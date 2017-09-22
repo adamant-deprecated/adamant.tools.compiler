@@ -16,7 +16,7 @@ namespace Bootstrap.Transpiler.Test
 
 		private static IEnumerable<TestCaseData> TranspileTestCases()
 		{
-			foreach(var fileName in Directory.EnumerateFiles(@"..\..\test-cases", "*.ad"))
+			foreach(var fileName in Directory.EnumerateFiles(@"..\..\..\test-cases", "*.ad"))
 			{
 				string source;
 				string expected;

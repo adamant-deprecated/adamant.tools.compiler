@@ -54,15 +54,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test-cases\Empty.ad" />
-    <None Include="test-cases\Return0.ad" />
-    <None Include="test-cases\Return42.ad" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="test-cases\Empty.cpp" />
-    <Content Include="test-cases\Return0.cpp" />
-    <Content Include="test-cases\Return42.cpp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

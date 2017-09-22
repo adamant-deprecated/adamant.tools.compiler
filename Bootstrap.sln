@@ -7,6 +7,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transpiler", "Bootstrap\Tra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transpiler.Test", "Bootstrap.Test\Transpiler.Test.csproj", "{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", "{DB2A90E3-F1CA-4C7D-A2D1-350B0E516036}"
+	ProjectSection(SolutionItems) = preProject
+		test-cases\Empty.ad = test-cases\Empty.ad
+		test-cases\Empty.cpp = test-cases\Empty.cpp
+		test-cases\Loop.ad = test-cases\Loop.ad
+		test-cases\Loop.cpp = test-cases\Loop.cpp
+		test-cases\Return0.ad = test-cases\Return0.ad
+		test-cases\Return0.cpp = test-cases\Return0.cpp
+		test-cases\Return42.ad = test-cases\Return42.ad
+		test-cases\Return42.cpp = test-cases\Return42.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47BD665B-83EC-49C5-8255-01B431741F3A}"
+	ProjectSection(SolutionItems) = preProject
+		src\Program.ad = src\Program.ad
+		src\runtime.cpp = src\runtime.cpp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

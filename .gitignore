@@ -5,3 +5,5 @@ translated/runtime.cpp
 *.user
 bin/
 obj/
+*.db
+*.opendb
