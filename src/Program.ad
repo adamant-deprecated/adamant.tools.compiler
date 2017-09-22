@@ -1,0 +1,87 @@
+
+ReadToken(src: string, position: ref int) -> string
+{
+	loop
+	{
+		let char: code_point = src[position];
+		if(char == ' ')
+	}
+}
+
+Accept(expected: string) -> void
+{
+	if token <> expected
+	{
+		Write("Expected '"+expected+"' but found '"+token"'");
+		Exit(1);
+	}
+}
+
+AcceptIdentifier() -> string
+{
+}
+
+AcceptType() -> string
+{
+}
+
+ParseDeclaration() -> void
+{
+	Accept("let");
+	let name: string;
+	name = AcceptIdentifier();
+	Accept(":");
+	let type: string;
+	type = AcceptType();
+	Accept(";");
+	// TODO emit the variable
+}
+
+ParseFunction() -> void
+{
+	let name: string;
+	name = AcceptIdentifier();
+	Accept("(");
+	loop
+	{
+		if not ParseArgument()
+			break;
+	}
+	Accept(")");
+	Accept("->");
+	let type: string;
+	type = AcceptType();
+	ParseBlock();
+}
+
+ParseProgram(src: string, position: ref int, token: ref string) -> void
+{
+	/*loop
+	{
+		if token == "<EOF>"
+			{ return; }
+
+		if token == "let"
+			{ ParseDeclaration(); }*/
+
+		ParseFunction();
+	//}
+}
+
+Main(System.Console console, args: System.Collections.Array<string>) -> void
+{
+	console.WriteLine("Adamant Compiler v0.1.0");
+	if args.Count <> 1
+	{
+		console.WriteLine("Must pass a single argument of the source file");
+		return;
+	}
+	let fileName: string = args[0];
+	console.Write("Compiling: ");
+	console.WriteLine(fileName);
+	let file: FileReader = new FileReader.Open(fileName);
+	let src: string = file.ReadToEndSync();
+	let position: int = 0;
+	let token: string = ReadToken(src, ref token);
+	ParseProgram(src, position, token);
+}
