@@ -31,6 +31,13 @@
 					Lexer.Expect(c, ";");
 					c.EndLine(";");
 				}
+				return true;
+			}
+			if(Lexer.Accept(c, "loop"))
+			{
+				c.WriteLine("for (;;)");
+				ParseBlock(c);
+				return true;
 			}
 
 			return false;
