@@ -44,10 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Context.cs" />
-    <Compile Include="FunctionDefinition.cs" />
-    <Compile Include="Lexer.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="Transpiler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

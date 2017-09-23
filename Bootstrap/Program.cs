@@ -22,7 +22,8 @@ namespace Bootstrap.Transpiler
 				source = file.ReadToEnd();
 			}
 
-			var translated = Parser.Transpile(source);
+			var transpiler = new Transpiler();
+			var translated = transpiler.Transpile(source);
 			using(var file = File.CreateText(Path.ChangeExtension(fileName, "cpp")))
 			{
 				file.Write(translated);

@@ -1,4 +1,5 @@
-// Main() -> void
+#include "runtime.cpp"
+
 void Main()
 {
 }

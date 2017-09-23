@@ -1,2 +1,1 @@
-copy src\runtime.cpp translated
-clang translated\Program.cpp -o target\Program.exe
+clang translated\Program.cpp --include-directory src -o target\Program.exe

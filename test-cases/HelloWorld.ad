@@ -1,0 +1,4 @@
+Main(console: System.Console) -> void
+{
+	console.WriteLine("Hello World!");
+}

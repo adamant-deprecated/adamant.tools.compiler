@@ -1,7 +1,6 @@
 /target/
 /.vs/
 /packages/
-translated/runtime.cpp
 *.user
 bin/
 obj/

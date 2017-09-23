@@ -5,13 +5,14 @@ using NUnit.Framework;
 namespace Bootstrap.Transpiler.Test
 {
 	[TestFixture]
-	public class ParserTests
+	public class TranspilerTests
 	{
 		[Test]
 		[TestCaseSource(nameof(TranspileTestCases))]
 		public void TranspileTest(string source, string expected)
 		{
-			Assert.AreEqual(expected, Parser.Transpile(source));
+			var transpiler = new Transpiler();
+			Assert.AreEqual(expected, transpiler.Transpile(source));
 		}
 
 		private static IEnumerable<TestCaseData> TranspileTestCases()

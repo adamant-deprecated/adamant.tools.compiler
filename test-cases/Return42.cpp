@@ -1,4 +1,5 @@
-// Main() -> int
+#include "runtime.cpp"
+
 int Main()
 {
 	return 42;
