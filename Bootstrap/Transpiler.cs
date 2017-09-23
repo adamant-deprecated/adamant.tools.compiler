@@ -111,6 +111,7 @@ namespace Bootstrap.Transpiler
 					case ',':
 					case '.':
 					case ':':
+					case '=':
 						tokenEnd = position + 1;
 						goto done;
 					case '-':
@@ -144,7 +145,7 @@ namespace Bootstrap.Transpiler
 								tokenEnd++;
 							goto done;
 						}
-						Error("Invalid character '{0}'", HttpUtility.JavaScriptStringEncode(curChar.ToString()));
+						Error("Lexer: Invalid character '{0}'", HttpUtility.JavaScriptStringEncode(curChar.ToString()));
 						position += 1;
 						break;
 				}
@@ -248,16 +249,6 @@ namespace Bootstrap.Transpiler
 		#endregion
 
 		#region Parser
-		private void ParseDeclaration()
-		{
-			Expect("let");
-			var name = ExpectIdentifier();
-			Expect(":");
-			var type = ParseType();
-			Expect(";");
-			// TODO emit the variable
-		}
-
 		// An Atom is the smallest unit of an expression, i.e. an identifier or literal
 		private bool ParseAtom()
 		{
@@ -413,8 +404,29 @@ namespace Bootstrap.Transpiler
 			return arguments.ToString();
 		}
 
-		private void ParseFunction()
+		private void ParseDeclaration()
 		{
+			// Static Variable Declaration
+			var kind = Token;
+			if(Accept("var") || Accept("let"))
+			{
+				var variableName = ExpectIdentifier();
+				Expect(":");
+				var variableType = ParseType();
+				Expect("=");
+				variableType = ConvertType(variableType);
+				if(kind == "let")
+					variableType = "const " + variableType;
+				BeginLine(variableType);
+				Write(" {0} = ", variableName);
+				ParseExpression();
+				Expect(";");
+				EndLine(";");
+				AfterDeclaration = true;
+				return;
+			}
+
+			// Function Declaration
 			var name = ExpectIdentifier();
 			var arguments = ParseArguments(name == "Main");
 			Expect("->");
@@ -436,7 +448,7 @@ namespace Bootstrap.Transpiler
 
 			do
 			{
-				ParseFunction();
+				ParseDeclaration();
 			} while(TokenIsIdentifier());
 			WriteLine("// Entry Point Adapter");
 			WriteLine("int main(int argc, const char * argv[])");

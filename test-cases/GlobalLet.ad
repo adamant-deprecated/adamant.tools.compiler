@@ -1,0 +1,6 @@
+let Result: int = 42;
+
+Main() -> int
+{
+	return Result;
+}
