@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", 
 	ProjectSection(SolutionItems) = preProject
 		test-cases\Empty.ad = test-cases\Empty.ad
 		test-cases\Empty.cpp = test-cases\Empty.cpp
+		test-cases\Function.ad = test-cases\Function.ad
+		test-cases\Function.cpp = test-cases\Function.cpp
 		test-cases\HelloWorld.ad = test-cases\HelloWorld.ad
 		test-cases\HelloWorld.cpp = test-cases\HelloWorld.cpp
 		test-cases\Loop.ad = test-cases\Loop.ad
@@ -25,6 +27,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47BD665B-83E
 	ProjectSection(SolutionItems) = preProject
 		src\Program.ad = src\Program.ad
 		src\runtime.cpp = src\runtime.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "translated", "translated", "{AAEE3638-1A6D-4C6D-B9C0-1DA23CD90906}"
+	ProjectSection(SolutionItems) = preProject
+		translated\Program.cpp = translated\Program.cpp
 	EndProjectSection
 EndProject
 Global

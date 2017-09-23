@@ -8,23 +8,26 @@ namespace Bootstrap.Transpiler
 		public static void Main(string[] args)
 		{
 			Console.WriteLine("Adamant Compiler v0.1.0");
-			if(args.Length != 1)
+			if(args.Length != 2)
 			{
-				Console.WriteLine("Must pass a single argument of the source file");
+				Console.WriteLine("Args: <Input File> <OutputFile>");
 				return;
 			}
-			var fileName = args[0];
+			var inputFile = args[0];
 			Console.Write("Compiling: ");
-			Console.WriteLine(fileName);
+			Console.WriteLine(inputFile);
 			string source;
-			using(var file = File.OpenText(fileName))
+			using(var file = File.OpenText(inputFile))
 			{
 				source = file.ReadToEnd();
 			}
 
 			var transpiler = new Transpiler();
 			var translated = transpiler.Transpile(source);
-			using(var file = File.CreateText(Path.ChangeExtension(fileName, "cpp")))
+			var outputFile = args[1];
+			Console.Write("Output: ");
+			Console.WriteLine(outputFile);
+			using(var file = File.CreateText(outputFile))
 			{
 				file.Write(translated);
 			}

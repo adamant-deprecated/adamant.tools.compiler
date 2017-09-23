@@ -1,2 +1,2 @@
 CALL build.bat
-target\Program.exe
+target\Program.exe src\Program.ad translated\Program.cpp

@@ -1,5 +1,5 @@
 
-ReadToken(src: string, position: ref int) -> string
+ReadToken(src: string, position: int) -> string
 {
 	loop
 	{
@@ -68,7 +68,7 @@ ParseProgram(src: string, position: ref int, token: ref string) -> void
 	//}
 }
 
-Main(System.Console console, args: System.Collections.Array<string>) -> void
+Main(System.Console console, args: System.Collections.List<string>) -> void
 {
 	console.WriteLine("Adamant Compiler v0.1.0");
 	if args.Count <> 1

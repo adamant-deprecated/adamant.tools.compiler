@@ -173,6 +173,17 @@ namespace Bootstrap.Transpiler
 			return c >= '0' && c <= '9';
 		}
 
+		private bool TokenIsIdentifier()
+		{
+			if(Token == null || Token.Length == 0)
+				return false;
+			foreach(var @char in Token)
+				if(!IsIdentifierChar(@char))
+					return false;
+
+			return true;
+		}
+
 		private bool Accept(string expected)
 		{
 			var accepted = Token == expected;
@@ -195,9 +206,8 @@ namespace Bootstrap.Transpiler
 
 		private bool AcceptIdentifier()
 		{
-			foreach(var @char in Token)
-				if(!IsIdentifierChar(@char))
-					return false;
+			if(!TokenIsIdentifier())
+				return false;
 
 			ReadToken();
 			return true;
@@ -224,32 +234,16 @@ namespace Bootstrap.Transpiler
 
 		private string ExpectIdentifier()
 		{
-			foreach(var @char in Token)
-				if(!IsIdentifierChar(@char))
-				{
-					Error("Expected identifier, found '{0}'", HttpUtility.JavaScriptStringEncode(Token));
-					ReadToken(); // Skip token to advance
-					return "<missing>";
-				}
+			if(!TokenIsIdentifier())
+			{
+				Error("Expected identifier, found '{0}'", HttpUtility.JavaScriptStringEncode(Token));
+				ReadToken(); // Skip token to advance
+				return "<missing>";
+			}
 
 			var identifier = Token;
 			ReadToken();
 			return identifier;
-		}
-
-		private string ExpectNumber()
-		{
-			foreach(var @char in Token)
-				if(!IsNumberChar(@char))
-				{
-					Error("Expected number, found '{0}'", HttpUtility.JavaScriptStringEncode(Token));
-					ReadToken(); // Skip token to advance
-					return "<missing>";
-				}
-
-			var number = Token;
-			ReadToken();
-			return number;
 		}
 		#endregion
 
@@ -440,8 +434,10 @@ namespace Bootstrap.Transpiler
 			WriteLine("#include \"runtime.cpp\"");
 			AfterDeclaration = true;
 
-			ParseFunction();
-
+			do
+			{
+				ParseFunction();
+			} while(TokenIsIdentifier());
 			WriteLine("// Entry Point Adapter");
 			WriteLine("int main(int argc, const char * argv[])");
 			BeginBlock();
