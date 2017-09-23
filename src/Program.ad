@@ -1,7 +1,7 @@
 var Source: string = "";
 var Token: string = "";
 var NextTokenPosition: int = 0;
-let Output: StringBuilder = new StringBuilder();
+let Output: System.Text.StringBuilder = new System.Text.StringBuilder();
 var IndentDepth: int = 0;
 var AfterDeclaration: bool = false;
 var MainFunctionReturnType: string = "";

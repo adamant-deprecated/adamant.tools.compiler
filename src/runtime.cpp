@@ -9,6 +9,7 @@ public:
 
 	string();
 	string(const char* s);
+	string(const string& s);
 	string(int length, const char* s);
 	char* cstr() const;
 	string Substring(int start, int length);
@@ -21,6 +22,11 @@ string::string()
 
 string::string(const char* s)
 	: Length(std::strlen(s)), Buffer(s)
+{
+}
+
+string::string(const string& s)
+	: Length(s.Length), Buffer(s.Buffer)
 {
 }
 

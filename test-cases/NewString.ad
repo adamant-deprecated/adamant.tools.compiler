@@ -1,0 +1,4 @@
+Main() -> void
+{
+	new string("foo");
+}

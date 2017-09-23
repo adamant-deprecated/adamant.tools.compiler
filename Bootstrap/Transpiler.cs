@@ -249,9 +249,23 @@ namespace Bootstrap.Transpiler
 		#endregion
 
 		#region Parser
-		// An Atom is the smallest unit of an expression, i.e. an identifier or literal
+		// An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
 		private bool ParseAtom()
 		{
+			if(Accept("new"))
+			{
+				// Constructor Call
+				Write("new ");
+				var type = ParseType();
+				Write(ConvertType(type));
+				Expect("(");
+				Write("(");
+				ParseExpression(); // Assume 1 arg for now
+				Expect(")");
+				Write(")");
+				return true;
+			}
+
 			if(Accept("(")) // Order of operations parens
 			{
 				Write("(");
@@ -286,21 +300,7 @@ namespace Bootstrap.Transpiler
 				var token = Token;
 				int precedence;
 				bool leftAssociative;
-				if(token == "new" && minPrecedence >= 1)
-				{
-					// Constructor Call
-					Write("new ");
-					var type = ParseType();
-					Write(ConvertType(type));
-					Expect("(");
-					ParseExpression(); // Assume 1 arg for now
-					if(Token != ")")
-						Error("Expected ')' found '{0}'", Token);
-
-					precedence = 1;
-					leftAssociative = true;
-				}
-				else if(token == "(" && minPrecedence >= 1)
+				if(token == "(" && minPrecedence >= 1)
 				{
 					// Call Expression
 					ReadToken();
