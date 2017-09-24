@@ -333,7 +333,14 @@ namespace Bootstrap.Transpiler
 				var token = Token;
 				int precedence;
 				bool leftAssociative;
-				if(token == "(" && minPrecedence >= 1)
+				if(token == "=" && minPrecedence <= 1)
+				{
+					// Assignment
+					precedence = 1;
+					leftAssociative = false;
+					Write(" = ");
+				}
+				else if(token == "(" && minPrecedence <= 2)
 				{
 					// Call Expression
 					ReadToken();
@@ -342,13 +349,13 @@ namespace Bootstrap.Transpiler
 					if(Token != ")")
 						Error("Expected ')' found '{0}'", Token);
 					Write(")");
-					precedence = 1;
+					precedence = 2;
 					leftAssociative = true;
 				}
-				else if(token == "." && minPrecedence >= 1)
+				else if(token == "." && minPrecedence <= 2)
 				{
 					// Member Access
-					precedence = 1;
+					precedence = 2;
 					leftAssociative = true;
 					Write("->");
 				}

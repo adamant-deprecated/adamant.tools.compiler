@@ -5,5 +5,5 @@ Identity(value: int) -> int
 
 Main() -> int
 {
-	return Func(42);
+	return Identity(42);
 }

@@ -8,6 +8,14 @@ var MainFunctionReturnType: string = "";
 var MainFunctionAcceptsConsole: bool = false;
 var MainFunctionAcceptsArgs: bool = false;
 
+Transpile(source: string) -> string
+{
+	Source = source;
+	ReadFirstToken();
+	ParseProgram();
+	return Output.ToString();
+}
+
 ReadToken(src: string, position: int) -> string
 {
 	loop

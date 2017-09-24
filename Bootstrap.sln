@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transpiler.Test", "Bootstra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", "{DB2A90E3-F1CA-4C7D-A2D1-350B0E516036}"
 	ProjectSection(SolutionItems) = preProject
+		test-cases\Assignment.ad = test-cases\Assignment.ad
+		test-cases\Assignment.cpp = test-cases\Assignment.cpp
 		test-cases\BoolFunction.ad = test-cases\BoolFunction.ad
 		test-cases\BoolFunction.cpp = test-cases\BoolFunction.cpp
 		test-cases\CodePointFunction.ad = test-cases\CodePointFunction.ad

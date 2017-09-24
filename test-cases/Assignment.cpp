@@ -1,13 +1,10 @@
 #include "runtime.cpp"
 
-int Identity(int value)
-{
-	return value;
-}
-
 int Main()
 {
-	return Identity(42);
+	int result;
+	result = 42;
+	return result;
 }
 
 // Entry Point Adapter
