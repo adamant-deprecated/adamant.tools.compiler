@@ -72,12 +72,14 @@ namespace Bootstrap.Transpiler
 		#endregion
 
 		#region Lexer
-		private void ReadFirstToken()
+		private bool IsIdentifierChar(char c)
 		{
-			if(NextTokenPosition != 0)
-				Error("Can't read first token of context that already has tokens read.");
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+		}
 
-			ReadToken();
+		private bool IsNumberChar(char c)
+		{
+			return c >= '0' && c <= '9';
 		}
 
 		private void ReadToken()
@@ -148,7 +150,23 @@ namespace Bootstrap.Transpiler
 							tokenEnd = position + 2;
 							goto done;
 						}
+						if(position + 1 < Source.Length && Source[position + 1] == '=')
+						{
+							// it is `<=`
+							tokenEnd = position + 2;
+							goto done;
+						}
 						// it is `<`
+						tokenEnd = position + 1;
+						goto done;
+					case '>':
+						if(position + 1 < Source.Length && Source[position + 1] == '=')
+						{
+							// it is `>=`
+							tokenEnd = position + 2;
+							goto done;
+						}
+						// it is `>`
 						tokenEnd = position + 1;
 						goto done;
 					case '"':
@@ -197,14 +215,12 @@ namespace Bootstrap.Transpiler
 			}
 		}
 
-		private bool IsIdentifierChar(char c)
+		private void ReadFirstToken()
 		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-		}
+			if(NextTokenPosition != 0)
+				Error("Can't read first token of context that already has tokens read.");
 
-		private bool IsNumberChar(char c)
-		{
-			return c >= '0' && c <= '9';
+			ReadToken();
 		}
 
 		private bool TokenIsIdentifier()
@@ -352,9 +368,12 @@ namespace Bootstrap.Transpiler
 
 		// Operator Precedence
 		// 1: = += -=
-		// 2: == <>
-		// 3: + -
-		// 4: f() .
+		// 2: or
+		// 3: and
+		// 4: == <>
+		// 5: < <= > >=
+		// 6: + -
+		// 7: f() .
 		private void ParseExpression(int minPrecedence = 1)
 		{
 			if(!ParseAtom())
@@ -372,35 +391,56 @@ namespace Bootstrap.Transpiler
 					leftAssociative = false;
 					Write(" {0} ", token);
 				}
-				else if(token == "==" && minPrecedence <= 2)
+				else if(token == "or" && minPrecedence <= 2)
 				{
-					// Assignment
+					// logical or
 					precedence = 2;
+					leftAssociative = true;
+					Write(" || ");
+				}
+				else if(token == "and" && minPrecedence <= 3)
+				{
+					// logical and
+					precedence = 3;
+					leftAssociative = true;
+					Write(" && ");
+				}
+				else if(token == "==" && minPrecedence <= 4)
+				{
+					// equal
+					precedence = 4;
 					leftAssociative = true;
 					Write(" == ");
 				}
-				else if(token == "<>" && minPrecedence <= 2)
+				else if(token == "<>" && minPrecedence <= 4)
 				{
-					// Assignment
-					precedence = 2;
+					// not equal
+					precedence = 4;
 					leftAssociative = true;
 					Write(" != ");
 				}
-				else if(token == "+" && minPrecedence <= 3)
+				else if((token == "<" || token == "<=" || token == ">" || token == ">=") && minPrecedence <= 5)
 				{
-					// Assignment
-					precedence = 3;
+					// relational operators
+					precedence = 5;
+					leftAssociative = true;
+					Write(" {0} ", token);
+				}
+				else if(token == "+" && minPrecedence <= 6)
+				{
+					// add
+					precedence = 6;
 					leftAssociative = true;
 					Write(" + ");
 				}
-				else if(token == "-" && minPrecedence <= 3)
+				else if(token == "-" && minPrecedence <= 6)
 				{
-					// Assignment
-					precedence = 3;
+					// subtract
+					precedence = 6;
 					leftAssociative = true;
 					Write(" - ");
 				}
-				else if(token == "(" && minPrecedence <= 4)
+				else if(token == "(" && minPrecedence <= 7)
 				{
 					// Call Expression
 					ReadToken();
@@ -409,13 +449,13 @@ namespace Bootstrap.Transpiler
 					if(Token != ")")
 						Error("Expected ')' found '{0}'", Token);
 					Write(")");
-					precedence = 4;
+					precedence = 7;
 					leftAssociative = true;
 				}
-				else if(token == "." && minPrecedence <= 4)
+				else if(token == "." && minPrecedence <= 7)
 				{
 					// Member Access
-					precedence = 4;
+					precedence = 7;
 					leftAssociative = true;
 					Write("->");
 				}

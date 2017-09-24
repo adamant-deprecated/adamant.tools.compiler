@@ -1,0 +1,6 @@
+Main() -> void
+{
+	var x: bool;
+	x = true and false;
+	x = true or false;
+}

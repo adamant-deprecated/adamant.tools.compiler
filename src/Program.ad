@@ -38,12 +38,9 @@ EndBlock() -> void
 	AfterDeclaration = true;
 }
 
-ReadFirstToken() -> void
+IsIdentifierChar(c: code_point) -> bool
 {
-	if(NextTokenPosition <> 0)
-		Error("Can't read first token of context that already has tokens read.");
-
-	ReadToken();
+	return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
 }
 
 ReadToken(src: string, position: int) -> string
@@ -53,6 +50,14 @@ ReadToken(src: string, position: int) -> string
 		let char: code_point = src[position];
 		if(char == ' ')
 	}
+}
+
+ReadFirstToken() -> void
+{
+	if(NextTokenPosition <> 0)
+		Error("Can't read first token of context that already has tokens read.");
+
+	ReadToken();
 }
 
 Accept(expected: string) -> void
