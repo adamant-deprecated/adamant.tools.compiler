@@ -1,0 +1,9 @@
+Func(a: int, b: int) -> int
+{
+	return b;
+}
+
+Main() -> int
+{
+	return Func(0, 42);
+}

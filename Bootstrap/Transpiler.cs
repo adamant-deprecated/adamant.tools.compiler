@@ -260,7 +260,7 @@ namespace Bootstrap.Transpiler
 				Write(ConvertType(type, true));
 				Expect("(");
 				Write("(");
-				ParseExpression(); // Assume 1 arg for now
+				ParseCallArguments();
 				Expect(")");
 				Write(")");
 				return true;
@@ -290,6 +290,19 @@ namespace Bootstrap.Transpiler
 			return false;
 		}
 
+		private void ParseCallArguments()
+		{
+			var first = true;
+			do
+			{
+				if(first)
+					first = false;
+				else
+					Write(", ");
+				ParseExpression();
+			} while(Accept(","));
+		}
+
 		private void ParseExpression(int minPrecedence = 1)
 		{
 			if(!ParseAtom())
@@ -305,7 +318,7 @@ namespace Bootstrap.Transpiler
 					// Call Expression
 					ReadToken();
 					Write("(");
-					ParseExpression(); // Assume 1 arg for now
+					ParseCallArguments();
 					if(Token != ")")
 						Error("Expected ')' found '{0}'", Token);
 					Write(")");
@@ -397,10 +410,10 @@ namespace Bootstrap.Transpiler
 				var type = ParseType();
 				if(isMainFunction && type == "System.Console")
 					MainFunctionAcceptsConsole = true;
-				arguments.AppendFormat("{1} {0},", name, ConvertType(type));
+				arguments.AppendFormat("{1} {0}, ", name, ConvertType(type));
 			} while(Accept(","));
 			Expect(")");
-			arguments.Length -= 1; // remove the trailing comma
+			arguments.Length -= 2; // remove the trailing comma and space
 			return arguments.ToString();
 		}
 

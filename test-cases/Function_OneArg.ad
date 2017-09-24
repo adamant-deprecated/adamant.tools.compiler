@@ -1,0 +1,9 @@
+Identity(value: int) -> int
+{
+	return value;
+}
+
+Main() -> int
+{
+	return Func(42);
+}
