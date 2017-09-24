@@ -16,14 +16,6 @@ namespace Bootstrap.Transpiler
 		private bool MainFunctionAcceptsConsole;
 		private bool MainFunctionAcceptsArgs;
 
-		public string Transpile(string source)
-		{
-			Source = source;
-			ReadFirstToken();
-			ParseProgram();
-			return Output.ToString();
-		}
-
 		#region Code Writing
 		private void Error(string format, params object[] args)
 		{
@@ -112,6 +104,7 @@ namespace Bootstrap.Transpiler
 					case '.':
 					case ':':
 					case '=':
+					case '+':
 						tokenEnd = position + 1;
 						goto done;
 					case '-':
@@ -323,6 +316,10 @@ namespace Bootstrap.Transpiler
 			} while(Accept(","));
 		}
 
+		// Operator Precedence
+		// 1: =
+		// 2: +
+		// 3: f() .
 		private void ParseExpression(int minPrecedence = 1)
 		{
 			if(!ParseAtom())
@@ -340,7 +337,14 @@ namespace Bootstrap.Transpiler
 					leftAssociative = false;
 					Write(" = ");
 				}
-				else if(token == "(" && minPrecedence <= 2)
+				else if(token == "+" && minPrecedence <= 2)
+				{
+					// Assignment
+					precedence = 2;
+					leftAssociative = true;
+					Write(" + ");
+				}
+				else if(token == "(" && minPrecedence <= 3)
 				{
 					// Call Expression
 					ReadToken();
@@ -349,13 +353,13 @@ namespace Bootstrap.Transpiler
 					if(Token != ")")
 						Error("Expected ')' found '{0}'", Token);
 					Write(")");
-					precedence = 2;
+					precedence = 3;
 					leftAssociative = true;
 				}
-				else if(token == "." && minPrecedence <= 2)
+				else if(token == "." && minPrecedence <= 3)
 				{
 					// Member Access
-					precedence = 2;
+					precedence = 3;
 					leftAssociative = true;
 					Write("->");
 				}
@@ -545,5 +549,13 @@ namespace Bootstrap.Transpiler
 			}
 		}
 		#endregion
+
+		public string Transpile(string source)
+		{
+			Source = source;
+			ReadFirstToken();
+			ParseProgram();
+			return Output.ToString();
+		}
 	}
 }

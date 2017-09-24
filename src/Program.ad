@@ -8,12 +8,9 @@ var MainFunctionReturnType: string = "";
 var MainFunctionAcceptsConsole: bool = false;
 var MainFunctionAcceptsArgs: bool = false;
 
-Transpile(source: string) -> string
+Error(message: string) -> void
 {
-	Source = source;
-	ReadFirstToken();
-	ParseProgram();
-	return Output.ToString();
+	Output.Append("<$ " + message + " $>");
 }
 
 ReadToken(src: string, position: int) -> string
@@ -83,6 +80,14 @@ ParseProgram(src: string, position: ref int, token: ref string) -> void
 
 		ParseFunction();
 	//}
+}
+
+Transpile(source: string) -> string
+{
+	Source = source;
+	ReadFirstToken();
+	ParseProgram();
+	return Output.ToString();
 }
 
 Main(System.Console console, args: System.Collections.List<string>) -> void
