@@ -364,6 +364,26 @@ namespace Bootstrap.Transpiler
 				ParseBlock();
 				return true;
 			}
+			var kind = Token;
+			if(Accept("let") || Accept("var"))
+			{
+				var variableName = ExpectIdentifier();
+				Expect(":");
+				var variableType = ParseType();
+				variableType = ConvertType(variableType);
+				if(kind == "let")
+					variableType = "const " + variableType;
+				BeginLine(variableType);
+				Write(" {0}", variableName);
+				if(Accept("="))
+				{
+					Write(" = ");
+					ParseExpression();
+				}
+				Expect(";");
+				EndLine(";");
+				return true;
+			}
 			if(Token == "}")
 				return false;
 
