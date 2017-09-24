@@ -1,0 +1,7 @@
+Main() -> int
+{
+	if true
+	{
+		return 0;
+	}
+}

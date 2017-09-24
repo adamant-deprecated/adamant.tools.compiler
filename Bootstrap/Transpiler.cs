@@ -395,6 +395,14 @@ namespace Bootstrap.Transpiler
 				ParseBlock();
 				return true;
 			}
+			if(Accept("if"))
+			{
+				BeginLine("if(");
+				ParseExpression();
+				EndLine(")");
+				ParseBlock();
+				return true;
+			}
 			var kind = Token;
 			if(Accept("let") || Accept("var"))
 			{
