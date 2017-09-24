@@ -130,6 +130,12 @@ namespace Bootstrap.Transpiler
 							tokenEnd++;
 						tokenEnd += 1; // To include the close quote
 						goto done;
+					case '\'':
+						tokenEnd = position + 1;
+						while(tokenEnd < Source.Length && Source[tokenEnd] != '\'')
+							tokenEnd++;
+						tokenEnd += 1; // To include the close quote
+						goto done;
 					default:
 						if(IsIdentifierChar(curChar))
 						{
@@ -166,7 +172,7 @@ namespace Bootstrap.Transpiler
 
 		private bool IsIdentifierChar(char c)
 		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 		}
 
 		private bool IsNumberChar(char c)
@@ -217,6 +223,15 @@ namespace Bootstrap.Transpiler
 		private bool AcceptString()
 		{
 			if(Token.Length == 0 || Token[0] != '"')
+				return false;
+
+			ReadToken();
+			return true;
+		}
+
+		private bool AcceptCodePoint()
+		{
+			if(Token.Length == 0 || Token[0] != '\'')
 				return false;
 
 			ReadToken();
@@ -284,6 +299,11 @@ namespace Bootstrap.Transpiler
 			if(AcceptString())
 			{
 				Write("string({0})", token);
+				return true;
+			}
+			if(AcceptCodePoint())
+			{
+				Write(token);
 				return true;
 			}
 
@@ -464,7 +484,7 @@ namespace Bootstrap.Transpiler
 			var arguments = ParseArguments(name == "Main");
 			Expect("->");
 			var returnType = ParseType();
-			WriteLine("{1} {0}({2})", name, returnType, arguments);
+			WriteLine("{1} {0}({2})", name, ConvertType(returnType), arguments);
 			if(name == "Main")
 			{
 				if(MainFunctionReturnType != null)
@@ -508,7 +528,10 @@ namespace Bootstrap.Transpiler
 				case "string":
 				case "int":
 				case "bool":
+				case "void":
 					return type;
+				case "code_point":
+					return "char";
 				default:
 
 					return "::" + type.Replace(".", "::") + (nameOnly ? "" : "*");
