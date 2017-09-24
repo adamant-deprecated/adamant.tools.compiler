@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", 
 		test-cases\BoolFunction.cpp = test-cases\BoolFunction.cpp
 		test-cases\CodePointFunction.ad = test-cases\CodePointFunction.ad
 		test-cases\CodePointFunction.cpp = test-cases\CodePointFunction.cpp
+		test-cases\DoWhile.ad = test-cases\DoWhile.ad
+		test-cases\DoWhile.cpp = test-cases\DoWhile.cpp
 		test-cases\ElementAccess.ad = test-cases\ElementAccess.ad
 		test-cases\ElementAccess.cpp = test-cases\ElementAccess.cpp
 		test-cases\Empty.ad = test-cases\Empty.ad
@@ -57,8 +59,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", 
 		test-cases\Return0.cpp = test-cases\Return0.cpp
 		test-cases\Return42.ad = test-cases\Return42.ad
 		test-cases\Return42.cpp = test-cases\Return42.cpp
-		test-cases\while.ad = test-cases\while.ad
-		test-cases\while.cpp = test-cases\while.cpp
+		test-cases\While.ad = test-cases\While.ad
+		test-cases\While.cpp = test-cases\While.cpp
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47BD665B-83EC-49C5-8255-01B431741F3A}"

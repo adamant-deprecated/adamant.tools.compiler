@@ -519,6 +519,19 @@ namespace Bootstrap.Transpiler
 				ParseBlock();
 				return true;
 			}
+			if(Accept("do"))
+			{
+				WriteLine("do");
+				ParseBlock();
+				AfterDeclaration = false;
+				Expect("while");
+				BeginLine("while (");
+				ParseExpression();
+				Expect(";");
+				EndLine(");");
+				return true;
+			}
+
 			if(Accept("if"))
 			{
 				BeginLine("if (");

@@ -1,0 +1,7 @@
+Main() -> int
+{
+	do
+	{
+		return 0;
+	} while true;
+}
