@@ -38,6 +38,14 @@ EndBlock() -> void
 	AfterDeclaration = true;
 }
 
+ReadFirstToken() -> void
+{
+	if(NextTokenPosition <> 0)
+		Error("Can't read first token of context that already has tokens read.");
+
+	ReadToken();
+}
+
 ReadToken(src: string, position: int) -> string
 {
 	loop

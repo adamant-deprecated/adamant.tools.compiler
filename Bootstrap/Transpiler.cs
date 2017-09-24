@@ -75,7 +75,7 @@ namespace Bootstrap.Transpiler
 		private void ReadFirstToken()
 		{
 			if(NextTokenPosition != 0)
-				throw new NotSupportedException("Can't read first token of context that already has tokens read.");
+				Error("Can't read first token of context that already has tokens read.");
 
 			ReadToken();
 		}
@@ -103,7 +103,16 @@ namespace Bootstrap.Transpiler
 					case ',':
 					case '.':
 					case ':':
+						tokenEnd = position + 1;
+						goto done;
 					case '=':
+						if(position + 1 < Source.Length && Source[position + 1] == '=')
+						{
+							// it is `==`
+							tokenEnd = position + 2;
+							goto done;
+						}
+						// it is `=`
 						tokenEnd = position + 1;
 						goto done;
 					case '+':
@@ -113,6 +122,7 @@ namespace Bootstrap.Transpiler
 							tokenEnd = position + 2;
 							goto done;
 						}
+						// it is `+`
 						tokenEnd = position + 1;
 						goto done;
 					case '-':
@@ -129,6 +139,16 @@ namespace Bootstrap.Transpiler
 							goto done;
 						}
 						// it is `-`
+						tokenEnd = position + 1;
+						goto done;
+					case '<':
+						if(position + 1 < Source.Length && Source[position + 1] == '>')
+						{
+							// it is `<>`
+							tokenEnd = position + 2;
+							goto done;
+						}
+						// it is `<`
 						tokenEnd = position + 1;
 						goto done;
 					case '"':
@@ -332,8 +352,9 @@ namespace Bootstrap.Transpiler
 
 		// Operator Precedence
 		// 1: = += -=
-		// 2: + -
-		// 3: f() .
+		// 2: == <>
+		// 3: + -
+		// 4: f() .
 		private void ParseExpression(int minPrecedence = 1)
 		{
 			if(!ParseAtom())
@@ -351,21 +372,35 @@ namespace Bootstrap.Transpiler
 					leftAssociative = false;
 					Write(" {0} ", token);
 				}
-				else if(token == "+" && minPrecedence <= 2)
+				else if(token == "==" && minPrecedence <= 2)
 				{
 					// Assignment
 					precedence = 2;
+					leftAssociative = true;
+					Write(" == ");
+				}
+				else if(token == "<>" && minPrecedence <= 2)
+				{
+					// Assignment
+					precedence = 2;
+					leftAssociative = true;
+					Write(" != ");
+				}
+				else if(token == "+" && minPrecedence <= 3)
+				{
+					// Assignment
+					precedence = 3;
 					leftAssociative = true;
 					Write(" + ");
 				}
-				else if(token == "-" && minPrecedence <= 2)
+				else if(token == "-" && minPrecedence <= 3)
 				{
 					// Assignment
-					precedence = 2;
+					precedence = 3;
 					leftAssociative = true;
 					Write(" - ");
 				}
-				else if(token == "(" && minPrecedence <= 3)
+				else if(token == "(" && minPrecedence <= 4)
 				{
 					// Call Expression
 					ReadToken();
@@ -374,13 +409,13 @@ namespace Bootstrap.Transpiler
 					if(Token != ")")
 						Error("Expected ')' found '{0}'", Token);
 					Write(")");
-					precedence = 3;
+					precedence = 4;
 					leftAssociative = true;
 				}
-				else if(token == "." && minPrecedence <= 3)
+				else if(token == "." && minPrecedence <= 4)
 				{
 					// Member Access
-					precedence = 3;
+					precedence = 4;
 					leftAssociative = true;
 					Write("->");
 				}
