@@ -497,6 +497,12 @@ namespace Bootstrap.Transpiler
 				ParseExpression();
 				EndLine(")");
 				ParseBlock();
+				AfterDeclaration = false;
+				if(Accept("else"))
+				{
+					WriteLine("else");
+					ParseBlock();
+				}
 				return true;
 			}
 			var kind = Token;
