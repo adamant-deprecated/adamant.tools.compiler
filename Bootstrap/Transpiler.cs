@@ -86,6 +86,7 @@ namespace Bootstrap.Transpiler
 		{
 			var position = NextTokenPosition;
 			var tokenEnd = -1;
+			bool escaped;
 			while(position < Source.Length)
 			{
 				var curChar = Source[position];
@@ -151,6 +152,7 @@ namespace Bootstrap.Transpiler
 							// it is a line comment `//`
 							while(position < Source.Length && Source[position] != '\r' && Source[position] != '\n')
 								position++;
+
 							continue;
 						}
 						// it is `/`
@@ -184,14 +186,24 @@ namespace Bootstrap.Transpiler
 						goto done;
 					case '"':
 						tokenEnd = position + 1;
-						while(tokenEnd < Source.Length && Source[tokenEnd] != '"')
+						escaped = false;
+						while(tokenEnd < Source.Length && (Source[tokenEnd] != '"' || escaped))
+						{
+							escaped = Source[tokenEnd] == '\\' && !escaped;
 							tokenEnd++;
+						}
+
 						tokenEnd += 1; // To include the close quote
 						goto done;
 					case '\'':
 						tokenEnd = position + 1;
-						while(tokenEnd < Source.Length && Source[tokenEnd] != '\'')
+						escaped = false;
+						while(tokenEnd < Source.Length && (Source[tokenEnd] != '\'' || escaped))
+						{
+							escaped = Source[tokenEnd] == '\\' && !escaped;
 							tokenEnd++;
+						}
+
 						tokenEnd += 1; // To include the close quote
 						goto done;
 					default:
