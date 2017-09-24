@@ -48,14 +48,18 @@ ReadToken(src: string, position: int) -> string
 	loop
 	{
 		let char: code_point = src[position];
-		if(char == ' ')
+		if char == ' '
+		{
+		}
 	}
 }
 
 ReadFirstToken() -> void
 {
-	if(NextTokenPosition <> 0)
+	if NextTokenPosition <> 0
+	{
 		Error("Can't read first token of context that already has tokens read.");
+	}
 
 	ReadToken();
 }
@@ -64,7 +68,7 @@ Accept(expected: string) -> void
 {
 	if token <> expected
 	{
-		Write("Expected '"+expected+"' but found '"+token"'");
+		Write("Expected '"+expected+"' but found '"+token+"'");
 		Exit(1);
 	}
 }
@@ -86,7 +90,6 @@ ParseDeclaration() -> void
 	let type: string;
 	type = AcceptType();
 	Accept(";");
-	// TODO emit the variable
 }
 
 ParseFunction() -> void
@@ -97,7 +100,9 @@ ParseFunction() -> void
 	loop
 	{
 		if not ParseArgument()
+		{
 			break;
+		}
 	}
 	Accept(")");
 	Accept("->");

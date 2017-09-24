@@ -325,7 +325,12 @@ namespace Bootstrap.Transpiler
 				Write(")");
 				return true;
 			}
-
+			if(Accept("not"))
+			{
+				Write("!");
+				ParseExpression();
+				return true;
+			}
 			if(Accept("(")) // Order of operations parens
 			{
 				Write("(");
@@ -369,13 +374,14 @@ namespace Bootstrap.Transpiler
 		}
 
 		// Operator Precedence
-		// 1: = += -=
-		// 2: or
-		// 3: and
-		// 4: == <>
-		// 5: < <= > >=
-		// 6: + -
-		// 7: f() . []
+		// 1 Assignment: = += -=
+		// 2 Logical Or: or
+		// 3 Logical And: and
+		// 4 Equality: == <>
+		// 5 Relational: < <= > >=
+		// 6 Additive: + -
+		// 7 Unary: -
+		// 8 Primary: f() . []
 		private void ParseExpression(int minPrecedence = 1)
 		{
 			if(!ParseAtom())
@@ -442,7 +448,7 @@ namespace Bootstrap.Transpiler
 					leftAssociative = true;
 					Write(" - ");
 				}
-				else if(token == "(" && minPrecedence <= 7)
+				else if(token == "(" && minPrecedence <= 8)
 				{
 					// Call Expression
 					ReadToken();
@@ -451,17 +457,17 @@ namespace Bootstrap.Transpiler
 					if(Token != ")")
 						Error("Expected ')' found '{0}'", Token);
 					Write(")");
-					precedence = 7;
+					precedence = 8;
 					leftAssociative = true;
 				}
-				else if(token == "." && minPrecedence <= 7)
+				else if(token == "." && minPrecedence <= 8)
 				{
 					// Member Access
-					precedence = 7;
+					precedence = 8;
 					leftAssociative = true;
 					Write("->");
 				}
-				else if(token == "[" && minPrecedence <= 7)
+				else if(token == "[" && minPrecedence <= 8)
 				{
 					// Element Access
 					ReadToken();
@@ -470,7 +476,7 @@ namespace Bootstrap.Transpiler
 					if(Token != "]")
 						Error("Expected ']' found '{0}'", Token);
 					Write("]");
-					precedence = 7;
+					precedence = 8;
 					leftAssociative = true;
 				}
 				else

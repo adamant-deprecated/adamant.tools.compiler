@@ -5,6 +5,7 @@ void Main()
 	bool x;
 	x = true && false;
 	x = true || false;
+	x = !true;
 }
 
 // Entry Point Adapter
