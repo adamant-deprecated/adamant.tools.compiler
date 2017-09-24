@@ -145,6 +145,17 @@ namespace Bootstrap.Transpiler
 						// it is `-`
 						tokenEnd = position + 1;
 						goto done;
+					case '/':
+						if(position + 1 < Source.Length && Source[position + 1] == '/')
+						{
+							// it is a line comment `//`
+							while(position < Source.Length && Source[position] != '\r' && Source[position] != '\n')
+								position++;
+							continue;
+						}
+						// it is `/`
+						tokenEnd = position + 1;
+						goto done;
 					case '<':
 						if(position + 1 < Source.Length && Source[position + 1] == '>')
 						{
