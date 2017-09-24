@@ -4,6 +4,8 @@ int Main()
 {
 	int result;
 	result = 42;
+	result += 1;
+	result -= 1;
 	return result;
 }
 

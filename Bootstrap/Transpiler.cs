@@ -104,13 +104,27 @@ namespace Bootstrap.Transpiler
 					case '.':
 					case ':':
 					case '=':
+						tokenEnd = position + 1;
+						goto done;
 					case '+':
+						if(position + 1 < Source.Length && Source[position + 1] == '=')
+						{
+							// it is `+=`
+							tokenEnd = position + 2;
+							goto done;
+						}
 						tokenEnd = position + 1;
 						goto done;
 					case '-':
 						if(position + 1 < Source.Length && Source[position + 1] == '>')
 						{
 							// it is `->`
+							tokenEnd = position + 2;
+							goto done;
+						}
+						if(position + 1 < Source.Length && Source[position + 1] == '=')
+						{
+							// it is `-=`
 							tokenEnd = position + 2;
 							goto done;
 						}
@@ -317,8 +331,8 @@ namespace Bootstrap.Transpiler
 		}
 
 		// Operator Precedence
-		// 1: =
-		// 2: +
+		// 1: = += -=
+		// 2: + -
 		// 3: f() .
 		private void ParseExpression(int minPrecedence = 1)
 		{
@@ -330,12 +344,12 @@ namespace Bootstrap.Transpiler
 				var token = Token;
 				int precedence;
 				bool leftAssociative;
-				if(token == "=" && minPrecedence <= 1)
+				if((token == "=" || token == "+=" || token == "-=") && minPrecedence <= 1)
 				{
 					// Assignment
 					precedence = 1;
 					leftAssociative = false;
-					Write(" = ");
+					Write(" {0} ", token);
 				}
 				else if(token == "+" && minPrecedence <= 2)
 				{
@@ -343,6 +357,13 @@ namespace Bootstrap.Transpiler
 					precedence = 2;
 					leftAssociative = true;
 					Write(" + ");
+				}
+				else if(token == "-" && minPrecedence <= 2)
+				{
+					// Assignment
+					precedence = 2;
+					leftAssociative = true;
+					Write(" - ");
 				}
 				else if(token == "(" && minPrecedence <= 3)
 				{

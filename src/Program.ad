@@ -24,6 +24,20 @@ BeginLine(value: string) -> void
 	Output.Append(value);
 }
 
+BeginBlock() -> void
+{
+	WriteLine("{");
+	IndentDepth += 1;
+}
+
+EndBlock() -> void
+{
+	AfterDeclaration = false;
+	IndentDepth -= 1;
+	WriteLine("}");
+	AfterDeclaration = true;
+}
+
 ReadToken(src: string, position: int) -> string
 {
 	loop

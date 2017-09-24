@@ -2,5 +2,7 @@ Main() -> int
 {
 	var result: int;
 	result = 42;
+	result += 1;
+	result -= 1;
 	return result;
 }
