@@ -111,18 +111,9 @@ ParseFunction() -> void
 	ParseBlock();
 }
 
-ParseProgram(src: string, position: ref int, token: ref string) -> void
+ParseProgram(src: string, position: int, token: string) -> void
 {
-	/*loop
-	{
-		if token == "<EOF>"
-			{ return; }
-
-		if token == "let"
-			{ ParseDeclaration(); }*/
-
-		ParseFunction();
-	//}
+	ParseFunction();
 }
 
 Transpile(source: string) -> string
@@ -133,7 +124,7 @@ Transpile(source: string) -> string
 	return Output.ToString();
 }
 
-Main(System.Console console, args: System.Collections.List<string>) -> void
+Main(console: System.Console, args: System.Collections.List) -> void
 {
 	console.WriteLine("Adamant Compiler v0.1.0");
 	if args.Count <> 1
@@ -147,6 +138,6 @@ Main(System.Console console, args: System.Collections.List<string>) -> void
 	let file: FileReader = new FileReader.Open(fileName);
 	let src: string = file.ReadToEndSync();
 	let position: int = 0;
-	let token: string = ReadToken(src, ref token);
+	let token: string = ReadToken(src, token);
 	ParseProgram(src, position, token);
 }

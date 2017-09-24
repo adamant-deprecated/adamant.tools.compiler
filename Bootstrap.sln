@@ -57,6 +57,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", 
 		test-cases\Return0.cpp = test-cases\Return0.cpp
 		test-cases\Return42.ad = test-cases\Return42.ad
 		test-cases\Return42.cpp = test-cases\Return42.cpp
+		test-cases\while.ad = test-cases\while.ad
+		test-cases\while.cpp = test-cases\while.cpp
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47BD665B-83EC-49C5-8255-01B431741F3A}"

@@ -511,9 +511,17 @@ namespace Bootstrap.Transpiler
 				ParseBlock();
 				return true;
 			}
+			if(Accept("while"))
+			{
+				BeginLine("while (");
+				ParseExpression();
+				EndLine(")");
+				ParseBlock();
+				return true;
+			}
 			if(Accept("if"))
 			{
-				BeginLine("if(");
+				BeginLine("if (");
 				ParseExpression();
 				EndLine(")");
 				ParseBlock();
