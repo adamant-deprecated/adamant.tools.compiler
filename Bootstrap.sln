@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transpiler.Test", "Bootstra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", "{DB2A90E3-F1CA-4C7D-A2D1-350B0E516036}"
 	ProjectSection(SolutionItems) = preProject
+		test-cases\BoolFunction.ad = test-cases\BoolFunction.ad
+		test-cases\BoolFunction.cpp = test-cases\BoolFunction.cpp
 		test-cases\Empty.ad = test-cases\Empty.ad
 		test-cases\Empty.cpp = test-cases\Empty.cpp
 		test-cases\Function.ad = test-cases\Function.ad
@@ -23,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", 
 		test-cases\Loop.cpp = test-cases\Loop.cpp
 		test-cases\NewString.ad = test-cases\NewString.ad
 		test-cases\NewString.cpp = test-cases\NewString.cpp
+		test-cases\NewStringBuilder.ad = test-cases\NewStringBuilder.ad
+		test-cases\NewStringBuilder.cpp = test-cases\NewStringBuilder.cpp
 		test-cases\Return0.ad = test-cases\Return0.ad
 		test-cases\Return0.cpp = test-cases\Return0.cpp
 		test-cases\Return42.ad = test-cases\Return42.ad

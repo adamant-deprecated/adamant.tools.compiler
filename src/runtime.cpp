@@ -126,4 +126,11 @@ namespace System
 			return string(length, buffer);
 		}
 	}
+
+	namespace Text
+	{
+		class StringBuilder
+		{
+		};
+	}
 }

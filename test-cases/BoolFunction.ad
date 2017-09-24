@@ -1,0 +1,9 @@
+Func(value: bool) -> bool
+{
+	return false;
+}
+
+Main() -> void
+{
+	Func(true);
+}

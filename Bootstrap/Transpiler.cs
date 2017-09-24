@@ -257,7 +257,7 @@ namespace Bootstrap.Transpiler
 				// Constructor Call
 				Write("new ");
 				var type = ParseType();
-				Write(ConvertType(type));
+				Write(ConvertType(type, true));
 				Expect("(");
 				Write("(");
 				ParseExpression(); // Assume 1 arg for now
@@ -468,15 +468,17 @@ namespace Bootstrap.Transpiler
 			EndBlock();
 		}
 
-		private string ConvertType(string type)
+		private string ConvertType(string type, bool nameOnly = false)
 		{
 			switch(type)
 			{
 				case "string":
 				case "int":
+				case "bool":
 					return type;
 				default:
-					return "::" + type.Replace(".", "::") + "*";
+
+					return "::" + type.Replace(".", "::") + (nameOnly ? "" : "*");
 			}
 		}
 		#endregion
