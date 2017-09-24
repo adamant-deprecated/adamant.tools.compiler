@@ -13,6 +13,7 @@ public:
 	string(int length, const char* s);
 	char* cstr() const;
 	string Substring(int start, int length);
+	char operator[] (const int index);
 };
 
 string::string()
@@ -35,17 +36,22 @@ string::string(int length, const char* s)
 {
 }
 
+char* string::cstr() const
+{
+	auto buffer = new char[Length + 1];
+	std::memcpy(buffer, Buffer, Length);
+	buffer[Length] = 0;
+	return buffer;
+}
+
 string string::Substring(int start, int length)
 {
 	return string(length, Buffer+start);
 }
 
-char* string::cstr() const
+char string::operator[] (const int index)
 {
-	auto buffer = new char[Length+1];
-	std::memcpy(buffer, Buffer, Length);
-	buffer[Length]=0;
-	return buffer;
+	return Buffer[index];
 }
 
 namespace System

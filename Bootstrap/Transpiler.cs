@@ -105,6 +105,8 @@ namespace Bootstrap.Transpiler
 					case ',':
 					case '.':
 					case ':':
+					case '[':
+					case ']':
 						tokenEnd = position + 1;
 						goto done;
 					case '=':
@@ -373,7 +375,7 @@ namespace Bootstrap.Transpiler
 		// 4: == <>
 		// 5: < <= > >=
 		// 6: + -
-		// 7: f() .
+		// 7: f() . []
 		private void ParseExpression(int minPrecedence = 1)
 		{
 			if(!ParseAtom())
@@ -458,6 +460,18 @@ namespace Bootstrap.Transpiler
 					precedence = 7;
 					leftAssociative = true;
 					Write("->");
+				}
+				else if(token == "[" && minPrecedence <= 7)
+				{
+					// Element Access
+					ReadToken();
+					Write("[");
+					ParseExpression();
+					if(Token != "]")
+						Error("Expected ']' found '{0}'", Token);
+					Write("]");
+					precedence = 7;
+					leftAssociative = true;
 				}
 				else
 					break;
