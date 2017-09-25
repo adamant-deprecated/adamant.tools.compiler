@@ -1,0 +1,8 @@
+Main() -> void
+{
+	loop
+	{
+		break;
+		continue;
+	}
+}
