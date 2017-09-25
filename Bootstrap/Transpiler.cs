@@ -420,6 +420,7 @@ namespace Bootstrap.Transpiler
 				var token = Token;
 				int precedence;
 				bool leftAssociative;
+				var suffixOperator = false;
 				if((token == "=" || token == "+=" || token == "-=") && minPrecedence <= 1)
 				{
 					// Assignment
@@ -487,6 +488,7 @@ namespace Bootstrap.Transpiler
 					Write(")");
 					precedence = 8;
 					leftAssociative = true;
+					suffixOperator = true;
 				}
 				else if(token == "." && minPrecedence <= 8)
 				{
@@ -506,15 +508,19 @@ namespace Bootstrap.Transpiler
 					Write("]");
 					precedence = 8;
 					leftAssociative = true;
+					suffixOperator = true;
 				}
 				else
 					break;
 
 				ReadToken();
-				if(leftAssociative)
-					precedence++;
+				if(!suffixOperator)
+				{
+					if(leftAssociative)
+						precedence++;
 
-				ParseExpression(precedence);
+					ParseExpression(precedence);
+				}
 			}
 		}
 

@@ -1,11 +1,17 @@
 #include "runtime.cpp"
 
+bool True()
+{
+	return true;
+}
+
 void Main()
 {
 	bool x;
 	x = true && false;
 	x = true || false;
 	x = !true;
+	x = True() || True();
 }
 
 // Entry Point Adapter
