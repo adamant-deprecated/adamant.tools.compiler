@@ -583,19 +583,22 @@ namespace Bootstrap.Transpiler
 				ParseExpression();
 				EndLine(")");
 				ParseBlock();
-				AfterDeclaration = false;
-				if(Accept("else"))
+				while(Accept("else"))
 				{
+					AfterDeclaration = false;
 					if(Accept("if"))
 					{
 						BeginLine("else if (");
 						ParseExpression();
 						EndLine(")");
+						ParseBlock();
 					}
 					else
+					{
 						WriteLine("else");
-
-					ParseBlock();
+						ParseBlock();
+						return true;
+					}
 				}
 				return true;
 			}

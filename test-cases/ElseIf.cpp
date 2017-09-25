@@ -2,13 +2,21 @@
 
 int Main()
 {
-	if (true)
+	if (false)
 	{
 		return 0;
 	}
-	else if (true)
+	else if (false)
 	{
 		return 42;
+	}
+	else if (false)
+	{
+		return 10;
+	}
+	else
+	{
+		return 0;
 	}
 }
 
