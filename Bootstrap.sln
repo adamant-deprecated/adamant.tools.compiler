@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", 
 		test-cases\EscapeSequences.cpp = test-cases\EscapeSequences.cpp
 		test-cases\For.ad = test-cases\For.ad
 		test-cases\For.cpp = test-cases\For.cpp
+		test-cases\ForwardDeclaration.ad = test-cases\ForwardDeclaration.ad
+		test-cases\ForwardDeclaration.cpp = test-cases\ForwardDeclaration.cpp
 		test-cases\Function.ad = test-cases\Function.ad
 		test-cases\Function.cpp = test-cases\Function.cpp
 		test-cases\Function_OneArg.ad = test-cases\Function_OneArg.ad
@@ -69,6 +71,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", 
 		test-cases\Return0.cpp = test-cases\Return0.cpp
 		test-cases\Return42.ad = test-cases\Return42.ad
 		test-cases\Return42.cpp = test-cases\Return42.cpp
+		test-cases\UnaryMinus.ad = test-cases\UnaryMinus.ad
+		test-cases\UnaryMinus.cpp = test-cases\UnaryMinus.cpp
 		test-cases\While.ad = test-cases\While.ad
 		test-cases\While.cpp = test-cases\While.cpp
 	EndProjectSection
@@ -80,8 +84,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47BD665B-83E
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "translated", "translated", "{AAEE3638-1A6D-4C6D-B9C0-1DA23CD90906}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "previous", "previous", "{E4C10FEF-17E4-4739-81EB-A7BEC2DC227F}"
 	ProjectSection(SolutionItems) = preProject
-		translated\Program.cpp = translated\Program.cpp
+		translated\previous\Program.cpp = translated\previous\Program.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "current", "current", "{471A6EB2-7698-42B0-9154-D0078E4A2C2A}"
+	ProjectSection(SolutionItems) = preProject
+		translated\current\Program.cpp = translated\current\Program.cpp
 	EndProjectSection
 EndProject
 Global
@@ -101,5 +112,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E4C10FEF-17E4-4739-81EB-A7BEC2DC227F} = {AAEE3638-1A6D-4C6D-B9C0-1DA23CD90906}
+		{471A6EB2-7698-42B0-9154-D0078E4A2C2A} = {AAEE3638-1A6D-4C6D-B9C0-1DA23CD90906}
 	EndGlobalSection
 EndGlobal

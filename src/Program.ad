@@ -1,12 +1,20 @@
 var Source: string = "";
 var Token: string = "";
 var NextTokenPosition: int = 0;
-let Output: System.Text.StringBuilder = new System.Text.StringBuilder();
+var Output: System.Text.StringBuilder = new System.Text.StringBuilder(); // var hack to make this mutable
 var IndentDepth: int = 0;
 var AfterDeclaration: bool = false;
 var MainFunctionReturnType: string = "";
 var MainFunctionAcceptsConsole: bool = false;
 var MainFunctionAcceptsArgs: bool = false;
+
+// ----------------------------------------------------------------------------
+// Forward Declarations
+// ----------------------------------------------------------------------------
+ParseCallArguments() -> void;
+ParseExpression(minPrecedence: int) -> void;
+ParseExpression() -> void;
+ParseBlock() -> void;
 
 // ----------------------------------------------------------------------------
 // Code Writing
@@ -93,7 +101,7 @@ ReadToken() -> void
 			or curChar == '\n'
 			or curChar == '\r'
 		{
-			poisition += 1;
+			position += 1;
 			continue;
 		}
 		else if curChar == '{'
@@ -253,7 +261,7 @@ ReadToken() -> void
 
 	if tokenEnd == -1
 	{
-		Token = null;
+		Token = "";
 		NextTokenPosition = position;
 	}
 	else
@@ -275,7 +283,7 @@ ReadFirstToken() -> void
 
 TokenIsIdentifier() -> bool
 {
-	if Token == null or Token.Length == 0
+	if Token.Length == 0
 		{ return false; }
 
 	for var c: code_point in Token
@@ -286,7 +294,7 @@ TokenIsIdentifier() -> bool
 	return true;
 }
 
-Accept(expected: string) -> void
+Accept(expected: string) -> bool
 {
 	var accepted: bool = Token == expected;
 	if accepted { ReadToken(); }
@@ -324,7 +332,7 @@ AcceptString() -> bool
 
 AcceptCodePoint() -> bool
 {
-	if Token.Length == 0 or Token[0] != '\''
+	if Token.Length == 0 or Token[0] <> '\''
 		{ return false; }
 
 	ReadToken();
@@ -360,34 +368,54 @@ ExpectIdentifier() -> string
 // ----------------------------------------------------------------------------
 // Parser
 // ----------------------------------------------------------------------------
-ConvertType(isConst: bool, type: string, nameOnly: bool) -> string
+
+IsStructType(type: string) -> bool
 {
-	if type == "string"
+	return type == "string"
 		or type == "int"
 		or type == "bool"
 		or type == "void"
+		or type == "code_point";
+}
+
+ConvertType(isConst: bool, type: string, nameOnly: bool) -> string
+{
+	var result: string = type;
+	if result == "code_point"
+	{
+		result = "char";
+	}
+	else if IsStructType(result)
 	{
 		// Do nothing
 	}
-	else if type == "code_point"
-	{
-		type = "char";
-	}
 	else
 	{
-		type = "::" + type.Replace(".", "::");
+		result = "::" + result.Replace(".", "::");
 		if not nameOnly
-			{ type = type + "*"; }
+			{ result = result + "*"; }
 	}
 
 	if isConst
-		{ type = "const " + type; };
-	return type;
+		{ result = "const " + result; }
+	return result;
 }
 
 ConvertType(isConst: bool, type: string) -> string
 {
 	return ConvertType(isConst, type, false);
+}
+
+ParseType() -> string
+{
+	var type: System.Text.StringBuilder = new System.Text.StringBuilder(ExpectIdentifier());
+	while Accept(".")
+	{
+		type.Append(".");
+		type.Append(ExpectIdentifier());
+	}
+
+	return type.ToString();
 }
 
 // An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
@@ -396,9 +424,11 @@ ParseAtom() -> bool
 	if Accept("new")
 	{
 		// Constructor Call
-		Write("new ");
-		let type: string = ParseType();
-		Write(ConvertType(false, type, true));
+		var type: string = ParseType();
+		if not IsStructType(type) // for stack values, don't use new
+			{ Write("new "); }
+		type = ConvertType(false, type, true);
+		Write(type);
 		Expect("(");
 		Write("(");
 		ParseCallArguments();
@@ -418,6 +448,13 @@ ParseAtom() -> bool
 		ParseExpression();
 		Expect(")");
 		Write(")");
+		return true;
+	}
+	if Accept("-")
+	{
+		// Unary Minus
+		Write("-");
+		ParseExpression(7);
 		return true;
 	}
 
@@ -461,11 +498,6 @@ ParseCallArguments() -> void
 // 6 Additive: + -
 // 7 Unary: -
 // 8 Primary: f() . []
-ParseExpression() -> void
-{
-	ParseExpression(1);
-}
-
 ParseExpression(minPrecedence: int) -> void
 {
 	if not ParseAtom() { return; }
@@ -518,19 +550,12 @@ ParseExpression(minPrecedence: int) -> void
 			leftAssociative = true;
 			Write(" " + token + " ");
 		}
-		else if token == "+" and minPrecedence <= 6
+		else if (token == "+" or token == "-") and minPrecedence <= 6
 		{
 			// add
 			precedence = 6;
 			leftAssociative = true;
-			Write(" + ");
-		}
-		else if token == "-" and minPrecedence <= 6
-		{
-			// subtract
-			precedence = 6;
-			leftAssociative = true;
-			Write(" - ");
+			Write(" " + token + " ");
 		}
 		else if token == "(" and minPrecedence <= 8
 		{
@@ -581,6 +606,11 @@ ParseExpression(minPrecedence: int) -> void
 			ParseExpression(precedence);
 		}
 	}
+}
+
+ParseExpression() -> void
+{
+	ParseExpression(1);
 }
 
 ParseStatement() -> bool
@@ -704,18 +734,6 @@ ParseBlock() -> void
 	EndBlock();
 }
 
-ParseType() -> string
-{
-	var type: System.Text.StringBuilder = new System.Text.StringBuilder(ExpectIdentifier());
-	while Accept(".")
-	{
-		type.Append(".");
-		type.Append(ExpectIdentifier());
-	}
-
-	return type.ToString();
-}
-
 ParseArgumentsDeclaration(isMainFunction: bool) -> string
 {
 	Expect("(");
@@ -737,8 +755,8 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 		arguments.Append(ConvertType(true, type) + " " + name + ", ");
 	} while Accept(",");
 	Expect(")");
-	arguments.Length -= 2; // remove the trailing comma and space
-	return arguments.ToString();
+	let result: string = arguments.ToString();
+	return result.Substring(0, result.Length - 2);// remove the trailing comma and space
 }
 
 
@@ -750,7 +768,7 @@ ParseDeclaration() -> void
 	{
 		let variableName: string = ExpectIdentifier();
 		Expect(":");
-		let variableType: string = ParseType();
+		var variableType: string = ParseType();
 		Expect("=");
 		variableType = ConvertType(kind == "let", variableType);
 		BeginLine(variableType);
@@ -767,10 +785,18 @@ ParseDeclaration() -> void
 	let arguments: string = ParseArgumentsDeclaration(name == "Main");
 	Expect("->");
 	let returnType: string = ParseType();
-	WriteLine(ConvertType(false, returnType) + " " + name + "(" + arguments + ")");
+	BeginLine(ConvertType(false, returnType) + " " + name + "(" + arguments + ")");
+	if Accept(";")
+	{
+		// Foward Declaration
+		WriteLine(";");
+		AfterDeclaration = true;
+		return;
+	}
+	WriteLine("");
 	if name == "Main"
 	{
-		if MainFunctionReturnType <> null
+		if MainFunctionReturnType <> ""
 			{ Error("Multiple declarations of main"); }
 		MainFunctionReturnType = returnType;
 	}
@@ -802,12 +828,12 @@ ParseProgram() -> void
 
 	if MainFunctionReturnType == "void"
 	{
-		WriteLine("Main(" + args + ");");
+		WriteLine("Main(" + args.ToString() + ");");
 		WriteLine("return 0;");
 	}
 	else
 	{
-		WriteLine("return Main({0});", args);
+		WriteLine("return Main(" + args.ToString() + ");");
 	}
 
 	EndBlock();
@@ -835,20 +861,20 @@ Main(console: System.Console.Console, args: System.Console.Arguments) -> void
 	}
 
 	// Read Source
-	let inputFilePath: string = args[0];
+	let inputFilePath: string = args.Get(0);
 	console.Write("Compiling: ");
 	console.WriteLine(inputFilePath);
-	let inputFile: System.IO.FileReader = new System.IO.FileReader.Open(inputFilePath);
+	let inputFile: System.IO.FileReader = new System.IO.FileReader(inputFilePath);
 	let source: string = inputFile.ReadToEndSync();
 	inputFile.Close();
 
 	let translated: string = Transpile(source);
 
 	// Write output
-	let outputFilePath: string = args[1];
+	let outputFilePath: string = args.Get(1);
 	console.Write("Output: ");
 	console.WriteLine(outputFilePath);
-	let outputFile: System.IO.FileWriter = new System.IO.FileWriter.Open(outputFilePath);
-	outputFile.Wrtie(translated);
+	let outputFile: System.IO.FileWriter = new System.IO.FileWriter(outputFilePath);
+	outputFile.Write(translated);
 	outputFile.Close();
 }

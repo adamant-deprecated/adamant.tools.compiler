@@ -1,5 +1,5 @@
-REM this needs cleaned up with a for loop and not overwriting the expected values
+REM This builds the compiler and runs it on the test-cases to test compiler output
 CALL build.bat
-target\Program.exe tests\Empty.ad
-target\Program.exe tests\Return0.ad
-target\Program.exe tests\Return42.ad
+for %%E in (test-cases\*.ad) do (
+	target\Program.exe %%E translated\text-cases\%%~nE
+)

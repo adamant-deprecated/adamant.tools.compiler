@@ -2,7 +2,7 @@
 
 void Main()
 {
-	string(string("foo"));
+	int x = -1;
 }
 
 // Entry Point Adapter

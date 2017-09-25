@@ -1,13 +1,19 @@
 #include "runtime.cpp"
 
-void Main()
+int Func();
+
+int Main()
 {
-	string(string("foo"));
+	return Func();
+}
+
+int Func()
+{
+	return 1;
 }
 
 // Entry Point Adapter
 int main(int argc, const char * argv[])
 {
-	Main();
-	return 0;
+	return Main();
 }

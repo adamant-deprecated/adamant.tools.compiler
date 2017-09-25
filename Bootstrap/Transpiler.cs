@@ -337,17 +337,32 @@ namespace Bootstrap.Transpiler
 		#endregion
 
 		#region Parser
-		private string ConvertType(bool isConst, string type, bool nameOnly = false)
+		private bool IsStructType(string type)
 		{
 			switch(type)
 			{
+				case "code_point":
 				case "string":
 				case "int":
 				case "bool":
 				case "void":
-					break;
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		private string ConvertType(bool isConst, string type, bool nameOnly = false)
+		{
+			switch(type)
+			{
 				case "code_point":
 					type = "char";
+					break;
+				case "string":
+				case "int":
+				case "bool":
+				case "void":
 					break;
 				default:
 					type = "::" + type.Replace(".", "::") + (nameOnly ? "" : "*");
@@ -358,15 +373,29 @@ namespace Bootstrap.Transpiler
 			return type;
 		}
 
+		private string ParseType()
+		{
+			var type = new StringBuilder(ExpectIdentifier());
+			while(Accept("."))
+			{
+				type.Append(".");
+				type.Append(ExpectIdentifier());
+			}
+
+			return type.ToString();
+		}
+
 		// An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
 		private bool ParseAtom()
 		{
 			if(Accept("new"))
 			{
 				// Constructor Call
-				Write("new ");
 				var type = ParseType();
-				Write(ConvertType(false, type, true));
+				if(!IsStructType(type)) // for stack values, don't use new
+					Write("new ");
+				type = ConvertType(false, type, true);
+				Write(type);
 				Expect("(");
 				Write("(");
 				ParseCallArguments();
@@ -386,6 +415,13 @@ namespace Bootstrap.Transpiler
 				ParseExpression();
 				Expect(")");
 				Write(")");
+				return true;
+			}
+			if(Accept("-"))
+			{
+				// Unary Minus
+				Write("-");
+				ParseExpression(7);
 				return true;
 			}
 
@@ -484,19 +520,12 @@ namespace Bootstrap.Transpiler
 					leftAssociative = true;
 					Write(" {0} ", token);
 				}
-				else if(token == "+" && minPrecedence <= 6)
+				else if((token == "+" || token == "-") && minPrecedence <= 6)
 				{
 					// add
 					precedence = 6;
 					leftAssociative = true;
-					Write(" + ");
-				}
-				else if(token == "-" && minPrecedence <= 6)
-				{
-					// subtract
-					precedence = 6;
-					leftAssociative = true;
-					Write(" - ");
+					Write(" {0} ", token);
 				}
 				else if(token == "(" && minPrecedence <= 8)
 				{
@@ -667,18 +696,6 @@ namespace Bootstrap.Transpiler
 			EndBlock();
 		}
 
-		private string ParseType()
-		{
-			var type = new StringBuilder(ExpectIdentifier());
-			while(Accept("."))
-			{
-				type.Append(".");
-				type.Append(ExpectIdentifier());
-			}
-
-			return type.ToString();
-		}
-
 		private string ParseArgumentsDeclaration(bool isMainFunction)
 		{
 			Expect("(");
@@ -730,7 +747,15 @@ namespace Bootstrap.Transpiler
 			var arguments = ParseArgumentsDeclaration(name == "Main");
 			Expect("->");
 			var returnType = ParseType();
-			WriteLine("{1} {0}({2})", name, ConvertType(false, returnType), arguments);
+			BeginLine("{1} {0}({2})", name, ConvertType(false, returnType), arguments);
+			if(Accept(";"))
+			{
+				// Foward Declaration
+				WriteLine(";");
+				AfterDeclaration = true;
+				return;
+			}
+			WriteLine("");
 			if(name == "Main")
 			{
 				if(MainFunctionReturnType != null)

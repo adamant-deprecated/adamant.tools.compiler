@@ -3,6 +3,7 @@
 void Main()
 {
 	int x = 1 + 2;
+	x = 1 - 2;
 }
 
 // Entry Point Adapter
