@@ -33,9 +33,14 @@ namespace Bootstrap.Transpiler
 			Output.AppendFormat(format, args);
 		}
 
-		private void Write(string format, params object[] args)
+		private void Write(string value)
 		{
-			Output.AppendFormat(format, args);
+			Output.Append(value);
+		}
+
+		private void Write(string value, params object[] args)
+		{
+			Output.AppendFormat(value, args);
 		}
 
 		private void EndLine(string format, params object[] args)
@@ -581,7 +586,15 @@ namespace Bootstrap.Transpiler
 				AfterDeclaration = false;
 				if(Accept("else"))
 				{
-					WriteLine("else");
+					if(Accept("if"))
+					{
+						BeginLine("else if (");
+						ParseExpression();
+						EndLine(")");
+					}
+					else
+						WriteLine("else");
+
 					ParseBlock();
 				}
 				return true;

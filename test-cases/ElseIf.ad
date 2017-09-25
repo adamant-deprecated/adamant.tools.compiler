@@ -1,0 +1,11 @@
+Main() -> int
+{
+	if true
+	{
+		return 0;
+	}
+	else if true
+	{
+		return 42;
+	}
+}
