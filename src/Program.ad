@@ -8,6 +8,10 @@ var MainFunctionReturnType: string = "";
 var MainFunctionAcceptsConsole: bool = false;
 var MainFunctionAcceptsArgs: bool = false;
 
+// ----------------------------------------------------------------------------
+// Code Writing
+// ----------------------------------------------------------------------------
+
 Error(message: string) -> void
 {
 	Output.Append("<$ " + message + " $>");
@@ -24,6 +28,29 @@ BeginLine(value: string) -> void
 	Output.Append(value);
 }
 
+Write(value: string) -> void
+{
+	Output.Append(value);
+}
+
+EndLine(value: string) -> void
+{
+	Output.Append(value);
+	Output.AppendLine();
+}
+
+WriteLine(value: string) -> void
+{
+	if AfterDeclaration
+	{
+		Output.AppendLine();
+		AfterDeclaration = false;
+	}
+	Output.Append(new string('\t', IndentDepth));
+	Output.Append(value);
+	Output.AppendLine();
+}
+
 BeginBlock() -> void
 {
 	WriteLine("{");
@@ -32,25 +59,207 @@ BeginBlock() -> void
 
 EndBlock() -> void
 {
-	AfterDeclaration = false;
+	AfterDeclaration = false; // so that we don't put a blank line between two closing braces
 	IndentDepth -= 1;
 	WriteLine("}");
 	AfterDeclaration = true;
 }
+
+// ----------------------------------------------------------------------------
+// Lexer
+// ----------------------------------------------------------------------------
 
 IsIdentifierChar(c: code_point) -> bool
 {
 	return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
 }
 
-ReadToken(src: string, position: int) -> string
+IsNumberChar(c: code_point) -> bool
 {
-	loop
+	return c >= '0' and c <= '9';
+}
+
+ReadToken() -> void
+{
+	var position: int = NextTokenPosition;
+	var tokenEnd: int = -1;
+	var escaped: bool;
+	var done: bool = false;
+	while not done and position < Source.Length
 	{
-		let char: code_point = src[position];
-		if char == ' '
+		let curChar: code_point = Source[position];
+		if curChar == ' '
+			or curChar == '\t'
+			or curChar == '\n'
+			or curChar == '\r'
 		{
+			poisition += 1;
+			continue;
 		}
+		else if curChar == '{'
+			or curChar == '}'
+			or curChar == '('
+			or curChar == ')'
+			or curChar == ';'
+			or curChar == ','
+			or curChar == '.'
+			or curChar == ':'
+			or curChar == '['
+			or curChar == ']'
+		{
+			tokenEnd = position + 1;
+			break;
+		}
+		else if curChar == '='
+		{
+			if position + 1 < Source.Length and Source[position + 1] == '='
+			{
+				// it is `==`
+				tokenEnd = position + 2;
+				break;
+			}
+
+			// it is `=`
+			tokenEnd = position + 1;
+			break;
+		}
+		else if curChar == '+'
+		{
+			if position + 1 < Source.Length and Source[position + 1] == '='
+			{
+				// it is `+=`
+				tokenEnd = position + 2;
+				break;
+			}
+
+			// it is `+`
+			tokenEnd = position + 1;
+			break;
+		}
+		else if curChar == '-'
+		{
+			if position + 1 < Source.Length and Source[position + 1] == '>'
+			{
+				// it is `->`
+				tokenEnd = position + 2;
+				break;
+			}
+			if position + 1 < Source.Length and Source[position + 1] == '='
+			{
+				// it is `-=`
+				tokenEnd = position + 2;
+				break;
+			}
+			// it is `-`
+			tokenEnd = position + 1;
+			break;
+		}
+		else if curChar == '/'
+		{
+			if position + 1 < Source.Length and Source[position + 1] == '/'
+			{
+				// it is a line comment `//`
+				while position < Source.Length and Source[position] <> '\r' and Source[position] <> '\n'
+				{
+					position += 1;
+				}
+
+				continue;
+			}
+			// it is `/`
+			tokenEnd = position + 1;
+			break;
+		}
+		else if curChar == '<'
+		{
+			if position + 1 < Source.Length and Source[position + 1] == '>'
+			{
+				// it is `<>`
+				tokenEnd = position + 2;
+				break;
+			}
+			if position + 1 < Source.Length and Source[position + 1] == '='
+			{
+				// it is `<=`
+				tokenEnd = position + 2;
+				break;
+			}
+			// it is `<`
+			tokenEnd = position + 1;
+			break;
+		}
+		else if curChar == '>'
+		{
+			if position + 1 < Source.Length and Source[position + 1] == '='
+			{
+				// it is `>=`
+				tokenEnd = position + 2;
+				break;
+			}
+			// it is `>`
+			tokenEnd = position + 1;
+			break;
+		}
+		else if curChar == '"'
+		{
+			tokenEnd = position + 1;
+			escaped = false;
+			while tokenEnd < Source.Length and (Source[tokenEnd] <> '"' or escaped)
+			{
+				escaped = Source[tokenEnd] == '\\' and not escaped;
+				tokenEnd += 1;
+			}
+
+			tokenEnd += 1; // To include the close quote
+			break;
+		}
+		else if curChar == '\''
+		{
+			tokenEnd = position + 1;
+			escaped = false;
+			while tokenEnd < Source.Length and (Source[tokenEnd] <> '\'' or escaped)
+			{
+				escaped = Source[tokenEnd] == '\\' and not escaped;
+				tokenEnd += 1;
+			}
+
+			tokenEnd += 1; // To include the close quote
+			break;
+		}
+		else
+		{
+			if IsIdentifierChar(curChar)
+			{
+				tokenEnd = position + 1;
+				while IsIdentifierChar(Source[tokenEnd])
+				{
+					tokenEnd += 1;
+				}
+				break;
+			}
+			if(IsNumberChar(curChar))
+			{
+				tokenEnd = position + 1;
+				while IsNumberChar(Source[tokenEnd])
+				{
+					tokenEnd += 1;
+				}
+				break;
+			}
+			Error("Lexer: Invalid character '" + curChar + "'");
+			position += 1;
+		}
+	}
+
+	if tokenEnd == -1
+	{
+		Token = null;
+		NextTokenPosition = position;
+	}
+	else
+	{
+		Token = Source.Substring(position, tokenEnd - position);
+		NextTokenPosition = tokenEnd;
 	}
 }
 
@@ -64,57 +273,549 @@ ReadFirstToken() -> void
 	ReadToken();
 }
 
+TokenIsIdentifier() -> bool
+{
+	if Token == null or Token.Length == 0
+		{ return false; }
+
+	for var c: code_point in Token
+	{
+		if not IsIdentifierChar(c)
+			{ return false; }
+	}
+	return true;
+}
+
 Accept(expected: string) -> void
 {
-	if token <> expected
+	var accepted: bool = Token == expected;
+	if accepted { ReadToken(); }
+	return accepted;
+}
+
+Expect(expected: string) -> void
+{
+	if Token <> expected
 	{
-		Write("Expected '"+expected+"' but found '"+token+"'");
-		Exit(1);
+		Error("Expected '" + expected + "' but found '" + Token + "'");
+		ReadToken(); // Skip token to advance
+	}
+	else
+	{
+		ReadToken();
 	}
 }
 
-AcceptIdentifier() -> string
+AcceptIdentifier() -> bool
 {
+	if not TokenIsIdentifier() { return false; }
+	ReadToken();
+	return true;
 }
 
-AcceptType() -> string
+AcceptString() -> bool
 {
+	if Token.Length == 0 or Token[0] <> '"'
+		{ return false; }
+
+	ReadToken();
+	return true;
 }
 
-ParseDeclaration() -> void
+AcceptCodePoint() -> bool
 {
-	Accept("let");
-	let name: string;
-	name = AcceptIdentifier();
-	Accept(":");
-	let type: string;
-	type = AcceptType();
-	Accept(";");
+	if Token.Length == 0 or Token[0] != '\''
+		{ return false; }
+
+	ReadToken();
+	return true;
 }
 
-ParseFunction() -> void
+AcceptNumber() -> bool
 {
-	let name: string;
-	name = AcceptIdentifier();
-	Accept("(");
+	for var c: code_point in Token
+	{
+		if not IsNumberChar(c)
+			{ return false; }
+	}
+
+	ReadToken();
+	return true;
+}
+
+ExpectIdentifier() -> string
+{
+	if not TokenIsIdentifier()
+	{
+		Error("Expected identifier, found '" + Token + "'");
+		ReadToken(); // Skip token to advance
+		return "<missing>";
+	}
+
+	let identifier: string = Token;
+	ReadToken();
+	return identifier;
+}
+
+// ----------------------------------------------------------------------------
+// Parser
+// ----------------------------------------------------------------------------
+ConvertType(isConst: bool, type: string, nameOnly: bool) -> string
+{
+	if type == "string"
+		or type == "int"
+		or type == "bool"
+		or type == "void"
+	{
+		// Do nothing
+	}
+	else if type == "code_point"
+	{
+		type = "char";
+	}
+	else
+	{
+		type = "::" + type.Replace(".", "::");
+		if not nameOnly
+			{ type = type + "*"; }
+	}
+
+	if isConst
+		{ type = "const " + type; };
+	return type;
+}
+
+ConvertType(isConst: bool, type: string) -> string
+{
+	return ConvertType(isConst, type, false);
+}
+
+// An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
+ParseAtom() -> bool
+{
+	if Accept("new")
+	{
+		// Constructor Call
+		Write("new ");
+		let type: string = ParseType();
+		Write(ConvertType(false, type, true));
+		Expect("(");
+		Write("(");
+		ParseCallArguments();
+		Expect(")");
+		Write(")");
+		return true;
+	}
+	if Accept("not")
+	{
+		Write("!");
+		ParseExpression();
+		return true;
+	}
+	if Accept("(") // Order of operations parens
+	{
+		Write("(");
+		ParseExpression();
+		Expect(")");
+		Write(")");
+		return true;
+	}
+
+	let token: string = Token;
+	if AcceptIdentifier() or AcceptNumber()
+	{
+		Write(token);
+		return true;
+	}
+	if AcceptString()
+	{
+		Write("string(" + token + ")");
+		return true;
+	}
+	if AcceptCodePoint()
+	{
+		Write(token);
+		return true;
+	}
+
+	return false;
+}
+
+ParseCallArguments() -> void
+{
+	var first: bool = true;
+	do
+	{
+		if first { first = false; }
+		else { Write(", "); }
+		ParseExpression();
+	} while Accept(",");
+}
+
+// Operator Precedence
+// 1 Assignment: = += -=
+// 2 Logical Or: or
+// 3 Logical And: and
+// 4 Equality: == <>
+// 5 Relational: < <= > >=
+// 6 Additive: + -
+// 7 Unary: -
+// 8 Primary: f() . []
+ParseExpression() -> void
+{
+	ParseExpression(1);
+}
+
+ParseExpression(minPrecedence: int) -> void
+{
+	if not ParseAtom() { return; }
+
 	loop
 	{
-		if not ParseArgument()
+		let token: string = Token;
+		var precedence: int;
+		var leftAssociative: bool;
+		var suffixOperator: bool = false;
+		if (token == "=" or token == "+=" or token == "-=") and minPrecedence <= 1
+		{
+			// Assignment
+			precedence = 1;
+			leftAssociative = false;
+			Write(" " + token + " ");
+		}
+		else if token == "or" and minPrecedence <= 2
+		{
+			// logical or
+			precedence = 2;
+			leftAssociative = true;
+			Write(" || ");
+		}
+		else if token == "and" and minPrecedence <= 3
+		{
+			// logical and
+			precedence = 3;
+			leftAssociative = true;
+			Write(" && ");
+		}
+		else if token == "==" and minPrecedence <= 4
+		{
+			// equal
+			precedence = 4;
+			leftAssociative = true;
+			Write(" == ");
+		}
+		else if token == "<>" and minPrecedence <= 4
+		{
+			// not equal
+			precedence = 4;
+			leftAssociative = true;
+			Write(" != ");
+		}
+		else if (token == "<" or token == "<=" or token == ">" or token == ">=") and minPrecedence <= 5
+		{
+			// relational operators
+			precedence = 5;
+			leftAssociative = true;
+			Write(" " + token + " ");
+		}
+		else if token == "+" and minPrecedence <= 6
+		{
+			// add
+			precedence = 6;
+			leftAssociative = true;
+			Write(" + ");
+		}
+		else if token == "-" and minPrecedence <= 6
+		{
+			// subtract
+			precedence = 6;
+			leftAssociative = true;
+			Write(" - ");
+		}
+		else if token == "(" and minPrecedence <= 8
+		{
+			// Call Expression
+			ReadToken();
+			Write("(");
+			ParseCallArguments();
+			if Token <> ")"
+			{
+				Error("Expected ')' found '" + Token +"'");
+			}
+			Write(")");
+			precedence = 8;
+			leftAssociative = true;
+			suffixOperator = true;
+		}
+		else if token == "." and minPrecedence <= 8
+		{
+			// Member Access
+			precedence = 8;
+			leftAssociative = true;
+			Write("->");
+		}
+		else if token == "[" and minPrecedence <= 8
+		{
+			// Element Access
+			ReadToken();
+			Write("[");
+			ParseExpression();
+			if Token <> "]"
+			{
+				Error("Expected ']' found '" + Token + "'");
+			}
+			Write("]");
+			precedence = 8;
+			leftAssociative = true;
+			suffixOperator = true;
+		}
+		else
 		{
 			break;
 		}
+
+		ReadToken();
+		if not suffixOperator
+		{
+			if leftAssociative { precedence += 1; }
+			ParseExpression(precedence);
+		}
 	}
-	Accept(")");
-	Accept("->");
-	let type: string;
-	type = AcceptType();
+}
+
+ParseStatement() -> bool
+{
+	if Accept("return")
+	{
+		if  Accept(";")
+			{ WriteLine("return;"); }
+		else
+		{
+			BeginLine("return ");
+			ParseExpression();
+			Expect(";");
+			EndLine(";");
+		}
+		return true;
+	}
+	if Accept("loop")
+	{
+		WriteLine("for (;;)");
+		ParseBlock();
+		return true;
+	}
+	if Accept("while")
+	{
+		BeginLine("while (");
+		ParseExpression();
+		EndLine(")");
+		ParseBlock();
+		return true;
+	}
+	if Accept("for")
+	{
+		BeginLine("for (");
+		let k: string = Token;
+		if not Accept("let") and not Accept("var")
+			{ Error("Expected 'let' or 'var' but found '" + Token + "'"); }
+		let name: string = ExpectIdentifier();
+		Expect(":");
+		let type: string = ParseType();
+		Write(ConvertType(k == "let", type) + " " + name);
+		Expect("in");
+		Write(" : *(");
+		ParseExpression();
+		EndLine("))");
+		ParseBlock();
+		return true;
+	}
+	if Accept("do")
+	{
+		WriteLine("do");
+		ParseBlock();
+		AfterDeclaration = false;
+		Expect("while");
+		BeginLine("while (");
+		ParseExpression();
+		Expect(";");
+		EndLine(");");
+		return true;
+	}
+
+	if Accept("if")
+	{
+		BeginLine("if (");
+		ParseExpression();
+		EndLine(")");
+		ParseBlock();
+		while Accept("else")
+		{
+			AfterDeclaration = false;
+			if Accept("if")
+			{
+				BeginLine("else if (");
+				ParseExpression();
+				EndLine(")");
+				ParseBlock();
+			}
+			else
+			{
+				WriteLine("else");
+				ParseBlock();
+				return true;
+			}
+		}
+		return true;
+	}
+	let kind: string = Token;
+	if Accept("let") or Accept("var")
+	{
+		let variableName: string = ExpectIdentifier();
+		Expect(":");
+		var variableType: string = ParseType();
+		variableType = ConvertType(kind == "let", variableType);
+		BeginLine(variableType);
+		Write(" " + variableName);
+		if Accept("=")
+		{
+			Write(" = ");
+			ParseExpression();
+		}
+		Expect(";");
+		EndLine(";");
+		return true;
+	}
+	if Token == "}" { return false; }
+
+	// Assume it is an expression statement
+	BeginLine("");
+	ParseExpression();
+	Expect(";");
+	EndLine(";");
+	return true;
+}
+
+ParseBlock() -> void
+{
+	Expect("{");
+	BeginBlock();
+	while ParseStatement() {}
+	Expect("}");
+	EndBlock();
+}
+
+ParseType() -> string
+{
+	var type: System.Text.StringBuilder = new System.Text.StringBuilder(ExpectIdentifier());
+	while Accept(".")
+	{
+		type.Append(".");
+		type.Append(ExpectIdentifier());
+	}
+
+	return type.ToString();
+}
+
+ParseArgumentsDeclaration(isMainFunction: bool) -> string
+{
+	Expect("(");
+	if Accept(")") { return ""; }
+
+	var arguments: System.Text.StringBuilder = new System.Text.StringBuilder();
+	do
+	{
+		let name: string = ExpectIdentifier();
+		Expect(":");
+		let type: string = ParseType();
+		if isMainFunction
+		{
+			if type == "System.Console.Console"
+				{ MainFunctionAcceptsConsole = true; }
+			if type == "System.Console.Arguments"
+				{ MainFunctionAcceptsArgs = true; }
+		}
+		arguments.Append(ConvertType(true, type) + " " + name + ", ");
+	} while Accept(",");
+	Expect(")");
+	arguments.Length -= 2; // remove the trailing comma and space
+	return arguments.ToString();
+}
+
+
+ParseDeclaration() -> void
+{
+	// Static Variable Declaration
+	let kind: string = Token;
+	if Accept("var") or Accept("let")
+	{
+		let variableName: string = ExpectIdentifier();
+		Expect(":");
+		let variableType: string = ParseType();
+		Expect("=");
+		variableType = ConvertType(kind == "let", variableType);
+		BeginLine(variableType);
+		Write(" " + variableName + " = ");
+		ParseExpression();
+		Expect(";");
+		EndLine(";");
+		AfterDeclaration = true;
+		return;
+	}
+
+	// Function Declaration
+	let name: string = ExpectIdentifier();
+	let arguments: string = ParseArgumentsDeclaration(name == "Main");
+	Expect("->");
+	let returnType: string = ParseType();
+	WriteLine(ConvertType(false, returnType) + " " + name + "(" + arguments + ")");
+	if name == "Main"
+	{
+		if MainFunctionReturnType <> null
+			{ Error("Multiple declarations of main"); }
+		MainFunctionReturnType = returnType;
+	}
 	ParseBlock();
 }
 
-ParseProgram(src: string, position: int, token: string) -> void
+ParseProgram() -> void
 {
-	ParseFunction();
+	WriteLine("#include \"runtime.cpp\"");
+	AfterDeclaration = true;
+
+	do
+	{
+		ParseDeclaration();
+	} while TokenIsIdentifier();
+	WriteLine("// Entry Point Adapter");
+	WriteLine("int main(int argc, const char * argv[])");
+	BeginBlock();
+
+	var args: System.Text.StringBuilder = new System.Text.StringBuilder();
+	if MainFunctionAcceptsConsole
+		{ args.Append("new ::System::Console::Console()"); }
+	if MainFunctionAcceptsArgs
+	{
+		if MainFunctionAcceptsConsole
+			{ args.Append(", "); }
+		args.Append("new ::System::Console::Arguments(argc, argv)");
+	}
+
+	if MainFunctionReturnType == "void"
+	{
+		WriteLine("Main(" + args + ");");
+		WriteLine("return 0;");
+	}
+	else
+	{
+		WriteLine("return Main({0});", args);
+	}
+
+	EndBlock();
 }
+
+// ----------------------------------------------------------------------------
+// Transpiler
+// ----------------------------------------------------------------------------
 
 Transpile(source: string) -> string
 {
@@ -124,20 +825,30 @@ Transpile(source: string) -> string
 	return Output.ToString();
 }
 
-Main(console: System.Console, args: System.Collections.List) -> void
+Main(console: System.Console.Console, args: System.Console.Arguments) -> void
 {
 	console.WriteLine("Adamant Compiler v0.1.0");
-	if args.Count <> 1
+	if args.Count <> 2
 	{
-		console.WriteLine("Must pass a single argument of the source file");
+		console.WriteLine("Args: <Input File> <OutputFile>");
 		return;
 	}
-	let fileName: string = args[0];
+
+	// Read Source
+	let inputFilePath: string = args[0];
 	console.Write("Compiling: ");
-	console.WriteLine(fileName);
-	let file: FileReader = new FileReader.Open(fileName);
-	let src: string = file.ReadToEndSync();
-	let position: int = 0;
-	let token: string = ReadToken(src, token);
-	ParseProgram(src, position, token);
+	console.WriteLine(inputFilePath);
+	let inputFile: System.IO.FileReader = new System.IO.FileReader.Open(inputFilePath);
+	let source: string = inputFile.ReadToEndSync();
+	inputFile.Close();
+
+	let translated: string = Transpile(source);
+
+	// Write output
+	let outputFilePath: string = args[1];
+	console.Write("Output: ");
+	console.WriteLine(outputFilePath);
+	let outputFile: System.IO.FileWriter = new System.IO.FileWriter.Open(outputFilePath);
+	outputFile.Wrtie(translated);
+	outputFile.Close();
 }

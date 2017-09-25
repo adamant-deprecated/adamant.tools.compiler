@@ -337,6 +337,27 @@ namespace Bootstrap.Transpiler
 		#endregion
 
 		#region Parser
+		private string ConvertType(bool isConst, string type, bool nameOnly = false)
+		{
+			switch(type)
+			{
+				case "string":
+				case "int":
+				case "bool":
+				case "void":
+					break;
+				case "code_point":
+					type = "char";
+					break;
+				default:
+					type = "::" + type.Replace(".", "::") + (nameOnly ? "" : "*");
+					break;
+			}
+			if(isConst)
+				type = "const " + type;
+			return type;
+		}
+
 		// An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
 		private bool ParseAtom()
 		{
@@ -750,27 +771,6 @@ namespace Bootstrap.Transpiler
 			else
 				WriteLine("return Main({0});", args);
 			EndBlock();
-		}
-
-		private string ConvertType(bool isConst, string type, bool nameOnly = false)
-		{
-			switch(type)
-			{
-				case "string":
-				case "int":
-				case "bool":
-				case "void":
-					break;
-				case "code_point":
-					type = "char";
-					break;
-				default:
-					type = "::" + type.Replace(".", "::") + (nameOnly ? "" : "*");
-					break;
-			}
-			if(isConst)
-				type = "const " + type;
-			return type;
 		}
 		#endregion
 
