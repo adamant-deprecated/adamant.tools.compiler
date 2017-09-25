@@ -9,7 +9,6 @@ public:
 
 	string();
 	string(const char* s);
-	string(const string& s);
 	string(int length, const char* s);
 	char* cstr() const;
 	string Substring(int start, int length);
@@ -23,11 +22,6 @@ string::string()
 
 string::string(const char* s)
 	: Length(std::strlen(s)), Buffer(s)
-{
-}
-
-string::string(const string& s)
-	: Length(s.Length), Buffer(s.Buffer)
 {
 }
 
@@ -46,7 +40,7 @@ char* string::cstr() const
 
 string string::Substring(int start, int length)
 {
-	return string(length, Buffer+start);
+	return string(length, Buffer + start);
 }
 
 char string::operator[] (const int index)
@@ -56,21 +50,46 @@ char string::operator[] (const int index)
 
 namespace System
 {
-	class Console
+	namespace Console
 	{
-	public:
-		void Write(string value);
-		void WriteLine(string value);
-	};
+		class Console
+		{
+		public:
+			// TODO the const here is a hack until we have proper mutability
+			void Write(string value) const;
+			void WriteLine(string value) const;
+		};
 
-	void Console::Write(string value)
-	{
-		std::printf("%.*s", value.Length, value.Buffer);
-	}
+		void Console::Write(string value) const
+		{
+			std::printf("%.*s", value.Length, value.Buffer);
+		}
 
-	void Console::WriteLine(string value)
-	{
-		std::printf("%.*s\n", value.Length, value.Buffer);
+		void Console::WriteLine(string value) const
+		{
+			std::printf("%.*s\n", value.Length, value.Buffer);
+		}
+
+		class Arguments
+		{
+		private:
+			string* args;
+		public:
+			typedef const string* const_iterator;
+			const int Length;
+
+			Arguments(int argc, const char * argv[]);
+			const_iterator begin() const { return &args[0]; }
+			const_iterator end() const { return &args[Length]; }
+		};
+
+		Arguments::Arguments(int argc, const char * argv[])
+			: Length(argc)
+		{
+			args = new string[argc];
+			for (int i = 0; i < argc; i++)
+				args[i] = string(argv[i]);
+		}
 	}
 
 	namespace Collections

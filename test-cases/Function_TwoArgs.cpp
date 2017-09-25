@@ -1,6 +1,6 @@
 #include "runtime.cpp"
 
-int Func(int a, int b)
+int Func(const int a, const int b)
 {
 	return b;
 }

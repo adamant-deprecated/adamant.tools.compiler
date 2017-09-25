@@ -340,7 +340,7 @@ namespace Bootstrap.Transpiler
 				// Constructor Call
 				Write("new ");
 				var type = ParseType();
-				Write(ConvertType(type, true));
+				Write(ConvertType(false, type, true));
 				Expect("(");
 				Write("(");
 				ParseCallArguments();
@@ -542,6 +542,23 @@ namespace Bootstrap.Transpiler
 				ParseBlock();
 				return true;
 			}
+			if(Accept("for"))
+			{
+				BeginLine("for (");
+				var k = Token;
+				if(!Accept("let") && !Accept("var"))
+					Error("Expected 'let' or 'var' but found '{0}'", Token);
+				var name = ExpectIdentifier();
+				Expect(":");
+				var type = ParseType();
+				Write("{1} {0}", name, ConvertType(k == "let", type));
+				Expect("in");
+				Write(" : *(");
+				ParseExpression();
+				EndLine("))");
+				ParseBlock();
+				return true;
+			}
 			if(Accept("do"))
 			{
 				WriteLine("do");
@@ -575,9 +592,7 @@ namespace Bootstrap.Transpiler
 				var variableName = ExpectIdentifier();
 				Expect(":");
 				var variableType = ParseType();
-				variableType = ConvertType(variableType);
-				if(kind == "let")
-					variableType = "const " + variableType;
+				variableType = ConvertType(kind == "let", variableType);
 				BeginLine(variableType);
 				Write(" {0}", variableName);
 				if(Accept("="))
@@ -621,7 +636,7 @@ namespace Bootstrap.Transpiler
 			return type.ToString();
 		}
 
-		private string ParseArguments(bool isMainFunction)
+		private string ParseArgumentsDeclaration(bool isMainFunction)
 		{
 			Expect("(");
 			if(Accept(")"))
@@ -633,9 +648,14 @@ namespace Bootstrap.Transpiler
 				var name = ExpectIdentifier();
 				Expect(":");
 				var type = ParseType();
-				if(isMainFunction && type == "System.Console")
-					MainFunctionAcceptsConsole = true;
-				arguments.AppendFormat("{1} {0}, ", name, ConvertType(type));
+				if(isMainFunction)
+				{
+					if(type == "System.Console.Console")
+						MainFunctionAcceptsConsole = true;
+					if(type == "System.Console.Arguments")
+						MainFunctionAcceptsArgs = true;
+				}
+				arguments.AppendFormat("{1} {0}, ", name, ConvertType(true, type));
 			} while(Accept(","));
 			Expect(")");
 			arguments.Length -= 2; // remove the trailing comma and space
@@ -652,9 +672,7 @@ namespace Bootstrap.Transpiler
 				Expect(":");
 				var variableType = ParseType();
 				Expect("=");
-				variableType = ConvertType(variableType);
-				if(kind == "let")
-					variableType = "const " + variableType;
+				variableType = ConvertType(kind == "let", variableType);
 				BeginLine(variableType);
 				Write(" {0} = ", variableName);
 				ParseExpression();
@@ -666,10 +684,10 @@ namespace Bootstrap.Transpiler
 
 			// Function Declaration
 			var name = ExpectIdentifier();
-			var arguments = ParseArguments(name == "Main");
+			var arguments = ParseArgumentsDeclaration(name == "Main");
 			Expect("->");
 			var returnType = ParseType();
-			WriteLine("{1} {0}({2})", name, ConvertType(returnType), arguments);
+			WriteLine("{1} {0}({2})", name, ConvertType(false, returnType), arguments);
 			if(name == "Main")
 			{
 				if(MainFunctionReturnType != null)
@@ -694,7 +712,13 @@ namespace Bootstrap.Transpiler
 
 			var args = new StringBuilder();
 			if(MainFunctionAcceptsConsole)
-				args.AppendFormat("new ::System::Console()");
+				args.Append("new ::System::Console::Console()");
+			if(MainFunctionAcceptsArgs)
+			{
+				if(MainFunctionAcceptsConsole)
+					args.Append(", ");
+				args.Append("new ::System::Console::Arguments(argc, argv)");
+			}
 
 			if(MainFunctionReturnType == "void")
 			{
@@ -706,7 +730,7 @@ namespace Bootstrap.Transpiler
 			EndBlock();
 		}
 
-		private string ConvertType(string type, bool nameOnly = false)
+		private string ConvertType(bool isConst, string type, bool nameOnly = false)
 		{
 			switch(type)
 			{
@@ -714,13 +738,17 @@ namespace Bootstrap.Transpiler
 				case "int":
 				case "bool":
 				case "void":
-					return type;
+					break;
 				case "code_point":
-					return "char";
+					type = "char";
+					break;
 				default:
-
-					return "::" + type.Replace(".", "::") + (nameOnly ? "" : "*");
+					type = "::" + type.Replace(".", "::") + (nameOnly ? "" : "*");
+					break;
 			}
+			if(isConst)
+				type = "const " + type;
+			return type;
 		}
 		#endregion
 

@@ -1,6 +1,6 @@
 #include "runtime.cpp"
 
-char Identity(char value)
+char Identity(const char value)
 {
 	return value;
 }

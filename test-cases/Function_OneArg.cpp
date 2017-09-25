@@ -1,6 +1,6 @@
 #include "runtime.cpp"
 
-int Identity(int value)
+int Identity(const int value)
 {
 	return value;
 }

@@ -1,6 +1,6 @@
 #include "runtime.cpp"
 
-bool Func(bool value)
+bool Func(const bool value)
 {
 	return false;
 }
