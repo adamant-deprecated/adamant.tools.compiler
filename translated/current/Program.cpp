@@ -1,4 +1,4 @@
-#include "runtime.cpp"
+#include "runtime.h"
 
 string Source = string("");
 

@@ -9,4 +9,4 @@ xcopy src\runtime.* translated\current /Y
 target\previous\Program.exe src\Program.ad translated\current\Program.cpp
 rmdir /S/Q target\current
 mkdir target\current
-clang translated\current\Program.cpp -o target\current\Program.exe
+clang translated\current\*.cpp -o target\current\Program.exe
