@@ -1,4 +1,4 @@
-#include "runtime.cpp"
+#include "runtime.h"
 
 int Identity(const int value)
 {

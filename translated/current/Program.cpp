@@ -841,7 +841,7 @@ void ParseDeclaration()
 
 void ParseProgram()
 {
-	WriteLine(string("#include \"runtime.cpp\""));
+	WriteLine(string("#include \"runtime.h\""));
 	AfterDeclaration = true;
 	do
 	{

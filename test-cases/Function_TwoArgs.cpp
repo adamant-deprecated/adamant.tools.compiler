@@ -1,4 +1,4 @@
-#include "runtime.cpp"
+#include "runtime.h"
 
 int Func(const int a, const int b)
 {

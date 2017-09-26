@@ -1,4 +1,4 @@
-#include "runtime.cpp"
+#include "runtime.h"
 
 bool Func(const bool value)
 {

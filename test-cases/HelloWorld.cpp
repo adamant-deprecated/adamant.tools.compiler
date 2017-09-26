@@ -1,4 +1,4 @@
-#include "runtime.cpp"
+#include "runtime.h"
 
 void Main(const ::System::Console::Console* console)
 {

@@ -242,7 +242,7 @@ void ReadToken()
 				break;
 			}
 
-			Error(string("Lexer: Invalid character '") + curChar + string("'"));
+			Error(string("Lexer: Invalid character `") + curChar + string("`"));
 			position += 1;
 		}
 	}
@@ -276,7 +276,7 @@ bool TokenIsIdentifier()
 		return false;
 	}
 
-	for (char c : *(Token))
+	for (const char c : *(Token))
 	{
 		if (!IsIdentifierChar(c))
 		{
@@ -289,7 +289,7 @@ bool TokenIsIdentifier()
 
 bool Accept(const string expected)
 {
-	bool accepted = Token == expected;
+	const bool accepted = Token == expected;
 	if (accepted)
 	{
 		ReadToken();
@@ -302,7 +302,7 @@ void Expect(const string expected)
 {
 	if (Token != expected)
 	{
-		Error(string("Expected '") + expected + string("' but found '") + Token + string("'"));
+		Error(string("Expected `") + expected + string("` but found `") + Token + string("`"));
 		ReadToken();
 	}
 	else
@@ -346,7 +346,7 @@ bool AcceptCodePoint()
 
 bool AcceptNumber()
 {
-	for (char c : *(Token))
+	for (const char c : *(Token))
 	{
 		if (!IsNumberChar(c))
 		{
@@ -362,7 +362,7 @@ string ExpectIdentifier()
 {
 	if (!TokenIsIdentifier())
 	{
-		Error(string("Expected identifier, found '") + Token + string("'"));
+		Error(string("Expected identifier, found `") + Token + string("`"));
 		ReadToken();
 		return string("<missing>");
 	}
@@ -567,7 +567,7 @@ void ParseExpression(const int minPrecedence)
 			ParseCallArguments();
 			if (Token != string(")"))
 			{
-				Error(string("Expected ')' found '") + Token + string("'"));
+				Error(string("Expected `)` found `") + Token + string("`"));
 			}
 
 			Write(string(")"));
@@ -588,7 +588,7 @@ void ParseExpression(const int minPrecedence)
 			ParseExpression();
 			if (Token != string("]"))
 			{
-				Error(string("Expected ']' found '") + Token + string("'"));
+				Error(string("Expected `]` found `") + Token + string("`"));
 			}
 
 			Write(string("]"));
@@ -660,7 +660,7 @@ bool ParseStatement()
 		const string k = Token;
 		if (!Accept(string("let")) && !Accept(string("var")))
 		{
-			Error(string("Expected 'let' or 'var' but found '") + Token + string("'"));
+			Error(string("Expected `let` or `var` but found `") + Token + string("`"));
 		}
 
 		const string name = ExpectIdentifier();

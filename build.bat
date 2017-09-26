@@ -5,7 +5,7 @@ mkdir target\previous
 clang translated\previous\Program.cpp -o target\previous\Program.exe
 rmdir /S/Q translated\current
 mkdir translated\current
-xcopy src\runtime.cpp translated\current /Y
+xcopy src\runtime.* translated\current /Y
 target\previous\Program.exe src\Program.ad translated\current\Program.cpp
 rmdir /S/Q target\current
 mkdir target\current
