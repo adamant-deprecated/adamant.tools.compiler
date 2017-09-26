@@ -8,3 +8,4 @@ obj/
 *.opendb
 Debug/
 ipch/
+/translated/test-cases/
