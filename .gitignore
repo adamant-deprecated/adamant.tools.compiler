@@ -6,3 +6,5 @@ bin/
 obj/
 *.db
 *.opendb
+Debug/
+ipch/

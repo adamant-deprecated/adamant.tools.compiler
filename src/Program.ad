@@ -1,6 +1,8 @@
 var Source: string = "";
 var Token: string = "";
 var NextTokenPosition: int = 0;
+// TODO this should be `let Output: mut System.Text.StringBuilder` (can't change reference, can change object)
+// TODO should be `new mut`
 var Output: System.Text.StringBuilder = new System.Text.StringBuilder(); // var hack to make this mutable
 var IndentDepth: int = 0;
 var AfterDeclaration: bool = false;
@@ -11,6 +13,7 @@ var MainFunctionAcceptsArgs: bool = false;
 // ----------------------------------------------------------------------------
 // Forward Declarations
 // ----------------------------------------------------------------------------
+// TODO Remove need for forward declarations
 ParseCallArguments() -> void;
 ParseExpression(minPrecedence: int) -> void;
 ParseExpression() -> void;
@@ -44,7 +47,7 @@ Write(value: string) -> void
 EndLine(value: string) -> void
 {
 	Output.Append(value);
-	Output.AppendLine();
+	Output.AppendLine(); // TODO need to think about the handling of newlines
 }
 
 WriteLine(value: string) -> void
@@ -254,14 +257,14 @@ ReadToken() -> void
 				}
 				break;
 			}
-			Error("Lexer: Invalid character '" + curChar + "'");
+			Error("Lexer: Invalid character `" + curChar + "`");
 			position += 1;
 		}
 	}
 
 	if tokenEnd == -1
 	{
-		Token = "";
+		Token = ""; // TODO need nullable string so we can set it to null
 		NextTokenPosition = position;
 	}
 	else
@@ -286,7 +289,7 @@ TokenIsIdentifier() -> bool
 	if Token.Length == 0
 		{ return false; }
 
-	for var c: code_point in Token
+	for let c: code_point in Token
 	{
 		if not IsIdentifierChar(c)
 			{ return false; }
@@ -296,7 +299,7 @@ TokenIsIdentifier() -> bool
 
 Accept(expected: string) -> bool
 {
-	var accepted: bool = Token == expected;
+	let accepted: bool = Token == expected;
 	if accepted { ReadToken(); }
 	return accepted;
 }
@@ -305,7 +308,7 @@ Expect(expected: string) -> void
 {
 	if Token <> expected
 	{
-		Error("Expected '" + expected + "' but found '" + Token + "'");
+		Error("Expected `" + expected + "` but found `" + Token + "`");
 		ReadToken(); // Skip token to advance
 	}
 	else
@@ -341,7 +344,7 @@ AcceptCodePoint() -> bool
 
 AcceptNumber() -> bool
 {
-	for var c: code_point in Token
+	for let c: code_point in Token
 	{
 		if not IsNumberChar(c)
 			{ return false; }
@@ -355,7 +358,7 @@ ExpectIdentifier() -> string
 {
 	if not TokenIsIdentifier()
 	{
-		Error("Expected identifier, found '" + Token + "'");
+		Error("Expected identifier, found `" + Token + "`");
 		ReadToken(); // Skip token to advance
 		return "<missing>";
 	}
@@ -378,6 +381,7 @@ IsStructType(type: string) -> bool
 		or type == "code_point";
 }
 
+// TODO should be `var type: string` so we don't need separate result variable
 ConvertType(isConst: bool, type: string, nameOnly: bool) -> string
 {
 	var result: string = type;
@@ -408,6 +412,8 @@ ConvertType(isConst: bool, type: string) -> string
 
 ParseType() -> string
 {
+	// TODO this should be `let type: mut System.Text.StringBuilder`
+	// TODO should be `new mut`
 	var type: System.Text.StringBuilder = new System.Text.StringBuilder(ExpectIdentifier());
 	while Accept(".")
 	{
@@ -552,7 +558,7 @@ ParseExpression(minPrecedence: int) -> void
 		}
 		else if (token == "+" or token == "-") and minPrecedence <= 6
 		{
-			// add
+			// Additive
 			precedence = 6;
 			leftAssociative = true;
 			Write(" " + token + " ");
@@ -565,7 +571,7 @@ ParseExpression(minPrecedence: int) -> void
 			ParseCallArguments();
 			if Token <> ")"
 			{
-				Error("Expected ')' found '" + Token +"'");
+				Error("Expected `)` found `" + Token + "`");
 			}
 			Write(")");
 			precedence = 8;
@@ -587,7 +593,7 @@ ParseExpression(minPrecedence: int) -> void
 			ParseExpression();
 			if Token <> "]"
 			{
-				Error("Expected ']' found '" + Token + "'");
+				Error("Expected `]` found `" + Token + "`");
 			}
 			Write("]");
 			precedence = 8;
@@ -647,7 +653,7 @@ ParseStatement() -> bool
 		BeginLine("for (");
 		let k: string = Token;
 		if not Accept("let") and not Accept("var")
-			{ Error("Expected 'let' or 'var' but found '" + Token + "'"); }
+			{ Error("Expected `let` or `var` but found `" + Token + "`"); }
 		let name: string = ExpectIdentifier();
 		Expect(":");
 		let type: string = ParseType();
@@ -739,6 +745,8 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 	Expect("(");
 	if Accept(")") { return ""; }
 
+	// TODO should be `let arguments: mut System.Text.StringBuilder`
+	// TODO should be `new mut`
 	var arguments: System.Text.StringBuilder = new System.Text.StringBuilder();
 	do
 	{
@@ -756,7 +764,8 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 	} while Accept(",");
 	Expect(")");
 	let result: string = arguments.ToString();
-	return result.Substring(0, result.Length - 2);// remove the trailing comma and space
+	// TODO implement shortening of StringBuilder
+	return result.Substring(0, result.Length - 2); // remove the trailing comma and space
 }
 
 
@@ -788,7 +797,7 @@ ParseDeclaration() -> void
 	BeginLine(ConvertType(false, returnType) + " " + name + "(" + arguments + ")");
 	if Accept(";")
 	{
-		// Foward Declaration
+		// Forward Declaration
 		WriteLine(";");
 		AfterDeclaration = true;
 		return;
@@ -816,6 +825,8 @@ ParseProgram() -> void
 	WriteLine("int main(int argc, const char * argv[])");
 	BeginBlock();
 
+	// TODO should be `let args: mut System.Text.StringBuilder`
+	// TODO should be `new mut`
 	var args: System.Text.StringBuilder = new System.Text.StringBuilder();
 	if MainFunctionAcceptsConsole
 		{ args.Append("new ::System::Console::Console()"); }
@@ -851,6 +862,7 @@ Transpile(source: string) -> string
 	return Output.ToString();
 }
 
+// TODO should be `console: mut System.Console.Console`
 Main(console: System.Console.Console, args: System.Console.Arguments) -> void
 {
 	console.WriteLine("Adamant Compiler v0.1.0");
@@ -861,9 +873,11 @@ Main(console: System.Console.Console, args: System.Console.Arguments) -> void
 	}
 
 	// Read Source
-	let inputFilePath: string = args.Get(0);
+	let inputFilePath: string = args.Get(0); // TODO should be `args[0]`
 	console.Write("Compiling: ");
 	console.WriteLine(inputFilePath);
+	// TODO should be `let inputFile: mut System.IO.FileReader`
+	// TODO should be `new mut`
 	let inputFile: System.IO.FileReader = new System.IO.FileReader(inputFilePath);
 	let source: string = inputFile.ReadToEndSync();
 	inputFile.Close();
@@ -871,9 +885,11 @@ Main(console: System.Console.Console, args: System.Console.Arguments) -> void
 	let translated: string = Transpile(source);
 
 	// Write output
-	let outputFilePath: string = args.Get(1);
+	let outputFilePath: string = args.Get(1); // TODO should be `args[1]`
 	console.Write("Output: ");
 	console.WriteLine(outputFilePath);
+	// TODO should be `let outputFile: mut System.IO.FileWriter`
+	// TODO should be `new mut`
 	let outputFile: System.IO.FileWriter = new System.IO.FileWriter(outputFilePath);
 	outputFile.Write(translated);
 	outputFile.Close();
