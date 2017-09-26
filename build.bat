@@ -2,7 +2,7 @@ REM this builds the previous version and uses it to build the current version
 cls
 rmdir /S/Q target\previous
 mkdir target\previous
-clang translated\previous\Program.cpp -o target\previous\Program.exe
+clang translated\previous\*.cpp -o target\previous\Program.exe
 rmdir /S/Q translated\current
 mkdir translated\current
 xcopy src\runtime.* translated\current /Y

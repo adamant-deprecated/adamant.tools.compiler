@@ -89,11 +89,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "previous", "previous", "{E4C10FEF-17E4-4739-81EB-A7BEC2DC227F}"
 	ProjectSection(SolutionItems) = preProject
 		translated\previous\Program.cpp = translated\previous\Program.cpp
+		translated\previous\runtime.cpp = translated\previous\runtime.cpp
+		translated\previous\runtime.h = translated\previous\runtime.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "current", "current", "{471A6EB2-7698-42B0-9154-D0078E4A2C2A}"
 	ProjectSection(SolutionItems) = preProject
 		translated\current\Program.cpp = translated\current\Program.cpp
+		translated\current\runtime.cpp = translated\current\runtime.cpp
+		translated\current\runtime.h = translated\current\runtime.h
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DebugCurrent", "DebugCurrent\DebugCurrent.vcxproj", "{5F97A90B-861C-420A-B450-CE56CC6ABB19}"
