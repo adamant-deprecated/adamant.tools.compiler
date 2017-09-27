@@ -1,0 +1,9 @@
+Main() -> int
+{
+	return Func();
+}
+
+Func() -> int
+{
+	return 1;
+}

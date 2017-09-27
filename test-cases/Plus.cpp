@@ -1,5 +1,9 @@
 #include "runtime.h"
 
+// Declarations
+void Main();
+
+// Definitions
 void Main()
 {
 	int x = 1 + 2;

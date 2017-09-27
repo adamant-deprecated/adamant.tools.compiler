@@ -1,5 +1,9 @@
 #include "runtime.h"
 
+// Declarations
+void Main(const ::System::Console::Console* console, const ::System::Console::Arguments* args);
+
+// Definitions
 void Main(const ::System::Console::Console* console, const ::System::Console::Arguments* args)
 {
 	for (const string arg : *(args))

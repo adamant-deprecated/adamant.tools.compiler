@@ -1,5 +1,9 @@
 #include "runtime.h"
 
+// Declarations
+void Main(const ::System::Console::Console* console);
+
+// Definitions
 void Main(const ::System::Console::Console* console)
 {
 	console->WriteLine(string("Hello World!"));

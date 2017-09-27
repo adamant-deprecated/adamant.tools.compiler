@@ -5,24 +5,24 @@ struct string
 {
 public:
 	int Length;
-	const char* Buffer;
+	char const * Buffer;
 
 	string();
 	string(char c, int repeat);
-	string(const char* s);
-	string(int length, const char* s);
-	char* cstr() const;
+	string(char const * s);
+	string(int length, char const * s);
+	char const * cstr() const;
 	string Substring(int start, int length) const;
 	string Replace(string oldValue, string newValue) const;
-	char operator[] (const int index) const;
-	string operator+(const string& value) const;
-	string operator+(const char& value) const;
-	const string* operator->() const { return this; }
-	const string& operator* () const { return *this; }
-	bool operator==(const string &other) const;
-	bool operator!=(const string &other) const { return !(*this == other); }
+	char operator[] (int const index) const;
+	string operator+(string const & value) const;
+	string operator+(char const & value) const;
+	string const * operator->() const { return this; }
+	string const & operator* () const { return *this; }
+	bool operator==(string const & other) const;
+	bool operator!=(string const & other) const { return !(*this == other); }
 
-	typedef const char* const_iterator;
+	typedef char const * const_iterator;
 	const_iterator begin() const { return &Buffer[0]; }
 	const_iterator end() const { return &Buffer[Length]; }
 };

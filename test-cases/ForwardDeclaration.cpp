@@ -1,6 +1,11 @@
 #include "runtime.h"
 
+// Declarations
+int Main();
 int Func();
+
+// Definitions
+// WARNING: Forward Declarations Deprecated: `int Func();`
 
 int Main()
 {

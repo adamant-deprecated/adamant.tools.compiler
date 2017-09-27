@@ -1,5 +1,10 @@
 #include "runtime.h"
 
+// Declarations
+bool Func(const bool value);
+void Main();
+
+// Definitions
 bool Func(const bool value)
 {
 	return false;

@@ -1,5 +1,10 @@
 #include "runtime.h"
 
+// Declarations
+int Identity(const int value);
+int Main();
+
+// Definitions
 int Identity(const int value)
 {
 	return value;

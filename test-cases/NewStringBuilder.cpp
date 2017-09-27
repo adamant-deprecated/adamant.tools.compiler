@@ -1,5 +1,9 @@
 #include "runtime.h"
 
+// Declarations
+void Main();
+
+// Definitions
 void Main()
 {
 	new ::System::Text::StringBuilder();

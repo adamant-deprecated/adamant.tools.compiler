@@ -1,5 +1,9 @@
 #include "runtime.h"
 
+// Declarations
+int Main();
+
+// Definitions
 int Main()
 {
 	const int result = 42;

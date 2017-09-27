@@ -1,5 +1,10 @@
 #include "runtime.h"
 
+// Declarations
+int Func(const int a, const int b);
+int Main();
+
+// Definitions
 int Func(const int a, const int b)
 {
 	return b;

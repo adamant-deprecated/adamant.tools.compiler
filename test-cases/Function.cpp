@@ -1,5 +1,10 @@
 #include "runtime.h"
 
+// Declarations
+int Func();
+int Main();
+
+// Definitions
 int Func()
 {
 	return 1;

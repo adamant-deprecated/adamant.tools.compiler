@@ -1,9 +1,10 @@
 var Source: string = "";
 var Token: string = "";
 var NextTokenPosition: int = 0;
-// TODO this should be `let Output: mut System.Text.StringBuilder` (can't change reference, can change object)
+// TODO this should be `let X: mut System.Text.StringBuilder` (can't change reference, can change object)
 // TODO should be `new mut`
-var Output: System.Text.StringBuilder = new System.Text.StringBuilder(); // var hack to make this mutable
+var Declarations: System.Text.StringBuilder = new System.Text.StringBuilder(); // var hack to make this mutable
+var Definitions: System.Text.StringBuilder = new System.Text.StringBuilder(); // var hack to make this mutable
 var IndentDepth: int = 0;
 var AfterDeclaration: bool = false;
 var MainFunctionReturnType: string = "";
@@ -25,41 +26,41 @@ ParseBlock() -> void;
 
 Error(message: string) -> void
 {
-	Output.Append("<$ " + message + " $>");
+	Definitions.Append("<$ " + message + " $>");
 }
 
 BeginLine(value: string) -> void
 {
 	if AfterDeclaration
 	{
-		Output.AppendLine();
+		Definitions.AppendLine();
 		AfterDeclaration = false;
 	}
-	Output.Append(new string('\t', IndentDepth));
-	Output.Append(value);
+	Definitions.Append(new string('\t', IndentDepth));
+	Definitions.Append(value);
 }
 
 Write(value: string) -> void
 {
-	Output.Append(value);
+	Definitions.Append(value);
 }
 
 EndLine(value: string) -> void
 {
-	Output.Append(value);
-	Output.AppendLine(); // TODO need to think about the handling of newlines
+	Definitions.Append(value);
+	Definitions.AppendLine(); // TODO need to think about the handling of newlines
 }
 
 WriteLine(value: string) -> void
 {
 	if AfterDeclaration
 	{
-		Output.AppendLine();
+		Definitions.AppendLine();
 		AfterDeclaration = false;
 	}
-	Output.Append(new string('\t', IndentDepth));
-	Output.Append(value);
-	Output.AppendLine();
+	Definitions.Append(new string('\t', IndentDepth));
+	Definitions.Append(value);
+	Definitions.AppendLine();
 }
 
 BeginBlock() -> void
@@ -794,15 +795,17 @@ ParseDeclaration() -> void
 	let arguments: string = ParseArgumentsDeclaration(name == "Main");
 	Expect("->");
 	let returnType: string = ParseType();
-	BeginLine(ConvertType(false, returnType) + " " + name + "(" + arguments + ")");
+	let convertedReturnType: string = ConvertType(false, returnType);
 	if Accept(";")
 	{
 		// Forward Declaration
-		WriteLine(";");
+		WriteLine("// WARNING: Forward Declarations Deprecated: `"+convertedReturnType + " " + name + "(" + arguments + ");`");
 		AfterDeclaration = true;
 		return;
 	}
-	WriteLine("");
+	// Write out the function declaration for C++ so we can call functions defined after others
+	Declarations.AppendLine(convertedReturnType + " " + name + "(" + arguments + ");");
+	WriteLine(convertedReturnType + " " + name + "(" + arguments + ")");
 	if name == "Main"
 	{
 		if MainFunctionReturnType <> ""
@@ -814,8 +817,11 @@ ParseDeclaration() -> void
 
 ParseProgram() -> void
 {
-	WriteLine("#include \"runtime.h\"");
+	Declarations.AppendLine("#include \"runtime.h\"");
+	Declarations.AppendLine("");
+	Declarations.AppendLine("// Declarations");
 	AfterDeclaration = true;
+	WriteLine("// Definitions");
 
 	do
 	{
@@ -859,7 +865,7 @@ Transpile(source: string) -> string
 	Source = source;
 	ReadFirstToken();
 	ParseProgram();
-	return Output.ToString();
+	return Declarations.ToString() + Definitions.ToString();
 }
 
 // TODO should be `console: mut System.Console.Console`

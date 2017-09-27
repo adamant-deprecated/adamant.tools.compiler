@@ -1,5 +1,10 @@
 #include "runtime.h"
 
+// Declarations
+bool True();
+void Main();
+
+// Definitions
 bool True()
 {
 	return true;
