@@ -1,11 +1,11 @@
 #include "runtime.h"
 
 // Declarations
-int Identity(const int value);
+int Identity(int const value);
 int Main();
 
 // Definitions
-int Identity(const int value)
+int Identity(int const value)
 {
 	return value;
 }
@@ -16,7 +16,7 @@ int Main()
 }
 
 // Entry Point Adapter
-int main(int argc, const char * argv[])
+int main(int argc, char const *const * argv)
 {
 	return Main();
 }

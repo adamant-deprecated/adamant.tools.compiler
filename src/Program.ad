@@ -364,42 +364,42 @@ ExpectIdentifier() -> string
 // Parser
 // ----------------------------------------------------------------------------
 
-IsStructType(type: string) -> bool
+IsValueType(type: string) -> bool
 {
-	return type == "string"
-		or type == "int"
-		or type == "bool"
-		or type == "void"
-		or type == "code_point";
+	// Here we assume that they follow convention and value types start lowercase
+	let firstChar: code_point = type[0];
+	return firstChar >= 'a' and firstChar <= 'z';
+}
+
+ConvertType(type: string) -> string
+{
+	if type == "code_point"
+		{ return "char"; }
+	if IsValueType(type)
+		{ return type; }
+
+	return "::" + type.Replace(".", "::");
 }
 
 // TODO should be `var type: string` so we don't need separate result variable
-ConvertType(isConst: bool, type: string, nameOnly: bool) -> string
+ConvertType(mutableBinding: bool, mutableValue: bool, type: string) -> string
 {
-	var result: string = type;
-	if result == "code_point"
+	let isValueType: bool = IsValueType(type);
+	var result: string = ConvertType(type);
+
+	if isValueType
 	{
-		result = "char";
-	}
-	else if IsStructType(result)
-	{
-		// Do nothing
+		if not mutableBinding and not mutableValue
+			{ result = result + " const"; }
 	}
 	else
 	{
-		result = "::" + result.Replace(".", "::");
-		if not nameOnly
-			{ result = result + "*"; }
+		if not mutableValue { result = result + " const"; }
+		result = result + " *";
+		if not mutableBinding { result = result + "const" ; }
 	}
 
-	if isConst
-		{ result = "const " + result; }
 	return result;
-}
-
-ConvertType(isConst: bool, type: string) -> string
-{
-	return ConvertType(isConst, type, false);
 }
 
 ParseType() -> string
@@ -423,9 +423,9 @@ ParseAtom() -> bool
 	{
 		// Constructor Call
 		var type: string = ParseType();
-		if not IsStructType(type) // for stack values, don't use new
+		if not IsValueType(type) // place value types on the stack in C++ by not using new
 			{ Write("new "); }
-		type = ConvertType(false, type, true);
+		type = ConvertType(type);
 		Write(type);
 		Expect("(");
 		Write("(");
@@ -648,8 +648,9 @@ ParseStatement() -> bool
 			{ Error("Expected `let` or `var` but found `" + Token + "`"); }
 		let name: string = ExpectIdentifier();
 		Expect(":");
+		let mutableValue: bool = Accept("mut");
 		let type: string = ParseType();
-		Write(ConvertType(k == "let", type) + " " + name);
+		Write(ConvertType(k == "var", mutableValue, type) + " " + name);
 		Expect("in");
 		Write(" : *(");
 		ParseExpression();
@@ -700,8 +701,9 @@ ParseStatement() -> bool
 	{
 		let variableName: string = ExpectIdentifier();
 		Expect(":");
+		let mutableValue: bool = Accept("mut");
 		var variableType: string = ParseType();
-		variableType = ConvertType(kind == "let", variableType);
+		variableType = ConvertType(kind == "var", mutableValue, variableType);
 		BeginLine(variableType);
 		Write(" " + variableName);
 		if Accept("=")
@@ -742,8 +744,10 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 	var arguments: System.Text.StringBuilder = new System.Text.StringBuilder();
 	do
 	{
+		let mutableBinding: bool = Accept("var");
 		let name: string = ExpectIdentifier();
 		Expect(":");
+		let mutableValue: bool = Accept("mut");
 		let type: string = ParseType();
 		if isMainFunction
 		{
@@ -752,7 +756,7 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 			if type == "System.Console.Arguments"
 				{ MainFunctionAcceptsArgs = true; }
 		}
-		arguments.Append(ConvertType(true, type) + " " + name + ", ");
+		arguments.Append(ConvertType(mutableBinding, mutableValue, type) + " " + name + ", ");
 	} while Accept(",");
 	Expect(")");
 	let result: string = arguments.ToString();
@@ -769,9 +773,10 @@ ParseDeclaration() -> void
 	{
 		let variableName: string = ExpectIdentifier();
 		Expect(":");
+		let mutableValue: bool = Accept("mut");
 		var variableType: string = ParseType();
 		Expect("=");
-		variableType = ConvertType(kind == "let", variableType);
+		variableType = ConvertType(kind == "var", mutableValue, variableType);
 		BeginLine(variableType);
 		Write(" " + variableName + " = ");
 		ParseExpression();
@@ -785,8 +790,9 @@ ParseDeclaration() -> void
 	let name: string = ExpectIdentifier();
 	let arguments: string = ParseArgumentsDeclaration(name == "Main");
 	Expect("->");
+	let mutableValue: bool = Accept("mut");
 	let returnType: string = ParseType();
-	let convertedReturnType: string = ConvertType(false, returnType);
+	let convertedReturnType: string = ConvertType(true, mutableValue, returnType);
 	// Write out the function declaration for C++ so we can call functions defined after others
 	Declarations.AppendLine(convertedReturnType + " " + name + "(" + arguments + ");");
 	WriteLine(convertedReturnType + " " + name + "(" + arguments + ")");
@@ -812,7 +818,7 @@ ParseProgram() -> void
 		ParseDeclaration();
 	} while TokenIsIdentifier();
 	WriteLine("// Entry Point Adapter");
-	WriteLine("int main(int argc, const char * argv[])");
+	WriteLine("int main(int argc, char const *const * argv)");
 	BeginBlock();
 
 	// TODO should be `let args: mut System.Text.StringBuilder`

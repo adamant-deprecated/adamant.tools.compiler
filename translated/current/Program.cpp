@@ -1,40 +1,40 @@
 #include "runtime.h"
 
 // Declarations
-void Error(const string message);
-void BeginLine(const string value);
-void Write(const string value);
-void EndLine(const string value);
-void WriteLine(const string value);
+void Error(string const message);
+void BeginLine(string const value);
+void Write(string const value);
+void EndLine(string const value);
+void WriteLine(string const value);
 void BeginBlock();
 void EndBlock();
-bool IsIdentifierChar(const char c);
-bool IsNumberChar(const char c);
+bool IsIdentifierChar(char const c);
+bool IsNumberChar(char const c);
 void ReadToken();
 void ReadFirstToken();
 bool TokenIsIdentifier();
-bool Accept(const string expected);
-void Expect(const string expected);
+bool Accept(string const expected);
+void Expect(string const expected);
 bool AcceptIdentifier();
 bool AcceptString();
 bool AcceptCodePoint();
 bool AcceptNumber();
 string ExpectIdentifier();
-bool IsStructType(const string type);
-string ConvertType(const bool isConst, const string type, const bool nameOnly);
-string ConvertType(const bool isConst, const string type);
+bool IsValueType(string const type);
+string ConvertType(string const type);
+string ConvertType(bool const mutableBinding, bool const mutableValue, string const type);
 string ParseType();
 bool ParseAtom();
 void ParseCallArguments();
-void ParseExpression(const int minPrecedence);
+void ParseExpression(int const minPrecedence);
 void ParseExpression();
 bool ParseStatement();
 void ParseBlock();
-string ParseArgumentsDeclaration(const bool isMainFunction);
+string ParseArgumentsDeclaration(bool const isMainFunction);
 void ParseDeclaration();
 void ParseProgram();
-string Transpile(const string source);
-void Main(const ::System::Console::Console* console, const ::System::Console::Arguments* args);
+string Transpile(string const source);
+void Main(::System::Console::Console const *const console, ::System::Console::Arguments const *const args);
 
 // Definitions
 string Source = string("");
@@ -43,9 +43,9 @@ string Token = string("");
 
 int NextTokenPosition = 0;
 
-::System::Text::StringBuilder* Declarations = new ::System::Text::StringBuilder();
+::System::Text::StringBuilder const * Declarations = new ::System::Text::StringBuilder();
 
-::System::Text::StringBuilder* Definitions = new ::System::Text::StringBuilder();
+::System::Text::StringBuilder const * Definitions = new ::System::Text::StringBuilder();
 
 int IndentDepth = 0;
 
@@ -57,12 +57,12 @@ bool MainFunctionAcceptsConsole = false;
 
 bool MainFunctionAcceptsArgs = false;
 
-void Error(const string message)
+void Error(string const message)
 {
 	Definitions->Append(string("<$ ") + message + string(" $>"));
 }
 
-void BeginLine(const string value)
+void BeginLine(string const value)
 {
 	if (AfterDeclaration)
 	{
@@ -74,18 +74,18 @@ void BeginLine(const string value)
 	Definitions->Append(value);
 }
 
-void Write(const string value)
+void Write(string const value)
 {
 	Definitions->Append(value);
 }
 
-void EndLine(const string value)
+void EndLine(string const value)
 {
 	Definitions->Append(value);
 	Definitions->AppendLine();
 }
 
-void WriteLine(const string value)
+void WriteLine(string const value)
 {
 	if (AfterDeclaration)
 	{
@@ -112,12 +112,12 @@ void EndBlock()
 	AfterDeclaration = true;
 }
 
-bool IsIdentifierChar(const char c)
+bool IsIdentifierChar(char const c)
 {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
-bool IsNumberChar(const char c)
+bool IsNumberChar(char const c)
 {
 	return c >= '0' && c <= '9';
 }
@@ -130,7 +130,7 @@ void ReadToken()
 	bool done = false;
 	while (!done && position < Source->Length)
 	{
-		const char curChar = Source[position];
+		char const curChar = Source[position];
 		if (curChar == ' ' || curChar == '\t' || curChar == '\n' || curChar == '\r')
 		{
 			position += 1;
@@ -307,7 +307,7 @@ bool TokenIsIdentifier()
 		return false;
 	}
 
-	for (const char c : *(Token))
+	for (char const c : *(Token))
 	{
 		if (!IsIdentifierChar(c))
 		{
@@ -318,9 +318,9 @@ bool TokenIsIdentifier()
 	return true;
 }
 
-bool Accept(const string expected)
+bool Accept(string const expected)
 {
-	const bool accepted = Token == expected;
+	bool const accepted = Token == expected;
 	if (accepted)
 	{
 		ReadToken();
@@ -329,7 +329,7 @@ bool Accept(const string expected)
 	return accepted;
 }
 
-void Expect(const string expected)
+void Expect(string const expected)
 {
 	if (Token != expected)
 	{
@@ -377,7 +377,7 @@ bool AcceptCodePoint()
 
 bool AcceptNumber()
 {
-	for (const char c : *(Token))
+	for (char const c : *(Token))
 	{
 		if (!IsNumberChar(c))
 		{
@@ -398,51 +398,63 @@ string ExpectIdentifier()
 		return string("<missing>");
 	}
 
-	const string identifier = Token;
+	string const identifier = Token;
 	ReadToken();
 	return identifier;
 }
 
-bool IsStructType(const string type)
+bool IsValueType(string const type)
 {
-	return type == string("string") || type == string("int") || type == string("bool") || type == string("void") || type == string("code_point");
+	char const firstChar = type[0];
+	return firstChar >= 'a' && firstChar <= 'z';
 }
 
-string ConvertType(const bool isConst, const string type, const bool nameOnly)
+string ConvertType(string const type)
 {
-	string result = type;
-	if (result == string("code_point"))
+	if (type == string("code_point"))
 	{
-		result = string("char");
+		return string("char");
 	}
-	else if (IsStructType(result))
+
+	if (IsValueType(type))
 	{
+		return type;
+	}
+
+	return string("::") + type->Replace(string("."), string("::"));
+}
+
+string ConvertType(bool const mutableBinding, bool const mutableValue, string const type)
+{
+	bool const isValueType = IsValueType(type);
+	string result = ConvertType(type);
+	if (isValueType)
+	{
+		if (!mutableBinding && !mutableValue)
+		{
+			result = result + string(" const");
+		}
 	}
 	else
 	{
-		result = string("::") + result->Replace(string("."), string("::"));
-		if (!nameOnly)
+		if (!mutableValue)
 		{
-			result = result + string("*");
+			result = result + string(" const");
 		}
-	}
 
-	if (isConst)
-	{
-		result = string("const ") + result;
+		result = result + string(" *");
+		if (!mutableBinding)
+		{
+			result = result + string("const");
+		}
 	}
 
 	return result;
 }
 
-string ConvertType(const bool isConst, const string type)
-{
-	return ConvertType(isConst, type, false);
-}
-
 string ParseType()
 {
-	::System::Text::StringBuilder* type = new ::System::Text::StringBuilder(ExpectIdentifier());
+	::System::Text::StringBuilder const * type = new ::System::Text::StringBuilder(ExpectIdentifier());
 	while (Accept(string(".")))
 	{
 		type->Append(string("."));
@@ -457,12 +469,12 @@ bool ParseAtom()
 	if (Accept(string("new")))
 	{
 		string type = ParseType();
-		if (!IsStructType(type))
+		if (!IsValueType(type))
 		{
 			Write(string("new "));
 		}
 
-		type = ConvertType(false, type, true);
+		type = ConvertType(type);
 		Write(type);
 		Expect(string("("));
 		Write(string("("));
@@ -495,7 +507,7 @@ bool ParseAtom()
 		return true;
 	}
 
-	const string token = Token;
+	string const token = Token;
 	if (AcceptIdentifier() || AcceptNumber())
 	{
 		Write(token);
@@ -536,7 +548,7 @@ void ParseCallArguments()
 	while (Accept(string(",")));
 }
 
-void ParseExpression(const int minPrecedence)
+void ParseExpression(int const minPrecedence)
 {
 	if (!ParseAtom())
 	{
@@ -545,7 +557,7 @@ void ParseExpression(const int minPrecedence)
 
 	for (;;)
 	{
-		const string token = Token;
+		string const token = Token;
 		int precedence;
 		bool leftAssociative;
 		bool suffixOperator = false;
@@ -688,16 +700,17 @@ bool ParseStatement()
 	if (Accept(string("for")))
 	{
 		BeginLine(string("for ("));
-		const string k = Token;
+		string const k = Token;
 		if (!Accept(string("let")) && !Accept(string("var")))
 		{
 			Error(string("Expected `let` or `var` but found `") + Token + string("`"));
 		}
 
-		const string name = ExpectIdentifier();
+		string const name = ExpectIdentifier();
 		Expect(string(":"));
-		const string type = ParseType();
-		Write(ConvertType(k == string("let"), type) + string(" ") + name);
+		bool const mutableValue = Accept(string("mut"));
+		string const type = ParseType();
+		Write(ConvertType(k == string("var"), mutableValue, type) + string(" ") + name);
 		Expect(string("in"));
 		Write(string(" : *("));
 		ParseExpression();
@@ -746,13 +759,14 @@ bool ParseStatement()
 		return true;
 	}
 
-	const string kind = Token;
+	string const kind = Token;
 	if (Accept(string("let")) || Accept(string("var")))
 	{
-		const string variableName = ExpectIdentifier();
+		string const variableName = ExpectIdentifier();
 		Expect(string(":"));
+		bool const mutableValue = Accept(string("mut"));
 		string variableType = ParseType();
-		variableType = ConvertType(kind == string("let"), variableType);
+		variableType = ConvertType(kind == string("var"), mutableValue, variableType);
 		BeginLine(variableType);
 		Write(string(" ") + variableName);
 		if (Accept(string("=")))
@@ -790,7 +804,7 @@ void ParseBlock()
 	EndBlock();
 }
 
-string ParseArgumentsDeclaration(const bool isMainFunction)
+string ParseArgumentsDeclaration(bool const isMainFunction)
 {
 	Expect(string("("));
 	if (Accept(string(")")))
@@ -798,12 +812,14 @@ string ParseArgumentsDeclaration(const bool isMainFunction)
 		return string("");
 	}
 
-	::System::Text::StringBuilder* arguments = new ::System::Text::StringBuilder();
+	::System::Text::StringBuilder const * arguments = new ::System::Text::StringBuilder();
 	do
 	{
-		const string name = ExpectIdentifier();
+		bool const mutableBinding = Accept(string("var"));
+		string const name = ExpectIdentifier();
 		Expect(string(":"));
-		const string type = ParseType();
+		bool const mutableValue = Accept(string("mut"));
+		string const type = ParseType();
 		if (isMainFunction)
 		{
 			if (type == string("System.Console.Console"))
@@ -817,24 +833,25 @@ string ParseArgumentsDeclaration(const bool isMainFunction)
 			}
 		}
 
-		arguments->Append(ConvertType(true, type) + string(" ") + name + string(", "));
+		arguments->Append(ConvertType(mutableBinding, mutableValue, type) + string(" ") + name + string(", "));
 	}
 	while (Accept(string(",")));
 	Expect(string(")"));
-	const string result = arguments->ToString();
+	string const result = arguments->ToString();
 	return result->Substring(0, result->Length - 2);
 }
 
 void ParseDeclaration()
 {
-	const string kind = Token;
+	string const kind = Token;
 	if (Accept(string("var")) || Accept(string("let")))
 	{
-		const string variableName = ExpectIdentifier();
+		string const variableName = ExpectIdentifier();
 		Expect(string(":"));
+		bool const mutableValue = Accept(string("mut"));
 		string variableType = ParseType();
 		Expect(string("="));
-		variableType = ConvertType(kind == string("let"), variableType);
+		variableType = ConvertType(kind == string("var"), mutableValue, variableType);
 		BeginLine(variableType);
 		Write(string(" ") + variableName + string(" = "));
 		ParseExpression();
@@ -844,11 +861,12 @@ void ParseDeclaration()
 		return;
 	}
 
-	const string name = ExpectIdentifier();
-	const string arguments = ParseArgumentsDeclaration(name == string("Main"));
+	string const name = ExpectIdentifier();
+	string const arguments = ParseArgumentsDeclaration(name == string("Main"));
 	Expect(string("->"));
-	const string returnType = ParseType();
-	const string convertedReturnType = ConvertType(false, returnType);
+	bool const mutableValue = Accept(string("mut"));
+	string const returnType = ParseType();
+	string const convertedReturnType = ConvertType(true, mutableValue, returnType);
 	Declarations->AppendLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(");"));
 	WriteLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(")"));
 	if (name == string("Main"))
@@ -877,9 +895,9 @@ void ParseProgram()
 	}
 	while (TokenIsIdentifier());
 	WriteLine(string("// Entry Point Adapter"));
-	WriteLine(string("int main(int argc, const char * argv[])"));
+	WriteLine(string("int main(int argc, char const *const * argv)"));
 	BeginBlock();
-	::System::Text::StringBuilder* args = new ::System::Text::StringBuilder();
+	::System::Text::StringBuilder const * args = new ::System::Text::StringBuilder();
 	if (MainFunctionAcceptsConsole)
 	{
 		args->Append(string("new ::System::Console::Console()"));
@@ -908,7 +926,7 @@ void ParseProgram()
 	EndBlock();
 }
 
-string Transpile(const string source)
+string Transpile(string const source)
 {
 	Source = source;
 	ReadFirstToken();
@@ -916,7 +934,7 @@ string Transpile(const string source)
 	return Declarations->ToString() + Definitions->ToString();
 }
 
-void Main(const ::System::Console::Console* console, const ::System::Console::Arguments* args)
+void Main(::System::Console::Console const *const console, ::System::Console::Arguments const *const args)
 {
 	console->WriteLine(string("Adamant Compiler v0.1.0"));
 	if (args->Count != 2)
@@ -925,23 +943,23 @@ void Main(const ::System::Console::Console* console, const ::System::Console::Ar
 		return;
 	}
 
-	const string inputFilePath = args->Get(0);
+	string const inputFilePath = args->Get(0);
 	console->Write(string("Compiling: "));
 	console->WriteLine(inputFilePath);
-	const ::System::IO::FileReader* inputFile = new ::System::IO::FileReader(inputFilePath);
-	const string source = inputFile->ReadToEndSync();
+	::System::IO::FileReader const *const inputFile = new ::System::IO::FileReader(inputFilePath);
+	string const source = inputFile->ReadToEndSync();
 	inputFile->Close();
-	const string translated = Transpile(source);
-	const string outputFilePath = args->Get(1);
+	string const translated = Transpile(source);
+	string const outputFilePath = args->Get(1);
 	console->Write(string("Output: "));
 	console->WriteLine(outputFilePath);
-	const ::System::IO::FileWriter* outputFile = new ::System::IO::FileWriter(outputFilePath);
+	::System::IO::FileWriter const *const outputFile = new ::System::IO::FileWriter(outputFilePath);
 	outputFile->Write(translated);
 	outputFile->Close();
 }
 
 // Entry Point Adapter
-int main(int argc, const char * argv[])
+int main(int argc, char const *const * argv)
 {
 	Main(new ::System::Console::Console(), new ::System::Console::Arguments(argc, argv));
 	return 0;

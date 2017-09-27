@@ -4,7 +4,7 @@
 int Main();
 
 // Definitions
-const int Result = 42;
+int const Result = 42;
 
 int Main()
 {
@@ -12,7 +12,7 @@ int Main()
 }
 
 // Entry Point Adapter
-int main(int argc, const char * argv[])
+int main(int argc, char const *const * argv)
 {
 	return Main();
 }

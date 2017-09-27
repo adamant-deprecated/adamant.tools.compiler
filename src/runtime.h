@@ -34,7 +34,6 @@ namespace System
 		class Console
 		{
 		public:
-			// TODO the const here is a hack until we have proper mutability
 			void Write(string value) const;
 			void WriteLine(string value) const;
 		};
@@ -47,10 +46,10 @@ namespace System
 			typedef const string* const_iterator;
 			const int Count;
 
-			Arguments(int argc, const char * argv[]);
+			Arguments(int argc, char const *const * argv);
 			const_iterator begin() const { return &args[0]; }
 			const_iterator end() const { return &args[Count]; }
-			const string& Get(const int index) const { return args[index]; }
+			string const & Get(int const index) const { return args[index]; }
 		};
 	}
 
@@ -110,9 +109,9 @@ namespace System
 			string buffer;
 		public:
 			StringBuilder();
-			StringBuilder(const string& value);
-			void Append(const string& value);
-			void AppendLine(const string& value);
+			StringBuilder(string const & value);
+			void Append(string const & value);
+			void AppendLine(string const& value);
 			void AppendLine();
 			string ToString() const { return buffer; }
 		};

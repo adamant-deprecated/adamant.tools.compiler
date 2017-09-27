@@ -1,11 +1,11 @@
 #include "runtime.h"
 
 // Declarations
-int Func(const int a, const int b);
+int Func(int const a, int const b);
 int Main();
 
 // Definitions
-int Func(const int a, const int b)
+int Func(int const a, int const b)
 {
 	return b;
 }
@@ -16,7 +16,7 @@ int Main()
 }
 
 // Entry Point Adapter
-int main(int argc, const char * argv[])
+int main(int argc, char const *const * argv)
 {
 	return Main();
 }

@@ -107,7 +107,7 @@ namespace System
 			std::printf("%.*s\n", value.Length, value.Buffer);
 		}
 
-		Arguments::Arguments(int argc, const char * argv[])
+		Arguments::Arguments(int argc, char const *const * argv)
 			: Count(argc-1)
 		{
 			args = new string[Count];
@@ -150,7 +150,7 @@ namespace System
 
 	namespace Text
 	{
-		StringBuilder::StringBuilder(const string& value)
+		StringBuilder::StringBuilder(string const & value)
 			: buffer(value)
 		{
 		}
@@ -160,12 +160,12 @@ namespace System
 		{
 		}
 
-		void StringBuilder::Append(const string& value)
+		void StringBuilder::Append(string const & value)
 		{
 			buffer = buffer + value;
 		}
 
-		void StringBuilder::AppendLine(const string& value)
+		void StringBuilder::AppendLine(string const & value)
 		{
 			buffer = buffer + value + string("\r\n");
 		}

@@ -57,14 +57,6 @@ bool MainFunctionAcceptsConsole = false;
 
 bool MainFunctionAcceptsArgs = false;
 
-// WARNING: Forward Declarations Deprecated: `void ParseCallArguments();`
-
-// WARNING: Forward Declarations Deprecated: `void ParseExpression(const int minPrecedence);`
-
-// WARNING: Forward Declarations Deprecated: `void ParseExpression();`
-
-// WARNING: Forward Declarations Deprecated: `void ParseBlock();`
-
 void Error(const string message)
 {
 	Definitions->Append(string("<$ ") + message + string(" $>"));
@@ -857,13 +849,6 @@ void ParseDeclaration()
 	Expect(string("->"));
 	const string returnType = ParseType();
 	const string convertedReturnType = ConvertType(false, returnType);
-	if (Accept(string(";")))
-	{
-		WriteLine(string("// WARNING: Forward Declarations Deprecated: `") + convertedReturnType + string(" ") + name + string("(") + arguments + string(");`"));
-		AfterDeclaration = true;
-		return;
-	}
-
 	Declarations->AppendLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(");"));
 	WriteLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(")"));
 	if (name == string("Main"))

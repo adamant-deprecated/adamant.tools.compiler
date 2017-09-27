@@ -1,11 +1,11 @@
 #include "runtime.h"
 
 // Declarations
-bool Func(const bool value);
+bool Func(bool const value);
 void Main();
 
 // Definitions
-bool Func(const bool value)
+bool Func(bool const value)
 {
 	return false;
 }
@@ -16,7 +16,7 @@ void Main()
 }
 
 // Entry Point Adapter
-int main(int argc, const char * argv[])
+int main(int argc, char const *const * argv)
 {
 	Main();
 	return 0;
