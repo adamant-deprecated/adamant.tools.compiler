@@ -1,10 +1,9 @@
 var Source: string = "";
 var Token: string = "";
 var NextTokenPosition: int = 0;
-// TODO this should be `let X: mut System.Text.StringBuilder` (can't change reference, can change object)
 // TODO should be `new mut`
-var Declarations: System.Text.StringBuilder = new System.Text.StringBuilder(); // var hack to make this mutable
-var Definitions: System.Text.StringBuilder = new System.Text.StringBuilder(); // var hack to make this mutable
+let Declarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
+let Definitions: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 var IndentDepth: int = 0;
 var AfterDeclaration: bool = false;
 var MainFunctionReturnType: string = "";
@@ -382,31 +381,30 @@ ConvertType(type: string) -> string
 }
 
 // TODO should be `var type: string` so we don't need separate result variable
-ConvertType(mutableBinding: bool, mutableValue: bool, type: string) -> string
+ConvertType(mutableBinding: bool, mutableValue: bool, var type: string) -> string
 {
 	let isValueType: bool = IsValueType(type);
-	var result: string = ConvertType(type);
+	type = ConvertType(type);
 
 	if isValueType
 	{
 		if not mutableBinding and not mutableValue
-			{ result = result + " const"; }
+			{ type = type + " const"; }
 	}
 	else
 	{
-		if not mutableValue { result = result + " const"; }
-		result = result + " *";
-		if not mutableBinding { result = result + "const" ; }
+		if not mutableValue { type = type + " const"; }
+		type = type + " *";
+		if not mutableBinding { type = type + "const" ; }
 	}
 
-	return result;
+	return type;
 }
 
 ParseType() -> string
 {
-	// TODO this should be `let type: mut System.Text.StringBuilder`
 	// TODO should be `new mut`
-	var type: System.Text.StringBuilder = new System.Text.StringBuilder(ExpectIdentifier());
+	let type: mut System.Text.StringBuilder = new System.Text.StringBuilder(ExpectIdentifier());
 	while Accept(".")
 	{
 		type.Append(".");
@@ -739,9 +737,8 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 	Expect("(");
 	if Accept(")") { return ""; }
 
-	// TODO should be `let arguments: mut System.Text.StringBuilder`
 	// TODO should be `new mut`
-	var arguments: System.Text.StringBuilder = new System.Text.StringBuilder();
+	let arguments: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 	do
 	{
 		let mutableBinding: bool = Accept("var");
@@ -821,9 +818,8 @@ ParseProgram() -> void
 	WriteLine("int main(int argc, char const *const * argv)");
 	BeginBlock();
 
-	// TODO should be `let args: mut System.Text.StringBuilder`
 	// TODO should be `new mut`
-	var args: System.Text.StringBuilder = new System.Text.StringBuilder();
+	let args: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 	if MainFunctionAcceptsConsole
 		{ args.Append("new ::System::Console::Console()"); }
 	if MainFunctionAcceptsArgs
@@ -858,8 +854,7 @@ Transpile(source: string) -> string
 	return Declarations.ToString() + Definitions.ToString();
 }
 
-// TODO should be `console: mut System.Console.Console`
-Main(console: System.Console.Console, args: System.Console.Arguments) -> void
+Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void
 {
 	console.WriteLine("Adamant Compiler v0.1.0");
 	if args.Count <> 2
@@ -872,9 +867,8 @@ Main(console: System.Console.Console, args: System.Console.Arguments) -> void
 	let inputFilePath: string = args.Get(0); // TODO should be `args[0]`
 	console.Write("Compiling: ");
 	console.WriteLine(inputFilePath);
-	// TODO should be `let inputFile: mut System.IO.FileReader`
 	// TODO should be `new mut`
-	let inputFile: System.IO.FileReader = new System.IO.FileReader(inputFilePath);
+	let inputFile: mut System.IO.FileReader = new System.IO.FileReader(inputFilePath);
 	let source: string = inputFile.ReadToEndSync();
 	inputFile.Close();
 
@@ -884,9 +878,8 @@ Main(console: System.Console.Console, args: System.Console.Arguments) -> void
 	let outputFilePath: string = args.Get(1); // TODO should be `args[1]`
 	console.Write("Output: ");
 	console.WriteLine(outputFilePath);
-	// TODO should be `let outputFile: mut System.IO.FileWriter`
 	// TODO should be `new mut`
-	let outputFile: System.IO.FileWriter = new System.IO.FileWriter(outputFilePath);
+	let outputFile: mut System.IO.FileWriter = new System.IO.FileWriter(outputFilePath);
 	outputFile.Write(translated);
 	outputFile.Close();
 }

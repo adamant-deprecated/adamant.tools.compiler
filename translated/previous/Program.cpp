@@ -20,9 +20,9 @@ bool AcceptString();
 bool AcceptCodePoint();
 bool AcceptNumber();
 string ExpectIdentifier();
-bool IsStructType(const string type);
-string ConvertType(const bool isConst, const string type, const bool nameOnly);
-string ConvertType(const bool isConst, const string type);
+bool IsValueType(const string type);
+string ConvertType(const string type);
+string ConvertType(const bool mutableBinding, const bool mutableValue, const string type);
 string ParseType();
 bool ParseAtom();
 void ParseCallArguments();
@@ -403,41 +403,53 @@ string ExpectIdentifier()
 	return identifier;
 }
 
-bool IsStructType(const string type)
+bool IsValueType(const string type)
 {
-	return type == string("string") || type == string("int") || type == string("bool") || type == string("void") || type == string("code_point");
+	const char firstChar = type[0];
+	return firstChar >= 'a' && firstChar <= 'z';
 }
 
-string ConvertType(const bool isConst, const string type, const bool nameOnly)
+string ConvertType(const string type)
 {
-	string result = type;
-	if (result == string("code_point"))
+	if (type == string("code_point"))
 	{
-		result = string("char");
+		return string("char");
 	}
-	else if (IsStructType(result))
+
+	if (IsValueType(type))
 	{
+		return type;
+	}
+
+	return string("::") + type->Replace(string("."), string("::"));
+}
+
+string ConvertType(const bool mutableBinding, const bool mutableValue, const string type)
+{
+	const bool isValueType = IsValueType(type);
+	string result = ConvertType(type);
+	if (isValueType)
+	{
+		if (!mutableBinding && !mutableValue)
+		{
+			result = result + string(" const");
+		}
 	}
 	else
 	{
-		result = string("::") + result->Replace(string("."), string("::"));
-		if (!nameOnly)
+		if (!mutableValue)
 		{
-			result = result + string("*");
+			result = result + string(" const");
+		}
+
+		result = result + string(" *");
+		if (!mutableBinding)
+		{
+			result = result + string("const");
 		}
 	}
 
-	if (isConst)
-	{
-		result = string("const ") + result;
-	}
-
 	return result;
-}
-
-string ConvertType(const bool isConst, const string type)
-{
-	return ConvertType(isConst, type, false);
 }
 
 string ParseType()
@@ -457,12 +469,12 @@ bool ParseAtom()
 	if (Accept(string("new")))
 	{
 		string type = ParseType();
-		if (!IsStructType(type))
+		if (!IsValueType(type))
 		{
 			Write(string("new "));
 		}
 
-		type = ConvertType(false, type, true);
+		type = ConvertType(type);
 		Write(type);
 		Expect(string("("));
 		Write(string("("));
@@ -696,8 +708,9 @@ bool ParseStatement()
 
 		const string name = ExpectIdentifier();
 		Expect(string(":"));
+		const bool mutableValue = Accept(string("mut"));
 		const string type = ParseType();
-		Write(ConvertType(k == string("let"), type) + string(" ") + name);
+		Write(ConvertType(k == string("var"), mutableValue, type) + string(" ") + name);
 		Expect(string("in"));
 		Write(string(" : *("));
 		ParseExpression();
@@ -751,8 +764,9 @@ bool ParseStatement()
 	{
 		const string variableName = ExpectIdentifier();
 		Expect(string(":"));
+		const bool mutableValue = Accept(string("mut"));
 		string variableType = ParseType();
-		variableType = ConvertType(kind == string("let"), variableType);
+		variableType = ConvertType(kind == string("var"), mutableValue, variableType);
 		BeginLine(variableType);
 		Write(string(" ") + variableName);
 		if (Accept(string("=")))
@@ -801,8 +815,10 @@ string ParseArgumentsDeclaration(const bool isMainFunction)
 	::System::Text::StringBuilder* arguments = new ::System::Text::StringBuilder();
 	do
 	{
+		const bool mutableBinding = Accept(string("var"));
 		const string name = ExpectIdentifier();
 		Expect(string(":"));
+		const bool mutableValue = Accept(string("mut"));
 		const string type = ParseType();
 		if (isMainFunction)
 		{
@@ -817,7 +833,7 @@ string ParseArgumentsDeclaration(const bool isMainFunction)
 			}
 		}
 
-		arguments->Append(ConvertType(true, type) + string(" ") + name + string(", "));
+		arguments->Append(ConvertType(mutableBinding, mutableValue, type) + string(" ") + name + string(", "));
 	}
 	while (Accept(string(",")));
 	Expect(string(")"));
@@ -832,9 +848,10 @@ void ParseDeclaration()
 	{
 		const string variableName = ExpectIdentifier();
 		Expect(string(":"));
+		const bool mutableValue = Accept(string("mut"));
 		string variableType = ParseType();
 		Expect(string("="));
-		variableType = ConvertType(kind == string("let"), variableType);
+		variableType = ConvertType(kind == string("var"), mutableValue, variableType);
 		BeginLine(variableType);
 		Write(string(" ") + variableName + string(" = "));
 		ParseExpression();
@@ -847,8 +864,9 @@ void ParseDeclaration()
 	const string name = ExpectIdentifier();
 	const string arguments = ParseArgumentsDeclaration(name == string("Main"));
 	Expect(string("->"));
+	const bool mutableValue = Accept(string("mut"));
 	const string returnType = ParseType();
-	const string convertedReturnType = ConvertType(false, returnType);
+	const string convertedReturnType = ConvertType(true, mutableValue, returnType);
 	Declarations->AppendLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(");"));
 	WriteLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(")"));
 	if (name == string("Main"))
@@ -877,7 +895,7 @@ void ParseProgram()
 	}
 	while (TokenIsIdentifier());
 	WriteLine(string("// Entry Point Adapter"));
-	WriteLine(string("int main(int argc, const char * argv[])"));
+	WriteLine(string("int main(int argc, char const *const * argv)"));
 	BeginBlock();
 	::System::Text::StringBuilder* args = new ::System::Text::StringBuilder();
 	if (MainFunctionAcceptsConsole)

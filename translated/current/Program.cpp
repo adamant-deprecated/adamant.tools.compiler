@@ -22,7 +22,7 @@ bool AcceptNumber();
 string ExpectIdentifier();
 bool IsValueType(string const type);
 string ConvertType(string const type);
-string ConvertType(bool const mutableBinding, bool const mutableValue, string const type);
+string ConvertType(bool const mutableBinding, bool const mutableValue, string type);
 string ParseType();
 bool ParseAtom();
 void ParseCallArguments();
@@ -34,7 +34,7 @@ string ParseArgumentsDeclaration(bool const isMainFunction);
 void ParseDeclaration();
 void ParseProgram();
 string Transpile(string const source);
-void Main(::System::Console::Console const *const console, ::System::Console::Arguments const *const args);
+void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args);
 
 // Definitions
 string Source = string("");
@@ -43,9 +43,9 @@ string Token = string("");
 
 int NextTokenPosition = 0;
 
-::System::Text::StringBuilder const * Declarations = new ::System::Text::StringBuilder();
+::System::Text::StringBuilder *const Declarations = new ::System::Text::StringBuilder();
 
-::System::Text::StringBuilder const * Definitions = new ::System::Text::StringBuilder();
+::System::Text::StringBuilder *const Definitions = new ::System::Text::StringBuilder();
 
 int IndentDepth = 0;
 
@@ -424,37 +424,37 @@ string ConvertType(string const type)
 	return string("::") + type->Replace(string("."), string("::"));
 }
 
-string ConvertType(bool const mutableBinding, bool const mutableValue, string const type)
+string ConvertType(bool const mutableBinding, bool const mutableValue, string type)
 {
 	bool const isValueType = IsValueType(type);
-	string result = ConvertType(type);
+	type = ConvertType(type);
 	if (isValueType)
 	{
 		if (!mutableBinding && !mutableValue)
 		{
-			result = result + string(" const");
+			type = type + string(" const");
 		}
 	}
 	else
 	{
 		if (!mutableValue)
 		{
-			result = result + string(" const");
+			type = type + string(" const");
 		}
 
-		result = result + string(" *");
+		type = type + string(" *");
 		if (!mutableBinding)
 		{
-			result = result + string("const");
+			type = type + string("const");
 		}
 	}
 
-	return result;
+	return type;
 }
 
 string ParseType()
 {
-	::System::Text::StringBuilder const * type = new ::System::Text::StringBuilder(ExpectIdentifier());
+	::System::Text::StringBuilder *const type = new ::System::Text::StringBuilder(ExpectIdentifier());
 	while (Accept(string(".")))
 	{
 		type->Append(string("."));
@@ -812,7 +812,7 @@ string ParseArgumentsDeclaration(bool const isMainFunction)
 		return string("");
 	}
 
-	::System::Text::StringBuilder const * arguments = new ::System::Text::StringBuilder();
+	::System::Text::StringBuilder *const arguments = new ::System::Text::StringBuilder();
 	do
 	{
 		bool const mutableBinding = Accept(string("var"));
@@ -897,7 +897,7 @@ void ParseProgram()
 	WriteLine(string("// Entry Point Adapter"));
 	WriteLine(string("int main(int argc, char const *const * argv)"));
 	BeginBlock();
-	::System::Text::StringBuilder const * args = new ::System::Text::StringBuilder();
+	::System::Text::StringBuilder *const args = new ::System::Text::StringBuilder();
 	if (MainFunctionAcceptsConsole)
 	{
 		args->Append(string("new ::System::Console::Console()"));
@@ -934,7 +934,7 @@ string Transpile(string const source)
 	return Declarations->ToString() + Definitions->ToString();
 }
 
-void Main(::System::Console::Console const *const console, ::System::Console::Arguments const *const args)
+void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args)
 {
 	console->WriteLine(string("Adamant Compiler v0.1.0"));
 	if (args->Count != 2)
@@ -946,14 +946,14 @@ void Main(::System::Console::Console const *const console, ::System::Console::Ar
 	string const inputFilePath = args->Get(0);
 	console->Write(string("Compiling: "));
 	console->WriteLine(inputFilePath);
-	::System::IO::FileReader const *const inputFile = new ::System::IO::FileReader(inputFilePath);
+	::System::IO::FileReader *const inputFile = new ::System::IO::FileReader(inputFilePath);
 	string const source = inputFile->ReadToEndSync();
 	inputFile->Close();
 	string const translated = Transpile(source);
 	string const outputFilePath = args->Get(1);
 	console->Write(string("Output: "));
 	console->WriteLine(outputFilePath);
-	::System::IO::FileWriter const *const outputFile = new ::System::IO::FileWriter(outputFilePath);
+	::System::IO::FileWriter *const outputFile = new ::System::IO::FileWriter(outputFilePath);
 	outputFile->Write(translated);
 	outputFile->Close();
 }
