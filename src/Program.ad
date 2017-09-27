@@ -12,15 +12,6 @@ var MainFunctionAcceptsConsole: bool = false;
 var MainFunctionAcceptsArgs: bool = false;
 
 // ----------------------------------------------------------------------------
-// Forward Declarations
-// ----------------------------------------------------------------------------
-// TODO Remove need for forward declarations
-ParseCallArguments() -> void;
-ParseExpression(minPrecedence: int) -> void;
-ParseExpression() -> void;
-ParseBlock() -> void;
-
-// ----------------------------------------------------------------------------
 // Code Writing
 // ----------------------------------------------------------------------------
 
@@ -796,13 +787,6 @@ ParseDeclaration() -> void
 	Expect("->");
 	let returnType: string = ParseType();
 	let convertedReturnType: string = ConvertType(false, returnType);
-	if Accept(";")
-	{
-		// Forward Declaration
-		WriteLine("// WARNING: Forward Declarations Deprecated: `"+convertedReturnType + " " + name + "(" + arguments + ");`");
-		AfterDeclaration = true;
-		return;
-	}
 	// Write out the function declaration for C++ so we can call functions defined after others
 	Declarations.AppendLine(convertedReturnType + " " + name + "(" + arguments + ");");
 	WriteLine(convertedReturnType + " " + name + "(" + arguments + ")");

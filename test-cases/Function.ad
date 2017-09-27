@@ -1,9 +1,0 @@
-Func() -> int
-{
-	return 1;
-}
-
-Main() -> int
-{
-	return Func();
-}

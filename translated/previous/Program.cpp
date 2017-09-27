@@ -1,12 +1,51 @@
 #include "runtime.h"
 
+// Declarations
+void Error(const string message);
+void BeginLine(const string value);
+void Write(const string value);
+void EndLine(const string value);
+void WriteLine(const string value);
+void BeginBlock();
+void EndBlock();
+bool IsIdentifierChar(const char c);
+bool IsNumberChar(const char c);
+void ReadToken();
+void ReadFirstToken();
+bool TokenIsIdentifier();
+bool Accept(const string expected);
+void Expect(const string expected);
+bool AcceptIdentifier();
+bool AcceptString();
+bool AcceptCodePoint();
+bool AcceptNumber();
+string ExpectIdentifier();
+bool IsStructType(const string type);
+string ConvertType(const bool isConst, const string type, const bool nameOnly);
+string ConvertType(const bool isConst, const string type);
+string ParseType();
+bool ParseAtom();
+void ParseCallArguments();
+void ParseExpression(const int minPrecedence);
+void ParseExpression();
+bool ParseStatement();
+void ParseBlock();
+string ParseArgumentsDeclaration(const bool isMainFunction);
+void ParseDeclaration();
+void ParseProgram();
+string Transpile(const string source);
+void Main(const ::System::Console::Console* console, const ::System::Console::Arguments* args);
+
+// Definitions
 string Source = string("");
 
 string Token = string("");
 
 int NextTokenPosition = 0;
 
-::System::Text::StringBuilder* Output = new ::System::Text::StringBuilder();
+::System::Text::StringBuilder* Declarations = new ::System::Text::StringBuilder();
+
+::System::Text::StringBuilder* Definitions = new ::System::Text::StringBuilder();
 
 int IndentDepth = 0;
 
@@ -18,53 +57,53 @@ bool MainFunctionAcceptsConsole = false;
 
 bool MainFunctionAcceptsArgs = false;
 
-void ParseCallArguments();
+// WARNING: Forward Declarations Deprecated: `void ParseCallArguments();`
 
-void ParseExpression(const int minPrecedence);
+// WARNING: Forward Declarations Deprecated: `void ParseExpression(const int minPrecedence);`
 
-void ParseExpression();
+// WARNING: Forward Declarations Deprecated: `void ParseExpression();`
 
-void ParseBlock();
+// WARNING: Forward Declarations Deprecated: `void ParseBlock();`
 
 void Error(const string message)
 {
-	Output->Append(string("<$ ") + message + string(" $>"));
+	Definitions->Append(string("<$ ") + message + string(" $>"));
 }
 
 void BeginLine(const string value)
 {
 	if (AfterDeclaration)
 	{
-		Output->AppendLine();
+		Definitions->AppendLine();
 		AfterDeclaration = false;
 	}
 
-	Output->Append(string('\t', IndentDepth));
-	Output->Append(value);
+	Definitions->Append(string('\t', IndentDepth));
+	Definitions->Append(value);
 }
 
 void Write(const string value)
 {
-	Output->Append(value);
+	Definitions->Append(value);
 }
 
 void EndLine(const string value)
 {
-	Output->Append(value);
-	Output->AppendLine();
+	Definitions->Append(value);
+	Definitions->AppendLine();
 }
 
 void WriteLine(const string value)
 {
 	if (AfterDeclaration)
 	{
-		Output->AppendLine();
+		Definitions->AppendLine();
 		AfterDeclaration = false;
 	}
 
-	Output->Append(string('\t', IndentDepth));
-	Output->Append(value);
-	Output->AppendLine();
+	Definitions->Append(string('\t', IndentDepth));
+	Definitions->Append(value);
+	Definitions->AppendLine();
 }
 
 void BeginBlock()
@@ -817,15 +856,16 @@ void ParseDeclaration()
 	const string arguments = ParseArgumentsDeclaration(name == string("Main"));
 	Expect(string("->"));
 	const string returnType = ParseType();
-	BeginLine(ConvertType(false, returnType) + string(" ") + name + string("(") + arguments + string(")"));
+	const string convertedReturnType = ConvertType(false, returnType);
 	if (Accept(string(";")))
 	{
-		WriteLine(string(";"));
+		WriteLine(string("// WARNING: Forward Declarations Deprecated: `") + convertedReturnType + string(" ") + name + string("(") + arguments + string(");`"));
 		AfterDeclaration = true;
 		return;
 	}
 
-	WriteLine(string(""));
+	Declarations->AppendLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(");"));
+	WriteLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(")"));
 	if (name == string("Main"))
 	{
 		if (MainFunctionReturnType != string(""))
@@ -841,8 +881,11 @@ void ParseDeclaration()
 
 void ParseProgram()
 {
-	WriteLine(string("#include \"runtime.h\""));
+	Declarations->AppendLine(string("#include \"runtime.h\""));
+	Declarations->AppendLine(string(""));
+	Declarations->AppendLine(string("// Declarations"));
 	AfterDeclaration = true;
+	WriteLine(string("// Definitions"));
 	do
 	{
 		ParseDeclaration();
@@ -885,7 +928,7 @@ string Transpile(const string source)
 	Source = source;
 	ReadFirstToken();
 	ParseProgram();
-	return Output->ToString();
+	return Declarations->ToString() + Definitions->ToString();
 }
 
 void Main(const ::System::Console::Console* console, const ::System::Console::Arguments* args)

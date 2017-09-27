@@ -25,7 +25,7 @@ string::string(int length, const char* s)
 {
 }
 
-char* string::cstr() const
+char const * string::cstr() const
 {
 	auto buffer = new char[Length + 1];
 	std::memcpy(buffer, Buffer, Length);
