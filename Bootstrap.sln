@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transpiler", "Bootstrap\Transpiler.csproj", "{6F625C2E-6F56-47E9-BACA-E735742BE874}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transpiler.Test", "Bootstrap.Test\Transpiler.Test.csproj", "{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", "{DB2A90E3-F1CA-4C7D-A2D1-350B0E516036}"
 	ProjectSection(SolutionItems) = preProject
 		test-cases\Assignment.ad = test-cases\Assignment.ad
@@ -34,13 +30,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-cases", "test-cases", 
 		test-cases\For.ad = test-cases\For.ad
 		test-cases\For.cpp = test-cases\For.cpp
 		test-cases\ForwardDeclaration.ad = test-cases\ForwardDeclaration.ad
-		test-cases\ForwardDeclaration.cpp = test-cases\ForwardDeclaration.cpp
-		test-cases\Function.ad = test-cases\Function.ad
 		test-cases\Function.cpp = test-cases\Function.cpp
 		test-cases\Function_OneArg.ad = test-cases\Function_OneArg.ad
 		test-cases\Function_OneArg.cpp = test-cases\Function_OneArg.cpp
 		test-cases\Function_TwoArgs.ad = test-cases\Function_TwoArgs.ad
 		test-cases\Function_TwoArgs.cpp = test-cases\Function_TwoArgs.cpp
+		test-cases\FunctionOrder.ad = test-cases\FunctionOrder.ad
+		test-cases\FunctionOrder.cpp = test-cases\FunctionOrder.cpp
 		test-cases\GlobalLet.ad = test-cases\GlobalLet.ad
 		test-cases\GlobalLet.cpp = test-cases\GlobalLet.cpp
 		test-cases\GlobalVar.ad = test-cases\GlobalVar.ad
@@ -112,30 +108,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Debug|x64.Build.0 = Debug|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Debug|x86.Build.0 = Debug|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Release|x64.ActiveCfg = Release|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Release|x64.Build.0 = Release|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Release|x86.ActiveCfg = Release|Any CPU
-		{6F625C2E-6F56-47E9-BACA-E735742BE874}.Release|x86.Build.0 = Release|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Debug|x64.Build.0 = Debug|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Debug|x86.Build.0 = Debug|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Release|x64.ActiveCfg = Release|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Release|x64.Build.0 = Release|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Release|x86.ActiveCfg = Release|Any CPU
-		{F5DEC7CC-4FC4-480B-9E1B-DD362C7056A7}.Release|x86.Build.0 = Release|Any CPU
 		{5F97A90B-861C-420A-B450-CE56CC6ABB19}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{5F97A90B-861C-420A-B450-CE56CC6ABB19}.Debug|x64.ActiveCfg = Debug|x64
 		{5F97A90B-861C-420A-B450-CE56CC6ABB19}.Debug|x64.Build.0 = Debug|x64

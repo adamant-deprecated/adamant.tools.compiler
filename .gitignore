@@ -1,9 +1,6 @@
 /target/
 /.vs/
-/packages/
 *.user
-bin/
-obj/
 *.db
 *.opendb
 Debug/
