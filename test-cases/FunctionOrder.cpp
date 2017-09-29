@@ -1,18 +1,18 @@
 #include "runtime.h"
 
 // Declarations
-int Main();
-int Func();
+auto Main() -> int;
+auto Func() -> int;
 
 // Class Declarations
 
 // Definitions
-int Main()
+auto Main() -> int
 {
 	return Func();
 }
 
-int Func()
+auto Func() -> int
 {
 	return 1;
 }

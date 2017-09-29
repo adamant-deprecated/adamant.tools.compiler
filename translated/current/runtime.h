@@ -27,6 +27,26 @@ public:
 	const_iterator end() const { return &Buffer[Length]; }
 };
 
+class NoneType
+{
+public:
+	template<class T>
+	operator T*() const { return static_cast<T*>(0); }
+};
+static const NoneType None = NoneType();
+
+template<typename T>
+struct Maybe
+{
+private:
+	T data;
+	bool hasValue;
+
+public:
+	Maybe(T const & value) : data(value), hasValue(true) {}
+	Maybe(::NoneType const & none) : hasValue(false) {}
+};
+
 namespace System
 {
 	namespace Console

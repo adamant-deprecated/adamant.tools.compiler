@@ -1,14 +1,14 @@
 #include "runtime.h"
 
 // Declarations
-void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args);
+auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
 
 // Class Declarations
 
 // Definitions
-void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args)
+auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void
 {
-	for (string const arg : *(args))
+	for (::string const arg : *(args))
 	{
 		console->WriteLine(arg);
 	}

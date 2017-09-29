@@ -1,18 +1,18 @@
 #include "runtime.h"
 
 // Declarations
-char Identity(char const value);
-void Main();
+auto Identity(char const value) -> char;
+auto Main() -> void;
 
 // Class Declarations
 
 // Definitions
-char Identity(char const value)
+auto Identity(char const value) -> char
 {
 	return value;
 }
 
-void Main()
+auto Main() -> void
 {
 	Identity('a');
 }

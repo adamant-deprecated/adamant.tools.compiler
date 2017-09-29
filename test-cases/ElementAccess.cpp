@@ -1,15 +1,15 @@
 #include "runtime.h"
 
 // Declarations
-void Main();
+auto Main() -> void;
 
 // Class Declarations
 
 // Definitions
-void Main()
+auto Main() -> void
 {
 	char result;
-	result = string("hello")[0];
+	result = ::string("hello")[0];
 }
 
 // Entry Point Adapter

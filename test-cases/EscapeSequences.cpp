@@ -1,14 +1,14 @@
 #include "runtime.h"
 
 // Declarations
-void Main();
+auto Main() -> void;
 
 // Class Declarations
 
 // Definitions
-void Main()
+auto Main() -> void
 {
-	string s = string("\"\\");
+	::string s = ::string("\"\\");
 	char c = '\'';
 	c = '\\';
 }

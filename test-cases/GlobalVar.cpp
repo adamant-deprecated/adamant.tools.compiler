@@ -1,14 +1,14 @@
 #include "runtime.h"
 
 // Declarations
-int Main();
+auto Main() -> int;
 
 // Class Declarations
 
 // Definitions
 int Result = 42;
 
-int Main()
+auto Main() -> int
 {
 	return Result;
 }

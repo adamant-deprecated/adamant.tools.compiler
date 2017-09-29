@@ -1,12 +1,12 @@
 #include "runtime.h"
 
 // Declarations
-void Main();
+auto Main() -> void;
 
 // Class Declarations
 
 // Definitions
-void Main()
+auto Main() -> void
 {
 	int x = 1 + 2;
 	x = 1 - 2;

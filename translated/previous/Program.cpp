@@ -885,6 +885,10 @@ void ParseDeclaration()
 	if (Accept(string("public")) || Accept(string("internal")))
 	{
 	}
+	else
+	{
+		Error(string("Expected access modifier, found `") + accessModifier + string("`"));
+	}
 
 	string const kind = Token;
 	if (Accept(string("var")) || Accept(string("let")))

@@ -1,0 +1,11 @@
+public Func(x: string?, y: uint?) -> int?
+{
+	let z: int? = null;
+	let s: System.Text.StringBuilder? = null;
+	return null;
+}
+
+public Main(console: mut System.Console.Console) -> void
+{
+	Func(null, null);
+}

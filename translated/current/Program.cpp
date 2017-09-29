@@ -1,6 +1,8 @@
 #include "runtime.h"
 
 // Declarations
+class SourceText;
+class Lexer;
 void Error(string const message);
 void BeginLine(string const value);
 void Write(string const value);
@@ -38,8 +40,34 @@ string Transpile(string const source);
 void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args);
 
 // Class Declarations
+class SourceText
+{
+public:
+	string Package;
+	string Name;
+	string Text;
+	SourceText(string const package, string const name, string const text);
+};
+class Lexer
+{
+public:
+	::SourceText const * Source;
+	Lexer(::SourceText const *const source);
+};
 
 // Definitions
+::SourceText::SourceText(string const package, string const name, string const text)
+{
+	this->Package = package;
+	this->Name = name;
+	this->Text = text;
+}
+
+::Lexer::Lexer(::SourceText const *const source)
+{
+	this->Source = source;
+}
+
 string Source = string("");
 
 string Token = string("");
@@ -141,7 +169,7 @@ void ReadToken()
 			position += 1;
 			continue;
 		}
-		else if (curChar == '{' || curChar == '}' || curChar == '(' || curChar == ')' || curChar == ';' || curChar == ',' || curChar == '.' || curChar == ':' || curChar == '[' || curChar == ']')
+		else if (curChar == '{' || curChar == '}' || curChar == '(' || curChar == ')' || curChar == ';' || curChar == ',' || curChar == '.' || curChar == ':' || curChar == '[' || curChar == ']' || curChar == '?')
 		{
 			tokenEnd = position + 1;
 			break;
@@ -421,7 +449,12 @@ string ConvertType(string const type)
 		return string("char");
 	}
 
-	if (IsValueType(type))
+	if (type == string("uint"))
+	{
+		return string("unsigned int");
+	}
+
+	if (type == string("int") || type == string("bool") || type == string("void"))
 	{
 		return type;
 	}
@@ -431,10 +464,21 @@ string ConvertType(string const type)
 
 string ConvertType(bool const mutableBinding, bool const mutableValue, string type)
 {
+	bool const nullable = type[type->Length - 1] == '?';
+	if (nullable)
+	{
+		type = type->Substring(0, type->Length - 1);
+	}
+
 	bool const isValueType = IsValueType(type);
 	type = ConvertType(type);
 	if (isValueType)
 	{
+		if (nullable)
+		{
+			type = string("::Maybe<") + type + string(">");
+		}
+
 		if (!mutableBinding && !mutableValue)
 		{
 			type = type + string(" const");
@@ -464,6 +508,11 @@ string ParseType()
 	{
 		type->Append(string("."));
 		type->Append(ExpectIdentifier());
+	}
+
+	if (Accept(string("?")))
+	{
+		type->Append(string("?"));
 	}
 
 	return type->ToString();
@@ -512,6 +561,12 @@ bool ParseAtom()
 		return true;
 	}
 
+	if (Accept(string("null")))
+	{
+		Write(string("::None"));
+		return true;
+	}
+
 	string const token = Token;
 	if (AcceptIdentifier() || AcceptNumber())
 	{
@@ -521,7 +576,7 @@ bool ParseAtom()
 
 	if (AcceptString())
 	{
-		Write(string("string(") + token + string(")"));
+		Write(string("::string(") + token + string(")"));
 		return true;
 	}
 
@@ -863,6 +918,7 @@ void ParseClassMember(string const className)
 		ClassDeclarations->AppendLine(string("\t") + className + string("(") + arguments + string(");"));
 		WriteLine(string("::") + className + string("::") + className + string("(") + arguments + string(")"));
 		ParseBlock();
+		return;
 	}
 
 	string const kind = Token;
@@ -877,6 +933,16 @@ void ParseClassMember(string const className)
 		ClassDeclarations->AppendLine(string("\t") + fieldType + string(" ") + fieldName + string(";"));
 		return;
 	}
+
+	string const methodName = ExpectIdentifier();
+	string const arguments = ParseArgumentsDeclaration(false);
+	Expect(string("->"));
+	bool const mutableValue = Accept(string("mut"));
+	string const returnType = ParseType();
+	string const convertedReturnType = ConvertType(true, mutableValue, returnType);
+	ClassDeclarations->AppendLine(string("\tauto ") + methodName + string("(") + arguments + string(") -> ") + convertedReturnType + string(";"));
+	WriteLine(string("auto ::") + className + string("::") + methodName + string("(") + arguments + string(") -> ") + convertedReturnType);
+	ParseBlock();
 }
 
 void ParseDeclaration()
@@ -931,8 +997,8 @@ void ParseDeclaration()
 	bool const mutableValue = Accept(string("mut"));
 	string const returnType = ParseType();
 	string const convertedReturnType = ConvertType(true, mutableValue, returnType);
-	Declarations->AppendLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(");"));
-	WriteLine(convertedReturnType + string(" ") + name + string("(") + arguments + string(")"));
+	Declarations->AppendLine(string("auto ") + name + string("(") + arguments + string(") -> ") + convertedReturnType + string(";"));
+	WriteLine(string("auto ") + name + string("(") + arguments + string(") -> ") + convertedReturnType);
 	if (name == string("Main"))
 	{
 		if (MainFunctionReturnType != string(""))

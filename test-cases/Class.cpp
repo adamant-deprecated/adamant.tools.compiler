@@ -2,25 +2,31 @@
 
 // Declarations
 class C;
-void Main();
+auto Main() -> void;
 
 // Class Declarations
 class C
 {
 public:
-	string Name;
-	C(string const name);
+	::string Name;
+	C(::string const name);
+	auto Method() -> ::string;
 };
 
 // Definitions
-::C::C(string const name)
+::C::C(::string const name)
 {
 	Name = name;
 }
 
-void Main()
+auto ::C::Method() -> ::string
 {
-	::C const *const c = new ::C(string("Bob"));
+	return Name;
+}
+
+auto Main() -> void
+{
+	::C const *const c = new ::C(::string("Bob"));
 }
 
 // Entry Point Adapter

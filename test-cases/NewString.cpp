@@ -1,14 +1,14 @@
 #include "runtime.h"
 
 // Declarations
-void Main();
+auto Main() -> void;
 
 // Class Declarations
 
 // Definitions
-void Main()
+auto Main() -> void
 {
-	string(string("foo"));
+	::string(::string("foo"));
 }
 
 // Entry Point Adapter

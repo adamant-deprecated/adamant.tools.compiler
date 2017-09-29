@@ -1,18 +1,18 @@
 #include "runtime.h"
 
 // Declarations
-bool True();
-void Main();
+auto True() -> bool;
+auto Main() -> void;
 
 // Class Declarations
 
 // Definitions
-bool True()
+auto True() -> bool
 {
 	return true;
 }
 
-void Main()
+auto Main() -> void
 {
 	bool x;
 	x = true && false;

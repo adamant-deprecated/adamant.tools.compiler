@@ -1,3 +1,28 @@
+public class SourceText
+{
+	public let Package: string;
+	public let Name: string;
+	public let Text: string;
+
+	public new(package: string, name: string, text: string)
+	{
+		this.Package = package;
+		this.Name = name;
+		this.Text = text;
+	}
+}
+
+public class Lexer
+{
+	public let Source: SourceText;
+	//private var position: uint;
+
+	public new(source: SourceText)
+	{
+		this.Source = source;
+	}
+}
+
 public var Source: string = "";
 public var Token: string = "";
 public var NextTokenPosition: int = 0;
@@ -109,6 +134,7 @@ public ReadToken() -> void
 			or curChar == ':'
 			or curChar == '['
 			or curChar == ']'
+			or curChar == '?'
 		{
 			tokenEnd = position + 1;
 			break;
@@ -375,20 +401,27 @@ public ConvertType(type: string) -> string
 {
 	if type == "code_point"
 		{ return "char"; }
-	if IsValueType(type)
+	if type == "uint"
+		{ return "unsigned int"; }
+	if type == "int" or type == "bool" or type == "void"
 		{ return type; }
 
 	return "::" + type.Replace(".", "::");
 }
 
-// TODO should be `var type: string` so we don't need separate result variable
 public ConvertType(mutableBinding: bool, mutableValue: bool, var type: string) -> string
 {
+	let nullable: bool = type[type.Length-1] == '?';
+	if nullable // remove the `?`
+		{ type = type.Substring(0, type.Length-1); }
+
 	let isValueType: bool = IsValueType(type);
 	type = ConvertType(type);
 
 	if isValueType
 	{
+		if nullable
+			{ type = "::Maybe<" + type + ">"; }
 		if not mutableBinding and not mutableValue
 			{ type = type + " const"; }
 	}
@@ -411,6 +444,9 @@ public ParseType() -> string
 		type.Append(".");
 		type.Append(ExpectIdentifier());
 	}
+
+	if Accept("?")
+		{ type.Append("?"); }
 
 	return type.ToString();
 }
@@ -454,6 +490,11 @@ public ParseAtom() -> bool
 		ParseExpression(7);
 		return true;
 	}
+	if Accept("null")
+	{
+		Write("::None");
+		return true;
+	}
 
 	let token: string = Token;
 	if AcceptIdentifier() or AcceptNumber()
@@ -463,7 +504,7 @@ public ParseAtom() -> bool
 	}
 	if AcceptString()
 	{
-		Write("string(" + token + ")");
+		Write("::string(" + token + ")");
 		return true;
 	}
 	if AcceptCodePoint()
@@ -782,6 +823,7 @@ public ParseClassMember(className: string) -> void
 		ClassDeclarations.AppendLine("\t" + className + "(" + arguments + ");");
 		WriteLine("::" + className + "::" + className + "(" + arguments + ")");
 		ParseBlock();
+		return;
 	}
 
 	let kind: string = Token;
@@ -796,6 +838,17 @@ public ParseClassMember(className: string) -> void
 		ClassDeclarations.AppendLine("\t" + fieldType + " " + fieldName + ";");
 		return;
 	}
+
+	// Method Declaration
+	let methodName: string = ExpectIdentifier();
+	let arguments: string = ParseArgumentsDeclaration(false);
+	Expect("->");
+	let mutableValue: bool = Accept("mut");
+	let returnType: string = ParseType();
+	let convertedReturnType: string = ConvertType(true, mutableValue, returnType);
+	ClassDeclarations.AppendLine("\tauto " + methodName + "(" + arguments + ") -> " + convertedReturnType + ";");
+	WriteLine("auto ::" + className + "::" + methodName + "(" + arguments + ") -> " + convertedReturnType);
+	ParseBlock();
 }
 
 public ParseDeclaration() -> void
@@ -853,8 +906,8 @@ public ParseDeclaration() -> void
 	let returnType: string = ParseType();
 	let convertedReturnType: string = ConvertType(true, mutableValue, returnType);
 	// Write out the function declaration for C++ so we can call functions defined after others
-	Declarations.AppendLine(convertedReturnType + " " + name + "(" + arguments + ");");
-	WriteLine(convertedReturnType + " " + name + "(" + arguments + ")");
+	Declarations.AppendLine("auto " + name + "(" + arguments + ") -> " + convertedReturnType + ";");
+	WriteLine("auto " + name + "(" + arguments + ") -> " + convertedReturnType);
 	if name == "Main"
 	{
 		if MainFunctionReturnType <> ""

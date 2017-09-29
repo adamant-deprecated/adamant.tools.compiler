@@ -8,6 +8,7 @@ auto Main() -> void;
 // Definitions
 auto Main() -> void
 {
+	unsigned int x = 1 + 2;
 }
 
 // Entry Point Adapter

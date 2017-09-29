@@ -6,6 +6,11 @@ public class C
 	{
 		Name = name;
 	}
+
+	public Method() -> string
+	{
+		return Name;
+	}
 }
 
 public Main() -> void

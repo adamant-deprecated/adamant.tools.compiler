@@ -1,0 +1,4 @@
+public Main() -> void
+{
+	var x: uint = 1 + 2;
+}

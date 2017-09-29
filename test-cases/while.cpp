@@ -1,12 +1,12 @@
 #include "runtime.h"
 
 // Declarations
-int Main();
+auto Main() -> int;
 
 // Class Declarations
 
 // Definitions
-int Main()
+auto Main() -> int
 {
 	while (true)
 	{

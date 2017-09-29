@@ -1,18 +1,18 @@
 #include "runtime.h"
 
 // Declarations
-bool Func(bool const value);
-void Main();
+auto Func(bool const value) -> bool;
+auto Main() -> void;
 
 // Class Declarations
 
 // Definitions
-bool Func(bool const value)
+auto Func(bool const value) -> bool
 {
 	return false;
 }
 
-void Main()
+auto Main() -> void
 {
 	Func(true);
 }

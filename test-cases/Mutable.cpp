@@ -1,25 +1,25 @@
 #include "runtime.h"
 
 // Declarations
-::System::Text::StringBuilder * Func(int x, int const y);
-void Main(::System::Console::Console *const console);
+auto Func(int x, int const y) -> ::System::Text::StringBuilder *;
+auto Main(::System::Console::Console *const console) -> void;
 
 // Class Declarations
 
 // Definitions
-::System::Text::StringBuilder * Func(int x, int const y)
+auto Func(int x, int const y) -> ::System::Text::StringBuilder *
 {
 	x += 1;
 	int const i = x + 2;
 	int j = y - 23;
 	j = i;
-	::System::Text::StringBuilder *const stringA = new ::System::Text::StringBuilder(string("Hello"));
+	::System::Text::StringBuilder *const stringA = new ::System::Text::StringBuilder(::string("Hello"));
 	::System::Text::StringBuilder const * stringB;
 	stringB = stringA;
 	return stringA;
 }
 
-void Main(::System::Console::Console *const console)
+auto Main(::System::Console::Console *const console) -> void
 {
 	console->WriteLine(Func(1, 2)->ToString());
 }

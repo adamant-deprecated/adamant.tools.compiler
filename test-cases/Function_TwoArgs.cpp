@@ -1,18 +1,18 @@
 #include "runtime.h"
 
 // Declarations
-int Func(int const a, int const b);
-int Main();
+auto Func(int const a, int const b) -> int;
+auto Main() -> int;
 
 // Class Declarations
 
 // Definitions
-int Func(int const a, int const b)
+auto Func(int const a, int const b) -> int
 {
 	return b;
 }
 
-int Main()
+auto Main() -> int
 {
 	return Func(0, 42);
 }
