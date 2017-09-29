@@ -1,4 +1,4 @@
-Func(var x: int, y: int) -> mut System.Text.StringBuilder
+public Func(var x: int, y: int) -> mut System.Text.StringBuilder
 {
 	x += 1;
 	let i: int = x + 2;
@@ -10,7 +10,7 @@ Func(var x: int, y: int) -> mut System.Text.StringBuilder
 	return stringA;
 }
 
-Main(console: mut System.Console.Console) -> void
+public Main(console: mut System.Console.Console) -> void
 {
 	console.WriteLine(Func(1, 2).ToString());
 }

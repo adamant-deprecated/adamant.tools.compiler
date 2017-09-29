@@ -1,9 +1,9 @@
-Func(value: bool) -> bool
+public Func(value: bool) -> bool
 {
 	return false;
 }
 
-Main() -> void
+public Main() -> void
 {
 	Func(true);
 }

@@ -1,9 +1,9 @@
-Identity(value: int) -> int
+public Identity(value: int) -> int
 {
 	return value;
 }
 
-Main() -> int
+public Main() -> int
 {
 	return Identity(42);
 }

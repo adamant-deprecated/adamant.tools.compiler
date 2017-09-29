@@ -1,6 +1,6 @@
-var Result: int = 42;
+public var Result: int = 42;
 
-Main() -> int
+public Main() -> int
 {
 	return Result;
 }

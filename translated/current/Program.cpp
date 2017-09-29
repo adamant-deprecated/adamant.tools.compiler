@@ -848,6 +848,15 @@ string ParseArgumentsDeclaration(bool const isMainFunction)
 
 void ParseClassMember(string const className)
 {
+	string const accessModifier = Token;
+	if (Accept(string("public")) || Accept(string("internal")) || Accept(string("protected")) || Accept(string("private")))
+	{
+	}
+	else
+	{
+		Error(string("Expected access modifier, found `") + accessModifier + string("`"));
+	}
+
 	if (Accept(string("new")))
 	{
 		string const arguments = ParseArgumentsDeclaration(false);
@@ -872,6 +881,11 @@ void ParseClassMember(string const className)
 
 void ParseDeclaration()
 {
+	string const accessModifier = Token;
+	if (Accept(string("public")) || Accept(string("internal")))
+	{
+	}
+
 	string const kind = Token;
 	if (Accept(string("var")) || Accept(string("let")))
 	{

@@ -1,4 +1,4 @@
-Main() -> int
+public Main() -> int
 {
 	var result: int;
 	result = 42;

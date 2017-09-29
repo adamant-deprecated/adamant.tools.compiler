@@ -1,4 +1,4 @@
-Main() -> void
+public Main() -> void
 {
 	var x: bool;
 	x = 1 < 2;

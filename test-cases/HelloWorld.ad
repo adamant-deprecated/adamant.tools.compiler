@@ -1,4 +1,4 @@
-Main(console: mut System.Console.Console) -> void
+public Main(console: mut System.Console.Console) -> void
 {
 	console.WriteLine("Hello World!");
 }

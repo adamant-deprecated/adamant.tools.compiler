@@ -1,4 +1,4 @@
-Main() -> void
+public Main() -> void
 {
 	var x: int = 1 + 2;
 	x = 1 - 2;

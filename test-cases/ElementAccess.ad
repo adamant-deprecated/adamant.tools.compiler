@@ -1,4 +1,4 @@
-Main() -> void
+public Main() -> void
 {
 	var result: code_point;
 	result = "hello"[0];

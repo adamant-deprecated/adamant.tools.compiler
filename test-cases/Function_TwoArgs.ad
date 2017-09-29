@@ -1,9 +1,9 @@
-Func(a: int, b: int) -> int
+public Func(a: int, b: int) -> int
 {
 	return b;
 }
 
-Main() -> int
+public Main() -> int
 {
 	return Func(0, 42);
 }

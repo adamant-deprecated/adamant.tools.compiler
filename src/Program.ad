@@ -764,6 +764,16 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 
 ParseClassMember(className: string) -> void
 {
+	let accessModifier: string = Token;
+	if Accept("public") or Accept("internal") or Accept("protected") or Accept("private")
+	{
+		// TODO currently not doing anything with the access modifier
+	}
+	else
+	{
+		Error("Expected access modifier, found `" + accessModifier + "`");
+	}
+
 	if Accept("new")
 	{
 		// Constructor
@@ -790,6 +800,12 @@ ParseClassMember(className: string) -> void
 
 ParseDeclaration() -> void
 {
+	let accessModifier: string = Token;
+	if Accept("public") or Accept("internal")
+	{
+		// TODO currently not doing anything with the access modifier
+	}
+
 	// Static Variable Declaration
 	let kind: string = Token;
 	if Accept("var") or Accept("let")

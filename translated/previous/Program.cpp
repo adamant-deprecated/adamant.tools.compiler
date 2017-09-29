@@ -31,10 +31,13 @@ void ParseExpression();
 bool ParseStatement();
 void ParseBlock();
 string ParseArgumentsDeclaration(bool const isMainFunction);
+void ParseClassMember(string const className);
 void ParseDeclaration();
 void ParseProgram();
 string Transpile(string const source);
 void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args);
+
+// Class Declarations
 
 // Definitions
 string Source = string("");
@@ -843,6 +846,30 @@ string ParseArgumentsDeclaration(bool const isMainFunction)
 	return result->Substring(0, result->Length - 2);
 }
 
+void ParseClassMember(string const className)
+{
+	if (Accept(string("new")))
+	{
+		string const arguments = ParseArgumentsDeclaration(false);
+		ClassDeclarations->AppendLine(string("\t") + className + string("(") + arguments + string(");"));
+		WriteLine(string("::") + className + string("::") + className + string("(") + arguments + string(")"));
+		ParseBlock();
+	}
+
+	string const kind = Token;
+	if (Accept(string("var")) || Accept(string("let")))
+	{
+		string const fieldName = ExpectIdentifier();
+		Expect(string(":"));
+		bool const mutableValue = Accept(string("mut"));
+		string fieldType = ParseType();
+		fieldType = ConvertType(true, mutableValue, fieldType);
+		Expect(string(";"));
+		ClassDeclarations->AppendLine(string("\t") + fieldType + string(" ") + fieldName + string(";"));
+		return;
+	}
+}
+
 void ParseDeclaration()
 {
 	string const kind = Token;
@@ -870,7 +897,12 @@ void ParseDeclaration()
 		ClassDeclarations->AppendLine(string("class ") + className);
 		Expect(string("{"));
 		ClassDeclarations->AppendLine(string("{"));
-		Expect(string("}"));
+		ClassDeclarations->AppendLine(string("public:"));
+		while (!Accept(string("}")))
+		{
+			ParseClassMember(className);
+		}
+
 		ClassDeclarations->AppendLine(string("};"));
 		return;
 	}

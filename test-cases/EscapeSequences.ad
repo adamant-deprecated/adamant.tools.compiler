@@ -1,4 +1,4 @@
-Main() -> void
+public Main() -> void
 {
 	var s: string = "\"\\";
 	var c: code_point = '\'';
