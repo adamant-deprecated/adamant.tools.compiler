@@ -1,26 +1,26 @@
-var Source: string = "";
-var Token: string = "";
-var NextTokenPosition: int = 0;
+public var Source: string = "";
+public var Token: string = "";
+public var NextTokenPosition: int = 0;
 // TODO should be `new mut`
-let Declarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
-let ClassDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
-let Definitions: mut System.Text.StringBuilder = new System.Text.StringBuilder();
-var IndentDepth: int = 0;
-var AfterDeclaration: bool = false;
-var MainFunctionReturnType: string = "";
-var MainFunctionAcceptsConsole: bool = false;
-var MainFunctionAcceptsArgs: bool = false;
+public let Declarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
+public let ClassDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
+public let Definitions: mut System.Text.StringBuilder = new System.Text.StringBuilder();
+public var IndentDepth: int = 0;
+public var AfterDeclaration: bool = false;
+public var MainFunctionReturnType: string = "";
+public var MainFunctionAcceptsConsole: bool = false;
+public var MainFunctionAcceptsArgs: bool = false;
 
 // ----------------------------------------------------------------------------
 // Code Writing
 // ----------------------------------------------------------------------------
 
-Error(message: string) -> void
+public Error(message: string) -> void
 {
 	Definitions.Append("<$ " + message + " $>");
 }
 
-BeginLine(value: string) -> void
+public BeginLine(value: string) -> void
 {
 	if AfterDeclaration
 	{
@@ -31,18 +31,18 @@ BeginLine(value: string) -> void
 	Definitions.Append(value);
 }
 
-Write(value: string) -> void
+public Write(value: string) -> void
 {
 	Definitions.Append(value);
 }
 
-EndLine(value: string) -> void
+public EndLine(value: string) -> void
 {
 	Definitions.Append(value);
 	Definitions.AppendLine(); // TODO need to think about the handling of newlines
 }
 
-WriteLine(value: string) -> void
+public WriteLine(value: string) -> void
 {
 	if AfterDeclaration
 	{
@@ -54,13 +54,13 @@ WriteLine(value: string) -> void
 	Definitions.AppendLine();
 }
 
-BeginBlock() -> void
+public BeginBlock() -> void
 {
 	WriteLine("{");
 	IndentDepth += 1;
 }
 
-EndBlock() -> void
+public EndBlock() -> void
 {
 	AfterDeclaration = false; // so that we don't put a blank line between two closing braces
 	IndentDepth -= 1;
@@ -72,17 +72,17 @@ EndBlock() -> void
 // Lexer
 // ----------------------------------------------------------------------------
 
-IsIdentifierChar(c: code_point) -> bool
+public IsIdentifierChar(c: code_point) -> bool
 {
 	return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
 }
 
-IsNumberChar(c: code_point) -> bool
+public IsNumberChar(c: code_point) -> bool
 {
 	return c >= '0' and c <= '9';
 }
 
-ReadToken() -> void
+public ReadToken() -> void
 {
 	var position: int = NextTokenPosition;
 	var tokenEnd: int = -1;
@@ -266,7 +266,7 @@ ReadToken() -> void
 	}
 }
 
-ReadFirstToken() -> void
+public ReadFirstToken() -> void
 {
 	if NextTokenPosition <> 0
 	{
@@ -276,7 +276,7 @@ ReadFirstToken() -> void
 	ReadToken();
 }
 
-TokenIsIdentifier() -> bool
+public TokenIsIdentifier() -> bool
 {
 	if Token.Length == 0
 		{ return false; }
@@ -289,14 +289,14 @@ TokenIsIdentifier() -> bool
 	return true;
 }
 
-Accept(expected: string) -> bool
+public Accept(expected: string) -> bool
 {
 	let accepted: bool = Token == expected;
 	if accepted { ReadToken(); }
 	return accepted;
 }
 
-Expect(expected: string) -> void
+public Expect(expected: string) -> void
 {
 	if Token <> expected
 	{
@@ -309,14 +309,14 @@ Expect(expected: string) -> void
 	}
 }
 
-AcceptIdentifier() -> bool
+public AcceptIdentifier() -> bool
 {
 	if not TokenIsIdentifier() { return false; }
 	ReadToken();
 	return true;
 }
 
-AcceptString() -> bool
+public AcceptString() -> bool
 {
 	if Token.Length == 0 or Token[0] <> '"'
 		{ return false; }
@@ -325,7 +325,7 @@ AcceptString() -> bool
 	return true;
 }
 
-AcceptCodePoint() -> bool
+public AcceptCodePoint() -> bool
 {
 	if Token.Length == 0 or Token[0] <> '\''
 		{ return false; }
@@ -334,7 +334,7 @@ AcceptCodePoint() -> bool
 	return true;
 }
 
-AcceptNumber() -> bool
+public AcceptNumber() -> bool
 {
 	for let c: code_point in Token
 	{
@@ -346,7 +346,7 @@ AcceptNumber() -> bool
 	return true;
 }
 
-ExpectIdentifier() -> string
+public ExpectIdentifier() -> string
 {
 	if not TokenIsIdentifier()
 	{
@@ -364,14 +364,14 @@ ExpectIdentifier() -> string
 // Parser
 // ----------------------------------------------------------------------------
 
-IsValueType(type: string) -> bool
+public IsValueType(type: string) -> bool
 {
 	// Here we assume that they follow convention and value types start lowercase
 	let firstChar: code_point = type[0];
 	return firstChar >= 'a' and firstChar <= 'z';
 }
 
-ConvertType(type: string) -> string
+public ConvertType(type: string) -> string
 {
 	if type == "code_point"
 		{ return "char"; }
@@ -382,7 +382,7 @@ ConvertType(type: string) -> string
 }
 
 // TODO should be `var type: string` so we don't need separate result variable
-ConvertType(mutableBinding: bool, mutableValue: bool, var type: string) -> string
+public ConvertType(mutableBinding: bool, mutableValue: bool, var type: string) -> string
 {
 	let isValueType: bool = IsValueType(type);
 	type = ConvertType(type);
@@ -402,7 +402,7 @@ ConvertType(mutableBinding: bool, mutableValue: bool, var type: string) -> strin
 	return type;
 }
 
-ParseType() -> string
+public ParseType() -> string
 {
 	// TODO should be `new mut`
 	let type: mut System.Text.StringBuilder = new System.Text.StringBuilder(ExpectIdentifier());
@@ -416,7 +416,7 @@ ParseType() -> string
 }
 
 // An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
-ParseAtom() -> bool
+public ParseAtom() -> bool
 {
 	if Accept("new")
 	{
@@ -475,7 +475,7 @@ ParseAtom() -> bool
 	return false;
 }
 
-ParseCallArguments() -> void
+public ParseCallArguments() -> void
 {
 	var first: bool = true;
 	do
@@ -495,7 +495,7 @@ ParseCallArguments() -> void
 // 6 Additive: + -
 // 7 Unary: -
 // 8 Primary: f() . []
-ParseExpression(minPrecedence: int) -> void
+public ParseExpression(minPrecedence: int) -> void
 {
 	if not ParseAtom() { return; }
 
@@ -605,12 +605,12 @@ ParseExpression(minPrecedence: int) -> void
 	}
 }
 
-ParseExpression() -> void
+public ParseExpression() -> void
 {
 	ParseExpression(1);
 }
 
-ParseStatement() -> bool
+public ParseStatement() -> bool
 {
 	if Accept("return")
 	{
@@ -724,7 +724,7 @@ ParseStatement() -> bool
 	return true;
 }
 
-ParseBlock() -> void
+public ParseBlock() -> void
 {
 	Expect("{");
 	BeginBlock();
@@ -733,7 +733,7 @@ ParseBlock() -> void
 	EndBlock();
 }
 
-ParseArgumentsDeclaration(isMainFunction: bool) -> string
+public ParseArgumentsDeclaration(isMainFunction: bool) -> string
 {
 	Expect("(");
 	if Accept(")") { return ""; }
@@ -762,7 +762,7 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 	return result.Substring(0, result.Length - 2); // remove the trailing comma and space
 }
 
-ParseClassMember(className: string) -> void
+public ParseClassMember(className: string) -> void
 {
 	let accessModifier: string = Token;
 	if Accept("public") or Accept("internal") or Accept("protected") or Accept("private")
@@ -798,12 +798,16 @@ ParseClassMember(className: string) -> void
 	}
 }
 
-ParseDeclaration() -> void
+public ParseDeclaration() -> void
 {
 	let accessModifier: string = Token;
 	if Accept("public") or Accept("internal")
 	{
 		// TODO currently not doing anything with the access modifier
+	}
+	else
+	{
+		Error("Expected access modifier, found `" + accessModifier + "`");
 	}
 
 	// Static Variable Declaration
@@ -860,7 +864,7 @@ ParseDeclaration() -> void
 	ParseBlock();
 }
 
-ParseProgram() -> void
+public ParseProgram() -> void
 {
 	// Setup the beginning of each section
 	Declarations.AppendLine("#include \"runtime.h\"");
@@ -907,7 +911,7 @@ ParseProgram() -> void
 // Transpiler
 // ----------------------------------------------------------------------------
 
-Transpile(source: string) -> string
+public Transpile(source: string) -> string
 {
 	Source = source;
 	ReadFirstToken();
@@ -915,7 +919,7 @@ Transpile(source: string) -> string
 	return Declarations.ToString() + ClassDeclarations.ToString() + Definitions.ToString();
 }
 
-Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void
+public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void
 {
 	console.WriteLine("Adamant Compiler v0.1.0");
 	if args.Count <> 2
