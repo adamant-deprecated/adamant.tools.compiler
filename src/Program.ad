@@ -15,12 +15,107 @@ public class SourceText
 public class Lexer
 {
 	public let Source: SourceText;
-	//private var position: uint;
+	private var position: uint;
 
 	public new(source: SourceText)
 	{
 		this.Source = source;
 	}
+
+	public NextToken() -> SyntaxToken?
+	{
+		// return NewToken(TokenType.LeftParen);
+		return null;
+	}
+
+	private NewToken(type: TokenType, end: uint) -> SyntaxToken
+	{
+		let start: uint = position;
+		position = end;
+		return new SyntaxToken(type, Source, start, end);
+	}
+
+	private NewToken(type: TokenType) -> SyntaxToken
+	{
+		return NewToken(type, position+1);
+	}
+}
+
+// TODO make this an enum struct
+public class TokenType
+{
+	//Keyword,
+	//Identifier,
+	//LeftParen,
+	//RightParen,
+	//LeftBrace,
+	//RightBrace,
+	//LeftBracket,
+	//RightBracket,
+	//Colon,
+	//Dot,
+	//Semicolon,
+	//Assign,
+	//IsNull,
+	//Plus,
+	//Comma,
+}
+
+public class SyntaxToken
+{
+	public let TokenType: TokenType;
+	public let Source: SourceText;
+	public let Start: uint;
+	public let Length: uint;
+	//public Text: string;
+
+	public new(tokenType: TokenType, source: SourceText, start: uint, length: uint)
+	{
+		TokenType = tokenType;
+		Source = source;
+		Start = start;
+		Length = length;
+	}
+}
+
+public class Parser
+{
+	public let Lexer: Lexer;
+
+	public new(lexer: Lexer)
+	{
+		this.Lexer = lexer;
+	}
+
+	public Parse() -> SyntaxNode
+	{
+
+	}
+}
+
+public class SyntaxNode
+{
+
+}
+
+public ReadSource() -> SourceText
+{
+	// TODO should be mut new
+	let file: mut System.IO.FileReader = new System.IO.FileReader("src/Program.ad");
+	let contents: string = file.ReadToEndSync();
+	return new SourceText("MicroAdamant.Compiler", "Program.adam", contents);
+}
+
+public Parse(source: SourceText) -> SyntaxNode
+{
+	// TODO should be mut new
+	let lexer: mut Lexer = new Lexer(source);
+	let parser: mut Parser = new Parser(lexer);
+	return parser.Parse();
+}
+
+public EmitCpp(syntaxTree: SyntaxNode) -> void
+{
 }
 
 public var Source: string = "";
@@ -894,6 +989,34 @@ public ParseDeclaration() -> void
 		{
 			ParseClassMember(className);
 		}
+		ClassDeclarations.AppendLine("};");
+		return;
+	}
+
+	if Accept("enum")
+	{
+		Expect("struct");
+		let enumName: string = ExpectIdentifier();
+		Declarations.AppendLine("enum " + enumName + ";");
+		ClassDeclarations.AppendLine("enum " + enumName);
+		Expect("{");
+		ClassDeclarations.AppendLine("{");
+		do
+		{
+			let enumValue: string = ExpectIdentifier();
+			ClassDeclarations.Append("\t" + enumValue);
+			if Accept("=")
+			{
+				ClassDeclarations.Append(" = ");
+				let value: string = Token;
+				if  AcceptNumber()
+					{ ClassDeclarations.Append(value); }
+				else
+					{ Error("Expected number found `"+ value + "`"); }
+			}
+			ClassDeclarations.AppendLine(",");
+		} while Accept(",");
+		Expect("}");
 		ClassDeclarations.AppendLine("};");
 		return;
 	}

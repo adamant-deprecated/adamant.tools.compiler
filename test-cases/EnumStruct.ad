@@ -1,0 +1,16 @@
+public enum struct day_of_week
+{
+	Sunday = 0, // The value for Sunday is 0
+	Monday = 1, // The value for Monday is 1
+	Tuesday,
+	Wednesday,
+	Thursday,
+	Friday,
+	Saturday
+}
+
+public Main() -> void
+{
+	// TODO day_of_week.Tuesday doesn't work
+	//let d: day_of_week = day_of_week.Tuesday;
+}
