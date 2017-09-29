@@ -1,8 +1,14 @@
 class C
 {
+	let Name: string;
+
+	new(name: string)
+	{
+		Name = name;
+	}
 }
 
 Main() -> void
 {
-	let c: C = new C();
+	let c: C = new C("Bob");
 }

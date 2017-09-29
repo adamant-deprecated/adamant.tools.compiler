@@ -7,12 +7,20 @@ void Main();
 // Class Declarations
 class C
 {
+public:
+	string Name;
+	C(string const name);
 };
 
 // Definitions
+::C::C(string const name)
+{
+	Name = name;
+}
+
 void Main()
 {
-	::C const *const c = new ::C();
+	::C const *const c = new ::C(string("Bob"));
 }
 
 // Entry Point Adapter

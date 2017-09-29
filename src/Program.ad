@@ -762,6 +762,31 @@ ParseArgumentsDeclaration(isMainFunction: bool) -> string
 	return result.Substring(0, result.Length - 2); // remove the trailing comma and space
 }
 
+ParseClassMember(className: string) -> void
+{
+	if Accept("new")
+	{
+		// Constructor
+		let arguments: string = ParseArgumentsDeclaration(false);
+		// Write out the function declaration for C++ so we can call functions defined after others
+		ClassDeclarations.AppendLine("\t" + className + "(" + arguments + ");");
+		WriteLine("::" + className + "::" + className + "(" + arguments + ")");
+		ParseBlock();
+	}
+
+	let kind: string = Token;
+	if Accept("var") or Accept("let")
+	{
+		let fieldName: string = ExpectIdentifier();
+		Expect(":");
+		let mutableValue: bool = Accept("mut");
+		var fieldType: string = ParseType();
+		fieldType = ConvertType(true, mutableValue, fieldType); // because we need to assign them in constructors don't mark fields const
+		Expect(";");
+		ClassDeclarations.AppendLine("\t" + fieldType + " " + fieldName + ";");
+		return;
+	}
+}
 
 ParseDeclaration() -> void
 {
@@ -791,8 +816,11 @@ ParseDeclaration() -> void
 		ClassDeclarations.AppendLine("class " + className);
 		Expect("{");
 		ClassDeclarations.AppendLine("{");
-
-		Expect("}");
+		ClassDeclarations.AppendLine("public:");
+		while not Accept("}")
+		{
+			ParseClassMember(className);
+		}
 		ClassDeclarations.AppendLine("};");
 		return;
 	}
