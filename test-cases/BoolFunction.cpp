@@ -4,6 +4,8 @@
 bool Func(bool const value);
 void Main();
 
+// Class Declarations
+
 // Definitions
 bool Func(bool const value)
 {

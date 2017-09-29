@@ -4,6 +4,8 @@
 ::System::Text::StringBuilder * Func(int x, int const y);
 void Main(::System::Console::Console *const console);
 
+// Class Declarations
+
 // Definitions
 ::System::Text::StringBuilder * Func(int x, int const y)
 {

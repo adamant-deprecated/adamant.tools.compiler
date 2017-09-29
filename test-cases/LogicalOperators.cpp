@@ -4,6 +4,8 @@
 bool True();
 void Main();
 
+// Class Declarations
+
 // Definitions
 bool True()
 {

@@ -3,6 +3,8 @@
 // Declarations
 void Main();
 
+// Class Declarations
+
 // Definitions
 void Main()
 {

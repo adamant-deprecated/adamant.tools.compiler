@@ -3,6 +3,8 @@
 // Declarations
 void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args);
 
+// Class Declarations
+
 // Definitions
 void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args)
 {

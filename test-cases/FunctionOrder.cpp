@@ -4,6 +4,8 @@
 int Main();
 int Func();
 
+// Class Declarations
+
 // Definitions
 int Main()
 {

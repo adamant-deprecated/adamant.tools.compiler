@@ -4,6 +4,8 @@
 int Identity(int const value);
 int Main();
 
+// Class Declarations
+
 // Definitions
 int Identity(int const value)
 {

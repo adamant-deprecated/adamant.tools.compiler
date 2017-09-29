@@ -1,18 +1,18 @@
 #include "runtime.h"
 
 // Declarations
+class C;
 void Main();
 
 // Class Declarations
+class C
+{
+};
 
 // Definitions
 void Main()
 {
-	bool x;
-	x = 1 < 2;
-	x = 1 <= 2;
-	x = 1 > 2;
-	x = 1 >= 2;
+	::C const *const c = new ::C();
 }
 
 // Entry Point Adapter

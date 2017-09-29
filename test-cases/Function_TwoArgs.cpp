@@ -4,6 +4,8 @@
 int Func(int const a, int const b);
 int Main();
 
+// Class Declarations
+
 // Definitions
 int Func(int const a, int const b)
 {

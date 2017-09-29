@@ -45,6 +45,8 @@ int NextTokenPosition = 0;
 
 ::System::Text::StringBuilder *const Declarations = new ::System::Text::StringBuilder();
 
+::System::Text::StringBuilder *const ClassDeclarations = new ::System::Text::StringBuilder();
+
 ::System::Text::StringBuilder *const Definitions = new ::System::Text::StringBuilder();
 
 int IndentDepth = 0;
@@ -861,6 +863,18 @@ void ParseDeclaration()
 		return;
 	}
 
+	if (Accept(string("class")))
+	{
+		string const className = ExpectIdentifier();
+		Declarations->AppendLine(string("class ") + className + string(";"));
+		ClassDeclarations->AppendLine(string("class ") + className);
+		Expect(string("{"));
+		ClassDeclarations->AppendLine(string("{"));
+		Expect(string("}"));
+		ClassDeclarations->AppendLine(string("};"));
+		return;
+	}
+
 	string const name = ExpectIdentifier();
 	string const arguments = ParseArgumentsDeclaration(name == string("Main"));
 	Expect(string("->"));
@@ -887,7 +901,9 @@ void ParseProgram()
 	Declarations->AppendLine(string("#include \"runtime.h\""));
 	Declarations->AppendLine(string(""));
 	Declarations->AppendLine(string("// Declarations"));
-	AfterDeclaration = true;
+	ClassDeclarations->AppendLine(string(""));
+	ClassDeclarations->AppendLine(string("// Class Declarations"));
+	WriteLine(string(""));
 	WriteLine(string("// Definitions"));
 	do
 	{
@@ -931,7 +947,7 @@ string Transpile(string const source)
 	Source = source;
 	ReadFirstToken();
 	ParseProgram();
-	return Declarations->ToString() + Definitions->ToString();
+	return Declarations->ToString() + ClassDeclarations->ToString() + Definitions->ToString();
 }
 
 void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args)

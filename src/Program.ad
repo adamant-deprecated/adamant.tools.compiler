@@ -3,6 +3,7 @@ var Token: string = "";
 var NextTokenPosition: int = 0;
 // TODO should be `new mut`
 let Declarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
+let ClassDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 let Definitions: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 var IndentDepth: int = 0;
 var AfterDeclaration: bool = false;
@@ -783,6 +784,19 @@ ParseDeclaration() -> void
 		return;
 	}
 
+	if Accept("class")
+	{
+		let className: string = ExpectIdentifier();
+		Declarations.AppendLine("class " + className + ";");
+		ClassDeclarations.AppendLine("class " + className);
+		Expect("{");
+		ClassDeclarations.AppendLine("{");
+
+		Expect("}");
+		ClassDeclarations.AppendLine("};");
+		return;
+	}
+
 	// Function Declaration
 	let name: string = ExpectIdentifier();
 	let arguments: string = ParseArgumentsDeclaration(name == "Main");
@@ -804,10 +818,13 @@ ParseDeclaration() -> void
 
 ParseProgram() -> void
 {
+	// Setup the beginning of each section
 	Declarations.AppendLine("#include \"runtime.h\"");
 	Declarations.AppendLine("");
 	Declarations.AppendLine("// Declarations");
-	AfterDeclaration = true;
+	ClassDeclarations.AppendLine("");
+	ClassDeclarations.AppendLine("// Class Declarations");
+	WriteLine("");
 	WriteLine("// Definitions");
 
 	do
@@ -851,7 +868,7 @@ Transpile(source: string) -> string
 	Source = source;
 	ReadFirstToken();
 	ParseProgram();
-	return Declarations.ToString() + Definitions.ToString();
+	return Declarations.ToString() + ClassDeclarations.ToString() + Definitions.ToString();
 }
 
 Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void

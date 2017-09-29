@@ -3,6 +3,8 @@
 // Declarations
 int Main();
 
+// Class Declarations
+
 // Definitions
 int Main()
 {

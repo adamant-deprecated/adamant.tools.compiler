@@ -4,6 +4,8 @@
 char Identity(char const value);
 void Main();
 
+// Class Declarations
+
 // Definitions
 char Identity(char const value)
 {

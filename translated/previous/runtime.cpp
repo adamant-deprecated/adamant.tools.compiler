@@ -97,12 +97,12 @@ namespace System
 {
 	namespace Console
 	{
-		void Console::Write(string value) const
+		void Console::Write(string value)
 		{
 			std::printf("%.*s", value.Length, value.Buffer);
 		}
 
-		void Console::WriteLine(string value) const
+		void Console::WriteLine(string value)
 		{
 			std::printf("%.*s\n", value.Length, value.Buffer);
 		}
@@ -125,7 +125,7 @@ namespace System
 			delete[] fname;
 		}
 
-		string FileReader::ReadToEndSync() const
+		string FileReader::ReadToEndSync()
 		{
 			std::fseek(file, 0, SEEK_END);
 			auto length = std::ftell(file);
@@ -142,7 +142,7 @@ namespace System
 			delete[] fname;
 		}
 
-		void FileWriter::Write(const string& value) const
+		void FileWriter::Write(const string& value)
 		{
 			std::fwrite(value.Buffer, sizeof(char), value.Length, file);
 		}

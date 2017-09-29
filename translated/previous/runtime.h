@@ -34,8 +34,8 @@ namespace System
 		class Console
 		{
 		public:
-			void Write(string value) const;
-			void WriteLine(string value) const;
+			void Write(string value);
+			void WriteLine(string value);
 		};
 
 		class Arguments
@@ -53,29 +53,6 @@ namespace System
 		};
 	}
 
-	namespace Collections
-	{
-		template<typename T>
-		class Array
-		{
-		private:
-			T* data;
-
-		public:
-			const int Count;
-
-			Array(int capacity);
-			T operator [](int i) const { return data[i]; }
-			T& operator [](int i) { return data[i]; }
-		};
-
-		template<typename T>
-		Array<T>::Array(int capacity)
-			: Count(capacity), data(new T[capacity])
-		{
-		}
-	}
-
 	namespace IO
 	{
 		class FileReader
@@ -85,8 +62,8 @@ namespace System
 
 		public:
 			FileReader(const string& fileName);
-			string ReadToEndSync() const;
-			void Close() const { std::fclose(file); }
+			string ReadToEndSync();
+			void Close() { std::fclose(file); }
 		};
 
 		class FileWriter
@@ -96,8 +73,8 @@ namespace System
 
 		public:
 			FileWriter(const string& fileName);
-			void Write(const string& value) const;
-			void Close() const { std::fclose(file); }
+			void Write(const string& value);
+			void Close() { std::fclose(file); }
 		};
 	}
 
