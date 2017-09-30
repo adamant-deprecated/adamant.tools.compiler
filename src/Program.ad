@@ -98,14 +98,6 @@ public class SyntaxNode
 
 }
 
-public ReadSource() -> SourceText
-{
-	// TODO should be mut new
-	let file: mut System.IO.FileReader = new System.IO.FileReader("src/Program.ad");
-	let contents: string = file.ReadToEndSync();
-	return new SourceText("MicroAdamant.Compiler", "Program.adam", contents);
-}
-
 public Parse(source: SourceText) -> SyntaxNode
 {
 	// TODO should be mut new
@@ -118,7 +110,7 @@ public EmitCpp(syntaxTree: SyntaxNode) -> void
 {
 }
 
-public var Source: string = "";
+public var Source: SourceText = null;
 public var Token: string = "";
 public var NextTokenPosition: int = 0;
 // TODO should be `new mut`
@@ -208,9 +200,9 @@ public ReadToken() -> void
 	var tokenEnd: int = -1;
 	var escaped: bool;
 	var done: bool = false;
-	while not done and position < Source.Length
+	while not done and position < Source.Text.Length
 	{
-		let curChar: code_point = Source[position];
+		let curChar: code_point = Source.Text[position];
 		if curChar == ' '
 			or curChar == '\t'
 			or curChar == '\n'
@@ -236,7 +228,7 @@ public ReadToken() -> void
 		}
 		else if curChar == '='
 		{
-			if position + 1 < Source.Length and Source[position + 1] == '='
+			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 			{
 				// it is `==`
 				tokenEnd = position + 2;
@@ -249,7 +241,7 @@ public ReadToken() -> void
 		}
 		else if curChar == '+'
 		{
-			if position + 1 < Source.Length and Source[position + 1] == '='
+			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 			{
 				// it is `+=`
 				tokenEnd = position + 2;
@@ -262,13 +254,13 @@ public ReadToken() -> void
 		}
 		else if curChar == '-'
 		{
-			if position + 1 < Source.Length and Source[position + 1] == '>'
+			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'
 			{
 				// it is `->`
 				tokenEnd = position + 2;
 				break;
 			}
-			if position + 1 < Source.Length and Source[position + 1] == '='
+			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 			{
 				// it is `-=`
 				tokenEnd = position + 2;
@@ -280,10 +272,10 @@ public ReadToken() -> void
 		}
 		else if curChar == '/'
 		{
-			if position + 1 < Source.Length and Source[position + 1] == '/'
+			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '/'
 			{
 				// it is a line comment `//`
-				while position < Source.Length and Source[position] <> '\r' and Source[position] <> '\n'
+				while position < Source.Text.Length and Source.Text[position] <> '\r' and Source.Text[position] <> '\n'
 				{
 					position += 1;
 				}
@@ -296,13 +288,13 @@ public ReadToken() -> void
 		}
 		else if curChar == '<'
 		{
-			if position + 1 < Source.Length and Source[position + 1] == '>'
+			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'
 			{
 				// it is `<>`
 				tokenEnd = position + 2;
 				break;
 			}
-			if position + 1 < Source.Length and Source[position + 1] == '='
+			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 			{
 				// it is `<=`
 				tokenEnd = position + 2;
@@ -314,7 +306,7 @@ public ReadToken() -> void
 		}
 		else if curChar == '>'
 		{
-			if position + 1 < Source.Length and Source[position + 1] == '='
+			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 			{
 				// it is `>=`
 				tokenEnd = position + 2;
@@ -328,9 +320,9 @@ public ReadToken() -> void
 		{
 			tokenEnd = position + 1;
 			escaped = false;
-			while tokenEnd < Source.Length and (Source[tokenEnd] <> '"' or escaped)
+			while tokenEnd < Source.Text.Length and (Source.Text[tokenEnd] <> '"' or escaped)
 			{
-				escaped = Source[tokenEnd] == '\\' and not escaped;
+				escaped = Source.Text[tokenEnd] == '\\' and not escaped;
 				tokenEnd += 1;
 			}
 
@@ -341,9 +333,9 @@ public ReadToken() -> void
 		{
 			tokenEnd = position + 1;
 			escaped = false;
-			while tokenEnd < Source.Length and (Source[tokenEnd] <> '\'' or escaped)
+			while tokenEnd < Source.Text.Length and (Source.Text[tokenEnd] <> '\'' or escaped)
 			{
-				escaped = Source[tokenEnd] == '\\' and not escaped;
+				escaped = Source.Text[tokenEnd] == '\\' and not escaped;
 				tokenEnd += 1;
 			}
 
@@ -355,7 +347,7 @@ public ReadToken() -> void
 			if IsIdentifierChar(curChar)
 			{
 				tokenEnd = position + 1;
-				while IsIdentifierChar(Source[tokenEnd])
+				while IsIdentifierChar(Source.Text[tokenEnd])
 				{
 					tokenEnd += 1;
 				}
@@ -364,7 +356,7 @@ public ReadToken() -> void
 			if(IsNumberChar(curChar))
 			{
 				tokenEnd = position + 1;
-				while IsNumberChar(Source[tokenEnd])
+				while IsNumberChar(Source.Text[tokenEnd])
 				{
 					tokenEnd += 1;
 				}
@@ -382,7 +374,7 @@ public ReadToken() -> void
 	}
 	else
 	{
-		Token = Source.Substring(position, tokenEnd - position);
+		Token = Source.Text.Substring(position, tokenEnd - position);
 		NextTokenPosition = tokenEnd;
 	}
 }
@@ -1087,7 +1079,7 @@ public ParseProgram() -> void
 // Transpiler
 // ----------------------------------------------------------------------------
 
-public Transpile(source: string) -> string
+public Transpile(source: SourceText) -> string
 {
 	Source = source;
 	ReadFirstToken();
@@ -1108,10 +1100,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	let inputFilePath: string = args.Get(0); // TODO should be `args[0]`
 	console.Write("Compiling: ");
 	console.WriteLine(inputFilePath);
-	// TODO should be `new mut`
-	let inputFile: mut System.IO.FileReader = new System.IO.FileReader(inputFilePath);
-	let source: string = inputFile.ReadToEndSync();
-	inputFile.Close();
+	let source: SourceText = ReadSource(inputFilePath);
 
 	let translated: string = Transpile(source);
 
@@ -1123,4 +1112,13 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	let outputFile: mut System.IO.FileWriter = new System.IO.FileWriter(outputFilePath);
 	outputFile.Write(translated);
 	outputFile.Close();
+}
+
+public ReadSource(path: string) -> SourceText
+{
+	// TODO should be `mut new` or `new mut`, whichever is decided to be the correct syntax
+	let file: mut System.IO.FileReader = new System.IO.FileReader(path);
+	let contents: string = file.ReadToEndSync();
+	file.Close(); // TODO this should automatically be handled
+	return new SourceText("<default>", path, contents);
 }

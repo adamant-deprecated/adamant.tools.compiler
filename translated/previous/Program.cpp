@@ -3,60 +3,95 @@
 // Declarations
 class SourceText;
 class Lexer;
-void Error(string const message);
-void BeginLine(string const value);
-void Write(string const value);
-void EndLine(string const value);
-void WriteLine(string const value);
-void BeginBlock();
-void EndBlock();
-bool IsIdentifierChar(char const c);
-bool IsNumberChar(char const c);
-void ReadToken();
-void ReadFirstToken();
-bool TokenIsIdentifier();
-bool Accept(string const expected);
-void Expect(string const expected);
-bool AcceptIdentifier();
-bool AcceptString();
-bool AcceptCodePoint();
-bool AcceptNumber();
-string ExpectIdentifier();
-bool IsValueType(string const type);
-string ConvertType(string const type);
-string ConvertType(bool const mutableBinding, bool const mutableValue, string type);
-string ParseType();
-bool ParseAtom();
-void ParseCallArguments();
-void ParseExpression(int const minPrecedence);
-void ParseExpression();
-bool ParseStatement();
-void ParseBlock();
-string ParseArgumentsDeclaration(bool const isMainFunction);
-void ParseClassMember(string const className);
-void ParseDeclaration();
-void ParseProgram();
-string Transpile(string const source);
-void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args);
+class TokenType;
+class SyntaxToken;
+class Parser;
+class SyntaxNode;
+auto ReadSource() -> ::SourceText const *;
+auto Parse(::SourceText const *const source) -> ::SyntaxNode const *;
+auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void;
+auto Error(::string const message) -> void;
+auto BeginLine(::string const value) -> void;
+auto Write(::string const value) -> void;
+auto EndLine(::string const value) -> void;
+auto WriteLine(::string const value) -> void;
+auto BeginBlock() -> void;
+auto EndBlock() -> void;
+auto IsIdentifierChar(char const c) -> bool;
+auto IsNumberChar(char const c) -> bool;
+auto ReadToken() -> void;
+auto ReadFirstToken() -> void;
+auto TokenIsIdentifier() -> bool;
+auto Accept(::string const expected) -> bool;
+auto Expect(::string const expected) -> void;
+auto AcceptIdentifier() -> bool;
+auto AcceptString() -> bool;
+auto AcceptCodePoint() -> bool;
+auto AcceptNumber() -> bool;
+auto ExpectIdentifier() -> ::string;
+auto IsValueType(::string const type) -> bool;
+auto ConvertType(::string const type) -> ::string;
+auto ConvertType(bool const mutableBinding, bool const mutableValue, ::string type) -> ::string;
+auto ParseType() -> ::string;
+auto ParseAtom() -> bool;
+auto ParseCallArguments() -> void;
+auto ParseExpression(int const minPrecedence) -> void;
+auto ParseExpression() -> void;
+auto ParseStatement() -> bool;
+auto ParseBlock() -> void;
+auto ParseArgumentsDeclaration(bool const isMainFunction) -> ::string;
+auto ParseClassMember(::string const className) -> void;
+auto ParseDeclaration() -> void;
+auto ParseProgram() -> void;
+auto Transpile(::string const source) -> ::string;
+auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
 
 // Class Declarations
 class SourceText
 {
 public:
-	string Package;
-	string Name;
-	string Text;
-	SourceText(string const package, string const name, string const text);
+	::string Package;
+	::string Name;
+	::string Text;
+	SourceText(::string const package, ::string const name, ::string const text);
 };
 class Lexer
 {
 public:
 	::SourceText const * Source;
+	unsigned int position;
 	Lexer(::SourceText const *const source);
+	auto NextToken() -> ::SyntaxToken const *;
+	auto NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *;
+	auto NewToken(::TokenType const *const type) -> ::SyntaxToken const *;
+};
+class TokenType
+{
+public:
+};
+class SyntaxToken
+{
+public:
+	::TokenType const * TokenType;
+	::SourceText const * Source;
+	unsigned int Start;
+	unsigned int Length;
+	SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length);
+};
+class Parser
+{
+public:
+	::Lexer const * Lexer;
+	Parser(::Lexer const *const lexer);
+	auto Parse() -> ::SyntaxNode const *;
+};
+class SyntaxNode
+{
+public:
 };
 
 // Definitions
-::SourceText::SourceText(string const package, string const name, string const text)
+::SourceText::SourceText(::string const package, ::string const name, ::string const text)
 {
 	this->Package = package;
 	this->Name = name;
@@ -68,9 +103,61 @@ public:
 	this->Source = source;
 }
 
-string Source = string("");
+auto ::Lexer::NextToken() -> ::SyntaxToken const *
+{
+	return ::None;
+}
 
-string Token = string("");
+auto ::Lexer::NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *
+{
+	unsigned int const start = position;
+	position = end;
+	return new ::SyntaxToken(type, Source, start, end);
+}
+
+auto ::Lexer::NewToken(::TokenType const *const type) -> ::SyntaxToken const *
+{
+	return NewToken(type, position + 1);
+}
+
+::SyntaxToken::SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length)
+{
+	TokenType = tokenType;
+	Source = source;
+	Start = start;
+	Length = length;
+}
+
+::Parser::Parser(::Lexer const *const lexer)
+{
+	this->Lexer = lexer;
+}
+
+auto ::Parser::Parse() -> ::SyntaxNode const *
+{
+}
+
+auto ReadSource() -> ::SourceText const *
+{
+	::System::IO::FileReader *const file = new ::System::IO::FileReader(::string("src/Program.ad"));
+	::string const contents = file->ReadToEndSync();
+	return new ::SourceText(::string("MicroAdamant.Compiler"), ::string("Program.adam"), contents);
+}
+
+auto Parse(::SourceText const *const source) -> ::SyntaxNode const *
+{
+	::Lexer *const lexer = new ::Lexer(source);
+	::Parser *const parser = new ::Parser(lexer);
+	return parser->Parse();
+}
+
+auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void
+{
+}
+
+::string Source = ::string("");
+
+::string Token = ::string("");
 
 int NextTokenPosition = 0;
 
@@ -84,18 +171,18 @@ int IndentDepth = 0;
 
 bool AfterDeclaration = false;
 
-string MainFunctionReturnType = string("");
+::string MainFunctionReturnType = ::string("");
 
 bool MainFunctionAcceptsConsole = false;
 
 bool MainFunctionAcceptsArgs = false;
 
-void Error(string const message)
+auto Error(::string const message) -> void
 {
-	Definitions->Append(string("<$ ") + message + string(" $>"));
+	Definitions->Append(::string("<$ ") + message + ::string(" $>"));
 }
 
-void BeginLine(string const value)
+auto BeginLine(::string const value) -> void
 {
 	if (AfterDeclaration)
 	{
@@ -103,22 +190,22 @@ void BeginLine(string const value)
 		AfterDeclaration = false;
 	}
 
-	Definitions->Append(string('\t', IndentDepth));
+	Definitions->Append(::string('\t', IndentDepth));
 	Definitions->Append(value);
 }
 
-void Write(string const value)
+auto Write(::string const value) -> void
 {
 	Definitions->Append(value);
 }
 
-void EndLine(string const value)
+auto EndLine(::string const value) -> void
 {
 	Definitions->Append(value);
 	Definitions->AppendLine();
 }
 
-void WriteLine(string const value)
+auto WriteLine(::string const value) -> void
 {
 	if (AfterDeclaration)
 	{
@@ -126,36 +213,36 @@ void WriteLine(string const value)
 		AfterDeclaration = false;
 	}
 
-	Definitions->Append(string('\t', IndentDepth));
+	Definitions->Append(::string('\t', IndentDepth));
 	Definitions->Append(value);
 	Definitions->AppendLine();
 }
 
-void BeginBlock()
+auto BeginBlock() -> void
 {
-	WriteLine(string("{"));
+	WriteLine(::string("{"));
 	IndentDepth += 1;
 }
 
-void EndBlock()
+auto EndBlock() -> void
 {
 	AfterDeclaration = false;
 	IndentDepth -= 1;
-	WriteLine(string("}"));
+	WriteLine(::string("}"));
 	AfterDeclaration = true;
 }
 
-bool IsIdentifierChar(char const c)
+auto IsIdentifierChar(char const c) -> bool
 {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
-bool IsNumberChar(char const c)
+auto IsNumberChar(char const c) -> bool
 {
 	return c >= '0' && c <= '9';
 }
 
-void ReadToken()
+auto ReadToken() -> void
 {
 	int position = NextTokenPosition;
 	int tokenEnd = -1;
@@ -306,14 +393,14 @@ void ReadToken()
 				break;
 			}
 
-			Error(string("Lexer: Invalid character `") + curChar + string("`"));
+			Error(::string("Lexer: Invalid character `") + curChar + ::string("`"));
 			position += 1;
 		}
 	}
 
 	if (tokenEnd == -1)
 	{
-		Token = string("");
+		Token = ::string("");
 		NextTokenPosition = position;
 	}
 	else
@@ -323,17 +410,17 @@ void ReadToken()
 	}
 }
 
-void ReadFirstToken()
+auto ReadFirstToken() -> void
 {
 	if (NextTokenPosition != 0)
 	{
-		Error(string("Can't read first token of context that already has tokens read."));
+		Error(::string("Can't read first token of context that already has tokens read."));
 	}
 
 	ReadToken();
 }
 
-bool TokenIsIdentifier()
+auto TokenIsIdentifier() -> bool
 {
 	if (Token->Length == 0)
 	{
@@ -351,7 +438,7 @@ bool TokenIsIdentifier()
 	return true;
 }
 
-bool Accept(string const expected)
+auto Accept(::string const expected) -> bool
 {
 	bool const accepted = Token == expected;
 	if (accepted)
@@ -362,11 +449,11 @@ bool Accept(string const expected)
 	return accepted;
 }
 
-void Expect(string const expected)
+auto Expect(::string const expected) -> void
 {
 	if (Token != expected)
 	{
-		Error(string("Expected `") + expected + string("` but found `") + Token + string("`"));
+		Error(::string("Expected `") + expected + ::string("` but found `") + Token + ::string("`"));
 		ReadToken();
 	}
 	else
@@ -375,7 +462,7 @@ void Expect(string const expected)
 	}
 }
 
-bool AcceptIdentifier()
+auto AcceptIdentifier() -> bool
 {
 	if (!TokenIsIdentifier())
 	{
@@ -386,7 +473,7 @@ bool AcceptIdentifier()
 	return true;
 }
 
-bool AcceptString()
+auto AcceptString() -> bool
 {
 	if (Token->Length == 0 || Token[0] != '"')
 	{
@@ -397,7 +484,7 @@ bool AcceptString()
 	return true;
 }
 
-bool AcceptCodePoint()
+auto AcceptCodePoint() -> bool
 {
 	if (Token->Length == 0 || Token[0] != '\'')
 	{
@@ -408,7 +495,7 @@ bool AcceptCodePoint()
 	return true;
 }
 
-bool AcceptNumber()
+auto AcceptNumber() -> bool
 {
 	for (char const c : *(Token))
 	{
@@ -422,47 +509,47 @@ bool AcceptNumber()
 	return true;
 }
 
-string ExpectIdentifier()
+auto ExpectIdentifier() -> ::string
 {
 	if (!TokenIsIdentifier())
 	{
-		Error(string("Expected identifier, found `") + Token + string("`"));
+		Error(::string("Expected identifier, found `") + Token + ::string("`"));
 		ReadToken();
-		return string("<missing>");
+		return ::string("<missing>");
 	}
 
-	string const identifier = Token;
+	::string const identifier = Token;
 	ReadToken();
 	return identifier;
 }
 
-bool IsValueType(string const type)
+auto IsValueType(::string const type) -> bool
 {
 	char const firstChar = type[0];
 	return firstChar >= 'a' && firstChar <= 'z';
 }
 
-string ConvertType(string const type)
+auto ConvertType(::string const type) -> ::string
 {
-	if (type == string("code_point"))
+	if (type == ::string("code_point"))
 	{
-		return string("char");
+		return ::string("char");
 	}
 
-	if (type == string("uint"))
+	if (type == ::string("uint"))
 	{
-		return string("unsigned int");
+		return ::string("unsigned int");
 	}
 
-	if (type == string("int") || type == string("bool") || type == string("void"))
+	if (type == ::string("int") || type == ::string("bool") || type == ::string("void"))
 	{
 		return type;
 	}
 
-	return string("::") + type->Replace(string("."), string("::"));
+	return ::string("::") + type->Replace(::string("."), ::string("::"));
 }
 
-string ConvertType(bool const mutableBinding, bool const mutableValue, string type)
+auto ConvertType(bool const mutableBinding, bool const mutableValue, ::string type) -> ::string
 {
 	bool const nullable = type[type->Length - 1] == '?';
 	if (nullable)
@@ -476,98 +563,98 @@ string ConvertType(bool const mutableBinding, bool const mutableValue, string ty
 	{
 		if (nullable)
 		{
-			type = string("::Maybe<") + type + string(">");
+			type = ::string("::Maybe<") + type + ::string(">");
 		}
 
 		if (!mutableBinding && !mutableValue)
 		{
-			type = type + string(" const");
+			type = type + ::string(" const");
 		}
 	}
 	else
 	{
 		if (!mutableValue)
 		{
-			type = type + string(" const");
+			type = type + ::string(" const");
 		}
 
-		type = type + string(" *");
+		type = type + ::string(" *");
 		if (!mutableBinding)
 		{
-			type = type + string("const");
+			type = type + ::string("const");
 		}
 	}
 
 	return type;
 }
 
-string ParseType()
+auto ParseType() -> ::string
 {
 	::System::Text::StringBuilder *const type = new ::System::Text::StringBuilder(ExpectIdentifier());
-	while (Accept(string(".")))
+	while (Accept(::string(".")))
 	{
-		type->Append(string("."));
+		type->Append(::string("."));
 		type->Append(ExpectIdentifier());
 	}
 
-	if (Accept(string("?")))
+	if (Accept(::string("?")))
 	{
-		type->Append(string("?"));
+		type->Append(::string("?"));
 	}
 
 	return type->ToString();
 }
 
-bool ParseAtom()
+auto ParseAtom() -> bool
 {
-	if (Accept(string("new")))
+	if (Accept(::string("new")))
 	{
-		string type = ParseType();
+		::string type = ParseType();
 		if (!IsValueType(type))
 		{
-			Write(string("new "));
+			Write(::string("new "));
 		}
 
 		type = ConvertType(type);
 		Write(type);
-		Expect(string("("));
-		Write(string("("));
+		Expect(::string("("));
+		Write(::string("("));
 		ParseCallArguments();
-		Expect(string(")"));
-		Write(string(")"));
+		Expect(::string(")"));
+		Write(::string(")"));
 		return true;
 	}
 
-	if (Accept(string("not")))
+	if (Accept(::string("not")))
 	{
-		Write(string("!"));
+		Write(::string("!"));
 		ParseExpression();
 		return true;
 	}
 
-	if (Accept(string("(")))
+	if (Accept(::string("(")))
 	{
-		Write(string("("));
+		Write(::string("("));
 		ParseExpression();
-		Expect(string(")"));
-		Write(string(")"));
+		Expect(::string(")"));
+		Write(::string(")"));
 		return true;
 	}
 
-	if (Accept(string("-")))
+	if (Accept(::string("-")))
 	{
-		Write(string("-"));
+		Write(::string("-"));
 		ParseExpression(7);
 		return true;
 	}
 
-	if (Accept(string("null")))
+	if (Accept(::string("null")))
 	{
-		Write(string("::None"));
+		Write(::string("::None"));
 		return true;
 	}
 
-	string const token = Token;
+	::string const token = Token;
 	if (AcceptIdentifier() || AcceptNumber())
 	{
 		Write(token);
@@ -576,7 +663,7 @@ bool ParseAtom()
 
 	if (AcceptString())
 	{
-		Write(string("::string(") + token + string(")"));
+		Write(::string("::string(") + token + ::string(")"));
 		return true;
 	}
 
@@ -589,7 +676,7 @@ bool ParseAtom()
 	return false;
 }
 
-void ParseCallArguments()
+auto ParseCallArguments() -> void
 {
 	bool first = true;
 	do
@@ -600,15 +687,15 @@ void ParseCallArguments()
 		}
 		else
 		{
-			Write(string(", "));
+			Write(::string(", "));
 		}
 
 		ParseExpression();
 	}
-	while (Accept(string(",")));
+	while (Accept(::string(",")));
 }
 
-void ParseExpression(int const minPrecedence)
+auto ParseExpression(int const minPrecedence) -> void
 {
 	if (!ParseAtom())
 	{
@@ -617,84 +704,84 @@ void ParseExpression(int const minPrecedence)
 
 	for (;;)
 	{
-		string const token = Token;
+		::string const token = Token;
 		int precedence;
 		bool leftAssociative;
 		bool suffixOperator = false;
-		if ((token == string("=") || token == string("+=") || token == string("-=")) && minPrecedence <= 1)
+		if ((token == ::string("=") || token == ::string("+=") || token == ::string("-=")) && minPrecedence <= 1)
 		{
 			precedence = 1;
 			leftAssociative = false;
-			Write(string(" ") + token + string(" "));
+			Write(::string(" ") + token + ::string(" "));
 		}
-		else if (token == string("or") && minPrecedence <= 2)
+		else if (token == ::string("or") && minPrecedence <= 2)
 		{
 			precedence = 2;
 			leftAssociative = true;
-			Write(string(" || "));
+			Write(::string(" || "));
 		}
-		else if (token == string("and") && minPrecedence <= 3)
+		else if (token == ::string("and") && minPrecedence <= 3)
 		{
 			precedence = 3;
 			leftAssociative = true;
-			Write(string(" && "));
+			Write(::string(" && "));
 		}
-		else if (token == string("==") && minPrecedence <= 4)
+		else if (token == ::string("==") && minPrecedence <= 4)
 		{
 			precedence = 4;
 			leftAssociative = true;
-			Write(string(" == "));
+			Write(::string(" == "));
 		}
-		else if (token == string("<>") && minPrecedence <= 4)
+		else if (token == ::string("<>") && minPrecedence <= 4)
 		{
 			precedence = 4;
 			leftAssociative = true;
-			Write(string(" != "));
+			Write(::string(" != "));
 		}
-		else if ((token == string("<") || token == string("<=") || token == string(">") || token == string(">=")) && minPrecedence <= 5)
+		else if ((token == ::string("<") || token == ::string("<=") || token == ::string(">") || token == ::string(">=")) && minPrecedence <= 5)
 		{
 			precedence = 5;
 			leftAssociative = true;
-			Write(string(" ") + token + string(" "));
+			Write(::string(" ") + token + ::string(" "));
 		}
-		else if ((token == string("+") || token == string("-")) && minPrecedence <= 6)
+		else if ((token == ::string("+") || token == ::string("-")) && minPrecedence <= 6)
 		{
 			precedence = 6;
 			leftAssociative = true;
-			Write(string(" ") + token + string(" "));
+			Write(::string(" ") + token + ::string(" "));
 		}
-		else if (token == string("(") && minPrecedence <= 8)
+		else if (token == ::string("(") && minPrecedence <= 8)
 		{
 			ReadToken();
-			Write(string("("));
+			Write(::string("("));
 			ParseCallArguments();
-			if (Token != string(")"))
+			if (Token != ::string(")"))
 			{
-				Error(string("Expected `)` found `") + Token + string("`"));
+				Error(::string("Expected `)` found `") + Token + ::string("`"));
 			}
 
-			Write(string(")"));
+			Write(::string(")"));
 			precedence = 8;
 			leftAssociative = true;
 			suffixOperator = true;
 		}
-		else if (token == string(".") && minPrecedence <= 8)
+		else if (token == ::string(".") && minPrecedence <= 8)
 		{
 			precedence = 8;
 			leftAssociative = true;
-			Write(string("->"));
+			Write(::string("->"));
 		}
-		else if (token == string("[") && minPrecedence <= 8)
+		else if (token == ::string("[") && minPrecedence <= 8)
 		{
 			ReadToken();
-			Write(string("["));
+			Write(::string("["));
 			ParseExpression();
-			if (Token != string("]"))
+			if (Token != ::string("]"))
 			{
-				Error(string("Expected `]` found `") + Token + string("`"));
+				Error(::string("Expected `]` found `") + Token + ::string("`"));
 			}
 
-			Write(string("]"));
+			Write(::string("]"));
 			precedence = 8;
 			leftAssociative = true;
 			suffixOperator = true;
@@ -717,100 +804,100 @@ void ParseExpression(int const minPrecedence)
 	}
 }
 
-void ParseExpression()
+auto ParseExpression() -> void
 {
 	ParseExpression(1);
 }
 
-bool ParseStatement()
+auto ParseStatement() -> bool
 {
-	if (Accept(string("return")))
+	if (Accept(::string("return")))
 	{
-		if (Accept(string(";")))
+		if (Accept(::string(";")))
 		{
-			WriteLine(string("return;"));
+			WriteLine(::string("return;"));
 		}
 		else
 		{
-			BeginLine(string("return "));
+			BeginLine(::string("return "));
 			ParseExpression();
-			Expect(string(";"));
-			EndLine(string(";"));
+			Expect(::string(";"));
+			EndLine(::string(";"));
 		}
 
 		return true;
 	}
 
-	if (Accept(string("loop")))
+	if (Accept(::string("loop")))
 	{
-		WriteLine(string("for (;;)"));
+		WriteLine(::string("for (;;)"));
 		ParseBlock();
 		return true;
 	}
 
-	if (Accept(string("while")))
+	if (Accept(::string("while")))
 	{
-		BeginLine(string("while ("));
+		BeginLine(::string("while ("));
 		ParseExpression();
-		EndLine(string(")"));
+		EndLine(::string(")"));
 		ParseBlock();
 		return true;
 	}
 
-	if (Accept(string("for")))
+	if (Accept(::string("for")))
 	{
-		BeginLine(string("for ("));
-		string const k = Token;
-		if (!Accept(string("let")) && !Accept(string("var")))
+		BeginLine(::string("for ("));
+		::string const k = Token;
+		if (!Accept(::string("let")) && !Accept(::string("var")))
 		{
-			Error(string("Expected `let` or `var` but found `") + Token + string("`"));
+			Error(::string("Expected `let` or `var` but found `") + Token + ::string("`"));
 		}
 
-		string const name = ExpectIdentifier();
-		Expect(string(":"));
-		bool const mutableValue = Accept(string("mut"));
-		string const type = ParseType();
-		Write(ConvertType(k == string("var"), mutableValue, type) + string(" ") + name);
-		Expect(string("in"));
-		Write(string(" : *("));
+		::string const name = ExpectIdentifier();
+		Expect(::string(":"));
+		bool const mutableValue = Accept(::string("mut"));
+		::string const type = ParseType();
+		Write(ConvertType(k == ::string("var"), mutableValue, type) + ::string(" ") + name);
+		Expect(::string("in"));
+		Write(::string(" : *("));
 		ParseExpression();
-		EndLine(string("))"));
+		EndLine(::string("))"));
 		ParseBlock();
 		return true;
 	}
 
-	if (Accept(string("do")))
+	if (Accept(::string("do")))
 	{
-		WriteLine(string("do"));
+		WriteLine(::string("do"));
 		ParseBlock();
 		AfterDeclaration = false;
-		Expect(string("while"));
-		BeginLine(string("while ("));
+		Expect(::string("while"));
+		BeginLine(::string("while ("));
 		ParseExpression();
-		Expect(string(";"));
-		EndLine(string(");"));
+		Expect(::string(";"));
+		EndLine(::string(");"));
 		return true;
 	}
 
-	if (Accept(string("if")))
+	if (Accept(::string("if")))
 	{
-		BeginLine(string("if ("));
+		BeginLine(::string("if ("));
 		ParseExpression();
-		EndLine(string(")"));
+		EndLine(::string(")"));
 		ParseBlock();
-		while (Accept(string("else")))
+		while (Accept(::string("else")))
 		{
 			AfterDeclaration = false;
-			if (Accept(string("if")))
+			if (Accept(::string("if")))
 			{
-				BeginLine(string("else if ("));
+				BeginLine(::string("else if ("));
 				ParseExpression();
-				EndLine(string(")"));
+				EndLine(::string(")"));
 				ParseBlock();
 			}
 			else
 			{
-				WriteLine(string("else"));
+				WriteLine(::string("else"));
 				ParseBlock();
 				return true;
 			}
@@ -819,191 +906,225 @@ bool ParseStatement()
 		return true;
 	}
 
-	string const kind = Token;
-	if (Accept(string("let")) || Accept(string("var")))
+	::string const kind = Token;
+	if (Accept(::string("let")) || Accept(::string("var")))
 	{
-		string const variableName = ExpectIdentifier();
-		Expect(string(":"));
-		bool const mutableValue = Accept(string("mut"));
-		string variableType = ParseType();
-		variableType = ConvertType(kind == string("var"), mutableValue, variableType);
+		::string const variableName = ExpectIdentifier();
+		Expect(::string(":"));
+		bool const mutableValue = Accept(::string("mut"));
+		::string variableType = ParseType();
+		variableType = ConvertType(kind == ::string("var"), mutableValue, variableType);
 		BeginLine(variableType);
-		Write(string(" ") + variableName);
-		if (Accept(string("=")))
+		Write(::string(" ") + variableName);
+		if (Accept(::string("=")))
 		{
-			Write(string(" = "));
+			Write(::string(" = "));
 			ParseExpression();
 		}
 
-		Expect(string(";"));
-		EndLine(string(";"));
+		Expect(::string(";"));
+		EndLine(::string(";"));
 		return true;
 	}
 
-	if (Token == string("}"))
+	if (Token == ::string("}"))
 	{
 		return false;
 	}
 
-	BeginLine(string(""));
+	BeginLine(::string(""));
 	ParseExpression();
-	Expect(string(";"));
-	EndLine(string(";"));
+	Expect(::string(";"));
+	EndLine(::string(";"));
 	return true;
 }
 
-void ParseBlock()
+auto ParseBlock() -> void
 {
-	Expect(string("{"));
+	Expect(::string("{"));
 	BeginBlock();
 	while (ParseStatement())
 	{
 	}
 
-	Expect(string("}"));
+	Expect(::string("}"));
 	EndBlock();
 }
 
-string ParseArgumentsDeclaration(bool const isMainFunction)
+auto ParseArgumentsDeclaration(bool const isMainFunction) -> ::string
 {
-	Expect(string("("));
-	if (Accept(string(")")))
+	Expect(::string("("));
+	if (Accept(::string(")")))
 	{
-		return string("");
+		return ::string("");
 	}
 
 	::System::Text::StringBuilder *const arguments = new ::System::Text::StringBuilder();
 	do
 	{
-		bool const mutableBinding = Accept(string("var"));
-		string const name = ExpectIdentifier();
-		Expect(string(":"));
-		bool const mutableValue = Accept(string("mut"));
-		string const type = ParseType();
+		bool const mutableBinding = Accept(::string("var"));
+		::string const name = ExpectIdentifier();
+		Expect(::string(":"));
+		bool const mutableValue = Accept(::string("mut"));
+		::string const type = ParseType();
 		if (isMainFunction)
 		{
-			if (type == string("System.Console.Console"))
+			if (type == ::string("System.Console.Console"))
 			{
 				MainFunctionAcceptsConsole = true;
 			}
 
-			if (type == string("System.Console.Arguments"))
+			if (type == ::string("System.Console.Arguments"))
 			{
 				MainFunctionAcceptsArgs = true;
 			}
 		}
 
-		arguments->Append(ConvertType(mutableBinding, mutableValue, type) + string(" ") + name + string(", "));
+		arguments->Append(ConvertType(mutableBinding, mutableValue, type) + ::string(" ") + name + ::string(", "));
 	}
-	while (Accept(string(",")));
-	Expect(string(")"));
-	string const result = arguments->ToString();
+	while (Accept(::string(",")));
+	Expect(::string(")"));
+	::string const result = arguments->ToString();
 	return result->Substring(0, result->Length - 2);
 }
 
-void ParseClassMember(string const className)
+auto ParseClassMember(::string const className) -> void
 {
-	string const accessModifier = Token;
-	if (Accept(string("public")) || Accept(string("internal")) || Accept(string("protected")) || Accept(string("private")))
+	::string const accessModifier = Token;
+	if (Accept(::string("public")) || Accept(::string("internal")) || Accept(::string("protected")) || Accept(::string("private")))
 	{
 	}
 	else
 	{
-		Error(string("Expected access modifier, found `") + accessModifier + string("`"));
+		Error(::string("Expected access modifier, found `") + accessModifier + ::string("`"));
 	}
 
-	if (Accept(string("new")))
+	if (Accept(::string("new")))
 	{
-		string const arguments = ParseArgumentsDeclaration(false);
-		ClassDeclarations->AppendLine(string("\t") + className + string("(") + arguments + string(");"));
-		WriteLine(string("::") + className + string("::") + className + string("(") + arguments + string(")"));
+		::string const arguments = ParseArgumentsDeclaration(false);
+		ClassDeclarations->AppendLine(::string("\t") + className + ::string("(") + arguments + ::string(");"));
+		WriteLine(::string("::") + className + ::string("::") + className + ::string("(") + arguments + ::string(")"));
 		ParseBlock();
 		return;
 	}
 
-	string const kind = Token;
-	if (Accept(string("var")) || Accept(string("let")))
+	::string const kind = Token;
+	if (Accept(::string("var")) || Accept(::string("let")))
 	{
-		string const fieldName = ExpectIdentifier();
-		Expect(string(":"));
-		bool const mutableValue = Accept(string("mut"));
-		string fieldType = ParseType();
+		::string const fieldName = ExpectIdentifier();
+		Expect(::string(":"));
+		bool const mutableValue = Accept(::string("mut"));
+		::string fieldType = ParseType();
 		fieldType = ConvertType(true, mutableValue, fieldType);
-		Expect(string(";"));
-		ClassDeclarations->AppendLine(string("\t") + fieldType + string(" ") + fieldName + string(";"));
+		Expect(::string(";"));
+		ClassDeclarations->AppendLine(::string("\t") + fieldType + ::string(" ") + fieldName + ::string(";"));
 		return;
 	}
 
-	string const methodName = ExpectIdentifier();
-	string const arguments = ParseArgumentsDeclaration(false);
-	Expect(string("->"));
-	bool const mutableValue = Accept(string("mut"));
-	string const returnType = ParseType();
-	string const convertedReturnType = ConvertType(true, mutableValue, returnType);
-	ClassDeclarations->AppendLine(string("\tauto ") + methodName + string("(") + arguments + string(") -> ") + convertedReturnType + string(";"));
-	WriteLine(string("auto ::") + className + string("::") + methodName + string("(") + arguments + string(") -> ") + convertedReturnType);
+	::string const methodName = ExpectIdentifier();
+	::string const arguments = ParseArgumentsDeclaration(false);
+	Expect(::string("->"));
+	bool const mutableValue = Accept(::string("mut"));
+	::string const returnType = ParseType();
+	::string const convertedReturnType = ConvertType(true, mutableValue, returnType);
+	ClassDeclarations->AppendLine(::string("\tauto ") + methodName + ::string("(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
+	WriteLine(::string("auto ::") + className + ::string("::") + methodName + ::string("(") + arguments + ::string(") -> ") + convertedReturnType);
 	ParseBlock();
 }
 
-void ParseDeclaration()
+auto ParseDeclaration() -> void
 {
-	string const accessModifier = Token;
-	if (Accept(string("public")) || Accept(string("internal")))
+	::string const accessModifier = Token;
+	if (Accept(::string("public")) || Accept(::string("internal")))
 	{
 	}
 	else
 	{
-		Error(string("Expected access modifier, found `") + accessModifier + string("`"));
+		Error(::string("Expected access modifier, found `") + accessModifier + ::string("`"));
 	}
 
-	string const kind = Token;
-	if (Accept(string("var")) || Accept(string("let")))
+	::string const kind = Token;
+	if (Accept(::string("var")) || Accept(::string("let")))
 	{
-		string const variableName = ExpectIdentifier();
-		Expect(string(":"));
-		bool const mutableValue = Accept(string("mut"));
-		string variableType = ParseType();
-		Expect(string("="));
-		variableType = ConvertType(kind == string("var"), mutableValue, variableType);
+		::string const variableName = ExpectIdentifier();
+		Expect(::string(":"));
+		bool const mutableValue = Accept(::string("mut"));
+		::string variableType = ParseType();
+		Expect(::string("="));
+		variableType = ConvertType(kind == ::string("var"), mutableValue, variableType);
 		BeginLine(variableType);
-		Write(string(" ") + variableName + string(" = "));
+		Write(::string(" ") + variableName + ::string(" = "));
 		ParseExpression();
-		Expect(string(";"));
-		EndLine(string(";"));
+		Expect(::string(";"));
+		EndLine(::string(";"));
 		AfterDeclaration = true;
 		return;
 	}
 
-	if (Accept(string("class")))
+	if (Accept(::string("class")))
 	{
-		string const className = ExpectIdentifier();
-		Declarations->AppendLine(string("class ") + className + string(";"));
-		ClassDeclarations->AppendLine(string("class ") + className);
-		Expect(string("{"));
-		ClassDeclarations->AppendLine(string("{"));
-		ClassDeclarations->AppendLine(string("public:"));
-		while (!Accept(string("}")))
+		::string const className = ExpectIdentifier();
+		Declarations->AppendLine(::string("class ") + className + ::string(";"));
+		ClassDeclarations->AppendLine(::string("class ") + className);
+		Expect(::string("{"));
+		ClassDeclarations->AppendLine(::string("{"));
+		ClassDeclarations->AppendLine(::string("public:"));
+		while (!Accept(::string("}")))
 		{
 			ParseClassMember(className);
 		}
 
-		ClassDeclarations->AppendLine(string("};"));
+		ClassDeclarations->AppendLine(::string("};"));
 		return;
 	}
 
-	string const name = ExpectIdentifier();
-	string const arguments = ParseArgumentsDeclaration(name == string("Main"));
-	Expect(string("->"));
-	bool const mutableValue = Accept(string("mut"));
-	string const returnType = ParseType();
-	string const convertedReturnType = ConvertType(true, mutableValue, returnType);
-	Declarations->AppendLine(string("auto ") + name + string("(") + arguments + string(") -> ") + convertedReturnType + string(";"));
-	WriteLine(string("auto ") + name + string("(") + arguments + string(") -> ") + convertedReturnType);
-	if (name == string("Main"))
+	if (Accept(::string("enum")))
 	{
-		if (MainFunctionReturnType != string(""))
+		Expect(::string("struct"));
+		::string const enumName = ExpectIdentifier();
+		Declarations->AppendLine(::string("enum ") + enumName + ::string(";"));
+		ClassDeclarations->AppendLine(::string("enum ") + enumName);
+		Expect(::string("{"));
+		ClassDeclarations->AppendLine(::string("{"));
+		do
 		{
-			Error(string("Multiple declarations of main"));
+			::string const enumValue = ExpectIdentifier();
+			ClassDeclarations->Append(::string("\t") + enumValue);
+			if (Accept(::string("=")))
+			{
+				ClassDeclarations->Append(::string(" = "));
+				::string const value = Token;
+				if (AcceptNumber())
+				{
+					ClassDeclarations->Append(value);
+				}
+				else
+				{
+					Error(::string("Expected number found `") + value + ::string("`"));
+				}
+			}
+
+			ClassDeclarations->AppendLine(::string(","));
+		}
+		while (Accept(::string(",")));
+		Expect(::string("}"));
+		ClassDeclarations->AppendLine(::string("};"));
+		return;
+	}
+
+	::string const name = ExpectIdentifier();
+	::string const arguments = ParseArgumentsDeclaration(name == ::string("Main"));
+	Expect(::string("->"));
+	bool const mutableValue = Accept(::string("mut"));
+	::string const returnType = ParseType();
+	::string const convertedReturnType = ConvertType(true, mutableValue, returnType);
+	Declarations->AppendLine(::string("auto ") + name + ::string("(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
+	WriteLine(::string("auto ") + name + ::string("(") + arguments + ::string(") -> ") + convertedReturnType);
+	if (name == ::string("Main"))
+	{
+		if (MainFunctionReturnType != ::string(""))
+		{
+			Error(::string("Multiple declarations of main"));
 		}
 
 		MainFunctionReturnType = returnType;
@@ -1012,53 +1133,53 @@ void ParseDeclaration()
 	ParseBlock();
 }
 
-void ParseProgram()
+auto ParseProgram() -> void
 {
-	Declarations->AppendLine(string("#include \"runtime.h\""));
-	Declarations->AppendLine(string(""));
-	Declarations->AppendLine(string("// Declarations"));
-	ClassDeclarations->AppendLine(string(""));
-	ClassDeclarations->AppendLine(string("// Class Declarations"));
-	WriteLine(string(""));
-	WriteLine(string("// Definitions"));
+	Declarations->AppendLine(::string("#include \"runtime.h\""));
+	Declarations->AppendLine(::string(""));
+	Declarations->AppendLine(::string("// Declarations"));
+	ClassDeclarations->AppendLine(::string(""));
+	ClassDeclarations->AppendLine(::string("// Class Declarations"));
+	WriteLine(::string(""));
+	WriteLine(::string("// Definitions"));
 	do
 	{
 		ParseDeclaration();
 	}
 	while (TokenIsIdentifier());
-	WriteLine(string("// Entry Point Adapter"));
-	WriteLine(string("int main(int argc, char const *const * argv)"));
+	WriteLine(::string("// Entry Point Adapter"));
+	WriteLine(::string("int main(int argc, char const *const * argv)"));
 	BeginBlock();
 	::System::Text::StringBuilder *const args = new ::System::Text::StringBuilder();
 	if (MainFunctionAcceptsConsole)
 	{
-		args->Append(string("new ::System::Console::Console()"));
+		args->Append(::string("new ::System::Console::Console()"));
 	}
 
 	if (MainFunctionAcceptsArgs)
 	{
 		if (MainFunctionAcceptsConsole)
 		{
-			args->Append(string(", "));
+			args->Append(::string(", "));
 		}
 
-		args->Append(string("new ::System::Console::Arguments(argc, argv)"));
+		args->Append(::string("new ::System::Console::Arguments(argc, argv)"));
 	}
 
-	if (MainFunctionReturnType == string("void"))
+	if (MainFunctionReturnType == ::string("void"))
 	{
-		WriteLine(string("Main(") + args->ToString() + string(");"));
-		WriteLine(string("return 0;"));
+		WriteLine(::string("Main(") + args->ToString() + ::string(");"));
+		WriteLine(::string("return 0;"));
 	}
 	else
 	{
-		WriteLine(string("return Main(") + args->ToString() + string(");"));
+		WriteLine(::string("return Main(") + args->ToString() + ::string(");"));
 	}
 
 	EndBlock();
 }
 
-string Transpile(string const source)
+auto Transpile(::string const source) -> ::string
 {
 	Source = source;
 	ReadFirstToken();
@@ -1066,24 +1187,24 @@ string Transpile(string const source)
 	return Declarations->ToString() + ClassDeclarations->ToString() + Definitions->ToString();
 }
 
-void Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args)
+auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void
 {
-	console->WriteLine(string("Adamant Compiler v0.1.0"));
+	console->WriteLine(::string("Adamant Compiler v0.1.0"));
 	if (args->Count != 2)
 	{
-		console->WriteLine(string("Args: <Input File> <OutputFile>"));
+		console->WriteLine(::string("Args: <Input File> <OutputFile>"));
 		return;
 	}
 
-	string const inputFilePath = args->Get(0);
-	console->Write(string("Compiling: "));
+	::string const inputFilePath = args->Get(0);
+	console->Write(::string("Compiling: "));
 	console->WriteLine(inputFilePath);
 	::System::IO::FileReader *const inputFile = new ::System::IO::FileReader(inputFilePath);
-	string const source = inputFile->ReadToEndSync();
+	::string const source = inputFile->ReadToEndSync();
 	inputFile->Close();
-	string const translated = Transpile(source);
-	string const outputFilePath = args->Get(1);
-	console->Write(string("Output: "));
+	::string const translated = Transpile(source);
+	::string const outputFilePath = args->Get(1);
+	console->Write(::string("Output: "));
 	console->WriteLine(outputFilePath);
 	::System::IO::FileWriter *const outputFile = new ::System::IO::FileWriter(outputFilePath);
 	outputFile->Write(translated);
