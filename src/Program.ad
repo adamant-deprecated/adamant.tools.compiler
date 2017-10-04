@@ -14,30 +14,223 @@ public class SourceText
 
 public class Lexer
 {
+	public Analyze(source: SourceText) -> mut TokenStream
+	{
+		return new TokenStream(source);
+	}
+}
+
+public class TokenStream
+{
 	public let Source: SourceText;
-	private var position: uint;
+	private var nextToken: uint;
 
 	public new(source: SourceText)
 	{
-		this.Source = source;
+		Source = source;
+		nextToken = 0; // TODO have to assign this zero for now becuase we don't have default values working
 	}
 
-	public NextToken() -> SyntaxToken?
+	public GetNextToken() -> string
 	{
-		// return NewToken(TokenType.LeftParen);
-		return null;
+		var position: uint = nextToken;
+		var tokenEnd: uint = -1;
+		var escaped: bool;
+		var done: bool = false;
+		while not done and position < Source.Text.Length
+		{
+			let curChar: code_point = Source.Text[position];
+			if curChar == ' '
+				or curChar == '\t'
+				or curChar == '\n'
+				or curChar == '\r'
+			{
+				position += 1;
+				continue;
+			}
+			else if curChar == '{'
+				or curChar == '}'
+				or curChar == '('
+				or curChar == ')'
+				or curChar == ';'
+				or curChar == ','
+				or curChar == '.'
+				or curChar == ':'
+				or curChar == '['
+				or curChar == ']'
+				or curChar == '?'
+			{
+				tokenEnd = position + 1;
+				break;
+			}
+			else if curChar == '='
+			{
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
+				{
+					// it is `==`
+					tokenEnd = position + 2;
+					break;
+				}
+
+				// it is `=`
+				tokenEnd = position + 1;
+				break;
+			}
+			else if curChar == '+'
+			{
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
+				{
+					// it is `+=`
+					tokenEnd = position + 2;
+					break;
+				}
+
+				// it is `+`
+				tokenEnd = position + 1;
+				break;
+			}
+			else if curChar == '-'
+			{
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'
+				{
+					// it is `->`
+					tokenEnd = position + 2;
+					break;
+				}
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
+				{
+					// it is `-=`
+					tokenEnd = position + 2;
+					break;
+				}
+				// it is `-`
+				tokenEnd = position + 1;
+				break;
+			}
+			else if curChar == '/'
+			{
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '/'
+				{
+					// it is a line comment `//`
+					while position < Source.Text.Length and Source.Text[position] <> '\r' and Source.Text[position] <> '\n'
+					{
+						position += 1;
+					}
+
+					continue;
+				}
+				// it is `/`
+				tokenEnd = position + 1;
+				break;
+			}
+			else if curChar == '<'
+			{
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'
+				{
+					// it is `<>`
+					tokenEnd = position + 2;
+					break;
+				}
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
+				{
+					// it is `<=`
+					tokenEnd = position + 2;
+					break;
+				}
+				// it is `<`
+				tokenEnd = position + 1;
+				break;
+			}
+			else if curChar == '>'
+			{
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
+				{
+					// it is `>=`
+					tokenEnd = position + 2;
+					break;
+				}
+				// it is `>`
+				tokenEnd = position + 1;
+				break;
+			}
+			else if curChar == '"'
+			{
+				tokenEnd = position + 1;
+				escaped = false;
+				while tokenEnd < Source.Text.Length and (Source.Text[tokenEnd] <> '"' or escaped)
+				{
+					escaped = Source.Text[tokenEnd] == '\\' and not escaped;
+					tokenEnd += 1;
+				}
+
+				tokenEnd += 1; // To include the close quote
+				break;
+			}
+			else if curChar == '\''
+			{
+				tokenEnd = position + 1;
+				escaped = false;
+				while tokenEnd < Source.Text.Length and (Source.Text[tokenEnd] <> '\'' or escaped)
+				{
+					escaped = Source.Text[tokenEnd] == '\\' and not escaped;
+					tokenEnd += 1;
+				}
+
+				tokenEnd += 1; // To include the close quote
+				break;
+			}
+			else
+			{
+				if IsIdentifierChar(curChar)
+				{
+					tokenEnd = position + 1;
+					while IsIdentifierChar(Source.Text[tokenEnd])
+					{
+						tokenEnd += 1;
+					}
+					break;
+				}
+				if(IsNumberChar(curChar))
+				{
+					tokenEnd = position + 1;
+					while IsNumberChar(Source.Text[tokenEnd])
+					{
+						tokenEnd += 1;
+					}
+					break;
+				}
+				Error("Lexer: Invalid character `" + curChar + "`");
+				position += 1;
+			}
+		}
+
+		var token: string;
+		if tokenEnd == -1
+		{
+			token = ""; // TODO need nullable string so we can set it to null
+			nextToken = position;
+		}
+		else
+		{
+			token = Source.Text.Substring(position, tokenEnd - position);
+			nextToken = tokenEnd;
+		}
+
+		return token;
 	}
 
 	private NewToken(type: TokenType, end: uint) -> SyntaxToken
 	{
-		let start: uint = position;
-		position = end;
-		return new SyntaxToken(type, Source, start, end);
+		//let start: uint = position;
+		//position = end;
+		//return new SyntaxToken(type, Source, start, end);
+		return null;
 	}
 
 	private NewToken(type: TokenType) -> SyntaxToken
 	{
-		return NewToken(type, position+1);
+		//return NewToken(type, position+1);
+		return null;
 	}
 }
 
@@ -80,16 +273,13 @@ public class SyntaxToken
 
 public class Parser
 {
-	public let Lexer: Lexer;
-
-	public new(lexer: Lexer)
+	public new()
 	{
-		this.Lexer = lexer;
 	}
 
-	public Parse() -> SyntaxNode
+	public Parse(tokenStream: TokenStream) -> SyntaxNode?
 	{
-
+		return null;
 	}
 }
 
@@ -101,18 +291,18 @@ public class SyntaxNode
 public Parse(source: SourceText) -> SyntaxNode
 {
 	// TODO should be mut new
-	let lexer: mut Lexer = new Lexer(source);
-	let parser: mut Parser = new Parser(lexer);
-	return parser.Parse();
+	let lexer: mut Lexer = new Lexer(); // TODO remove mut here when we can mark methods as const
+	let tokenStream: mut TokenStream = lexer.Analyze(source);
+	let parser: mut Parser = new Parser();
+	return parser.Parse(tokenStream);
 }
 
 public EmitCpp(syntaxTree: SyntaxNode) -> void
 {
 }
 
-public var Source: SourceText = null;
+public var tokenStream: mut TokenStream = null;
 public var Token: string = "";
-public var NextTokenPosition: int = 0;
 // TODO should be `new mut`
 public let Declarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 public let ClassDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
@@ -194,200 +384,7 @@ public IsNumberChar(c: code_point) -> bool
 	return c >= '0' and c <= '9';
 }
 
-public ReadToken() -> void
-{
-	var position: int = NextTokenPosition;
-	var tokenEnd: int = -1;
-	var escaped: bool;
-	var done: bool = false;
-	while not done and position < Source.Text.Length
-	{
-		let curChar: code_point = Source.Text[position];
-		if curChar == ' '
-			or curChar == '\t'
-			or curChar == '\n'
-			or curChar == '\r'
-		{
-			position += 1;
-			continue;
-		}
-		else if curChar == '{'
-			or curChar == '}'
-			or curChar == '('
-			or curChar == ')'
-			or curChar == ';'
-			or curChar == ','
-			or curChar == '.'
-			or curChar == ':'
-			or curChar == '['
-			or curChar == ']'
-			or curChar == '?'
-		{
-			tokenEnd = position + 1;
-			break;
-		}
-		else if curChar == '='
-		{
-			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
-			{
-				// it is `==`
-				tokenEnd = position + 2;
-				break;
-			}
 
-			// it is `=`
-			tokenEnd = position + 1;
-			break;
-		}
-		else if curChar == '+'
-		{
-			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
-			{
-				// it is `+=`
-				tokenEnd = position + 2;
-				break;
-			}
-
-			// it is `+`
-			tokenEnd = position + 1;
-			break;
-		}
-		else if curChar == '-'
-		{
-			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'
-			{
-				// it is `->`
-				tokenEnd = position + 2;
-				break;
-			}
-			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
-			{
-				// it is `-=`
-				tokenEnd = position + 2;
-				break;
-			}
-			// it is `-`
-			tokenEnd = position + 1;
-			break;
-		}
-		else if curChar == '/'
-		{
-			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '/'
-			{
-				// it is a line comment `//`
-				while position < Source.Text.Length and Source.Text[position] <> '\r' and Source.Text[position] <> '\n'
-				{
-					position += 1;
-				}
-
-				continue;
-			}
-			// it is `/`
-			tokenEnd = position + 1;
-			break;
-		}
-		else if curChar == '<'
-		{
-			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'
-			{
-				// it is `<>`
-				tokenEnd = position + 2;
-				break;
-			}
-			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
-			{
-				// it is `<=`
-				tokenEnd = position + 2;
-				break;
-			}
-			// it is `<`
-			tokenEnd = position + 1;
-			break;
-		}
-		else if curChar == '>'
-		{
-			if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
-			{
-				// it is `>=`
-				tokenEnd = position + 2;
-				break;
-			}
-			// it is `>`
-			tokenEnd = position + 1;
-			break;
-		}
-		else if curChar == '"'
-		{
-			tokenEnd = position + 1;
-			escaped = false;
-			while tokenEnd < Source.Text.Length and (Source.Text[tokenEnd] <> '"' or escaped)
-			{
-				escaped = Source.Text[tokenEnd] == '\\' and not escaped;
-				tokenEnd += 1;
-			}
-
-			tokenEnd += 1; // To include the close quote
-			break;
-		}
-		else if curChar == '\''
-		{
-			tokenEnd = position + 1;
-			escaped = false;
-			while tokenEnd < Source.Text.Length and (Source.Text[tokenEnd] <> '\'' or escaped)
-			{
-				escaped = Source.Text[tokenEnd] == '\\' and not escaped;
-				tokenEnd += 1;
-			}
-
-			tokenEnd += 1; // To include the close quote
-			break;
-		}
-		else
-		{
-			if IsIdentifierChar(curChar)
-			{
-				tokenEnd = position + 1;
-				while IsIdentifierChar(Source.Text[tokenEnd])
-				{
-					tokenEnd += 1;
-				}
-				break;
-			}
-			if(IsNumberChar(curChar))
-			{
-				tokenEnd = position + 1;
-				while IsNumberChar(Source.Text[tokenEnd])
-				{
-					tokenEnd += 1;
-				}
-				break;
-			}
-			Error("Lexer: Invalid character `" + curChar + "`");
-			position += 1;
-		}
-	}
-
-	if tokenEnd == -1
-	{
-		Token = ""; // TODO need nullable string so we can set it to null
-		NextTokenPosition = position;
-	}
-	else
-	{
-		Token = Source.Text.Substring(position, tokenEnd - position);
-		NextTokenPosition = tokenEnd;
-	}
-}
-
-public ReadFirstToken() -> void
-{
-	if NextTokenPosition <> 0
-	{
-		Error("Can't read first token of context that already has tokens read.");
-	}
-
-	ReadToken();
-}
 
 public TokenIsIdentifier() -> bool
 {
@@ -405,7 +402,7 @@ public TokenIsIdentifier() -> bool
 public Accept(expected: string) -> bool
 {
 	let accepted: bool = Token == expected;
-	if accepted { ReadToken(); }
+	if accepted { Token = tokenStream.GetNextToken(); }
 	return accepted;
 }
 
@@ -414,18 +411,18 @@ public Expect(expected: string) -> void
 	if Token <> expected
 	{
 		Error("Expected `" + expected + "` but found `" + Token + "`");
-		ReadToken(); // Skip token to advance
+		Token = tokenStream.GetNextToken(); // Skip token to advance
 	}
 	else
 	{
-		ReadToken();
+		Token = tokenStream.GetNextToken();
 	}
 }
 
 public AcceptIdentifier() -> bool
 {
 	if not TokenIsIdentifier() { return false; }
-	ReadToken();
+	Token = tokenStream.GetNextToken();
 	return true;
 }
 
@@ -434,7 +431,7 @@ public AcceptString() -> bool
 	if Token.Length == 0 or Token[0] <> '"'
 		{ return false; }
 
-	ReadToken();
+	Token = tokenStream.GetNextToken();
 	return true;
 }
 
@@ -443,7 +440,7 @@ public AcceptCodePoint() -> bool
 	if Token.Length == 0 or Token[0] <> '\''
 		{ return false; }
 
-	ReadToken();
+	Token = tokenStream.GetNextToken();
 	return true;
 }
 
@@ -455,7 +452,7 @@ public AcceptNumber() -> bool
 			{ return false; }
 	}
 
-	ReadToken();
+	Token = tokenStream.GetNextToken();
 	return true;
 }
 
@@ -464,12 +461,12 @@ public ExpectIdentifier() -> string
 	if not TokenIsIdentifier()
 	{
 		Error("Expected identifier, found `" + Token + "`");
-		ReadToken(); // Skip token to advance
+		Token = tokenStream.GetNextToken(); // Skip token to advance
 		return "<missing>";
 	}
 
 	let identifier: string = Token;
-	ReadToken();
+	Token = tokenStream.GetNextToken();
 	return identifier;
 }
 
@@ -685,7 +682,7 @@ public ParseExpression(minPrecedence: int) -> void
 		else if token == "(" and minPrecedence <= 8
 		{
 			// Call Expression
-			ReadToken();
+			Token = tokenStream.GetNextToken();
 			Write("(");
 			ParseCallArguments();
 			if Token <> ")"
@@ -707,7 +704,7 @@ public ParseExpression(minPrecedence: int) -> void
 		else if token == "[" and minPrecedence <= 8
 		{
 			// Element Access
-			ReadToken();
+			Token = tokenStream.GetNextToken();
 			Write("[");
 			ParseExpression();
 			if Token <> "]"
@@ -724,7 +721,7 @@ public ParseExpression(minPrecedence: int) -> void
 			break;
 		}
 
-		ReadToken();
+		Token = tokenStream.GetNextToken();
 		if not suffixOperator
 		{
 			if leftAssociative { precedence += 1; }
@@ -1081,8 +1078,9 @@ public ParseProgram() -> void
 
 public Transpile(source: SourceText) -> string
 {
-	Source = source;
-	ReadFirstToken();
+	let lexer: mut Lexer = new Lexer(); // TODO remove mut when not needed
+	tokenStream = lexer.Analyze(source);
+	Token = tokenStream.GetNextToken();
 	ParseProgram();
 	return Declarations.ToString() + ClassDeclarations.ToString() + Definitions.ToString();
 }

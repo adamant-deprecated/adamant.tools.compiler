@@ -18,8 +18,15 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\translated\current\Program.cpp" />
+    <ClCompile Include="..\translated\current\runtime.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\translated\current\runtime.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5F97A90B-861C-420A-B450-CE56CC6ABB19}</ProjectGuid>
+    <ProjectGuid>{B652BB7C-92EA-4D0F-852D-5C101E6BC559}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DebugCurrent</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
@@ -141,12 +148,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\translated\current\Program.cpp" />
-    <ClCompile Include="..\translated\current\runtime.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

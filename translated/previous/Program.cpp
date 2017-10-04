@@ -7,7 +7,6 @@ class TokenType;
 class SyntaxToken;
 class Parser;
 class SyntaxNode;
-auto ReadSource() -> ::SourceText const *;
 auto Parse(::SourceText const *const source) -> ::SyntaxNode const *;
 auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void;
 auto Error(::string const message) -> void;
@@ -43,8 +42,9 @@ auto ParseArgumentsDeclaration(bool const isMainFunction) -> ::string;
 auto ParseClassMember(::string const className) -> void;
 auto ParseDeclaration() -> void;
 auto ParseProgram() -> void;
-auto Transpile(::string const source) -> ::string;
+auto Transpile(::SourceText const *const source) -> ::string;
 auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
+auto ReadSource(::string const path) -> ::SourceText const *;
 
 // Class Declarations
 class SourceText
@@ -137,13 +137,6 @@ auto ::Parser::Parse() -> ::SyntaxNode const *
 {
 }
 
-auto ReadSource() -> ::SourceText const *
-{
-	::System::IO::FileReader *const file = new ::System::IO::FileReader(::string("src/Program.ad"));
-	::string const contents = file->ReadToEndSync();
-	return new ::SourceText(::string("MicroAdamant.Compiler"), ::string("Program.adam"), contents);
-}
-
 auto Parse(::SourceText const *const source) -> ::SyntaxNode const *
 {
 	::Lexer *const lexer = new ::Lexer(source);
@@ -155,7 +148,7 @@ auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void
 {
 }
 
-::string Source = ::string("");
+::SourceText const * Source = ::None;
 
 ::string Token = ::string("");
 
@@ -248,9 +241,9 @@ auto ReadToken() -> void
 	int tokenEnd = -1;
 	bool escaped;
 	bool done = false;
-	while (!done && position < Source->Length)
+	while (!done && position < Source->Text->Length)
 	{
-		char const curChar = Source[position];
+		char const curChar = Source->Text[position];
 		if (curChar == ' ' || curChar == '\t' || curChar == '\n' || curChar == '\r')
 		{
 			position += 1;
@@ -263,7 +256,7 @@ auto ReadToken() -> void
 		}
 		else if (curChar == '=')
 		{
-			if (position + 1 < Source->Length && Source[position + 1] == '=')
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
 			{
 				tokenEnd = position + 2;
 				break;
@@ -274,7 +267,7 @@ auto ReadToken() -> void
 		}
 		else if (curChar == '+')
 		{
-			if (position + 1 < Source->Length && Source[position + 1] == '=')
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
 			{
 				tokenEnd = position + 2;
 				break;
@@ -285,13 +278,13 @@ auto ReadToken() -> void
 		}
 		else if (curChar == '-')
 		{
-			if (position + 1 < Source->Length && Source[position + 1] == '>')
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '>')
 			{
 				tokenEnd = position + 2;
 				break;
 			}
 
-			if (position + 1 < Source->Length && Source[position + 1] == '=')
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
 			{
 				tokenEnd = position + 2;
 				break;
@@ -302,9 +295,9 @@ auto ReadToken() -> void
 		}
 		else if (curChar == '/')
 		{
-			if (position + 1 < Source->Length && Source[position + 1] == '/')
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '/')
 			{
-				while (position < Source->Length && Source[position] != '\r' && Source[position] != '\n')
+				while (position < Source->Text->Length && Source->Text[position] != '\r' && Source->Text[position] != '\n')
 				{
 					position += 1;
 				}
@@ -317,13 +310,13 @@ auto ReadToken() -> void
 		}
 		else if (curChar == '<')
 		{
-			if (position + 1 < Source->Length && Source[position + 1] == '>')
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '>')
 			{
 				tokenEnd = position + 2;
 				break;
 			}
 
-			if (position + 1 < Source->Length && Source[position + 1] == '=')
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
 			{
 				tokenEnd = position + 2;
 				break;
@@ -334,7 +327,7 @@ auto ReadToken() -> void
 		}
 		else if (curChar == '>')
 		{
-			if (position + 1 < Source->Length && Source[position + 1] == '=')
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
 			{
 				tokenEnd = position + 2;
 				break;
@@ -347,9 +340,9 @@ auto ReadToken() -> void
 		{
 			tokenEnd = position + 1;
 			escaped = false;
-			while (tokenEnd < Source->Length && (Source[tokenEnd] != '"' || escaped))
+			while (tokenEnd < Source->Text->Length && (Source->Text[tokenEnd] != '"' || escaped))
 			{
-				escaped = Source[tokenEnd] == '\\' && !escaped;
+				escaped = Source->Text[tokenEnd] == '\\' && !escaped;
 				tokenEnd += 1;
 			}
 
@@ -360,9 +353,9 @@ auto ReadToken() -> void
 		{
 			tokenEnd = position + 1;
 			escaped = false;
-			while (tokenEnd < Source->Length && (Source[tokenEnd] != '\'' || escaped))
+			while (tokenEnd < Source->Text->Length && (Source->Text[tokenEnd] != '\'' || escaped))
 			{
-				escaped = Source[tokenEnd] == '\\' && !escaped;
+				escaped = Source->Text[tokenEnd] == '\\' && !escaped;
 				tokenEnd += 1;
 			}
 
@@ -374,7 +367,7 @@ auto ReadToken() -> void
 			if (IsIdentifierChar(curChar))
 			{
 				tokenEnd = position + 1;
-				while (IsIdentifierChar(Source[tokenEnd]))
+				while (IsIdentifierChar(Source->Text[tokenEnd]))
 				{
 					tokenEnd += 1;
 				}
@@ -385,7 +378,7 @@ auto ReadToken() -> void
 			if ((IsNumberChar(curChar)))
 			{
 				tokenEnd = position + 1;
-				while (IsNumberChar(Source[tokenEnd]))
+				while (IsNumberChar(Source->Text[tokenEnd]))
 				{
 					tokenEnd += 1;
 				}
@@ -405,7 +398,7 @@ auto ReadToken() -> void
 	}
 	else
 	{
-		Token = Source->Substring(position, tokenEnd - position);
+		Token = Source->Text->Substring(position, tokenEnd - position);
 		NextTokenPosition = tokenEnd;
 	}
 }
@@ -1179,7 +1172,7 @@ auto ParseProgram() -> void
 	EndBlock();
 }
 
-auto Transpile(::string const source) -> ::string
+auto Transpile(::SourceText const *const source) -> ::string
 {
 	Source = source;
 	ReadFirstToken();
@@ -1199,9 +1192,7 @@ auto Main(::System::Console::Console *const console, ::System::Console::Argument
 	::string const inputFilePath = args->Get(0);
 	console->Write(::string("Compiling: "));
 	console->WriteLine(inputFilePath);
-	::System::IO::FileReader *const inputFile = new ::System::IO::FileReader(inputFilePath);
-	::string const source = inputFile->ReadToEndSync();
-	inputFile->Close();
+	::SourceText const *const source = ReadSource(inputFilePath);
 	::string const translated = Transpile(source);
 	::string const outputFilePath = args->Get(1);
 	console->Write(::string("Output: "));
@@ -1209,6 +1200,14 @@ auto Main(::System::Console::Console *const console, ::System::Console::Argument
 	::System::IO::FileWriter *const outputFile = new ::System::IO::FileWriter(outputFilePath);
 	outputFile->Write(translated);
 	outputFile->Close();
+}
+
+auto ReadSource(::string const path) -> ::SourceText const *
+{
+	::System::IO::FileReader *const file = new ::System::IO::FileReader(path);
+	::string const contents = file->ReadToEndSync();
+	file->Close();
+	return new ::SourceText(::string("<default>"), path, contents);
 }
 
 // Entry Point Adapter

@@ -45,6 +45,30 @@ private:
 public:
 	Maybe(T const & value) : data(value), hasValue(true) {}
 	Maybe(::NoneType const & none) : hasValue(false) {}
+	T& operator->() { return data; }
+	T const & operator->() const
+	{
+		if(!hasValue) throw "Access to null Maybe value";
+		return data;
+	}
+	T  & operator* ()
+	{
+		if(!hasValue) throw "Access to null Maybe value";
+		return data;
+	}
+	T const & operator* () const
+	{
+		if(!hasValue) throw "Access to null Maybe value";
+		return data;
+	}
+	bool operator==(T const & other) const
+	{
+		return hasValue && data == other;
+	}
+	bool operator!=(T const & other) const
+	{
+		return hasValue && data != other;
+	}
 };
 
 namespace System
