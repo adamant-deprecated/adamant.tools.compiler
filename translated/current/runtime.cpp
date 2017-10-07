@@ -1,5 +1,13 @@
 #include "runtime.h"
 
+// On windows this disables warnings about using fopen_s instead of fopen
+// It must be defined before including the headers.  The includes have been moved
+// here to avoid leaking this into the program being compiled.  This required the
+// use of void* instead of FILE* in some places.
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstring>
+#include <cstdio>
+
 string::string()
 	: Length(0), Buffer(0)
 {
@@ -120,31 +128,42 @@ namespace System
 	{
 		FileReader::FileReader(const string& fileName)
 		{
+			std::FILE* foo;
 			auto fname = fileName.cstr();
-			fopen_s(&file, fname, "rb");
+			file = std::fopen(fname, "rb");
 			delete[] fname;
 		}
 
 		string FileReader::ReadToEndSync()
 		{
-			std::fseek(file, 0, SEEK_END);
-			auto length = std::ftell(file);
-			std::fseek(file, 0, SEEK_SET);
+			std::fseek(static_cast<std::FILE*>(file), 0, SEEK_END);
+			auto length = std::ftell(static_cast<std::FILE*>(file));
+			std::fseek(static_cast<std::FILE*>(file), 0, SEEK_SET);
 			auto buffer = new char[length];
-			length = std::fread(buffer, sizeof(char), length, file);
+			length = std::fread(buffer, sizeof(char), length, static_cast<std::FILE*>(file));
 			return string(length, buffer);
+		}
+
+		void FileReader::Close()
+		{
+			std::fclose(static_cast<std::FILE*>(file));
 		}
 
 		FileWriter::FileWriter(const string& fileName)
 		{
 			auto fname = fileName.cstr();
-			fopen_s(&file, fname, "wb"); // TODO check error
+			file = std::fopen(fname, "wb"); // TODO check error
 			delete[] fname;
 		}
 
 		void FileWriter::Write(const string& value)
 		{
-			std::fwrite(value.Buffer, sizeof(char), value.Length, file);
+			std::fwrite(value.Buffer, sizeof(char), value.Length, static_cast<std::FILE*>(file));
+		}
+
+		void FileWriter::Close()
+		{
+			std::fclose(static_cast<std::FILE*>(file));
 		}
 	}
 

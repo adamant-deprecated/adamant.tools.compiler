@@ -1069,8 +1069,8 @@ auto ParseDeclaration() -> void
 	{
 		Expect(::string("struct"));
 		::string const enumName = ExpectIdentifier();
-		Declarations->AppendLine(::string("enum ") + enumName + ::string(";"));
-		ClassDeclarations->AppendLine(::string("enum ") + enumName);
+		Declarations->AppendLine(::string("enum class ") + enumName + ::string(";"));
+		ClassDeclarations->AppendLine(::string("enum class ") + enumName);
 		Expect(::string("{"));
 		ClassDeclarations->AppendLine(::string("{"));
 		do

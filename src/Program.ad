@@ -28,7 +28,7 @@ public class TokenStream
 	public new(source: SourceText)
 	{
 		Source = source;
-		nextToken = 0; // TODO have to assign this zero for now becuase we don't have default values working
+		nextToken = 0; // TODO have to assign this zero for now because we don't have default values working
 	}
 
 	public GetNextToken() -> string
@@ -986,8 +986,8 @@ public ParseDeclaration() -> void
 	{
 		Expect("struct");
 		let enumName: string = ExpectIdentifier();
-		Declarations.AppendLine("enum " + enumName + ";");
-		ClassDeclarations.AppendLine("enum " + enumName);
+		Declarations.AppendLine("enum class " + enumName + ";");
+		ClassDeclarations.AppendLine("enum class " + enumName);
 		Expect("{");
 		ClassDeclarations.AppendLine("{");
 		do

@@ -3,6 +3,7 @@
 // Declarations
 class SourceText;
 class Lexer;
+class TokenStream;
 class TokenType;
 class SyntaxToken;
 class Parser;
@@ -18,8 +19,6 @@ auto BeginBlock() -> void;
 auto EndBlock() -> void;
 auto IsIdentifierChar(char const c) -> bool;
 auto IsNumberChar(char const c) -> bool;
-auto ReadToken() -> void;
-auto ReadFirstToken() -> void;
 auto TokenIsIdentifier() -> bool;
 auto Accept(::string const expected) -> bool;
 auto Expect(::string const expected) -> void;
@@ -58,10 +57,15 @@ public:
 class Lexer
 {
 public:
+	auto Analyze(::SourceText const *const source) -> ::TokenStream *;
+};
+class TokenStream
+{
+public:
 	::SourceText const * Source;
-	unsigned int position;
-	Lexer(::SourceText const *const source);
-	auto NextToken() -> ::SyntaxToken const *;
+	unsigned int nextToken;
+	TokenStream(::SourceText const *const source);
+	auto GetNextToken() -> ::string;
 	auto NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *;
 	auto NewToken(::TokenType const *const type) -> ::SyntaxToken const *;
 };
@@ -81,9 +85,8 @@ public:
 class Parser
 {
 public:
-	::Lexer const * Lexer;
-	Parser(::Lexer const *const lexer);
-	auto Parse() -> ::SyntaxNode const *;
+	Parser();
+	auto Parse(::TokenStream const *const tokenStream) -> ::SyntaxNode const *;
 };
 class SyntaxNode
 {
@@ -98,147 +101,21 @@ public:
 	this->Text = text;
 }
 
-::Lexer::Lexer(::SourceText const *const source)
+auto ::Lexer::Analyze(::SourceText const *const source) -> ::TokenStream *
 {
-	this->Source = source;
+	return new ::TokenStream(source);
 }
 
-auto ::Lexer::NextToken() -> ::SyntaxToken const *
+::TokenStream::TokenStream(::SourceText const *const source)
 {
-	return ::None;
-}
-
-auto ::Lexer::NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *
-{
-	unsigned int const start = position;
-	position = end;
-	return new ::SyntaxToken(type, Source, start, end);
-}
-
-auto ::Lexer::NewToken(::TokenType const *const type) -> ::SyntaxToken const *
-{
-	return NewToken(type, position + 1);
-}
-
-::SyntaxToken::SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length)
-{
-	TokenType = tokenType;
 	Source = source;
-	Start = start;
-	Length = length;
+	nextToken = 0;
 }
 
-::Parser::Parser(::Lexer const *const lexer)
+auto ::TokenStream::GetNextToken() -> ::string
 {
-	this->Lexer = lexer;
-}
-
-auto ::Parser::Parse() -> ::SyntaxNode const *
-{
-}
-
-auto Parse(::SourceText const *const source) -> ::SyntaxNode const *
-{
-	::Lexer *const lexer = new ::Lexer(source);
-	::Parser *const parser = new ::Parser(lexer);
-	return parser->Parse();
-}
-
-auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void
-{
-}
-
-::SourceText const * Source = ::None;
-
-::string Token = ::string("");
-
-int NextTokenPosition = 0;
-
-::System::Text::StringBuilder *const Declarations = new ::System::Text::StringBuilder();
-
-::System::Text::StringBuilder *const ClassDeclarations = new ::System::Text::StringBuilder();
-
-::System::Text::StringBuilder *const Definitions = new ::System::Text::StringBuilder();
-
-int IndentDepth = 0;
-
-bool AfterDeclaration = false;
-
-::string MainFunctionReturnType = ::string("");
-
-bool MainFunctionAcceptsConsole = false;
-
-bool MainFunctionAcceptsArgs = false;
-
-auto Error(::string const message) -> void
-{
-	Definitions->Append(::string("<$ ") + message + ::string(" $>"));
-}
-
-auto BeginLine(::string const value) -> void
-{
-	if (AfterDeclaration)
-	{
-		Definitions->AppendLine();
-		AfterDeclaration = false;
-	}
-
-	Definitions->Append(::string('\t', IndentDepth));
-	Definitions->Append(value);
-}
-
-auto Write(::string const value) -> void
-{
-	Definitions->Append(value);
-}
-
-auto EndLine(::string const value) -> void
-{
-	Definitions->Append(value);
-	Definitions->AppendLine();
-}
-
-auto WriteLine(::string const value) -> void
-{
-	if (AfterDeclaration)
-	{
-		Definitions->AppendLine();
-		AfterDeclaration = false;
-	}
-
-	Definitions->Append(::string('\t', IndentDepth));
-	Definitions->Append(value);
-	Definitions->AppendLine();
-}
-
-auto BeginBlock() -> void
-{
-	WriteLine(::string("{"));
-	IndentDepth += 1;
-}
-
-auto EndBlock() -> void
-{
-	AfterDeclaration = false;
-	IndentDepth -= 1;
-	WriteLine(::string("}"));
-	AfterDeclaration = true;
-}
-
-auto IsIdentifierChar(char const c) -> bool
-{
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-}
-
-auto IsNumberChar(char const c) -> bool
-{
-	return c >= '0' && c <= '9';
-}
-
-auto ReadToken() -> void
-{
-	int position = NextTokenPosition;
-	int tokenEnd = -1;
+	unsigned int position = nextToken;
+	unsigned int tokenEnd = -1;
 	bool escaped;
 	bool done = false;
 	while (!done && position < Source->Text->Length)
@@ -391,26 +268,143 @@ auto ReadToken() -> void
 		}
 	}
 
+	::string token;
 	if (tokenEnd == -1)
 	{
-		Token = ::string("");
-		NextTokenPosition = position;
+		token = ::string("");
+		nextToken = position;
 	}
 	else
 	{
-		Token = Source->Text->Substring(position, tokenEnd - position);
-		NextTokenPosition = tokenEnd;
+		token = Source->Text->Substring(position, tokenEnd - position);
+		nextToken = tokenEnd;
 	}
+
+	return token;
 }
 
-auto ReadFirstToken() -> void
+auto ::TokenStream::NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *
 {
-	if (NextTokenPosition != 0)
+	return ::None;
+}
+
+auto ::TokenStream::NewToken(::TokenType const *const type) -> ::SyntaxToken const *
+{
+	return ::None;
+}
+
+::SyntaxToken::SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length)
+{
+	TokenType = tokenType;
+	Source = source;
+	Start = start;
+	Length = length;
+}
+
+::Parser::Parser()
+{
+}
+
+auto ::Parser::Parse(::TokenStream const *const tokenStream) -> ::SyntaxNode const *
+{
+	return ::None;
+}
+
+auto Parse(::SourceText const *const source) -> ::SyntaxNode const *
+{
+	::Lexer *const lexer = new ::Lexer();
+	::TokenStream *const tokenStream = lexer->Analyze(source);
+	::Parser *const parser = new ::Parser();
+	return parser->Parse(tokenStream);
+}
+
+auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void
+{
+}
+
+::TokenStream * tokenStream = ::None;
+
+::string Token = ::string("");
+
+::System::Text::StringBuilder *const Declarations = new ::System::Text::StringBuilder();
+
+::System::Text::StringBuilder *const ClassDeclarations = new ::System::Text::StringBuilder();
+
+::System::Text::StringBuilder *const Definitions = new ::System::Text::StringBuilder();
+
+int IndentDepth = 0;
+
+bool AfterDeclaration = false;
+
+::string MainFunctionReturnType = ::string("");
+
+bool MainFunctionAcceptsConsole = false;
+
+bool MainFunctionAcceptsArgs = false;
+
+auto Error(::string const message) -> void
+{
+	Definitions->Append(::string("<$ ") + message + ::string(" $>"));
+}
+
+auto BeginLine(::string const value) -> void
+{
+	if (AfterDeclaration)
 	{
-		Error(::string("Can't read first token of context that already has tokens read."));
+		Definitions->AppendLine();
+		AfterDeclaration = false;
 	}
 
-	ReadToken();
+	Definitions->Append(::string('\t', IndentDepth));
+	Definitions->Append(value);
+}
+
+auto Write(::string const value) -> void
+{
+	Definitions->Append(value);
+}
+
+auto EndLine(::string const value) -> void
+{
+	Definitions->Append(value);
+	Definitions->AppendLine();
+}
+
+auto WriteLine(::string const value) -> void
+{
+	if (AfterDeclaration)
+	{
+		Definitions->AppendLine();
+		AfterDeclaration = false;
+	}
+
+	Definitions->Append(::string('\t', IndentDepth));
+	Definitions->Append(value);
+	Definitions->AppendLine();
+}
+
+auto BeginBlock() -> void
+{
+	WriteLine(::string("{"));
+	IndentDepth += 1;
+}
+
+auto EndBlock() -> void
+{
+	AfterDeclaration = false;
+	IndentDepth -= 1;
+	WriteLine(::string("}"));
+	AfterDeclaration = true;
+}
+
+auto IsIdentifierChar(char const c) -> bool
+{
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+}
+
+auto IsNumberChar(char const c) -> bool
+{
+	return c >= '0' && c <= '9';
 }
 
 auto TokenIsIdentifier() -> bool
@@ -436,7 +430,7 @@ auto Accept(::string const expected) -> bool
 	bool const accepted = Token == expected;
 	if (accepted)
 	{
-		ReadToken();
+		Token = tokenStream->GetNextToken();
 	}
 
 	return accepted;
@@ -447,11 +441,11 @@ auto Expect(::string const expected) -> void
 	if (Token != expected)
 	{
 		Error(::string("Expected `") + expected + ::string("` but found `") + Token + ::string("`"));
-		ReadToken();
+		Token = tokenStream->GetNextToken();
 	}
 	else
 	{
-		ReadToken();
+		Token = tokenStream->GetNextToken();
 	}
 }
 
@@ -462,7 +456,7 @@ auto AcceptIdentifier() -> bool
 		return false;
 	}
 
-	ReadToken();
+	Token = tokenStream->GetNextToken();
 	return true;
 }
 
@@ -473,7 +467,7 @@ auto AcceptString() -> bool
 		return false;
 	}
 
-	ReadToken();
+	Token = tokenStream->GetNextToken();
 	return true;
 }
 
@@ -484,7 +478,7 @@ auto AcceptCodePoint() -> bool
 		return false;
 	}
 
-	ReadToken();
+	Token = tokenStream->GetNextToken();
 	return true;
 }
 
@@ -498,7 +492,7 @@ auto AcceptNumber() -> bool
 		}
 	}
 
-	ReadToken();
+	Token = tokenStream->GetNextToken();
 	return true;
 }
 
@@ -507,12 +501,12 @@ auto ExpectIdentifier() -> ::string
 	if (!TokenIsIdentifier())
 	{
 		Error(::string("Expected identifier, found `") + Token + ::string("`"));
-		ReadToken();
+		Token = tokenStream->GetNextToken();
 		return ::string("<missing>");
 	}
 
 	::string const identifier = Token;
-	ReadToken();
+	Token = tokenStream->GetNextToken();
 	return identifier;
 }
 
@@ -745,7 +739,7 @@ auto ParseExpression(int const minPrecedence) -> void
 		}
 		else if (token == ::string("(") && minPrecedence <= 8)
 		{
-			ReadToken();
+			Token = tokenStream->GetNextToken();
 			Write(::string("("));
 			ParseCallArguments();
 			if (Token != ::string(")"))
@@ -766,7 +760,7 @@ auto ParseExpression(int const minPrecedence) -> void
 		}
 		else if (token == ::string("[") && minPrecedence <= 8)
 		{
-			ReadToken();
+			Token = tokenStream->GetNextToken();
 			Write(::string("["));
 			ParseExpression();
 			if (Token != ::string("]"))
@@ -784,7 +778,7 @@ auto ParseExpression(int const minPrecedence) -> void
 			break;
 		}
 
-		ReadToken();
+		Token = tokenStream->GetNextToken();
 		if (!suffixOperator)
 		{
 			if (leftAssociative)
@@ -1174,8 +1168,9 @@ auto ParseProgram() -> void
 
 auto Transpile(::SourceText const *const source) -> ::string
 {
-	Source = source;
-	ReadFirstToken();
+	::Lexer *const lexer = new ::Lexer();
+	tokenStream = lexer->Analyze(source);
+	Token = tokenStream->GetNextToken();
 	ParseProgram();
 	return Declarations->ToString() + ClassDeclarations->ToString() + Definitions->ToString();
 }

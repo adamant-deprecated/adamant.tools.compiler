@@ -1,11 +1,11 @@
 #include "runtime.h"
 
 // Declarations
-enum day_of_week;
+enum class day_of_week;
 auto Main() -> void;
 
 // Class Declarations
-enum day_of_week
+enum class day_of_week
 {
 	Sunday = 0,
 	Monday = 1,
