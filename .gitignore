@@ -1,8 +1,14 @@
+# Compiled Binaries
 /target/
+
+# Translated C++ that shouldn't be committed
+/translated/test-cases/
+/translated/bootstrapped/
+
+# VS on windows files
 /.vs/
 *.user
 *.db
 *.opendb
 Debug/
 ipch/
-/translated/test-cases/

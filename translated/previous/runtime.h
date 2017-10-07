@@ -1,6 +1,3 @@
-#include <cstring>
-#include <cstdio>
-
 struct string
 {
 public:
@@ -102,23 +99,23 @@ namespace System
 		class FileReader
 		{
 		private:
-			std::FILE* file;
+			void* file; // Using void* to avoid including <cstdio> (see runtime.cpp)
 
 		public:
 			FileReader(const string& fileName);
 			string ReadToEndSync();
-			void Close() { std::fclose(file); }
+			void Close();
 		};
 
 		class FileWriter
 		{
 		private:
-			std::FILE* file;
+			void* file; // Using void* to avoid including <cstdio> (see runtime.cpp)
 
 		public:
 			FileWriter(const string& fileName);
 			void Write(const string& value);
-			void Close() { std::fclose(file); }
+			void Close();
 		};
 	}
 
