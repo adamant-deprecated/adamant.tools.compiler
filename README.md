@@ -6,6 +6,10 @@ A compiler for the [Adamant language](http://adamant-lang.org) that is in the pr
 
 The compiler is under active development. It is in a very early stage, and there are likely issues and limitations. APIs are subject to frequent breaking changes.
 
+## Implementation Notes
+
+The list of the currently [implemented language features](docs/ImplementedLanguageFeatures.md) can be found in the docs directory.
+
 ## Contributing
 
 Fork the project and then clone the repository.  Submit changes as a pull request.  Language features should have a test in the test suite for them.
