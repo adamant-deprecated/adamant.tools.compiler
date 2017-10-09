@@ -4,7 +4,7 @@
 *.ad		text
 *.md		text
 *.bat		text eol=crlf
-*.cpp		text
+*.cpp		text eol=lf
 *.cs		text eol=crlf
 *.sln		text eol=crlf
 *.csproj	text eol=crlf

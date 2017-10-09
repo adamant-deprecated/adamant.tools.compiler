@@ -186,12 +186,12 @@ namespace System
 
 		void StringBuilder::AppendLine(string const & value)
 		{
-			buffer = buffer + value + string("\r\n");
+			buffer = buffer + value + string("\n");
 		}
 
 		void StringBuilder::AppendLine()
 		{
-			buffer = buffer + string("\r\n");
+			buffer = buffer + string("\n");
 		}
 	}
 }
