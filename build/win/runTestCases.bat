@@ -3,5 +3,5 @@ CALL buildTestCases.bat
 setlocal enabledelayedexpansion
 for %%E in (..\..\target\test-cases\*.exe) do (
 	%%E
-	echo Exit Code is !errorlevel!
+	@echo Exit Code is !errorlevel!
 )

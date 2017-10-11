@@ -12,3 +12,6 @@
 *.opendb
 Debug/
 ipch/
+
+# VS Code Files
+.vscode/

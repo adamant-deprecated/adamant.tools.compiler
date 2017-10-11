@@ -490,7 +490,7 @@ public ConvertType(type: string) -> string
 	if type == "int" or type == "bool" or type == "void"
 		{ return type; }
 
-	return "::" + type.Replace(".", "::");
+	return "::" + type.Replace(".", "::").Replace("<", "<::");
 }
 
 public ConvertType(mutableBinding: bool, mutableValue: bool, var type: string) -> string
@@ -527,6 +527,13 @@ public ParseType() -> string
 	{
 		type.Append(".");
 		type.Append(ExpectIdentifier());
+	}
+	if Accept("<")
+	{
+		type.Append("<");
+		type.Append(ParseType());
+		Accept(">");
+		type.Append(">");
 	}
 
 	if Accept("?")
