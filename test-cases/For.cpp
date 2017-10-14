@@ -1,4 +1,4 @@
-#include "runtime.h"
+#include "RuntimeLibrary.h"
 
 // Declarations
 auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;

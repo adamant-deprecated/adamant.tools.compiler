@@ -1,4 +1,4 @@
-#include "runtime.h"
+#include "RuntimeLibrary.h"
 
 // Declarations
 auto Func(bool const value) -> bool;

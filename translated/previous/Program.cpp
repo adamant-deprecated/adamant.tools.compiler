@@ -40,8 +40,10 @@ auto ParseBlock() -> void;
 auto ParseArgumentsDeclaration(bool const isMainFunction) -> ::string;
 auto ParseClassMember(::string const className) -> void;
 auto ParseDeclaration() -> void;
-auto ParseProgram() -> void;
-auto Transpile(::SourceText const *const source) -> ::string;
+auto ParseCompilationUnit() -> void;
+auto EmitPreamble() -> void;
+auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> const *const resources) -> void;
+auto Transpile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string;
 auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
 auto ReadSource(::string const path) -> ::SourceText const *;
 
@@ -1129,7 +1131,16 @@ auto ParseDeclaration() -> void
 	ParseBlock();
 }
 
-auto ParseProgram() -> void
+auto ParseCompilationUnit() -> void
+{
+	do
+	{
+		ParseDeclaration();
+	}
+	while (TokenIsIdentifier());
+}
+
+auto EmitPreamble() -> void
 {
 	Declarations->AppendLine(::string("#include \"runtime.h\""));
 	Declarations->AppendLine(::string(""));
@@ -1138,14 +1149,27 @@ auto ParseProgram() -> void
 	ClassDeclarations->AppendLine(::string("// Class Declarations"));
 	WriteLine(::string(""));
 	WriteLine(::string("// Definitions"));
-	do
-	{
-		ParseDeclaration();
-	}
-	while (TokenIsIdentifier());
+}
+
+auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> const *const resources) -> void
+{
 	WriteLine(::string("// Entry Point Adapter"));
 	WriteLine(::string("int main(int argc, char const *const * argv)"));
 	BeginBlock();
+	for (::SourceText const *const resource : *(resources))
+	{
+		BeginLine(::string("resource_manager->AddResource(::string(\""));
+		Write(resource->Name);
+		Write(::string("\"), ::string(\""));
+		Write(resource->Text->Replace(::string("\\"), ::string("\\\\"))->Replace(::string("\n"), ::string("\\n"))->Replace(::string("\r"), ::string("\\r"))->Replace(::string("\""), ::string("\\\"")));
+		EndLine(::string("\"));"));
+	}
+
+	if (resources->Length() > 0)
+	{
+		EndLine(::string(""));
+	}
+
 	::System::Text::StringBuilder *const args = new ::System::Text::StringBuilder();
 	if (MainFunctionAcceptsConsole)
 	{
@@ -1175,30 +1199,83 @@ auto ParseProgram() -> void
 	EndBlock();
 }
 
-auto Transpile(::SourceText const *const source) -> ::string
+auto Transpile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string
 {
+	EmitPreamble();
 	::Lexer *const lexer = new ::Lexer();
-	tokenStream = lexer->Analyze(source);
-	Token = tokenStream->GetNextToken();
-	ParseProgram();
+	for (::SourceText const *const source : *(sources))
+	{
+		tokenStream = lexer->Analyze(source);
+		Token = tokenStream->GetNextToken();
+		ParseCompilationUnit();
+	}
+
+	EmitEntryPointAdapter(resources);
 	return Declarations->ToString() + ClassDeclarations->ToString() + Definitions->ToString();
 }
 
 auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void
 {
 	console->WriteLine(::string("Adamant Compiler v0.1.0"));
-	if (args->Count != 2)
+	::System::Collections::List<::string> *const sourceFilePaths = new ::System::Collections::List<::string>();
+	::System::Collections::List<::string> *const resourceFilePaths = new ::System::Collections::List<::string>();
+	::string outputFilePath = ::string("");
+	int argType = 0;
+	for (::string const arg : *(args))
 	{
-		console->WriteLine(::string("Args: <Input File> <OutputFile>"));
+		if (argType == 1)
+		{
+			resourceFilePaths->Add(arg);
+			argType = 0;
+		}
+		else if (argType == 2)
+		{
+			outputFilePath = arg;
+			argType = 0;
+		}
+		else
+		{
+			if (arg == ::string("-r"))
+			{
+				argType = 1;
+			}
+			else if (arg == ::string("-o"))
+			{
+				argType = 2;
+			}
+			else
+			{
+				sourceFilePaths->Add(arg);
+			}
+		}
+	}
+
+	if (sourceFilePaths->Length() == 0 || outputFilePath == ::string(""))
+	{
+		console->WriteLine(::string("Args: <Input File(s)> -o <OutputFile> -r <Resource File>"));
 		return;
 	}
 
-	::string const inputFilePath = args->Get(0);
-	console->Write(::string("Compiling: "));
-	console->WriteLine(inputFilePath);
-	::SourceText const *const source = ReadSource(inputFilePath);
-	::string const translated = Transpile(source);
-	::string const outputFilePath = args->Get(1);
+	::System::Collections::List<::SourceText const *> *const resources = new ::System::Collections::List<::SourceText const *>();
+	if (resourceFilePaths->Length() > 0)
+	{
+		console->WriteLine(::string("Reading Resources:"));
+		for (::string const resourceFilePath : *(resourceFilePaths))
+		{
+			console->WriteLine(::string("  ") + resourceFilePath);
+			resources->Add(ReadSource(resourceFilePath));
+		}
+	}
+
+	console->WriteLine(::string("Compiling:"));
+	::System::Collections::List<::SourceText const *> *const sources = new ::System::Collections::List<::SourceText const *>();
+	for (::string const sourceFilePath : *(sourceFilePaths))
+	{
+		console->WriteLine(::string("  ") + sourceFilePath);
+		sources->Add(ReadSource(sourceFilePath));
+	}
+
+	::string const translated = Transpile(sources, resources);
 	console->Write(::string("Output: "));
 	console->WriteLine(outputFilePath);
 	::System::IO::FileWriter *const outputFile = new ::System::IO::FileWriter(outputFilePath);
@@ -1211,7 +1288,20 @@ auto ReadSource(::string const path) -> ::SourceText const *
 	::System::IO::FileReader *const file = new ::System::IO::FileReader(path);
 	::string const contents = file->ReadToEndSync();
 	file->Close();
-	return new ::SourceText(::string("<default>"), path, contents);
+	::string name = path;
+	int index = name->LastIndexOf('/');
+	if (index != -1)
+	{
+		name = name->Substring(index + 1);
+	}
+
+	index = name->LastIndexOf('\\');
+	if (index != -1)
+	{
+		name = name->Substring(index + 1);
+	}
+
+	return new ::SourceText(::string("<default>"), name, contents);
 }
 
 // Entry Point Adapter

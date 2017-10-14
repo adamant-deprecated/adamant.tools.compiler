@@ -1,4 +1,4 @@
-#include "runtime.h"
+#include "RuntimeLibrary.h"
 
 // Declarations
 auto Identity(char const value) -> char;

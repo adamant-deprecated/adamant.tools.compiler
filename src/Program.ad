@@ -1048,7 +1048,7 @@ public ParseCompilationUnit() -> void
 public EmitPreamble() -> void
 {
 	// Setup the beginning of each section
-	Declarations.AppendLine("#include \"runtime.h\"");
+	Declarations.AppendLine("#include \"RuntimeLibrary.h\"");
 	Declarations.AppendLine("");
 	Declarations.AppendLine("// Declarations");
 	ClassDeclarations.AppendLine("");
@@ -1194,6 +1194,23 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	let outputFile: mut System.IO.FileWriter = new System.IO.FileWriter(outputFilePath);
 	outputFile.Write(translated);
 	outputFile.Close();
+
+	// Write RuntimeLibrary
+	console.Write("Outputting RuntimeLibrary to: ");
+	var outputDirPath: string = outputFilePath;
+	var index: int = outputDirPath.LastIndexOf('/');
+	if index <> -1
+		{ outputDirPath = outputDirPath.Substring(0, index+1); }
+	index = outputDirPath.LastIndexOf('\\');
+	if index <> -1
+		{ outputDirPath = outputDirPath.Substring(0, index+1); }
+	console.WriteLine(outputDirPath);
+	var resourceFile: mut System.IO.FileWriter = new System.IO.FileWriter(outputDirPath+"RuntimeLibrary.h");
+	resourceFile.Write(resource_manager.GetString("RuntimeLibrary.h"));
+	resourceFile.Close();
+	resourceFile = new System.IO.FileWriter(outputDirPath+"RuntimeLibrary.cpp");
+	resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
+	resourceFile.Close();
 }
 
 public ReadSource(path: string) -> SourceText

@@ -1,4 +1,4 @@
-#include "runtime.h"
+#include "RuntimeLibrary.h"
 
 // Declarations
 auto Func(::Maybe<::string> const x, ::Maybe<unsigned int> const y) -> ::Maybe<int>;

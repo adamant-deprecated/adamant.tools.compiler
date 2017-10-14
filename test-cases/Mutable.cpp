@@ -1,4 +1,4 @@
-#include "runtime.h"
+#include "RuntimeLibrary.h"
 
 // Declarations
 auto Func(int x, int const y) -> ::System::Text::StringBuilder *;
