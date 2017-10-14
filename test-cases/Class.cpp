@@ -1,7 +1,9 @@
 #include "RuntimeLibrary.h"
 
-// Declarations
+// Type Declarations
 class C;
+
+// Function Declarations
 auto Main() -> void;
 
 // Class Declarations

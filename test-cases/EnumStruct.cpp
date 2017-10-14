@@ -1,7 +1,9 @@
 #include "RuntimeLibrary.h"
 
-// Declarations
+// Type Declarations
 enum class day_of_week;
+
+// Function Declarations
 auto Main() -> void;
 
 // Class Declarations

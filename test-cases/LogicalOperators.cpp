@@ -1,6 +1,8 @@
 #include "RuntimeLibrary.h"
 
-// Declarations
+// Type Declarations
+
+// Function Declarations
 auto True() -> bool;
 auto Main() -> void;
 

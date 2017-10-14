@@ -4,6 +4,7 @@ cls
 @echo Rebuilding Previous
 rmdir /S/Q ..\..\target\previous
 @mkdir ..\..\target\previous
+
 clang++ ..\..\translated\previous\*.cpp -o ..\..\target\previous\Program.exe -std=c++14 -Xclang -flto-visibility-public-std
 
 @echo.
@@ -11,7 +12,9 @@ clang++ ..\..\translated\previous\*.cpp -o ..\..\target\previous\Program.exe -st
 @echo Building Current
 rmdir /S/Q ..\..\translated\current
 @mkdir ..\..\translated\current
-..\..\target\previous\Program.exe ..\..\src\Program.ad -o ..\..\translated\current\Program.cpp -r ..\..\src\RuntimeLibrary.cpp -r ..\..\src\RuntimeLibrary.h
+@set source_files=
+@for /f "tokens=*" %%F in ('dir /b /S "..\..\src\*.ad"') do @call set source_files=%%source_files%% "%%F"
+..\..\target\previous\Program.exe %source_files% -o ..\..\translated\current\Program.cpp -r ..\..\src\RuntimeLibrary.cpp -r ..\..\src\RuntimeLibrary.h
 rmdir /S/Q ..\..\target\current
 @mkdir ..\..\target\current
 clang++ ..\..\translated\current\*.cpp -o ..\..\target\current\Program.exe -std=c++14 -Xclang -flto-visibility-public-std

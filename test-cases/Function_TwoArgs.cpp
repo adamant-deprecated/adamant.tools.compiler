@@ -1,6 +1,8 @@
 #include "RuntimeLibrary.h"
 
-// Declarations
+// Type Declarations
+
+// Function Declarations
 auto Func(int const a, int const b) -> int;
 auto Main() -> int;
 

@@ -1,6 +1,8 @@
 #include "RuntimeLibrary.h"
 
-// Declarations
+// Type Declarations
+
+// Function Declarations
 auto Func(::Maybe<::string> const x, ::Maybe<unsigned int> const y) -> ::Maybe<int>;
 auto Main(::System::Console::Console *const console) -> void;
 

@@ -1,6 +1,8 @@
 #include "RuntimeLibrary.h"
 
-// Declarations
+// Type Declarations
+
+// Function Declarations
 auto Main(::System::Console::Console *const console) -> void;
 
 // Class Declarations

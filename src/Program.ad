@@ -304,7 +304,8 @@ public EmitCpp(syntaxTree: SyntaxNode) -> void
 public var tokenStream: mut TokenStream = null;
 public var Token: string = "";
 // TODO should be `new mut`
-public let Declarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
+public let TypeDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
+public let FunctionDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 public let ClassDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 public let Definitions: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 public var IndentDepth: int = 0;
@@ -977,7 +978,7 @@ public ParseDeclaration() -> void
 	if Accept("class")
 	{
 		let className: string = ExpectIdentifier();
-		Declarations.AppendLine("class " + className + ";");
+		TypeDeclarations.AppendLine("class " + className + ";");
 		ClassDeclarations.AppendLine("class " + className);
 		Expect("{");
 		ClassDeclarations.AppendLine("{");
@@ -994,7 +995,7 @@ public ParseDeclaration() -> void
 	{
 		Expect("struct");
 		let enumName: string = ExpectIdentifier();
-		Declarations.AppendLine("enum class " + enumName + ";");
+		TypeDeclarations.AppendLine("enum class " + enumName + ";");
 		ClassDeclarations.AppendLine("enum class " + enumName);
 		Expect("{");
 		ClassDeclarations.AppendLine("{");
@@ -1026,7 +1027,7 @@ public ParseDeclaration() -> void
 	let returnType: string = ParseType();
 	let convertedReturnType: string = ConvertType(true, mutableValue, returnType);
 	// Write out the function declaration for C++ so we can call functions defined after others
-	Declarations.AppendLine("auto " + name + "(" + arguments + ") -> " + convertedReturnType + ";");
+	FunctionDeclarations.AppendLine("auto " + name + "(" + arguments + ") -> " + convertedReturnType + ";");
 	WriteLine("auto " + name + "(" + arguments + ") -> " + convertedReturnType);
 	if name == "Main"
 	{
@@ -1039,18 +1040,20 @@ public ParseDeclaration() -> void
 
 public ParseCompilationUnit() -> void
 {
-	do
+	while TokenIsIdentifier()
 	{
 		ParseDeclaration();
-	} while TokenIsIdentifier();
+	}
 }
 
 public EmitPreamble() -> void
 {
 	// Setup the beginning of each section
-	Declarations.AppendLine("#include \"RuntimeLibrary.h\"");
-	Declarations.AppendLine("");
-	Declarations.AppendLine("// Declarations");
+	TypeDeclarations.AppendLine("#include \"RuntimeLibrary.h\"");
+	TypeDeclarations.AppendLine("");
+	TypeDeclarations.AppendLine("// Type Declarations");
+	FunctionDeclarations.AppendLine("");
+	FunctionDeclarations.AppendLine("// Function Declarations");
 	ClassDeclarations.AppendLine("");
 	ClassDeclarations.AppendLine("// Class Declarations");
 	WriteLine("");
@@ -1119,7 +1122,7 @@ public Transpile(sources: System.Collections.List<SourceText>, resources: System
 		ParseCompilationUnit();
 	}
 	EmitEntryPointAdapter(resources);
-	return Declarations.ToString() + ClassDeclarations.ToString() + Definitions.ToString();
+	return TypeDeclarations.ToString() + FunctionDeclarations.ToString() + ClassDeclarations.ToString() + Definitions.ToString();
 }
 
 public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void

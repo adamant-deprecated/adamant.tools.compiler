@@ -46,6 +46,7 @@ auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> con
 auto Transpile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string;
 auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
 auto ReadSource(::string const path) -> ::SourceText const *;
+class Placeholder;
 
 // Class Declarations
 class SourceText
@@ -91,6 +92,10 @@ public:
 	auto Parse(::TokenStream const *const tokenStream) -> ::SyntaxNode const *;
 };
 class SyntaxNode
+{
+public:
+};
+class Placeholder
 {
 public:
 };
@@ -328,7 +333,9 @@ auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void
 
 ::string Token = ::string("");
 
-::System::Text::StringBuilder *const Declarations = new ::System::Text::StringBuilder();
+::System::Text::StringBuilder *const TypeDeclarations = new ::System::Text::StringBuilder();
+
+::System::Text::StringBuilder *const FunctionDeclarations = new ::System::Text::StringBuilder();
 
 ::System::Text::StringBuilder *const ClassDeclarations = new ::System::Text::StringBuilder();
 
@@ -1062,7 +1069,7 @@ auto ParseDeclaration() -> void
 	if (Accept(::string("class")))
 	{
 		::string const className = ExpectIdentifier();
-		Declarations->AppendLine(::string("class ") + className + ::string(";"));
+		TypeDeclarations->AppendLine(::string("class ") + className + ::string(";"));
 		ClassDeclarations->AppendLine(::string("class ") + className);
 		Expect(::string("{"));
 		ClassDeclarations->AppendLine(::string("{"));
@@ -1080,7 +1087,7 @@ auto ParseDeclaration() -> void
 	{
 		Expect(::string("struct"));
 		::string const enumName = ExpectIdentifier();
-		Declarations->AppendLine(::string("enum class ") + enumName + ::string(";"));
+		TypeDeclarations->AppendLine(::string("enum class ") + enumName + ::string(";"));
 		ClassDeclarations->AppendLine(::string("enum class ") + enumName);
 		Expect(::string("{"));
 		ClassDeclarations->AppendLine(::string("{"));
@@ -1116,7 +1123,7 @@ auto ParseDeclaration() -> void
 	bool const mutableValue = Accept(::string("mut"));
 	::string const returnType = ParseType();
 	::string const convertedReturnType = ConvertType(true, mutableValue, returnType);
-	Declarations->AppendLine(::string("auto ") + name + ::string("(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
+	FunctionDeclarations->AppendLine(::string("auto ") + name + ::string("(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
 	WriteLine(::string("auto ") + name + ::string("(") + arguments + ::string(") -> ") + convertedReturnType);
 	if (name == ::string("Main"))
 	{
@@ -1133,18 +1140,19 @@ auto ParseDeclaration() -> void
 
 auto ParseCompilationUnit() -> void
 {
-	do
+	while (TokenIsIdentifier())
 	{
 		ParseDeclaration();
 	}
-	while (TokenIsIdentifier());
 }
 
 auto EmitPreamble() -> void
 {
-	Declarations->AppendLine(::string("#include \"RuntimeLibrary.h\""));
-	Declarations->AppendLine(::string(""));
-	Declarations->AppendLine(::string("// Declarations"));
+	TypeDeclarations->AppendLine(::string("#include \"RuntimeLibrary.h\""));
+	TypeDeclarations->AppendLine(::string(""));
+	TypeDeclarations->AppendLine(::string("// Type Declarations"));
+	FunctionDeclarations->AppendLine(::string(""));
+	FunctionDeclarations->AppendLine(::string("// Function Declarations"));
 	ClassDeclarations->AppendLine(::string(""));
 	ClassDeclarations->AppendLine(::string("// Class Declarations"));
 	WriteLine(::string(""));
@@ -1211,7 +1219,7 @@ auto Transpile(::System::Collections::List<::SourceText const *> const *const so
 	}
 
 	EmitEntryPointAdapter(resources);
-	return Declarations->ToString() + ClassDeclarations->ToString() + Definitions->ToString();
+	return TypeDeclarations->ToString() + FunctionDeclarations->ToString() + ClassDeclarations->ToString() + Definitions->ToString();
 }
 
 auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void

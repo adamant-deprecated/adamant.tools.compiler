@@ -1,6 +1,8 @@
 #include "RuntimeLibrary.h"
 
-// Declarations
+// Type Declarations
+
+// Function Declarations
 auto Func(int x, int const y) -> ::System::Text::StringBuilder *;
 auto Main(::System::Console::Console *const console) -> void;
 
