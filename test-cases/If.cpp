@@ -3,12 +3,12 @@
 // Type Declarations
 
 // Function Declarations
-auto Main() -> int;
+auto Main_() -> int;
 
 // Class Declarations
 
 // Definitions
-auto Main() -> int
+auto Main_() -> int
 {
 	if (true)
 	{
@@ -19,5 +19,5 @@ auto Main() -> int
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	return Main();
+	return Main_();
 }

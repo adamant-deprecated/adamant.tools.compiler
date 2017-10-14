@@ -9,7 +9,7 @@
 struct string
 {
 public:
-	int Length;
+	int Length_;
 	char const * Buffer;
 
 	string();
@@ -17,10 +17,10 @@ public:
 	string(char const * s);
 	string(int length, char const * s);
 	char const * cstr() const;
-	string Substring(int start, int length) const;
-	string Substring(int start) const { return Substring(start, Length-start); }
-	string Replace(string oldValue, string newValue) const;
-	int LastIndexOf(char c) const;
+	string Substring_(int start, int length) const;
+	string Substring_(int start) const { return Substring_(start, Length_-start); }
+	string Replace_(string oldValue, string newValue) const;
+	int LastIndexOf_(char c) const;
 	char operator[] (int const index) const;
 	string operator+(string const & value) const;
 	string operator+(char const & value) const;
@@ -32,17 +32,17 @@ public:
 
 	typedef char const * const_iterator;
 	const_iterator begin() const { return &Buffer[0]; }
-	const_iterator end() const { return &Buffer[Length]; }
+	const_iterator end() const { return &Buffer[Length_]; }
 };
 
 class ResourceManager
 {
 public:
-	string const & GetString(string resourceName);
+	string const & GetString_(string resourceName);
 	void AddResource(string name, string value);
 };
 
-extern ResourceManager *const resource_manager;
+extern ResourceManager *const resource_manager_;
 
 class NoneType
 {
@@ -88,12 +88,12 @@ public:
 	}
 };
 
-namespace System
+namespace System_
 {
-	namespace Collections
+	namespace Collections_
 	{
 		template<typename T>
-		class List
+		class List_
 		{
 		private:
 			T* values;
@@ -103,16 +103,16 @@ namespace System
 		public:
 			typedef T const * const_iterator;
 
-			List() : values(0), length(0), capacity(0) { }
-			void Add(T value);
-			int Length() const { return length; }
+			List_() : values(0), length(0), capacity(0) { }
+			void Add_(T value);
+			int Length_() const { return length; }
 			const_iterator begin() const { return values; }
 			const_iterator end() const { return &values[length]; }
-			T const & Get(int const index) const { return values[index]; }
+			T const & Get_(int const index) const { return values[index]; }
 		};
 
 		template<typename T>
-		void List<T>::Add(T value)
+		void List_<T>::Add_(T value)
 		{
 			if(length >= capacity)
 			{
@@ -127,69 +127,69 @@ namespace System
 		}
 	}
 
-	namespace Console
+	namespace Console_
 	{
-		class Console
+		class Console_
 		{
 		public:
-			void Write(string value);
-			void WriteLine(string value);
-			void WriteLine();
+			void Write_(string value);
+			void WriteLine_(string value);
+			void WriteLine_();
 		};
 
-		class Arguments
+		class Arguments_
 		{
 		private:
 			string* args;
 		public:
 			typedef string const * const_iterator;
-			const int Count;
+			const int Count_;
 
-			Arguments(int argc, char const *const * argv);
+			Arguments_(int argc, char const *const * argv);
 			const_iterator begin() const { return &args[0]; }
-			const_iterator end() const { return &args[Count]; }
-			string const & Get(int const index) const { return args[index]; }
+			const_iterator end() const { return &args[Count_]; }
+			string const & Get_(int const index) const { return args[index]; }
 		};
 	}
 
-	namespace IO
+	namespace IO_
 	{
-		class FileReader
+		class FileReader_
 		{
 		private:
 			std::FILE* file;
 
 		public:
-			FileReader(const string& fileName);
-			string ReadToEndSync();
-			void Close();
+			FileReader_(const string& fileName);
+			string ReadToEndSync_();
+			void Close_();
 		};
 
-		class FileWriter
+		class FileWriter_
 		{
 		private:
 			std::FILE* file;
 
 		public:
-			FileWriter(const string& fileName);
-			void Write(const string& value);
-			void Close();
+			FileWriter_(const string& fileName);
+			void Write_(const string& value);
+			void Close_();
 		};
 	}
 
-	namespace Text
+	namespace Text_
 	{
-		class StringBuilder
+		class StringBuilder_
 		{
 		private:
 			string buffer;
 		public:
-			StringBuilder();
-			StringBuilder(string const & value);
-			void Append(string const & value);
-			void AppendLine(string const& value);
-			void AppendLine();
-			string ToString() const { return buffer; }
+			StringBuilder_();
+			StringBuilder_(string const & value);
+			void Append_(string const & value);
+			void AppendLine_(string const& value);
+			void AppendLine_();
+			string ToString_() const { return buffer; }
 		};
 	}
 }

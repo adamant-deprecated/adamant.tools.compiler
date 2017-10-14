@@ -45,7 +45,7 @@ auto ParseDeclaration() -> void;
 auto ParseCompilationUnit() -> void;
 auto EmitPreamble() -> void;
 auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> const *const resources) -> void;
-auto Transpile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string;
+auto Compile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string;
 auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
 auto ReadSource(::string const path) -> ::SourceText const *;
 
@@ -332,12 +332,18 @@ auto ConvertType(::string const type) -> ::string
 		return ::string("unsigned int");
 	}
 
-	if (type == ::string("int") || type == ::string("bool") || type == ::string("void"))
+	if (type == ::string("int") || type == ::string("bool") || type == ::string("void") || type == ::string("string"))
 	{
 		return type;
 	}
 
-	return ::string("::") + type->Replace(::string("."), ::string("::"));
+	::string const cppType = ::string("::") + type->Replace(::string("."), ::string("_::"))->Replace(::string("<"), ::string("_<"));
+	if (cppType[cppType->Length - 1] == '>')
+	{
+		return cppType;
+	}
+
+	return cppType + ::string("_");
 }
 
 auto ConvertType(bool const mutableBinding, bool const mutableValue, ::string type) -> ::string
@@ -454,16 +460,28 @@ auto ParseAtom() -> bool
 		return true;
 	}
 
+	if (Accept(::string("self")))
+	{
+		Write(::string("this"));
+		return true;
+	}
+
 	::string const token = Token;
-	if (AcceptIdentifier() || AcceptNumber())
+	if (Accept(::string("true")) || Accept(::string("false")) || AcceptNumber())
 	{
 		Write(token);
 		return true;
 	}
 
+	if (AcceptIdentifier())
+	{
+		Write(token + ::string("_"));
+		return true;
+	}
+
 	if (AcceptString())
 	{
-		Write(::string("::string(") + token + ::string(")"));
+		Write(::string("string(") + token + ::string(")"));
 		return true;
 	}
 
@@ -657,7 +675,7 @@ auto ParseStatement() -> bool
 		Expect(::string(":"));
 		bool const mutableValue = Accept(::string("mut"));
 		::string const type = ParseType();
-		Write(ConvertType(k == ::string("var"), mutableValue, type) + ::string(" ") + name);
+		Write(ConvertType(k == ::string("var"), mutableValue, type) + ::string(" ") + name + ::string("_"));
 		Expect(::string("in"));
 		Write(::string(" : *("));
 		ParseExpression();
@@ -706,6 +724,20 @@ auto ParseStatement() -> bool
 		return true;
 	}
 
+	if (Accept(::string("break")))
+	{
+		Expect(::string(";"));
+		WriteLine(::string("break;"));
+		return true;
+	}
+
+	if (Accept(::string("continue")))
+	{
+		Expect(::string(";"));
+		WriteLine(::string("continue;"));
+		return true;
+	}
+
 	::string const kind = Token;
 	if (Accept(::string("let")) || Accept(::string("var")))
 	{
@@ -715,7 +747,7 @@ auto ParseStatement() -> bool
 		::string variableType = ParseType();
 		variableType = ConvertType(kind == ::string("var"), mutableValue, variableType);
 		BeginLine(variableType);
-		Write(::string(" ") + variableName);
+		Write(::string(" ") + variableName + ::string("_"));
 		if (Accept(::string("=")))
 		{
 			Write(::string(" = "));
@@ -780,7 +812,7 @@ auto ParseArgumentsDeclaration(bool const isMainFunction) -> ::string
 			}
 		}
 
-		arguments->Append(ConvertType(mutableBinding, mutableValue, type) + ::string(" ") + name + ::string(", "));
+		arguments->Append(ConvertType(mutableBinding, mutableValue, type) + ::string(" ") + name + ::string("_, "));
 	}
 	while (Accept(::string(",")));
 	Expect(::string(")"));
@@ -802,8 +834,8 @@ auto ParseClassMember(::string const className) -> void
 	if (Accept(::string("new")))
 	{
 		::string const arguments = ParseArgumentsDeclaration(false);
-		ClassDeclarations->AppendLine(::string("\t") + className + ::string("(") + arguments + ::string(");"));
-		WriteLine(::string("::") + className + ::string("::") + className + ::string("(") + arguments + ::string(")"));
+		ClassDeclarations->AppendLine(::string("\t") + className + ::string("_(") + arguments + ::string(");"));
+		WriteLine(::string("::") + className + ::string("_::") + className + ::string("_(") + arguments + ::string(")"));
 		ParseBlock();
 		return;
 	}
@@ -817,7 +849,7 @@ auto ParseClassMember(::string const className) -> void
 		::string fieldType = ParseType();
 		fieldType = ConvertType(true, mutableValue, fieldType);
 		Expect(::string(";"));
-		ClassDeclarations->AppendLine(::string("\t") + fieldType + ::string(" ") + fieldName + ::string(";"));
+		ClassDeclarations->AppendLine(::string("\t") + fieldType + ::string(" ") + fieldName + ::string("_;"));
 		return;
 	}
 
@@ -827,8 +859,8 @@ auto ParseClassMember(::string const className) -> void
 	bool const mutableValue = Accept(::string("mut"));
 	::string const returnType = ParseType();
 	::string const convertedReturnType = ConvertType(true, mutableValue, returnType);
-	ClassDeclarations->AppendLine(::string("\tauto ") + methodName + ::string("(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
-	WriteLine(::string("auto ::") + className + ::string("::") + methodName + ::string("(") + arguments + ::string(") -> ") + convertedReturnType);
+	ClassDeclarations->AppendLine(::string("\tauto ") + methodName + ::string("_(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
+	WriteLine(::string("auto ::") + className + ::string("_::") + methodName + ::string("_(") + arguments + ::string(") -> ") + convertedReturnType);
 	ParseBlock();
 }
 
@@ -853,7 +885,7 @@ auto ParseDeclaration() -> void
 		Expect(::string("="));
 		variableType = ConvertType(kind == ::string("var"), mutableValue, variableType);
 		BeginLine(variableType);
-		Write(::string(" ") + variableName + ::string(" = "));
+		Write(::string(" ") + variableName + ::string("_ = "));
 		ParseExpression();
 		Expect(::string(";"));
 		EndLine(::string(";"));
@@ -864,8 +896,8 @@ auto ParseDeclaration() -> void
 	if (Accept(::string("class")))
 	{
 		::string const className = ExpectIdentifier();
-		TypeDeclarations->AppendLine(::string("class ") + className + ::string(";"));
-		ClassDeclarations->AppendLine(::string("class ") + className);
+		TypeDeclarations->AppendLine(::string("class ") + className + ::string("_;"));
+		ClassDeclarations->AppendLine(::string("class ") + className + ::string("_"));
 		Expect(::string("{"));
 		ClassDeclarations->AppendLine(::string("{"));
 		ClassDeclarations->AppendLine(::string("public:"));
@@ -882,14 +914,14 @@ auto ParseDeclaration() -> void
 	{
 		Expect(::string("struct"));
 		::string const enumName = ExpectIdentifier();
-		TypeDeclarations->AppendLine(::string("enum class ") + enumName + ::string(";"));
-		ClassDeclarations->AppendLine(::string("enum class ") + enumName);
+		TypeDeclarations->AppendLine(::string("enum class ") + enumName + ::string("_;"));
+		ClassDeclarations->AppendLine(::string("enum class ") + enumName + ::string("_"));
 		Expect(::string("{"));
 		ClassDeclarations->AppendLine(::string("{"));
 		do
 		{
 			::string const enumValue = ExpectIdentifier();
-			ClassDeclarations->Append(::string("\t") + enumValue);
+			ClassDeclarations->Append(::string("\t") + enumValue + ::string("_"));
 			if (Accept(::string("=")))
 			{
 				ClassDeclarations->Append(::string(" = "));
@@ -918,8 +950,8 @@ auto ParseDeclaration() -> void
 	bool const mutableValue = Accept(::string("mut"));
 	::string const returnType = ParseType();
 	::string const convertedReturnType = ConvertType(true, mutableValue, returnType);
-	FunctionDeclarations->AppendLine(::string("auto ") + name + ::string("(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
-	WriteLine(::string("auto ") + name + ::string("(") + arguments + ::string(") -> ") + convertedReturnType);
+	FunctionDeclarations->AppendLine(::string("auto ") + name + ::string("_(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
+	WriteLine(::string("auto ") + name + ::string("_(") + arguments + ::string(") -> ") + convertedReturnType);
 	if (name == ::string("Main"))
 	{
 		if (MainFunctionReturnType != ::string(""))
@@ -961,7 +993,7 @@ auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> con
 	BeginBlock();
 	for (::SourceText const *const resource : *(resources))
 	{
-		BeginLine(::string("resource_manager->AddResource(::string(\""));
+		BeginLine(::string("resource_manager_->AddResource(::string(\""));
 		Write(resource->Name);
 		Write(::string("\"), ::string(\""));
 		Write(resource->Text->Replace(::string("\\"), ::string("\\\\"))->Replace(::string("\n"), ::string("\\n"))->Replace(::string("\r"), ::string("\\r"))->Replace(::string("\""), ::string("\\\"")));
@@ -976,7 +1008,7 @@ auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> con
 	::System::Text::StringBuilder *const args = new ::System::Text::StringBuilder();
 	if (MainFunctionAcceptsConsole)
 	{
-		args->Append(::string("new ::System::Console::Console()"));
+		args->Append(::string("new ::System_::Console_::Console_()"));
 	}
 
 	if (MainFunctionAcceptsArgs)
@@ -986,23 +1018,23 @@ auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> con
 			args->Append(::string(", "));
 		}
 
-		args->Append(::string("new ::System::Console::Arguments(argc, argv)"));
+		args->Append(::string("new ::System_::Console_::Arguments_(argc, argv)"));
 	}
 
 	if (MainFunctionReturnType == ::string("void"))
 	{
-		WriteLine(::string("Main(") + args->ToString() + ::string(");"));
+		WriteLine(::string("Main_(") + args->ToString() + ::string(");"));
 		WriteLine(::string("return 0;"));
 	}
 	else
 	{
-		WriteLine(::string("return Main(") + args->ToString() + ::string(");"));
+		WriteLine(::string("return Main_(") + args->ToString() + ::string(");"));
 	}
 
 	EndBlock();
 }
 
-auto Transpile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string
+auto Compile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string
 {
 	EmitPreamble();
 	::Lexer *const lexer = new ::Lexer();
@@ -1078,7 +1110,7 @@ auto Main(::System::Console::Console *const console, ::System::Console::Argument
 		sources->Add(ReadSource(sourceFilePath));
 	}
 
-	::string const translated = Transpile(sources, resources);
+	::string const translated = Compile(sources, resources);
 	console->Write(::string("Output: "));
 	console->WriteLine(outputFilePath);
 	::System::IO::FileWriter *const outputFile = new ::System::IO::FileWriter(outputFilePath);
@@ -1130,9 +1162,9 @@ auto ReadSource(::string const path) -> ::SourceText const *
 
 ::SourceText::SourceText(::string const package, ::string const name, ::string const text)
 {
-	this->Package = package;
-	this->Name = name;
-	this->Text = text;
+	Package = package;
+	Name = name;
+	Text = text;
 }
 
 ::SyntaxToken::SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length)
@@ -1333,8 +1365,8 @@ auto ::TokenStream::NewToken(::TokenType const *const type) -> ::SyntaxToken con
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	resource_manager->AddResource(::string("RuntimeLibrary.cpp"), ::string("#include \"RuntimeLibrary.h\"\n#include <map>\n\nstring::string()\n	: Length(0), Buffer(0)\n{\n}\n\nstring::string(char c, int repeat)\n	: Length(repeat)\n{\n	char* buffer = new char[repeat];\n	for (int i = 0; i < repeat; i++)\n		buffer[i] = c;\n\n	Buffer = buffer;\n}\n\nstring::string(const char* s)\n	: Length(std::strlen(s)), Buffer(s)\n{\n}\n\nstring::string(int length, const char* s)\n	: Length(length), Buffer(s)\n{\n}\n\nchar const * string::cstr() const\n{\n	auto buffer = new char[Length + 1];\n	std::memcpy(buffer, Buffer, Length);\n	buffer[Length] = 0;\n	return buffer;\n}\n\nstring string::Substring(int start, int length) const\n{\n	return string(length, Buffer + start);\n}\n\nstring string::Replace(string oldValue, string newValue) const\n{\n	string buffer = \"\";\n	int limit = Length - oldValue.Length + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring(i, oldValue.Length) == oldValue)\n		{\n			buffer = buffer + Substring(lastIndex, i-lastIndex) + newValue;\n			i += oldValue.Length; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer + Substring(lastIndex, Length - lastIndex);\n	return buffer;\n}\n\nint string::LastIndexOf(char c) const\n{\n	for(int i=Length-1; i>=0; i--)\n		if(Buffer[i]==c)\n			return i;\n\n	return -1;\n}\n\nchar string::operator[] (const int index) const\n{\n	return Buffer[index];\n}\n\nstring string::operator+(const string& value) const\n{\n	int newLength = Length + value.Length;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length);\n	return string(newLength, chars);\n}\n\nstring string::operator+(const char& value) const\n{\n	int newLength = Length + 1;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length;\n	std::memcpy(chars, Buffer, offset);\n	chars[Length] = value;\n	return string(newLength, chars);\n}\n\nbool string::operator==(const string &other) const\n{\n	if (Length != other.Length)\n		return false;\n\n	for (int i = 0; i < Length; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (string const& lhs, string const& rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<string, string> resourceValues;\n\nstring const & ResourceManager::GetString(string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(string name, string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager = new ResourceManager();\n\nnamespace System\n{\n	namespace Console\n	{\n		void Console::Write(string value)\n		{\n			std::printf(\"%.*s\", value.Length, value.Buffer);\n		}\n\n		void Console::WriteLine(string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length, value.Buffer);\n		}\n\n		void Console::WriteLine()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments::Arguments(int argc, char const *const * argv)\n			: Count(argc-1)\n		{\n			args = new string[Count];\n			for (int i = 0; i < Count; i++)\n				args[i] = string(argv[i+1]);\n		}\n	}\n\n	namespace IO\n	{\n		FileReader::FileReader(const string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		string FileReader::ReadToEndSync()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return string(length, buffer);\n		}\n\n		void FileReader::Close()\n		{\n			std::fclose(file);\n		}\n\n		FileWriter::FileWriter(const string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void FileWriter::Write(const string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length, file);\n		}\n\n		void FileWriter::Close()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text\n	{\n		StringBuilder::StringBuilder(string const & value)\n			: buffer(value)\n		{\n		}\n\n		StringBuilder::StringBuilder()\n			: buffer(\"\")\n		{\n		}\n\n		void StringBuilder::Append(string const & value)\n		{\n			buffer = buffer + value;\n		}\n\n		void StringBuilder::AppendLine(string const & value)\n		{\n			buffer = buffer + value + string(\"\\n\");\n		}\n\n		void StringBuilder::AppendLine()\n		{\n			buffer = buffer + string(\"\\n\");\n		}\n	}\n}\n"));
-	resource_manager->AddResource(::string("RuntimeLibrary.h"), ::string("// On windows this disables warnings about using fopen_s instead of fopen\r\n// It must be defined before including the headers.  The includes have been moved\r\n// here to avoid leaking this into the program being compiled.  This required the\r\n// use of void* instead of FILE* in some places.\r\n#define _CRT_SECURE_NO_WARNINGS\r\n#include <cstring>\r\n#include <cstdio>\r\n\r\nstruct string\r\n{\r\npublic:\r\n	int Length;\r\n	char const * Buffer;\r\n\r\n	string();\r\n	string(char c, int repeat);\r\n	string(char const * s);\r\n	string(int length, char const * s);\r\n	char const * cstr() const;\r\n	string Substring(int start, int length) const;\r\n	string Substring(int start) const { return Substring(start, Length-start); }\r\n	string Replace(string oldValue, string newValue) const;\r\n	int LastIndexOf(char c) const;\r\n	char operator[] (int const index) const;\r\n	string operator+(string const & value) const;\r\n	string operator+(char const & value) const;\r\n	string const * operator->() const { return this; }\r\n	string const & operator* () const { return *this; }\r\n	bool operator==(string const & other) const;\r\n	bool operator!=(string const & other) const { return !(*this == other); }\r\n	friend bool operator<(string const & lhs, string const & rhs);\r\n\r\n	typedef char const * const_iterator;\r\n	const_iterator begin() const { return &Buffer[0]; }\r\n	const_iterator end() const { return &Buffer[Length]; }\r\n};\r\n\r\nclass ResourceManager\r\n{\r\npublic:\r\n	string const & GetString(string resourceName);\r\n	void AddResource(string name, string value);\r\n};\r\n\r\nextern ResourceManager *const resource_manager;\r\n\r\nclass NoneType\r\n{\r\npublic:\r\n	template<class T>\r\n	operator T*() const { return static_cast<T*>(0); }\r\n};\r\nstatic const NoneType None = NoneType();\r\n\r\ntemplate<typename T>\r\nstruct Maybe\r\n{\r\nprivate:\r\n	T data;\r\n	bool hasValue;\r\n\r\npublic:\r\n	Maybe(T const & value) : data(value), hasValue(true) {}\r\n	Maybe(::NoneType const & none) : hasValue(false) {}\r\n	T& operator->() { return data; }\r\n	T const & operator->() const\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	T  & operator* ()\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	T const & operator* () const\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	bool operator==(T const & other) const\r\n	{\r\n		return hasValue && data == other;\r\n	}\r\n	bool operator!=(T const & other) const\r\n	{\r\n		return hasValue && data != other;\r\n	}\r\n};\r\n\r\nnamespace System\r\n{\r\n	namespace Collections\r\n	{\r\n		template<typename T>\r\n		class List\r\n		{\r\n		private:\r\n			T* values;\r\n			int length;\r\n			int capacity;\r\n\r\n		public:\r\n			typedef T const * const_iterator;\r\n\r\n			List() : values(0), length(0), capacity(0) { }\r\n			void Add(T value);\r\n			int Length() const { return length; }\r\n			const_iterator begin() const { return values; }\r\n			const_iterator end() const { return &values[length]; }\r\n			T const & Get(int const index) const { return values[index]; }\r\n		};\r\n\r\n		template<typename T>\r\n		void List<T>::Add(T value)\r\n		{\r\n			if(length >= capacity)\r\n			{\r\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\r\n				T* newValues = new T[newCapacity];\r\n				std::memcpy(newValues, values, length * sizeof(T));\r\n				values = newValues;\r\n				capacity = newCapacity;\r\n			}\r\n			values[length] = value;\r\n			length++;\r\n		}\r\n	}\r\n\r\n	namespace Console\r\n	{\r\n		class Console\r\n		{\r\n		public:\r\n			void Write(string value);\r\n			void WriteLine(string value);\r\n			void WriteLine();\r\n		};\r\n\r\n		class Arguments\r\n		{\r\n		private:\r\n			string* args;\r\n		public:\r\n			typedef string const * const_iterator;\r\n			const int Count;\r\n\r\n			Arguments(int argc, char const *const * argv);\r\n			const_iterator begin() const { return &args[0]; }\r\n			const_iterator end() const { return &args[Count]; }\r\n			string const & Get(int const index) const { return args[index]; }\r\n		};\r\n	}\r\n\r\n	namespace IO\r\n	{\r\n		class FileReader\r\n		{\r\n		private:\r\n			std::FILE* file;\r\n\r\n		public:\r\n			FileReader(const string& fileName);\r\n			string ReadToEndSync();\r\n			void Close();\r\n		};\r\n\r\n		class FileWriter\r\n		{\r\n		private:\r\n			std::FILE* file;\r\n\r\n		public:\r\n			FileWriter(const string& fileName);\r\n			void Write(const string& value);\r\n			void Close();\r\n		};\r\n	}\r\n\r\n	namespace Text\r\n	{\r\n		class StringBuilder\r\n		{\r\n		private:\r\n			string buffer;\r\n		public:\r\n			StringBuilder();\r\n			StringBuilder(string const & value);\r\n			void Append(string const & value);\r\n			void AppendLine(string const& value);\r\n			void AppendLine();\r\n			string ToString() const { return buffer; }\r\n		};\r\n	}\r\n}\r\n"));
+	resource_manager->AddResource(::string("RuntimeLibrary.cpp"), ::string("#include \"RuntimeLibrary.h\"\n#include <map>\n\nstring::string()\n	: Length_(0), Buffer(0)\n{\n}\n\nstring::string(char c, int repeat)\n	: Length_(repeat)\n{\n	char* buffer = new char[repeat];\n	for (int i = 0; i < repeat; i++)\n		buffer[i] = c;\n\n	Buffer = buffer;\n}\n\nstring::string(const char* s)\n	: Length_(std::strlen(s)), Buffer(s)\n{\n}\n\nstring::string(int length, const char* s)\n	: Length_(length), Buffer(s)\n{\n}\n\nchar const * string::cstr() const\n{\n	auto buffer = new char[Length_ + 1];\n	std::memcpy(buffer, Buffer, Length_);\n	buffer[Length_] = 0;\n	return buffer;\n}\n\nstring string::Substring_(int start, int length) const\n{\n	return string(length, Buffer + start);\n}\n\nstring string::Replace_(string oldValue, string newValue) const\n{\n	string buffer = \"\";\n	int limit = Length_ - oldValue.Length_ + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length_) == oldValue)\n		{\n			buffer = buffer + Substring_(lastIndex, i-lastIndex) + newValue;\n			i += oldValue.Length_; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer + Substring_(lastIndex, Length_ - lastIndex);\n	return buffer;\n}\n\nint string::LastIndexOf_(char c) const\n{\n	for(int i=Length_-1; i>=0; i--)\n		if(Buffer[i]==c)\n			return i;\n\n	return -1;\n}\n\nchar string::operator[] (const int index) const\n{\n	return Buffer[index];\n}\n\nstring string::operator+(const string& value) const\n{\n	int newLength = Length_ + value.Length_;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length_;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length_);\n	return string(newLength, chars);\n}\n\nstring string::operator+(const char& value) const\n{\n	int newLength = Length_ + 1;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length_;\n	std::memcpy(chars, Buffer, offset);\n	chars[Length_] = value;\n	return string(newLength, chars);\n}\n\nbool string::operator==(const string &other) const\n{\n	if (Length_ != other.Length_)\n		return false;\n\n	for (int i = 0; i < Length_; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (string const& lhs, string const& rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<string, string> resourceValues;\n\nstring const & ResourceManager::GetString_(string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(string name, string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace System_\n{\n	namespace Console_\n	{\n		void Console_::Write_(string value)\n		{\n			std::printf(\"%.*s\", value.Length_, value.Buffer);\n		}\n\n		void Console_::WriteLine_(string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length_, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count_(argc-1)\n		{\n			args = new string[Count_];\n			for (int i = 0; i < Count_; i++)\n				args[i] = string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		FileReader_::FileReader_(const string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		string FileReader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return string(length, buffer);\n		}\n\n		void FileReader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		FileWriter_::FileWriter_(const string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void FileWriter_::Write_(const string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length_, file);\n		}\n\n		void FileWriter_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		StringBuilder_::StringBuilder_(string const & value)\n			: buffer(value)\n		{\n		}\n\n		StringBuilder_::StringBuilder_()\n			: buffer(\"\")\n		{\n		}\n\n		void StringBuilder_::Append_(string const & value)\n		{\n			buffer = buffer + value;\n		}\n\n		void StringBuilder_::AppendLine_(string const & value)\n		{\n			buffer = buffer + value + string(\"\\n\");\n		}\n\n		void StringBuilder_::AppendLine_()\n		{\n			buffer = buffer + string(\"\\n\");\n		}\n	}\n}\n"));
+	resource_manager->AddResource(::string("RuntimeLibrary.h"), ::string("// On windows this disables warnings about using fopen_s instead of fopen\r\n// It must be defined before including the headers.  The includes have been moved\r\n// here to avoid leaking this into the program being compiled.  This required the\r\n// use of void* instead of FILE* in some places.\r\n#define _CRT_SECURE_NO_WARNINGS\r\n#include <cstring>\r\n#include <cstdio>\r\n\r\nstruct string\r\n{\r\npublic:\r\n	int Length_;\r\n	char const * Buffer;\r\n\r\n	string();\r\n	string(char c, int repeat);\r\n	string(char const * s);\r\n	string(int length, char const * s);\r\n	char const * cstr() const;\r\n	string Substring_(int start, int length) const;\r\n	string Substring_(int start) const { return Substring_(start, Length_-start); }\r\n	string Replace_(string oldValue, string newValue) const;\r\n	int LastIndexOf_(char c) const;\r\n	char operator[] (int const index) const;\r\n	string operator+(string const & value) const;\r\n	string operator+(char const & value) const;\r\n	string const * operator->() const { return this; }\r\n	string const & operator* () const { return *this; }\r\n	bool operator==(string const & other) const;\r\n	bool operator!=(string const & other) const { return !(*this == other); }\r\n	friend bool operator<(string const & lhs, string const & rhs);\r\n\r\n	typedef char const * const_iterator;\r\n	const_iterator begin() const { return &Buffer[0]; }\r\n	const_iterator end() const { return &Buffer[Length_]; }\r\n};\r\n\r\nclass ResourceManager\r\n{\r\npublic:\r\n	string const & GetString_(string resourceName);\r\n	void AddResource(string name, string value);\r\n};\r\n\r\nextern ResourceManager *const resource_manager_;\r\n\r\nclass NoneType\r\n{\r\npublic:\r\n	template<class T>\r\n	operator T*() const { return static_cast<T*>(0); }\r\n};\r\nstatic const NoneType None = NoneType();\r\n\r\ntemplate<typename T>\r\nstruct Maybe\r\n{\r\nprivate:\r\n	T data;\r\n	bool hasValue;\r\n\r\npublic:\r\n	Maybe(T const & value) : data(value), hasValue(true) {}\r\n	Maybe(::NoneType const & none) : hasValue(false) {}\r\n	T& operator->() { return data; }\r\n	T const & operator->() const\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	T  & operator* ()\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	T const & operator* () const\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	bool operator==(T const & other) const\r\n	{\r\n		return hasValue && data == other;\r\n	}\r\n	bool operator!=(T const & other) const\r\n	{\r\n		return hasValue && data != other;\r\n	}\r\n};\r\n\r\nnamespace System_\r\n{\r\n	namespace Collections_\r\n	{\r\n		template<typename T>\r\n		class List_\r\n		{\r\n		private:\r\n			T* values;\r\n			int length;\r\n			int capacity;\r\n\r\n		public:\r\n			typedef T const * const_iterator;\r\n\r\n			List_() : values(0), length(0), capacity(0) { }\r\n			void Add_(T value);\r\n			int Length_() const { return length; }\r\n			const_iterator begin() const { return values; }\r\n			const_iterator end() const { return &values[length]; }\r\n			T const & Get_(int const index) const { return values[index]; }\r\n		};\r\n\r\n		template<typename T>\r\n		void List_<T>::Add_(T value)\r\n		{\r\n			if(length >= capacity)\r\n			{\r\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\r\n				T* newValues = new T[newCapacity];\r\n				std::memcpy(newValues, values, length * sizeof(T));\r\n				values = newValues;\r\n				capacity = newCapacity;\r\n			}\r\n			values[length] = value;\r\n			length++;\r\n		}\r\n	}\r\n\r\n	namespace Console_\r\n	{\r\n		class Console_\r\n		{\r\n		public:\r\n			void Write_(string value);\r\n			void WriteLine_(string value);\r\n			void WriteLine_();\r\n		};\r\n\r\n		class Arguments_\r\n		{\r\n		private:\r\n			string* args;\r\n		public:\r\n			typedef string const * const_iterator;\r\n			const int Count_;\r\n\r\n			Arguments_(int argc, char const *const * argv);\r\n			const_iterator begin() const { return &args[0]; }\r\n			const_iterator end() const { return &args[Count_]; }\r\n			string const & Get_(int const index) const { return args[index]; }\r\n		};\r\n	}\r\n\r\n	namespace IO_\r\n	{\r\n		class FileReader_\r\n		{\r\n		private:\r\n			std::FILE* file;\r\n\r\n		public:\r\n			FileReader_(const string& fileName);\r\n			string ReadToEndSync_();\r\n			void Close_();\r\n		};\r\n\r\n		class FileWriter_\r\n		{\r\n		private:\r\n			std::FILE* file;\r\n\r\n		public:\r\n			FileWriter_(const string& fileName);\r\n			void Write_(const string& value);\r\n			void Close_();\r\n		};\r\n	}\r\n\r\n	namespace Text_\r\n	{\r\n		class StringBuilder_\r\n		{\r\n		private:\r\n			string buffer;\r\n		public:\r\n			StringBuilder_();\r\n			StringBuilder_(string const & value);\r\n			void Append_(string const & value);\r\n			void AppendLine_(string const& value);\r\n			void AppendLine_();\r\n			string ToString_() const { return buffer; }\r\n		};\r\n	}\r\n}\r\n"));
 
 	Main(new ::System::Console::Console(), new ::System::Console::Arguments(argc, argv));
 	return 0;

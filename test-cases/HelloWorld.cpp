@@ -3,19 +3,19 @@
 // Type Declarations
 
 // Function Declarations
-auto Main(::System::Console::Console *const console) -> void;
+auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Class Declarations
 
 // Definitions
-auto Main(::System::Console::Console *const console) -> void
+auto Main_(::System_::Console_::Console_ *const console_) -> void
 {
-	console->WriteLine(::string("Hello World!"));
+	console_->WriteLine_(string("Hello World!"));
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main(new ::System::Console::Console());
+	Main_(new ::System_::Console_::Console_());
 	return 0;
 }

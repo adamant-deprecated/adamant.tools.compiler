@@ -1,39 +1,39 @@
 #include "RuntimeLibrary.h"
 
 // Type Declarations
-class C;
+class C_;
 
 // Function Declarations
-auto Main() -> void;
+auto Main_() -> void;
 
 // Class Declarations
-class C
+class C_
 {
 public:
-	::string Name;
-	C(::string const name);
-	auto Method() -> ::string;
+	string Name_;
+	C_(string const name_);
+	auto Method_() -> string;
 };
 
 // Definitions
-::C::C(::string const name)
+::C_::C_(string const name_)
 {
-	Name = name;
+	Name_ = name_;
 }
 
-auto ::C::Method() -> ::string
+auto ::C_::Method_() -> string
 {
-	return Name;
+	return Name_;
 }
 
-auto Main() -> void
+auto Main_() -> void
 {
-	::C const *const c = new ::C(::string("Bob"));
+	::C_ const *const c_ = new ::C_(string("Bob"));
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main();
+	Main_();
 	return 0;
 }

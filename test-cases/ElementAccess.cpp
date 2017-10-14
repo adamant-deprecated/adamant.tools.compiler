@@ -3,20 +3,20 @@
 // Type Declarations
 
 // Function Declarations
-auto Main() -> void;
+auto Main_() -> void;
 
 // Class Declarations
 
 // Definitions
-auto Main() -> void
+auto Main_() -> void
 {
-	char result;
-	result = ::string("hello")[0];
+	char result_;
+	result_ = string("hello")[0];
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main();
+	Main_();
 	return 0;
 }

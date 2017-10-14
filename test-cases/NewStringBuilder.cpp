@@ -3,19 +3,19 @@
 // Type Declarations
 
 // Function Declarations
-auto Main() -> void;
+auto Main_() -> void;
 
 // Class Declarations
 
 // Definitions
-auto Main() -> void
+auto Main_() -> void
 {
-	new ::System::Text::StringBuilder();
+	new ::System_::Text_::StringBuilder_();
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main();
+	Main_();
 	return 0;
 }

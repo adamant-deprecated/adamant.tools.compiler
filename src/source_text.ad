@@ -6,8 +6,8 @@ public class SourceText
 
 	public new(package: string, name: string, text: string)
 	{
-		this.Package = package;
-		this.Name = name;
-		this.Text = text;
+		Package = package;
+		Name = name;
+		Text = text;
 	}
 }

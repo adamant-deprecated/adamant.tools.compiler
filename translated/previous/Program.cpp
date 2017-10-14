@@ -1,13 +1,15 @@
 #include "RuntimeLibrary.h"
 
-// Declarations
-class SourceText;
+// Type Declarations
 class Lexer;
+class Parser;
+class SourceText;
+class SyntaxNode;
+class SyntaxToken;
 class TokenStream;
 class TokenType;
-class SyntaxToken;
-class Parser;
-class SyntaxNode;
+
+// Function Declarations
 auto Parse(::SourceText const *const source) -> ::SyntaxNode const *;
 auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void;
 auto Error(::string const message) -> void;
@@ -46,9 +48,19 @@ auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> con
 auto Transpile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string;
 auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
 auto ReadSource(::string const path) -> ::SourceText const *;
-class Placeholder;
 
 // Class Declarations
+class Lexer
+{
+public:
+	auto Analyze(::SourceText const *const source) -> ::TokenStream *;
+};
+class Parser
+{
+public:
+	Parser();
+	auto Parse(::TokenStream const *const tokenStream) -> ::SyntaxNode const *;
+};
 class SourceText
 {
 public:
@@ -57,10 +69,18 @@ public:
 	::string Text;
 	SourceText(::string const package, ::string const name, ::string const text);
 };
-class Lexer
+class SyntaxNode
 {
 public:
-	auto Analyze(::SourceText const *const source) -> ::TokenStream *;
+};
+class SyntaxToken
+{
+public:
+	::TokenType const * TokenType;
+	::SourceText const * Source;
+	unsigned int Start;
+	unsigned int Length;
+	SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length);
 };
 class TokenStream
 {
@@ -76,236 +96,11 @@ class TokenType
 {
 public:
 };
-class SyntaxToken
-{
-public:
-	::TokenType const * TokenType;
-	::SourceText const * Source;
-	unsigned int Start;
-	unsigned int Length;
-	SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length);
-};
-class Parser
-{
-public:
-	Parser();
-	auto Parse(::TokenStream const *const tokenStream) -> ::SyntaxNode const *;
-};
-class SyntaxNode
-{
-public:
-};
-class Placeholder
-{
-public:
-};
 
 // Definitions
-::SourceText::SourceText(::string const package, ::string const name, ::string const text)
-{
-	this->Package = package;
-	this->Name = name;
-	this->Text = text;
-}
-
 auto ::Lexer::Analyze(::SourceText const *const source) -> ::TokenStream *
 {
 	return new ::TokenStream(source);
-}
-
-::TokenStream::TokenStream(::SourceText const *const source)
-{
-	Source = source;
-	nextToken = 0;
-}
-
-auto ::TokenStream::GetNextToken() -> ::string
-{
-	unsigned int position = nextToken;
-	unsigned int tokenEnd = -1;
-	bool escaped;
-	bool done = false;
-	while (!done && position < Source->Text->Length)
-	{
-		char const curChar = Source->Text[position];
-		if (curChar == ' ' || curChar == '\t' || curChar == '\n' || curChar == '\r')
-		{
-			position += 1;
-			continue;
-		}
-		else if (curChar == '{' || curChar == '}' || curChar == '(' || curChar == ')' || curChar == ';' || curChar == ',' || curChar == '.' || curChar == ':' || curChar == '[' || curChar == ']' || curChar == '?')
-		{
-			tokenEnd = position + 1;
-			break;
-		}
-		else if (curChar == '=')
-		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
-			{
-				tokenEnd = position + 2;
-				break;
-			}
-
-			tokenEnd = position + 1;
-			break;
-		}
-		else if (curChar == '+')
-		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
-			{
-				tokenEnd = position + 2;
-				break;
-			}
-
-			tokenEnd = position + 1;
-			break;
-		}
-		else if (curChar == '-')
-		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '>')
-			{
-				tokenEnd = position + 2;
-				break;
-			}
-
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
-			{
-				tokenEnd = position + 2;
-				break;
-			}
-
-			tokenEnd = position + 1;
-			break;
-		}
-		else if (curChar == '/')
-		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '/')
-			{
-				while (position < Source->Text->Length && Source->Text[position] != '\r' && Source->Text[position] != '\n')
-				{
-					position += 1;
-				}
-
-				continue;
-			}
-
-			tokenEnd = position + 1;
-			break;
-		}
-		else if (curChar == '<')
-		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '>')
-			{
-				tokenEnd = position + 2;
-				break;
-			}
-
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
-			{
-				tokenEnd = position + 2;
-				break;
-			}
-
-			tokenEnd = position + 1;
-			break;
-		}
-		else if (curChar == '>')
-		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
-			{
-				tokenEnd = position + 2;
-				break;
-			}
-
-			tokenEnd = position + 1;
-			break;
-		}
-		else if (curChar == '"')
-		{
-			tokenEnd = position + 1;
-			escaped = false;
-			while (tokenEnd < Source->Text->Length && (Source->Text[tokenEnd] != '"' || escaped))
-			{
-				escaped = Source->Text[tokenEnd] == '\\' && !escaped;
-				tokenEnd += 1;
-			}
-
-			tokenEnd += 1;
-			break;
-		}
-		else if (curChar == '\'')
-		{
-			tokenEnd = position + 1;
-			escaped = false;
-			while (tokenEnd < Source->Text->Length && (Source->Text[tokenEnd] != '\'' || escaped))
-			{
-				escaped = Source->Text[tokenEnd] == '\\' && !escaped;
-				tokenEnd += 1;
-			}
-
-			tokenEnd += 1;
-			break;
-		}
-		else
-		{
-			if (IsIdentifierChar(curChar))
-			{
-				tokenEnd = position + 1;
-				while (IsIdentifierChar(Source->Text[tokenEnd]))
-				{
-					tokenEnd += 1;
-				}
-
-				break;
-			}
-
-			if ((IsNumberChar(curChar)))
-			{
-				tokenEnd = position + 1;
-				while (IsNumberChar(Source->Text[tokenEnd]))
-				{
-					tokenEnd += 1;
-				}
-
-				break;
-			}
-
-			Error(::string("Lexer: Invalid character `") + curChar + ::string("`"));
-			position += 1;
-		}
-	}
-
-	::string token;
-	if (tokenEnd == -1)
-	{
-		token = ::string("");
-		nextToken = position;
-	}
-	else
-	{
-		token = Source->Text->Substring(position, tokenEnd - position);
-		nextToken = tokenEnd;
-	}
-
-	return token;
-}
-
-auto ::TokenStream::NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *
-{
-	return ::None;
-}
-
-auto ::TokenStream::NewToken(::TokenType const *const type) -> ::SyntaxToken const *
-{
-	return ::None;
-}
-
-::SyntaxToken::SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length)
-{
-	TokenType = tokenType;
-	Source = source;
-	Start = start;
-	Length = length;
 }
 
 ::Parser::Parser()
@@ -1331,6 +1126,208 @@ auto ReadSource(::string const path) -> ::SourceText const *
 	}
 
 	return new ::SourceText(::string("<default>"), name, contents);
+}
+
+::SourceText::SourceText(::string const package, ::string const name, ::string const text)
+{
+	this->Package = package;
+	this->Name = name;
+	this->Text = text;
+}
+
+::SyntaxToken::SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length)
+{
+	TokenType = tokenType;
+	Source = source;
+	Start = start;
+	Length = length;
+}
+
+::TokenStream::TokenStream(::SourceText const *const source)
+{
+	Source = source;
+	nextToken = 0;
+}
+
+auto ::TokenStream::GetNextToken() -> ::string
+{
+	unsigned int position = nextToken;
+	unsigned int tokenEnd = -1;
+	bool escaped;
+	bool done = false;
+	while (!done && position < Source->Text->Length)
+	{
+		char const curChar = Source->Text[position];
+		if (curChar == ' ' || curChar == '\t' || curChar == '\n' || curChar == '\r')
+		{
+			position += 1;
+			continue;
+		}
+		else if (curChar == '{' || curChar == '}' || curChar == '(' || curChar == ')' || curChar == ';' || curChar == ',' || curChar == '.' || curChar == ':' || curChar == '[' || curChar == ']' || curChar == '?')
+		{
+			tokenEnd = position + 1;
+			break;
+		}
+		else if (curChar == '=')
+		{
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			{
+				tokenEnd = position + 2;
+				break;
+			}
+
+			tokenEnd = position + 1;
+			break;
+		}
+		else if (curChar == '+')
+		{
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			{
+				tokenEnd = position + 2;
+				break;
+			}
+
+			tokenEnd = position + 1;
+			break;
+		}
+		else if (curChar == '-')
+		{
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '>')
+			{
+				tokenEnd = position + 2;
+				break;
+			}
+
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			{
+				tokenEnd = position + 2;
+				break;
+			}
+
+			tokenEnd = position + 1;
+			break;
+		}
+		else if (curChar == '/')
+		{
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '/')
+			{
+				while (position < Source->Text->Length && Source->Text[position] != '\r' && Source->Text[position] != '\n')
+				{
+					position += 1;
+				}
+
+				continue;
+			}
+
+			tokenEnd = position + 1;
+			break;
+		}
+		else if (curChar == '<')
+		{
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '>')
+			{
+				tokenEnd = position + 2;
+				break;
+			}
+
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			{
+				tokenEnd = position + 2;
+				break;
+			}
+
+			tokenEnd = position + 1;
+			break;
+		}
+		else if (curChar == '>')
+		{
+			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			{
+				tokenEnd = position + 2;
+				break;
+			}
+
+			tokenEnd = position + 1;
+			break;
+		}
+		else if (curChar == '"')
+		{
+			tokenEnd = position + 1;
+			escaped = false;
+			while (tokenEnd < Source->Text->Length && (Source->Text[tokenEnd] != '"' || escaped))
+			{
+				escaped = Source->Text[tokenEnd] == '\\' && !escaped;
+				tokenEnd += 1;
+			}
+
+			tokenEnd += 1;
+			break;
+		}
+		else if (curChar == '\'')
+		{
+			tokenEnd = position + 1;
+			escaped = false;
+			while (tokenEnd < Source->Text->Length && (Source->Text[tokenEnd] != '\'' || escaped))
+			{
+				escaped = Source->Text[tokenEnd] == '\\' && !escaped;
+				tokenEnd += 1;
+			}
+
+			tokenEnd += 1;
+			break;
+		}
+		else
+		{
+			if (IsIdentifierChar(curChar))
+			{
+				tokenEnd = position + 1;
+				while (IsIdentifierChar(Source->Text[tokenEnd]))
+				{
+					tokenEnd += 1;
+				}
+
+				break;
+			}
+
+			if ((IsNumberChar(curChar)))
+			{
+				tokenEnd = position + 1;
+				while (IsNumberChar(Source->Text[tokenEnd]))
+				{
+					tokenEnd += 1;
+				}
+
+				break;
+			}
+
+			Error(::string("Lexer: Invalid character `") + curChar + ::string("`"));
+			position += 1;
+		}
+	}
+
+	::string token;
+	if (tokenEnd == -1)
+	{
+		token = ::string("");
+		nextToken = position;
+	}
+	else
+	{
+		token = Source->Text->Substring(position, tokenEnd - position);
+		nextToken = tokenEnd;
+	}
+
+	return token;
+}
+
+auto ::TokenStream::NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *
+{
+	return ::None;
+}
+
+auto ::TokenStream::NewToken(::TokenType const *const type) -> ::SyntaxToken const *
+{
+	return ::None;
 }
 
 // Entry Point Adapter

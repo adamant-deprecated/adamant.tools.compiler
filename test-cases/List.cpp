@@ -3,45 +3,45 @@
 // Type Declarations
 
 // Function Declarations
-auto Main(::System::Console::Console *const console) -> void;
+auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Class Declarations
 
 // Definitions
-auto Main(::System::Console::Console *const console) -> void
+auto Main_(::System_::Console_::Console_ *const console_) -> void
 {
-	::System::Collections::List<::string> *const strings = new ::System::Collections::List<::string>();
-	strings->Add(::string("Hello"));
-	strings->Add(::string("World!"));
-	if (strings->Length() != 2)
+	::System_::Collections_::List_<string> *const strings_ = new ::System_::Collections_::List_<string>();
+	strings_->Add_(string("Hello"));
+	strings_->Add_(string("World!"));
+	if (strings_->Length_() != 2)
 	{
-		console->WriteLine(::string("List length not 2!"));
+		console_->WriteLine_(string("List length not 2!"));
 	}
 
-	console->WriteLine(strings->Get(0));
-	for (::string const s : *(strings))
+	console_->WriteLine_(strings_->Get_(0));
+	for (string const s_ : *(strings_))
 	{
-		console->Write(s);
+		console_->Write_(s_);
 	}
 
-	console->WriteLine();
-	::System::Collections::List<::System::Text::StringBuilder *> *const builders = new ::System::Collections::List<::System::Text::StringBuilder *>();
-	builders->Add(new ::System::Text::StringBuilder(::string("sb[0]: ")));
-	builders->Add(new ::System::Text::StringBuilder(::string("sb[1]: ")));
-	for (::System::Text::StringBuilder *const sb : *(builders))
+	console_->WriteLine_();
+	::System_::Collections_::List_<::System_::Text_::StringBuilder_ *> *const builders_ = new ::System_::Collections_::List_<::System_::Text_::StringBuilder_ *>();
+	builders_->Add_(new ::System_::Text_::StringBuilder_(string("sb[0]: ")));
+	builders_->Add_(new ::System_::Text_::StringBuilder_(string("sb[1]: ")));
+	for (::System_::Text_::StringBuilder_ *const sb_ : *(builders_))
 	{
-		sb->Append(::string("value"));
+		sb_->Append_(string("value"));
 	}
 
-	for (::System::Text::StringBuilder const *const sb : *(builders))
+	for (::System_::Text_::StringBuilder_ const *const sb_ : *(builders_))
 	{
-		console->WriteLine(sb->ToString());
+		console_->WriteLine_(sb_->ToString_());
 	}
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main(new ::System::Console::Console());
+	Main_(new ::System_::Console_::Console_());
 	return 0;
 }

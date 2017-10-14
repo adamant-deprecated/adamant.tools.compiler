@@ -3,25 +3,25 @@
 // Type Declarations
 
 // Function Declarations
-auto Func(bool const value) -> bool;
-auto Main() -> void;
+auto Func_(bool const value_) -> bool;
+auto Main_() -> void;
 
 // Class Declarations
 
 // Definitions
-auto Func(bool const value) -> bool
+auto Func_(bool const value_) -> bool
 {
 	return false;
 }
 
-auto Main() -> void
+auto Main_() -> void
 {
-	Func(true);
+	Func_(true);
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main();
+	Main_();
 	return 0;
 }

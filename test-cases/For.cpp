@@ -3,22 +3,22 @@
 // Type Declarations
 
 // Function Declarations
-auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
+auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
 
 // Class Declarations
 
 // Definitions
-auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void
+auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void
 {
-	for (::string const arg : *(args))
+	for (string const arg_ : *(args_))
 	{
-		console->WriteLine(arg);
+		console_->WriteLine_(arg_);
 	}
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main(new ::System::Console::Console(), new ::System::Console::Arguments(argc, argv));
+	Main_(new ::System_::Console_::Console_(), new ::System_::Console_::Arguments_(argc, argv));
 	return 0;
 }

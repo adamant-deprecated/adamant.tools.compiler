@@ -3,29 +3,29 @@
 // Type Declarations
 
 // Function Declarations
-auto True() -> bool;
-auto Main() -> void;
+auto True_() -> bool;
+auto Main_() -> void;
 
 // Class Declarations
 
 // Definitions
-auto True() -> bool
+auto True_() -> bool
 {
 	return true;
 }
 
-auto Main() -> void
+auto Main_() -> void
 {
-	bool x;
-	x = true && false;
-	x = true || false;
-	x = !true;
-	x = True() || True();
+	bool x_;
+	x_ = true && false;
+	x_ = true || false;
+	x_ = !true;
+	x_ = True_() || True_();
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main();
+	Main_();
 	return 0;
 }

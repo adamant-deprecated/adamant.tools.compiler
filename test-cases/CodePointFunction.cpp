@@ -3,25 +3,25 @@
 // Type Declarations
 
 // Function Declarations
-auto Identity(char const value) -> char;
-auto Main() -> void;
+auto Identity_(char const value_) -> char;
+auto Main_() -> void;
 
 // Class Declarations
 
 // Definitions
-auto Identity(char const value) -> char
+auto Identity_(char const value_) -> char
 {
-	return value;
+	return value_;
 }
 
-auto Main() -> void
+auto Main_() -> void
 {
-	Identity('a');
+	Identity_('a');
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main();
+	Main_();
 	return 0;
 }

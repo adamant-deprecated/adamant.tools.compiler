@@ -196,10 +196,15 @@ public ConvertType(type: string) -> string
 		{ return "char"; }
 	if type == "uint"
 		{ return "unsigned int"; }
-	if type == "int" or type == "bool" or type == "void"
+	if type == "int" or type == "bool" or type == "void" or type == "string"
 		{ return type; }
 
-	return "::" + type.Replace(".", "::");
+	let cppType: string = "::" + type.Replace(".", "_::").Replace("<", "_<");
+	if cppType[cppType.Length-1]=='>'
+	{
+		return cppType;
+	}
+	return  cppType + "_";
 }
 
 public ConvertType(mutableBinding: bool, mutableValue: bool, var type: string) -> string
@@ -296,16 +301,28 @@ public ParseAtom() -> bool
 		Write("::None");
 		return true;
 	}
+	if Accept("self")
+	{
+		Write("this");
+		return true;
+	}
 
 	let token: string = Token;
-	if AcceptIdentifier() or AcceptNumber()
+	if Accept("true")
+		or Accept("false")
+		or AcceptNumber()
 	{
 		Write(token);
 		return true;
 	}
+	if AcceptIdentifier()
+	{
+		Write(token + "_");
+		return true;
+	}
 	if AcceptString()
 	{
-		Write("::string(" + token + ")");
+		Write("string(" + token + ")");
 		return true;
 	}
 	if AcceptCodePoint()
@@ -491,7 +508,7 @@ public ParseStatement() -> bool
 		Expect(":");
 		let mutableValue: bool = Accept("mut");
 		let type: string = ParseType();
-		Write(ConvertType(k == "var", mutableValue, type) + " " + name);
+		Write(ConvertType(k == "var", mutableValue, type) + " " + name + "_");
 		Expect("in");
 		Write(" : *(");
 		ParseExpression();
@@ -537,6 +554,19 @@ public ParseStatement() -> bool
 		}
 		return true;
 	}
+	if Accept("break")
+	{
+		Expect(";");
+		WriteLine("break;");
+		return true;
+	}
+	if Accept("continue")
+	{
+		Expect(";");
+		WriteLine("continue;");
+		return true;
+	}
+
 	let kind: string = Token;
 	if Accept("let") or Accept("var")
 	{
@@ -546,7 +576,7 @@ public ParseStatement() -> bool
 		var variableType: string = ParseType();
 		variableType = ConvertType(kind == "var", mutableValue, variableType);
 		BeginLine(variableType);
-		Write(" " + variableName);
+		Write(" " + variableName + "_");
 		if Accept("=")
 		{
 			Write(" = ");
@@ -596,7 +626,7 @@ public ParseArgumentsDeclaration(isMainFunction: bool) -> string
 			if type == "System.Console.Arguments"
 				{ MainFunctionAcceptsArgs = true; }
 		}
-		arguments.Append(ConvertType(mutableBinding, mutableValue, type) + " " + name + ", ");
+		arguments.Append(ConvertType(mutableBinding, mutableValue, type) + " " + name + "_, ");
 	} while Accept(",");
 	Expect(")");
 	let result: string = arguments.ToString();
@@ -621,8 +651,8 @@ public ParseClassMember(className: string) -> void
 		// Constructor
 		let arguments: string = ParseArgumentsDeclaration(false);
 		// Write out the function declaration for C++ so we can call functions defined after others
-		ClassDeclarations.AppendLine("\t" + className + "(" + arguments + ");");
-		WriteLine("::" + className + "::" + className + "(" + arguments + ")");
+		ClassDeclarations.AppendLine("\t" + className + "_(" + arguments + ");");
+		WriteLine("::" + className + "_::" + className + "_(" + arguments + ")");
 		ParseBlock();
 		return;
 	}
@@ -636,7 +666,7 @@ public ParseClassMember(className: string) -> void
 		var fieldType: string = ParseType();
 		fieldType = ConvertType(true, mutableValue, fieldType); // because we need to assign them in constructors don't mark fields const
 		Expect(";");
-		ClassDeclarations.AppendLine("\t" + fieldType + " " + fieldName + ";");
+		ClassDeclarations.AppendLine("\t" + fieldType + " " + fieldName + "_;");
 		return;
 	}
 
@@ -647,8 +677,8 @@ public ParseClassMember(className: string) -> void
 	let mutableValue: bool = Accept("mut");
 	let returnType: string = ParseType();
 	let convertedReturnType: string = ConvertType(true, mutableValue, returnType);
-	ClassDeclarations.AppendLine("\tauto " + methodName + "(" + arguments + ") -> " + convertedReturnType + ";");
-	WriteLine("auto ::" + className + "::" + methodName + "(" + arguments + ") -> " + convertedReturnType);
+	ClassDeclarations.AppendLine("\tauto " + methodName + "_(" + arguments + ") -> " + convertedReturnType + ";");
+	WriteLine("auto ::" + className + "_::" + methodName + "_(" + arguments + ") -> " + convertedReturnType);
 	ParseBlock();
 }
 
@@ -675,7 +705,7 @@ public ParseDeclaration() -> void
 		Expect("=");
 		variableType = ConvertType(kind == "var", mutableValue, variableType);
 		BeginLine(variableType);
-		Write(" " + variableName + " = ");
+		Write(" " + variableName + "_ = ");
 		ParseExpression();
 		Expect(";");
 		EndLine(";");
@@ -686,8 +716,8 @@ public ParseDeclaration() -> void
 	if Accept("class")
 	{
 		let className: string = ExpectIdentifier();
-		TypeDeclarations.AppendLine("class " + className + ";");
-		ClassDeclarations.AppendLine("class " + className);
+		TypeDeclarations.AppendLine("class " + className + "_;");
+		ClassDeclarations.AppendLine("class " + className + "_");
 		Expect("{");
 		ClassDeclarations.AppendLine("{");
 		ClassDeclarations.AppendLine("public:");
@@ -703,14 +733,14 @@ public ParseDeclaration() -> void
 	{
 		Expect("struct");
 		let enumName: string = ExpectIdentifier();
-		TypeDeclarations.AppendLine("enum class " + enumName + ";");
-		ClassDeclarations.AppendLine("enum class " + enumName);
+		TypeDeclarations.AppendLine("enum class " + enumName + "_;");
+		ClassDeclarations.AppendLine("enum class " + enumName + "_");
 		Expect("{");
 		ClassDeclarations.AppendLine("{");
 		do
 		{
 			let enumValue: string = ExpectIdentifier();
-			ClassDeclarations.Append("\t" + enumValue);
+			ClassDeclarations.Append("\t" + enumValue + "_");
 			if Accept("=")
 			{
 				ClassDeclarations.Append(" = ");
@@ -735,8 +765,8 @@ public ParseDeclaration() -> void
 	let returnType: string = ParseType();
 	let convertedReturnType: string = ConvertType(true, mutableValue, returnType);
 	// Write out the function declaration for C++ so we can call functions defined after others
-	FunctionDeclarations.AppendLine("auto " + name + "(" + arguments + ") -> " + convertedReturnType + ";");
-	WriteLine("auto " + name + "(" + arguments + ") -> " + convertedReturnType);
+	FunctionDeclarations.AppendLine("auto " + name + "_(" + arguments + ") -> " + convertedReturnType + ";");
+	WriteLine("auto " + name + "_(" + arguments + ") -> " + convertedReturnType);
 	if name == "Main"
 	{
 		if MainFunctionReturnType <> ""
@@ -776,7 +806,7 @@ public EmitEntryPointAdapter(resources: System.Collections.List<SourceText>) -> 
 
 	for let resource: SourceText in resources
 	{
-		BeginLine("resource_manager->AddResource(::string(\"");
+		BeginLine("resource_manager_->AddResource(::string(\"");
 		Write(resource.Name);
 		Write("\"), ::string(\"");
 		Write(resource.Text
@@ -794,22 +824,22 @@ public EmitEntryPointAdapter(resources: System.Collections.List<SourceText>) -> 
 	// TODO should be `new mut`
 	let args: mut System.Text.StringBuilder = new System.Text.StringBuilder();
 	if MainFunctionAcceptsConsole
-		{ args.Append("new ::System::Console::Console()"); }
+		{ args.Append("new ::System_::Console_::Console_()"); }
 	if MainFunctionAcceptsArgs
 	{
 		if MainFunctionAcceptsConsole
 			{ args.Append(", "); }
-		args.Append("new ::System::Console::Arguments(argc, argv)");
+		args.Append("new ::System_::Console_::Arguments_(argc, argv)");
 	}
 
 	if MainFunctionReturnType == "void"
 	{
-		WriteLine("Main(" + args.ToString() + ");");
+		WriteLine("Main_(" + args.ToString() + ");");
 		WriteLine("return 0;");
 	}
 	else
 	{
-		WriteLine("return Main(" + args.ToString() + ");");
+		WriteLine("return Main_(" + args.ToString() + ");");
 	}
 
 	EndBlock();
@@ -819,7 +849,7 @@ public EmitEntryPointAdapter(resources: System.Collections.List<SourceText>) -> 
 // Transpiler
 // ----------------------------------------------------------------------------
 
-public Transpile(sources: System.Collections.List<SourceText>, resources: System.Collections.List<SourceText>) -> string
+public Compile(sources: System.Collections.List<SourceText>, resources: System.Collections.List<SourceText>) -> string
 {
 	EmitPreamble();
 	let lexer: mut Lexer = new Lexer(); // TODO remove mut when not needed
@@ -896,7 +926,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 		sources.Add(ReadSource(sourceFilePath));
 	}
 
-	let translated: string = Transpile(sources, resources);
+	let translated: string = Compile(sources, resources);
 
 	// Write output
 	console.Write("Output: ");

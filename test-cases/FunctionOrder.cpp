@@ -3,18 +3,18 @@
 // Type Declarations
 
 // Function Declarations
-auto Main() -> int;
-auto Func() -> int;
+auto Main_() -> int;
+auto Func_() -> int;
 
 // Class Declarations
 
 // Definitions
-auto Main() -> int
+auto Main_() -> int
 {
-	return Func();
+	return Func_();
 }
 
-auto Func() -> int
+auto Func_() -> int
 {
 	return 1;
 }
@@ -22,5 +22,5 @@ auto Func() -> int
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	return Main();
+	return Main_();
 }

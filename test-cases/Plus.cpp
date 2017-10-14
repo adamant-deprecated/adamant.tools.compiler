@@ -3,20 +3,20 @@
 // Type Declarations
 
 // Function Declarations
-auto Main() -> void;
+auto Main_() -> void;
 
 // Class Declarations
 
 // Definitions
-auto Main() -> void
+auto Main_() -> void
 {
-	int x = 1 + 2;
-	x = 1 - 2;
+	int x_ = 1 + 2;
+	x_ = 1 - 2;
 }
 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	Main();
+	Main_();
 	return 0;
 }
