@@ -1,0 +1,19 @@
+// TODO make this an enum struct
+public class TokenType
+{
+	//Keyword,
+	//Identifier,
+	//LeftParen,
+	//RightParen,
+	//LeftBrace,
+	//RightBrace,
+	//LeftBracket,
+	//RightBracket,
+	//Colon,
+	//Dot,
+	//Semicolon,
+	//Assign,
+	//IsNull,
+	//Plus,
+	//Comma,
+}

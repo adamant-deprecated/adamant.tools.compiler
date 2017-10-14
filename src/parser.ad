@@ -1,0 +1,11 @@
+public class Parser
+{
+	public new()
+	{
+	}
+
+	public Parse(tokenStream: TokenStream) -> SyntaxNode?
+	{
+		return null;
+	}
+}

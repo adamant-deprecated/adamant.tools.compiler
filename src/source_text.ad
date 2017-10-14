@@ -1,0 +1,13 @@
+public class SourceText
+{
+	public let Package: string;
+	public let Name: string;
+	public let Text: string;
+
+	public new(package: string, name: string, text: string)
+	{
+		this.Package = package;
+		this.Name = name;
+		this.Text = text;
+	}
+}

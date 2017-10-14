@@ -1,0 +1,16 @@
+public class SyntaxToken
+{
+	public let TokenType: TokenType;
+	public let Source: SourceText;
+	public let Start: uint;
+	public let Length: uint;
+	//public Text: string;
+
+	public new(tokenType: TokenType, source: SourceText, start: uint, length: uint)
+	{
+		TokenType = tokenType;
+		Source = source;
+		Start = start;
+		Length = length;
+	}
+}
