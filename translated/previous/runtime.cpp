@@ -1,13 +1,5 @@
 #include "runtime.h"
 
-// On windows this disables warnings about using fopen_s instead of fopen
-// It must be defined before including the headers.  The includes have been moved
-// here to avoid leaking this into the program being compiled.  This required the
-// use of void* instead of FILE* in some places.
-#define _CRT_SECURE_NO_WARNINGS
-#include <cstring>
-#include <cstdio>
-
 string::string()
 	: Length(0), Buffer(0)
 {
@@ -115,6 +107,11 @@ namespace System
 			std::printf("%.*s\n", value.Length, value.Buffer);
 		}
 
+		void Console::WriteLine()
+		{
+			std::printf("\n");
+		}
+
 		Arguments::Arguments(int argc, char const *const * argv)
 			: Count(argc-1)
 		{
@@ -136,17 +133,17 @@ namespace System
 
 		string FileReader::ReadToEndSync()
 		{
-			std::fseek(static_cast<std::FILE*>(file), 0, SEEK_END);
-			auto length = std::ftell(static_cast<std::FILE*>(file));
-			std::fseek(static_cast<std::FILE*>(file), 0, SEEK_SET);
+			std::fseek(file, 0, SEEK_END);
+			auto length = std::ftell(file);
+			std::fseek(file, 0, SEEK_SET);
 			auto buffer = new char[length];
-			length = std::fread(buffer, sizeof(char), length, static_cast<std::FILE*>(file));
+			length = std::fread(buffer, sizeof(char), length, file);
 			return string(length, buffer);
 		}
 
 		void FileReader::Close()
 		{
-			std::fclose(static_cast<std::FILE*>(file));
+			std::fclose(file);
 		}
 
 		FileWriter::FileWriter(const string& fileName)
@@ -158,12 +155,12 @@ namespace System
 
 		void FileWriter::Write(const string& value)
 		{
-			std::fwrite(value.Buffer, sizeof(char), value.Length, static_cast<std::FILE*>(file));
+			std::fwrite(value.Buffer, sizeof(char), value.Length, file);
 		}
 
 		void FileWriter::Close()
 		{
-			std::fclose(static_cast<std::FILE*>(file));
+			std::fclose(file);
 		}
 	}
 

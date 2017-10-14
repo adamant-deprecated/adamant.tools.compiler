@@ -1,18 +1,30 @@
 public Main(console: mut System.Console.Console) -> void
 {
-	let l: mut System.Collections.List<string> = new System.Collections.List<string>();
-	l.Add("Hello");
-	l.Add("World!");
+	let strings: mut System.Collections.List<string> = new System.Collections.List<string>();
+	strings.Add("Hello");
+	strings.Add("World!");
 	// TODO Length should be a property not a method
-	if l.Length() <> 2 // Collections of contiguous elements have length that replaces the Count property in the interface
+	if strings.Length() <> 2 // Collections of contiguous elements have length that replaces the Count property in the interface
 	{
 		console.WriteLine("List length not 2!");
 	}
 
-	console.WriteLine(l.Get(0)); // TODO this should be an indexer
-	for let s: string in l
+	console.WriteLine(strings.Get(0)); // TODO this should be an indexer
+	for let s: string in strings
 	{
 		console.Write(s);
 	}
 	console.WriteLine();
+
+	let builders: mut System.Collections.List<mut System.Text.StringBuilder> = new System.Collections.List<mut System.Text.StringBuilder>();
+	builders.Add(new System.Text.StringBuilder("sb[0]: "));
+	builders.Add(new System.Text.StringBuilder("sb[1]: "));
+	for let sb: mut System.Text.StringBuilder in builders
+	{
+		sb.Append("value");
+	}
+	for let sb: System.Text.StringBuilder in builders
+	{
+		console.WriteLine(sb.ToString());
+	}
 }
