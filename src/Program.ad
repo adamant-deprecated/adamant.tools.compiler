@@ -1,7 +1,6 @@
 public Parse(source: SourceText) -> SyntaxNode
 {
-	// TODO should be mut new
-	let lexer: mut Lexer = new Lexer(); // TODO remove mut here when we can mark methods as const
+	let lexer: Lexer = new Lexer();
 	let tokenStream: mut TokenStream = lexer.Analyze(source);
 	let parser: mut Parser = new Parser();
 	return parser.Parse(tokenStream);
@@ -892,7 +891,7 @@ public EmitEntryPointAdapter(resources: System.Collections.List<SourceText>) -> 
 public Compile(sources: System.Collections.List<SourceText>, resources: System.Collections.List<SourceText>) -> string
 {
 	EmitPreamble();
-	let lexer: mut Lexer = new Lexer(); // TODO remove mut when not needed
+	let lexer: Lexer = new Lexer();
 	for let source: SourceText in sources
 	{
 		tokenStream = lexer.Analyze(source);

@@ -904,8 +904,20 @@ auto ParseClassMember_(string const className_) -> void
 	bool const mutableValue_ = Accept_(string("mut"));
 	string const returnType_ = ParseType_();
 	string const convertedReturnType_ = ConvertType_(true, mutableValue_, returnType_);
-	ClassDeclarations_->AppendLine_(string("\tauto ") + methodName_ + string("_(") + arguments_ + string(") -> ") + convertedReturnType_ + string(";"));
-	WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_(") + arguments_ + string(") -> ") + convertedReturnType_);
+	string staticModifier_ = string("");
+	if (isAssociatedFuntion_)
+	{
+		staticModifier_ = string("static ");
+	}
+
+	string constModifier_ = string("");
+	if (!mutableSelf_ && !isAssociatedFuntion_)
+	{
+		constModifier_ = string("const ");
+	}
+
+	ClassDeclarations_->AppendLine_(string("\t") + staticModifier_ + string("auto ") + methodName_ + string("_(") + arguments_ + string(") ") + constModifier_ + string("-> ") + convertedReturnType_ + string(";"));
+	WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_(") + arguments_ + string(") ") + constModifier_ + string("-> ") + convertedReturnType_);
 	ParseBlock_();
 }
 
