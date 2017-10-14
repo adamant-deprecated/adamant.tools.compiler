@@ -11,7 +11,6 @@ clang++ ..\..\translated\previous\*.cpp -o ..\..\target\previous\Program.exe -st
 @echo Building Current
 rmdir /S/Q ..\..\translated\current
 @mkdir ..\..\translated\current
-xcopy ..\..\src\runtime.* ..\..\translated\current /Y
 ..\..\target\previous\Program.exe ..\..\src\Program.ad -o ..\..\translated\current\Program.cpp -r ..\..\src\RuntimeLibrary.cpp -r ..\..\src\RuntimeLibrary.h
 rmdir /S/Q ..\..\target\current
 @mkdir ..\..\target\current
