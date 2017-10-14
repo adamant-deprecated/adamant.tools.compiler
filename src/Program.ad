@@ -1037,7 +1037,15 @@ public ParseDeclaration() -> void
 	ParseBlock();
 }
 
-public ParseProgram() -> void
+public ParseCompilationUnit() -> void
+{
+	do
+	{
+		ParseDeclaration();
+	} while TokenIsIdentifier();
+}
+
+public EmitPreamble() -> void
 {
 	// Setup the beginning of each section
 	Declarations.AppendLine("#include \"runtime.h\"");
@@ -1047,14 +1055,30 @@ public ParseProgram() -> void
 	ClassDeclarations.AppendLine("// Class Declarations");
 	WriteLine("");
 	WriteLine("// Definitions");
+}
 
-	do
-	{
-		ParseDeclaration();
-	} while TokenIsIdentifier();
+public EmitEntryPointAdapter(resources: System.Collections.List<SourceText>) -> void
+{
 	WriteLine("// Entry Point Adapter");
 	WriteLine("int main(int argc, char const *const * argv)");
 	BeginBlock();
+
+	for let resource: SourceText in resources
+	{
+		BeginLine("resource_manager->AddResource(::string(\"");
+		Write(resource.Name);
+		Write("\"), ::string(\"");
+		Write(resource.Text
+								.Replace("\\", "\\\\")
+								.Replace("\n", "\\n")
+								.Replace("\r", "\\r")
+								.Replace("\"", "\\\""));
+		EndLine("\"));");
+	}
+	if resources.Length() > 0
+	{
+		EndLine(""); // Use EndLine to avoid having an indent on a blank line
+	}
 
 	// TODO should be `new mut`
 	let args: mut System.Text.StringBuilder = new System.Text.StringBuilder();
@@ -1084,34 +1108,86 @@ public ParseProgram() -> void
 // Transpiler
 // ----------------------------------------------------------------------------
 
-public Transpile(source: SourceText) -> string
+public Transpile(sources: System.Collections.List<SourceText>, resources: System.Collections.List<SourceText>) -> string
 {
+	EmitPreamble();
 	let lexer: mut Lexer = new Lexer(); // TODO remove mut when not needed
-	tokenStream = lexer.Analyze(source);
-	Token = tokenStream.GetNextToken();
-	ParseProgram();
+	for let source: SourceText in sources
+	{
+		tokenStream = lexer.Analyze(source);
+		Token = tokenStream.GetNextToken();
+		ParseCompilationUnit();
+	}
+	EmitEntryPointAdapter(resources);
 	return Declarations.ToString() + ClassDeclarations.ToString() + Definitions.ToString();
 }
 
 public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void
 {
 	console.WriteLine("Adamant Compiler v0.1.0");
-	if args.Count <> 2
+	let sourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
+	let resourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
+	var outputFilePath: string = "";
+	var argType: int = 0; // 0=source file, 1=resource file, 2=output file
+	for let arg: string in args
 	{
-		console.WriteLine("Args: <Input File> <OutputFile>");
+		if argType == 1 // resource file
+		{
+			resourceFilePaths.Add(arg);
+			argType = 0;
+		}
+		else if argType == 2 // output file
+		{
+			outputFilePath = arg;
+			argType = 0;
+		}
+		else // source file TODO check argType == 0
+		{
+			if arg == "-r"
+			{
+				argType = 1;
+			}
+			else if arg == "-o"
+			{
+				argType = 2;
+			}
+			else
+			{
+				sourceFilePaths.Add(arg);
+			}
+		}
+	}
+
+	if sourceFilePaths.Length() == 0 or outputFilePath == ""
+	{
+		console.WriteLine("Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
 		return;
 	}
 
-	// Read Source
-	let inputFilePath: string = args.Get(0); // TODO should be `args[0]`
-	console.Write("Compiling: ");
-	console.WriteLine(inputFilePath);
-	let source: SourceText = ReadSource(inputFilePath);
+	// Read Resources
+	let resources: mut System.Collections.List<SourceText> = new System.Collections.List<SourceText>();
+	if resourceFilePaths.Length() > 0
+	{
+		console.WriteLine("Reading Resources:");
+		for let resourceFilePath: string in resourceFilePaths
+		{
+			console.WriteLine("  " + resourceFilePath);
+			resources.Add(ReadSource(resourceFilePath));
+		}
+	}
 
-	let translated: string = Transpile(source);
+	// Read Source(s)
+	console.WriteLine("Compiling:");
+	let sources: mut System.Collections.List<SourceText> = new System.Collections.List<SourceText>();
+	for let sourceFilePath: string in sourceFilePaths
+	{
+		console.WriteLine("  " + sourceFilePath);
+		sources.Add(ReadSource(sourceFilePath));
+	}
+
+	let translated: string = Transpile(sources, resources);
 
 	// Write output
-	let outputFilePath: string = args.Get(1); // TODO should be `args[1]`
 	console.Write("Output: ");
 	console.WriteLine(outputFilePath);
 	// TODO should be `new mut`
@@ -1126,5 +1202,12 @@ public ReadSource(path: string) -> SourceText
 	let file: mut System.IO.FileReader = new System.IO.FileReader(path);
 	let contents: string = file.ReadToEndSync();
 	file.Close(); // TODO this should automatically be handled
-	return new SourceText("<default>", path, contents);
+	var name: string = path;
+	var index: int = name.LastIndexOf('/');
+	if index <> -1
+		{ name = name.Substring(index+1); }
+	index = name.LastIndexOf('\\');
+	if index <> -1
+		{ name = name.Substring(index+1); }
+	return new SourceText("<default>", name, contents);
 }

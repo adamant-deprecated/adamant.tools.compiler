@@ -18,7 +18,9 @@ public:
 	string(int length, char const * s);
 	char const * cstr() const;
 	string Substring(int start, int length) const;
+	string Substring(int start) const { return Substring(start, Length-start); }
 	string Replace(string oldValue, string newValue) const;
+	int LastIndexOf(char c) const;
 	char operator[] (int const index) const;
 	string operator+(string const & value) const;
 	string operator+(char const & value) const;
@@ -26,11 +28,21 @@ public:
 	string const & operator* () const { return *this; }
 	bool operator==(string const & other) const;
 	bool operator!=(string const & other) const { return !(*this == other); }
+	friend bool operator<(string const & lhs, string const & rhs);
 
 	typedef char const * const_iterator;
 	const_iterator begin() const { return &Buffer[0]; }
 	const_iterator end() const { return &Buffer[Length]; }
 };
+
+class ResourceManager
+{
+public:
+	string const & GetString(string resourceName);
+	void AddResource(string name, string value);
+};
+
+extern ResourceManager *const resource_manager;
 
 class NoneType
 {
@@ -87,13 +99,13 @@ namespace System
 			T* values;
 			int length;
 			int capacity;
-			//std::vector<T> values;
+
 		public:
 			typedef T const * const_iterator;
 
 			List() : values(0), length(0), capacity(0) { }
-			void Add(T value);// { values.push_back(value); }
-			int Length() { return length; }//{ return values.size(); }
+			void Add(T value);
+			int Length() const { return length; }
 			const_iterator begin() const { return values; }
 			const_iterator end() const { return &values[length]; }
 			T const & Get(int const index) const { return values[index]; }

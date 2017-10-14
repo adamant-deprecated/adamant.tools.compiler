@@ -533,7 +533,7 @@ auto ConvertType(::string const type) -> ::string
 		return type;
 	}
 
-	return ::string("::") + type->Replace(::string("."), ::string("::"))->Replace(::string("<"), ::string("<::"));
+	return ::string("::") + type->Replace(::string("."), ::string("::"));
 }
 
 auto ConvertType(bool const mutableBinding, bool const mutableValue, ::string type) -> ::string
@@ -587,7 +587,8 @@ auto ParseType() -> ::string
 	if (Accept(::string("<")))
 	{
 		type->Append(::string("<"));
-		type->Append(ParseType());
+		bool const mutableValue = Accept(::string("mut"));
+		type->Append(ConvertType(true, mutableValue, ParseType()));
 		Accept(::string(">"));
 		type->Append(::string(">"));
 	}

@@ -1,4 +1,5 @@
 #include "runtime.h"
+#include <map>
 
 string::string()
 	: Length(0), Buffer(0)
@@ -56,6 +57,15 @@ string string::Replace(string oldValue, string newValue) const
 	return buffer;
 }
 
+int string::LastIndexOf(char c) const
+{
+	for(int i=Length-1; i>=0; i--)
+		if(Buffer[i]==c)
+			return i;
+
+	return -1;
+}
+
 char string::operator[] (const int index) const
 {
 	return Buffer[index];
@@ -92,6 +102,24 @@ bool string::operator==(const string &other) const
 
 	return true;
 }
+
+bool operator < (string const& lhs, string const& rhs)
+{
+    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;
+}
+
+std::map<string, string> resourceValues;
+
+string const & ResourceManager::GetString(string resourceName)
+{
+	return resourceValues.at(resourceName);
+}
+void ResourceManager::AddResource(string name, string value)
+{
+	resourceValues.insert(std::make_pair(name, value));
+}
+
+ResourceManager *const resource_manager = new ResourceManager();
 
 namespace System
 {

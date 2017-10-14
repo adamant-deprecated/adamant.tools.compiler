@@ -4,7 +4,7 @@ cls
 @echo Rebuilding Previous
 rmdir /S/Q ..\..\target\previous
 @mkdir ..\..\target\previous
-clang++ ..\..\translated\previous\*.cpp -o ..\..\target\previous\Program.exe -std=c++14
+clang++ ..\..\translated\previous\*.cpp -o ..\..\target\previous\Program.exe -std=c++14 -Xclang -flto-visibility-public-std
 
 @echo.
 @echo ************************
@@ -15,4 +15,4 @@ xcopy ..\..\src\runtime.* ..\..\translated\current /Y
 ..\..\target\previous\Program.exe ..\..\src\Program.ad ..\..\translated\current\Program.cpp
 rmdir /S/Q ..\..\target\current
 @mkdir ..\..\target\current
-clang++ ..\..\translated\current\*.cpp -o ..\..\target\current\Program.exe -std=c++14
+clang++ ..\..\translated\current\*.cpp -o ..\..\target\current\Program.exe -std=c++14 -Xclang -flto-visibility-public-std

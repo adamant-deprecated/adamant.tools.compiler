@@ -9,3 +9,4 @@
 *.sln		text eol=crlf
 *.csproj	text eol=crlf
 *.config	text
+*.rsrc		text eol=lf
