@@ -4,7 +4,7 @@ public class Parser
 	{
 	}
 
-	public Parse(tokenStream: TokenStream) -> SyntaxNode?
+	public Parse(self, tokenStream: TokenStream) -> SyntaxNode?
 	{
 		return null;
 	}

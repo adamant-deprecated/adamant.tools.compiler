@@ -12,7 +12,7 @@ class C_
 public:
 	string Name_;
 	C_(string const name_);
-	auto Method_() -> string;
+	auto Method_() const -> string;
 };
 
 // Definitions
@@ -21,7 +21,7 @@ public:
 	Name_ = name_;
 }
 
-auto ::C_::Method_() -> string
+auto ::C_::Method_() const -> string
 {
 	return Name_;
 }

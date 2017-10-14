@@ -9,7 +9,7 @@ public class TokenStream
 		nextToken = 0; // TODO have to assign this zero for now because we don't have default values working
 	}
 
-	public GetNextToken() -> string
+	public GetNextToken(mut self) -> string
 	{
 		var position: uint = nextToken;
 		var tokenEnd: uint = -1;

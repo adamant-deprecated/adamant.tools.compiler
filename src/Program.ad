@@ -711,8 +711,14 @@ public ParseClassMember(className: string) -> void
 	let mutableValue: bool = Accept("mut");
 	let returnType: string = ParseType();
 	let convertedReturnType: string = ConvertType(true, mutableValue, returnType);
-	ClassDeclarations.AppendLine("\tauto " + methodName + "_(" + arguments + ") -> " + convertedReturnType + ";");
-	WriteLine("auto ::" + className + "_::" + methodName + "_(" + arguments + ") -> " + convertedReturnType);
+	var staticModifier: string = "";
+	if isAssociatedFuntion
+		{ staticModifier = "static "; }
+	var constModifier: string = "";
+	if not mutableSelf and not isAssociatedFuntion
+		{ constModifier = "const "; }
+	ClassDeclarations.AppendLine("\t" + staticModifier + "auto " + methodName + "_(" + arguments + ") " + constModifier + "-> " + convertedReturnType + ";");
+	WriteLine("auto ::" + className + "_::" + methodName + "_(" + arguments + ") " + constModifier + "-> " + convertedReturnType);
 	ParseBlock();
 }
 
