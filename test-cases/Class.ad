@@ -7,7 +7,7 @@ public class C
 		Name = name;
 	}
 
-	public Method() -> string
+	public Method(self) -> string
 	{
 		return Name;
 	}
@@ -16,4 +16,5 @@ public class C
 public Main() -> void
 {
 	let c: C = new C("Bob");
+	c.Method();
 }

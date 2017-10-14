@@ -29,6 +29,7 @@ auto ::C_::Method_() -> string
 auto Main_() -> void
 {
 	::C_ const *const c_ = new ::C_(string("Bob"));
+	c_->Method_();
 }
 
 // Entry Point Adapter

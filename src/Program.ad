@@ -605,9 +605,10 @@ public ParseBlock() -> void
 	EndBlock();
 }
 
-public ParseArgumentsDeclaration(isMainFunction: bool) -> string
+public ParseArgumentsDeclaration(isMainFunction: bool, isMethod: bool) -> string
 {
-	Expect("(");
+	// For methods, this is already consumed becuase of the self param
+	if not isMethod { Expect("("); }
 	if Accept(")") { return ""; }
 
 	// TODO should be `new mut`
@@ -634,6 +635,21 @@ public ParseArgumentsDeclaration(isMainFunction: bool) -> string
 	return result.Substring(0, result.Length - 2); // remove the trailing comma and space
 }
 
+public ParseConstructorArgumentsDeclaration() -> string
+{
+	return ParseArgumentsDeclaration(false, false);
+}
+
+public ParseFunctionArgumentsDeclaration(isMainFunction: bool) -> string
+{
+	return ParseArgumentsDeclaration(isMainFunction, false);
+}
+
+public ParseMethodArgumentsDeclaration() -> string
+{
+	return ParseArgumentsDeclaration(false, true);
+}
+
 public ParseClassMember(className: string) -> void
 {
 	let accessModifier: string = Token;
@@ -649,7 +665,7 @@ public ParseClassMember(className: string) -> void
 	if Accept("new")
 	{
 		// Constructor
-		let arguments: string = ParseArgumentsDeclaration(false);
+		let arguments: string = ParseConstructorArgumentsDeclaration();
 		// Write out the function declaration for C++ so we can call functions defined after others
 		ClassDeclarations.AppendLine("\t" + className + "_(" + arguments + ");");
 		WriteLine("::" + className + "_::" + className + "_(" + arguments + ")");
@@ -672,7 +688,25 @@ public ParseClassMember(className: string) -> void
 
 	// Method Declaration
 	let methodName: string = ExpectIdentifier();
-	let arguments: string = ParseArgumentsDeclaration(false);
+	Expect("(");
+	let mutableSelf: bool = Accept("mut");
+	var isAssociatedFuntion: bool = not mutableSelf;
+	if mutableSelf
+	{
+		Expect("self");
+		if Token <> ")"
+			{ Expect(","); }
+	}
+	else
+	{
+		if Accept("self")
+		{
+			isAssociatedFuntion = false;
+			if Token <> ")"
+				{ Expect(","); }
+		}
+	}
+	let arguments: string = ParseMethodArgumentsDeclaration();
 	Expect("->");
 	let mutableValue: bool = Accept("mut");
 	let returnType: string = ParseType();
@@ -759,7 +793,7 @@ public ParseDeclaration() -> void
 
 	// Function Declaration
 	let name: string = ExpectIdentifier();
-	let arguments: string = ParseArgumentsDeclaration(name == "Main");
+	let arguments: string = ParseFunctionArgumentsDeclaration(name == "Main");
 	Expect("->");
 	let mutableValue: bool = Accept("mut");
 	let returnType: string = ParseType();

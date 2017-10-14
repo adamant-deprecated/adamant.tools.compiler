@@ -2,12 +2,12 @@
 #include <map>
 
 string::string()
-	: Length(0), Buffer(0)
+	: Length_(0), Buffer(0)
 {
 }
 
 string::string(char c, int repeat)
-	: Length(repeat)
+	: Length_(repeat)
 {
 	char* buffer = new char[repeat];
 	for (int i = 0; i < repeat; i++)
@@ -17,49 +17,49 @@ string::string(char c, int repeat)
 }
 
 string::string(const char* s)
-	: Length(std::strlen(s)), Buffer(s)
+	: Length_(std::strlen(s)), Buffer(s)
 {
 }
 
 string::string(int length, const char* s)
-	: Length(length), Buffer(s)
+	: Length_(length), Buffer(s)
 {
 }
 
 char const * string::cstr() const
 {
-	auto buffer = new char[Length + 1];
-	std::memcpy(buffer, Buffer, Length);
-	buffer[Length] = 0;
+	auto buffer = new char[Length_ + 1];
+	std::memcpy(buffer, Buffer, Length_);
+	buffer[Length_] = 0;
 	return buffer;
 }
 
-string string::Substring(int start, int length) const
+string string::Substring_(int start, int length) const
 {
 	return string(length, Buffer + start);
 }
 
-string string::Replace(string oldValue, string newValue) const
+string string::Replace_(string oldValue, string newValue) const
 {
 	string buffer = "";
-	int limit = Length - oldValue.Length + 1;
+	int limit = Length_ - oldValue.Length_ + 1;
 	int lastIndex = 0;
 	for(int i=0; i < limit; i++)
-		if (Substring(i, oldValue.Length) == oldValue)
+		if (Substring_(i, oldValue.Length_) == oldValue)
 		{
-			buffer = buffer + Substring(lastIndex, i-lastIndex) + newValue;
-			i += oldValue.Length; // skip over the value we just matched
+			buffer = buffer + Substring_(lastIndex, i-lastIndex) + newValue;
+			i += oldValue.Length_; // skip over the value we just matched
 			lastIndex = i;
 			i--; // we need i-- to offset the i++ that is about to happen
 		}
 
-	buffer = buffer + Substring(lastIndex, Length - lastIndex);
+	buffer = buffer + Substring_(lastIndex, Length_ - lastIndex);
 	return buffer;
 }
 
-int string::LastIndexOf(char c) const
+int string::LastIndexOf_(char c) const
 {
-	for(int i=Length-1; i>=0; i--)
+	for(int i=Length_-1; i>=0; i--)
 		if(Buffer[i]==c)
 			return i;
 
@@ -73,30 +73,30 @@ char string::operator[] (const int index) const
 
 string string::operator+(const string& value) const
 {
-	int newLength = Length + value.Length;
+	int newLength = Length_ + value.Length_;
 	char* chars = new char[newLength];
-	size_t offset = sizeof(char)*Length;
+	size_t offset = sizeof(char)*Length_;
 	std::memcpy(chars, Buffer, offset);
-	std::memcpy(chars + offset, value.Buffer, value.Length);
+	std::memcpy(chars + offset, value.Buffer, value.Length_);
 	return string(newLength, chars);
 }
 
 string string::operator+(const char& value) const
 {
-	int newLength = Length + 1;
+	int newLength = Length_ + 1;
 	char* chars = new char[newLength];
-	size_t offset = sizeof(char)*Length;
+	size_t offset = sizeof(char)*Length_;
 	std::memcpy(chars, Buffer, offset);
-	chars[Length] = value;
+	chars[Length_] = value;
 	return string(newLength, chars);
 }
 
 bool string::operator==(const string &other) const
 {
-	if (Length != other.Length)
+	if (Length_ != other.Length_)
 		return false;
 
-	for (int i = 0; i < Length; i++)
+	for (int i = 0; i < Length_; i++)
 		if (Buffer[i] != other.Buffer[i])
 			return false;
 
@@ -110,7 +110,7 @@ bool operator < (string const& lhs, string const& rhs)
 
 std::map<string, string> resourceValues;
 
-string const & ResourceManager::GetString(string resourceName)
+string const & ResourceManager::GetString_(string resourceName)
 {
 	return resourceValues.at(resourceName);
 }
@@ -119,39 +119,39 @@ void ResourceManager::AddResource(string name, string value)
 	resourceValues.insert(std::make_pair(name, value));
 }
 
-ResourceManager *const resource_manager = new ResourceManager();
+ResourceManager *const resource_manager_ = new ResourceManager();
 
-namespace System
+namespace System_
 {
-	namespace Console
+	namespace Console_
 	{
-		void Console::Write(string value)
+		void Console_::Write_(string value)
 		{
-			std::printf("%.*s", value.Length, value.Buffer);
+			std::printf("%.*s", value.Length_, value.Buffer);
 		}
 
-		void Console::WriteLine(string value)
+		void Console_::WriteLine_(string value)
 		{
-			std::printf("%.*s\n", value.Length, value.Buffer);
+			std::printf("%.*s\n", value.Length_, value.Buffer);
 		}
 
-		void Console::WriteLine()
+		void Console_::WriteLine_()
 		{
 			std::printf("\n");
 		}
 
-		Arguments::Arguments(int argc, char const *const * argv)
-			: Count(argc-1)
+		Arguments_::Arguments_(int argc, char const *const * argv)
+			: Count_(argc-1)
 		{
-			args = new string[Count];
-			for (int i = 0; i < Count; i++)
+			args = new string[Count_];
+			for (int i = 0; i < Count_; i++)
 				args[i] = string(argv[i+1]);
 		}
 	}
 
-	namespace IO
+	namespace IO_
 	{
-		FileReader::FileReader(const string& fileName)
+		FileReader_::FileReader_(const string& fileName)
 		{
 			std::FILE* foo;
 			auto fname = fileName.cstr();
@@ -159,7 +159,7 @@ namespace System
 			delete[] fname;
 		}
 
-		string FileReader::ReadToEndSync()
+		string FileReader_::ReadToEndSync_()
 		{
 			std::fseek(file, 0, SEEK_END);
 			auto length = std::ftell(file);
@@ -169,52 +169,52 @@ namespace System
 			return string(length, buffer);
 		}
 
-		void FileReader::Close()
+		void FileReader_::Close_()
 		{
 			std::fclose(file);
 		}
 
-		FileWriter::FileWriter(const string& fileName)
+		FileWriter_::FileWriter_(const string& fileName)
 		{
 			auto fname = fileName.cstr();
 			file = std::fopen(fname, "wb"); // TODO check error
 			delete[] fname;
 		}
 
-		void FileWriter::Write(const string& value)
+		void FileWriter_::Write_(const string& value)
 		{
-			std::fwrite(value.Buffer, sizeof(char), value.Length, file);
+			std::fwrite(value.Buffer, sizeof(char), value.Length_, file);
 		}
 
-		void FileWriter::Close()
+		void FileWriter_::Close_()
 		{
 			std::fclose(file);
 		}
 	}
 
-	namespace Text
+	namespace Text_
 	{
-		StringBuilder::StringBuilder(string const & value)
+		StringBuilder_::StringBuilder_(string const & value)
 			: buffer(value)
 		{
 		}
 
-		StringBuilder::StringBuilder()
+		StringBuilder_::StringBuilder_()
 			: buffer("")
 		{
 		}
 
-		void StringBuilder::Append(string const & value)
+		void StringBuilder_::Append_(string const & value)
 		{
 			buffer = buffer + value;
 		}
 
-		void StringBuilder::AppendLine(string const & value)
+		void StringBuilder_::AppendLine_(string const & value)
 		{
 			buffer = buffer + value + string("\n");
 		}
 
-		void StringBuilder::AppendLine()
+		void StringBuilder_::AppendLine_()
 		{
 			buffer = buffer + string("\n");
 		}

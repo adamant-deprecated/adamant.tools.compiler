@@ -1,226 +1,229 @@
 #include "RuntimeLibrary.h"
 
 // Type Declarations
-class Lexer;
-class Parser;
-class SourceText;
-class SyntaxNode;
-class SyntaxToken;
-class TokenStream;
-class TokenType;
+class Lexer_;
+class Parser_;
+class SourceText_;
+class SyntaxNode_;
+class SyntaxToken_;
+class TokenStream_;
+class TokenType_;
 
 // Function Declarations
-auto Parse(::SourceText const *const source) -> ::SyntaxNode const *;
-auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void;
-auto Error(::string const message) -> void;
-auto BeginLine(::string const value) -> void;
-auto Write(::string const value) -> void;
-auto EndLine(::string const value) -> void;
-auto WriteLine(::string const value) -> void;
-auto BeginBlock() -> void;
-auto EndBlock() -> void;
-auto IsIdentifierChar(char const c) -> bool;
-auto IsNumberChar(char const c) -> bool;
-auto TokenIsIdentifier() -> bool;
-auto Accept(::string const expected) -> bool;
-auto Expect(::string const expected) -> void;
-auto AcceptIdentifier() -> bool;
-auto AcceptString() -> bool;
-auto AcceptCodePoint() -> bool;
-auto AcceptNumber() -> bool;
-auto ExpectIdentifier() -> ::string;
-auto IsValueType(::string const type) -> bool;
-auto ConvertType(::string const type) -> ::string;
-auto ConvertType(bool const mutableBinding, bool const mutableValue, ::string type) -> ::string;
-auto ParseType() -> ::string;
-auto ParseAtom() -> bool;
-auto ParseCallArguments() -> void;
-auto ParseExpression(int const minPrecedence) -> void;
-auto ParseExpression() -> void;
-auto ParseStatement() -> bool;
-auto ParseBlock() -> void;
-auto ParseArgumentsDeclaration(bool const isMainFunction) -> ::string;
-auto ParseClassMember(::string const className) -> void;
-auto ParseDeclaration() -> void;
-auto ParseCompilationUnit() -> void;
-auto EmitPreamble() -> void;
-auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> const *const resources) -> void;
-auto Compile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string;
-auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void;
-auto ReadSource(::string const path) -> ::SourceText const *;
+auto Parse_(::SourceText_ const *const source_) -> ::SyntaxNode_ const *;
+auto EmitCpp_(::SyntaxNode_ const *const syntaxTree_) -> void;
+auto Error_(string const message_) -> void;
+auto BeginLine_(string const value_) -> void;
+auto Write_(string const value_) -> void;
+auto EndLine_(string const value_) -> void;
+auto WriteLine_(string const value_) -> void;
+auto BeginBlock_() -> void;
+auto EndBlock_() -> void;
+auto IsIdentifierChar_(char const c_) -> bool;
+auto IsNumberChar_(char const c_) -> bool;
+auto TokenIsIdentifier_() -> bool;
+auto Accept_(string const expected_) -> bool;
+auto Expect_(string const expected_) -> void;
+auto AcceptIdentifier_() -> bool;
+auto AcceptString_() -> bool;
+auto AcceptCodePoint_() -> bool;
+auto AcceptNumber_() -> bool;
+auto ExpectIdentifier_() -> string;
+auto IsValueType_(string const type_) -> bool;
+auto ConvertType_(string const type_) -> string;
+auto ConvertType_(bool const mutableBinding_, bool const mutableValue_, string type_) -> string;
+auto ParseType_() -> string;
+auto ParseAtom_() -> bool;
+auto ParseCallArguments_() -> void;
+auto ParseExpression_(int const minPrecedence_) -> void;
+auto ParseExpression_() -> void;
+auto ParseStatement_() -> bool;
+auto ParseBlock_() -> void;
+auto ParseArgumentsDeclaration_(bool const isMainFunction_, bool const isMethod_) -> string;
+auto ParseConstructorArgumentsDeclaration_() -> string;
+auto ParseFunctionArgumentsDeclaration_(bool const isMainFunction_) -> string;
+auto ParseMethodArgumentsDeclaration_() -> string;
+auto ParseClassMember_(string const className_) -> void;
+auto ParseDeclaration_() -> void;
+auto ParseCompilationUnit_() -> void;
+auto EmitPreamble_() -> void;
+auto EmitEntryPointAdapter_(::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> void;
+auto Compile_(::System_::Collections_::List_<::SourceText_ const *> const *const sources_, ::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> string;
+auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
+auto ReadSource_(string const path_) -> ::SourceText_ const *;
 
 // Class Declarations
-class Lexer
+class Lexer_
 {
 public:
-	auto Analyze(::SourceText const *const source) -> ::TokenStream *;
+	auto Analyze_(::SourceText_ const *const source_) -> ::TokenStream_ *;
 };
-class Parser
+class Parser_
 {
 public:
-	Parser();
-	auto Parse(::TokenStream const *const tokenStream) -> ::SyntaxNode const *;
+	Parser_();
+	auto Parse_(::TokenStream_ const *const tokenStream_) -> ::SyntaxNode_ const *;
 };
-class SourceText
+class SourceText_
 {
 public:
-	::string Package;
-	::string Name;
-	::string Text;
-	SourceText(::string const package, ::string const name, ::string const text);
+	string Package_;
+	string Name_;
+	string Text_;
+	SourceText_(string const package_, string const name_, string const text_);
 };
-class SyntaxNode
+class SyntaxNode_
 {
 public:
 };
-class SyntaxToken
+class SyntaxToken_
 {
 public:
-	::TokenType const * TokenType;
-	::SourceText const * Source;
-	unsigned int Start;
-	unsigned int Length;
-	SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length);
+	::TokenType_ const * TokenType_;
+	::SourceText_ const * Source_;
+	unsigned int Start_;
+	unsigned int Length_;
+	SyntaxToken_(::TokenType_ const *const tokenType_, ::SourceText_ const *const source_, unsigned int const start_, unsigned int const length_);
 };
-class TokenStream
+class TokenStream_
 {
 public:
-	::SourceText const * Source;
-	unsigned int nextToken;
-	TokenStream(::SourceText const *const source);
-	auto GetNextToken() -> ::string;
-	auto NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *;
-	auto NewToken(::TokenType const *const type) -> ::SyntaxToken const *;
+	::SourceText_ const * Source_;
+	unsigned int nextToken_;
+	TokenStream_(::SourceText_ const *const source_);
+	auto GetNextToken_() -> string;
+	auto NewToken_(::TokenType_ const *const type_, unsigned int const end_) -> ::SyntaxToken_ const *;
+	auto NewToken_(::TokenType_ const *const type_) -> ::SyntaxToken_ const *;
 };
-class TokenType
+class TokenType_
 {
 public:
 };
 
 // Definitions
-auto ::Lexer::Analyze(::SourceText const *const source) -> ::TokenStream *
+auto ::Lexer_::Analyze_(::SourceText_ const *const source_) -> ::TokenStream_ *
 {
-	return new ::TokenStream(source);
+	return new ::TokenStream_(source_);
 }
 
-::Parser::Parser()
+::Parser_::Parser_()
 {
 }
 
-auto ::Parser::Parse(::TokenStream const *const tokenStream) -> ::SyntaxNode const *
+auto ::Parser_::Parse_(::TokenStream_ const *const tokenStream_) -> ::SyntaxNode_ const *
 {
 	return ::None;
 }
 
-auto Parse(::SourceText const *const source) -> ::SyntaxNode const *
+auto Parse_(::SourceText_ const *const source_) -> ::SyntaxNode_ const *
 {
-	::Lexer *const lexer = new ::Lexer();
-	::TokenStream *const tokenStream = lexer->Analyze(source);
-	::Parser *const parser = new ::Parser();
-	return parser->Parse(tokenStream);
+	::Lexer_ *const lexer_ = new ::Lexer_();
+	::TokenStream_ *const tokenStream_ = lexer_->Analyze_(source_);
+	::Parser_ *const parser_ = new ::Parser_();
+	return parser_->Parse_(tokenStream_);
 }
 
-auto EmitCpp(::SyntaxNode const *const syntaxTree) -> void
+auto EmitCpp_(::SyntaxNode_ const *const syntaxTree_) -> void
 {
 }
 
-::TokenStream * tokenStream = ::None;
+::TokenStream_ * tokenStream_ = ::None;
 
-::string Token = ::string("");
+string Token_ = string("");
 
-::System::Text::StringBuilder *const TypeDeclarations = new ::System::Text::StringBuilder();
+::System_::Text_::StringBuilder_ *const TypeDeclarations_ = new ::System_::Text_::StringBuilder_();
 
-::System::Text::StringBuilder *const FunctionDeclarations = new ::System::Text::StringBuilder();
+::System_::Text_::StringBuilder_ *const FunctionDeclarations_ = new ::System_::Text_::StringBuilder_();
 
-::System::Text::StringBuilder *const ClassDeclarations = new ::System::Text::StringBuilder();
+::System_::Text_::StringBuilder_ *const ClassDeclarations_ = new ::System_::Text_::StringBuilder_();
 
-::System::Text::StringBuilder *const Definitions = new ::System::Text::StringBuilder();
+::System_::Text_::StringBuilder_ *const Definitions_ = new ::System_::Text_::StringBuilder_();
 
-int IndentDepth = 0;
+int IndentDepth_ = 0;
 
-bool AfterDeclaration = false;
+bool AfterDeclaration_ = false;
 
-::string MainFunctionReturnType = ::string("");
+string MainFunctionReturnType_ = string("");
 
-bool MainFunctionAcceptsConsole = false;
+bool MainFunctionAcceptsConsole_ = false;
 
-bool MainFunctionAcceptsArgs = false;
+bool MainFunctionAcceptsArgs_ = false;
 
-auto Error(::string const message) -> void
+auto Error_(string const message_) -> void
 {
-	Definitions->Append(::string("<$ ") + message + ::string(" $>"));
+	Definitions_->Append_(string("<$ ") + message_ + string(" $>"));
 }
 
-auto BeginLine(::string const value) -> void
+auto BeginLine_(string const value_) -> void
 {
-	if (AfterDeclaration)
+	if (AfterDeclaration_)
 	{
-		Definitions->AppendLine();
-		AfterDeclaration = false;
+		Definitions_->AppendLine_();
+		AfterDeclaration_ = false;
 	}
 
-	Definitions->Append(::string('\t', IndentDepth));
-	Definitions->Append(value);
+	Definitions_->Append_(string('\t', IndentDepth_));
+	Definitions_->Append_(value_);
 }
 
-auto Write(::string const value) -> void
+auto Write_(string const value_) -> void
 {
-	Definitions->Append(value);
+	Definitions_->Append_(value_);
 }
 
-auto EndLine(::string const value) -> void
+auto EndLine_(string const value_) -> void
 {
-	Definitions->Append(value);
-	Definitions->AppendLine();
+	Definitions_->Append_(value_);
+	Definitions_->AppendLine_();
 }
 
-auto WriteLine(::string const value) -> void
+auto WriteLine_(string const value_) -> void
 {
-	if (AfterDeclaration)
+	if (AfterDeclaration_)
 	{
-		Definitions->AppendLine();
-		AfterDeclaration = false;
+		Definitions_->AppendLine_();
+		AfterDeclaration_ = false;
 	}
 
-	Definitions->Append(::string('\t', IndentDepth));
-	Definitions->Append(value);
-	Definitions->AppendLine();
+	Definitions_->Append_(string('\t', IndentDepth_));
+	Definitions_->Append_(value_);
+	Definitions_->AppendLine_();
 }
 
-auto BeginBlock() -> void
+auto BeginBlock_() -> void
 {
-	WriteLine(::string("{"));
-	IndentDepth += 1;
+	WriteLine_(string("{"));
+	IndentDepth_ += 1;
 }
 
-auto EndBlock() -> void
+auto EndBlock_() -> void
 {
-	AfterDeclaration = false;
-	IndentDepth -= 1;
-	WriteLine(::string("}"));
-	AfterDeclaration = true;
+	AfterDeclaration_ = false;
+	IndentDepth_ -= 1;
+	WriteLine_(string("}"));
+	AfterDeclaration_ = true;
 }
 
-auto IsIdentifierChar(char const c) -> bool
+auto IsIdentifierChar_(char const c_) -> bool
 {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+	return (c_ >= 'a' && c_ <= 'z') || (c_ >= 'A' && c_ <= 'Z') || c_ == '_';
 }
 
-auto IsNumberChar(char const c) -> bool
+auto IsNumberChar_(char const c_) -> bool
 {
-	return c >= '0' && c <= '9';
+	return c_ >= '0' && c_ <= '9';
 }
 
-auto TokenIsIdentifier() -> bool
+auto TokenIsIdentifier_() -> bool
 {
-	if (Token->Length == 0)
+	if (Token_->Length_ == 0)
 	{
 		return false;
 	}
 
-	for (char const c : *(Token))
+	for (char const c_ : *(Token_))
 	{
-		if (!IsIdentifierChar(c))
+		if (!IsIdentifierChar_(c_))
 		{
 			return false;
 		}
@@ -229,494 +232,494 @@ auto TokenIsIdentifier() -> bool
 	return true;
 }
 
-auto Accept(::string const expected) -> bool
+auto Accept_(string const expected_) -> bool
 {
-	bool const accepted = Token == expected;
-	if (accepted)
+	bool const accepted_ = Token_ == expected_;
+	if (accepted_)
 	{
-		Token = tokenStream->GetNextToken();
+		Token_ = tokenStream_->GetNextToken_();
 	}
 
-	return accepted;
+	return accepted_;
 }
 
-auto Expect(::string const expected) -> void
+auto Expect_(string const expected_) -> void
 {
-	if (Token != expected)
+	if (Token_ != expected_)
 	{
-		Error(::string("Expected `") + expected + ::string("` but found `") + Token + ::string("`"));
-		Token = tokenStream->GetNextToken();
+		Error_(string("Expected `") + expected_ + string("` but found `") + Token_ + string("`"));
+		Token_ = tokenStream_->GetNextToken_();
 	}
 	else
 	{
-		Token = tokenStream->GetNextToken();
+		Token_ = tokenStream_->GetNextToken_();
 	}
 }
 
-auto AcceptIdentifier() -> bool
+auto AcceptIdentifier_() -> bool
 {
-	if (!TokenIsIdentifier())
+	if (!TokenIsIdentifier_())
 	{
 		return false;
 	}
 
-	Token = tokenStream->GetNextToken();
+	Token_ = tokenStream_->GetNextToken_();
 	return true;
 }
 
-auto AcceptString() -> bool
+auto AcceptString_() -> bool
 {
-	if (Token->Length == 0 || Token[0] != '"')
+	if (Token_->Length_ == 0 || Token_[0] != '"')
 	{
 		return false;
 	}
 
-	Token = tokenStream->GetNextToken();
+	Token_ = tokenStream_->GetNextToken_();
 	return true;
 }
 
-auto AcceptCodePoint() -> bool
+auto AcceptCodePoint_() -> bool
 {
-	if (Token->Length == 0 || Token[0] != '\'')
+	if (Token_->Length_ == 0 || Token_[0] != '\'')
 	{
 		return false;
 	}
 
-	Token = tokenStream->GetNextToken();
+	Token_ = tokenStream_->GetNextToken_();
 	return true;
 }
 
-auto AcceptNumber() -> bool
+auto AcceptNumber_() -> bool
 {
-	for (char const c : *(Token))
+	for (char const c_ : *(Token_))
 	{
-		if (!IsNumberChar(c))
+		if (!IsNumberChar_(c_))
 		{
 			return false;
 		}
 	}
 
-	Token = tokenStream->GetNextToken();
+	Token_ = tokenStream_->GetNextToken_();
 	return true;
 }
 
-auto ExpectIdentifier() -> ::string
+auto ExpectIdentifier_() -> string
 {
-	if (!TokenIsIdentifier())
+	if (!TokenIsIdentifier_())
 	{
-		Error(::string("Expected identifier, found `") + Token + ::string("`"));
-		Token = tokenStream->GetNextToken();
-		return ::string("<missing>");
+		Error_(string("Expected identifier, found `") + Token_ + string("`"));
+		Token_ = tokenStream_->GetNextToken_();
+		return string("<missing>");
 	}
 
-	::string const identifier = Token;
-	Token = tokenStream->GetNextToken();
-	return identifier;
+	string const identifier_ = Token_;
+	Token_ = tokenStream_->GetNextToken_();
+	return identifier_;
 }
 
-auto IsValueType(::string const type) -> bool
+auto IsValueType_(string const type_) -> bool
 {
-	char const firstChar = type[0];
-	return firstChar >= 'a' && firstChar <= 'z';
+	char const firstChar_ = type_[0];
+	return firstChar_ >= 'a' && firstChar_ <= 'z';
 }
 
-auto ConvertType(::string const type) -> ::string
+auto ConvertType_(string const type_) -> string
 {
-	if (type == ::string("code_point"))
+	if (type_ == string("code_point"))
 	{
-		return ::string("char");
+		return string("char");
 	}
 
-	if (type == ::string("uint"))
+	if (type_ == string("uint"))
 	{
-		return ::string("unsigned int");
+		return string("unsigned int");
 	}
 
-	if (type == ::string("int") || type == ::string("bool") || type == ::string("void") || type == ::string("string"))
+	if (type_ == string("int") || type_ == string("bool") || type_ == string("void") || type_ == string("string"))
 	{
-		return type;
+		return type_;
 	}
 
-	::string const cppType = ::string("::") + type->Replace(::string("."), ::string("_::"))->Replace(::string("<"), ::string("_<"));
-	if (cppType[cppType->Length - 1] == '>')
+	string const cppType_ = string("::") + type_->Replace_(string("."), string("_::"))->Replace_(string("<"), string("_<"));
+	if (cppType_[cppType_->Length_ - 1] == '>')
 	{
-		return cppType;
+		return cppType_;
 	}
 
-	return cppType + ::string("_");
+	return cppType_ + string("_");
 }
 
-auto ConvertType(bool const mutableBinding, bool const mutableValue, ::string type) -> ::string
+auto ConvertType_(bool const mutableBinding_, bool const mutableValue_, string type_) -> string
 {
-	bool const nullable = type[type->Length - 1] == '?';
-	if (nullable)
+	bool const nullable_ = type_[type_->Length_ - 1] == '?';
+	if (nullable_)
 	{
-		type = type->Substring(0, type->Length - 1);
+		type_ = type_->Substring_(0, type_->Length_ - 1);
 	}
 
-	bool const isValueType = IsValueType(type);
-	type = ConvertType(type);
-	if (isValueType)
+	bool const isValueType_ = IsValueType_(type_);
+	type_ = ConvertType_(type_);
+	if (isValueType_)
 	{
-		if (nullable)
+		if (nullable_)
 		{
-			type = ::string("::Maybe<") + type + ::string(">");
+			type_ = string("::Maybe<") + type_ + string(">");
 		}
 
-		if (!mutableBinding && !mutableValue)
+		if (!mutableBinding_ && !mutableValue_)
 		{
-			type = type + ::string(" const");
+			type_ = type_ + string(" const");
 		}
 	}
 	else
 	{
-		if (!mutableValue)
+		if (!mutableValue_)
 		{
-			type = type + ::string(" const");
+			type_ = type_ + string(" const");
 		}
 
-		type = type + ::string(" *");
-		if (!mutableBinding)
+		type_ = type_ + string(" *");
+		if (!mutableBinding_)
 		{
-			type = type + ::string("const");
+			type_ = type_ + string("const");
 		}
 	}
 
-	return type;
+	return type_;
 }
 
-auto ParseType() -> ::string
+auto ParseType_() -> string
 {
-	::System::Text::StringBuilder *const type = new ::System::Text::StringBuilder(ExpectIdentifier());
-	while (Accept(::string(".")))
+	::System_::Text_::StringBuilder_ *const type_ = new ::System_::Text_::StringBuilder_(ExpectIdentifier_());
+	while (Accept_(string(".")))
 	{
-		type->Append(::string("."));
-		type->Append(ExpectIdentifier());
+		type_->Append_(string("."));
+		type_->Append_(ExpectIdentifier_());
 	}
 
-	if (Accept(::string("<")))
+	if (Accept_(string("<")))
 	{
-		type->Append(::string("<"));
-		bool const mutableValue = Accept(::string("mut"));
-		type->Append(ConvertType(true, mutableValue, ParseType()));
-		Accept(::string(">"));
-		type->Append(::string(">"));
+		type_->Append_(string("<"));
+		bool const mutableValue_ = Accept_(string("mut"));
+		type_->Append_(ConvertType_(true, mutableValue_, ParseType_()));
+		Accept_(string(">"));
+		type_->Append_(string(">"));
 	}
 
-	if (Accept(::string("?")))
+	if (Accept_(string("?")))
 	{
-		type->Append(::string("?"));
+		type_->Append_(string("?"));
 	}
 
-	return type->ToString();
+	return type_->ToString_();
 }
 
-auto ParseAtom() -> bool
+auto ParseAtom_() -> bool
 {
-	if (Accept(::string("new")))
+	if (Accept_(string("new")))
 	{
-		::string type = ParseType();
-		if (!IsValueType(type))
+		string type_ = ParseType_();
+		if (!IsValueType_(type_))
 		{
-			Write(::string("new "));
+			Write_(string("new "));
 		}
 
-		type = ConvertType(type);
-		Write(type);
-		Expect(::string("("));
-		Write(::string("("));
-		ParseCallArguments();
-		Expect(::string(")"));
-		Write(::string(")"));
+		type_ = ConvertType_(type_);
+		Write_(type_);
+		Expect_(string("("));
+		Write_(string("("));
+		ParseCallArguments_();
+		Expect_(string(")"));
+		Write_(string(")"));
 		return true;
 	}
 
-	if (Accept(::string("not")))
+	if (Accept_(string("not")))
 	{
-		Write(::string("!"));
-		ParseExpression();
+		Write_(string("!"));
+		ParseExpression_();
 		return true;
 	}
 
-	if (Accept(::string("(")))
+	if (Accept_(string("(")))
 	{
-		Write(::string("("));
-		ParseExpression();
-		Expect(::string(")"));
-		Write(::string(")"));
+		Write_(string("("));
+		ParseExpression_();
+		Expect_(string(")"));
+		Write_(string(")"));
 		return true;
 	}
 
-	if (Accept(::string("-")))
+	if (Accept_(string("-")))
 	{
-		Write(::string("-"));
-		ParseExpression(7);
+		Write_(string("-"));
+		ParseExpression_(7);
 		return true;
 	}
 
-	if (Accept(::string("null")))
+	if (Accept_(string("null")))
 	{
-		Write(::string("::None"));
+		Write_(string("::None"));
 		return true;
 	}
 
-	if (Accept(::string("self")))
+	if (Accept_(string("self")))
 	{
-		Write(::string("this"));
+		Write_(string("this"));
 		return true;
 	}
 
-	::string const token = Token;
-	if (Accept(::string("true")) || Accept(::string("false")) || AcceptNumber())
+	string const token_ = Token_;
+	if (Accept_(string("true")) || Accept_(string("false")) || AcceptNumber_())
 	{
-		Write(token);
+		Write_(token_);
 		return true;
 	}
 
-	if (AcceptIdentifier())
+	if (AcceptIdentifier_())
 	{
-		Write(token + ::string("_"));
+		Write_(token_ + string("_"));
 		return true;
 	}
 
-	if (AcceptString())
+	if (AcceptString_())
 	{
-		Write(::string("string(") + token + ::string(")"));
+		Write_(string("string(") + token_ + string(")"));
 		return true;
 	}
 
-	if (AcceptCodePoint())
+	if (AcceptCodePoint_())
 	{
-		Write(token);
+		Write_(token_);
 		return true;
 	}
 
 	return false;
 }
 
-auto ParseCallArguments() -> void
+auto ParseCallArguments_() -> void
 {
-	bool first = true;
+	bool first_ = true;
 	do
 	{
-		if (first)
+		if (first_)
 		{
-			first = false;
+			first_ = false;
 		}
 		else
 		{
-			Write(::string(", "));
+			Write_(string(", "));
 		}
 
-		ParseExpression();
+		ParseExpression_();
 	}
-	while (Accept(::string(",")));
+	while (Accept_(string(",")));
 }
 
-auto ParseExpression(int const minPrecedence) -> void
+auto ParseExpression_(int const minPrecedence_) -> void
 {
-	if (!ParseAtom())
+	if (!ParseAtom_())
 	{
 		return;
 	}
 
 	for (;;)
 	{
-		::string const token = Token;
-		int precedence;
-		bool leftAssociative;
-		bool suffixOperator = false;
-		if ((token == ::string("=") || token == ::string("+=") || token == ::string("-=")) && minPrecedence <= 1)
+		string const token_ = Token_;
+		int precedence_;
+		bool leftAssociative_;
+		bool suffixOperator_ = false;
+		if ((token_ == string("=") || token_ == string("+=") || token_ == string("-=")) && minPrecedence_ <= 1)
 		{
-			precedence = 1;
-			leftAssociative = false;
-			Write(::string(" ") + token + ::string(" "));
+			precedence_ = 1;
+			leftAssociative_ = false;
+			Write_(string(" ") + token_ + string(" "));
 		}
-		else if (token == ::string("or") && minPrecedence <= 2)
+		else if (token_ == string("or") && minPrecedence_ <= 2)
 		{
-			precedence = 2;
-			leftAssociative = true;
-			Write(::string(" || "));
+			precedence_ = 2;
+			leftAssociative_ = true;
+			Write_(string(" || "));
 		}
-		else if (token == ::string("and") && minPrecedence <= 3)
+		else if (token_ == string("and") && minPrecedence_ <= 3)
 		{
-			precedence = 3;
-			leftAssociative = true;
-			Write(::string(" && "));
+			precedence_ = 3;
+			leftAssociative_ = true;
+			Write_(string(" && "));
 		}
-		else if (token == ::string("==") && minPrecedence <= 4)
+		else if (token_ == string("==") && minPrecedence_ <= 4)
 		{
-			precedence = 4;
-			leftAssociative = true;
-			Write(::string(" == "));
+			precedence_ = 4;
+			leftAssociative_ = true;
+			Write_(string(" == "));
 		}
-		else if (token == ::string("<>") && minPrecedence <= 4)
+		else if (token_ == string("<>") && minPrecedence_ <= 4)
 		{
-			precedence = 4;
-			leftAssociative = true;
-			Write(::string(" != "));
+			precedence_ = 4;
+			leftAssociative_ = true;
+			Write_(string(" != "));
 		}
-		else if ((token == ::string("<") || token == ::string("<=") || token == ::string(">") || token == ::string(">=")) && minPrecedence <= 5)
+		else if ((token_ == string("<") || token_ == string("<=") || token_ == string(">") || token_ == string(">=")) && minPrecedence_ <= 5)
 		{
-			precedence = 5;
-			leftAssociative = true;
-			Write(::string(" ") + token + ::string(" "));
+			precedence_ = 5;
+			leftAssociative_ = true;
+			Write_(string(" ") + token_ + string(" "));
 		}
-		else if ((token == ::string("+") || token == ::string("-")) && minPrecedence <= 6)
+		else if ((token_ == string("+") || token_ == string("-")) && minPrecedence_ <= 6)
 		{
-			precedence = 6;
-			leftAssociative = true;
-			Write(::string(" ") + token + ::string(" "));
+			precedence_ = 6;
+			leftAssociative_ = true;
+			Write_(string(" ") + token_ + string(" "));
 		}
-		else if (token == ::string("(") && minPrecedence <= 8)
+		else if (token_ == string("(") && minPrecedence_ <= 8)
 		{
-			Token = tokenStream->GetNextToken();
-			Write(::string("("));
-			ParseCallArguments();
-			if (Token != ::string(")"))
+			Token_ = tokenStream_->GetNextToken_();
+			Write_(string("("));
+			ParseCallArguments_();
+			if (Token_ != string(")"))
 			{
-				Error(::string("Expected `)` found `") + Token + ::string("`"));
+				Error_(string("Expected `)` found `") + Token_ + string("`"));
 			}
 
-			Write(::string(")"));
-			precedence = 8;
-			leftAssociative = true;
-			suffixOperator = true;
+			Write_(string(")"));
+			precedence_ = 8;
+			leftAssociative_ = true;
+			suffixOperator_ = true;
 		}
-		else if (token == ::string(".") && minPrecedence <= 8)
+		else if (token_ == string(".") && minPrecedence_ <= 8)
 		{
-			precedence = 8;
-			leftAssociative = true;
-			Write(::string("->"));
+			precedence_ = 8;
+			leftAssociative_ = true;
+			Write_(string("->"));
 		}
-		else if (token == ::string("[") && minPrecedence <= 8)
+		else if (token_ == string("[") && minPrecedence_ <= 8)
 		{
-			Token = tokenStream->GetNextToken();
-			Write(::string("["));
-			ParseExpression();
-			if (Token != ::string("]"))
+			Token_ = tokenStream_->GetNextToken_();
+			Write_(string("["));
+			ParseExpression_();
+			if (Token_ != string("]"))
 			{
-				Error(::string("Expected `]` found `") + Token + ::string("`"));
+				Error_(string("Expected `]` found `") + Token_ + string("`"));
 			}
 
-			Write(::string("]"));
-			precedence = 8;
-			leftAssociative = true;
-			suffixOperator = true;
+			Write_(string("]"));
+			precedence_ = 8;
+			leftAssociative_ = true;
+			suffixOperator_ = true;
 		}
 		else
 		{
 			break;
 		}
 
-		Token = tokenStream->GetNextToken();
-		if (!suffixOperator)
+		Token_ = tokenStream_->GetNextToken_();
+		if (!suffixOperator_)
 		{
-			if (leftAssociative)
+			if (leftAssociative_)
 			{
-				precedence += 1;
+				precedence_ += 1;
 			}
 
-			ParseExpression(precedence);
+			ParseExpression_(precedence_);
 		}
 	}
 }
 
-auto ParseExpression() -> void
+auto ParseExpression_() -> void
 {
-	ParseExpression(1);
+	ParseExpression_(1);
 }
 
-auto ParseStatement() -> bool
+auto ParseStatement_() -> bool
 {
-	if (Accept(::string("return")))
+	if (Accept_(string("return")))
 	{
-		if (Accept(::string(";")))
+		if (Accept_(string(";")))
 		{
-			WriteLine(::string("return;"));
+			WriteLine_(string("return;"));
 		}
 		else
 		{
-			BeginLine(::string("return "));
-			ParseExpression();
-			Expect(::string(";"));
-			EndLine(::string(";"));
+			BeginLine_(string("return "));
+			ParseExpression_();
+			Expect_(string(";"));
+			EndLine_(string(";"));
 		}
 
 		return true;
 	}
 
-	if (Accept(::string("loop")))
+	if (Accept_(string("loop")))
 	{
-		WriteLine(::string("for (;;)"));
-		ParseBlock();
+		WriteLine_(string("for (;;)"));
+		ParseBlock_();
 		return true;
 	}
 
-	if (Accept(::string("while")))
+	if (Accept_(string("while")))
 	{
-		BeginLine(::string("while ("));
-		ParseExpression();
-		EndLine(::string(")"));
-		ParseBlock();
+		BeginLine_(string("while ("));
+		ParseExpression_();
+		EndLine_(string(")"));
+		ParseBlock_();
 		return true;
 	}
 
-	if (Accept(::string("for")))
+	if (Accept_(string("for")))
 	{
-		BeginLine(::string("for ("));
-		::string const k = Token;
-		if (!Accept(::string("let")) && !Accept(::string("var")))
+		BeginLine_(string("for ("));
+		string const k_ = Token_;
+		if (!Accept_(string("let")) && !Accept_(string("var")))
 		{
-			Error(::string("Expected `let` or `var` but found `") + Token + ::string("`"));
+			Error_(string("Expected `let` or `var` but found `") + Token_ + string("`"));
 		}
 
-		::string const name = ExpectIdentifier();
-		Expect(::string(":"));
-		bool const mutableValue = Accept(::string("mut"));
-		::string const type = ParseType();
-		Write(ConvertType(k == ::string("var"), mutableValue, type) + ::string(" ") + name + ::string("_"));
-		Expect(::string("in"));
-		Write(::string(" : *("));
-		ParseExpression();
-		EndLine(::string("))"));
-		ParseBlock();
+		string const name_ = ExpectIdentifier_();
+		Expect_(string(":"));
+		bool const mutableValue_ = Accept_(string("mut"));
+		string const type_ = ParseType_();
+		Write_(ConvertType_(k_ == string("var"), mutableValue_, type_) + string(" ") + name_ + string("_"));
+		Expect_(string("in"));
+		Write_(string(" : *("));
+		ParseExpression_();
+		EndLine_(string("))"));
+		ParseBlock_();
 		return true;
 	}
 
-	if (Accept(::string("do")))
+	if (Accept_(string("do")))
 	{
-		WriteLine(::string("do"));
-		ParseBlock();
-		AfterDeclaration = false;
-		Expect(::string("while"));
-		BeginLine(::string("while ("));
-		ParseExpression();
-		Expect(::string(";"));
-		EndLine(::string(");"));
+		WriteLine_(string("do"));
+		ParseBlock_();
+		AfterDeclaration_ = false;
+		Expect_(string("while"));
+		BeginLine_(string("while ("));
+		ParseExpression_();
+		Expect_(string(";"));
+		EndLine_(string(");"));
 		return true;
 	}
 
-	if (Accept(::string("if")))
+	if (Accept_(string("if")))
 	{
-		BeginLine(::string("if ("));
-		ParseExpression();
-		EndLine(::string(")"));
-		ParseBlock();
-		while (Accept(::string("else")))
+		BeginLine_(string("if ("));
+		ParseExpression_();
+		EndLine_(string(")"));
+		ParseBlock_();
+		while (Accept_(string("else")))
 		{
-			AfterDeclaration = false;
-			if (Accept(::string("if")))
+			AfterDeclaration_ = false;
+			if (Accept_(string("if")))
 			{
-				BeginLine(::string("else if ("));
-				ParseExpression();
-				EndLine(::string(")"));
-				ParseBlock();
+				BeginLine_(string("else if ("));
+				ParseExpression_();
+				EndLine_(string(")"));
+				ParseBlock_();
 			}
 			else
 			{
-				WriteLine(::string("else"));
-				ParseBlock();
+				WriteLine_(string("else"));
+				ParseBlock_();
 				return true;
 			}
 		}
@@ -724,640 +727,682 @@ auto ParseStatement() -> bool
 		return true;
 	}
 
-	if (Accept(::string("break")))
+	if (Accept_(string("break")))
 	{
-		Expect(::string(";"));
-		WriteLine(::string("break;"));
+		Expect_(string(";"));
+		WriteLine_(string("break;"));
 		return true;
 	}
 
-	if (Accept(::string("continue")))
+	if (Accept_(string("continue")))
 	{
-		Expect(::string(";"));
-		WriteLine(::string("continue;"));
+		Expect_(string(";"));
+		WriteLine_(string("continue;"));
 		return true;
 	}
 
-	::string const kind = Token;
-	if (Accept(::string("let")) || Accept(::string("var")))
+	string const kind_ = Token_;
+	if (Accept_(string("let")) || Accept_(string("var")))
 	{
-		::string const variableName = ExpectIdentifier();
-		Expect(::string(":"));
-		bool const mutableValue = Accept(::string("mut"));
-		::string variableType = ParseType();
-		variableType = ConvertType(kind == ::string("var"), mutableValue, variableType);
-		BeginLine(variableType);
-		Write(::string(" ") + variableName + ::string("_"));
-		if (Accept(::string("=")))
+		string const variableName_ = ExpectIdentifier_();
+		Expect_(string(":"));
+		bool const mutableValue_ = Accept_(string("mut"));
+		string variableType_ = ParseType_();
+		variableType_ = ConvertType_(kind_ == string("var"), mutableValue_, variableType_);
+		BeginLine_(variableType_);
+		Write_(string(" ") + variableName_ + string("_"));
+		if (Accept_(string("=")))
 		{
-			Write(::string(" = "));
-			ParseExpression();
+			Write_(string(" = "));
+			ParseExpression_();
 		}
 
-		Expect(::string(";"));
-		EndLine(::string(";"));
+		Expect_(string(";"));
+		EndLine_(string(";"));
 		return true;
 	}
 
-	if (Token == ::string("}"))
+	if (Token_ == string("}"))
 	{
 		return false;
 	}
 
-	BeginLine(::string(""));
-	ParseExpression();
-	Expect(::string(";"));
-	EndLine(::string(";"));
+	BeginLine_(string(""));
+	ParseExpression_();
+	Expect_(string(";"));
+	EndLine_(string(";"));
 	return true;
 }
 
-auto ParseBlock() -> void
+auto ParseBlock_() -> void
 {
-	Expect(::string("{"));
-	BeginBlock();
-	while (ParseStatement())
+	Expect_(string("{"));
+	BeginBlock_();
+	while (ParseStatement_())
 	{
 	}
 
-	Expect(::string("}"));
-	EndBlock();
+	Expect_(string("}"));
+	EndBlock_();
 }
 
-auto ParseArgumentsDeclaration(bool const isMainFunction) -> ::string
+auto ParseArgumentsDeclaration_(bool const isMainFunction_, bool const isMethod_) -> string
 {
-	Expect(::string("("));
-	if (Accept(::string(")")))
+	if (!isMethod_)
 	{
-		return ::string("");
+		Expect_(string("("));
 	}
 
-	::System::Text::StringBuilder *const arguments = new ::System::Text::StringBuilder();
+	if (Accept_(string(")")))
+	{
+		return string("");
+	}
+
+	::System_::Text_::StringBuilder_ *const arguments_ = new ::System_::Text_::StringBuilder_();
 	do
 	{
-		bool const mutableBinding = Accept(::string("var"));
-		::string const name = ExpectIdentifier();
-		Expect(::string(":"));
-		bool const mutableValue = Accept(::string("mut"));
-		::string const type = ParseType();
-		if (isMainFunction)
+		bool const mutableBinding_ = Accept_(string("var"));
+		string const name_ = ExpectIdentifier_();
+		Expect_(string(":"));
+		bool const mutableValue_ = Accept_(string("mut"));
+		string const type_ = ParseType_();
+		if (isMainFunction_)
 		{
-			if (type == ::string("System.Console.Console"))
+			if (type_ == string("System.Console.Console"))
 			{
-				MainFunctionAcceptsConsole = true;
+				MainFunctionAcceptsConsole_ = true;
 			}
 
-			if (type == ::string("System.Console.Arguments"))
+			if (type_ == string("System.Console.Arguments"))
 			{
-				MainFunctionAcceptsArgs = true;
+				MainFunctionAcceptsArgs_ = true;
 			}
 		}
 
-		arguments->Append(ConvertType(mutableBinding, mutableValue, type) + ::string(" ") + name + ::string("_, "));
+		arguments_->Append_(ConvertType_(mutableBinding_, mutableValue_, type_) + string(" ") + name_ + string("_, "));
 	}
-	while (Accept(::string(",")));
-	Expect(::string(")"));
-	::string const result = arguments->ToString();
-	return result->Substring(0, result->Length - 2);
+	while (Accept_(string(",")));
+	Expect_(string(")"));
+	string const result_ = arguments_->ToString_();
+	return result_->Substring_(0, result_->Length_ - 2);
 }
 
-auto ParseClassMember(::string const className) -> void
+auto ParseConstructorArgumentsDeclaration_() -> string
 {
-	::string const accessModifier = Token;
-	if (Accept(::string("public")) || Accept(::string("internal")) || Accept(::string("protected")) || Accept(::string("private")))
+	return ParseArgumentsDeclaration_(false, false);
+}
+
+auto ParseFunctionArgumentsDeclaration_(bool const isMainFunction_) -> string
+{
+	return ParseArgumentsDeclaration_(isMainFunction_, false);
+}
+
+auto ParseMethodArgumentsDeclaration_() -> string
+{
+	return ParseArgumentsDeclaration_(false, true);
+}
+
+auto ParseClassMember_(string const className_) -> void
+{
+	string const accessModifier_ = Token_;
+	if (Accept_(string("public")) || Accept_(string("internal")) || Accept_(string("protected")) || Accept_(string("private")))
 	{
 	}
 	else
 	{
-		Error(::string("Expected access modifier, found `") + accessModifier + ::string("`"));
+		Error_(string("Expected access modifier, found `") + accessModifier_ + string("`"));
 	}
 
-	if (Accept(::string("new")))
+	if (Accept_(string("new")))
 	{
-		::string const arguments = ParseArgumentsDeclaration(false);
-		ClassDeclarations->AppendLine(::string("\t") + className + ::string("_(") + arguments + ::string(");"));
-		WriteLine(::string("::") + className + ::string("_::") + className + ::string("_(") + arguments + ::string(")"));
-		ParseBlock();
+		string const arguments_ = ParseConstructorArgumentsDeclaration_();
+		ClassDeclarations_->AppendLine_(string("\t") + className_ + string("_(") + arguments_ + string(");"));
+		WriteLine_(string("::") + className_ + string("_::") + className_ + string("_(") + arguments_ + string(")"));
+		ParseBlock_();
 		return;
 	}
 
-	::string const kind = Token;
-	if (Accept(::string("var")) || Accept(::string("let")))
+	string const kind_ = Token_;
+	if (Accept_(string("var")) || Accept_(string("let")))
 	{
-		::string const fieldName = ExpectIdentifier();
-		Expect(::string(":"));
-		bool const mutableValue = Accept(::string("mut"));
-		::string fieldType = ParseType();
-		fieldType = ConvertType(true, mutableValue, fieldType);
-		Expect(::string(";"));
-		ClassDeclarations->AppendLine(::string("\t") + fieldType + ::string(" ") + fieldName + ::string("_;"));
+		string const fieldName_ = ExpectIdentifier_();
+		Expect_(string(":"));
+		bool const mutableValue_ = Accept_(string("mut"));
+		string fieldType_ = ParseType_();
+		fieldType_ = ConvertType_(true, mutableValue_, fieldType_);
+		Expect_(string(";"));
+		ClassDeclarations_->AppendLine_(string("\t") + fieldType_ + string(" ") + fieldName_ + string("_;"));
 		return;
 	}
 
-	::string const methodName = ExpectIdentifier();
-	::string const arguments = ParseArgumentsDeclaration(false);
-	Expect(::string("->"));
-	bool const mutableValue = Accept(::string("mut"));
-	::string const returnType = ParseType();
-	::string const convertedReturnType = ConvertType(true, mutableValue, returnType);
-	ClassDeclarations->AppendLine(::string("\tauto ") + methodName + ::string("_(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
-	WriteLine(::string("auto ::") + className + ::string("_::") + methodName + ::string("_(") + arguments + ::string(") -> ") + convertedReturnType);
-	ParseBlock();
+	string const methodName_ = ExpectIdentifier_();
+	Expect_(string("("));
+	bool const mutableSelf_ = Accept_(string("mut"));
+	bool isAssociatedFuntion_ = !mutableSelf_;
+	if (mutableSelf_)
+	{
+		Expect_(string("self"));
+		if (Token_ != string(")"))
+		{
+			Expect_(string(","));
+		}
+	}
+	else
+	{
+		if (Accept_(string("self")))
+		{
+			isAssociatedFuntion_ = false;
+			if (Token_ != string(")"))
+			{
+				Expect_(string(","));
+			}
+		}
+	}
+
+	string const arguments_ = ParseMethodArgumentsDeclaration_();
+	Expect_(string("->"));
+	bool const mutableValue_ = Accept_(string("mut"));
+	string const returnType_ = ParseType_();
+	string const convertedReturnType_ = ConvertType_(true, mutableValue_, returnType_);
+	ClassDeclarations_->AppendLine_(string("\tauto ") + methodName_ + string("_(") + arguments_ + string(") -> ") + convertedReturnType_ + string(";"));
+	WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_(") + arguments_ + string(") -> ") + convertedReturnType_);
+	ParseBlock_();
 }
 
-auto ParseDeclaration() -> void
+auto ParseDeclaration_() -> void
 {
-	::string const accessModifier = Token;
-	if (Accept(::string("public")) || Accept(::string("internal")))
+	string const accessModifier_ = Token_;
+	if (Accept_(string("public")) || Accept_(string("internal")))
 	{
 	}
 	else
 	{
-		Error(::string("Expected access modifier, found `") + accessModifier + ::string("`"));
+		Error_(string("Expected access modifier, found `") + accessModifier_ + string("`"));
 	}
 
-	::string const kind = Token;
-	if (Accept(::string("var")) || Accept(::string("let")))
+	string const kind_ = Token_;
+	if (Accept_(string("var")) || Accept_(string("let")))
 	{
-		::string const variableName = ExpectIdentifier();
-		Expect(::string(":"));
-		bool const mutableValue = Accept(::string("mut"));
-		::string variableType = ParseType();
-		Expect(::string("="));
-		variableType = ConvertType(kind == ::string("var"), mutableValue, variableType);
-		BeginLine(variableType);
-		Write(::string(" ") + variableName + ::string("_ = "));
-		ParseExpression();
-		Expect(::string(";"));
-		EndLine(::string(";"));
-		AfterDeclaration = true;
+		string const variableName_ = ExpectIdentifier_();
+		Expect_(string(":"));
+		bool const mutableValue_ = Accept_(string("mut"));
+		string variableType_ = ParseType_();
+		Expect_(string("="));
+		variableType_ = ConvertType_(kind_ == string("var"), mutableValue_, variableType_);
+		BeginLine_(variableType_);
+		Write_(string(" ") + variableName_ + string("_ = "));
+		ParseExpression_();
+		Expect_(string(";"));
+		EndLine_(string(";"));
+		AfterDeclaration_ = true;
 		return;
 	}
 
-	if (Accept(::string("class")))
+	if (Accept_(string("class")))
 	{
-		::string const className = ExpectIdentifier();
-		TypeDeclarations->AppendLine(::string("class ") + className + ::string("_;"));
-		ClassDeclarations->AppendLine(::string("class ") + className + ::string("_"));
-		Expect(::string("{"));
-		ClassDeclarations->AppendLine(::string("{"));
-		ClassDeclarations->AppendLine(::string("public:"));
-		while (!Accept(::string("}")))
+		string const className_ = ExpectIdentifier_();
+		TypeDeclarations_->AppendLine_(string("class ") + className_ + string("_;"));
+		ClassDeclarations_->AppendLine_(string("class ") + className_ + string("_"));
+		Expect_(string("{"));
+		ClassDeclarations_->AppendLine_(string("{"));
+		ClassDeclarations_->AppendLine_(string("public:"));
+		while (!Accept_(string("}")))
 		{
-			ParseClassMember(className);
+			ParseClassMember_(className_);
 		}
 
-		ClassDeclarations->AppendLine(::string("};"));
+		ClassDeclarations_->AppendLine_(string("};"));
 		return;
 	}
 
-	if (Accept(::string("enum")))
+	if (Accept_(string("enum")))
 	{
-		Expect(::string("struct"));
-		::string const enumName = ExpectIdentifier();
-		TypeDeclarations->AppendLine(::string("enum class ") + enumName + ::string("_;"));
-		ClassDeclarations->AppendLine(::string("enum class ") + enumName + ::string("_"));
-		Expect(::string("{"));
-		ClassDeclarations->AppendLine(::string("{"));
+		Expect_(string("struct"));
+		string const enumName_ = ExpectIdentifier_();
+		TypeDeclarations_->AppendLine_(string("enum class ") + enumName_ + string("_;"));
+		ClassDeclarations_->AppendLine_(string("enum class ") + enumName_ + string("_"));
+		Expect_(string("{"));
+		ClassDeclarations_->AppendLine_(string("{"));
 		do
 		{
-			::string const enumValue = ExpectIdentifier();
-			ClassDeclarations->Append(::string("\t") + enumValue + ::string("_"));
-			if (Accept(::string("=")))
+			string const enumValue_ = ExpectIdentifier_();
+			ClassDeclarations_->Append_(string("\t") + enumValue_ + string("_"));
+			if (Accept_(string("=")))
 			{
-				ClassDeclarations->Append(::string(" = "));
-				::string const value = Token;
-				if (AcceptNumber())
+				ClassDeclarations_->Append_(string(" = "));
+				string const value_ = Token_;
+				if (AcceptNumber_())
 				{
-					ClassDeclarations->Append(value);
+					ClassDeclarations_->Append_(value_);
 				}
 				else
 				{
-					Error(::string("Expected number found `") + value + ::string("`"));
+					Error_(string("Expected number found `") + value_ + string("`"));
 				}
 			}
 
-			ClassDeclarations->AppendLine(::string(","));
+			ClassDeclarations_->AppendLine_(string(","));
 		}
-		while (Accept(::string(",")));
-		Expect(::string("}"));
-		ClassDeclarations->AppendLine(::string("};"));
+		while (Accept_(string(",")));
+		Expect_(string("}"));
+		ClassDeclarations_->AppendLine_(string("};"));
 		return;
 	}
 
-	::string const name = ExpectIdentifier();
-	::string const arguments = ParseArgumentsDeclaration(name == ::string("Main"));
-	Expect(::string("->"));
-	bool const mutableValue = Accept(::string("mut"));
-	::string const returnType = ParseType();
-	::string const convertedReturnType = ConvertType(true, mutableValue, returnType);
-	FunctionDeclarations->AppendLine(::string("auto ") + name + ::string("_(") + arguments + ::string(") -> ") + convertedReturnType + ::string(";"));
-	WriteLine(::string("auto ") + name + ::string("_(") + arguments + ::string(") -> ") + convertedReturnType);
-	if (name == ::string("Main"))
+	string const name_ = ExpectIdentifier_();
+	string const arguments_ = ParseFunctionArgumentsDeclaration_(name_ == string("Main"));
+	Expect_(string("->"));
+	bool const mutableValue_ = Accept_(string("mut"));
+	string const returnType_ = ParseType_();
+	string const convertedReturnType_ = ConvertType_(true, mutableValue_, returnType_);
+	FunctionDeclarations_->AppendLine_(string("auto ") + name_ + string("_(") + arguments_ + string(") -> ") + convertedReturnType_ + string(";"));
+	WriteLine_(string("auto ") + name_ + string("_(") + arguments_ + string(") -> ") + convertedReturnType_);
+	if (name_ == string("Main"))
 	{
-		if (MainFunctionReturnType != ::string(""))
+		if (MainFunctionReturnType_ != string(""))
 		{
-			Error(::string("Multiple declarations of main"));
+			Error_(string("Multiple declarations of main"));
 		}
 
-		MainFunctionReturnType = returnType;
+		MainFunctionReturnType_ = returnType_;
 	}
 
-	ParseBlock();
+	ParseBlock_();
 }
 
-auto ParseCompilationUnit() -> void
+auto ParseCompilationUnit_() -> void
 {
-	while (TokenIsIdentifier())
+	while (TokenIsIdentifier_())
 	{
-		ParseDeclaration();
+		ParseDeclaration_();
 	}
 }
 
-auto EmitPreamble() -> void
+auto EmitPreamble_() -> void
 {
-	TypeDeclarations->AppendLine(::string("#include \"RuntimeLibrary.h\""));
-	TypeDeclarations->AppendLine(::string(""));
-	TypeDeclarations->AppendLine(::string("// Type Declarations"));
-	FunctionDeclarations->AppendLine(::string(""));
-	FunctionDeclarations->AppendLine(::string("// Function Declarations"));
-	ClassDeclarations->AppendLine(::string(""));
-	ClassDeclarations->AppendLine(::string("// Class Declarations"));
-	WriteLine(::string(""));
-	WriteLine(::string("// Definitions"));
+	TypeDeclarations_->AppendLine_(string("#include \"RuntimeLibrary.h\""));
+	TypeDeclarations_->AppendLine_(string(""));
+	TypeDeclarations_->AppendLine_(string("// Type Declarations"));
+	FunctionDeclarations_->AppendLine_(string(""));
+	FunctionDeclarations_->AppendLine_(string("// Function Declarations"));
+	ClassDeclarations_->AppendLine_(string(""));
+	ClassDeclarations_->AppendLine_(string("// Class Declarations"));
+	WriteLine_(string(""));
+	WriteLine_(string("// Definitions"));
 }
 
-auto EmitEntryPointAdapter(::System::Collections::List<::SourceText const *> const *const resources) -> void
+auto EmitEntryPointAdapter_(::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> void
 {
-	WriteLine(::string("// Entry Point Adapter"));
-	WriteLine(::string("int main(int argc, char const *const * argv)"));
-	BeginBlock();
-	for (::SourceText const *const resource : *(resources))
+	WriteLine_(string("// Entry Point Adapter"));
+	WriteLine_(string("int main(int argc, char const *const * argv)"));
+	BeginBlock_();
+	for (::SourceText_ const *const resource_ : *(resources_))
 	{
-		BeginLine(::string("resource_manager_->AddResource(::string(\""));
-		Write(resource->Name);
-		Write(::string("\"), ::string(\""));
-		Write(resource->Text->Replace(::string("\\"), ::string("\\\\"))->Replace(::string("\n"), ::string("\\n"))->Replace(::string("\r"), ::string("\\r"))->Replace(::string("\""), ::string("\\\"")));
-		EndLine(::string("\"));"));
+		BeginLine_(string("resource_manager_->AddResource(::string(\""));
+		Write_(resource_->Name_);
+		Write_(string("\"), ::string(\""));
+		Write_(resource_->Text_->Replace_(string("\\"), string("\\\\"))->Replace_(string("\n"), string("\\n"))->Replace_(string("\r"), string("\\r"))->Replace_(string("\""), string("\\\"")));
+		EndLine_(string("\"));"));
 	}
 
-	if (resources->Length() > 0)
+	if (resources_->Length_() > 0)
 	{
-		EndLine(::string(""));
+		EndLine_(string(""));
 	}
 
-	::System::Text::StringBuilder *const args = new ::System::Text::StringBuilder();
-	if (MainFunctionAcceptsConsole)
+	::System_::Text_::StringBuilder_ *const args_ = new ::System_::Text_::StringBuilder_();
+	if (MainFunctionAcceptsConsole_)
 	{
-		args->Append(::string("new ::System_::Console_::Console_()"));
+		args_->Append_(string("new ::System_::Console_::Console_()"));
 	}
 
-	if (MainFunctionAcceptsArgs)
+	if (MainFunctionAcceptsArgs_)
 	{
-		if (MainFunctionAcceptsConsole)
+		if (MainFunctionAcceptsConsole_)
 		{
-			args->Append(::string(", "));
+			args_->Append_(string(", "));
 		}
 
-		args->Append(::string("new ::System_::Console_::Arguments_(argc, argv)"));
+		args_->Append_(string("new ::System_::Console_::Arguments_(argc, argv)"));
 	}
 
-	if (MainFunctionReturnType == ::string("void"))
+	if (MainFunctionReturnType_ == string("void"))
 	{
-		WriteLine(::string("Main_(") + args->ToString() + ::string(");"));
-		WriteLine(::string("return 0;"));
+		WriteLine_(string("Main_(") + args_->ToString_() + string(");"));
+		WriteLine_(string("return 0;"));
 	}
 	else
 	{
-		WriteLine(::string("return Main_(") + args->ToString() + ::string(");"));
+		WriteLine_(string("return Main_(") + args_->ToString_() + string(");"));
 	}
 
-	EndBlock();
+	EndBlock_();
 }
 
-auto Compile(::System::Collections::List<::SourceText const *> const *const sources, ::System::Collections::List<::SourceText const *> const *const resources) -> ::string
+auto Compile_(::System_::Collections_::List_<::SourceText_ const *> const *const sources_, ::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> string
 {
-	EmitPreamble();
-	::Lexer *const lexer = new ::Lexer();
-	for (::SourceText const *const source : *(sources))
+	EmitPreamble_();
+	::Lexer_ *const lexer_ = new ::Lexer_();
+	for (::SourceText_ const *const source_ : *(sources_))
 	{
-		tokenStream = lexer->Analyze(source);
-		Token = tokenStream->GetNextToken();
-		ParseCompilationUnit();
+		tokenStream_ = lexer_->Analyze_(source_);
+		Token_ = tokenStream_->GetNextToken_();
+		ParseCompilationUnit_();
 	}
 
-	EmitEntryPointAdapter(resources);
-	return TypeDeclarations->ToString() + FunctionDeclarations->ToString() + ClassDeclarations->ToString() + Definitions->ToString();
+	EmitEntryPointAdapter_(resources_);
+	return TypeDeclarations_->ToString_() + FunctionDeclarations_->ToString_() + ClassDeclarations_->ToString_() + Definitions_->ToString_();
 }
 
-auto Main(::System::Console::Console *const console, ::System::Console::Arguments const *const args) -> void
+auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void
 {
-	console->WriteLine(::string("Adamant Compiler v0.1.0"));
-	::System::Collections::List<::string> *const sourceFilePaths = new ::System::Collections::List<::string>();
-	::System::Collections::List<::string> *const resourceFilePaths = new ::System::Collections::List<::string>();
-	::string outputFilePath = ::string("");
-	int argType = 0;
-	for (::string const arg : *(args))
+	console_->WriteLine_(string("Adamant Compiler v0.1.0"));
+	::System_::Collections_::List_<string> *const sourceFilePaths_ = new ::System_::Collections_::List_<string>();
+	::System_::Collections_::List_<string> *const resourceFilePaths_ = new ::System_::Collections_::List_<string>();
+	string outputFilePath_ = string("");
+	int argType_ = 0;
+	for (string const arg_ : *(args_))
 	{
-		if (argType == 1)
+		if (argType_ == 1)
 		{
-			resourceFilePaths->Add(arg);
-			argType = 0;
+			resourceFilePaths_->Add_(arg_);
+			argType_ = 0;
 		}
-		else if (argType == 2)
+		else if (argType_ == 2)
 		{
-			outputFilePath = arg;
-			argType = 0;
+			outputFilePath_ = arg_;
+			argType_ = 0;
 		}
 		else
 		{
-			if (arg == ::string("-r"))
+			if (arg_ == string("-r"))
 			{
-				argType = 1;
+				argType_ = 1;
 			}
-			else if (arg == ::string("-o"))
+			else if (arg_ == string("-o"))
 			{
-				argType = 2;
+				argType_ = 2;
 			}
 			else
 			{
-				sourceFilePaths->Add(arg);
+				sourceFilePaths_->Add_(arg_);
 			}
 		}
 	}
 
-	if (sourceFilePaths->Length() == 0 || outputFilePath == ::string(""))
+	if (sourceFilePaths_->Length_() == 0 || outputFilePath_ == string(""))
 	{
-		console->WriteLine(::string("Args: <Input File(s)> -o <OutputFile> -r <Resource File>"));
+		console_->WriteLine_(string("Args: <Input File(s)> -o <OutputFile> -r <Resource File>"));
 		return;
 	}
 
-	::System::Collections::List<::SourceText const *> *const resources = new ::System::Collections::List<::SourceText const *>();
-	if (resourceFilePaths->Length() > 0)
+	::System_::Collections_::List_<::SourceText_ const *> *const resources_ = new ::System_::Collections_::List_<::SourceText_ const *>();
+	if (resourceFilePaths_->Length_() > 0)
 	{
-		console->WriteLine(::string("Reading Resources:"));
-		for (::string const resourceFilePath : *(resourceFilePaths))
+		console_->WriteLine_(string("Reading Resources:"));
+		for (string const resourceFilePath_ : *(resourceFilePaths_))
 		{
-			console->WriteLine(::string("  ") + resourceFilePath);
-			resources->Add(ReadSource(resourceFilePath));
+			console_->WriteLine_(string("  ") + resourceFilePath_);
+			resources_->Add_(ReadSource_(resourceFilePath_));
 		}
 	}
 
-	console->WriteLine(::string("Compiling:"));
-	::System::Collections::List<::SourceText const *> *const sources = new ::System::Collections::List<::SourceText const *>();
-	for (::string const sourceFilePath : *(sourceFilePaths))
+	console_->WriteLine_(string("Compiling:"));
+	::System_::Collections_::List_<::SourceText_ const *> *const sources_ = new ::System_::Collections_::List_<::SourceText_ const *>();
+	for (string const sourceFilePath_ : *(sourceFilePaths_))
 	{
-		console->WriteLine(::string("  ") + sourceFilePath);
-		sources->Add(ReadSource(sourceFilePath));
+		console_->WriteLine_(string("  ") + sourceFilePath_);
+		sources_->Add_(ReadSource_(sourceFilePath_));
 	}
 
-	::string const translated = Compile(sources, resources);
-	console->Write(::string("Output: "));
-	console->WriteLine(outputFilePath);
-	::System::IO::FileWriter *const outputFile = new ::System::IO::FileWriter(outputFilePath);
-	outputFile->Write(translated);
-	outputFile->Close();
-	console->Write(::string("Outputting RuntimeLibrary to: "));
-	::string outputDirPath = outputFilePath;
-	int index = outputDirPath->LastIndexOf('/');
-	if (index != -1)
+	string const translated_ = Compile_(sources_, resources_);
+	console_->Write_(string("Output: "));
+	console_->WriteLine_(outputFilePath_);
+	::System_::IO_::FileWriter_ *const outputFile_ = new ::System_::IO_::FileWriter_(outputFilePath_);
+	outputFile_->Write_(translated_);
+	outputFile_->Close_();
+	console_->Write_(string("Outputting RuntimeLibrary to: "));
+	string outputDirPath_ = outputFilePath_;
+	int index_ = outputDirPath_->LastIndexOf_('/');
+	if (index_ != -1)
 	{
-		outputDirPath = outputDirPath->Substring(0, index + 1);
+		outputDirPath_ = outputDirPath_->Substring_(0, index_ + 1);
 	}
 
-	index = outputDirPath->LastIndexOf('\\');
-	if (index != -1)
+	index_ = outputDirPath_->LastIndexOf_('\\');
+	if (index_ != -1)
 	{
-		outputDirPath = outputDirPath->Substring(0, index + 1);
+		outputDirPath_ = outputDirPath_->Substring_(0, index_ + 1);
 	}
 
-	console->WriteLine(outputDirPath);
-	::System::IO::FileWriter * resourceFile = new ::System::IO::FileWriter(outputDirPath + ::string("RuntimeLibrary.h"));
-	resourceFile->Write(resource_manager->GetString(::string("RuntimeLibrary.h")));
-	resourceFile->Close();
-	resourceFile = new ::System::IO::FileWriter(outputDirPath + ::string("RuntimeLibrary.cpp"));
-	resourceFile->Write(resource_manager->GetString(::string("RuntimeLibrary.cpp")));
-	resourceFile->Close();
+	console_->WriteLine_(outputDirPath_);
+	::System_::IO_::FileWriter_ * resourceFile_ = new ::System_::IO_::FileWriter_(outputDirPath_ + string("RuntimeLibrary.h"));
+	resourceFile_->Write_(resource_manager_->GetString_(string("RuntimeLibrary.h")));
+	resourceFile_->Close_();
+	resourceFile_ = new ::System_::IO_::FileWriter_(outputDirPath_ + string("RuntimeLibrary.cpp"));
+	resourceFile_->Write_(resource_manager_->GetString_(string("RuntimeLibrary.cpp")));
+	resourceFile_->Close_();
 }
 
-auto ReadSource(::string const path) -> ::SourceText const *
+auto ReadSource_(string const path_) -> ::SourceText_ const *
 {
-	::System::IO::FileReader *const file = new ::System::IO::FileReader(path);
-	::string const contents = file->ReadToEndSync();
-	file->Close();
-	::string name = path;
-	int index = name->LastIndexOf('/');
-	if (index != -1)
+	::System_::IO_::FileReader_ *const file_ = new ::System_::IO_::FileReader_(path_);
+	string const contents_ = file_->ReadToEndSync_();
+	file_->Close_();
+	string name_ = path_;
+	int index_ = name_->LastIndexOf_('/');
+	if (index_ != -1)
 	{
-		name = name->Substring(index + 1);
+		name_ = name_->Substring_(index_ + 1);
 	}
 
-	index = name->LastIndexOf('\\');
-	if (index != -1)
+	index_ = name_->LastIndexOf_('\\');
+	if (index_ != -1)
 	{
-		name = name->Substring(index + 1);
+		name_ = name_->Substring_(index_ + 1);
 	}
 
-	return new ::SourceText(::string("<default>"), name, contents);
+	return new ::SourceText_(string("<default>"), name_, contents_);
 }
 
-::SourceText::SourceText(::string const package, ::string const name, ::string const text)
+::SourceText_::SourceText_(string const package_, string const name_, string const text_)
 {
-	Package = package;
-	Name = name;
-	Text = text;
+	Package_ = package_;
+	Name_ = name_;
+	Text_ = text_;
 }
 
-::SyntaxToken::SyntaxToken(::TokenType const *const tokenType, ::SourceText const *const source, unsigned int const start, unsigned int const length)
+::SyntaxToken_::SyntaxToken_(::TokenType_ const *const tokenType_, ::SourceText_ const *const source_, unsigned int const start_, unsigned int const length_)
 {
-	TokenType = tokenType;
-	Source = source;
-	Start = start;
-	Length = length;
+	TokenType_ = tokenType_;
+	Source_ = source_;
+	Start_ = start_;
+	Length_ = length_;
 }
 
-::TokenStream::TokenStream(::SourceText const *const source)
+::TokenStream_::TokenStream_(::SourceText_ const *const source_)
 {
-	Source = source;
-	nextToken = 0;
+	Source_ = source_;
+	nextToken_ = 0;
 }
 
-auto ::TokenStream::GetNextToken() -> ::string
+auto ::TokenStream_::GetNextToken_() -> string
 {
-	unsigned int position = nextToken;
-	unsigned int tokenEnd = -1;
-	bool escaped;
-	bool done = false;
-	while (!done && position < Source->Text->Length)
+	unsigned int position_ = nextToken_;
+	unsigned int tokenEnd_ = -1;
+	bool escaped_;
+	bool done_ = false;
+	while (!done_ && position_ < Source_->Text_->Length_)
 	{
-		char const curChar = Source->Text[position];
-		if (curChar == ' ' || curChar == '\t' || curChar == '\n' || curChar == '\r')
+		char const curChar_ = Source_->Text_[position_];
+		if (curChar_ == ' ' || curChar_ == '\t' || curChar_ == '\n' || curChar_ == '\r')
 		{
-			position += 1;
+			position_ += 1;
 			continue;
 		}
-		else if (curChar == '{' || curChar == '}' || curChar == '(' || curChar == ')' || curChar == ';' || curChar == ',' || curChar == '.' || curChar == ':' || curChar == '[' || curChar == ']' || curChar == '?')
+		else if (curChar_ == '{' || curChar_ == '}' || curChar_ == '(' || curChar_ == ')' || curChar_ == ';' || curChar_ == ',' || curChar_ == '.' || curChar_ == ':' || curChar_ == '[' || curChar_ == ']' || curChar_ == '?')
 		{
-			tokenEnd = position + 1;
+			tokenEnd_ = position_ + 1;
 			break;
 		}
-		else if (curChar == '=')
+		else if (curChar_ == '=')
 		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd = position + 2;
+				tokenEnd_ = position_ + 2;
 				break;
 			}
 
-			tokenEnd = position + 1;
+			tokenEnd_ = position_ + 1;
 			break;
 		}
-		else if (curChar == '+')
+		else if (curChar_ == '+')
 		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd = position + 2;
+				tokenEnd_ = position_ + 2;
 				break;
 			}
 
-			tokenEnd = position + 1;
+			tokenEnd_ = position_ + 1;
 			break;
 		}
-		else if (curChar == '-')
+		else if (curChar_ == '-')
 		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '>')
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '>')
 			{
-				tokenEnd = position + 2;
+				tokenEnd_ = position_ + 2;
 				break;
 			}
 
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd = position + 2;
+				tokenEnd_ = position_ + 2;
 				break;
 			}
 
-			tokenEnd = position + 1;
+			tokenEnd_ = position_ + 1;
 			break;
 		}
-		else if (curChar == '/')
+		else if (curChar_ == '/')
 		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '/')
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '/')
 			{
-				while (position < Source->Text->Length && Source->Text[position] != '\r' && Source->Text[position] != '\n')
+				while (position_ < Source_->Text_->Length_ && Source_->Text_[position_] != '\r' && Source_->Text_[position_] != '\n')
 				{
-					position += 1;
+					position_ += 1;
 				}
 
 				continue;
 			}
 
-			tokenEnd = position + 1;
+			tokenEnd_ = position_ + 1;
 			break;
 		}
-		else if (curChar == '<')
+		else if (curChar_ == '<')
 		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '>')
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '>')
 			{
-				tokenEnd = position + 2;
+				tokenEnd_ = position_ + 2;
 				break;
 			}
 
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd = position + 2;
+				tokenEnd_ = position_ + 2;
 				break;
 			}
 
-			tokenEnd = position + 1;
+			tokenEnd_ = position_ + 1;
 			break;
 		}
-		else if (curChar == '>')
+		else if (curChar_ == '>')
 		{
-			if (position + 1 < Source->Text->Length && Source->Text[position + 1] == '=')
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd = position + 2;
+				tokenEnd_ = position_ + 2;
 				break;
 			}
 
-			tokenEnd = position + 1;
+			tokenEnd_ = position_ + 1;
 			break;
 		}
-		else if (curChar == '"')
+		else if (curChar_ == '"')
 		{
-			tokenEnd = position + 1;
-			escaped = false;
-			while (tokenEnd < Source->Text->Length && (Source->Text[tokenEnd] != '"' || escaped))
+			tokenEnd_ = position_ + 1;
+			escaped_ = false;
+			while (tokenEnd_ < Source_->Text_->Length_ && (Source_->Text_[tokenEnd_] != '"' || escaped_))
 			{
-				escaped = Source->Text[tokenEnd] == '\\' && !escaped;
-				tokenEnd += 1;
+				escaped_ = Source_->Text_[tokenEnd_] == '\\' && !escaped_;
+				tokenEnd_ += 1;
 			}
 
-			tokenEnd += 1;
+			tokenEnd_ += 1;
 			break;
 		}
-		else if (curChar == '\'')
+		else if (curChar_ == '\'')
 		{
-			tokenEnd = position + 1;
-			escaped = false;
-			while (tokenEnd < Source->Text->Length && (Source->Text[tokenEnd] != '\'' || escaped))
+			tokenEnd_ = position_ + 1;
+			escaped_ = false;
+			while (tokenEnd_ < Source_->Text_->Length_ && (Source_->Text_[tokenEnd_] != '\'' || escaped_))
 			{
-				escaped = Source->Text[tokenEnd] == '\\' && !escaped;
-				tokenEnd += 1;
+				escaped_ = Source_->Text_[tokenEnd_] == '\\' && !escaped_;
+				tokenEnd_ += 1;
 			}
 
-			tokenEnd += 1;
+			tokenEnd_ += 1;
 			break;
 		}
 		else
 		{
-			if (IsIdentifierChar(curChar))
+			if (IsIdentifierChar_(curChar_))
 			{
-				tokenEnd = position + 1;
-				while (IsIdentifierChar(Source->Text[tokenEnd]))
+				tokenEnd_ = position_ + 1;
+				while (IsIdentifierChar_(Source_->Text_[tokenEnd_]))
 				{
-					tokenEnd += 1;
+					tokenEnd_ += 1;
 				}
 
 				break;
 			}
 
-			if ((IsNumberChar(curChar)))
+			if ((IsNumberChar_(curChar_)))
 			{
-				tokenEnd = position + 1;
-				while (IsNumberChar(Source->Text[tokenEnd]))
+				tokenEnd_ = position_ + 1;
+				while (IsNumberChar_(Source_->Text_[tokenEnd_]))
 				{
-					tokenEnd += 1;
+					tokenEnd_ += 1;
 				}
 
 				break;
 			}
 
-			Error(::string("Lexer: Invalid character `") + curChar + ::string("`"));
-			position += 1;
+			Error_(string("Lexer: Invalid character `") + curChar_ + string("`"));
+			position_ += 1;
 		}
 	}
 
-	::string token;
-	if (tokenEnd == -1)
+	string token_;
+	if (tokenEnd_ == -1)
 	{
-		token = ::string("");
-		nextToken = position;
+		token_ = string("");
+		nextToken_ = position_;
 	}
 	else
 	{
-		token = Source->Text->Substring(position, tokenEnd - position);
-		nextToken = tokenEnd;
+		token_ = Source_->Text_->Substring_(position_, tokenEnd_ - position_);
+		nextToken_ = tokenEnd_;
 	}
 
-	return token;
+	return token_;
 }
 
-auto ::TokenStream::NewToken(::TokenType const *const type, unsigned int const end) -> ::SyntaxToken const *
+auto ::TokenStream_::NewToken_(::TokenType_ const *const type_, unsigned int const end_) -> ::SyntaxToken_ const *
 {
 	return ::None;
 }
 
-auto ::TokenStream::NewToken(::TokenType const *const type) -> ::SyntaxToken const *
+auto ::TokenStream_::NewToken_(::TokenType_ const *const type_) -> ::SyntaxToken_ const *
 {
 	return ::None;
 }
@@ -1365,9 +1410,9 @@ auto ::TokenStream::NewToken(::TokenType const *const type) -> ::SyntaxToken con
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	resource_manager->AddResource(::string("RuntimeLibrary.cpp"), ::string("#include \"RuntimeLibrary.h\"\n#include <map>\n\nstring::string()\n	: Length_(0), Buffer(0)\n{\n}\n\nstring::string(char c, int repeat)\n	: Length_(repeat)\n{\n	char* buffer = new char[repeat];\n	for (int i = 0; i < repeat; i++)\n		buffer[i] = c;\n\n	Buffer = buffer;\n}\n\nstring::string(const char* s)\n	: Length_(std::strlen(s)), Buffer(s)\n{\n}\n\nstring::string(int length, const char* s)\n	: Length_(length), Buffer(s)\n{\n}\n\nchar const * string::cstr() const\n{\n	auto buffer = new char[Length_ + 1];\n	std::memcpy(buffer, Buffer, Length_);\n	buffer[Length_] = 0;\n	return buffer;\n}\n\nstring string::Substring_(int start, int length) const\n{\n	return string(length, Buffer + start);\n}\n\nstring string::Replace_(string oldValue, string newValue) const\n{\n	string buffer = \"\";\n	int limit = Length_ - oldValue.Length_ + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length_) == oldValue)\n		{\n			buffer = buffer + Substring_(lastIndex, i-lastIndex) + newValue;\n			i += oldValue.Length_; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer + Substring_(lastIndex, Length_ - lastIndex);\n	return buffer;\n}\n\nint string::LastIndexOf_(char c) const\n{\n	for(int i=Length_-1; i>=0; i--)\n		if(Buffer[i]==c)\n			return i;\n\n	return -1;\n}\n\nchar string::operator[] (const int index) const\n{\n	return Buffer[index];\n}\n\nstring string::operator+(const string& value) const\n{\n	int newLength = Length_ + value.Length_;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length_;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length_);\n	return string(newLength, chars);\n}\n\nstring string::operator+(const char& value) const\n{\n	int newLength = Length_ + 1;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length_;\n	std::memcpy(chars, Buffer, offset);\n	chars[Length_] = value;\n	return string(newLength, chars);\n}\n\nbool string::operator==(const string &other) const\n{\n	if (Length_ != other.Length_)\n		return false;\n\n	for (int i = 0; i < Length_; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (string const& lhs, string const& rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<string, string> resourceValues;\n\nstring const & ResourceManager::GetString_(string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(string name, string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace System_\n{\n	namespace Console_\n	{\n		void Console_::Write_(string value)\n		{\n			std::printf(\"%.*s\", value.Length_, value.Buffer);\n		}\n\n		void Console_::WriteLine_(string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length_, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count_(argc-1)\n		{\n			args = new string[Count_];\n			for (int i = 0; i < Count_; i++)\n				args[i] = string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		FileReader_::FileReader_(const string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		string FileReader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return string(length, buffer);\n		}\n\n		void FileReader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		FileWriter_::FileWriter_(const string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void FileWriter_::Write_(const string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length_, file);\n		}\n\n		void FileWriter_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		StringBuilder_::StringBuilder_(string const & value)\n			: buffer(value)\n		{\n		}\n\n		StringBuilder_::StringBuilder_()\n			: buffer(\"\")\n		{\n		}\n\n		void StringBuilder_::Append_(string const & value)\n		{\n			buffer = buffer + value;\n		}\n\n		void StringBuilder_::AppendLine_(string const & value)\n		{\n			buffer = buffer + value + string(\"\\n\");\n		}\n\n		void StringBuilder_::AppendLine_()\n		{\n			buffer = buffer + string(\"\\n\");\n		}\n	}\n}\n"));
-	resource_manager->AddResource(::string("RuntimeLibrary.h"), ::string("// On windows this disables warnings about using fopen_s instead of fopen\r\n// It must be defined before including the headers.  The includes have been moved\r\n// here to avoid leaking this into the program being compiled.  This required the\r\n// use of void* instead of FILE* in some places.\r\n#define _CRT_SECURE_NO_WARNINGS\r\n#include <cstring>\r\n#include <cstdio>\r\n\r\nstruct string\r\n{\r\npublic:\r\n	int Length_;\r\n	char const * Buffer;\r\n\r\n	string();\r\n	string(char c, int repeat);\r\n	string(char const * s);\r\n	string(int length, char const * s);\r\n	char const * cstr() const;\r\n	string Substring_(int start, int length) const;\r\n	string Substring_(int start) const { return Substring_(start, Length_-start); }\r\n	string Replace_(string oldValue, string newValue) const;\r\n	int LastIndexOf_(char c) const;\r\n	char operator[] (int const index) const;\r\n	string operator+(string const & value) const;\r\n	string operator+(char const & value) const;\r\n	string const * operator->() const { return this; }\r\n	string const & operator* () const { return *this; }\r\n	bool operator==(string const & other) const;\r\n	bool operator!=(string const & other) const { return !(*this == other); }\r\n	friend bool operator<(string const & lhs, string const & rhs);\r\n\r\n	typedef char const * const_iterator;\r\n	const_iterator begin() const { return &Buffer[0]; }\r\n	const_iterator end() const { return &Buffer[Length_]; }\r\n};\r\n\r\nclass ResourceManager\r\n{\r\npublic:\r\n	string const & GetString_(string resourceName);\r\n	void AddResource(string name, string value);\r\n};\r\n\r\nextern ResourceManager *const resource_manager_;\r\n\r\nclass NoneType\r\n{\r\npublic:\r\n	template<class T>\r\n	operator T*() const { return static_cast<T*>(0); }\r\n};\r\nstatic const NoneType None = NoneType();\r\n\r\ntemplate<typename T>\r\nstruct Maybe\r\n{\r\nprivate:\r\n	T data;\r\n	bool hasValue;\r\n\r\npublic:\r\n	Maybe(T const & value) : data(value), hasValue(true) {}\r\n	Maybe(::NoneType const & none) : hasValue(false) {}\r\n	T& operator->() { return data; }\r\n	T const & operator->() const\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	T  & operator* ()\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	T const & operator* () const\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	bool operator==(T const & other) const\r\n	{\r\n		return hasValue && data == other;\r\n	}\r\n	bool operator!=(T const & other) const\r\n	{\r\n		return hasValue && data != other;\r\n	}\r\n};\r\n\r\nnamespace System_\r\n{\r\n	namespace Collections_\r\n	{\r\n		template<typename T>\r\n		class List_\r\n		{\r\n		private:\r\n			T* values;\r\n			int length;\r\n			int capacity;\r\n\r\n		public:\r\n			typedef T const * const_iterator;\r\n\r\n			List_() : values(0), length(0), capacity(0) { }\r\n			void Add_(T value);\r\n			int Length_() const { return length; }\r\n			const_iterator begin() const { return values; }\r\n			const_iterator end() const { return &values[length]; }\r\n			T const & Get_(int const index) const { return values[index]; }\r\n		};\r\n\r\n		template<typename T>\r\n		void List_<T>::Add_(T value)\r\n		{\r\n			if(length >= capacity)\r\n			{\r\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\r\n				T* newValues = new T[newCapacity];\r\n				std::memcpy(newValues, values, length * sizeof(T));\r\n				values = newValues;\r\n				capacity = newCapacity;\r\n			}\r\n			values[length] = value;\r\n			length++;\r\n		}\r\n	}\r\n\r\n	namespace Console_\r\n	{\r\n		class Console_\r\n		{\r\n		public:\r\n			void Write_(string value);\r\n			void WriteLine_(string value);\r\n			void WriteLine_();\r\n		};\r\n\r\n		class Arguments_\r\n		{\r\n		private:\r\n			string* args;\r\n		public:\r\n			typedef string const * const_iterator;\r\n			const int Count_;\r\n\r\n			Arguments_(int argc, char const *const * argv);\r\n			const_iterator begin() const { return &args[0]; }\r\n			const_iterator end() const { return &args[Count_]; }\r\n			string const & Get_(int const index) const { return args[index]; }\r\n		};\r\n	}\r\n\r\n	namespace IO_\r\n	{\r\n		class FileReader_\r\n		{\r\n		private:\r\n			std::FILE* file;\r\n\r\n		public:\r\n			FileReader_(const string& fileName);\r\n			string ReadToEndSync_();\r\n			void Close_();\r\n		};\r\n\r\n		class FileWriter_\r\n		{\r\n		private:\r\n			std::FILE* file;\r\n\r\n		public:\r\n			FileWriter_(const string& fileName);\r\n			void Write_(const string& value);\r\n			void Close_();\r\n		};\r\n	}\r\n\r\n	namespace Text_\r\n	{\r\n		class StringBuilder_\r\n		{\r\n		private:\r\n			string buffer;\r\n		public:\r\n			StringBuilder_();\r\n			StringBuilder_(string const & value);\r\n			void Append_(string const & value);\r\n			void AppendLine_(string const& value);\r\n			void AppendLine_();\r\n			string ToString_() const { return buffer; }\r\n		};\r\n	}\r\n}\r\n"));
+	resource_manager_->AddResource(::string("RuntimeLibrary.cpp"), ::string("#include \"RuntimeLibrary.h\"\n#include <map>\n\nstring::string()\n	: Length_(0), Buffer(0)\n{\n}\n\nstring::string(char c, int repeat)\n	: Length_(repeat)\n{\n	char* buffer = new char[repeat];\n	for (int i = 0; i < repeat; i++)\n		buffer[i] = c;\n\n	Buffer = buffer;\n}\n\nstring::string(const char* s)\n	: Length_(std::strlen(s)), Buffer(s)\n{\n}\n\nstring::string(int length, const char* s)\n	: Length_(length), Buffer(s)\n{\n}\n\nchar const * string::cstr() const\n{\n	auto buffer = new char[Length_ + 1];\n	std::memcpy(buffer, Buffer, Length_);\n	buffer[Length_] = 0;\n	return buffer;\n}\n\nstring string::Substring_(int start, int length) const\n{\n	return string(length, Buffer + start);\n}\n\nstring string::Replace_(string oldValue, string newValue) const\n{\n	string buffer = \"\";\n	int limit = Length_ - oldValue.Length_ + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length_) == oldValue)\n		{\n			buffer = buffer + Substring_(lastIndex, i-lastIndex) + newValue;\n			i += oldValue.Length_; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer + Substring_(lastIndex, Length_ - lastIndex);\n	return buffer;\n}\n\nint string::LastIndexOf_(char c) const\n{\n	for(int i=Length_-1; i>=0; i--)\n		if(Buffer[i]==c)\n			return i;\n\n	return -1;\n}\n\nchar string::operator[] (const int index) const\n{\n	return Buffer[index];\n}\n\nstring string::operator+(const string& value) const\n{\n	int newLength = Length_ + value.Length_;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length_;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length_);\n	return string(newLength, chars);\n}\n\nstring string::operator+(const char& value) const\n{\n	int newLength = Length_ + 1;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length_;\n	std::memcpy(chars, Buffer, offset);\n	chars[Length_] = value;\n	return string(newLength, chars);\n}\n\nbool string::operator==(const string &other) const\n{\n	if (Length_ != other.Length_)\n		return false;\n\n	for (int i = 0; i < Length_; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (string const& lhs, string const& rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<string, string> resourceValues;\n\nstring const & ResourceManager::GetString_(string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(string name, string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace System_\n{\n	namespace Console_\n	{\n		void Console_::Write_(string value)\n		{\n			std::printf(\"%.*s\", value.Length_, value.Buffer);\n		}\n\n		void Console_::WriteLine_(string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length_, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count_(argc-1)\n		{\n			args = new string[Count_];\n			for (int i = 0; i < Count_; i++)\n				args[i] = string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		FileReader_::FileReader_(const string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		string FileReader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return string(length, buffer);\n		}\n\n		void FileReader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		FileWriter_::FileWriter_(const string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void FileWriter_::Write_(const string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length_, file);\n		}\n\n		void FileWriter_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		StringBuilder_::StringBuilder_(string const & value)\n			: buffer(value)\n		{\n		}\n\n		StringBuilder_::StringBuilder_()\n			: buffer(\"\")\n		{\n		}\n\n		void StringBuilder_::Append_(string const & value)\n		{\n			buffer = buffer + value;\n		}\n\n		void StringBuilder_::AppendLine_(string const & value)\n		{\n			buffer = buffer + value + string(\"\\n\");\n		}\n\n		void StringBuilder_::AppendLine_()\n		{\n			buffer = buffer + string(\"\\n\");\n		}\n	}\n}\n"));
+	resource_manager_->AddResource(::string("RuntimeLibrary.h"), ::string("// On windows this disables warnings about using fopen_s instead of fopen\r\n// It must be defined before including the headers.  The includes have been moved\r\n// here to avoid leaking this into the program being compiled.  This required the\r\n// use of void* instead of FILE* in some places.\r\n#define _CRT_SECURE_NO_WARNINGS\r\n#include <cstring>\r\n#include <cstdio>\r\n\r\nstruct string\r\n{\r\npublic:\r\n	int Length_;\r\n	char const * Buffer;\r\n\r\n	string();\r\n	string(char c, int repeat);\r\n	string(char const * s);\r\n	string(int length, char const * s);\r\n	char const * cstr() const;\r\n	string Substring_(int start, int length) const;\r\n	string Substring_(int start) const { return Substring_(start, Length_-start); }\r\n	string Replace_(string oldValue, string newValue) const;\r\n	int LastIndexOf_(char c) const;\r\n	char operator[] (int const index) const;\r\n	string operator+(string const & value) const;\r\n	string operator+(char const & value) const;\r\n	string const * operator->() const { return this; }\r\n	string const & operator* () const { return *this; }\r\n	bool operator==(string const & other) const;\r\n	bool operator!=(string const & other) const { return !(*this == other); }\r\n	friend bool operator<(string const & lhs, string const & rhs);\r\n\r\n	typedef char const * const_iterator;\r\n	const_iterator begin() const { return &Buffer[0]; }\r\n	const_iterator end() const { return &Buffer[Length_]; }\r\n};\r\n\r\nclass ResourceManager\r\n{\r\npublic:\r\n	string const & GetString_(string resourceName);\r\n	void AddResource(string name, string value);\r\n};\r\n\r\nextern ResourceManager *const resource_manager_;\r\n\r\nclass NoneType\r\n{\r\npublic:\r\n	template<class T>\r\n	operator T*() const { return static_cast<T*>(0); }\r\n};\r\nstatic const NoneType None = NoneType();\r\n\r\ntemplate<typename T>\r\nstruct Maybe\r\n{\r\nprivate:\r\n	T data;\r\n	bool hasValue;\r\n\r\npublic:\r\n	Maybe(T const & value) : data(value), hasValue(true) {}\r\n	Maybe(::NoneType const & none) : hasValue(false) {}\r\n	T& operator->() { return data; }\r\n	T const & operator->() const\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	T  & operator* ()\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	T const & operator* () const\r\n	{\r\n		if(!hasValue) throw \"Access to null Maybe value\";\r\n		return data;\r\n	}\r\n	bool operator==(T const & other) const\r\n	{\r\n		return hasValue && data == other;\r\n	}\r\n	bool operator!=(T const & other) const\r\n	{\r\n		return hasValue && data != other;\r\n	}\r\n};\r\n\r\nnamespace System_\r\n{\r\n	namespace Collections_\r\n	{\r\n		template<typename T>\r\n		class List_\r\n		{\r\n		private:\r\n			T* values;\r\n			int length;\r\n			int capacity;\r\n\r\n		public:\r\n			typedef T const * const_iterator;\r\n\r\n			List_() : values(0), length(0), capacity(0) { }\r\n			void Add_(T value);\r\n			int Length_() const { return length; }\r\n			const_iterator begin() const { return values; }\r\n			const_iterator end() const { return &values[length]; }\r\n			T const & Get_(int const index) const { return values[index]; }\r\n		};\r\n\r\n		template<typename T>\r\n		void List_<T>::Add_(T value)\r\n		{\r\n			if(length >= capacity)\r\n			{\r\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\r\n				T* newValues = new T[newCapacity];\r\n				std::memcpy(newValues, values, length * sizeof(T));\r\n				values = newValues;\r\n				capacity = newCapacity;\r\n			}\r\n			values[length] = value;\r\n			length++;\r\n		}\r\n	}\r\n\r\n	namespace Console_\r\n	{\r\n		class Console_\r\n		{\r\n		public:\r\n			void Write_(string value);\r\n			void WriteLine_(string value);\r\n			void WriteLine_();\r\n		};\r\n\r\n		class Arguments_\r\n		{\r\n		private:\r\n			string* args;\r\n		public:\r\n			typedef string const * const_iterator;\r\n			const int Count_;\r\n\r\n			Arguments_(int argc, char const *const * argv);\r\n			const_iterator begin() const { return &args[0]; }\r\n			const_iterator end() const { return &args[Count_]; }\r\n			string const & Get_(int const index) const { return args[index]; }\r\n		};\r\n	}\r\n\r\n	namespace IO_\r\n	{\r\n		class FileReader_\r\n		{\r\n		private:\r\n			std::FILE* file;\r\n\r\n		public:\r\n			FileReader_(const string& fileName);\r\n			string ReadToEndSync_();\r\n			void Close_();\r\n		};\r\n\r\n		class FileWriter_\r\n		{\r\n		private:\r\n			std::FILE* file;\r\n\r\n		public:\r\n			FileWriter_(const string& fileName);\r\n			void Write_(const string& value);\r\n			void Close_();\r\n		};\r\n	}\r\n\r\n	namespace Text_\r\n	{\r\n		class StringBuilder_\r\n		{\r\n		private:\r\n			string buffer;\r\n		public:\r\n			StringBuilder_();\r\n			StringBuilder_(string const & value);\r\n			void Append_(string const & value);\r\n			void AppendLine_(string const& value);\r\n			void AppendLine_();\r\n			string ToString_() const { return buffer; }\r\n		};\r\n	}\r\n}\r\n"));
 
-	Main(new ::System::Console::Console(), new ::System::Console::Arguments(argc, argv));
+	Main_(new ::System_::Console_::Console_(), new ::System_::Console_::Arguments_(argc, argv));
 	return 0;
 }
