@@ -9,6 +9,7 @@ auto Main_() -> void;
 // Class Declarations
 
 // Definitions
+
 auto True_() -> bool
 {
 	return true;

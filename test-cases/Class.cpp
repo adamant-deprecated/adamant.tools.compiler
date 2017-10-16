@@ -7,6 +7,7 @@ class C_;
 auto Main_() -> void;
 
 // Class Declarations
+
 class C_
 {
 public:
@@ -16,6 +17,7 @@ public:
 };
 
 // Definitions
+
 ::C_::C_(string const name_)
 {
 	Name_ = name_;

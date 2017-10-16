@@ -3,15 +3,15 @@
 // Type Declarations
 class Lexer_;
 class Parser_;
-class SourceText_;
-class SyntaxNode_;
-class SyntaxToken_;
-class TokenStream_;
-class TokenType_;
+class Source_Text_;
+class Syntax_Node_;
+class Syntax_Token_;
+class Token_Stream_;
+class Token_Type_;
 
 // Function Declarations
-auto Parse_(::SourceText_ const *const source_) -> ::SyntaxNode_ const *;
-auto EmitCpp_(::SyntaxNode_ const *const syntaxTree_) -> void;
+auto Parse_(::Source_Text_ const *const source_) -> ::Syntax_Node_ const *;
+auto EmitCpp_(::Syntax_Node_ const *const syntaxTree_) -> void;
 auto Error_(string const message_) -> void;
 auto BeginLine_(string const value_) -> void;
 auto Write_(string const value_) -> void;
@@ -47,87 +47,87 @@ auto ParseClassMember_(string const className_) -> void;
 auto ParseDeclaration_() -> void;
 auto ParseCompilationUnit_() -> void;
 auto EmitPreamble_() -> void;
-auto EmitEntryPointAdapter_(::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> void;
-auto Compile_(::System_::Collections_::List_<::SourceText_ const *> const *const sources_, ::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> string;
+auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void;
+auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string;
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
-auto ReadSource_(string const path_) -> ::SourceText_ const *;
+auto ReadSource_(string const path_) -> ::Source_Text_ const *;
 
 // Class Declarations
 class Lexer_
 {
 public:
-	auto Analyze_(::SourceText_ const *const source_) const -> ::TokenStream_ *;
+	auto Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *;
 };
 class Parser_
 {
 public:
 	Parser_();
-	auto Parse_(::TokenStream_ const *const tokenStream_) const -> ::SyntaxNode_ const *;
+	auto Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syntax_Node_ const *;
 };
-class SourceText_
+class Source_Text_
 {
 public:
 	string Package_;
 	string Name_;
 	string Text_;
-	SourceText_(string const package_, string const name_, string const text_);
+	Source_Text_(string const package_, string const name_, string const text_);
 };
-class SyntaxNode_
+class Syntax_Node_
 {
 public:
 };
-class SyntaxToken_
+class Syntax_Token_
 {
 public:
-	::TokenType_ const * TokenType_;
-	::SourceText_ const * Source_;
+	::Token_Type_ const * TokenType_;
+	::Source_Text_ const * Source_;
 	unsigned int Start_;
 	unsigned int Length_;
-	SyntaxToken_(::TokenType_ const *const tokenType_, ::SourceText_ const *const source_, unsigned int const start_, unsigned int const length_);
+	Syntax_Token_(::Token_Type_ const *const tokenType_, ::Source_Text_ const *const source_, unsigned int const start_, unsigned int const length_);
 };
-class TokenStream_
+class Token_Stream_
 {
 public:
-	::SourceText_ const * Source_;
+	::Source_Text_ const * Source_;
 	unsigned int nextToken_;
-	TokenStream_(::SourceText_ const *const source_);
+	Token_Stream_(::Source_Text_ const *const source_);
 	auto GetNextToken_() -> string;
-	static auto NewToken_(::TokenType_ const *const type_, unsigned int const end_) -> ::SyntaxToken_ const *;
-	static auto NewToken_(::TokenType_ const *const type_) -> ::SyntaxToken_ const *;
+	static auto NewToken_(::Token_Type_ const *const type_, unsigned int const end_) -> ::Syntax_Token_ const *;
+	static auto NewToken_(::Token_Type_ const *const type_) -> ::Syntax_Token_ const *;
 };
-class TokenType_
+class Token_Type_
 {
 public:
 };
 
 // Definitions
-auto ::Lexer_::Analyze_(::SourceText_ const *const source_) const -> ::TokenStream_ *
+auto ::Lexer_::Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *
 {
-	return new ::TokenStream_(source_);
+	return new ::Token_Stream_(source_);
 }
 
 ::Parser_::Parser_()
 {
 }
 
-auto ::Parser_::Parse_(::TokenStream_ const *const tokenStream_) const -> ::SyntaxNode_ const *
+auto ::Parser_::Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syntax_Node_ const *
 {
 	return ::None;
 }
 
-auto Parse_(::SourceText_ const *const source_) -> ::SyntaxNode_ const *
+auto Parse_(::Source_Text_ const *const source_) -> ::Syntax_Node_ const *
 {
 	::Lexer_ const *const lexer_ = new ::Lexer_();
-	::TokenStream_ *const tokenStream_ = lexer_->Analyze_(source_);
+	::Token_Stream_ *const tokenStream_ = lexer_->Analyze_(source_);
 	::Parser_ *const parser_ = new ::Parser_();
 	return parser_->Parse_(tokenStream_);
 }
 
-auto EmitCpp_(::SyntaxNode_ const *const syntaxTree_) -> void
+auto EmitCpp_(::Syntax_Node_ const *const syntaxTree_) -> void
 {
 }
 
-::TokenStream_ * tokenStream_ = ::None;
+::Token_Stream_ * tokenStream_ = ::None;
 
 string Token_ = string("");
 
@@ -1043,12 +1043,12 @@ auto EmitPreamble_() -> void
 	WriteLine_(string("// Definitions"));
 }
 
-auto EmitEntryPointAdapter_(::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> void
+auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void
 {
 	WriteLine_(string("// Entry Point Adapter"));
 	WriteLine_(string("int main(int argc, char const *const * argv)"));
 	BeginBlock_();
-	for (::SourceText_ const *const resource_ : *(resources_))
+	for (::Source_Text_ const *const resource_ : *(resources_))
 	{
 		BeginLine_(string("resource_manager_->AddResource(::string(\""));
 		Write_(resource_->Name_);
@@ -1091,11 +1091,11 @@ auto EmitEntryPointAdapter_(::System_::Collections_::List_<::SourceText_ const *
 	EndBlock_();
 }
 
-auto Compile_(::System_::Collections_::List_<::SourceText_ const *> const *const sources_, ::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> string
+auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string
 {
 	EmitPreamble_();
 	::Lexer_ const *const lexer_ = new ::Lexer_();
-	for (::SourceText_ const *const source_ : *(sources_))
+	for (::Source_Text_ const *const source_ : *(sources_))
 	{
 		tokenStream_ = lexer_->Analyze_(source_);
 		Token_ = tokenStream_->GetNextToken_();
@@ -1148,7 +1148,7 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 		return;
 	}
 
-	::System_::Collections_::List_<::SourceText_ const *> *const resources_ = new ::System_::Collections_::List_<::SourceText_ const *>();
+	::System_::Collections_::List_<::Source_Text_ const *> *const resources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
 	if (resourceFilePaths_->Length_() > 0)
 	{
 		console_->WriteLine_(string("Reading Resources:"));
@@ -1160,7 +1160,7 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 	}
 
 	console_->WriteLine_(string("Compiling:"));
-	::System_::Collections_::List_<::SourceText_ const *> *const sources_ = new ::System_::Collections_::List_<::SourceText_ const *>();
+	::System_::Collections_::List_<::Source_Text_ const *> *const sources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
 	for (string const sourceFilePath_ : *(sourceFilePaths_))
 	{
 		console_->WriteLine_(string("  ") + sourceFilePath_);
@@ -1196,7 +1196,7 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 	resourceFile_->Close_();
 }
 
-auto ReadSource_(string const path_) -> ::SourceText_ const *
+auto ReadSource_(string const path_) -> ::Source_Text_ const *
 {
 	::System_::IO_::FileReader_ *const file_ = new ::System_::IO_::FileReader_(path_);
 	string const contents_ = file_->ReadToEndSync_();
@@ -1214,17 +1214,17 @@ auto ReadSource_(string const path_) -> ::SourceText_ const *
 		name_ = name_->Substring_(index_ + 1);
 	}
 
-	return new ::SourceText_(string("<default>"), name_, contents_);
+	return new ::Source_Text_(string("<default>"), name_, contents_);
 }
 
-::SourceText_::SourceText_(string const package_, string const name_, string const text_)
+::Source_Text_::Source_Text_(string const package_, string const name_, string const text_)
 {
 	Package_ = package_;
 	Name_ = name_;
 	Text_ = text_;
 }
 
-::SyntaxToken_::SyntaxToken_(::TokenType_ const *const tokenType_, ::SourceText_ const *const source_, unsigned int const start_, unsigned int const length_)
+::Syntax_Token_::Syntax_Token_(::Token_Type_ const *const tokenType_, ::Source_Text_ const *const source_, unsigned int const start_, unsigned int const length_)
 {
 	TokenType_ = tokenType_;
 	Source_ = source_;
@@ -1232,13 +1232,13 @@ auto ReadSource_(string const path_) -> ::SourceText_ const *
 	Length_ = length_;
 }
 
-::TokenStream_::TokenStream_(::SourceText_ const *const source_)
+::Token_Stream_::Token_Stream_(::Source_Text_ const *const source_)
 {
 	Source_ = source_;
 	nextToken_ = 0;
 }
 
-auto ::TokenStream_::GetNextToken_() -> string
+auto ::Token_Stream_::GetNextToken_() -> string
 {
 	unsigned int position_ = nextToken_;
 	unsigned int tokenEnd_ = -1;
@@ -1409,12 +1409,12 @@ auto ::TokenStream_::GetNextToken_() -> string
 	return token_;
 }
 
-auto ::TokenStream_::NewToken_(::TokenType_ const *const type_, unsigned int const end_) -> ::SyntaxToken_ const *
+auto ::Token_Stream_::NewToken_(::Token_Type_ const *const type_, unsigned int const end_) -> ::Syntax_Token_ const *
 {
 	return ::None;
 }
 
-auto ::TokenStream_::NewToken_(::TokenType_ const *const type_) -> ::SyntaxToken_ const *
+auto ::Token_Stream_::NewToken_(::Token_Type_ const *const type_) -> ::Syntax_Token_ const *
 {
 	return ::None;
 }

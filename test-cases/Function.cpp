@@ -9,6 +9,7 @@ auto Main_() -> int;
 // Class Declarations
 
 // Definitions
+
 auto Func_() -> int
 {
 	return 1;

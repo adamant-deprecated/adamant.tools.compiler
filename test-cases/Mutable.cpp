@@ -9,6 +9,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 // Class Declarations
 
 // Definitions
+
 auto Func_(int x_, int const y_) -> ::System_::Text_::StringBuilder_ *
 {
 	x_ += 1;

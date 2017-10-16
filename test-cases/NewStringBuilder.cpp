@@ -8,6 +8,7 @@ auto Main_() -> void;
 // Class Declarations
 
 // Definitions
+
 auto Main_() -> void
 {
 	new ::System_::Text_::StringBuilder_();

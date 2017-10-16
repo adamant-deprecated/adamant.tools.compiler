@@ -8,6 +8,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 // Class Declarations
 
 // Definitions
+
 auto Main_(::System_::Console_::Console_ *const console_) -> void
 {
 	::System_::Collections_::List_<string> *const strings_ = new ::System_::Collections_::List_<string>();

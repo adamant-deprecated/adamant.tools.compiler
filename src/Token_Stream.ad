@@ -177,7 +177,7 @@ public class Token_Stream
 					}
 					break;
 				}
-				Error("Lexer: Invalid character `" + curChar + "`");
+				Definitions.Error("Lexer: Invalid character `" + curChar + "`");
 				position += 1;
 			}
 		}

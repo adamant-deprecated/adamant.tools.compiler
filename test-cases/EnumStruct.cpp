@@ -7,6 +7,7 @@ enum class day_of_week_;
 auto Main_() -> void;
 
 // Class Declarations
+
 enum class day_of_week_
 {
 	Sunday_ = 0,
@@ -19,6 +20,7 @@ enum class day_of_week_
 };
 
 // Definitions
+
 auto Main_() -> void
 {
 }

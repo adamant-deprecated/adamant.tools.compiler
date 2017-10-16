@@ -8,6 +8,7 @@ auto Main_() -> void;
 // Class Declarations
 
 // Definitions
+
 auto Main_() -> void
 {
 	unsigned int x_ = 1 + 2;

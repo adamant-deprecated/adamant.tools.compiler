@@ -8,6 +8,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 // Class Declarations
 
 // Definitions
+
 auto Main_(::System_::Console_::Console_ *const console_) -> void
 {
 	console_->WriteLine_(string("Hello World!"));

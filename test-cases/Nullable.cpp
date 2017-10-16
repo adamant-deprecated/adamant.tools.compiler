@@ -9,6 +9,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 // Class Declarations
 
 // Definitions
+
 auto Func_(::Maybe<string> const x_, ::Maybe<unsigned int> const y_) -> ::Maybe<int>
 {
 	::Maybe<int> const z_ = ::None;

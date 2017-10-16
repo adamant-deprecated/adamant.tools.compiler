@@ -1,84 +1,15 @@
-public Parse(source: Source_Text) -> Syntax_Node
-{
-	let lexer: Lexer = new Lexer();
-	let tokenStream: mut Token_Stream = lexer.Analyze(source);
-	let parser: mut Parser = new Parser();
-	return parser.Parse(tokenStream);
-}
-
-public EmitCpp(syntaxTree: Syntax_Node) -> void
-{
-}
-
 public var tokenStream: mut Token_Stream = null;
 public var Token: string = "";
-// TODO should be `new mut`
-public let TypeDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
-public let FunctionDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
-public let ClassDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
-public let Definitions: mut System.Text.StringBuilder = new System.Text.StringBuilder();
+
+public let TypeDeclarations: mut Source_File_Builder = new Source_File_Builder();
+public let FunctionDeclarations: mut Source_File_Builder = new Source_File_Builder();
+public let ClassDeclarations: mut Source_File_Builder= new Source_File_Builder();
+public let Definitions: mut Source_File_Builder = new Source_File_Builder();
 public var IndentDepth: int = 0;
 public var AfterDeclaration: bool = false;
 public var MainFunctionReturnType: string = "";
 public var MainFunctionAcceptsConsole: bool = false;
 public var MainFunctionAcceptsArgs: bool = false;
-
-// ----------------------------------------------------------------------------
-// Code Writing
-// ----------------------------------------------------------------------------
-
-public Error(message: string) -> void
-{
-	Definitions.Append("<$ " + message + " $>");
-}
-
-public BeginLine(value: string) -> void
-{
-	if AfterDeclaration
-	{
-		Definitions.AppendLine();
-		AfterDeclaration = false;
-	}
-	Definitions.Append(new string('\t', IndentDepth));
-	Definitions.Append(value);
-}
-
-public Write(value: string) -> void
-{
-	Definitions.Append(value);
-}
-
-public EndLine(value: string) -> void
-{
-	Definitions.Append(value);
-	Definitions.AppendLine(); // TODO need to think about the handling of newlines
-}
-
-public WriteLine(value: string) -> void
-{
-	if AfterDeclaration
-	{
-		Definitions.AppendLine();
-		AfterDeclaration = false;
-	}
-	Definitions.Append(new string('\t', IndentDepth));
-	Definitions.Append(value);
-	Definitions.AppendLine();
-}
-
-public BeginBlock() -> void
-{
-	WriteLine("{");
-	IndentDepth += 1;
-}
-
-public EndBlock() -> void
-{
-	AfterDeclaration = false; // so that we don't put a blank line between two closing braces
-	IndentDepth -= 1;
-	WriteLine("}");
-	AfterDeclaration = true;
-}
 
 // ----------------------------------------------------------------------------
 // Lexer
@@ -118,7 +49,7 @@ public Expect(expected: string) -> void
 {
 	if Token <> expected
 	{
-		Error("Expected `" + expected + "` but found `" + Token + "`");
+		Definitions.Error("Expected `" + expected + "` but found `" + Token + "`");
 		Token = tokenStream.GetNextToken(); // Skip token to advance
 	}
 	else
@@ -168,7 +99,7 @@ public ExpectIdentifier() -> string
 {
 	if not TokenIsIdentifier()
 	{
-		Error("Expected identifier, found `" + Token + "`");
+		Definitions.Error("Expected identifier, found `" + Token + "`");
 		Token = tokenStream.GetNextToken(); // Skip token to advance
 		return "<missing>";
 	}
@@ -264,45 +195,45 @@ public ParseAtom() -> bool
 		// Constructor Call
 		var type: string = ParseType();
 		if not IsValueType(type) // place value types on the stack in C++ by not using new
-			{ Write("new "); }
+			{ Definitions.Write("new "); }
 		type = ConvertType(type);
-		Write(type);
+		Definitions.Write(type);
 		Expect("(");
-		Write("(");
+		Definitions.Write("(");
 		ParseCallArguments();
 		Expect(")");
-		Write(")");
+		Definitions.Write(")");
 		return true;
 	}
 	if Accept("not")
 	{
-		Write("!");
+		Definitions.Write("!");
 		ParseExpression();
 		return true;
 	}
 	if Accept("(") // Order of operations parens
 	{
-		Write("(");
+		Definitions.Write("(");
 		ParseExpression();
 		Expect(")");
-		Write(")");
+		Definitions.Write(")");
 		return true;
 	}
 	if Accept("-")
 	{
 		// Unary Minus
-		Write("-");
+		Definitions.Write("-");
 		ParseExpression(7);
 		return true;
 	}
 	if Accept("null")
 	{
-		Write("::None");
+		Definitions.Write("::None");
 		return true;
 	}
 	if Accept("self")
 	{
-		Write("this");
+		Definitions.Write("this");
 		return true;
 	}
 
@@ -311,22 +242,22 @@ public ParseAtom() -> bool
 		or Accept("false")
 		or AcceptNumber()
 	{
-		Write(token);
+		Definitions.Write(token);
 		return true;
 	}
 	if AcceptIdentifier()
 	{
-		Write(token + "_");
+		Definitions.Write(token + "_");
 		return true;
 	}
 	if AcceptString()
 	{
-		Write("string(" + token + ")");
+		Definitions.Write("string(" + token + ")");
 		return true;
 	}
 	if AcceptCodePoint()
 	{
-		Write(token);
+		Definitions.Write(token);
 		return true;
 	}
 
@@ -339,7 +270,7 @@ public ParseCallArguments() -> void
 	do
 	{
 		if first { first = false; }
-		else { Write(", "); }
+		else { Definitions.Write(", "); }
 		ParseExpression();
 	} while Accept(",");
 }
@@ -368,61 +299,61 @@ public ParseExpression(minPrecedence: int) -> void
 			// Assignment
 			precedence = 1;
 			leftAssociative = false;
-			Write(" " + token + " ");
+			Definitions.Write(" " + token + " ");
 		}
 		else if token == "or" and minPrecedence <= 2
 		{
 			// logical or
 			precedence = 2;
 			leftAssociative = true;
-			Write(" || ");
+			Definitions.Write(" || ");
 		}
 		else if token == "and" and minPrecedence <= 3
 		{
 			// logical and
 			precedence = 3;
 			leftAssociative = true;
-			Write(" && ");
+			Definitions.Write(" && ");
 		}
 		else if token == "==" and minPrecedence <= 4
 		{
 			// equal
 			precedence = 4;
 			leftAssociative = true;
-			Write(" == ");
+			Definitions.Write(" == ");
 		}
 		else if token == "<>" and minPrecedence <= 4
 		{
 			// not equal
 			precedence = 4;
 			leftAssociative = true;
-			Write(" != ");
+			Definitions.Write(" != ");
 		}
 		else if (token == "<" or token == "<=" or token == ">" or token == ">=") and minPrecedence <= 5
 		{
 			// relational operators
 			precedence = 5;
 			leftAssociative = true;
-			Write(" " + token + " ");
+			Definitions.Write(" " + token + " ");
 		}
 		else if (token == "+" or token == "-") and minPrecedence <= 6
 		{
 			// Additive
 			precedence = 6;
 			leftAssociative = true;
-			Write(" " + token + " ");
+			Definitions.Write(" " + token + " ");
 		}
 		else if token == "(" and minPrecedence <= 8
 		{
 			// Call Expression
 			Token = tokenStream.GetNextToken();
-			Write("(");
+			Definitions.Write("(");
 			ParseCallArguments();
 			if Token <> ")"
 			{
-				Error("Expected `)` found `" + Token + "`");
+				Definitions.Error("Expected `)` found `" + Token + "`");
 			}
-			Write(")");
+			Definitions.Write(")");
 			precedence = 8;
 			leftAssociative = true;
 			suffixOperator = true;
@@ -432,19 +363,19 @@ public ParseExpression(minPrecedence: int) -> void
 			// Member Access
 			precedence = 8;
 			leftAssociative = true;
-			Write("->");
+			Definitions.Write("->");
 		}
 		else if token == "[" and minPrecedence <= 8
 		{
 			// Element Access
 			Token = tokenStream.GetNextToken();
-			Write("[");
+			Definitions.Write("[");
 			ParseExpression();
 			if Token <> "]"
 			{
-				Error("Expected `]` found `" + Token + "`");
+				Definitions.Error("Expected `]` found `" + Token + "`");
 			}
-			Write("]");
+			Definitions.Write("]");
 			precedence = 8;
 			leftAssociative = true;
 			suffixOperator = true;
@@ -470,83 +401,87 @@ public ParseExpression() -> void
 
 public ParseStatement() -> bool
 {
+	if Token == "}" { return false; }
+
+	Definitions.StatementSeparatorLine();
+
 	if Accept("return")
 	{
 		if  Accept(";")
-			{ WriteLine("return;"); }
+			{ Definitions.WriteLine("return;"); }
 		else
 		{
-			BeginLine("return ");
+			Definitions.BeginLine("return ");
 			ParseExpression();
 			Expect(";");
-			EndLine(";");
+			Definitions.EndLine(";");
 		}
 		return true;
 	}
 	if Accept("loop")
 	{
-		WriteLine("for (;;)");
+		Definitions.WriteLine("for (;;)");
 		ParseBlock();
 		return true;
 	}
 	if Accept("while")
 	{
-		BeginLine("while (");
+		Definitions.BeginLine("while (");
 		ParseExpression();
-		EndLine(")");
+		Definitions.EndLine(")");
 		ParseBlock();
 		return true;
 	}
 	if Accept("for")
 	{
-		BeginLine("for (");
+		Definitions.BeginLine("for (");
 		let k: string = Token;
 		if not Accept("let") and not Accept("var")
-			{ Error("Expected `let` or `var` but found `" + Token + "`"); }
+			{ Definitions.Error("Expected `let` or `var` but found `" + Token + "`"); }
 		let name: string = ExpectIdentifier();
 		Expect(":");
 		let mutableValue: bool = Accept("mut");
 		let type: string = ParseType();
-		Write(ConvertType(k == "var", mutableValue, type) + " " + name + "_");
+		Definitions.Write(ConvertType(k == "var", mutableValue, type) + " " + name + "_");
 		Expect("in");
-		Write(" : *(");
+		Definitions.Write(" : *(");
 		ParseExpression();
-		EndLine("))");
+		Definitions.EndLine("))");
 		ParseBlock();
 		return true;
 	}
 	if Accept("do")
 	{
-		WriteLine("do");
+		Definitions.WriteLine("do");
 		ParseBlock();
 		AfterDeclaration = false;
 		Expect("while");
-		BeginLine("while (");
+		Definitions.BeginLine("while (");
 		ParseExpression();
 		Expect(";");
-		EndLine(");");
+		Definitions.EndLine(");");
 		return true;
 	}
 
 	if Accept("if")
 	{
-		BeginLine("if (");
+		Definitions.BeginLine("if (");
 		ParseExpression();
-		EndLine(")");
+		Definitions.EndLine(")");
 		ParseBlock();
 		while Accept("else")
 		{
 			AfterDeclaration = false;
 			if Accept("if")
 			{
-				BeginLine("else if (");
+				Definitions.BeginLine("else if (");
 				ParseExpression();
-				EndLine(")");
+				Definitions.EndLine(")");
 				ParseBlock();
 			}
 			else
 			{
-				WriteLine("else");
+				Definitions.WriteLine("else");
 				ParseBlock();
 				return true;
 			}
@@ -556,13 +491,13 @@ public ParseStatement() -> bool
 	if Accept("break")
 	{
 		Expect(";");
-		WriteLine("break;");
+		Definitions.WriteLine("break;");
 		return true;
 	}
 	if Accept("continue")
 	{
 		Expect(";");
-		WriteLine("continue;");
+		Definitions.WriteLine("continue;");
 		return true;
 	}
 
@@ -574,34 +509,33 @@ public ParseStatement() -> bool
 		let mutableValue: bool = Accept("mut");
 		var variableType: string = ParseType();
 		variableType = ConvertType(kind == "var", mutableValue, variableType);
-		BeginLine(variableType);
-		Write(" " + variableName + "_");
+		Definitions.BeginLine(variableType);
+		Definitions.Write(" " + variableName + "_");
 		if Accept("=")
 		{
-			Write(" = ");
+			Definitions.Write(" = ");
 			ParseExpression();
 		}
 		Expect(";");
-		EndLine(";");
+		Definitions.EndLine(";");
 		return true;
 	}
-	if Token == "}" { return false; }
 
 	// Assume it is an expression statement
-	BeginLine("");
+	Definitions.BeginLine("");
 	ParseExpression();
 	Expect(";");
-	EndLine(";");
+	Definitions.EndLine(";");
 	return true;
 }
 
 public ParseBlock() -> void
 {
 	Expect("{");
-	BeginBlock();
+	Definitions.BeginBlock();
 	while ParseStatement() {}
 	Expect("}");
-	EndBlock();
+	Definitions.EndBlock();
 }
 
 public ParseArgumentsDeclaration(isMainFunction: bool, isMethod: bool) -> string
@@ -658,7 +592,7 @@ public ParseClassMember(className: string) -> void
 	}
 	else
 	{
-		Error("Expected access modifier, found `" + accessModifier + "`");
+		Definitions.Error("Expected access modifier, found `" + accessModifier + "`");
 	}
 
 	if Accept("new")
@@ -666,8 +600,9 @@ public ParseClassMember(className: string) -> void
 		// Constructor
 		let arguments: string = ParseConstructorArgumentsDeclaration();
 		// Write out the function declaration for C++ so we can call functions defined after others
-		ClassDeclarations.AppendLine("\t" + className + "_(" + arguments + ");");
-		WriteLine("::" + className + "_::" + className + "_(" + arguments + ")");
+		ClassDeclarations.WriteLine(className + "_(" + arguments + ");");
+		Definitions.ElementSeparatorLine();
+		Definitions.WriteLine("::" + className + "_::" + className + "_(" + arguments + ")");
 		ParseBlock();
 		return;
 	}
@@ -681,7 +616,7 @@ public ParseClassMember(className: string) -> void
 		var fieldType: string = ParseType();
 		fieldType = ConvertType(true, mutableValue, fieldType); // because we need to assign them in constructors don't mark fields const
 		Expect(";");
-		ClassDeclarations.AppendLine("\t" + fieldType + " " + fieldName + "_;");
+		ClassDeclarations.WriteLine(fieldType + " " + fieldName + "_;");
 		return;
 	}
 
@@ -716,8 +651,9 @@ public ParseClassMember(className: string) -> void
 	var constModifier: string = "";
 	if not mutableSelf and not isAssociatedFuntion
 		{ constModifier = "const "; }
-	ClassDeclarations.AppendLine("\t" + staticModifier + "auto " + methodName + "_(" + arguments + ") " + constModifier + "-> " + convertedReturnType + ";");
-	WriteLine("auto ::" + className + "_::" + methodName + "_(" + arguments + ") " + constModifier + "-> " + convertedReturnType);
+	ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_(" + arguments + ") " + constModifier + "-> " + convertedReturnType + ";");
+	Definitions.ElementSeparatorLine();
+	Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_(" + arguments + ") " + constModifier + "-> " + convertedReturnType);
 	ParseBlock();
 }
 
@@ -730,7 +666,7 @@ public ParseDeclaration() -> void
 	}
 	else
 	{
-		Error("Expected access modifier, found `" + accessModifier + "`");
+		Definitions.Error("Expected access modifier, found `" + accessModifier + "`");
 	}
 
 	// Static Variable Declaration
@@ -743,11 +679,11 @@ public ParseDeclaration() -> void
 		var variableType: string = ParseType();
 		Expect("=");
 		variableType = ConvertType(kind == "var", mutableValue, variableType);
-		BeginLine(variableType);
-		Write(" " + variableName + "_ = ");
+		Definitions.BeginLine(variableType);
+		Definitions.Write(" " + variableName + "_ = ");
 		ParseExpression();
 		Expect(";");
-		EndLine(";");
+		Definitions.EndLine(";");
 		AfterDeclaration = true;
 		return;
 	}
@@ -755,16 +691,17 @@ public ParseDeclaration() -> void
 	if Accept("class")
 	{
 		let className: string = ExpectIdentifier();
-		TypeDeclarations.AppendLine("class " + className + "_;");
-		ClassDeclarations.AppendLine("class " + className + "_");
+		TypeDeclarations.WriteLine("class " + className + "_;");
+		ClassDeclarations.ElementSeparatorLine();
+		ClassDeclarations.WriteLine("class " + className + "_");
 		Expect("{");
-		ClassDeclarations.AppendLine("{");
-		ClassDeclarations.AppendLine("public:");
+		ClassDeclarations.BeginBlock();
+		ClassDeclarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
 		while not Accept("}")
 		{
 			ParseClassMember(className);
 		}
-		ClassDeclarations.AppendLine("};");
+		ClassDeclarations.EndBlockWithSemicolon();
 		return;
 	}
 
@@ -772,27 +709,28 @@ public ParseDeclaration() -> void
 	{
 		Expect("struct");
 		let enumName: string = ExpectIdentifier();
-		TypeDeclarations.AppendLine("enum class " + enumName + "_;");
-		ClassDeclarations.AppendLine("enum class " + enumName + "_");
+		TypeDeclarations.WriteLine("enum class " + enumName + "_;");
+		ClassDeclarations.ElementSeparatorLine();
+		ClassDeclarations.WriteLine("enum class " + enumName + "_");
 		Expect("{");
-		ClassDeclarations.AppendLine("{");
+		ClassDeclarations.BeginBlock();
 		do
 		{
 			let enumValue: string = ExpectIdentifier();
-			ClassDeclarations.Append("\t" + enumValue + "_");
+			ClassDeclarations.BeginLine(enumValue + "_");
 			if Accept("=")
 			{
-				ClassDeclarations.Append(" = ");
+				ClassDeclarations.Write(" = ");
 				let value: string = Token;
 				if  AcceptNumber()
-					{ ClassDeclarations.Append(value); }
+					{ ClassDeclarations.Write(value); }
 				else
-					{ Error("Expected number found `"+ value + "`"); }
+					{ Definitions.Error("Expected number found `"+ value + "`"); }
 			}
-			ClassDeclarations.AppendLine(",");
+			ClassDeclarations.EndLine(",");
 		} while Accept(",");
 		Expect("}");
-		ClassDeclarations.AppendLine("};");
+		ClassDeclarations.EndBlockWithSemicolon();
 		return;
 	}
 
@@ -804,12 +742,13 @@ public ParseDeclaration() -> void
 	let returnType: string = ParseType();
 	let convertedReturnType: string = ConvertType(true, mutableValue, returnType);
 	// Write out the function declaration for C++ so we can call functions defined after others
-	FunctionDeclarations.AppendLine("auto " + name + "_(" + arguments + ") -> " + convertedReturnType + ";");
-	WriteLine("auto " + name + "_(" + arguments + ") -> " + convertedReturnType);
+	FunctionDeclarations.WriteLine("auto " + name + "_(" + arguments + ") -> " + convertedReturnType + ";");
+	Definitions.ElementSeparatorLine();
+	Definitions.WriteLine("auto " + name + "_(" + arguments + ") -> " + convertedReturnType);
 	if name == "Main"
 	{
 		if MainFunctionReturnType <> ""
-			{ Error("Multiple declarations of main"); }
+			{ Definitions.Error("Multiple declarations of main"); }
 		MainFunctionReturnType = returnType;
 	}
 	ParseBlock();
@@ -826,38 +765,39 @@ public ParseCompilationUnit() -> void
 public EmitPreamble() -> void
 {
 	// Setup the beginning of each section
-	TypeDeclarations.AppendLine("#include \"RuntimeLibrary.h\"");
-	TypeDeclarations.AppendLine("");
-	TypeDeclarations.AppendLine("// Type Declarations");
-	FunctionDeclarations.AppendLine("");
-	FunctionDeclarations.AppendLine("// Function Declarations");
-	ClassDeclarations.AppendLine("");
-	ClassDeclarations.AppendLine("// Class Declarations");
-	WriteLine("");
-	WriteLine("// Definitions");
+	TypeDeclarations.WriteLine("#include \"RuntimeLibrary.h\"");
+	TypeDeclarations.BlankLine();
+	TypeDeclarations.WriteLine("// Type Declarations");
+	FunctionDeclarations.BlankLine();
+	FunctionDeclarations.WriteLine("// Function Declarations");
+	ClassDeclarations.BlankLine();
+	ClassDeclarations.WriteLine("// Class Declarations");
+	Definitions.BlankLine();
+	Definitions.WriteLine("// Definitions");
 }
 
 public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) -> void
 {
-	WriteLine("// Entry Point Adapter");
-	WriteLine("int main(int argc, char const *const * argv)");
-	BeginBlock();
+	Definitions.ElementSeparatorLine();
+	Definitions.WriteLine("// Entry Point Adapter");
+	Definitions.WriteLine("int main(int argc, char const *const * argv)");
+	Definitions.BeginBlock();
 
 	for let resource: Source_Text in resources
 	{
-		BeginLine("resource_manager_->AddResource(::string(\"");
-		Write(resource.Name);
-		Write("\"), ::string(\"");
-		Write(resource.Text
+		Definitions.BeginLine("resource_manager_->AddResource(::string(\"");
+		Definitions.Write(resource.Name);
+		Definitions.Write("\"), ::string(\"");
+		Definitions.Write(resource.Text
 								.Replace("\\", "\\\\")
 								.Replace("\n", "\\n")
 								.Replace("\r", "\\r")
 								.Replace("\"", "\\\""));
-		EndLine("\"));");
+		Definitions.EndLine("\"));");
 	}
 	if resources.Length() > 0
 	{
-		EndLine(""); // Use EndLine to avoid having an indent on a blank line
+		Definitions.EndLine(""); // Use EndLine to avoid having an indent on a blank line
 	}
 
 	// TODO should be `new mut`
@@ -873,15 +813,15 @@ public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) ->
 
 	if MainFunctionReturnType == "void"
 	{
-		WriteLine("Main_(" + args.ToString() + ");");
-		WriteLine("return 0;");
+		Definitions.WriteLine("Main_(" + args.ToString() + ");");
+		Definitions.WriteLine("return 0;");
 	}
 	else
 	{
-		WriteLine("return Main_(" + args.ToString() + ");");
+		Definitions.WriteLine("return Main_(" + args.ToString() + ");");
 	}
 
-	EndBlock();
+	Definitions.EndBlock();
 }
 
 // ----------------------------------------------------------------------------

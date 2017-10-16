@@ -9,6 +9,7 @@ auto Main_() -> int;
 // Class Declarations
 
 // Definitions
+
 auto Identity_(int const value_) -> int
 {
 	return value_;

@@ -8,6 +8,7 @@ auto Main_() -> int;
 // Class Declarations
 
 // Definitions
+
 auto Main_() -> int
 {
 	if (true)

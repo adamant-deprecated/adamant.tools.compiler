@@ -9,6 +9,7 @@ auto Main_() -> int;
 // Class Declarations
 
 // Definitions
+
 auto Func_(int const a_, int const b_) -> int
 {
 	return b_;

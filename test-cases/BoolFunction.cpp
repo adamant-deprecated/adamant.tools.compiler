@@ -9,6 +9,7 @@ auto Main_() -> void;
 // Class Declarations
 
 // Definitions
+
 auto Func_(bool const value_) -> bool
 {
 	return false;
