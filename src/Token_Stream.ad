@@ -1,9 +1,9 @@
-public class TokenStream
+public class Token_Stream
 {
-	public let Source: SourceText;
+	public let Source: Source_Text;
 	private var nextToken: uint;
 
-	public new(source: SourceText)
+	public new(source: Source_Text)
 	{
 		Source = source;
 		nextToken = 0; // TODO have to assign this zero for now because we don't have default values working
@@ -197,15 +197,15 @@ public class TokenStream
 		return token;
 	}
 
-	private NewToken(type: TokenType, end: uint) -> SyntaxToken
+	private NewToken(type: Token_Type, end: uint) -> Syntax_Token
 	{
 		//let start: uint = position;
 		//position = end;
-		//return new SyntaxToken(type, Source, start, end);
+		//return new Syntax_Token(type, Source, start, end);
 		return null;
 	}
 
-	private NewToken(type: TokenType) -> SyntaxToken
+	private NewToken(type: Token_Type) -> Syntax_Token
 	{
 		//return NewToken(type, position+1);
 		return null;

@@ -1,4 +1,4 @@
-public class SourceText
+public class Source_Text // TODO change immutable class name to snake_case when supported
 {
 	public let Package: string;
 	public let Name: string;

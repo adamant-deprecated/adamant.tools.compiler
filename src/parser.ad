@@ -1,10 +1,10 @@
-public class Parser
+public class Parser // TODO change immutable class name to snake_case when supported
 {
 	public new()
 	{
 	}
 
-	public Parse(self, tokenStream: TokenStream) -> SyntaxNode?
+	public Parse(self, tokenStream: Token_Stream) -> Syntax_Node?
 	{
 		return null;
 	}

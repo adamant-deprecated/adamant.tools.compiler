@@ -1,16 +1,16 @@
-public Parse(source: SourceText) -> SyntaxNode
+public Parse(source: Source_Text) -> Syntax_Node
 {
 	let lexer: Lexer = new Lexer();
-	let tokenStream: mut TokenStream = lexer.Analyze(source);
+	let tokenStream: mut Token_Stream = lexer.Analyze(source);
 	let parser: mut Parser = new Parser();
 	return parser.Parse(tokenStream);
 }
 
-public EmitCpp(syntaxTree: SyntaxNode) -> void
+public EmitCpp(syntaxTree: Syntax_Node) -> void
 {
 }
 
-public var tokenStream: mut TokenStream = null;
+public var tokenStream: mut Token_Stream = null;
 public var Token: string = "";
 // TODO should be `new mut`
 public let TypeDeclarations: mut System.Text.StringBuilder = new System.Text.StringBuilder();
@@ -837,13 +837,13 @@ public EmitPreamble() -> void
 	WriteLine("// Definitions");
 }
 
-public EmitEntryPointAdapter(resources: System.Collections.List<SourceText>) -> void
+public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) -> void
 {
 	WriteLine("// Entry Point Adapter");
 	WriteLine("int main(int argc, char const *const * argv)");
 	BeginBlock();
 
-	for let resource: SourceText in resources
+	for let resource: Source_Text in resources
 	{
 		BeginLine("resource_manager_->AddResource(::string(\"");
 		Write(resource.Name);
@@ -888,11 +888,11 @@ public EmitEntryPointAdapter(resources: System.Collections.List<SourceText>) -> 
 // Transpiler
 // ----------------------------------------------------------------------------
 
-public Compile(sources: System.Collections.List<SourceText>, resources: System.Collections.List<SourceText>) -> string
+public Compile(sources: System.Collections.List<Source_Text>, resources: System.Collections.List<Source_Text>) -> string
 {
 	EmitPreamble();
 	let lexer: Lexer = new Lexer();
-	for let source: SourceText in sources
+	for let source: Source_Text in sources
 	{
 		tokenStream = lexer.Analyze(source);
 		Token = tokenStream.GetNextToken();
@@ -945,7 +945,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	}
 
 	// Read Resources
-	let resources: mut System.Collections.List<SourceText> = new System.Collections.List<SourceText>();
+	let resources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
 	if resourceFilePaths.Length() > 0
 	{
 		console.WriteLine("Reading Resources:");
@@ -958,7 +958,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 
 	// Read Source(s)
 	console.WriteLine("Compiling:");
-	let sources: mut System.Collections.List<SourceText> = new System.Collections.List<SourceText>();
+	let sources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
 	for let sourceFilePath: string in sourceFilePaths
 	{
 		console.WriteLine("  " + sourceFilePath);
@@ -993,7 +993,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	resourceFile.Close();
 }
 
-public ReadSource(path: string) -> SourceText
+public ReadSource(path: string) -> Source_Text
 {
 	// TODO should be `mut new` or `new mut`, whichever is decided to be the correct syntax
 	let file: mut System.IO.FileReader = new System.IO.FileReader(path);
@@ -1006,5 +1006,5 @@ public ReadSource(path: string) -> SourceText
 	index = name.LastIndexOf('\\');
 	if index <> -1
 		{ name = name.Substring(index+1); }
-	return new SourceText("<default>", name, contents);
+	return new Source_Text("<default>", name, contents);
 }

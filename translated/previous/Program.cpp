@@ -56,13 +56,13 @@ auto ReadSource_(string const path_) -> ::SourceText_ const *;
 class Lexer_
 {
 public:
-	auto Analyze_(::SourceText_ const *const source_) -> ::TokenStream_ *;
+	auto Analyze_(::SourceText_ const *const source_) const -> ::TokenStream_ *;
 };
 class Parser_
 {
 public:
 	Parser_();
-	auto Parse_(::TokenStream_ const *const tokenStream_) -> ::SyntaxNode_ const *;
+	auto Parse_(::TokenStream_ const *const tokenStream_) const -> ::SyntaxNode_ const *;
 };
 class SourceText_
 {
@@ -92,8 +92,8 @@ public:
 	unsigned int nextToken_;
 	TokenStream_(::SourceText_ const *const source_);
 	auto GetNextToken_() -> string;
-	auto NewToken_(::TokenType_ const *const type_, unsigned int const end_) -> ::SyntaxToken_ const *;
-	auto NewToken_(::TokenType_ const *const type_) -> ::SyntaxToken_ const *;
+	static auto NewToken_(::TokenType_ const *const type_, unsigned int const end_) -> ::SyntaxToken_ const *;
+	static auto NewToken_(::TokenType_ const *const type_) -> ::SyntaxToken_ const *;
 };
 class TokenType_
 {
@@ -101,7 +101,7 @@ public:
 };
 
 // Definitions
-auto ::Lexer_::Analyze_(::SourceText_ const *const source_) -> ::TokenStream_ *
+auto ::Lexer_::Analyze_(::SourceText_ const *const source_) const -> ::TokenStream_ *
 {
 	return new ::TokenStream_(source_);
 }
@@ -110,14 +110,14 @@ auto ::Lexer_::Analyze_(::SourceText_ const *const source_) -> ::TokenStream_ *
 {
 }
 
-auto ::Parser_::Parse_(::TokenStream_ const *const tokenStream_) -> ::SyntaxNode_ const *
+auto ::Parser_::Parse_(::TokenStream_ const *const tokenStream_) const -> ::SyntaxNode_ const *
 {
 	return ::None;
 }
 
 auto Parse_(::SourceText_ const *const source_) -> ::SyntaxNode_ const *
 {
-	::Lexer_ *const lexer_ = new ::Lexer_();
+	::Lexer_ const *const lexer_ = new ::Lexer_();
 	::TokenStream_ *const tokenStream_ = lexer_->Analyze_(source_);
 	::Parser_ *const parser_ = new ::Parser_();
 	return parser_->Parse_(tokenStream_);
@@ -1094,7 +1094,7 @@ auto EmitEntryPointAdapter_(::System_::Collections_::List_<::SourceText_ const *
 auto Compile_(::System_::Collections_::List_<::SourceText_ const *> const *const sources_, ::System_::Collections_::List_<::SourceText_ const *> const *const resources_) -> string
 {
 	EmitPreamble_();
-	::Lexer_ *const lexer_ = new ::Lexer_();
+	::Lexer_ const *const lexer_ = new ::Lexer_();
 	for (::SourceText_ const *const source_ : *(sources_))
 	{
 		tokenStream_ = lexer_->Analyze_(source_);

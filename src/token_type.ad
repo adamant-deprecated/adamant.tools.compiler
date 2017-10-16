@@ -1,5 +1,5 @@
 // TODO make this an enum struct
-public class TokenType
+public class Token_Type // TODO change immutable class name to snake_case when supported
 {
 	//Keyword,
 	//Identifier,
