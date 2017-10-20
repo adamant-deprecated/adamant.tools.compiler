@@ -165,8 +165,6 @@ namespace System_
 			void Close_();
 		};
 
-		typedef File_Reader_ FileReader_;
-
 		class File_Writer_
 		{
 		private:
@@ -177,8 +175,6 @@ namespace System_
 			void Write_(const string& value);
 			void Close_();
 		};
-
-		typedef File_Writer_ FileWriter_;
 	}
 
 	namespace Text_
@@ -196,7 +192,5 @@ namespace System_
 			void AppendLine_();
 			string ToString_() const { return buffer; }
 		};
-
-		typedef String_Builder_ StringBuilder_;
 	}
 }
