@@ -19,7 +19,7 @@ public class Source_File_Builder
 
     public BeginLine(mut self, value: string) -> void
     {
-        code.Append(indent.ToString()); // TODO remove ToString() when RuntimeLibrary supports Append(StringBuilder)
+        code.Append(indent);
         code.Append(value);
         firstElement = afterBlock = false;
     }
@@ -39,7 +39,7 @@ public class Source_File_Builder
 
     public WriteLine(mut self, value: string) -> void
     {
-        code.Append(indent.ToString()); // TODO remove ToString() when RuntimeLibrary supports Append(StringBuilder)
+        code.Append(indent);
         code.Append(value);
         code.AppendLine();
         firstElement = afterBlock = false;

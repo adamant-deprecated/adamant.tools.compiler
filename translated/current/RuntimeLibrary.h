@@ -187,6 +187,7 @@ namespace System_
 			StringBuilder_();
 			StringBuilder_(string const & value);
 			void Append_(string const & value);
+			void Append_(StringBuilder_ const * value);
 			void AppendLine_(string const& value);
 			void AppendLine_();
 			string ToString_() const { return buffer; }
