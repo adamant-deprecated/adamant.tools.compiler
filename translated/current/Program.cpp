@@ -770,8 +770,8 @@ auto ParseArgumentsDeclaration_(bool const isMainFunction_, bool const isMethod_
 	}
 	while (Accept_(string(",")));
 	Expect_(string(")"));
-	string const result_ = arguments_->ToString_();
-	return result_->Substring_(0, result_->Length_ - 2);
+	arguments_->Remove_(arguments_->ToString_()->Length_ - 2);
+	return arguments_->ToString_();
 }
 
 auto ParseConstructorArgumentsDeclaration_() -> string
@@ -1448,14 +1448,14 @@ auto ::Source_File_Builder_::BeginBlock_() -> void
 
 auto ::Source_File_Builder_::EndBlock_() -> void
 {
-	indent_ = new ::System_::Text_::String_Builder_(indent_->ToString_()->Substring_(1));
+	indent_->Remove_(0, 1);
 	WriteLine_(string("}"));
 	afterBlock_ = true;
 }
 
 auto ::Source_File_Builder_::EndBlockWithSemicolon_() -> void
 {
-	indent_ = new ::System_::Text_::String_Builder_(indent_->ToString_()->Substring_(1));
+	indent_->Remove_(0, 1);
 	WriteLine_(string("};"));
 }
 
