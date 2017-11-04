@@ -8,6 +8,8 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Class Declarations
 
+// Global Definitions
+
 // Definitions
 
 auto Func_(int x_, int const y_) -> ::System_::Text_::String_Builder_ *

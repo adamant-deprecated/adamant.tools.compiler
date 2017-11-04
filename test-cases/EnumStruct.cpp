@@ -19,6 +19,8 @@ enum class day_of_week_
 	Saturday_,
 };
 
+// Global Definitions
+
 // Definitions
 
 auto Main_() -> void

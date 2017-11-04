@@ -7,6 +7,8 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Class Declarations
 
+// Global Definitions
+
 // Definitions
 
 auto Main_(::System_::Console_::Console_ *const console_) -> void

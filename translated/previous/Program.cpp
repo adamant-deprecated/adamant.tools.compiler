@@ -1,15 +1,15 @@
 #include "RuntimeLibrary.h"
 
 // Type Declarations
+class Source_Text_;
+class Source_File_Builder_;
+class Emitter_;
 class Lexer_;
 class Parser_;
-class Source_Text_;
 class Syntax_Node_;
 class Syntax_Token_;
 class Token_Stream_;
 class Token_Type_;
-class Source_File_Builder_;
-class Emitter_;
 
 // Function Declarations
 auto IsIdentifierChar_(char const c_) -> bool;
@@ -47,6 +47,42 @@ auto ReadSource_(string const path_) -> ::Source_Text_ const *;
 
 // Class Declarations
 
+class Source_Text_
+{
+public:
+	string Package_;
+	string Name_;
+	string Text_;
+	Source_Text_(string const package_, string const name_, string const text_);
+};
+
+class Source_File_Builder_
+{
+public:
+	::System_::Text_::String_Builder_ * code_;
+	::System_::Text_::String_Builder_ * indent_;
+	bool firstElement_;
+	bool afterBlock_;
+	Source_File_Builder_();
+	auto Error_(string const message_) -> void;
+	auto BeginLine_(string const value_) -> void;
+	auto Write_(string const value_) -> void;
+	auto EndLine_(string const value_) -> void;
+	auto WriteLine_(string const value_) -> void;
+	auto BlankLine_() -> void;
+	auto ElementSeparatorLine_() -> void;
+	auto StatementSeparatorLine_() -> void;
+	auto BeginBlock_() -> void;
+	auto EndBlock_() -> void;
+	auto EndBlockWithSemicolon_() -> void;
+	auto ToString_() const -> string;
+};
+
+class Emitter_
+{
+public:
+};
+
 class Lexer_
 {
 public:
@@ -58,15 +94,6 @@ class Parser_
 public:
 	Parser_();
 	auto Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syntax_Node_ const *;
-};
-
-class Source_Text_
-{
-public:
-	string Package_;
-	string Name_;
-	string Text_;
-	Source_Text_(string const package_, string const name_, string const text_);
 };
 
 class Syntax_Node_
@@ -100,48 +127,7 @@ class Token_Type_
 public:
 };
 
-class Source_File_Builder_
-{
-public:
-	::System_::Text_::String_Builder_ * code_;
-	::System_::Text_::String_Builder_ * indent_;
-	bool firstElement_;
-	bool afterBlock_;
-	Source_File_Builder_();
-	auto Error_(string const message_) -> void;
-	auto BeginLine_(string const value_) -> void;
-	auto Write_(string const value_) -> void;
-	auto EndLine_(string const value_) -> void;
-	auto WriteLine_(string const value_) -> void;
-	auto BlankLine_() -> void;
-	auto ElementSeparatorLine_() -> void;
-	auto StatementSeparatorLine_() -> void;
-	auto BeginBlock_() -> void;
-	auto EndBlock_() -> void;
-	auto EndBlockWithSemicolon_() -> void;
-	auto ToString_() const -> string;
-};
-
-class Emitter_
-{
-public:
-};
-
 // Definitions
-
-auto ::Lexer_::Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *
-{
-	return new ::Token_Stream_(source_);
-}
-
-::Parser_::Parser_()
-{
-}
-
-auto ::Parser_::Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syntax_Node_ const *
-{
-	return ::None;
-}
 ::Token_Stream_ * tokenStream_ = ::None;
 string Token_ = string("");
 ::Source_File_Builder_ *const TypeDeclarations_ = new ::Source_File_Builder_();
@@ -1176,6 +1162,113 @@ auto ReadSource_(string const path_) -> ::Source_Text_ const *
 	Text_ = text_;
 }
 
+::Source_File_Builder_::Source_File_Builder_()
+{
+	code_ = new ::System_::Text_::String_Builder_();
+	indent_ = new ::System_::Text_::String_Builder_();
+	firstElement_ = true;
+	afterBlock_ = true;
+}
+
+auto ::Source_File_Builder_::Error_(string const message_) -> void
+{
+	code_->Append_(string("<$ ") + message_ + string(" $>"));
+}
+
+auto ::Source_File_Builder_::BeginLine_(string const value_) -> void
+{
+	code_->Append_(indent_);
+	code_->Append_(value_);
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::Write_(string const value_) -> void
+{
+	code_->Append_(value_);
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::EndLine_(string const value_) -> void
+{
+	code_->Append_(value_);
+	code_->AppendLine_();
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::WriteLine_(string const value_) -> void
+{
+	code_->Append_(indent_);
+	code_->Append_(value_);
+	code_->AppendLine_();
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::BlankLine_() -> void
+{
+	code_->AppendLine_();
+	firstElement_ = true;
+	afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::ElementSeparatorLine_() -> void
+{
+	if (!firstElement_)
+	{
+		code_->AppendLine_();
+		firstElement_ = true;
+		afterBlock_ = false;
+	}
+}
+
+auto ::Source_File_Builder_::StatementSeparatorLine_() -> void
+{
+	if (afterBlock_)
+	{
+		code_->AppendLine_();
+		firstElement_ = true;
+		afterBlock_ = false;
+	}
+}
+
+auto ::Source_File_Builder_::BeginBlock_() -> void
+{
+	WriteLine_(string("{"));
+	indent_->Append_(string("\t"));
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::EndBlock_() -> void
+{
+	indent_->Remove_(0, 1);
+	WriteLine_(string("}"));
+	afterBlock_ = true;
+}
+
+auto ::Source_File_Builder_::EndBlockWithSemicolon_() -> void
+{
+	indent_->Remove_(0, 1);
+	WriteLine_(string("};"));
+}
+
+auto ::Source_File_Builder_::ToString_() const -> string
+{
+	return code_->ToString_();
+}
+
+auto ::Lexer_::Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *
+{
+	return new ::Token_Stream_(source_);
+}
+
+::Parser_::Parser_()
+{
+}
+
+auto ::Parser_::Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syntax_Node_ const *
+{
+	return ::None;
+}
+
 ::Syntax_Token_::Syntax_Token_(::Token_Type_ const *const tokenType_, ::Source_Text_ const *const source_, unsigned int const start_, unsigned int const length_)
 {
 	TokenType_ = tokenType_;
@@ -1369,99 +1462,6 @@ auto ::Token_Stream_::NewToken_(::Token_Type_ const *const type_, unsigned int c
 auto ::Token_Stream_::NewToken_(::Token_Type_ const *const type_) -> ::Syntax_Token_ const *
 {
 	return ::None;
-}
-
-::Source_File_Builder_::Source_File_Builder_()
-{
-	code_ = new ::System_::Text_::String_Builder_();
-	indent_ = new ::System_::Text_::String_Builder_();
-	firstElement_ = true;
-	afterBlock_ = true;
-}
-
-auto ::Source_File_Builder_::Error_(string const message_) -> void
-{
-	code_->Append_(string("<$ ") + message_ + string(" $>"));
-}
-
-auto ::Source_File_Builder_::BeginLine_(string const value_) -> void
-{
-	code_->Append_(indent_);
-	code_->Append_(value_);
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::Write_(string const value_) -> void
-{
-	code_->Append_(value_);
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::EndLine_(string const value_) -> void
-{
-	code_->Append_(value_);
-	code_->AppendLine_();
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::WriteLine_(string const value_) -> void
-{
-	code_->Append_(indent_);
-	code_->Append_(value_);
-	code_->AppendLine_();
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::BlankLine_() -> void
-{
-	code_->AppendLine_();
-	firstElement_ = true;
-	afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::ElementSeparatorLine_() -> void
-{
-	if (!firstElement_)
-	{
-		code_->AppendLine_();
-		firstElement_ = true;
-		afterBlock_ = false;
-	}
-}
-
-auto ::Source_File_Builder_::StatementSeparatorLine_() -> void
-{
-	if (afterBlock_)
-	{
-		code_->AppendLine_();
-		firstElement_ = true;
-		afterBlock_ = false;
-	}
-}
-
-auto ::Source_File_Builder_::BeginBlock_() -> void
-{
-	WriteLine_(string("{"));
-	indent_->Append_(string("\t"));
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::EndBlock_() -> void
-{
-	indent_->Remove_(0, 1);
-	WriteLine_(string("}"));
-	afterBlock_ = true;
-}
-
-auto ::Source_File_Builder_::EndBlockWithSemicolon_() -> void
-{
-	indent_->Remove_(0, 1);
-	WriteLine_(string("};"));
-}
-
-auto ::Source_File_Builder_::ToString_() const -> string
-{
-	return code_->ToString_();
 }
 
 // Entry Point Adapter

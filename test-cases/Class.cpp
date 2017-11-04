@@ -16,6 +16,8 @@ public:
 	auto Method_() const -> string;
 };
 
+// Global Definitions
+
 // Definitions
 
 ::C_::C_(string const name_)

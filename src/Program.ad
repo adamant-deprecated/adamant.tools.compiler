@@ -4,6 +4,7 @@ public var Token: string = "";
 public let TypeDeclarations: mut Source_File_Builder = new Source_File_Builder();
 public let FunctionDeclarations: mut Source_File_Builder = new Source_File_Builder();
 public let ClassDeclarations: mut Source_File_Builder= new Source_File_Builder();
+public let GlobalDefinitions: mut Source_File_Builder = new Source_File_Builder();
 public let Definitions: mut Source_File_Builder = new Source_File_Builder();
 
 public var MainFunctionReturnType: string = "";
@@ -187,52 +188,52 @@ public ParseType() -> string
 }
 
 // An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
-public ParseAtom() -> bool
+public ParseAtom(builder: mut Source_File_Builder) -> bool
 {
 	if Accept("new")
 	{
 		// Constructor Call
 		var type: string = ParseType();
 		if not IsValueType(type) // place value types on the stack in C++ by not using new
-			{ Definitions.Write("new "); }
+			{ builder.Write("new "); }
 		type = ConvertType(type);
-		Definitions.Write(type);
+		builder.Write(type);
 		Expect("(");
-		Definitions.Write("(");
-		ParseCallArguments();
+		builder.Write("(");
+		ParseCallArguments(builder);
 		Expect(")");
-		Definitions.Write(")");
+		builder.Write(")");
 		return true;
 	}
 	if Accept("not")
 	{
-		Definitions.Write("!");
-		ParseExpression();
+		builder.Write("!");
+		ParseExpression(builder);
 		return true;
 	}
 	if Accept("(") // Order of operations parens
 	{
-		Definitions.Write("(");
-		ParseExpression();
+		builder.Write("(");
+		ParseExpression(builder);
 		Expect(")");
-		Definitions.Write(")");
+		builder.Write(")");
 		return true;
 	}
 	if Accept("-")
 	{
 		// Unary Minus
-		Definitions.Write("-");
-		ParseExpression(7);
+		builder.Write("-");
+		ParseExpression(builder, 7);
 		return true;
 	}
 	if Accept("null")
 	{
-		Definitions.Write("::None");
+		builder.Write("::None");
 		return true;
 	}
 	if Accept("self")
 	{
-		Definitions.Write("this");
+		builder.Write("this");
 		return true;
 	}
 
@@ -241,36 +242,36 @@ public ParseAtom() -> bool
 		or Accept("false")
 		or AcceptNumber()
 	{
-		Definitions.Write(token);
+		builder.Write(token);
 		return true;
 	}
 	if AcceptIdentifier()
 	{
-		Definitions.Write(token + "_");
+		builder.Write(token + "_");
 		return true;
 	}
 	if AcceptString()
 	{
-		Definitions.Write("string(" + token + ")");
+		builder.Write("string(" + token + ")");
 		return true;
 	}
 	if AcceptCodePoint()
 	{
-		Definitions.Write(token);
+		builder.Write(token);
 		return true;
 	}
 
 	return false;
 }
 
-public ParseCallArguments() -> void
+public ParseCallArguments(builder: mut Source_File_Builder) -> void
 {
 	var first: bool = true;
 	do
 	{
 		if first { first = false; }
-		else { Definitions.Write(", "); }
-		ParseExpression();
+		else { builder.Write(", "); }
+		ParseExpression(builder);
 	} while Accept(",");
 }
 
@@ -283,9 +284,9 @@ public ParseCallArguments() -> void
 // 6 Additive: + -
 // 7 Unary: -
 // 8 Primary: f() . []
-public ParseExpression(minPrecedence: int) -> void
+public ParseExpression(builder: mut Source_File_Builder, minPrecedence: int) -> void
 {
-	if not ParseAtom() { return; }
+	if not ParseAtom(builder) { return; }
 
 	loop
 	{
@@ -298,61 +299,61 @@ public ParseExpression(minPrecedence: int) -> void
 			// Assignment
 			precedence = 1;
 			leftAssociative = false;
-			Definitions.Write(" " + token + " ");
+			builder.Write(" " + token + " ");
 		}
 		else if token == "or" and minPrecedence <= 2
 		{
 			// logical or
 			precedence = 2;
 			leftAssociative = true;
-			Definitions.Write(" || ");
+			builder.Write(" || ");
 		}
 		else if token == "and" and minPrecedence <= 3
 		{
 			// logical and
 			precedence = 3;
 			leftAssociative = true;
-			Definitions.Write(" && ");
+			builder.Write(" && ");
 		}
 		else if token == "==" and minPrecedence <= 4
 		{
 			// equal
 			precedence = 4;
 			leftAssociative = true;
-			Definitions.Write(" == ");
+			builder.Write(" == ");
 		}
 		else if token == "<>" and minPrecedence <= 4
 		{
 			// not equal
 			precedence = 4;
 			leftAssociative = true;
-			Definitions.Write(" != ");
+			builder.Write(" != ");
 		}
 		else if (token == "<" or token == "<=" or token == ">" or token == ">=") and minPrecedence <= 5
 		{
 			// relational operators
 			precedence = 5;
 			leftAssociative = true;
-			Definitions.Write(" " + token + " ");
+			builder.Write(" " + token + " ");
 		}
 		else if (token == "+" or token == "-") and minPrecedence <= 6
 		{
 			// Additive
 			precedence = 6;
 			leftAssociative = true;
-			Definitions.Write(" " + token + " ");
+			builder.Write(" " + token + " ");
 		}
 		else if token == "(" and minPrecedence <= 8
 		{
 			// Call Expression
 			Token = tokenStream.GetNextToken();
-			Definitions.Write("(");
-			ParseCallArguments();
+			builder.Write("(");
+			ParseCallArguments(builder);
 			if Token <> ")"
 			{
-				Definitions.Error("Expected `)` found `" + Token + "`");
+				builder.Error("Expected `)` found `" + Token + "`");
 			}
-			Definitions.Write(")");
+			builder.Write(")");
 			precedence = 8;
 			leftAssociative = true;
 			suffixOperator = true;
@@ -362,19 +363,19 @@ public ParseExpression(minPrecedence: int) -> void
 			// Member Access
 			precedence = 8;
 			leftAssociative = true;
-			Definitions.Write("->");
+			builder.Write("->");
 		}
 		else if token == "[" and minPrecedence <= 8
 		{
 			// Element Access
 			Token = tokenStream.GetNextToken();
-			Definitions.Write("[");
-			ParseExpression();
+			builder.Write("[");
+			ParseExpression(builder);
 			if Token <> "]"
 			{
-				Definitions.Error("Expected `]` found `" + Token + "`");
+				builder.Error("Expected `]` found `" + Token + "`");
 			}
-			Definitions.Write("]");
+			builder.Write("]");
 			precedence = 8;
 			leftAssociative = true;
 			suffixOperator = true;
@@ -388,14 +389,14 @@ public ParseExpression(minPrecedence: int) -> void
 		if not suffixOperator
 		{
 			if leftAssociative { precedence += 1; }
-			ParseExpression(precedence);
+			ParseExpression(builder, precedence);
 		}
 	}
 }
 
-public ParseExpression() -> void
+public ParseExpression(builder: mut Source_File_Builder) -> void
 {
-	ParseExpression(1);
+	ParseExpression(builder, 1);
 }
 
 public ParseStatement() -> bool
@@ -411,7 +412,7 @@ public ParseStatement() -> bool
 		else
 		{
 			Definitions.BeginLine("return ");
-			ParseExpression();
+			ParseExpression(Definitions);
 			Expect(";");
 			Definitions.EndLine(";");
 		}
@@ -426,7 +427,7 @@ public ParseStatement() -> bool
 	if Accept("while")
 	{
 		Definitions.BeginLine("while (");
-		ParseExpression();
+		ParseExpression(Definitions);
 		Definitions.EndLine(")");
 		ParseBlock();
 		return true;
@@ -444,7 +445,7 @@ public ParseStatement() -> bool
 		Definitions.Write(ConvertType(k == "var", mutableValue, type) + " " + name + "_");
 		Expect("in");
 		Definitions.Write(" : *(");
-		ParseExpression();
+		ParseExpression(Definitions);
 		Definitions.EndLine("))");
 		ParseBlock();
 		return true;
@@ -455,7 +456,7 @@ public ParseStatement() -> bool
 		ParseBlock();
 		Expect("while");
 		Definitions.BeginLine("while (");
-		ParseExpression();
+		ParseExpression(Definitions);
 		Expect(";");
 		Definitions.EndLine(");");
 		return true;
@@ -464,7 +465,7 @@ public ParseStatement() -> bool
 	if Accept("if")
 	{
 		Definitions.BeginLine("if (");
-		ParseExpression();
+		ParseExpression(Definitions);
 		Definitions.EndLine(")");
 		ParseBlock();
 		while Accept("else")
@@ -472,7 +473,7 @@ public ParseStatement() -> bool
 			if Accept("if")
 			{
 				Definitions.BeginLine("else if (");
-				ParseExpression();
+				ParseExpression(Definitions);
 				Definitions.EndLine(")");
 				ParseBlock();
 			}
@@ -511,7 +512,7 @@ public ParseStatement() -> bool
 		if Accept("=")
 		{
 			Definitions.Write(" = ");
-			ParseExpression();
+			ParseExpression(Definitions);
 		}
 		Expect(";");
 		Definitions.EndLine(";");
@@ -520,7 +521,7 @@ public ParseStatement() -> bool
 
 	// Assume it is an expression statement
 	Definitions.BeginLine("");
-	ParseExpression();
+	ParseExpression(Definitions);
 	Expect(";");
 	Definitions.EndLine(";");
 	return true;
@@ -676,11 +677,11 @@ public ParseDeclaration() -> void
 		var variableType: string = ParseType();
 		Expect("=");
 		variableType = ConvertType(kind == "var", mutableValue, variableType);
-		Definitions.BeginLine(variableType);
-		Definitions.Write(" " + variableName + "_ = ");
-		ParseExpression();
+		GlobalDefinitions.BeginLine(variableType);
+		GlobalDefinitions.Write(" " + variableName + "_ = ");
+		ParseExpression(GlobalDefinitions);
 		Expect(";");
-		Definitions.EndLine(";");
+		GlobalDefinitions.EndLine(";");
 		return;
 	}
 
@@ -768,6 +769,8 @@ public EmitPreamble() -> void
 	FunctionDeclarations.WriteLine("// Function Declarations");
 	ClassDeclarations.BlankLine();
 	ClassDeclarations.WriteLine("// Class Declarations");
+	GlobalDefinitions.BlankLine();
+	GlobalDefinitions.WriteLine("// Global Definitions");
 	Definitions.BlankLine();
 	Definitions.WriteLine("// Definitions");
 }
@@ -835,7 +838,11 @@ public Compile(sources: System.Collections.List<Source_Text>, resources: System.
 		ParseCompilationUnit();
 	}
 	EmitEntryPointAdapter(resources);
-	return TypeDeclarations.ToString() + FunctionDeclarations.ToString() + ClassDeclarations.ToString() + Definitions.ToString();
+	return TypeDeclarations.ToString()
+		+ FunctionDeclarations.ToString()
+		+ ClassDeclarations.ToString()
+		+ GlobalDefinitions.ToString()
+		+ Definitions.ToString();
 }
 
 public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void

@@ -7,6 +7,8 @@ auto Main_() -> int;
 
 // Class Declarations
 
+// Global Definitions
+
 // Definitions
 
 auto Main_() -> int

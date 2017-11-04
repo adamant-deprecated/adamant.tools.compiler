@@ -8,6 +8,8 @@ auto Func_() -> int;
 
 // Class Declarations
 
+// Global Definitions
+
 // Definitions
 
 auto Main_() -> int

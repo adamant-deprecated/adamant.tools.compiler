@@ -8,6 +8,8 @@ auto Main_() -> int;
 
 // Class Declarations
 
+// Global Definitions
+
 // Definitions
 
 auto Identity_(int const value_) -> int

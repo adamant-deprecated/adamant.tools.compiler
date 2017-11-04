@@ -8,6 +8,8 @@ auto Main_() -> void;
 
 // Class Declarations
 
+// Global Definitions
+
 // Definitions
 
 auto Func_(bool const value_) -> bool

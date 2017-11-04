@@ -7,6 +7,8 @@ auto Main_() -> void;
 
 // Class Declarations
 
+// Global Definitions
+
 // Definitions
 
 auto Main_() -> void

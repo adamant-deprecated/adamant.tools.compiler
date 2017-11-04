@@ -7,8 +7,10 @@ auto Main_() -> int;
 
 // Class Declarations
 
-// Definitions
+// Global Definitions
 int const Result_ = 42;
+
+// Definitions
 
 auto Main_() -> int
 {
