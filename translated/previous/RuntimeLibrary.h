@@ -190,6 +190,8 @@ namespace System_
 			void Append_(String_Builder_ const * value);
 			void AppendLine_(string const& value);
 			void AppendLine_();
+			void Remove_(int start, int length);
+			void Remove_(int start);
 			string ToString_() const { return buffer; }
 		};
 	}

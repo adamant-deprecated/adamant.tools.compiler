@@ -223,5 +223,15 @@ namespace System_
 		{
 			buffer = buffer + string("\n");
 		}
+
+		void String_Builder_::Remove_(int start, int length)
+		{
+			buffer = buffer.Substring_(0, start) + buffer.Substring_(start+length);
+		}
+
+		void String_Builder_::Remove_(int start)
+		{
+			String_Builder_::Remove_(start, buffer.Length_-start);
+		}
 	}
 }
