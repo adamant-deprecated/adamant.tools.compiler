@@ -209,6 +209,11 @@ namespace System_
 			buffer = buffer + value;
 		}
 
+		void StringBuilder_::Append_(StringBuilder_ const * value)
+		{
+			buffer = buffer + value->buffer;
+		}
+
 		void StringBuilder_::AppendLine_(string const & value)
 		{
 			buffer = buffer + value + string("\n");

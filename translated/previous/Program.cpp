@@ -9,6 +9,7 @@ class Syntax_Token_;
 class Token_Stream_;
 class Token_Type_;
 class Source_File_Builder_;
+class Emitter_;
 
 // Function Declarations
 auto IsIdentifierChar_(char const c_) -> bool;
@@ -45,17 +46,20 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 auto ReadSource_(string const path_) -> ::Source_Text_ const *;
 
 // Class Declarations
+
 class Lexer_
 {
 public:
 	auto Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *;
 };
+
 class Parser_
 {
 public:
 	Parser_();
 	auto Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syntax_Node_ const *;
 };
+
 class Source_Text_
 {
 public:
@@ -64,10 +68,12 @@ public:
 	string Text_;
 	Source_Text_(string const package_, string const name_, string const text_);
 };
+
 class Syntax_Node_
 {
 public:
 };
+
 class Syntax_Token_
 {
 public:
@@ -77,6 +83,7 @@ public:
 	unsigned int Length_;
 	Syntax_Token_(::Token_Type_ const *const tokenType_, ::Source_Text_ const *const source_, unsigned int const start_, unsigned int const length_);
 };
+
 class Token_Stream_
 {
 public:
@@ -87,10 +94,12 @@ public:
 	static auto NewToken_(::Token_Type_ const *const type_, unsigned int const end_) -> ::Syntax_Token_ const *;
 	static auto NewToken_(::Token_Type_ const *const type_) -> ::Syntax_Token_ const *;
 };
+
 class Token_Type_
 {
 public:
 };
+
 class Source_File_Builder_
 {
 public:
@@ -113,7 +122,13 @@ public:
 	auto ToString_() const -> string;
 };
 
+class Emitter_
+{
+public:
+};
+
 // Definitions
+
 auto ::Lexer_::Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *
 {
 	return new ::Token_Stream_(source_);
@@ -127,27 +142,14 @@ auto ::Parser_::Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syn
 {
 	return ::None;
 }
-
 ::Token_Stream_ * tokenStream_ = ::None;
-
 string Token_ = string("");
-
 ::Source_File_Builder_ *const TypeDeclarations_ = new ::Source_File_Builder_();
-
 ::Source_File_Builder_ *const FunctionDeclarations_ = new ::Source_File_Builder_();
-
 ::Source_File_Builder_ *const ClassDeclarations_ = new ::Source_File_Builder_();
-
 ::Source_File_Builder_ *const Definitions_ = new ::Source_File_Builder_();
-
-int IndentDepth_ = 0;
-
-bool AfterDeclaration_ = false;
-
 string MainFunctionReturnType_ = string("");
-
 bool MainFunctionAcceptsConsole_ = false;
-
 bool MainFunctionAcceptsArgs_ = false;
 
 auto IsIdentifierChar_(char const c_) -> bool
@@ -643,7 +645,6 @@ auto ParseStatement_() -> bool
 	{
 		Definitions_->WriteLine_(string("do"));
 		ParseBlock_();
-		AfterDeclaration_ = false;
 		Expect_(string("while"));
 		Definitions_->BeginLine_(string("while ("));
 		ParseExpression_();
@@ -660,7 +661,6 @@ auto ParseStatement_() -> bool
 		ParseBlock_();
 		while (Accept_(string("else")))
 		{
-			AfterDeclaration_ = false;
 			if (Accept_(string("if")))
 			{
 				Definitions_->BeginLine_(string("else if ("));
@@ -895,7 +895,6 @@ auto ParseDeclaration_() -> void
 		ParseExpression_();
 		Expect_(string(";"));
 		Definitions_->EndLine_(string(";"));
-		AfterDeclaration_ = true;
 		return;
 	}
 
@@ -1387,7 +1386,7 @@ auto ::Source_File_Builder_::Error_(string const message_) -> void
 
 auto ::Source_File_Builder_::BeginLine_(string const value_) -> void
 {
-	code_->Append_(indent_->ToString_());
+	code_->Append_(indent_);
 	code_->Append_(value_);
 	firstElement_ = afterBlock_ = false;
 }
@@ -1407,7 +1406,7 @@ auto ::Source_File_Builder_::EndLine_(string const value_) -> void
 
 auto ::Source_File_Builder_::WriteLine_(string const value_) -> void
 {
-	code_->Append_(indent_->ToString_());
+	code_->Append_(indent_);
 	code_->Append_(value_);
 	code_->AppendLine_();
 	firstElement_ = afterBlock_ = false;
