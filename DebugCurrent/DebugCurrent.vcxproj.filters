@@ -18,7 +18,7 @@
     <ClCompile Include="..\translated\current\Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\translated\current\runtime.cpp">
+    <ClCompile Include="..\translated\current\RuntimeLibrary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

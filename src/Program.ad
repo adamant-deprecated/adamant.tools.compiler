@@ -1,5 +1,5 @@
 public var tokenStream: mut Token_Stream = null;
-public var Token: string = "";
+public var Token: Syntax_Node = null;
 
 public let TypeDeclarations: mut Source_File_Builder = new Source_File_Builder();
 public let FunctionDeclarations: mut Source_File_Builder = new Source_File_Builder();
@@ -15,41 +15,18 @@ public var MainFunctionAcceptsArgs: bool = false;
 // Lexer
 // ----------------------------------------------------------------------------
 
-public IsIdentifierChar(c: code_point) -> bool
-{
-	return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
-}
-
-public IsNumberChar(c: code_point) -> bool
-{
-	return c >= '0' and c <= '9';
-}
-
-public TokenIsIdentifier() -> bool
-{
-	if Token.Length == 0
-		{ return false; }
-
-	for let c: code_point in Token
-	{
-		if not IsIdentifierChar(c)
-			{ return false; }
-	}
-	return true;
-}
-
 public Accept(expected: string) -> bool
 {
-	let accepted: bool = Token == expected;
+	let accepted: bool = Token.GetText() == expected;
 	if accepted { Token = tokenStream.GetNextToken(); }
 	return accepted;
 }
 
 public Expect(expected: string) -> void
 {
-	if Token <> expected
+	if Token.GetText() <> expected
 	{
-		Definitions.Error("Expected `" + expected + "` but found `" + Token + "`");
+		Definitions.Error("Expected `" + expected + "` but found `" + Token.GetText() + "`");
 		Token = tokenStream.GetNextToken(); // Skip token to advance
 	}
 	else
@@ -60,14 +37,14 @@ public Expect(expected: string) -> void
 
 public AcceptIdentifier() -> bool
 {
-	if not TokenIsIdentifier() { return false; }
+	if Token.Type <> Identifier { return false; }
 	Token = tokenStream.GetNextToken();
 	return true;
 }
 
 public AcceptString() -> bool
 {
-	if Token.Length == 0 or Token[0] <> '"'
+	if Token.Type <> String
 		{ return false; }
 
 	Token = tokenStream.GetNextToken();
@@ -76,7 +53,7 @@ public AcceptString() -> bool
 
 public AcceptCodePoint() -> bool
 {
-	if Token.Length == 0 or Token[0] <> '\''
+	if Token.Type <> CodePoint
 		{ return false; }
 
 	Token = tokenStream.GetNextToken();
@@ -85,11 +62,8 @@ public AcceptCodePoint() -> bool
 
 public AcceptNumber() -> bool
 {
-	for let c: code_point in Token
-	{
-		if not IsNumberChar(c)
-			{ return false; }
-	}
+	if Token.Type <> Number
+		{ return false; }
 
 	Token = tokenStream.GetNextToken();
 	return true;
@@ -97,14 +71,14 @@ public AcceptNumber() -> bool
 
 public ExpectIdentifier() -> string
 {
-	if not TokenIsIdentifier()
+	if Token.Type <> Identifier
 	{
-		Definitions.Error("Expected identifier, found `" + Token + "`");
+		Definitions.Error("Expected identifier, found `" + Token.GetText() + "`");
 		Token = tokenStream.GetNextToken(); // Skip token to advance
 		return "<missing>";
 	}
 
-	let identifier: string = Token;
+	let identifier: string = Token.GetText();
 	Token = tokenStream.GetNextToken();
 	return identifier;
 }
@@ -177,7 +151,7 @@ public ParseType() -> string
 		type.Append("<");
 		let mutableValue: bool = Accept("mut");
 		type.Append(ConvertType(true, mutableValue, ParseType()));
-		Accept(">");
+		Expect(">");
 		type.Append(">");
 	}
 
@@ -237,7 +211,7 @@ public ParseAtom(builder: mut Source_File_Builder) -> bool
 		return true;
 	}
 
-	let token: string = Token;
+	let token: string = Token.GetText();
 	if Accept("true")
 		or Accept("false")
 		or AcceptNumber()
@@ -290,7 +264,7 @@ public ParseExpression(builder: mut Source_File_Builder, minPrecedence: int) -> 
 
 	loop
 	{
-		let token: string = Token;
+		let token: string = Token.GetText();
 		var precedence: int;
 		var leftAssociative: bool;
 		var suffixOperator: bool = false;
@@ -349,9 +323,9 @@ public ParseExpression(builder: mut Source_File_Builder, minPrecedence: int) -> 
 			Token = tokenStream.GetNextToken();
 			builder.Write("(");
 			ParseCallArguments(builder);
-			if Token <> ")"
+			if Token.GetText() <> ")"
 			{
-				builder.Error("Expected `)` found `" + Token + "`");
+				builder.Error("Expected `)` found `" + Token.GetText() + "`");
 			}
 			builder.Write(")");
 			precedence = 8;
@@ -371,9 +345,9 @@ public ParseExpression(builder: mut Source_File_Builder, minPrecedence: int) -> 
 			Token = tokenStream.GetNextToken();
 			builder.Write("[");
 			ParseExpression(builder);
-			if Token <> "]"
+			if Token.GetText() <> "]"
 			{
-				builder.Error("Expected `]` found `" + Token + "`");
+				builder.Error("Expected `]` found `" + Token.GetText() + "`");
 			}
 			builder.Write("]");
 			precedence = 8;
@@ -401,7 +375,7 @@ public ParseExpression(builder: mut Source_File_Builder) -> void
 
 public ParseStatement() -> bool
 {
-	if Token == "}" { return false; }
+	if Token.GetText() == "}" { return false; }
 
 	Definitions.StatementSeparatorLine();
 
@@ -435,9 +409,9 @@ public ParseStatement() -> bool
 	if Accept("for")
 	{
 		Definitions.BeginLine("for (");
-		let k: string = Token;
+		let k: string = Token.GetText();
 		if not Accept("let") and not Accept("var")
-			{ Definitions.Error("Expected `let` or `var` but found `" + Token + "`"); }
+			{ Definitions.Error("Expected `let` or `var` but found `" + Token.GetText() + "`"); }
 		let name: string = ExpectIdentifier();
 		Expect(":");
 		let mutableValue: bool = Accept("mut");
@@ -499,7 +473,7 @@ public ParseStatement() -> bool
 		return true;
 	}
 
-	let kind: string = Token;
+	let kind: string = Token.GetText();
 	if Accept("let") or Accept("var")
 	{
 		let variableName: string = ExpectIdentifier();
@@ -583,7 +557,7 @@ public ParseMethodArgumentsDeclaration() -> string
 
 public ParseClassMember(className: string) -> void
 {
-	let accessModifier: string = Token;
+	let accessModifier: string = Token.GetText();
 	if Accept("public") or Accept("internal") or Accept("protected") or Accept("private")
 	{
 		// TODO currently not doing anything with the access modifier
@@ -605,7 +579,7 @@ public ParseClassMember(className: string) -> void
 		return;
 	}
 
-	let kind: string = Token;
+	let kind: string = Token.GetText();
 	if Accept("var") or Accept("let")
 	{
 		let fieldName: string = ExpectIdentifier();
@@ -626,7 +600,7 @@ public ParseClassMember(className: string) -> void
 	if mutableSelf
 	{
 		Expect("self");
-		if Token <> ")"
+		if Token.GetText() <> ")"
 			{ Expect(","); }
 	}
 	else
@@ -634,7 +608,7 @@ public ParseClassMember(className: string) -> void
 		if Accept("self")
 		{
 			isAssociatedFuntion = false;
-			if Token <> ")"
+			if Token.GetText() <> ")"
 				{ Expect(","); }
 		}
 	}
@@ -657,7 +631,7 @@ public ParseClassMember(className: string) -> void
 
 public ParseDeclaration() -> void
 {
-	let accessModifier: string = Token;
+	let accessModifier: string = Token.GetText();
 	if Accept("public") or Accept("internal")
 	{
 		// TODO currently not doing anything with the access modifier
@@ -668,7 +642,7 @@ public ParseDeclaration() -> void
 	}
 
 	// Static Variable Declaration
-	let kind: string = Token;
+	let kind: string = Token.GetText();
 	if Accept("var") or Accept("let")
 	{
 		let variableName: string = ExpectIdentifier();
@@ -718,7 +692,7 @@ public ParseDeclaration() -> void
 			if Accept("=")
 			{
 				ClassDeclarations.Write(" = ");
-				let value: string = Token;
+				let value: string = Token.GetText();
 				if  AcceptNumber()
 					{ ClassDeclarations.Write(value); }
 				else
@@ -753,7 +727,7 @@ public ParseDeclaration() -> void
 
 public ParseCompilationUnit() -> void
 {
-	while TokenIsIdentifier()
+	while Token <> null and Token.Type == Identifier
 	{
 		ParseDeclaration();
 	}

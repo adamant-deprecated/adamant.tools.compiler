@@ -1,21 +1,18 @@
 public class Token_Stream
 {
 	public let Source: Source_Text;
-	private var nextToken: uint;
+	private var position: uint;
 
 	public new(source: Source_Text)
 	{
 		Source = source;
-		nextToken = 0; // TODO have to assign this zero for now because we don't have default values working
+		position = 0; // TODO have to assign this zero for now because we don't have default values working
 	}
 
-	public GetNextToken(mut self) -> string
+	public GetNextToken(mut self) -> Syntax_Node
 	{
-		var position: uint = nextToken;
-		var tokenEnd: uint = -1;
-		var escaped: bool;
-		var done: bool = false;
-		while not done and position < Source.Text.Length
+		var end: uint = -1;
+		while position < Source.Text.Length
 		{
 			let curChar: code_point = Source.Text[position];
 			if curChar == ' '
@@ -27,63 +24,63 @@ public class Token_Stream
 				continue;
 			}
 			else if curChar == '{'
-				or curChar == '}'
-				or curChar == '('
-				or curChar == ')'
-				or curChar == ';'
-				or curChar == ','
-				or curChar == '.'
-				or curChar == ':'
-				or curChar == '['
-				or curChar == ']'
-				or curChar == '?'
-			{
-				tokenEnd = position + 1;
-				break;
-			}
+				{ return NewOperator(LeftBrace); }
+			else if curChar == '}'
+				{ return NewOperator(RightBrace); }
+			else if curChar == '('
+				{ return NewOperator(LeftParen); }
+			else if curChar == ')'
+				{ return NewOperator(RightParen); }
+			else if curChar == ';'
+				{ return NewOperator(Semicolon); }
+			else if curChar == ','
+				{ return NewOperator(Comma); }
+			else if curChar == '.'
+				{ return NewOperator(Dot); }
+			else if curChar == ':'
+				{ return NewOperator(Colon); }
+			else if curChar == '['
+				{ return NewOperator(LeftBracket); }
+			else if curChar == ']'
+				{ return NewOperator(RightBracket); }
+			else if curChar == '?'
+				{ return NewOperator(Null); }
 			else if curChar == '='
 			{
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 				{
 					// it is `==`
-					tokenEnd = position + 2;
-					break;
+					return NewOperator(Equal, 2);
 				}
 
 				// it is `=`
-				tokenEnd = position + 1;
-				break;
+				return NewOperator(Assign);
 			}
 			else if curChar == '+'
 			{
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 				{
 					// it is `+=`
-					tokenEnd = position + 2;
-					break;
+					return NewOperator(AddAssign, 2);
 				}
 
 				// it is `+`
-				tokenEnd = position + 1;
-				break;
+				return NewOperator(Add);
 			}
 			else if curChar == '-'
 			{
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'
 				{
 					// it is `->`
-					tokenEnd = position + 2;
-					break;
+					return NewOperator(Arrow, 2);
 				}
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 				{
 					// it is `-=`
-					tokenEnd = position + 2;
-					break;
+					return NewOperator(SubAssign, 2);
 				}
 				// it is `-`
-				tokenEnd = position + 1;
-				break;
+				return NewOperator(Sub);
 			}
 			else if curChar == '/'
 			{
@@ -98,116 +95,111 @@ public class Token_Stream
 					continue;
 				}
 				// it is `/`
-				tokenEnd = position + 1;
-				break;
+				return NewOperator(Slash);
 			}
 			else if curChar == '<'
 			{
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'
 				{
 					// it is `<>`
-					tokenEnd = position + 2;
-					break;
+					return NewOperator(NotEqual, 2);
 				}
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 				{
 					// it is `<=`
-					tokenEnd = position + 2;
-					break;
+					return NewOperator(LessThanOrEqual, 2);
 				}
 				// it is `<`
-				tokenEnd = position + 1;
-				break;
+				return NewOperator(LessThan);
 			}
 			else if curChar == '>'
 			{
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
 				{
 					// it is `>=`
-					tokenEnd = position + 2;
-					break;
+					return NewOperator(GreaterThanOrEqual, 2);
 				}
 				// it is `>`
-				tokenEnd = position + 1;
-				break;
+				return NewOperator(GreaterThan);
 			}
 			else if curChar == '"'
 			{
-				tokenEnd = position + 1;
-				escaped = false;
-				while tokenEnd < Source.Text.Length and (Source.Text[tokenEnd] <> '"' or escaped)
+				end = position + 1;
+				var escaped: bool = false;
+				while end < Source.Text.Length and (Source.Text[end] <> '"' or escaped)
 				{
-					escaped = Source.Text[tokenEnd] == '\\' and not escaped;
-					tokenEnd += 1;
+					escaped = Source.Text[end] == '\\' and not escaped;
+					end += 1;
 				}
 
-				tokenEnd += 1; // To include the close quote
-				break;
+				end += 1; // To include the close quote
+				return NewToken(String, end);
 			}
 			else if curChar == '\''
 			{
-				tokenEnd = position + 1;
-				escaped = false;
-				while tokenEnd < Source.Text.Length and (Source.Text[tokenEnd] <> '\'' or escaped)
+				end = position + 1;
+				var escaped: bool = false;
+				while end < Source.Text.Length and (Source.Text[end] <> '\'' or escaped)
 				{
-					escaped = Source.Text[tokenEnd] == '\\' and not escaped;
-					tokenEnd += 1;
+					escaped = Source.Text[end] == '\\' and not escaped;
+					end += 1;
 				}
 
-				tokenEnd += 1; // To include the close quote
-				break;
+				end += 1; // To include the close quote
+				return NewToken(CodePoint, end);
 			}
 			else
 			{
 				if IsIdentifierChar(curChar)
 				{
-					tokenEnd = position + 1;
-					while IsIdentifierChar(Source.Text[tokenEnd])
+					end = position + 1;
+					while IsIdentifierChar(Source.Text[end])
 					{
-						tokenEnd += 1;
+						end += 1;
 					}
-					break;
+					return NewToken(Identifier, end);
 				}
 				if(IsNumberChar(curChar))
 				{
-					tokenEnd = position + 1;
-					while IsNumberChar(Source.Text[tokenEnd])
+					end = position + 1;
+					while IsNumberChar(Source.Text[end])
 					{
-						tokenEnd += 1;
+						end += 1;
 					}
-					break;
+					return NewToken(Number, end);
 				}
-				Definitions.Error("Lexer: Invalid character `" + curChar + "`");
-				position += 1;
+				return NewToken(Error, position + 1);
+				//TODO Definitions.Error("Lexer: Invalid character `" + curChar + "`");
 			}
 		}
 
-		var token: string;
-		if tokenEnd == -1
-		{
-			token = ""; // TODO need nullable string so we can set it to null
-			nextToken = position;
-		}
-		else
-		{
-			token = Source.Text.Substring(position, tokenEnd - position);
-			nextToken = tokenEnd;
-		}
+		return null;
+	}
 
+	private NewOperator(mut self, type: int) -> Syntax_Node
+	{
+		return NewToken(type, position + 1);
+	}
+
+	private NewOperator(mut self, type: int, length: uint) -> Syntax_Node
+	{
+		return NewToken(type, position + length);
+	}
+
+	private NewToken(mut self, type: int, end: uint) -> Syntax_Node
+	{
+		let token: Syntax_Node = new Syntax_Node(type, Source, position, end-position);
+		position = end;
 		return token;
 	}
 
-	private NewToken(type: Token_Type, end: uint) -> Syntax_Token
+	private IsIdentifierChar(c: code_point) -> bool
 	{
-		//let start: uint = position;
-		//position = end;
-		//return new Syntax_Token(type, Source, start, end);
-		return null;
+		return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
 	}
 
-	private NewToken(type: Token_Type) -> Syntax_Token
+	private IsNumberChar(c: code_point) -> bool
 	{
-		//return NewToken(type, position+1);
-		return null;
+		return c >= '0' and c <= '9';
 	}
 }

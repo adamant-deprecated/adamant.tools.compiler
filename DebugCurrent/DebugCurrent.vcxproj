@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\translated\current\Program.cpp" />
-    <ClCompile Include="..\translated\current\runtime.cpp" />
+    <ClCompile Include="..\translated\current\RuntimeLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\translated\current\runtime.h" />
@@ -78,6 +78,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

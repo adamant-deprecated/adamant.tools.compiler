@@ -26,10 +26,10 @@ auto IsValueType_(string const type_) -> bool;
 auto ConvertType_(string const type_) -> string;
 auto ConvertType_(bool const mutableBinding_, bool const mutableValue_, string type_) -> string;
 auto ParseType_() -> string;
-auto ParseAtom_() -> bool;
-auto ParseCallArguments_() -> void;
-auto ParseExpression_(int const minPrecedence_) -> void;
-auto ParseExpression_() -> void;
+auto ParseAtom_(::Source_File_Builder_ *const builder_) -> bool;
+auto ParseCallArguments_(::Source_File_Builder_ *const builder_) -> void;
+auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrecedence_) -> void;
+auto ParseExpression_(::Source_File_Builder_ *const builder_) -> void;
 auto ParseStatement_() -> bool;
 auto ParseBlock_() -> void;
 auto ParseArgumentsDeclaration_(bool const isMainFunction_, bool const isMethod_) -> string;
@@ -133,6 +133,7 @@ string Token_ = string("");
 ::Source_File_Builder_ *const TypeDeclarations_ = new ::Source_File_Builder_();
 ::Source_File_Builder_ *const FunctionDeclarations_ = new ::Source_File_Builder_();
 ::Source_File_Builder_ *const ClassDeclarations_ = new ::Source_File_Builder_();
+::Source_File_Builder_ *const GlobalDefinitions_ = new ::Source_File_Builder_();
 ::Source_File_Builder_ *const Definitions_ = new ::Source_File_Builder_();
 string MainFunctionReturnType_ = string("");
 bool MainFunctionAcceptsConsole_ = false;
@@ -348,90 +349,90 @@ auto ParseType_() -> string
 	return type_->ToString_();
 }
 
-auto ParseAtom_() -> bool
+auto ParseAtom_(::Source_File_Builder_ *const builder_) -> bool
 {
 	if (Accept_(string("new")))
 	{
 		string type_ = ParseType_();
 		if (!IsValueType_(type_))
 		{
-			Definitions_->Write_(string("new "));
+			builder_->Write_(string("new "));
 		}
 
 		type_ = ConvertType_(type_);
-		Definitions_->Write_(type_);
+		builder_->Write_(type_);
 		Expect_(string("("));
-		Definitions_->Write_(string("("));
-		ParseCallArguments_();
+		builder_->Write_(string("("));
+		ParseCallArguments_(builder_);
 		Expect_(string(")"));
-		Definitions_->Write_(string(")"));
+		builder_->Write_(string(")"));
 		return true;
 	}
 
 	if (Accept_(string("not")))
 	{
-		Definitions_->Write_(string("!"));
-		ParseExpression_();
+		builder_->Write_(string("!"));
+		ParseExpression_(builder_);
 		return true;
 	}
 
 	if (Accept_(string("(")))
 	{
-		Definitions_->Write_(string("("));
-		ParseExpression_();
+		builder_->Write_(string("("));
+		ParseExpression_(builder_);
 		Expect_(string(")"));
-		Definitions_->Write_(string(")"));
+		builder_->Write_(string(")"));
 		return true;
 	}
 
 	if (Accept_(string("-")))
 	{
-		Definitions_->Write_(string("-"));
-		ParseExpression_(7);
+		builder_->Write_(string("-"));
+		ParseExpression_(builder_, 7);
 		return true;
 	}
 
 	if (Accept_(string("null")))
 	{
-		Definitions_->Write_(string("::None"));
+		builder_->Write_(string("::None"));
 		return true;
 	}
 
 	if (Accept_(string("self")))
 	{
-		Definitions_->Write_(string("this"));
+		builder_->Write_(string("this"));
 		return true;
 	}
 
 	string const token_ = Token_;
 	if (Accept_(string("true")) || Accept_(string("false")) || AcceptNumber_())
 	{
-		Definitions_->Write_(token_);
+		builder_->Write_(token_);
 		return true;
 	}
 
 	if (AcceptIdentifier_())
 	{
-		Definitions_->Write_(token_ + string("_"));
+		builder_->Write_(token_ + string("_"));
 		return true;
 	}
 
 	if (AcceptString_())
 	{
-		Definitions_->Write_(string("string(") + token_ + string(")"));
+		builder_->Write_(string("string(") + token_ + string(")"));
 		return true;
 	}
 
 	if (AcceptCodePoint_())
 	{
-		Definitions_->Write_(token_);
+		builder_->Write_(token_);
 		return true;
 	}
 
 	return false;
 }
 
-auto ParseCallArguments_() -> void
+auto ParseCallArguments_(::Source_File_Builder_ *const builder_) -> void
 {
 	bool first_ = true;
 	do
@@ -442,17 +443,17 @@ auto ParseCallArguments_() -> void
 		}
 		else
 		{
-			Definitions_->Write_(string(", "));
+			builder_->Write_(string(", "));
 		}
 
-		ParseExpression_();
+		ParseExpression_(builder_);
 	}
 	while (Accept_(string(",")));
 }
 
-auto ParseExpression_(int const minPrecedence_) -> void
+auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrecedence_) -> void
 {
-	if (!ParseAtom_())
+	if (!ParseAtom_(builder_))
 	{
 		return;
 	}
@@ -467,55 +468,55 @@ auto ParseExpression_(int const minPrecedence_) -> void
 		{
 			precedence_ = 1;
 			leftAssociative_ = false;
-			Definitions_->Write_(string(" ") + token_ + string(" "));
+			builder_->Write_(string(" ") + token_ + string(" "));
 		}
 		else if (token_ == string("or") && minPrecedence_ <= 2)
 		{
 			precedence_ = 2;
 			leftAssociative_ = true;
-			Definitions_->Write_(string(" || "));
+			builder_->Write_(string(" || "));
 		}
 		else if (token_ == string("and") && minPrecedence_ <= 3)
 		{
 			precedence_ = 3;
 			leftAssociative_ = true;
-			Definitions_->Write_(string(" && "));
+			builder_->Write_(string(" && "));
 		}
 		else if (token_ == string("==") && minPrecedence_ <= 4)
 		{
 			precedence_ = 4;
 			leftAssociative_ = true;
-			Definitions_->Write_(string(" == "));
+			builder_->Write_(string(" == "));
 		}
 		else if (token_ == string("<>") && minPrecedence_ <= 4)
 		{
 			precedence_ = 4;
 			leftAssociative_ = true;
-			Definitions_->Write_(string(" != "));
+			builder_->Write_(string(" != "));
 		}
 		else if ((token_ == string("<") || token_ == string("<=") || token_ == string(">") || token_ == string(">=")) && minPrecedence_ <= 5)
 		{
 			precedence_ = 5;
 			leftAssociative_ = true;
-			Definitions_->Write_(string(" ") + token_ + string(" "));
+			builder_->Write_(string(" ") + token_ + string(" "));
 		}
 		else if ((token_ == string("+") || token_ == string("-")) && minPrecedence_ <= 6)
 		{
 			precedence_ = 6;
 			leftAssociative_ = true;
-			Definitions_->Write_(string(" ") + token_ + string(" "));
+			builder_->Write_(string(" ") + token_ + string(" "));
 		}
 		else if (token_ == string("(") && minPrecedence_ <= 8)
 		{
 			Token_ = tokenStream_->GetNextToken_();
-			Definitions_->Write_(string("("));
-			ParseCallArguments_();
+			builder_->Write_(string("("));
+			ParseCallArguments_(builder_);
 			if (Token_ != string(")"))
 			{
-				Definitions_->Error_(string("Expected `)` found `") + Token_ + string("`"));
+				builder_->Error_(string("Expected `)` found `") + Token_ + string("`"));
 			}
 
-			Definitions_->Write_(string(")"));
+			builder_->Write_(string(")"));
 			precedence_ = 8;
 			leftAssociative_ = true;
 			suffixOperator_ = true;
@@ -524,19 +525,19 @@ auto ParseExpression_(int const minPrecedence_) -> void
 		{
 			precedence_ = 8;
 			leftAssociative_ = true;
-			Definitions_->Write_(string("->"));
+			builder_->Write_(string("->"));
 		}
 		else if (token_ == string("[") && minPrecedence_ <= 8)
 		{
 			Token_ = tokenStream_->GetNextToken_();
-			Definitions_->Write_(string("["));
-			ParseExpression_();
+			builder_->Write_(string("["));
+			ParseExpression_(builder_);
 			if (Token_ != string("]"))
 			{
-				Definitions_->Error_(string("Expected `]` found `") + Token_ + string("`"));
+				builder_->Error_(string("Expected `]` found `") + Token_ + string("`"));
 			}
 
-			Definitions_->Write_(string("]"));
+			builder_->Write_(string("]"));
 			precedence_ = 8;
 			leftAssociative_ = true;
 			suffixOperator_ = true;
@@ -554,14 +555,14 @@ auto ParseExpression_(int const minPrecedence_) -> void
 				precedence_ += 1;
 			}
 
-			ParseExpression_(precedence_);
+			ParseExpression_(builder_, precedence_);
 		}
 	}
 }
 
-auto ParseExpression_() -> void
+auto ParseExpression_(::Source_File_Builder_ *const builder_) -> void
 {
-	ParseExpression_(1);
+	ParseExpression_(builder_, 1);
 }
 
 auto ParseStatement_() -> bool
@@ -581,7 +582,7 @@ auto ParseStatement_() -> bool
 		else
 		{
 			Definitions_->BeginLine_(string("return "));
-			ParseExpression_();
+			ParseExpression_(Definitions_);
 			Expect_(string(";"));
 			Definitions_->EndLine_(string(";"));
 		}
@@ -599,7 +600,7 @@ auto ParseStatement_() -> bool
 	if (Accept_(string("while")))
 	{
 		Definitions_->BeginLine_(string("while ("));
-		ParseExpression_();
+		ParseExpression_(Definitions_);
 		Definitions_->EndLine_(string(")"));
 		ParseBlock_();
 		return true;
@@ -621,7 +622,7 @@ auto ParseStatement_() -> bool
 		Definitions_->Write_(ConvertType_(k_ == string("var"), mutableValue_, type_) + string(" ") + name_ + string("_"));
 		Expect_(string("in"));
 		Definitions_->Write_(string(" : *("));
-		ParseExpression_();
+		ParseExpression_(Definitions_);
 		Definitions_->EndLine_(string("))"));
 		ParseBlock_();
 		return true;
@@ -633,7 +634,7 @@ auto ParseStatement_() -> bool
 		ParseBlock_();
 		Expect_(string("while"));
 		Definitions_->BeginLine_(string("while ("));
-		ParseExpression_();
+		ParseExpression_(Definitions_);
 		Expect_(string(";"));
 		Definitions_->EndLine_(string(");"));
 		return true;
@@ -642,7 +643,7 @@ auto ParseStatement_() -> bool
 	if (Accept_(string("if")))
 	{
 		Definitions_->BeginLine_(string("if ("));
-		ParseExpression_();
+		ParseExpression_(Definitions_);
 		Definitions_->EndLine_(string(")"));
 		ParseBlock_();
 		while (Accept_(string("else")))
@@ -650,7 +651,7 @@ auto ParseStatement_() -> bool
 			if (Accept_(string("if")))
 			{
 				Definitions_->BeginLine_(string("else if ("));
-				ParseExpression_();
+				ParseExpression_(Definitions_);
 				Definitions_->EndLine_(string(")"));
 				ParseBlock_();
 			}
@@ -692,7 +693,7 @@ auto ParseStatement_() -> bool
 		if (Accept_(string("=")))
 		{
 			Definitions_->Write_(string(" = "));
-			ParseExpression_();
+			ParseExpression_(Definitions_);
 		}
 
 		Expect_(string(";"));
@@ -701,7 +702,7 @@ auto ParseStatement_() -> bool
 	}
 
 	Definitions_->BeginLine_(string(""));
-	ParseExpression_();
+	ParseExpression_(Definitions_);
 	Expect_(string(";"));
 	Definitions_->EndLine_(string(";"));
 	return true;
@@ -876,11 +877,11 @@ auto ParseDeclaration_() -> void
 		string variableType_ = ParseType_();
 		Expect_(string("="));
 		variableType_ = ConvertType_(kind_ == string("var"), mutableValue_, variableType_);
-		Definitions_->BeginLine_(variableType_);
-		Definitions_->Write_(string(" ") + variableName_ + string("_ = "));
-		ParseExpression_();
+		GlobalDefinitions_->BeginLine_(variableType_);
+		GlobalDefinitions_->Write_(string(" ") + variableName_ + string("_ = "));
+		ParseExpression_(GlobalDefinitions_);
 		Expect_(string(";"));
-		Definitions_->EndLine_(string(";"));
+		GlobalDefinitions_->EndLine_(string(";"));
 		return;
 	}
 
@@ -976,6 +977,8 @@ auto EmitPreamble_() -> void
 	FunctionDeclarations_->WriteLine_(string("// Function Declarations"));
 	ClassDeclarations_->BlankLine_();
 	ClassDeclarations_->WriteLine_(string("// Class Declarations"));
+	GlobalDefinitions_->BlankLine_();
+	GlobalDefinitions_->WriteLine_(string("// Global Definitions"));
 	Definitions_->BlankLine_();
 	Definitions_->WriteLine_(string("// Definitions"));
 }
@@ -1041,7 +1044,7 @@ auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *cons
 	}
 
 	EmitEntryPointAdapter_(resources_);
-	return TypeDeclarations_->ToString_() + FunctionDeclarations_->ToString_() + ClassDeclarations_->ToString_() + Definitions_->ToString_();
+	return TypeDeclarations_->ToString_() + FunctionDeclarations_->ToString_() + ClassDeclarations_->ToString_() + GlobalDefinitions_->ToString_() + Definitions_->ToString_();
 }
 
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void
