@@ -1,3 +1,5 @@
+// Eventually, this will be the class that represents tokens in the syntax tree, but I need inheritance so it can inherit from Syntax_Token
+
 public class Syntax_Token
 {
 	public let TokenType: Token_Type;

@@ -12,9 +12,6 @@ class Token_Stream_;
 class Token_Type_;
 
 // Function Declarations
-auto IsIdentifierChar_(char const c_) -> bool;
-auto IsNumberChar_(char const c_) -> bool;
-auto TokenIsIdentifier_() -> bool;
 auto Accept_(string const expected_) -> bool;
 auto Expect_(string const expected_) -> void;
 auto AcceptIdentifier_() -> bool;
@@ -99,6 +96,12 @@ public:
 class Syntax_Node_
 {
 public:
+	int Type_;
+	::Source_Text_ const * Source_;
+	unsigned int Start_;
+	unsigned int Length_;
+	Syntax_Node_(int const type_, ::Source_Text_ const *const source_, unsigned int const start_, unsigned int const length_);
+	auto GetText_() const -> string;
 };
 
 class Syntax_Token_
@@ -115,11 +118,14 @@ class Token_Stream_
 {
 public:
 	::Source_Text_ const * Source_;
-	unsigned int nextToken_;
+	unsigned int position_;
 	Token_Stream_(::Source_Text_ const *const source_);
-	auto GetNextToken_() -> string;
-	static auto NewToken_(::Token_Type_ const *const type_, unsigned int const end_) -> ::Syntax_Token_ const *;
-	static auto NewToken_(::Token_Type_ const *const type_) -> ::Syntax_Token_ const *;
+	auto GetNextToken_() -> ::Syntax_Node_ const *;
+	auto NewOperator_(int const type_) -> ::Syntax_Node_ const *;
+	auto NewOperator_(int const type_, unsigned int const length_) -> ::Syntax_Node_ const *;
+	auto NewToken_(int const type_, unsigned int const end_) -> ::Syntax_Node_ const *;
+	static auto IsIdentifierChar_(char const c_) -> bool;
+	static auto IsNumberChar_(char const c_) -> bool;
 };
 
 class Token_Type_
@@ -127,9 +133,9 @@ class Token_Type_
 public:
 };
 
-// Definitions
+// Global Definitions
 ::Token_Stream_ * tokenStream_ = ::None;
-string Token_ = string("");
+::Syntax_Node_ const * Token_ = ::None;
 ::Source_File_Builder_ *const TypeDeclarations_ = new ::Source_File_Builder_();
 ::Source_File_Builder_ *const FunctionDeclarations_ = new ::Source_File_Builder_();
 ::Source_File_Builder_ *const ClassDeclarations_ = new ::Source_File_Builder_();
@@ -138,38 +144,41 @@ string Token_ = string("");
 string MainFunctionReturnType_ = string("");
 bool MainFunctionAcceptsConsole_ = false;
 bool MainFunctionAcceptsArgs_ = false;
+int const Error_ = -1;
+int const LeftBrace_ = 1;
+int const RightBrace_ = 2;
+int const LeftParen_ = 3;
+int const RightParen_ = 4;
+int const Semicolon_ = 5;
+int const Comma_ = 6;
+int const Dot_ = 7;
+int const Colon_ = 8;
+int const LeftBracket_ = 9;
+int const RightBracket_ = 10;
+int const Null_ = 11;
+int const Equal_ = 12;
+int const Assign_ = 13;
+int const AddAssign_ = 14;
+int const Add_ = 15;
+int const Arrow_ = 16;
+int const SubAssign_ = 17;
+int const Sub_ = 18;
+int const Slash_ = 19;
+int const NotEqual_ = 20;
+int const LessThanOrEqual_ = 21;
+int const LessThan_ = 22;
+int const GreaterThanOrEqual_ = 23;
+int const GreaterThan_ = 24;
+int const String_ = 25;
+int const CodePoint_ = 26;
+int const Identifier_ = 27;
+int const Number_ = 28;
 
-auto IsIdentifierChar_(char const c_) -> bool
-{
-	return (c_ >= 'a' && c_ <= 'z') || (c_ >= 'A' && c_ <= 'Z') || c_ == '_';
-}
-
-auto IsNumberChar_(char const c_) -> bool
-{
-	return c_ >= '0' && c_ <= '9';
-}
-
-auto TokenIsIdentifier_() -> bool
-{
-	if (Token_->Length_ == 0)
-	{
-		return false;
-	}
-
-	for (char const c_ : *(Token_))
-	{
-		if (!IsIdentifierChar_(c_))
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
+// Definitions
 
 auto Accept_(string const expected_) -> bool
 {
-	bool const accepted_ = Token_ == expected_;
+	bool const accepted_ = Token_->GetText_() == expected_;
 	if (accepted_)
 	{
 		Token_ = tokenStream_->GetNextToken_();
@@ -180,9 +189,9 @@ auto Accept_(string const expected_) -> bool
 
 auto Expect_(string const expected_) -> void
 {
-	if (Token_ != expected_)
+	if (Token_->GetText_() != expected_)
 	{
-		Definitions_->Error_(string("Expected `") + expected_ + string("` but found `") + Token_ + string("`"));
+		Definitions_->Error_(string("Expected `") + expected_ + string("` but found `") + Token_->GetText_() + string("`"));
 		Token_ = tokenStream_->GetNextToken_();
 	}
 	else
@@ -193,7 +202,7 @@ auto Expect_(string const expected_) -> void
 
 auto AcceptIdentifier_() -> bool
 {
-	if (!TokenIsIdentifier_())
+	if (Token_->Type_ != Identifier_)
 	{
 		return false;
 	}
@@ -204,7 +213,7 @@ auto AcceptIdentifier_() -> bool
 
 auto AcceptString_() -> bool
 {
-	if (Token_->Length_ == 0 || Token_[0] != '"')
+	if (Token_->Type_ != String_)
 	{
 		return false;
 	}
@@ -215,7 +224,7 @@ auto AcceptString_() -> bool
 
 auto AcceptCodePoint_() -> bool
 {
-	if (Token_->Length_ == 0 || Token_[0] != '\'')
+	if (Token_->Type_ != CodePoint_)
 	{
 		return false;
 	}
@@ -226,12 +235,9 @@ auto AcceptCodePoint_() -> bool
 
 auto AcceptNumber_() -> bool
 {
-	for (char const c_ : *(Token_))
+	if (Token_->Type_ != Number_)
 	{
-		if (!IsNumberChar_(c_))
-		{
-			return false;
-		}
+		return false;
 	}
 
 	Token_ = tokenStream_->GetNextToken_();
@@ -240,14 +246,14 @@ auto AcceptNumber_() -> bool
 
 auto ExpectIdentifier_() -> string
 {
-	if (!TokenIsIdentifier_())
+	if (Token_->Type_ != Identifier_)
 	{
-		Definitions_->Error_(string("Expected identifier, found `") + Token_ + string("`"));
+		Definitions_->Error_(string("Expected identifier, found `") + Token_->GetText_() + string("`"));
 		Token_ = tokenStream_->GetNextToken_();
 		return string("<missing>");
 	}
 
-	string const identifier_ = Token_;
+	string const identifier_ = Token_->GetText_();
 	Token_ = tokenStream_->GetNextToken_();
 	return identifier_;
 }
@@ -337,7 +343,7 @@ auto ParseType_() -> string
 		type_->Append_(string("<"));
 		bool const mutableValue_ = Accept_(string("mut"));
 		type_->Append_(ConvertType_(true, mutableValue_, ParseType_()));
-		Accept_(string(">"));
+		Expect_(string(">"));
 		type_->Append_(string(">"));
 	}
 
@@ -404,7 +410,7 @@ auto ParseAtom_(::Source_File_Builder_ *const builder_) -> bool
 		return true;
 	}
 
-	string const token_ = Token_;
+	string const token_ = Token_->GetText_();
 	if (Accept_(string("true")) || Accept_(string("false")) || AcceptNumber_())
 	{
 		builder_->Write_(token_);
@@ -460,7 +466,7 @@ auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrece
 
 	for (;;)
 	{
-		string const token_ = Token_;
+		string const token_ = Token_->GetText_();
 		int precedence_;
 		bool leftAssociative_;
 		bool suffixOperator_ = false;
@@ -511,9 +517,9 @@ auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrece
 			Token_ = tokenStream_->GetNextToken_();
 			builder_->Write_(string("("));
 			ParseCallArguments_(builder_);
-			if (Token_ != string(")"))
+			if (Token_->GetText_() != string(")"))
 			{
-				builder_->Error_(string("Expected `)` found `") + Token_ + string("`"));
+				builder_->Error_(string("Expected `)` found `") + Token_->GetText_() + string("`"));
 			}
 
 			builder_->Write_(string(")"));
@@ -532,9 +538,9 @@ auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrece
 			Token_ = tokenStream_->GetNextToken_();
 			builder_->Write_(string("["));
 			ParseExpression_(builder_);
-			if (Token_ != string("]"))
+			if (Token_->GetText_() != string("]"))
 			{
-				builder_->Error_(string("Expected `]` found `") + Token_ + string("`"));
+				builder_->Error_(string("Expected `]` found `") + Token_->GetText_() + string("`"));
 			}
 
 			builder_->Write_(string("]"));
@@ -567,7 +573,7 @@ auto ParseExpression_(::Source_File_Builder_ *const builder_) -> void
 
 auto ParseStatement_() -> bool
 {
-	if (Token_ == string("}"))
+	if (Token_->GetText_() == string("}"))
 	{
 		return false;
 	}
@@ -609,10 +615,10 @@ auto ParseStatement_() -> bool
 	if (Accept_(string("for")))
 	{
 		Definitions_->BeginLine_(string("for ("));
-		string const k_ = Token_;
+		string const k_ = Token_->GetText_();
 		if (!Accept_(string("let")) && !Accept_(string("var")))
 		{
-			Definitions_->Error_(string("Expected `let` or `var` but found `") + Token_ + string("`"));
+			Definitions_->Error_(string("Expected `let` or `var` but found `") + Token_->GetText_() + string("`"));
 		}
 
 		string const name_ = ExpectIdentifier_();
@@ -680,7 +686,7 @@ auto ParseStatement_() -> bool
 		return true;
 	}
 
-	string const kind_ = Token_;
+	string const kind_ = Token_->GetText_();
 	if (Accept_(string("let")) || Accept_(string("var")))
 	{
 		string const variableName_ = ExpectIdentifier_();
@@ -778,7 +784,7 @@ auto ParseMethodArgumentsDeclaration_() -> string
 
 auto ParseClassMember_(string const className_) -> void
 {
-	string const accessModifier_ = Token_;
+	string const accessModifier_ = Token_->GetText_();
 	if (Accept_(string("public")) || Accept_(string("internal")) || Accept_(string("protected")) || Accept_(string("private")))
 	{
 	}
@@ -797,7 +803,7 @@ auto ParseClassMember_(string const className_) -> void
 		return;
 	}
 
-	string const kind_ = Token_;
+	string const kind_ = Token_->GetText_();
 	if (Accept_(string("var")) || Accept_(string("let")))
 	{
 		string const fieldName_ = ExpectIdentifier_();
@@ -817,7 +823,7 @@ auto ParseClassMember_(string const className_) -> void
 	if (mutableSelf_)
 	{
 		Expect_(string("self"));
-		if (Token_ != string(")"))
+		if (Token_->GetText_() != string(")"))
 		{
 			Expect_(string(","));
 		}
@@ -827,7 +833,7 @@ auto ParseClassMember_(string const className_) -> void
 		if (Accept_(string("self")))
 		{
 			isAssociatedFuntion_ = false;
-			if (Token_ != string(")"))
+			if (Token_->GetText_() != string(")"))
 			{
 				Expect_(string(","));
 			}
@@ -859,7 +865,7 @@ auto ParseClassMember_(string const className_) -> void
 
 auto ParseDeclaration_() -> void
 {
-	string const accessModifier_ = Token_;
+	string const accessModifier_ = Token_->GetText_();
 	if (Accept_(string("public")) || Accept_(string("internal")))
 	{
 	}
@@ -868,7 +874,7 @@ auto ParseDeclaration_() -> void
 		Definitions_->Error_(string("Expected access modifier, found `") + accessModifier_ + string("`"));
 	}
 
-	string const kind_ = Token_;
+	string const kind_ = Token_->GetText_();
 	if (Accept_(string("var")) || Accept_(string("let")))
 	{
 		string const variableName_ = ExpectIdentifier_();
@@ -919,7 +925,7 @@ auto ParseDeclaration_() -> void
 			if (Accept_(string("=")))
 			{
 				ClassDeclarations_->Write_(string(" = "));
-				string const value_ = Token_;
+				string const value_ = Token_->GetText_();
 				if (AcceptNumber_())
 				{
 					ClassDeclarations_->Write_(value_);
@@ -962,7 +968,7 @@ auto ParseDeclaration_() -> void
 
 auto ParseCompilationUnit_() -> void
 {
-	while (TokenIsIdentifier_())
+	while (Token_ != ::None && Token_->Type_ == Identifier_)
 	{
 		ParseDeclaration_();
 	}
@@ -1272,6 +1278,19 @@ auto ::Parser_::Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syn
 	return ::None;
 }
 
+::Syntax_Node_::Syntax_Node_(int const type_, ::Source_Text_ const *const source_, unsigned int const start_, unsigned int const length_)
+{
+	Type_ = type_;
+	Source_ = source_;
+	Start_ = start_;
+	Length_ = length_;
+}
+
+auto ::Syntax_Node_::GetText_() const -> string
+{
+	return Source_->Text_->Substring_(Start_, Length_);
+}
+
 ::Syntax_Token_::Syntax_Token_(::Token_Type_ const *const tokenType_, ::Source_Text_ const *const source_, unsigned int const start_, unsigned int const length_)
 {
 	TokenType_ = tokenType_;
@@ -1283,16 +1302,13 @@ auto ::Parser_::Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syn
 ::Token_Stream_::Token_Stream_(::Source_Text_ const *const source_)
 {
 	Source_ = source_;
-	nextToken_ = 0;
+	position_ = 0;
 }
 
-auto ::Token_Stream_::GetNextToken_() -> string
+auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 {
-	unsigned int position_ = nextToken_;
-	unsigned int tokenEnd_ = -1;
-	bool escaped_;
-	bool done_ = false;
-	while (!done_ && position_ < Source_->Text_->Length_)
+	unsigned int end_ = -1;
+	while (position_ < Source_->Text_->Length_)
 	{
 		char const curChar_ = Source_->Text_[position_];
 		if (curChar_ == ' ' || curChar_ == '\t' || curChar_ == '\n' || curChar_ == '\r')
@@ -1300,49 +1316,81 @@ auto ::Token_Stream_::GetNextToken_() -> string
 			position_ += 1;
 			continue;
 		}
-		else if (curChar_ == '{' || curChar_ == '}' || curChar_ == '(' || curChar_ == ')' || curChar_ == ';' || curChar_ == ',' || curChar_ == '.' || curChar_ == ':' || curChar_ == '[' || curChar_ == ']' || curChar_ == '?')
+		else if (curChar_ == '{')
 		{
-			tokenEnd_ = position_ + 1;
-			break;
+			return NewOperator_(LeftBrace_);
+		}
+		else if (curChar_ == '}')
+		{
+			return NewOperator_(RightBrace_);
+		}
+		else if (curChar_ == '(')
+		{
+			return NewOperator_(LeftParen_);
+		}
+		else if (curChar_ == ')')
+		{
+			return NewOperator_(RightParen_);
+		}
+		else if (curChar_ == ';')
+		{
+			return NewOperator_(Semicolon_);
+		}
+		else if (curChar_ == ',')
+		{
+			return NewOperator_(Comma_);
+		}
+		else if (curChar_ == '.')
+		{
+			return NewOperator_(Dot_);
+		}
+		else if (curChar_ == ':')
+		{
+			return NewOperator_(Colon_);
+		}
+		else if (curChar_ == '[')
+		{
+			return NewOperator_(LeftBracket_);
+		}
+		else if (curChar_ == ']')
+		{
+			return NewOperator_(RightBracket_);
+		}
+		else if (curChar_ == '?')
+		{
+			return NewOperator_(Null_);
 		}
 		else if (curChar_ == '=')
 		{
 			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd_ = position_ + 2;
-				break;
+				return NewOperator_(Equal_, 2);
 			}
 
-			tokenEnd_ = position_ + 1;
-			break;
+			return NewOperator_(Assign_);
 		}
 		else if (curChar_ == '+')
 		{
 			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd_ = position_ + 2;
-				break;
+				return NewOperator_(AddAssign_, 2);
 			}
 
-			tokenEnd_ = position_ + 1;
-			break;
+			return NewOperator_(Add_);
 		}
 		else if (curChar_ == '-')
 		{
 			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '>')
 			{
-				tokenEnd_ = position_ + 2;
-				break;
+				return NewOperator_(Arrow_, 2);
 			}
 
 			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd_ = position_ + 2;
-				break;
+				return NewOperator_(SubAssign_, 2);
 			}
 
-			tokenEnd_ = position_ + 1;
-			break;
+			return NewOperator_(Sub_);
 		}
 		else if (curChar_ == '/')
 		{
@@ -1356,115 +1404,113 @@ auto ::Token_Stream_::GetNextToken_() -> string
 				continue;
 			}
 
-			tokenEnd_ = position_ + 1;
-			break;
+			return NewOperator_(Slash_);
 		}
 		else if (curChar_ == '<')
 		{
 			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '>')
 			{
-				tokenEnd_ = position_ + 2;
-				break;
+				return NewOperator_(NotEqual_, 2);
 			}
 
 			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd_ = position_ + 2;
-				break;
+				return NewOperator_(LessThanOrEqual_, 2);
 			}
 
-			tokenEnd_ = position_ + 1;
-			break;
+			return NewOperator_(LessThan_);
 		}
 		else if (curChar_ == '>')
 		{
 			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '=')
 			{
-				tokenEnd_ = position_ + 2;
-				break;
+				return NewOperator_(GreaterThanOrEqual_, 2);
 			}
 
-			tokenEnd_ = position_ + 1;
-			break;
+			return NewOperator_(GreaterThan_);
 		}
 		else if (curChar_ == '"')
 		{
-			tokenEnd_ = position_ + 1;
-			escaped_ = false;
-			while (tokenEnd_ < Source_->Text_->Length_ && (Source_->Text_[tokenEnd_] != '"' || escaped_))
+			end_ = position_ + 1;
+			bool escaped_ = false;
+			while (end_ < Source_->Text_->Length_ && (Source_->Text_[end_] != '"' || escaped_))
 			{
-				escaped_ = Source_->Text_[tokenEnd_] == '\\' && !escaped_;
-				tokenEnd_ += 1;
+				escaped_ = Source_->Text_[end_] == '\\' && !escaped_;
+				end_ += 1;
 			}
 
-			tokenEnd_ += 1;
-			break;
+			end_ += 1;
+			return NewToken_(String_, end_);
 		}
 		else if (curChar_ == '\'')
 		{
-			tokenEnd_ = position_ + 1;
-			escaped_ = false;
-			while (tokenEnd_ < Source_->Text_->Length_ && (Source_->Text_[tokenEnd_] != '\'' || escaped_))
+			end_ = position_ + 1;
+			bool escaped_ = false;
+			while (end_ < Source_->Text_->Length_ && (Source_->Text_[end_] != '\'' || escaped_))
 			{
-				escaped_ = Source_->Text_[tokenEnd_] == '\\' && !escaped_;
-				tokenEnd_ += 1;
+				escaped_ = Source_->Text_[end_] == '\\' && !escaped_;
+				end_ += 1;
 			}
 
-			tokenEnd_ += 1;
-			break;
+			end_ += 1;
+			return NewToken_(CodePoint_, end_);
 		}
 		else
 		{
 			if (IsIdentifierChar_(curChar_))
 			{
-				tokenEnd_ = position_ + 1;
-				while (IsIdentifierChar_(Source_->Text_[tokenEnd_]))
+				end_ = position_ + 1;
+				while (IsIdentifierChar_(Source_->Text_[end_]))
 				{
-					tokenEnd_ += 1;
+					end_ += 1;
 				}
 
-				break;
+				return NewToken_(Identifier_, end_);
 			}
 
 			if ((IsNumberChar_(curChar_)))
 			{
-				tokenEnd_ = position_ + 1;
-				while (IsNumberChar_(Source_->Text_[tokenEnd_]))
+				end_ = position_ + 1;
+				while (IsNumberChar_(Source_->Text_[end_]))
 				{
-					tokenEnd_ += 1;
+					end_ += 1;
 				}
 
-				break;
+				return NewToken_(Number_, end_);
 			}
 
-			Definitions_->Error_(string("Lexer: Invalid character `") + curChar_ + string("`"));
-			position_ += 1;
+			return NewToken_(Error_, position_ + 1);
 		}
 	}
 
-	string token_;
-	if (tokenEnd_ == -1)
-	{
-		token_ = string("");
-		nextToken_ = position_;
-	}
-	else
-	{
-		token_ = Source_->Text_->Substring_(position_, tokenEnd_ - position_);
-		nextToken_ = tokenEnd_;
-	}
+	return ::None;
+}
 
+auto ::Token_Stream_::NewOperator_(int const type_) -> ::Syntax_Node_ const *
+{
+	return NewToken_(type_, position_ + 1);
+}
+
+auto ::Token_Stream_::NewOperator_(int const type_, unsigned int const length_) -> ::Syntax_Node_ const *
+{
+	return NewToken_(type_, position_ + length_);
+}
+
+auto ::Token_Stream_::NewToken_(int const type_, unsigned int const end_) -> ::Syntax_Node_ const *
+{
+	::Syntax_Node_ const *const token_ = new ::Syntax_Node_(type_, Source_, position_, end_ - position_);
+	position_ = end_;
 	return token_;
 }
 
-auto ::Token_Stream_::NewToken_(::Token_Type_ const *const type_, unsigned int const end_) -> ::Syntax_Token_ const *
+auto ::Token_Stream_::IsIdentifierChar_(char const c_) -> bool
 {
-	return ::None;
+	return (c_ >= 'a' && c_ <= 'z') || (c_ >= 'A' && c_ <= 'Z') || c_ == '_';
 }
 
-auto ::Token_Stream_::NewToken_(::Token_Type_ const *const type_) -> ::Syntax_Token_ const *
+auto ::Token_Stream_::IsNumberChar_(char const c_) -> bool
 {
-	return ::None;
+	return c_ >= '0' && c_ <= '9';
 }
 
 // Entry Point Adapter

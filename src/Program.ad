@@ -15,6 +15,27 @@ public var MainFunctionAcceptsArgs: bool = false;
 // Lexer
 // ----------------------------------------------------------------------------
 
+public AcceptToken() -> Syntax_Node
+{
+	let node: Syntax_Node = Token;
+	Token = tokenStream.GetNextToken();
+	return node;
+}
+
+public ExpectToken(tokenType: int) -> Syntax_Node
+{
+	if Token.Type <> tokenType
+	{
+		Definitions.Error("Expected token type " + tokenType + ", found `" + Token.GetText() + "` of type " + Token.Type);
+		Token = tokenStream.GetNextToken(); // Skip token to advance
+		return new Syntax_Node(Error, Token.Source, Token.Start, Token.Length);
+	}
+
+	let node: Syntax_Node = Token;
+	Token = tokenStream.GetNextToken();
+	return node;
+}
+
 public Accept(expected: string) -> bool
 {
 	let accepted: bool = Token.GetText() == expected;
@@ -33,54 +54,6 @@ public Expect(expected: string) -> void
 	{
 		Token = tokenStream.GetNextToken();
 	}
-}
-
-public AcceptIdentifier() -> bool
-{
-	if Token.Type <> Identifier { return false; }
-	Token = tokenStream.GetNextToken();
-	return true;
-}
-
-public AcceptString() -> bool
-{
-	if Token.Type <> String
-		{ return false; }
-
-	Token = tokenStream.GetNextToken();
-	return true;
-}
-
-public AcceptCodePoint() -> bool
-{
-	if Token.Type <> CodePoint
-		{ return false; }
-
-	Token = tokenStream.GetNextToken();
-	return true;
-}
-
-public AcceptNumber() -> bool
-{
-	if Token.Type <> Number
-		{ return false; }
-
-	Token = tokenStream.GetNextToken();
-	return true;
-}
-
-public ExpectIdentifier() -> string
-{
-	if Token.Type <> Identifier
-	{
-		Definitions.Error("Expected identifier, found `" + Token.GetText() + "`");
-		Token = tokenStream.GetNextToken(); // Skip token to advance
-		return "<missing>";
-	}
-
-	let identifier: string = Token.GetText();
-	Token = tokenStream.GetNextToken();
-	return identifier;
 }
 
 // ----------------------------------------------------------------------------
@@ -140,11 +113,11 @@ public ConvertType(mutableBinding: bool, mutableValue: bool, var type: string) -
 public ParseType() -> string
 {
 	// TODO should be `new mut`
-	let type: mut System.Text.String_Builder = new System.Text.String_Builder(ExpectIdentifier());
+	let type: mut System.Text.String_Builder = new System.Text.String_Builder(ExpectToken(Identifier).GetText());
 	while Accept(".")
 	{
 		type.Append(".");
-		type.Append(ExpectIdentifier());
+		type.Append(ExpectToken(Identifier).GetText());
 	}
 	if Accept("<")
 	{
@@ -164,74 +137,91 @@ public ParseType() -> string
 // An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
 public ParseAtom(builder: mut Source_File_Builder) -> bool
 {
-	if Accept("new")
+	// This should be a match on the token type
+	if Token.Type == NewKeyword
 	{
 		// Constructor Call
+		AcceptToken();
 		var type: string = ParseType();
 		if not IsValueType(type) // place value types on the stack in C++ by not using new
 			{ builder.Write("new "); }
 		type = ConvertType(type);
 		builder.Write(type);
-		Expect("(");
+		ExpectToken(LeftParen);
 		builder.Write("(");
 		ParseCallArguments(builder);
-		Expect(")");
+		ExpectToken(RightParen);
 		builder.Write(")");
 		return true;
 	}
-	if Accept("not")
+	if Token.Type == NotOperator
 	{
+		AcceptToken();
 		builder.Write("!");
 		ParseExpression(builder);
 		return true;
 	}
-	if Accept("(") // Order of operations parens
+	if Token.Type == LeftParen // Order of operations parens
 	{
+		AcceptToken();
 		builder.Write("(");
 		ParseExpression(builder);
-		Expect(")");
+		ExpectToken(RightParen);
 		builder.Write(")");
 		return true;
 	}
-	if Accept("-")
+	if Token.Type == Sub
 	{
 		// Unary Minus
+		AcceptToken();
 		builder.Write("-");
 		ParseExpression(builder, 7);
 		return true;
 	}
-	if Accept("null")
+	if Token.Type == NullKeyword
 	{
+		AcceptToken();
 		builder.Write("::None");
 		return true;
 	}
-	if Accept("self")
+	if Token.Type == SelfKeyword
 	{
+		AcceptToken();
 		builder.Write("this");
 		return true;
 	}
 
 	let token: string = Token.GetText();
-	if Accept("true")
-		or Accept("false")
-		or AcceptNumber()
+	if Token.Type == TrueKeyword
+		or Token.Type == FalseKeyword
+		or Token.Type == NullKeyword
 	{
+		AcceptToken();
 		builder.Write(token);
 		return true;
 	}
-	if AcceptIdentifier()
+	if Token.Type == Number
+	{
+		builder.Write(token);
+		AcceptToken();
+		return true;
+	}
+	if Token.Type == Identifier
 	{
 		builder.Write(token + "_");
+		AcceptToken();
 		return true;
 	}
-	if AcceptString()
+	if Token.Type == String
 	{
 		builder.Write("string(" + token + ")");
+		AcceptToken();
 		return true;
 	}
-	if AcceptCodePoint()
+	if Token.Type == CodePoint
 	{
 		builder.Write(token);
+		AcceptToken();
 		return true;
 	}
 
@@ -412,7 +402,7 @@ public ParseStatement() -> bool
 		let k: string = Token.GetText();
 		if not Accept("let") and not Accept("var")
 			{ Definitions.Error("Expected `let` or `var` but found `" + Token.GetText() + "`"); }
-		let name: string = ExpectIdentifier();
+		let name: string = ExpectToken(Identifier).GetText();
 		Expect(":");
 		let mutableValue: bool = Accept("mut");
 		let type: string = ParseType();
@@ -476,7 +466,7 @@ public ParseStatement() -> bool
 	let kind: string = Token.GetText();
 	if Accept("let") or Accept("var")
 	{
-		let variableName: string = ExpectIdentifier();
+		let variableName: string = ExpectToken(Identifier).GetText();
 		Expect(":");
 		let mutableValue: bool = Accept("mut");
 		var variableType: string = ParseType();
@@ -521,7 +511,7 @@ public ParseArgumentsDeclaration(isMainFunction: bool, isMethod: bool) -> string
 	do
 	{
 		let mutableBinding: bool = Accept("var");
-		let name: string = ExpectIdentifier();
+		let name: string = ExpectToken(Identifier).GetText();
 		Expect(":");
 		let mutableValue: bool = Accept("mut");
 		let type: string = ParseType();
@@ -582,7 +572,7 @@ public ParseClassMember(className: string) -> void
 	let kind: string = Token.GetText();
 	if Accept("var") or Accept("let")
 	{
-		let fieldName: string = ExpectIdentifier();
+		let fieldName: string = ExpectToken(Identifier).GetText();
 		Expect(":");
 		let mutableValue: bool = Accept("mut");
 		var fieldType: string = ParseType();
@@ -593,7 +583,7 @@ public ParseClassMember(className: string) -> void
 	}
 
 	// Method Declaration
-	let methodName: string = ExpectIdentifier();
+	let methodName: string = ExpectToken(Identifier).GetText();
 	Expect("(");
 	let mutableSelf: bool = Accept("mut");
 	var isAssociatedFuntion: bool = not mutableSelf;
@@ -645,7 +635,7 @@ public ParseDeclaration() -> void
 	let kind: string = Token.GetText();
 	if Accept("var") or Accept("let")
 	{
-		let variableName: string = ExpectIdentifier();
+		let variableName: string = ExpectToken(Identifier).GetText();
 		Expect(":");
 		let mutableValue: bool = Accept("mut");
 		var variableType: string = ParseType();
@@ -661,7 +651,7 @@ public ParseDeclaration() -> void
 
 	if Accept("class")
 	{
-		let className: string = ExpectIdentifier();
+		let className: string = ExpectToken(Identifier).GetText();
 		TypeDeclarations.WriteLine("class " + className + "_;");
 		ClassDeclarations.ElementSeparatorLine();
 		ClassDeclarations.WriteLine("class " + className + "_");
@@ -679,7 +669,7 @@ public ParseDeclaration() -> void
 	if Accept("enum")
 	{
 		Expect("struct");
-		let enumName: string = ExpectIdentifier();
+		let enumName: string = ExpectToken(Identifier).GetText();
 		TypeDeclarations.WriteLine("enum class " + enumName + "_;");
 		ClassDeclarations.ElementSeparatorLine();
 		ClassDeclarations.WriteLine("enum class " + enumName + "_");
@@ -687,16 +677,14 @@ public ParseDeclaration() -> void
 		ClassDeclarations.BeginBlock();
 		do
 		{
-			let enumValue: string = ExpectIdentifier();
+			let enumValue: string = ExpectToken(Identifier).GetText();
 			ClassDeclarations.BeginLine(enumValue + "_");
 			if Accept("=")
 			{
 				ClassDeclarations.Write(" = ");
-				let value: string = Token.GetText();
-				if  AcceptNumber()
-					{ ClassDeclarations.Write(value); }
-				else
-					{ Definitions.Error("Expected number found `"+ value + "`"); }
+				let token: Syntax_Node = ExpectToken(Number);
+				if token <> null
+					{ ClassDeclarations.Write(token.GetText()); }
 			}
 			ClassDeclarations.EndLine(",");
 		} while Accept(",");
@@ -706,7 +694,7 @@ public ParseDeclaration() -> void
 	}
 
 	// Function Declaration
-	let name: string = ExpectIdentifier();
+	let name: string = ExpectToken(Identifier).GetText();
 	let arguments: string = ParseFunctionArgumentsDeclaration(name == "Main");
 	Expect("->");
 	let mutableValue: bool = Accept("mut");
