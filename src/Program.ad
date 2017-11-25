@@ -12,7 +12,7 @@ public var MainFunctionAcceptsConsole: bool = false;
 public var MainFunctionAcceptsArgs: bool = false;
 
 // ----------------------------------------------------------------------------
-// Lexer
+// Token Handling
 // ----------------------------------------------------------------------------
 
 public AcceptToken() -> Syntax_Node
@@ -57,7 +57,7 @@ public Expect(expected: string) -> void
 }
 
 // ----------------------------------------------------------------------------
-// Parser
+// Emitting C++
 // ----------------------------------------------------------------------------
 
 public IsValueType(type: Syntax_Node) -> bool
@@ -156,6 +156,10 @@ public ConvertType(mutableBinding: bool, mutableValue: bool, var type: Syntax_No
 
 	return cppType;
 }
+
+// ----------------------------------------------------------------------------
+// Parser
+// ----------------------------------------------------------------------------
 
 public ParseType() -> Syntax_Node
 {
@@ -575,7 +579,7 @@ public ParseBlock() -> void
 	Definitions.EndBlock();
 }
 
-public ParseArgumentsDeclaration(isMainFunction: bool, isMethod: bool) -> string
+public ParseParameters(isMainFunction: bool, isMethod: bool) -> string
 {
 	// For methods, this is already consumed becuase of the self param
 	if not isMethod { Expect("("); }
@@ -606,19 +610,19 @@ public ParseArgumentsDeclaration(isMainFunction: bool, isMethod: bool) -> string
 	return arguments.ToString();
 }
 
-public ParseConstructorArgumentsDeclaration() -> string
+public ParseConstructorParameters() -> string
 {
-	return ParseArgumentsDeclaration(false, false);
+	return ParseParameters(false, false);
 }
 
-public ParseFunctionArgumentsDeclaration(isMainFunction: bool) -> string
+public ParseFunctionParameters(isMainFunction: bool) -> string
 {
-	return ParseArgumentsDeclaration(isMainFunction, false);
+	return ParseParameters(isMainFunction, false);
 }
 
-public ParseMethodArgumentsDeclaration() -> string
+public ParseMethodParameters() -> string
 {
-	return ParseArgumentsDeclaration(false, true);
+	return ParseParameters(false, true);
 }
 
 public ParseClassMember(className: string) -> void
@@ -636,7 +640,7 @@ public ParseClassMember(className: string) -> void
 	if Accept("new")
 	{
 		// Constructor
-		let arguments: string = ParseConstructorArgumentsDeclaration();
+		let arguments: string = ParseConstructorParameters();
 		// Write out the function declaration for C++ so we can call functions defined after others
 		ClassDeclarations.WriteLine(className + "_(" + arguments + ");");
 		Definitions.ElementSeparatorLine();
@@ -678,7 +682,7 @@ public ParseClassMember(className: string) -> void
 				{ Expect(","); }
 		}
 	}
-	let arguments: string = ParseMethodArgumentsDeclaration();
+	let arguments: string = ParseMethodParameters();
 	Expect("->");
 	let mutableValue: bool = Accept("mut");
 	let returnType: Syntax_Node = ParseType();
@@ -771,7 +775,7 @@ public ParseDeclaration() -> void
 
 	// Function Declaration
 	let name: string = ExpectToken(Identifier).GetText();
-	let arguments: string = ParseFunctionArgumentsDeclaration(name == "Main");
+	let arguments: string = ParseFunctionParameters(name == "Main");
 	Expect("->");
 	let mutableValue: bool = Accept("mut");
 	let returnType: Syntax_Node = ParseType();
