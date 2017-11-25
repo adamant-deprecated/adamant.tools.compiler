@@ -1,0 +1,4 @@
+public FormatError(message: string) -> string
+{
+	return "<$ " + message + " $>";
+}

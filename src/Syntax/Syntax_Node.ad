@@ -1,38 +1,53 @@
 public let Error: int = -1;
-public let LeftBrace: int = 1;
-public let RightBrace: int = 2;
-public let LeftParen: int = 3;
-public let RightParen: int = 4;
-public let Semicolon: int = 5;
-public let Comma: int = 6;
-public let Dot: int = 7;
-public let Colon: int = 8;
-public let LeftBracket: int = 9;
-public let RightBracket: int = 10;
-public let Null: int = 11;
-public let Equal: int = 12;
-public let Assign: int = 13;
-public let AddAssign: int = 14;
-public let Add: int = 15;
-public let Arrow: int = 16;
-public let SubAssign: int = 17;
-public let Sub: int = 18;
-public let Slash: int = 19;
-public let NotEqual: int = 20;
-public let LessThanOrEqual: int = 21;
-public let LessThan: int = 22;
-public let GreaterThanOrEqual: int = 23;
-public let GreaterThan: int = 24;
-public let String: int = 25;
-public let CodePoint: int = 26;
+
+// Note, a lot of these names should say Token
+public let LeftBrace: int = 1; // `{`
+public let RightBrace: int = 2; // `}`
+public let LeftParen: int = 3; // `(`
+public let RightParen: int = 4; // `)`
+public let Semicolon: int = 5; // `;`
+public let Comma: int = 6; // `,`
+public let Dot: int = 7; // `.`
+public let Colon: int = 8; // `:`
+public let LeftBracket: int = 9; // `[`
+public let RightBracket: int = 10; // `]`
+public let Question: int = 11; // `?`
+public let Equal: int = 12; // `==`
+public let Assign: int = 13; // `=`
+public let AddAssign: int = 14; // `+=`
+public let Add: int = 15; // `+`
+public let Arrow: int = 16; // `->`
+public let SubAssign: int = 17; // `-=`
+public let Sub: int = 18; // `-`
+public let Slash: int = 19; // `/`
+public let NotEqual: int = 20; // `<>`
+public let LessThanOrEqual: int = 21; // `<=`
+public let LessThan: int = 22; // `<`
+public let GreaterThanOrEqual: int = 23; // `>=`
+public let GreaterThan: int = 24; // `>`
+public let StringLiteral: int = 25;
+public let CodePointLiteral: int = 26;
 public let Identifier: int = 27;
 public let Number: int = 28;
-public let NewKeyword: int = 29;
-public let NotOperator: int = 30;
-public let NullKeyword: int = 31;
-public let SelfKeyword: int = 32;
-public let TrueKeyword: int = 33;
-public let FalseKeyword: int = 34;
+public let NewKeyword: int = 29; // `new`
+public let NotOperator: int = 30; // `not`
+public let NullKeyword: int = 31; // `null`
+public let SelfKeyword: int = 32; // `self`
+public let TrueKeyword: int = 33; // `true`
+public let FalseKeyword: int = 34; // `false`
+public let IdentifierName: int = 35; // A name that is just an Identifier
+public let GenericName: int = 36; // An identifier with type arguments
+public let QualifiedName: int = 37; // A name that is qualified by a name and a dot
+public let PackageQualifiedName: int = 38; // IdentifierName::Name
+public let MutableKeyword: int = 39; // `mut`
+public let NullableType: int = 40; // `⧼type⧽?`
+public let PredefinedType: int = 41;
+public let CodePoint: int = 42; // `code_point`
+public let String: int = 43; // `string`
+public let Int: int = 44; // `int`
+public let Bool: int = 45; // `bool`
+public let Void: int = 46; // `void`
+public let UnsignedInt: int = 47; // `uint`
 
 public class Syntax_Node
 {
@@ -40,6 +55,7 @@ public class Syntax_Node
 	public let Source: Source_Text;
 	public let Start: uint;
 	public let Length: uint;
+	public let Children: System.Collections.List<Syntax_Node>;
 
 	public new(type: int, source: Source_Text, start: uint, length: uint)
 	{
@@ -47,10 +63,43 @@ public class Syntax_Node
 		Source = source;
 		Start = start;
 		Length = length;
+		Children = new System.Collections.List<Syntax_Node>();
+	}
+
+	public new(type: int, child: Syntax_Node)
+	{
+		Type = type;
+		Source = child.Source;
+		Start = child.Start;
+		Length = child.Length;
+		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+		children.Add(child);
+		Children = children;
+	}
+
+	// TODO we want to take ownership of the child list
+	public new(type: int, children: System.Collections.List<Syntax_Node>)
+	{
+		Type = type;
+		Source = children.Get(0).Source;
+		Start = children.Get(0).Start;
+		let lastChild: Syntax_Node = children.Get(children.Length()-1);
+		Length = lastChild.Start - Start + lastChild.Length;
+		Children = children;
 	}
 
 	public GetText(self) -> string
 	{
 		return Source.Text.Substring(Start, Length);
+	}
+
+	public FirstChildOfType(self, type: int) -> Syntax_Node?
+	{
+		for let child: Syntax_Node in Children
+		{
+			if child.Type == type
+				{ return child; }
+		}
+		return null;
 	}
 }

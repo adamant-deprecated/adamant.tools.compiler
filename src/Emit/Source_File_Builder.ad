@@ -14,7 +14,7 @@ public class Source_File_Builder
     }
     public Error(mut self, message: string) -> void
     {
-        code.Append("<$ " + message + " $>");
+        code.Append(FormatError(message));
     }
 
     public BeginLine(mut self, value: string) -> void

@@ -44,7 +44,7 @@ public class Token_Stream
 			else if curChar == ']'
 				{ return NewOperator(RightBracket); }
 			else if curChar == '?'
-				{ return NewOperator(Null); }
+				{ return NewOperator(Question); }
 			else if curChar == '='
 			{
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '='
@@ -133,7 +133,7 @@ public class Token_Stream
 				}
 
 				end += 1; // To include the close quote
-				return NewToken(String, end);
+				return NewToken(StringLiteral, end);
 			}
 			else if curChar == '\''
 			{
@@ -146,7 +146,7 @@ public class Token_Stream
 				}
 
 				end += 1; // To include the close quote
-				return NewToken(CodePoint, end);
+				return NewToken(CodePointLiteral, end);
 			}
 			else
 			{
@@ -193,6 +193,20 @@ public class Token_Stream
 			{ type = TrueKeyword; }
 		else if value == "false"
 			{ type = FalseKeyword; }
+		else if value == "mut"
+			{ type = MutableKeyword; }
+		else if value == "code_point"
+			{ type = CodePoint; }
+		else if value == "string"
+			{ type = String; }
+		else if value == "int"
+			{ type = Int; }
+		else if value == "bool"
+			{ type = Bool; }
+		else if value == "void"
+			{ type = Void; }
+		else if value == "uint"
+			{ type = UnsignedInt; }
 		else
 			{ type = Identifier; }
 

@@ -12,13 +12,10 @@ class Token_Stream_;
 class Token_Type_;
 
 // Function Declarations
+auto AcceptToken_() -> ::Syntax_Node_ const *;
+auto ExpectToken_(int const tokenType_) -> ::Syntax_Node_ const *;
 auto Accept_(string const expected_) -> bool;
 auto Expect_(string const expected_) -> void;
-auto AcceptIdentifier_() -> bool;
-auto AcceptString_() -> bool;
-auto AcceptCodePoint_() -> bool;
-auto AcceptNumber_() -> bool;
-auto ExpectIdentifier_() -> string;
 auto IsValueType_(string const type_) -> bool;
 auto ConvertType_(string const type_) -> string;
 auto ConvertType_(bool const mutableBinding_, bool const mutableValue_, string type_) -> string;
@@ -121,6 +118,7 @@ public:
 	unsigned int position_;
 	Token_Stream_(::Source_Text_ const *const source_);
 	auto GetNextToken_() -> ::Syntax_Node_ const *;
+	auto NewIdentifierOrKeyword_(unsigned int const end_) -> ::Syntax_Node_ const *;
 	auto NewOperator_(int const type_) -> ::Syntax_Node_ const *;
 	auto NewOperator_(int const type_, unsigned int const length_) -> ::Syntax_Node_ const *;
 	auto NewToken_(int const type_, unsigned int const end_) -> ::Syntax_Node_ const *;
@@ -173,8 +171,35 @@ int const String_ = 25;
 int const CodePoint_ = 26;
 int const Identifier_ = 27;
 int const Number_ = 28;
+int const NewKeyword_ = 29;
+int const NotOperator_ = 30;
+int const NullKeyword_ = 31;
+int const SelfKeyword_ = 32;
+int const TrueKeyword_ = 33;
+int const FalseKeyword_ = 34;
 
 // Definitions
+
+auto AcceptToken_() -> ::Syntax_Node_ const *
+{
+	::Syntax_Node_ const *const node_ = Token_;
+	Token_ = tokenStream_->GetNextToken_();
+	return node_;
+}
+
+auto ExpectToken_(int const tokenType_) -> ::Syntax_Node_ const *
+{
+	if (Token_->Type_ != tokenType_)
+	{
+		Definitions_->Error_(string("Expected token type ") + tokenType_ + string(", found `") + Token_->GetText_() + string("` of type ") + Token_->Type_);
+		Token_ = tokenStream_->GetNextToken_();
+		return new ::Syntax_Node_(Error_, Token_->Source_, Token_->Start_, Token_->Length_);
+	}
+
+	::Syntax_Node_ const *const node_ = Token_;
+	Token_ = tokenStream_->GetNextToken_();
+	return node_;
+}
 
 auto Accept_(string const expected_) -> bool
 {
@@ -198,64 +223,6 @@ auto Expect_(string const expected_) -> void
 	{
 		Token_ = tokenStream_->GetNextToken_();
 	}
-}
-
-auto AcceptIdentifier_() -> bool
-{
-	if (Token_->Type_ != Identifier_)
-	{
-		return false;
-	}
-
-	Token_ = tokenStream_->GetNextToken_();
-	return true;
-}
-
-auto AcceptString_() -> bool
-{
-	if (Token_->Type_ != String_)
-	{
-		return false;
-	}
-
-	Token_ = tokenStream_->GetNextToken_();
-	return true;
-}
-
-auto AcceptCodePoint_() -> bool
-{
-	if (Token_->Type_ != CodePoint_)
-	{
-		return false;
-	}
-
-	Token_ = tokenStream_->GetNextToken_();
-	return true;
-}
-
-auto AcceptNumber_() -> bool
-{
-	if (Token_->Type_ != Number_)
-	{
-		return false;
-	}
-
-	Token_ = tokenStream_->GetNextToken_();
-	return true;
-}
-
-auto ExpectIdentifier_() -> string
-{
-	if (Token_->Type_ != Identifier_)
-	{
-		Definitions_->Error_(string("Expected identifier, found `") + Token_->GetText_() + string("`"));
-		Token_ = tokenStream_->GetNextToken_();
-		return string("<missing>");
-	}
-
-	string const identifier_ = Token_->GetText_();
-	Token_ = tokenStream_->GetNextToken_();
-	return identifier_;
 }
 
 auto IsValueType_(string const type_) -> bool
@@ -331,11 +298,11 @@ auto ConvertType_(bool const mutableBinding_, bool const mutableValue_, string t
 
 auto ParseType_() -> string
 {
-	::System_::Text_::String_Builder_ *const type_ = new ::System_::Text_::String_Builder_(ExpectIdentifier_());
+	::System_::Text_::String_Builder_ *const type_ = new ::System_::Text_::String_Builder_(ExpectToken_(Identifier_)->GetText_());
 	while (Accept_(string(".")))
 	{
 		type_->Append_(string("."));
-		type_->Append_(ExpectIdentifier_());
+		type_->Append_(ExpectToken_(Identifier_)->GetText_());
 	}
 
 	if (Accept_(string("<")))
@@ -357,8 +324,9 @@ auto ParseType_() -> string
 
 auto ParseAtom_(::Source_File_Builder_ *const builder_) -> bool
 {
-	if (Accept_(string("new")))
+	if (Token_->Type_ == NewKeyword_)
 	{
+		AcceptToken_();
 		string type_ = ParseType_();
 		if (!IsValueType_(type_))
 		{
@@ -367,71 +335,87 @@ auto ParseAtom_(::Source_File_Builder_ *const builder_) -> bool
 
 		type_ = ConvertType_(type_);
 		builder_->Write_(type_);
-		Expect_(string("("));
+		ExpectToken_(LeftParen_);
 		builder_->Write_(string("("));
 		ParseCallArguments_(builder_);
-		Expect_(string(")"));
+		ExpectToken_(RightParen_);
 		builder_->Write_(string(")"));
 		return true;
 	}
 
-	if (Accept_(string("not")))
+	if (Token_->Type_ == NotOperator_)
 	{
+		AcceptToken_();
 		builder_->Write_(string("!"));
 		ParseExpression_(builder_);
 		return true;
 	}
 
-	if (Accept_(string("(")))
+	if (Token_->Type_ == LeftParen_)
 	{
+		AcceptToken_();
 		builder_->Write_(string("("));
 		ParseExpression_(builder_);
-		Expect_(string(")"));
+		ExpectToken_(RightParen_);
 		builder_->Write_(string(")"));
 		return true;
 	}
 
-	if (Accept_(string("-")))
+	if (Token_->Type_ == Sub_)
 	{
+		AcceptToken_();
 		builder_->Write_(string("-"));
 		ParseExpression_(builder_, 7);
 		return true;
 	}
 
-	if (Accept_(string("null")))
+	if (Token_->Type_ == NullKeyword_)
 	{
+		AcceptToken_();
 		builder_->Write_(string("::None"));
 		return true;
 	}
 
-	if (Accept_(string("self")))
+	if (Token_->Type_ == SelfKeyword_)
 	{
+		AcceptToken_();
 		builder_->Write_(string("this"));
 		return true;
 	}
 
 	string const token_ = Token_->GetText_();
-	if (Accept_(string("true")) || Accept_(string("false")) || AcceptNumber_())
+	if (Token_->Type_ == TrueKeyword_ || Token_->Type_ == FalseKeyword_ || Token_->Type_ == NullKeyword_)
 	{
+		AcceptToken_();
 		builder_->Write_(token_);
 		return true;
 	}
 
-	if (AcceptIdentifier_())
+	if (Token_->Type_ == Number_)
+	{
+		builder_->Write_(token_);
+		AcceptToken_();
+		return true;
+	}
+
+	if (Token_->Type_ == Identifier_)
 	{
 		builder_->Write_(token_ + string("_"));
+		AcceptToken_();
 		return true;
 	}
 
-	if (AcceptString_())
+	if (Token_->Type_ == String_)
 	{
 		builder_->Write_(string("string(") + token_ + string(")"));
+		AcceptToken_();
 		return true;
 	}
 
-	if (AcceptCodePoint_())
+	if (Token_->Type_ == CodePoint_)
 	{
 		builder_->Write_(token_);
+		AcceptToken_();
 		return true;
 	}
 
@@ -621,7 +605,7 @@ auto ParseStatement_() -> bool
 			Definitions_->Error_(string("Expected `let` or `var` but found `") + Token_->GetText_() + string("`"));
 		}
 
-		string const name_ = ExpectIdentifier_();
+		string const name_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
 		bool const mutableValue_ = Accept_(string("mut"));
 		string const type_ = ParseType_();
@@ -689,7 +673,7 @@ auto ParseStatement_() -> bool
 	string const kind_ = Token_->GetText_();
 	if (Accept_(string("let")) || Accept_(string("var")))
 	{
-		string const variableName_ = ExpectIdentifier_();
+		string const variableName_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
 		bool const mutableValue_ = Accept_(string("mut"));
 		string variableType_ = ParseType_();
@@ -742,7 +726,7 @@ auto ParseArgumentsDeclaration_(bool const isMainFunction_, bool const isMethod_
 	do
 	{
 		bool const mutableBinding_ = Accept_(string("var"));
-		string const name_ = ExpectIdentifier_();
+		string const name_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
 		bool const mutableValue_ = Accept_(string("mut"));
 		string const type_ = ParseType_();
@@ -806,7 +790,7 @@ auto ParseClassMember_(string const className_) -> void
 	string const kind_ = Token_->GetText_();
 	if (Accept_(string("var")) || Accept_(string("let")))
 	{
-		string const fieldName_ = ExpectIdentifier_();
+		string const fieldName_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
 		bool const mutableValue_ = Accept_(string("mut"));
 		string fieldType_ = ParseType_();
@@ -816,7 +800,7 @@ auto ParseClassMember_(string const className_) -> void
 		return;
 	}
 
-	string const methodName_ = ExpectIdentifier_();
+	string const methodName_ = ExpectToken_(Identifier_)->GetText_();
 	Expect_(string("("));
 	bool const mutableSelf_ = Accept_(string("mut"));
 	bool isAssociatedFuntion_ = !mutableSelf_;
@@ -877,7 +861,7 @@ auto ParseDeclaration_() -> void
 	string const kind_ = Token_->GetText_();
 	if (Accept_(string("var")) || Accept_(string("let")))
 	{
-		string const variableName_ = ExpectIdentifier_();
+		string const variableName_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
 		bool const mutableValue_ = Accept_(string("mut"));
 		string variableType_ = ParseType_();
@@ -893,7 +877,7 @@ auto ParseDeclaration_() -> void
 
 	if (Accept_(string("class")))
 	{
-		string const className_ = ExpectIdentifier_();
+		string const className_ = ExpectToken_(Identifier_)->GetText_();
 		TypeDeclarations_->WriteLine_(string("class ") + className_ + string("_;"));
 		ClassDeclarations_->ElementSeparatorLine_();
 		ClassDeclarations_->WriteLine_(string("class ") + className_ + string("_"));
@@ -912,7 +896,7 @@ auto ParseDeclaration_() -> void
 	if (Accept_(string("enum")))
 	{
 		Expect_(string("struct"));
-		string const enumName_ = ExpectIdentifier_();
+		string const enumName_ = ExpectToken_(Identifier_)->GetText_();
 		TypeDeclarations_->WriteLine_(string("enum class ") + enumName_ + string("_;"));
 		ClassDeclarations_->ElementSeparatorLine_();
 		ClassDeclarations_->WriteLine_(string("enum class ") + enumName_ + string("_"));
@@ -920,19 +904,15 @@ auto ParseDeclaration_() -> void
 		ClassDeclarations_->BeginBlock_();
 		do
 		{
-			string const enumValue_ = ExpectIdentifier_();
+			string const enumValue_ = ExpectToken_(Identifier_)->GetText_();
 			ClassDeclarations_->BeginLine_(enumValue_ + string("_"));
 			if (Accept_(string("=")))
 			{
 				ClassDeclarations_->Write_(string(" = "));
-				string const value_ = Token_->GetText_();
-				if (AcceptNumber_())
+				::Syntax_Node_ const *const token_ = ExpectToken_(Number_);
+				if (token_ != ::None)
 				{
-					ClassDeclarations_->Write_(value_);
-				}
-				else
-				{
-					Definitions_->Error_(string("Expected number found `") + value_ + string("`"));
+					ClassDeclarations_->Write_(token_->GetText_());
 				}
 			}
 
@@ -944,7 +924,7 @@ auto ParseDeclaration_() -> void
 		return;
 	}
 
-	string const name_ = ExpectIdentifier_();
+	string const name_ = ExpectToken_(Identifier_)->GetText_();
 	string const arguments_ = ParseFunctionArgumentsDeclaration_(name_ == string("Main"));
 	Expect_(string("->"));
 	bool const mutableValue_ = Accept_(string("mut"));
@@ -1465,7 +1445,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 					end_ += 1;
 				}
 
-				return NewToken_(Identifier_, end_);
+				return NewIdentifierOrKeyword_(end_);
 			}
 
 			if ((IsNumberChar_(curChar_)))
@@ -1484,6 +1464,43 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 	}
 
 	return ::None;
+}
+
+auto ::Token_Stream_::NewIdentifierOrKeyword_(unsigned int const end_) -> ::Syntax_Node_ const *
+{
+	unsigned int const length_ = end_ - position_;
+	string const value_ = Source_->Text_->Substring_(position_, length_);
+	int type_;
+	if (value_ == string("new"))
+	{
+		type_ = NewKeyword_;
+	}
+	else if (value_ == string("not"))
+	{
+		type_ = NotOperator_;
+	}
+	else if (value_ == string("null"))
+	{
+		type_ = NullKeyword_;
+	}
+	else if (value_ == string("self"))
+	{
+		type_ = SelfKeyword_;
+	}
+	else if (value_ == string("true"))
+	{
+		type_ = TrueKeyword_;
+	}
+	else if (value_ == string("false"))
+	{
+		type_ = FalseKeyword_;
+	}
+	else
+	{
+		type_ = Identifier_;
+	}
+
+	return NewToken_(type_, end_);
 }
 
 auto ::Token_Stream_::NewOperator_(int const type_) -> ::Syntax_Node_ const *
