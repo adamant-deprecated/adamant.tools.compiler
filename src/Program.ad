@@ -164,27 +164,27 @@ public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 
 public ConvertParameterList(parameterList: Syntax_Node) -> string
 {
-	let parameters: mut System.Text.String_Builder = new System.Text.String_Builder();
-	parameters.Append("(");
+	let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
+	builder.Append("(");
 	var firstParameter: bool = true;
 	for let parameter: Syntax_Node in parameterList.Children
 	{
 		if parameter.Type == Parameter
 		{
 			if not firstParameter
-				{ parameters.Append(", "); }
+				{ builder.Append(", "); }
 			else
 				{ firstParameter = false; }
 
 			let mutableBinding: bool = parameter.HasChildOfType(VarKeyword);
-			parameters.Append(ConvertType(mutableBinding, parameter.Children.Get(parameter.Children.Length()-1)));
-			parameters.Append(" ");
-			parameters.Append(parameter.FirstChildOfType(Identifier).GetText());
-			parameters.Append("_");
+			builder.Append(ConvertType(mutableBinding, parameter.Children.Get(parameter.Children.Length()-1)));
+			builder.Append(" ");
+			builder.Append(parameter.FirstChildOfType(Identifier).GetText());
+			builder.Append("_");
 		}
 	}
-	parameters.Append(")");
-	return parameters.ToString();
+	builder.Append(")");
+	return builder.ToString();
 }
 
 // ----------------------------------------------------------------------------

@@ -357,8 +357,8 @@ auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> s
 
 auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string
 {
-	::System_::Text_::String_Builder_ *const parameters_ = new ::System_::Text_::String_Builder_();
-	parameters_->Append_(string("("));
+	::System_::Text_::String_Builder_ *const builder_ = new ::System_::Text_::String_Builder_();
+	builder_->Append_(string("("));
 	bool firstParameter_ = true;
 	for (::Syntax_Node_ const *const parameter_ : *(parameterList_->Children_))
 	{
@@ -366,7 +366,7 @@ auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string
 		{
 			if (!firstParameter_)
 			{
-				parameters_->Append_(string(", "));
+				builder_->Append_(string(", "));
 			}
 			else
 			{
@@ -374,15 +374,15 @@ auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string
 			}
 
 			bool const mutableBinding_ = parameter_->HasChildOfType_(VarKeyword_);
-			parameters_->Append_(ConvertType_(mutableBinding_, parameter_->Children_->Get_(parameter_->Children_->Length_() - 1)));
-			parameters_->Append_(string(" "));
-			parameters_->Append_(parameter_->FirstChildOfType_(Identifier_)->GetText_());
-			parameters_->Append_(string("_"));
+			builder_->Append_(ConvertType_(mutableBinding_, parameter_->Children_->Get_(parameter_->Children_->Length_() - 1)));
+			builder_->Append_(string(" "));
+			builder_->Append_(parameter_->FirstChildOfType_(Identifier_)->GetText_());
+			builder_->Append_(string("_"));
 		}
 	}
 
-	parameters_->Append_(string(")"));
-	return parameters_->ToString_();
+	builder_->Append_(string(")"));
+	return builder_->ToString_();
 }
 
 auto ParseType_() -> ::Syntax_Node_ const *
