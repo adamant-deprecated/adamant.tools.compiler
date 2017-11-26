@@ -17,7 +17,8 @@ auto Accept_(string const expected_) -> bool;
 auto Expect_(string const expected_) -> void;
 auto IsValueType_(::Syntax_Node_ const *const type_) -> bool;
 auto ConvertType_(::Syntax_Node_ const *const type_) -> string;
-auto ConvertType_(bool const mutableBinding_, bool const mutableValue_, ::Syntax_Node_ const * type_) -> string;
+auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string;
+auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string;
 auto ParseType_() -> ::Syntax_Node_ const *;
 auto ParseAtom_(::Source_File_Builder_ *const builder_) -> bool;
 auto ParseCallArguments_(::Source_File_Builder_ *const builder_) -> void;
@@ -25,10 +26,8 @@ auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrece
 auto ParseExpression_(::Source_File_Builder_ *const builder_) -> void;
 auto ParseStatement_() -> bool;
 auto ParseBlock_() -> void;
-auto ParseParameters_(bool const isMainFunction_, bool const isMethod_) -> string;
-auto ParseConstructorParameters_() -> string;
-auto ParseFunctionParameters_(bool const isMainFunction_) -> string;
-auto ParseMethodParameters_() -> string;
+auto ParseParameterList_(bool const isMainFunction_) -> ::Syntax_Node_ const *;
+auto ParseParameterList_() -> ::Syntax_Node_ const *;
 auto ParseClassMember_(string const className_) -> void;
 auto ParseDeclaration_() -> void;
 auto ParseCompilationUnit_() -> void;
@@ -103,6 +102,7 @@ public:
 	Syntax_Node_(int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *> const *const children_);
 	auto GetText_() const -> string;
 	auto FirstChildOfType_(int const type_) const -> ::Syntax_Node_ const *;
+	auto HasChildOfType_(int const type_) const -> bool;
 };
 
 class Token_Stream_
@@ -184,6 +184,11 @@ int const Int_ = 44;
 int const Bool_ = 45;
 int const Void_ = 46;
 int const UnsignedInt_ = 47;
+int const ParameterList_ = 48;
+int const Parameter_ = 49;
+int const SelfParameter_ = 50;
+int const VarKeyword_ = 51;
+int const MutableType_ = 52;
 
 // Definitions
 
@@ -261,6 +266,11 @@ auto IsValueType_(::Syntax_Node_ const *const type_) -> bool
 		return firstChar_ >= 'a' && firstChar_ <= 'z';
 	}
 
+	if (type_->Type_ == MutableType_)
+	{
+		return IsValueType_(type_->Children_->Get_(1));
+	}
+
 	return true;
 }
 
@@ -294,23 +304,24 @@ auto ConvertType_(::Syntax_Node_ const *const type_) -> string
 
 	if (type_->Type_ == GenericName_)
 	{
-		if (type_->Children_->Get_(2)->Type_ == MutableKeyword_)
-		{
-			return ConvertType_(type_->Children_->Get_(0)) + string("<") + ConvertType_(true, true, type_->Children_->Get_(3)) + string(">");
-		}
-
-		return ConvertType_(type_->Children_->Get_(0)) + string("<") + ConvertType_(true, false, type_->Children_->Get_(2)) + string(">");
+		return ConvertType_(type_->Children_->Get_(0)) + string("<") + ConvertType_(true, type_->Children_->Get_(2)) + string(">");
 	}
 
 	return FormatError_(string("Unexpected Token of type ") + type_->Type_ + string(" found in CovertType(), `") + type_->GetText_() + string("`"));
 }
 
-auto ConvertType_(bool const mutableBinding_, bool const mutableValue_, ::Syntax_Node_ const * type_) -> string
+auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string
 {
 	bool const nullable_ = type_->Type_ == NullableType_;
 	if (nullable_)
 	{
 		type_ = type_->Children_->Get_(0);
+	}
+
+	bool const mutableValue_ = type_->Type_ == MutableType_;
+	if (mutableValue_)
+	{
+		type_ = type_->Children_->Get_(1);
 	}
 
 	bool const isValueType_ = IsValueType_(type_);
@@ -344,40 +355,76 @@ auto ConvertType_(bool const mutableBinding_, bool const mutableValue_, ::Syntax
 	return cppType_;
 }
 
-auto ParseType_() -> ::Syntax_Node_ const *
+auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string
 {
-	if (Token_->Type_ == CodePoint_ || Token_->Type_ == String_ || Token_->Type_ == Int_ || Token_->Type_ == Bool_ || Token_->Type_ == Void_ || Token_->Type_ == UnsignedInt_)
+	::System_::Text_::String_Builder_ *const parameters_ = new ::System_::Text_::String_Builder_();
+	parameters_->Append_(string("("));
+	bool firstParameter_ = true;
+	for (::Syntax_Node_ const *const parameter_ : *(parameterList_->Children_))
 	{
-		return new ::Syntax_Node_(PredefinedType_, AcceptToken_());
-	}
-
-	::Syntax_Node_ const * type_ = new ::Syntax_Node_(IdentifierName_, ExpectToken_(Identifier_));
-	while (Token_->Type_ == Dot_)
-	{
-		::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
-		children_->Add_(type_);
-		children_->Add_(ExpectToken_(Dot_));
-		::Syntax_Node_ const *const identifier_ = ExpectToken_(Identifier_);
-		if (Token_->Type_ == LessThan_)
+		if (parameter_->Type_ == Parameter_)
 		{
-			::System_::Collections_::List_<::Syntax_Node_ const *> *const genericNameChildren_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
-			genericNameChildren_->Add_(new ::Syntax_Node_(IdentifierName_, identifier_));
-			genericNameChildren_->Add_(ExpectToken_(LessThan_));
-			if (Token_->Type_ == MutableKeyword_)
+			if (!firstParameter_)
 			{
-				genericNameChildren_->Add_(ExpectToken_(MutableKeyword_));
+				parameters_->Append_(string(", "));
+			}
+			else
+			{
+				firstParameter_ = false;
 			}
 
-			genericNameChildren_->Add_(ParseType_());
-			genericNameChildren_->Add_(ExpectToken_(GreaterThan_));
-			children_->Add_(new ::Syntax_Node_(GenericName_, genericNameChildren_));
+			bool const mutableBinding_ = parameter_->HasChildOfType_(VarKeyword_);
+			parameters_->Append_(ConvertType_(mutableBinding_, parameter_->Children_->Get_(parameter_->Children_->Length_() - 1)));
+			parameters_->Append_(string(" "));
+			parameters_->Append_(parameter_->FirstChildOfType_(Identifier_)->GetText_());
+			parameters_->Append_(string("_"));
 		}
-		else
-		{
-			children_->Add_(new ::Syntax_Node_(IdentifierName_, identifier_));
-		}
+	}
 
-		type_ = new ::Syntax_Node_(QualifiedName_, children_);
+	parameters_->Append_(string(")"));
+	return parameters_->ToString_();
+}
+
+auto ParseType_() -> ::Syntax_Node_ const *
+{
+	if (Token_->Type_ == MutableKeyword_)
+	{
+		::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+		children_->Add_(ExpectToken_(MutableKeyword_));
+		children_->Add_(ParseType_());
+		return new ::Syntax_Node_(MutableType_, children_);
+	}
+
+	::Syntax_Node_ const * type_;
+	if (Token_->Type_ == CodePoint_ || Token_->Type_ == String_ || Token_->Type_ == Int_ || Token_->Type_ == Bool_ || Token_->Type_ == Void_ || Token_->Type_ == UnsignedInt_)
+	{
+		type_ = new ::Syntax_Node_(PredefinedType_, AcceptToken_());
+	}
+	else
+	{
+		type_ = new ::Syntax_Node_(IdentifierName_, ExpectToken_(Identifier_));
+		while (Token_->Type_ == Dot_)
+		{
+			::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+			children_->Add_(type_);
+			children_->Add_(ExpectToken_(Dot_));
+			::Syntax_Node_ const *const identifier_ = ExpectToken_(Identifier_);
+			if (Token_->Type_ == LessThan_)
+			{
+				::System_::Collections_::List_<::Syntax_Node_ const *> *const genericNameChildren_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+				genericNameChildren_->Add_(new ::Syntax_Node_(IdentifierName_, identifier_));
+				genericNameChildren_->Add_(ExpectToken_(LessThan_));
+				genericNameChildren_->Add_(ParseType_());
+				genericNameChildren_->Add_(ExpectToken_(GreaterThan_));
+				children_->Add_(new ::Syntax_Node_(GenericName_, genericNameChildren_));
+			}
+			else
+			{
+				children_->Add_(new ::Syntax_Node_(IdentifierName_, identifier_));
+			}
+
+			type_ = new ::Syntax_Node_(QualifiedName_, children_);
+		}
 	}
 
 	if (Token_->Type_ == Question_)
@@ -675,9 +722,8 @@ auto ParseStatement_() -> bool
 
 		string const name_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
-		bool const mutableValue_ = Accept_(string("mut"));
 		::Syntax_Node_ const *const type_ = ParseType_();
-		Definitions_->Write_(ConvertType_(k_ == string("var"), mutableValue_, type_) + string(" ") + name_ + string("_"));
+		Definitions_->Write_(ConvertType_(k_ == string("var"), type_) + string(" ") + name_ + string("_"));
 		Expect_(string("in"));
 		Definitions_->Write_(string(" : *("));
 		ParseExpression_(Definitions_);
@@ -743,9 +789,8 @@ auto ParseStatement_() -> bool
 	{
 		string const variableName_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
-		bool const mutableValue_ = Accept_(string("mut"));
 		::Syntax_Node_ const *const variableType_ = ParseType_();
-		string const cppType_ = ConvertType_(kind_ == string("var"), mutableValue_, variableType_);
+		string const cppType_ = ConvertType_(kind_ == string("var"), variableType_);
 		Definitions_->BeginLine_(cppType_);
 		Definitions_->Write_(string(" ") + variableName_ + string("_"));
 		if (Accept_(string("=")))
@@ -778,61 +823,81 @@ auto ParseBlock_() -> void
 	Definitions_->EndBlock_();
 }
 
-auto ParseParameters_(bool const isMainFunction_, bool const isMethod_) -> string
+auto ParseParameterList_(bool const isMainFunction_) -> ::Syntax_Node_ const *
 {
-	if (!isMethod_)
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	children_->Add_(ExpectToken_(LeftParen_));
+	if (Token_->Type_ != RightParen_)
 	{
-		Expect_(string("("));
-	}
-
-	if (Accept_(string(")")))
-	{
-		return string("");
-	}
-
-	::System_::Text_::String_Builder_ *const arguments_ = new ::System_::Text_::String_Builder_();
-	do
-	{
-		bool const mutableBinding_ = Accept_(string("var"));
-		string const name_ = ExpectToken_(Identifier_)->GetText_();
-		Expect_(string(":"));
-		bool const mutableValue_ = Accept_(string("mut"));
-		::Syntax_Node_ const *const type_ = ParseType_();
-		if (isMainFunction_)
+		for (;;)
 		{
-			string const typeString_ = type_->GetText_();
-			if (typeString_ == string("System.Console.Console"))
+			::System_::Collections_::List_<::Syntax_Node_ const *> *const parameterChildren_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+			if (Token_->Type_ == MutableKeyword_ || Token_->Type_ == SelfKeyword_)
 			{
-				MainFunctionAcceptsConsole_ = true;
+				if (Token_->Type_ == MutableKeyword_)
+				{
+					parameterChildren_->Add_(ExpectToken_(MutableKeyword_));
+				}
+
+				parameterChildren_->Add_(ExpectToken_(SelfKeyword_));
+				children_->Add_(new ::Syntax_Node_(SelfParameter_, parameterChildren_));
+			}
+			else
+			{
+				bool const mutableBinding_ = Token_->Type_ == VarKeyword_;
+				if (Token_->Type_ == VarKeyword_)
+				{
+					parameterChildren_->Add_(ExpectToken_(VarKeyword_));
+				}
+
+				parameterChildren_->Add_(ExpectToken_(Identifier_));
+				parameterChildren_->Add_(ExpectToken_(Colon_));
+				::Syntax_Node_ const *const type_ = ParseType_();
+				parameterChildren_->Add_(type_);
+				if (isMainFunction_)
+				{
+					string typeString_;
+					if (type_->Type_ == MutableType_)
+					{
+						typeString_ = type_->Children_->Get_(1)->GetText_();
+					}
+					else
+					{
+						typeString_ = type_->GetText_();
+					}
+
+					if (typeString_ == string("System.Console.Console"))
+					{
+						MainFunctionAcceptsConsole_ = true;
+					}
+
+					if (typeString_ == string("System.Console.Arguments"))
+					{
+						MainFunctionAcceptsArgs_ = true;
+					}
+				}
+
+				children_->Add_(new ::Syntax_Node_(Parameter_, parameterChildren_));
 			}
 
-			if (typeString_ == string("System.Console.Arguments"))
+			if (Token_->Type_ == Comma_)
 			{
-				MainFunctionAcceptsArgs_ = true;
+				children_->Add_(ExpectToken_(Comma_));
+			}
+			else
+			{
+				break;
 			}
 		}
-
-		arguments_->Append_(ConvertType_(mutableBinding_, mutableValue_, type_) + string(" ") + name_ + string("_, "));
 	}
-	while (Accept_(string(",")));
-	Expect_(string(")"));
-	arguments_->Remove_(arguments_->ToString_()->Length_ - 2);
-	return arguments_->ToString_();
+
+	children_->Add_(ExpectToken_(RightParen_));
+	return new ::Syntax_Node_(ParameterList_, children_);
 }
 
-auto ParseConstructorParameters_() -> string
+auto ParseParameterList_() -> ::Syntax_Node_ const *
 {
-	return ParseParameters_(false, false);
-}
-
-auto ParseFunctionParameters_(bool const isMainFunction_) -> string
-{
-	return ParseParameters_(isMainFunction_, false);
-}
-
-auto ParseMethodParameters_() -> string
-{
-	return ParseParameters_(false, true);
+	return ParseParameterList_(false);
 }
 
 auto ParseClassMember_(string const className_) -> void
@@ -848,10 +913,10 @@ auto ParseClassMember_(string const className_) -> void
 
 	if (Accept_(string("new")))
 	{
-		string const arguments_ = ParseConstructorParameters_();
-		ClassDeclarations_->WriteLine_(className_ + string("_(") + arguments_ + string(");"));
+		string const parameters_ = ConvertParameterList_(ParseParameterList_());
+		ClassDeclarations_->WriteLine_(className_ + string("_") + parameters_ + string(";"));
 		Definitions_->ElementSeparatorLine_();
-		Definitions_->WriteLine_(string("::") + className_ + string("_::") + className_ + string("_(") + arguments_ + string(")"));
+		Definitions_->WriteLine_(string("::") + className_ + string("_::") + className_ + string("_") + parameters_ + string(""));
 		ParseBlock_();
 		return;
 	}
@@ -861,43 +926,22 @@ auto ParseClassMember_(string const className_) -> void
 	{
 		string const fieldName_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
-		bool const mutableValue_ = Accept_(string("mut"));
 		::Syntax_Node_ const *const fieldType_ = ParseType_();
-		string const cppType_ = ConvertType_(true, mutableValue_, fieldType_);
+		string const cppType_ = ConvertType_(true, fieldType_);
 		Expect_(string(";"));
 		ClassDeclarations_->WriteLine_(cppType_ + string(" ") + fieldName_ + string("_;"));
 		return;
 	}
 
 	string const methodName_ = ExpectToken_(Identifier_)->GetText_();
-	Expect_(string("("));
-	bool const mutableSelf_ = Accept_(string("mut"));
-	bool isAssociatedFuntion_ = !mutableSelf_;
-	if (mutableSelf_)
-	{
-		Expect_(string("self"));
-		if (Token_->GetText_() != string(")"))
-		{
-			Expect_(string(","));
-		}
-	}
-	else
-	{
-		if (Accept_(string("self")))
-		{
-			isAssociatedFuntion_ = false;
-			if (Token_->GetText_() != string(")"))
-			{
-				Expect_(string(","));
-			}
-		}
-	}
-
-	string const arguments_ = ParseMethodParameters_();
+	::Syntax_Node_ const *const parameterList_ = ParseParameterList_();
+	string const parameters_ = ConvertParameterList_(parameterList_);
+	::Syntax_Node_ const *const selfParameter_ = parameterList_->FirstChildOfType_(SelfParameter_);
+	bool const isAssociatedFuntion_ = selfParameter_ == ::None;
+	bool const mutableSelf_ = !isAssociatedFuntion_ && selfParameter_->HasChildOfType_(MutableKeyword_);
 	Expect_(string("->"));
-	bool const mutableValue_ = Accept_(string("mut"));
 	::Syntax_Node_ const *const returnType_ = ParseType_();
-	string const cppType_ = ConvertType_(true, mutableValue_, returnType_);
+	string const cppType_ = ConvertType_(true, returnType_);
 	string staticModifier_ = string("");
 	if (isAssociatedFuntion_)
 	{
@@ -910,9 +954,9 @@ auto ParseClassMember_(string const className_) -> void
 		constModifier_ = string("const ");
 	}
 
-	ClassDeclarations_->WriteLine_(staticModifier_ + string("auto ") + methodName_ + string("_(") + arguments_ + string(") ") + constModifier_ + string("-> ") + cppType_ + string(";"));
+	ClassDeclarations_->WriteLine_(staticModifier_ + string("auto ") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_ + string(";"));
 	Definitions_->ElementSeparatorLine_();
-	Definitions_->WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_(") + arguments_ + string(") ") + constModifier_ + string("-> ") + cppType_);
+	Definitions_->WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_);
 	ParseBlock_();
 }
 
@@ -932,10 +976,9 @@ auto ParseDeclaration_() -> void
 	{
 		string const variableName_ = ExpectToken_(Identifier_)->GetText_();
 		Expect_(string(":"));
-		bool const mutableValue_ = Accept_(string("mut"));
 		::Syntax_Node_ const *const variableType_ = ParseType_();
 		Expect_(string("="));
-		string const cppType_ = ConvertType_(kind_ == string("var"), mutableValue_, variableType_);
+		string const cppType_ = ConvertType_(kind_ == string("var"), variableType_);
 		GlobalDefinitions_->BeginLine_(cppType_);
 		GlobalDefinitions_->Write_(string(" ") + variableName_ + string("_ = "));
 		ParseExpression_(GlobalDefinitions_);
@@ -994,14 +1037,13 @@ auto ParseDeclaration_() -> void
 	}
 
 	string const name_ = ExpectToken_(Identifier_)->GetText_();
-	string const arguments_ = ParseFunctionParameters_(name_ == string("Main"));
+	string const parameters_ = ConvertParameterList_(ParseParameterList_(name_ == string("Main")));
 	Expect_(string("->"));
-	bool const mutableValue_ = Accept_(string("mut"));
 	::Syntax_Node_ const *const returnType_ = ParseType_();
-	string const cppType_ = ConvertType_(true, mutableValue_, returnType_);
-	FunctionDeclarations_->WriteLine_(string("auto ") + name_ + string("_(") + arguments_ + string(") -> ") + cppType_ + string(";"));
+	string const cppType_ = ConvertType_(true, returnType_);
+	FunctionDeclarations_->WriteLine_(string("auto ") + name_ + string("_") + parameters_ + string(" -> ") + cppType_ + string(";"));
 	Definitions_->ElementSeparatorLine_();
-	Definitions_->WriteLine_(string("auto ") + name_ + string("_(") + arguments_ + string(") -> ") + cppType_);
+	Definitions_->WriteLine_(string("auto ") + name_ + string("_") + parameters_ + string(" -> ") + cppType_);
 	if (name_ == string("Main"))
 	{
 		if (MainFunctionReturnType_ != string(""))
@@ -1380,6 +1422,19 @@ auto ::Syntax_Node_::FirstChildOfType_(int const type_) const -> ::Syntax_Node_ 
 	return ::None;
 }
 
+auto ::Syntax_Node_::HasChildOfType_(int const type_) const -> bool
+{
+	for (::Syntax_Node_ const *const child_ : *(Children_))
+	{
+		if (child_->Type_ == type_)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 ::Token_Stream_::Token_Stream_(::Source_Text_ const *const source_)
 {
 	Source_ = source_;
@@ -1623,6 +1678,10 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(unsigned int const end_) -> ::Synt
 	else if (value_ == string("uint"))
 	{
 		type_ = UnsignedInt_;
+	}
+	else if (value_ == string("var"))
+	{
+		type_ = VarKeyword_;
 	}
 	else
 	{

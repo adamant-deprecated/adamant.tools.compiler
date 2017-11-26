@@ -26,6 +26,7 @@ public ExpectToken(tokenType: int) -> Syntax_Node
 {
 	if Token.Type <> tokenType
 	{
+		// TODO the tokenType isn't being properly converted to a string here
 		Definitions.Error("Expected token type " + tokenType + ", found `" + Token.GetText() + "` of type " + Token.Type);
 		Token = tokenStream.GetNextToken(); // Skip token to advance
 		return new Syntax_Node(Error, Token.Source, Token.Start, Token.Length);
@@ -87,6 +88,10 @@ public IsValueType(type: Syntax_Node) -> bool
 		let firstChar: code_point = type.FirstChildOfType(Identifier).GetText()[0];
 		return firstChar >= 'a' and firstChar <= 'z';
 	}
+	if type.Type == MutableType
+	{
+		return IsValueType(type.Children.Get(1)); // The type that is mutable
+	}
 
 	// TODO Error
 	return true; // The value true is more likely to cause some kind of compiler error in the emitted source that we will notice
@@ -116,19 +121,14 @@ public ConvertType(type: Syntax_Node) -> string
 	}
 	if type.Type == GenericName
 	{
-		if type.Children.Get(2).Type == MutableKeyword
-		{
-			return ConvertType(type.Children.Get(0)) + "<" + ConvertType(true, true, type.Children.Get(3)) + ">";
-		}
-		return ConvertType(type.Children.Get(0)) + "<" + ConvertType(true, false, type.Children.Get(2)) + ">";
+		return ConvertType(type.Children.Get(0)) + "<" + ConvertType(true, type.Children.Get(2)) + ">";
 	}
 
-	// TODO what about the leading `::`?
 	return FormatError("Unexpected Token of type "+type.Type+" found in CovertType(), `"+type.GetText()+"`");
 }
 
 // Converts a type to C++
-public ConvertType(mutableBinding: bool, mutableValue: bool, var type: Syntax_Node) -> string
+public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 {
 	let nullable: bool = type.Type == NullableType;
 	if nullable
@@ -136,6 +136,11 @@ public ConvertType(mutableBinding: bool, mutableValue: bool, var type: Syntax_No
 		type = type.Children.Get(0); // Remove the nullable wrapper
 	}
 
+	let mutableValue: bool = type.Type == MutableType;
+	if mutableValue
+	{
+		type = type.Children.Get(1); // Remove the mutable wrapper
+	}
 
 	let isValueType: bool = IsValueType(type);
 	var cppType: string = ConvertType(type);
@@ -157,12 +162,47 @@ public ConvertType(mutableBinding: bool, mutableValue: bool, var type: Syntax_No
 	return cppType;
 }
 
+public ConvertParameterList(parameterList: Syntax_Node) -> string
+{
+	let parameters: mut System.Text.String_Builder = new System.Text.String_Builder();
+	parameters.Append("(");
+	var firstParameter: bool = true;
+	for let parameter: Syntax_Node in parameterList.Children
+	{
+		if parameter.Type == Parameter
+		{
+			if not firstParameter
+				{ parameters.Append(", "); }
+			else
+				{ firstParameter = false; }
+
+			let mutableBinding: bool = parameter.HasChildOfType(VarKeyword);
+			parameters.Append(ConvertType(mutableBinding, parameter.Children.Get(parameter.Children.Length()-1)));
+			parameters.Append(" ");
+			parameters.Append(parameter.FirstChildOfType(Identifier).GetText());
+			parameters.Append("_");
+		}
+	}
+	parameters.Append(")");
+	return parameters.ToString();
+}
+
 // ----------------------------------------------------------------------------
 // Parser
 // ----------------------------------------------------------------------------
 
 public ParseType() -> Syntax_Node
 {
+	if Token.Type == MutableKeyword
+	{
+		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+		children.Add(ExpectToken(MutableKeyword));
+		children.Add(ParseType());
+		return new Syntax_Node(MutableType, children);
+	}
+
+	var type: Syntax_Node;
+
 	if Token.Type == CodePoint
 		or Token.Type == String
 		or Token.Type == Int
@@ -170,38 +210,35 @@ public ParseType() -> Syntax_Node
 		or Token.Type == Void
 		or Token.Type == UnsignedInt
 	{
-		return new Syntax_Node(PredefinedType, AcceptToken());
+		type = new Syntax_Node(PredefinedType, AcceptToken());
 	}
-
-	// TODO should be `new mut`
-	var type: Syntax_Node = new Syntax_Node(IdentifierName, ExpectToken(Identifier));
-
-	while Token.Type == Dot
+	else
 	{
-		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-		children.Add(type);
-		children.Add(ExpectToken(Dot));
-		let identifier: Syntax_Node = ExpectToken(Identifier);
-		if Token.Type == LessThan
-		{
-			// Generic Name
-			let genericNameChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-			genericNameChildren.Add(new Syntax_Node(IdentifierName, identifier));
-			genericNameChildren.Add(ExpectToken(LessThan));
-			if Token.Type == MutableKeyword
-			{
-				genericNameChildren.Add(ExpectToken(MutableKeyword));
-			}
-			genericNameChildren.Add(ParseType());
-			genericNameChildren.Add(ExpectToken(GreaterThan));
-			children.Add(new Syntax_Node(GenericName, genericNameChildren));
-		}
-		else
-		{
-			children.Add(new Syntax_Node(IdentifierName, identifier));
-		}
+		type = new Syntax_Node(IdentifierName, ExpectToken(Identifier));
 
-		type = new Syntax_Node(QualifiedName, children);
+		while Token.Type == Dot
+		{
+			let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+			children.Add(type);
+			children.Add(ExpectToken(Dot));
+			let identifier: Syntax_Node = ExpectToken(Identifier);
+			if Token.Type == LessThan
+			{
+				// Generic Name
+				let genericNameChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+				genericNameChildren.Add(new Syntax_Node(IdentifierName, identifier));
+				genericNameChildren.Add(ExpectToken(LessThan));
+				genericNameChildren.Add(ParseType());
+				genericNameChildren.Add(ExpectToken(GreaterThan));
+				children.Add(new Syntax_Node(GenericName, genericNameChildren));
+			}
+			else
+			{
+				children.Add(new Syntax_Node(IdentifierName, identifier));
+			}
+
+			type = new Syntax_Node(QualifiedName, children);
+		}
 	}
 
 	if Token.Type == Question
@@ -483,9 +520,8 @@ public ParseStatement() -> bool
 			{ Definitions.Error("Expected `let` or `var` but found `" + Token.GetText() + "`"); }
 		let name: string = ExpectToken(Identifier).GetText();
 		Expect(":");
-		let mutableValue: bool = Accept("mut");
 		let type: Syntax_Node = ParseType();
-		Definitions.Write(ConvertType(k == "var", mutableValue, type) + " " + name + "_");
+		Definitions.Write(ConvertType(k == "var", type) + " " + name + "_");
 		Expect("in");
 		Definitions.Write(" : *(");
 		ParseExpression(Definitions);
@@ -547,9 +583,8 @@ public ParseStatement() -> bool
 	{
 		let variableName: string = ExpectToken(Identifier).GetText();
 		Expect(":");
-		let mutableValue: bool = Accept("mut");
 		let variableType: Syntax_Node = ParseType();
-		let cppType: string = ConvertType(kind == "var", mutableValue, variableType);
+		let cppType: string = ConvertType(kind == "var", variableType);
 		Definitions.BeginLine(cppType);
 		Definitions.Write(" " + variableName + "_");
 		if Accept("=")
@@ -579,50 +614,63 @@ public ParseBlock() -> void
 	Definitions.EndBlock();
 }
 
-public ParseParameters(isMainFunction: bool, isMethod: bool) -> string
+public ParseParameterList(isMainFunction: bool) -> Syntax_Node
 {
-	// For methods, this is already consumed becuase of the self param
-	if not isMethod { Expect("("); }
-	if Accept(")") { return ""; }
+	let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+	children.Add(ExpectToken(LeftParen));
 
-	// TODO should be `new mut`
-	let arguments: mut System.Text.String_Builder = new System.Text.String_Builder();
-	do
+	if Token.Type <> RightParen
 	{
-		let mutableBinding: bool = Accept("var");
-		let name: string = ExpectToken(Identifier).GetText();
-		Expect(":");
-		let mutableValue: bool = Accept("mut");
-		let type: Syntax_Node = ParseType();
-		if isMainFunction
+		loop
 		{
-			let typeString: string = type.GetText();
-			if typeString == "System.Console.Console"
-				{ MainFunctionAcceptsConsole = true; }
-			if typeString == "System.Console.Arguments"
-				{ MainFunctionAcceptsArgs = true; }
+			let parameterChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+			if Token.Type == MutableKeyword
+				or Token.Type == SelfKeyword
+			{
+				// SelfParameter
+				if Token.Type == MutableKeyword
+					{ parameterChildren.Add(ExpectToken(MutableKeyword)); }
+
+				parameterChildren.Add(ExpectToken(SelfKeyword));
+				children.Add(new Syntax_Node(SelfParameter, parameterChildren));
+			}
+			else
+			{
+				let mutableBinding: bool = Token.Type == VarKeyword;
+				if Token.Type == VarKeyword
+					{ parameterChildren.Add(ExpectToken(VarKeyword)); }
+				parameterChildren.Add(ExpectToken(Identifier));
+				parameterChildren.Add(ExpectToken(Colon));
+				let type: Syntax_Node = ParseType();
+				parameterChildren.Add(type);
+				if isMainFunction
+				{
+					var typeString: string;
+					if type.Type == MutableType
+						{ typeString = type.Children.Get(1).GetText(); }
+					else
+						{ typeString = type.GetText(); }
+					if typeString == "System.Console.Console"
+						{ MainFunctionAcceptsConsole = true; }
+					if typeString == "System.Console.Arguments"
+						{ MainFunctionAcceptsArgs = true; }
+				}
+				children.Add(new Syntax_Node(Parameter, parameterChildren));
+			}
+
+			if Token.Type == Comma
+				{ children.Add(ExpectToken(Comma)); }
+			else
+				{ break; }
 		}
-		arguments.Append(ConvertType(mutableBinding, mutableValue, type) + " " + name + "_, ");
-	} while Accept(",");
-	Expect(")");
-	// TODO Should String_Builder have a Length property?
-	arguments.Remove(arguments.ToString().Length - 2); // remove the trailing comma and space
-	return arguments.ToString();
+	}
+	children.Add(ExpectToken(RightParen));
+	return new Syntax_Node(ParameterList, children);
 }
 
-public ParseConstructorParameters() -> string
+public ParseParameterList() -> Syntax_Node
 {
-	return ParseParameters(false, false);
-}
-
-public ParseFunctionParameters(isMainFunction: bool) -> string
-{
-	return ParseParameters(isMainFunction, false);
-}
-
-public ParseMethodParameters() -> string
-{
-	return ParseParameters(false, true);
+	return ParseParameterList(false);
 }
 
 public ParseClassMember(className: string) -> void
@@ -640,11 +688,11 @@ public ParseClassMember(className: string) -> void
 	if Accept("new")
 	{
 		// Constructor
-		let arguments: string = ParseConstructorParameters();
+		let parameters: string = ConvertParameterList(ParseParameterList());
 		// Write out the function declaration for C++ so we can call functions defined after others
-		ClassDeclarations.WriteLine(className + "_(" + arguments + ");");
+		ClassDeclarations.WriteLine(className + "_" + parameters + ";");
 		Definitions.ElementSeparatorLine();
-		Definitions.WriteLine("::" + className + "_::" + className + "_(" + arguments + ")");
+		Definitions.WriteLine("::" + className + "_::" + className + "_" + parameters + "");
 		ParseBlock();
 		return;
 	}
@@ -654,9 +702,8 @@ public ParseClassMember(className: string) -> void
 	{
 		let fieldName: string = ExpectToken(Identifier).GetText();
 		Expect(":");
-		let mutableValue: bool = Accept("mut");
 		let fieldType: Syntax_Node = ParseType();
-		let cppType: string = ConvertType(true, mutableValue, fieldType); // because we need to assign them in constructors don't mark fields const
+		let cppType: string = ConvertType(true, fieldType); // because we need to assign them in constructors don't mark fields const
 		Expect(";");
 		ClassDeclarations.WriteLine(cppType + " " + fieldName + "_;");
 		return;
@@ -664,38 +711,23 @@ public ParseClassMember(className: string) -> void
 
 	// Method Declaration
 	let methodName: string = ExpectToken(Identifier).GetText();
-	Expect("(");
-	let mutableSelf: bool = Accept("mut");
-	var isAssociatedFuntion: bool = not mutableSelf;
-	if mutableSelf
-	{
-		Expect("self");
-		if Token.GetText() <> ")"
-			{ Expect(","); }
-	}
-	else
-	{
-		if Accept("self")
-		{
-			isAssociatedFuntion = false;
-			if Token.GetText() <> ")"
-				{ Expect(","); }
-		}
-	}
-	let arguments: string = ParseMethodParameters();
+	let parameterList: Syntax_Node = ParseParameterList();
+	let parameters: string = ConvertParameterList(parameterList);
+	let selfParameter: Syntax_Node = parameterList.FirstChildOfType(SelfParameter);
+	let isAssociatedFuntion: bool = selfParameter == null;
+	let mutableSelf: bool = not isAssociatedFuntion and selfParameter.HasChildOfType(MutableKeyword);
 	Expect("->");
-	let mutableValue: bool = Accept("mut");
 	let returnType: Syntax_Node = ParseType();
-	let cppType: string = ConvertType(true, mutableValue, returnType);
+	let cppType: string = ConvertType(true, returnType);
 	var staticModifier: string = "";
 	if isAssociatedFuntion
 		{ staticModifier = "static "; }
 	var constModifier: string = "";
 	if not mutableSelf and not isAssociatedFuntion
 		{ constModifier = "const "; }
-	ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_(" + arguments + ") " + constModifier + "-> " + cppType + ";");
+	ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_" + parameters + " " + constModifier + "-> " + cppType + ";");
 	Definitions.ElementSeparatorLine();
-	Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_(" + arguments + ") " + constModifier + "-> " + cppType);
+	Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_" + parameters + " " + constModifier + "-> " + cppType);
 	ParseBlock();
 }
 
@@ -717,10 +749,9 @@ public ParseDeclaration() -> void
 	{
 		let variableName: string = ExpectToken(Identifier).GetText();
 		Expect(":");
-		let mutableValue: bool = Accept("mut");
 		let variableType: Syntax_Node = ParseType();
 		Expect("=");
-		let cppType: string = ConvertType(kind == "var", mutableValue, variableType);
+		let cppType: string = ConvertType(kind == "var", variableType);
 		GlobalDefinitions.BeginLine(cppType);
 		GlobalDefinitions.Write(" " + variableName + "_ = ");
 		ParseExpression(GlobalDefinitions);
@@ -775,15 +806,14 @@ public ParseDeclaration() -> void
 
 	// Function Declaration
 	let name: string = ExpectToken(Identifier).GetText();
-	let arguments: string = ParseFunctionParameters(name == "Main");
+	let parameters: string = ConvertParameterList(ParseParameterList(name == "Main"));
 	Expect("->");
-	let mutableValue: bool = Accept("mut");
 	let returnType: Syntax_Node = ParseType();
-	let cppType: string = ConvertType(true, mutableValue, returnType);
+	let cppType: string = ConvertType(true, returnType);
 	// Write out the function declaration for C++ so we can call functions defined after others
-	FunctionDeclarations.WriteLine("auto " + name + "_(" + arguments + ") -> " + cppType + ";");
+	FunctionDeclarations.WriteLine("auto " + name + "_" + parameters + " -> " + cppType + ";");
 	Definitions.ElementSeparatorLine();
-	Definitions.WriteLine("auto " + name + "_(" + arguments + ") -> " + cppType);
+	Definitions.WriteLine("auto " + name + "_" + parameters + " -> " + cppType);
 	if name == "Main"
 	{
 		if MainFunctionReturnType <> ""

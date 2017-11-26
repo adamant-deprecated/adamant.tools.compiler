@@ -40,7 +40,7 @@ public let GenericName: int = 36; // An identifier with type arguments
 public let QualifiedName: int = 37; // A name that is qualified by a name and a dot
 public let PackageQualifiedName: int = 38; // IdentifierName::Name
 public let MutableKeyword: int = 39; // `mut`
-public let NullableType: int = 40; // `⧼type⧽?`
+public let NullableType: int = 40; // `⧼Type⧽?`
 public let PredefinedType: int = 41;
 public let CodePoint: int = 42; // `code_point`
 public let String: int = 43; // `string`
@@ -48,6 +48,11 @@ public let Int: int = 44; // `int`
 public let Bool: int = 45; // `bool`
 public let Void: int = 46; // `void`
 public let UnsignedInt: int = 47; // `uint`
+public let ParameterList: int = 48; // `(Parameter, ⧼...⧽)` may include a SelfParameter
+public let Parameter: int = 49; // `⧼VarKeyword⧽ ⧼Identifier⧽: ⧼Type⧽` A parameter in a ParameterList
+public let SelfParameter: int = 50; // `self` or `mut self`
+public let VarKeyword: int = 51; // `var`
+public let MutableType: int = 52; // `mut ⧼Type⧽`
 
 public class Syntax_Node
 {
@@ -101,5 +106,15 @@ public class Syntax_Node
 				{ return child; }
 		}
 		return null;
+	}
+
+	public HasChildOfType(self, type: int) -> bool
+	{
+		for let child: Syntax_Node in Children
+		{
+			if child.Type == type
+				{ return true; }
+		}
+		return false;
 	}
 }

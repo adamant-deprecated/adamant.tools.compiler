@@ -25,10 +25,10 @@ auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrece
 auto ParseExpression_(::Source_File_Builder_ *const builder_) -> void;
 auto ParseStatement_() -> bool;
 auto ParseBlock_() -> void;
-auto ParseArgumentsDeclaration_(bool const isMainFunction_, bool const isMethod_) -> string;
-auto ParseConstructorArgumentsDeclaration_() -> string;
-auto ParseFunctionArgumentsDeclaration_(bool const isMainFunction_) -> string;
-auto ParseMethodArgumentsDeclaration_() -> string;
+auto ParseParameters_(bool const isMainFunction_, bool const isMethod_) -> string;
+auto ParseConstructorParameters_() -> string;
+auto ParseFunctionParameters_(bool const isMainFunction_) -> string;
+auto ParseMethodParameters_() -> string;
 auto ParseClassMember_(string const className_) -> void;
 auto ParseDeclaration_() -> void;
 auto ParseCompilationUnit_() -> void;
@@ -778,7 +778,7 @@ auto ParseBlock_() -> void
 	Definitions_->EndBlock_();
 }
 
-auto ParseArgumentsDeclaration_(bool const isMainFunction_, bool const isMethod_) -> string
+auto ParseParameters_(bool const isMainFunction_, bool const isMethod_) -> string
 {
 	if (!isMethod_)
 	{
@@ -820,19 +820,19 @@ auto ParseArgumentsDeclaration_(bool const isMainFunction_, bool const isMethod_
 	return arguments_->ToString_();
 }
 
-auto ParseConstructorArgumentsDeclaration_() -> string
+auto ParseConstructorParameters_() -> string
 {
-	return ParseArgumentsDeclaration_(false, false);
+	return ParseParameters_(false, false);
 }
 
-auto ParseFunctionArgumentsDeclaration_(bool const isMainFunction_) -> string
+auto ParseFunctionParameters_(bool const isMainFunction_) -> string
 {
-	return ParseArgumentsDeclaration_(isMainFunction_, false);
+	return ParseParameters_(isMainFunction_, false);
 }
 
-auto ParseMethodArgumentsDeclaration_() -> string
+auto ParseMethodParameters_() -> string
 {
-	return ParseArgumentsDeclaration_(false, true);
+	return ParseParameters_(false, true);
 }
 
 auto ParseClassMember_(string const className_) -> void
@@ -848,7 +848,7 @@ auto ParseClassMember_(string const className_) -> void
 
 	if (Accept_(string("new")))
 	{
-		string const arguments_ = ParseConstructorArgumentsDeclaration_();
+		string const arguments_ = ParseConstructorParameters_();
 		ClassDeclarations_->WriteLine_(className_ + string("_(") + arguments_ + string(");"));
 		Definitions_->ElementSeparatorLine_();
 		Definitions_->WriteLine_(string("::") + className_ + string("_::") + className_ + string("_(") + arguments_ + string(")"));
@@ -893,7 +893,7 @@ auto ParseClassMember_(string const className_) -> void
 		}
 	}
 
-	string const arguments_ = ParseMethodArgumentsDeclaration_();
+	string const arguments_ = ParseMethodParameters_();
 	Expect_(string("->"));
 	bool const mutableValue_ = Accept_(string("mut"));
 	::Syntax_Node_ const *const returnType_ = ParseType_();
@@ -994,7 +994,7 @@ auto ParseDeclaration_() -> void
 	}
 
 	string const name_ = ExpectToken_(Identifier_)->GetText_();
-	string const arguments_ = ParseFunctionArgumentsDeclaration_(name_ == string("Main"));
+	string const arguments_ = ParseFunctionParameters_(name_ == string("Main"));
 	Expect_(string("->"));
 	bool const mutableValue_ = Accept_(string("mut"));
 	::Syntax_Node_ const *const returnType_ = ParseType_();

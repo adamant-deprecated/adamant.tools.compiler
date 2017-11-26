@@ -3,7 +3,7 @@ CALL buildBootstrapped.bat
 
 @echo.
 @echo ************************
-@echo Testing Current (compile test-cases with current)
+@echo Testing Bootstrapped (compile test-cases with bootstrapped)
 rmdir /S/Q ..\..\translated\test-cases
 @mkdir ..\..\translated\test-cases\resources
 for %%E in (..\..\test-cases\*.ad) do (

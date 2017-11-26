@@ -207,6 +207,8 @@ public class Token_Stream
 			{ type = Void; }
 		else if value == "uint"
 			{ type = UnsignedInt; }
+		else if value == "var"
+			{ type = VarKeyword; }
 		else
 			{ type = Identifier; }
 
