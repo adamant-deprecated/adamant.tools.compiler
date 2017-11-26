@@ -209,6 +209,10 @@ public class Token_Stream
 			{ type = UnsignedInt; }
 		else if value == "var"
 			{ type = VarKeyword; }
+		else if value == "and"
+			{ type = AndKeyword; }
+		else if value == "or"
+			{ type = OrKeyword; }
 		else
 			{ type = Identifier; }
 

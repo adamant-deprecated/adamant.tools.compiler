@@ -15,10 +15,10 @@ public let Question: int = 11; // `?`
 public let Equal: int = 12; // `==`
 public let Assign: int = 13; // `=`
 public let AddAssign: int = 14; // `+=`
-public let Add: int = 15; // `+`
+public let Add: int = 15; // `+` // TODO use Plus instead
 public let Arrow: int = 16; // `->`
 public let SubAssign: int = 17; // `-=`
-public let Sub: int = 18; // `-`
+public let Sub: int = 18; // `-` // TODO use Minus instead
 public let Slash: int = 19; // `/`
 public let NotEqual: int = 20; // `<>`
 public let LessThanOrEqual: int = 21; // `<=`
@@ -53,6 +53,31 @@ public let Parameter: int = 49; // `⧼VarKeyword⧽ ⧼Identifier⧽: ⧼Type�
 public let SelfParameter: int = 50; // `self` or `mut self`
 public let VarKeyword: int = 51; // `var`
 public let MutableType: int = 52; // `mut ⧼Type⧽`
+public let NewExpression: int = 53; // `new ⧼Type⧽⧼ParameterList⧽`
+public let ArgumentList: int = 54; // `(⧼Expression⧽, ⧼...⧽)` may include a SelfParameter
+public let NotExpression: int = 55; // `not ⧼Expression⧽`
+public let ParenthesizedExpression: int = 56; // `(⧼Expression⧽)`
+public let NullLiteralExpression: int = 57; // `null`
+public let SelfExpression: int = 58; // `self`
+public let TrueLiteralExpression: int = 59; // `true`
+public let FalseLiteralExpression: int = 60; // `false`
+public let StringLiteralExpression: int = 61;
+public let CodePointLiteralExpression: int = 62;
+public let NumericLiteralExpression: int = 63;
+public let AssignmentExpression: int = 64;
+public let OrExpression: int = 65;
+public let AndExpression: int = 66;
+public let EqualExpression: int = 67;
+public let NotEqualExpression: int = 68;
+public let AndKeyword: int = 69; // `and`
+public let OrKeyword: int = 70; // `or`
+public let ComparisionExpression: int = 71;
+public let AddExpression: int = 72;
+public let SubtractExpression: int = 73;
+public let InvocationExpression: int = 74;
+public let MemberAccessExpression: int = 75;
+public let ElementAccessExpression: int = 76;
+public let UnaryMinusExpression: int = 77; // `-⧼Expression⧽`
 
 public class Syntax_Node
 {
