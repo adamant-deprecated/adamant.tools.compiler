@@ -202,17 +202,17 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	{
 		builder.Write("(");
 		var firstExpression: bool = true;
-		for let syntax: Syntax_Node in syntax.Children
+		for let arg: Syntax_Node in syntax.Children
 		{
-			if syntax.Type <> LeftParen
-				and syntax.Type <> RightParen
-				and syntax.Type <> Comma
+			if arg.Type <> LeftParen
+				and arg.Type <> RightParen
+				and arg.Type <> Comma
 			{
 				if firstExpression
 					{ firstExpression = false; }
 				else
 					{ builder.Write(", "); }
-				ConvertExpression(syntax, builder);
+				ConvertExpression(arg, builder);
 			}
 		}
 		builder.Write(")");
@@ -307,6 +307,134 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	else
 	{
 		builder.Error("Could not convert expression of type " + syntax.Type);
+	}
+}
+
+public EmitStatement(statement: Syntax_Node) -> void
+{
+	Definitions.StatementSeparatorLine();
+
+	if statement.Type == ReturnStatement
+	{
+
+		if statement.Children.Length() == 2
+			{ Definitions.WriteLine("return;"); }
+		else
+		{
+			Definitions.BeginLine("return ");
+			ConvertExpression(statement.Children.Get(1), Definitions);
+			Definitions.EndLine(";");
+		}
+	}
+	else if statement.Type == LoopStatement
+	{
+		Definitions.WriteLine("for (;;)");
+		EmitStatement(statement.Children.Get(1)); // Block Statement
+	}
+	else if statement.Type == Block
+	{
+		Definitions.BeginBlock();
+		for let blockStatement: Syntax_Node in statement.Children
+		{
+			if blockStatement.Type <> LeftBrace and blockStatement.Type <> RightBrace
+			{
+				EmitStatement(blockStatement);
+			}
+		}
+		Definitions.EndBlock();
+	}
+	else if statement.Type == WhileStatement
+	{
+		Definitions.BeginLine("while (");
+		ConvertExpression(statement.Children.Get(1), Definitions);
+		Definitions.EndLine(")");
+		EmitStatement(statement.Children.Get(2)); // Block Statement
+	}
+	else if statement.Type == ForStatement
+	{
+		Definitions.BeginLine("for (");
+		//let k: string = Token.GetText();
+		//if not Accept("let") and not Accept("var")
+		//	{ Definitions.Error("Expected `let` or `var` but found `" + Token.GetText() + "`"); }
+		let variableDeclaration: Syntax_Node = statement.Children.Get(1);
+		let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
+		let name: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
+		let type: Syntax_Node = variableDeclaration.Children.Get(3);
+		Definitions.Write(ConvertType(mutableBinding, type) + " " + name + "_");
+		Definitions.Write(" : *(");
+		ConvertExpression(statement.Children.Get(3), Definitions); // expression
+		Definitions.EndLine("))");
+		EmitStatement(statement.Children.Get(4)); // Block Statement
+	}
+	else if statement.Type == DoWhileStatement
+	{
+		Definitions.WriteLine("do");
+		EmitStatement(statement.Children.Get(1)); // Block Statement
+		Definitions.BeginLine("while (");
+		ConvertExpression(statement.Children.Get(3), Definitions);
+		Definitions.EndLine(");");
+	}
+	else if statement.Type == IfStatement
+	{
+		var ifStatement: Syntax_Node = statement;
+		Definitions.BeginLine("");
+		loop
+		{
+			Definitions.Write("if (");
+			ConvertExpression(ifStatement.Children.Get(1), Definitions);
+			Definitions.EndLine(")");
+			EmitStatement(ifStatement.Children.Get(2)); // Block Statement
+			let elseClause: Syntax_Node = ifStatement.FirstChildOfType(ElseClause);
+			if elseClause <> null
+			{
+				ifStatement = elseClause.FirstChildOfType(IfStatement);
+				if ifStatement <> null
+				{
+					Definitions.BeginLine("else ");
+				}
+				else
+				{
+					Definitions.WriteLine("else");
+					EmitStatement(elseClause.Children.Get(1)); // Block Statement
+					break;
+				}
+			}
+			else
+				{ break; }
+		}
+	}
+	else if statement.Type == BreakStatement
+	{
+		Definitions.WriteLine("break;");
+	}
+	else if statement.Type == ContinueStatement
+	{
+		Definitions.WriteLine("continue;");
+	}
+	else if statement.Type == LocalDeclarationStatement
+	{
+		let variableDeclaration: Syntax_Node = statement.Children.Get(0);
+		let variableName: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
+		let variableType: Syntax_Node = variableDeclaration.Children.Get(3);
+		let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
+		Definitions.BeginLine(ConvertType(mutableBinding, variableType));
+		Definitions.Write(" " + variableName + "_");
+		if variableDeclaration.HasChildOfType(Assign)
+		{
+			Definitions.Write(" = ");
+			ConvertExpression(variableDeclaration.Children.Get(5), Definitions);
+		}
+		Definitions.EndLine(";");
+	}
+	else if statement.Type == ExpressionStatement
+	{
+		Definitions.BeginLine("");
+		ConvertExpression(statement.Children.Get(0), Definitions);
+		Definitions.EndLine(";");
+	}
+	else
+	{
+		Definitions.Error("Could not emit statement of type " + statement.Type);
 	}
 }
 
@@ -615,139 +743,133 @@ public ParseExpression() -> Syntax_Node
 	return ParseExpression(1);
 }
 
-public ParseStatement() -> bool
+public ParseStatement() -> Syntax_Node
 {
-	if Token.GetText() == "}" { return false; }
+	let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
-	Definitions.StatementSeparatorLine();
-
-	if Accept("return")
+	if Token.Type == ReturnKeyword
 	{
-		if  Accept(";")
-			{ Definitions.WriteLine("return;"); }
-		else
+		children.Add(ExpectToken(ReturnKeyword));
+		if Token.Type <> Semicolon
 		{
-			Definitions.BeginLine("return ");
-			ConvertExpression(ParseExpression(), Definitions);
-			Expect(";");
-			Definitions.EndLine(";");
+			children.Add(ParseExpression());
 		}
-		return true;
+		children.Add(ExpectToken(Semicolon));
+		return new Syntax_Node(ReturnStatement, children);
 	}
-	if Accept("loop")
+	if Token.Type == LoopKeyword
 	{
-		Definitions.WriteLine("for (;;)");
-		ParseBlock();
-		return true;
+		children.Add(ExpectToken(LoopKeyword));
+		children.Add(ParseBlock());
+		return new Syntax_Node(LoopStatement, children);
 	}
-	if Accept("while")
+	if Token.Type == WhileKeyword
 	{
-		Definitions.BeginLine("while (");
-		ConvertExpression(ParseExpression(), Definitions);
-		Definitions.EndLine(")");
-		ParseBlock();
-		return true;
+		children.Add(ExpectToken(WhileKeyword));
+		children.Add(ParseExpression());
+		children.Add(ParseBlock());
+		return new Syntax_Node(WhileStatement, children);
 	}
-	if Accept("for")
+	if Token.Type == ForKeyword
 	{
-		Definitions.BeginLine("for (");
-		let k: string = Token.GetText();
-		if not Accept("let") and not Accept("var")
-			{ Definitions.Error("Expected `let` or `var` but found `" + Token.GetText() + "`"); }
-		let name: string = ExpectToken(Identifier).GetText();
-		Expect(":");
-		let type: Syntax_Node = ParseType();
-		Definitions.Write(ConvertType(k == "var", type) + " " + name + "_");
-		Expect("in");
-		Definitions.Write(" : *(");
-		ConvertExpression(ParseExpression(), Definitions);
-		Definitions.EndLine("))");
-		ParseBlock();
-		return true;
+		children.Add(ExpectToken(ForKeyword));
+		children.Add(ParseVariableDeclaration(false));
+		children.Add(ExpectToken(InKeyword));
+		children.Add(ParseExpression());
+		children.Add(ParseBlock());
+		return new Syntax_Node(ForStatement, children);
 	}
-	if Accept("do")
+	if Token.Type == DoKeyword
 	{
-		Definitions.WriteLine("do");
-		ParseBlock();
-		Expect("while");
-		Definitions.BeginLine("while (");
-		ConvertExpression(ParseExpression(), Definitions);
-		Expect(";");
-		Definitions.EndLine(");");
-		return true;
+		children.Add(ExpectToken(DoKeyword));
+		children.Add(ParseBlock());
+		children.Add(ExpectToken(WhileKeyword));
+		children.Add(ParseExpression());
+		children.Add(ExpectToken(Semicolon));
+		return new Syntax_Node(DoWhileStatement, children);
 	}
-
-	if Accept("if")
+	if Token.Type == IfKeyword
 	{
-		Definitions.BeginLine("if (");
-		ConvertExpression(ParseExpression(), Definitions);
-		Definitions.EndLine(")");
-		ParseBlock();
-		while Accept("else")
-		{
-			if Accept("if")
-			{
-				Definitions.BeginLine("else if (");
-				ConvertExpression(ParseExpression(), Definitions);
-				Definitions.EndLine(")");
-				ParseBlock();
-			}
-			else
-			{
-				Definitions.WriteLine("else");
-				ParseBlock();
-				return true;
-			}
-		}
-		return true;
+		return ParseIfStatement();
 	}
-	if Accept("break")
+	if Token.Type == BreakKeyword
 	{
-		Expect(";");
-		Definitions.WriteLine("break;");
-		return true;
+		children.Add(ExpectToken(BreakKeyword));
+		children.Add(ExpectToken(Semicolon));
+		return new Syntax_Node(BreakStatement, children);
 	}
-	if Accept("continue")
+	if Token.Type == ContinueKeyword
 	{
-		Expect(";");
-		Definitions.WriteLine("continue;");
-		return true;
+		children.Add(ExpectToken(ContinueKeyword));
+		children.Add(ExpectToken(Semicolon));
+		return new Syntax_Node(ContinueStatement, children);
 	}
-
-	let kind: string = Token.GetText();
-	if Accept("let") or Accept("var")
+	if Token.Type == VarKeyword or Token.Type == LetKeyword
 	{
-		let variableName: string = ExpectToken(Identifier).GetText();
-		Expect(":");
-		let variableType: Syntax_Node = ParseType();
-		let cppType: string = ConvertType(kind == "var", variableType);
-		Definitions.BeginLine(cppType);
-		Definitions.Write(" " + variableName + "_");
-		if Accept("=")
-		{
-			Definitions.Write(" = ");
-			ConvertExpression(ParseExpression(), Definitions);
-		}
-		Expect(";");
-		Definitions.EndLine(";");
-		return true;
+		children.Add(ParseVariableDeclaration(true));
+		children.Add(ExpectToken(Semicolon));
+		return new Syntax_Node(LocalDeclarationStatement, children);
 	}
 
 	// Assume it is an expression statement
-	Definitions.BeginLine("");
-	ConvertExpression(ParseExpression(), Definitions);
-	Expect(";");
-	Definitions.EndLine(";");
-	return true;
+	children.Add(ParseExpression());
+	children.Add(ExpectToken(Semicolon));
+	return new Syntax_Node(ExpressionStatement, children);
 }
 
-public ParseBlock() -> void
+public ParseIfStatement() -> Syntax_Node
 {
-	Expect("{");
-	Definitions.BeginBlock();
-	while ParseStatement() {}
-	Expect("}");
-	Definitions.EndBlock();
+	let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+
+	children.Add(ExpectToken(IfKeyword));
+	children.Add(ParseExpression());
+	children.Add(ParseBlock());
+	if Token.Type == ElseKeyword
+	{
+		let elseChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+		elseChildren.Add(ExpectToken(ElseKeyword));
+		if Token.Type == IfKeyword
+			{ elseChildren.Add(ParseIfStatement()); }
+		else
+			{ elseChildren.Add(ParseBlock());}
+		children.Add(new Syntax_Node(ElseClause, elseChildren));
+	}
+
+	return new Syntax_Node(IfStatement, children);
+}
+
+public ParseVariableDeclaration(allowInitializer: bool) -> Syntax_Node
+{
+	let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+
+	if Token.Type == LetKeyword and Token.Type <> VarKeyword
+		{ children.Add(ExpectToken(LetKeyword)); }
+	else
+		{ children.Add(ExpectToken(VarKeyword)); }
+
+	children.Add(ExpectToken(Identifier));
+	children.Add(ExpectToken(Colon));
+	children.Add(ParseType());
+
+	if allowInitializer and Token.Type == Assign
+	{
+		children.Add(ExpectToken(Assign));
+		children.Add(ParseExpression());
+	}
+
+	return new Syntax_Node(VariableDeclaration, children);
+}
+
+public ParseBlock() -> Syntax_Node
+{
+	let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+	children.Add(ExpectToken(LeftBrace));
+	while Token.Type <> RightBrace
+	{
+		children.Add(ParseStatement());
+	}
+	children.Add(ExpectToken(RightBrace));
+	return new Syntax_Node(Block, children);
 }
 
 public ParseParameterList(isMainFunction: bool) -> Syntax_Node
@@ -829,7 +951,7 @@ public ParseClassMember(className: string) -> void
 		ClassDeclarations.WriteLine(className + "_" + parameters + ";");
 		Definitions.ElementSeparatorLine();
 		Definitions.WriteLine("::" + className + "_::" + className + "_" + parameters + "");
-		ParseBlock();
+		EmitStatement(ParseBlock());
 		return;
 	}
 
@@ -864,7 +986,7 @@ public ParseClassMember(className: string) -> void
 	ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_" + parameters + " " + constModifier + "-> " + cppType + ";");
 	Definitions.ElementSeparatorLine();
 	Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_" + parameters + " " + constModifier + "-> " + cppType);
-	ParseBlock();
+	EmitStatement(ParseBlock());
 }
 
 public ParseDeclaration() -> void
@@ -956,7 +1078,7 @@ public ParseDeclaration() -> void
 			{ Definitions.Error("Multiple declarations of main"); }
 		MainFunctionReturnType = cppType;
 	}
-	ParseBlock();
+	EmitStatement(ParseBlock());
 }
 
 public ParseCompilationUnit() -> void

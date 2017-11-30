@@ -20,13 +20,16 @@ auto ConvertType_(::Syntax_Node_ const *const type_) -> string;
 auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string;
 auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string;
 auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void;
+auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
 auto ParseType_() -> ::Syntax_Node_ const *;
 auto ParseAtom_() -> ::Syntax_Node_ const *;
 auto ParseCallArguments_() -> ::Syntax_Node_ const *;
 auto ParseExpression_(int const minPrecedence_) -> ::Syntax_Node_ const *;
 auto ParseExpression_() -> ::Syntax_Node_ const *;
-auto ParseStatement_() -> bool;
-auto ParseBlock_() -> void;
+auto ParseStatement_() -> ::Syntax_Node_ const *;
+auto ParseIfStatement_() -> ::Syntax_Node_ const *;
+auto ParseVariableDeclaration_(bool const allowInitializer_) -> ::Syntax_Node_ const *;
+auto ParseBlock_() -> ::Syntax_Node_ const *;
 auto ParseParameterList_(bool const isMainFunction_) -> ::Syntax_Node_ const *;
 auto ParseParameterList_() -> ::Syntax_Node_ const *;
 auto ParseClassMember_(string const className_) -> void;
@@ -215,6 +218,30 @@ int const InvocationExpression_ = 74;
 int const MemberAccessExpression_ = 75;
 int const ElementAccessExpression_ = 76;
 int const UnaryMinusExpression_ = 77;
+int const ReturnKeyword_ = 78;
+int const ReturnStatement_ = 79;
+int const LoopKeyword_ = 80;
+int const LoopStatement_ = 81;
+int const Block_ = 82;
+int const WhileKeyword_ = 83;
+int const WhileStatement_ = 84;
+int const ForKeyword_ = 85;
+int const ForStatement_ = 86;
+int const LetKeyword_ = 87;
+int const VariableDeclaration_ = 88;
+int const LocalDeclarationStatement_ = 89;
+int const InKeyword_ = 90;
+int const DoKeyword_ = 91;
+int const DoWhileStatement_ = 92;
+int const IfKeyword_ = 93;
+int const ElseKeyword_ = 94;
+int const IfStatement_ = 95;
+int const ElseClause_ = 96;
+int const BreakKeyword_ = 97;
+int const BreakStatement_ = 98;
+int const ContinueKeyword_ = 99;
+int const ContinueStatement_ = 100;
+int const ExpressionStatement_ = 101;
 
 // Definitions
 
@@ -429,9 +456,9 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	{
 		builder_->Write_(string("("));
 		bool firstExpression_ = true;
-		for (::Syntax_Node_ const *const syntax_ : *(syntax_->Children_))
+		for (::Syntax_Node_ const *const arg_ : *(syntax_->Children_))
 		{
-			if (syntax_->Type_ != LeftParen_ && syntax_->Type_ != RightParen_ && syntax_->Type_ != Comma_)
+			if (arg_->Type_ != LeftParen_ && arg_->Type_ != RightParen_ && arg_->Type_ != Comma_)
 			{
 				if (firstExpression_)
 				{
@@ -442,7 +469,7 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 					builder_->Write_(string(", "));
 				}
 
-				ConvertExpression_(syntax_, builder_);
+				ConvertExpression_(arg_, builder_);
 			}
 		}
 
@@ -531,6 +558,135 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	else
 	{
 		builder_->Error_(string("Could not convert expression of type ") + syntax_->Type_);
+	}
+}
+
+auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
+{
+	Definitions_->StatementSeparatorLine_();
+	if (statement_->Type_ == ReturnStatement_)
+	{
+		if (statement_->Children_->Length_() == 2)
+		{
+			Definitions_->WriteLine_(string("return;"));
+		}
+		else
+		{
+			Definitions_->BeginLine_(string("return "));
+			ConvertExpression_(statement_->Children_->Get_(1), Definitions_);
+			Definitions_->EndLine_(string(";"));
+		}
+	}
+	else if (statement_->Type_ == LoopStatement_)
+	{
+		Definitions_->WriteLine_(string("for (;;)"));
+		EmitStatement_(statement_->Children_->Get_(1));
+	}
+	else if (statement_->Type_ == Block_)
+	{
+		Definitions_->BeginBlock_();
+		for (::Syntax_Node_ const *const blockStatement_ : *(statement_->Children_))
+		{
+			if (blockStatement_->Type_ != LeftBrace_ && blockStatement_->Type_ != RightBrace_)
+			{
+				EmitStatement_(blockStatement_);
+			}
+		}
+
+		Definitions_->EndBlock_();
+	}
+	else if (statement_->Type_ == WhileStatement_)
+	{
+		Definitions_->BeginLine_(string("while ("));
+		ConvertExpression_(statement_->Children_->Get_(1), Definitions_);
+		Definitions_->EndLine_(string(")"));
+		EmitStatement_(statement_->Children_->Get_(2));
+	}
+	else if (statement_->Type_ == ForStatement_)
+	{
+		Definitions_->BeginLine_(string("for ("));
+		::Syntax_Node_ const *const variableDeclaration_ = statement_->Children_->Get_(1);
+		bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
+		string const name_ = variableDeclaration_->FirstChildOfType_(Identifier_)->GetText_();
+		::Syntax_Node_ const *const type_ = variableDeclaration_->Children_->Get_(3);
+		Definitions_->Write_(ConvertType_(mutableBinding_, type_) + string(" ") + name_ + string("_"));
+		Definitions_->Write_(string(" : *("));
+		ConvertExpression_(statement_->Children_->Get_(3), Definitions_);
+		Definitions_->EndLine_(string("))"));
+		EmitStatement_(statement_->Children_->Get_(4));
+	}
+	else if (statement_->Type_ == DoWhileStatement_)
+	{
+		Definitions_->WriteLine_(string("do"));
+		EmitStatement_(statement_->Children_->Get_(1));
+		Definitions_->BeginLine_(string("while ("));
+		ConvertExpression_(statement_->Children_->Get_(3), Definitions_);
+		Definitions_->EndLine_(string(");"));
+	}
+	else if (statement_->Type_ == IfStatement_)
+	{
+		::Syntax_Node_ const * ifStatement_ = statement_;
+		Definitions_->BeginLine_(string(""));
+		for (;;)
+		{
+			Definitions_->Write_(string("if ("));
+			ConvertExpression_(ifStatement_->Children_->Get_(1), Definitions_);
+			Definitions_->EndLine_(string(")"));
+			EmitStatement_(ifStatement_->Children_->Get_(2));
+			::Syntax_Node_ const *const elseClause_ = ifStatement_->FirstChildOfType_(ElseClause_);
+			if (elseClause_ != ::None)
+			{
+				ifStatement_ = elseClause_->FirstChildOfType_(IfStatement_);
+				if (ifStatement_ != ::None)
+				{
+					Definitions_->BeginLine_(string("else "));
+				}
+				else
+				{
+					Definitions_->WriteLine_(string("else"));
+					EmitStatement_(elseClause_->Children_->Get_(1));
+					break;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	else if (statement_->Type_ == BreakStatement_)
+	{
+		Definitions_->WriteLine_(string("break;"));
+	}
+	else if (statement_->Type_ == ContinueStatement_)
+	{
+		Definitions_->WriteLine_(string("continue;"));
+	}
+	else if (statement_->Type_ == LocalDeclarationStatement_)
+	{
+		::Syntax_Node_ const *const variableDeclaration_ = statement_->Children_->Get_(0);
+		string const variableName_ = variableDeclaration_->FirstChildOfType_(Identifier_)->GetText_();
+		::Syntax_Node_ const *const variableType_ = variableDeclaration_->Children_->Get_(3);
+		bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
+		Definitions_->BeginLine_(ConvertType_(mutableBinding_, variableType_));
+		Definitions_->Write_(string(" ") + variableName_ + string("_"));
+		if (variableDeclaration_->HasChildOfType_(Assign_))
+		{
+			Definitions_->Write_(string(" = "));
+			ConvertExpression_(variableDeclaration_->Children_->Get_(5), Definitions_);
+		}
+
+		Definitions_->EndLine_(string(";"));
+	}
+	else if (statement_->Type_ == ExpressionStatement_)
+	{
+		Definitions_->BeginLine_(string(""));
+		ConvertExpression_(statement_->Children_->Get_(0), Definitions_);
+		Definitions_->EndLine_(string(";"));
+	}
+	else
+	{
+		Definitions_->Error_(string("Could not emit statement of type ") + statement_->Type_);
 	}
 }
 
@@ -820,157 +976,147 @@ auto ParseExpression_() -> ::Syntax_Node_ const *
 	return ParseExpression_(1);
 }
 
-auto ParseStatement_() -> bool
+auto ParseStatement_() -> ::Syntax_Node_ const *
 {
-	if (Token_->GetText_() == string("}"))
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	if (Token_->Type_ == ReturnKeyword_)
 	{
-		return false;
+		children_->Add_(ExpectToken_(ReturnKeyword_));
+		if (Token_->Type_ != Semicolon_)
+		{
+			children_->Add_(ParseExpression_());
+		}
+
+		children_->Add_(ExpectToken_(Semicolon_));
+		return new ::Syntax_Node_(ReturnStatement_, children_);
 	}
 
-	Definitions_->StatementSeparatorLine_();
-	if (Accept_(string("return")))
+	if (Token_->Type_ == LoopKeyword_)
 	{
-		if (Accept_(string(";")))
+		children_->Add_(ExpectToken_(LoopKeyword_));
+		children_->Add_(ParseBlock_());
+		return new ::Syntax_Node_(LoopStatement_, children_);
+	}
+
+	if (Token_->Type_ == WhileKeyword_)
+	{
+		children_->Add_(ExpectToken_(WhileKeyword_));
+		children_->Add_(ParseExpression_());
+		children_->Add_(ParseBlock_());
+		return new ::Syntax_Node_(WhileStatement_, children_);
+	}
+
+	if (Token_->Type_ == ForKeyword_)
+	{
+		children_->Add_(ExpectToken_(ForKeyword_));
+		children_->Add_(ParseVariableDeclaration_(false));
+		children_->Add_(ExpectToken_(InKeyword_));
+		children_->Add_(ParseExpression_());
+		children_->Add_(ParseBlock_());
+		return new ::Syntax_Node_(ForStatement_, children_);
+	}
+
+	if (Token_->Type_ == DoKeyword_)
+	{
+		children_->Add_(ExpectToken_(DoKeyword_));
+		children_->Add_(ParseBlock_());
+		children_->Add_(ExpectToken_(WhileKeyword_));
+		children_->Add_(ParseExpression_());
+		children_->Add_(ExpectToken_(Semicolon_));
+		return new ::Syntax_Node_(DoWhileStatement_, children_);
+	}
+
+	if (Token_->Type_ == IfKeyword_)
+	{
+		return ParseIfStatement_();
+	}
+
+	if (Token_->Type_ == BreakKeyword_)
+	{
+		children_->Add_(ExpectToken_(BreakKeyword_));
+		children_->Add_(ExpectToken_(Semicolon_));
+		return new ::Syntax_Node_(BreakStatement_, children_);
+	}
+
+	if (Token_->Type_ == ContinueKeyword_)
+	{
+		children_->Add_(ExpectToken_(ContinueKeyword_));
+		children_->Add_(ExpectToken_(Semicolon_));
+		return new ::Syntax_Node_(ContinueStatement_, children_);
+	}
+
+	if (Token_->Type_ == VarKeyword_ || Token_->Type_ == LetKeyword_)
+	{
+		children_->Add_(ParseVariableDeclaration_(true));
+		children_->Add_(ExpectToken_(Semicolon_));
+		return new ::Syntax_Node_(LocalDeclarationStatement_, children_);
+	}
+
+	children_->Add_(ParseExpression_());
+	children_->Add_(ExpectToken_(Semicolon_));
+	return new ::Syntax_Node_(ExpressionStatement_, children_);
+}
+
+auto ParseIfStatement_() -> ::Syntax_Node_ const *
+{
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	children_->Add_(ExpectToken_(IfKeyword_));
+	children_->Add_(ParseExpression_());
+	children_->Add_(ParseBlock_());
+	if (Token_->Type_ == ElseKeyword_)
+	{
+		::System_::Collections_::List_<::Syntax_Node_ const *> *const elseChildren_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+		elseChildren_->Add_(ExpectToken_(ElseKeyword_));
+		if (Token_->Type_ == IfKeyword_)
 		{
-			Definitions_->WriteLine_(string("return;"));
+			elseChildren_->Add_(ParseIfStatement_());
 		}
 		else
 		{
-			Definitions_->BeginLine_(string("return "));
-			ConvertExpression_(ParseExpression_(), Definitions_);
-			Expect_(string(";"));
-			Definitions_->EndLine_(string(";"));
+			elseChildren_->Add_(ParseBlock_());
 		}
 
-		return true;
+		children_->Add_(new ::Syntax_Node_(ElseClause_, elseChildren_));
 	}
 
-	if (Accept_(string("loop")))
-	{
-		Definitions_->WriteLine_(string("for (;;)"));
-		ParseBlock_();
-		return true;
-	}
-
-	if (Accept_(string("while")))
-	{
-		Definitions_->BeginLine_(string("while ("));
-		ConvertExpression_(ParseExpression_(), Definitions_);
-		Definitions_->EndLine_(string(")"));
-		ParseBlock_();
-		return true;
-	}
-
-	if (Accept_(string("for")))
-	{
-		Definitions_->BeginLine_(string("for ("));
-		string const k_ = Token_->GetText_();
-		if (!Accept_(string("let")) && !Accept_(string("var")))
-		{
-			Definitions_->Error_(string("Expected `let` or `var` but found `") + Token_->GetText_() + string("`"));
-		}
-
-		string const name_ = ExpectToken_(Identifier_)->GetText_();
-		Expect_(string(":"));
-		::Syntax_Node_ const *const type_ = ParseType_();
-		Definitions_->Write_(ConvertType_(k_ == string("var"), type_) + string(" ") + name_ + string("_"));
-		Expect_(string("in"));
-		Definitions_->Write_(string(" : *("));
-		ConvertExpression_(ParseExpression_(), Definitions_);
-		Definitions_->EndLine_(string("))"));
-		ParseBlock_();
-		return true;
-	}
-
-	if (Accept_(string("do")))
-	{
-		Definitions_->WriteLine_(string("do"));
-		ParseBlock_();
-		Expect_(string("while"));
-		Definitions_->BeginLine_(string("while ("));
-		ConvertExpression_(ParseExpression_(), Definitions_);
-		Expect_(string(";"));
-		Definitions_->EndLine_(string(");"));
-		return true;
-	}
-
-	if (Accept_(string("if")))
-	{
-		Definitions_->BeginLine_(string("if ("));
-		ConvertExpression_(ParseExpression_(), Definitions_);
-		Definitions_->EndLine_(string(")"));
-		ParseBlock_();
-		while (Accept_(string("else")))
-		{
-			if (Accept_(string("if")))
-			{
-				Definitions_->BeginLine_(string("else if ("));
-				ConvertExpression_(ParseExpression_(), Definitions_);
-				Definitions_->EndLine_(string(")"));
-				ParseBlock_();
-			}
-			else
-			{
-				Definitions_->WriteLine_(string("else"));
-				ParseBlock_();
-				return true;
-			}
-		}
-
-		return true;
-	}
-
-	if (Accept_(string("break")))
-	{
-		Expect_(string(";"));
-		Definitions_->WriteLine_(string("break;"));
-		return true;
-	}
-
-	if (Accept_(string("continue")))
-	{
-		Expect_(string(";"));
-		Definitions_->WriteLine_(string("continue;"));
-		return true;
-	}
-
-	string const kind_ = Token_->GetText_();
-	if (Accept_(string("let")) || Accept_(string("var")))
-	{
-		string const variableName_ = ExpectToken_(Identifier_)->GetText_();
-		Expect_(string(":"));
-		::Syntax_Node_ const *const variableType_ = ParseType_();
-		string const cppType_ = ConvertType_(kind_ == string("var"), variableType_);
-		Definitions_->BeginLine_(cppType_);
-		Definitions_->Write_(string(" ") + variableName_ + string("_"));
-		if (Accept_(string("=")))
-		{
-			Definitions_->Write_(string(" = "));
-			ConvertExpression_(ParseExpression_(), Definitions_);
-		}
-
-		Expect_(string(";"));
-		Definitions_->EndLine_(string(";"));
-		return true;
-	}
-
-	Definitions_->BeginLine_(string(""));
-	ConvertExpression_(ParseExpression_(), Definitions_);
-	Expect_(string(";"));
-	Definitions_->EndLine_(string(";"));
-	return true;
+	return new ::Syntax_Node_(IfStatement_, children_);
 }
 
-auto ParseBlock_() -> void
+auto ParseVariableDeclaration_(bool const allowInitializer_) -> ::Syntax_Node_ const *
 {
-	Expect_(string("{"));
-	Definitions_->BeginBlock_();
-	while (ParseStatement_())
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	if (Token_->Type_ == LetKeyword_ && Token_->Type_ != VarKeyword_)
 	{
+		children_->Add_(ExpectToken_(LetKeyword_));
+	}
+	else
+	{
+		children_->Add_(ExpectToken_(VarKeyword_));
 	}
 
-	Expect_(string("}"));
-	Definitions_->EndBlock_();
+	children_->Add_(ExpectToken_(Identifier_));
+	children_->Add_(ExpectToken_(Colon_));
+	children_->Add_(ParseType_());
+	if (allowInitializer_ && Token_->Type_ == Assign_)
+	{
+		children_->Add_(ExpectToken_(Assign_));
+		children_->Add_(ParseExpression_());
+	}
+
+	return new ::Syntax_Node_(VariableDeclaration_, children_);
+}
+
+auto ParseBlock_() -> ::Syntax_Node_ const *
+{
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	children_->Add_(ExpectToken_(LeftBrace_));
+	while (Token_->Type_ != RightBrace_)
+	{
+		children_->Add_(ParseStatement_());
+	}
+
+	children_->Add_(ExpectToken_(RightBrace_));
+	return new ::Syntax_Node_(Block_, children_);
 }
 
 auto ParseParameterList_(bool const isMainFunction_) -> ::Syntax_Node_ const *
@@ -1067,7 +1213,7 @@ auto ParseClassMember_(string const className_) -> void
 		ClassDeclarations_->WriteLine_(className_ + string("_") + parameters_ + string(";"));
 		Definitions_->ElementSeparatorLine_();
 		Definitions_->WriteLine_(string("::") + className_ + string("_::") + className_ + string("_") + parameters_ + string(""));
-		ParseBlock_();
+		EmitStatement_(ParseBlock_());
 		return;
 	}
 
@@ -1107,7 +1253,7 @@ auto ParseClassMember_(string const className_) -> void
 	ClassDeclarations_->WriteLine_(staticModifier_ + string("auto ") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_ + string(";"));
 	Definitions_->ElementSeparatorLine_();
 	Definitions_->WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_);
-	ParseBlock_();
+	EmitStatement_(ParseBlock_());
 }
 
 auto ParseDeclaration_() -> void
@@ -1204,7 +1350,7 @@ auto ParseDeclaration_() -> void
 		MainFunctionReturnType_ = cppType_;
 	}
 
-	ParseBlock_();
+	EmitStatement_(ParseBlock_());
 }
 
 auto ParseCompilationUnit_() -> void
@@ -1840,6 +1986,50 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(unsigned int const end_) -> ::Synt
 	else if (value_ == string("or"))
 	{
 		type_ = OrKeyword_;
+	}
+	else if (value_ == string("return"))
+	{
+		type_ = ReturnKeyword_;
+	}
+	else if (value_ == string("loop"))
+	{
+		type_ = LoopKeyword_;
+	}
+	else if (value_ == string("while"))
+	{
+		type_ = WhileKeyword_;
+	}
+	else if (value_ == string("for"))
+	{
+		type_ = ForKeyword_;
+	}
+	else if (value_ == string("let"))
+	{
+		type_ = LetKeyword_;
+	}
+	else if (value_ == string("in"))
+	{
+		type_ = InKeyword_;
+	}
+	else if (value_ == string("do"))
+	{
+		type_ = DoKeyword_;
+	}
+	else if (value_ == string("if"))
+	{
+		type_ = IfKeyword_;
+	}
+	else if (value_ == string("else"))
+	{
+		type_ = ElseKeyword_;
+	}
+	else if (value_ == string("break"))
+	{
+		type_ = BreakKeyword_;
+	}
+	else if (value_ == string("continue"))
+	{
+		type_ = ContinueKeyword_;
 	}
 	else
 	{

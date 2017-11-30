@@ -78,6 +78,30 @@ public let InvocationExpression: int = 74;
 public let MemberAccessExpression: int = 75;
 public let ElementAccessExpression: int = 76;
 public let UnaryMinusExpression: int = 77; // `-⧼Expression⧽`
+public let ReturnKeyword: int = 78; // `return`
+public let ReturnStatement: int = 79; // `return ⧼Expression⧽;` or `return;`
+public let LoopKeyword: int = 80; // `loop`
+public let LoopStatement: int = 81; // `loop ⧼Block⧽`
+public let Block: int = 82; // `{ ⧼Statement⧽ ⧼...⧽ }`
+public let WhileKeyword: int = 83; // `while`
+public let WhileStatement: int = 84; // `while ⧼Expression⧽ ⧼Block⧽`
+public let ForKeyword: int = 85; // `for`
+public let ForStatement: int = 86; // `for  ⧼Block⧽`
+public let LetKeyword: int = 87; // `let`
+public let VariableDeclaration: int = 88; // `⧼LetKeyword|VarKeyword⧽ ⧼Identifier⧽ = ⧼Expression⧽`
+public let LocalDeclarationStatement: int = 89; // `⧼VariableDeclaration⧽;`
+public let InKeyword: int = 90; // `in`
+public let DoKeyword: int = 91; // `do`
+public let DoWhileStatement: int = 92; // `do ⧼Block⧽ while ⧼Expression⧽;`
+public let IfKeyword: int = 93; // `if`
+public let ElseKeyword: int = 94; // `else`
+public let IfStatement: int = 95; // `if ⧼Expression⧽ ⧼Block⧽ ⧼ElseClause?⧽`
+public let ElseClause: int = 96; // `else ⧼Block⧽` or `else ⧼IfStatement⧽`
+public let BreakKeyword: int = 97; // `break`
+public let BreakStatement: int = 98; // `break;`
+public let ContinueKeyword: int = 99; // `continue`
+public let ContinueStatement: int = 100; // `continue;`
+public let ExpressionStatement: int = 101; // `⧼Expression⧽;`
 
 public class Syntax_Node
 {

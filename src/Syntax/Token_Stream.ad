@@ -213,6 +213,28 @@ public class Token_Stream
 			{ type = AndKeyword; }
 		else if value == "or"
 			{ type = OrKeyword; }
+		else if value == "return"
+			{ type = ReturnKeyword; }
+		else if value == "loop"
+			{ type = LoopKeyword; }
+		else if value == "while"
+			{ type = WhileKeyword; }
+		else if value == "for"
+			{ type = ForKeyword; }
+		else if value == "let"
+			{ type = LetKeyword; }
+		else if value == "in"
+			{ type = InKeyword; }
+		else if value == "do"
+			{ type = DoKeyword; }
+		else if value == "if"
+			{ type = IfKeyword; }
+		else if value == "else"
+			{ type = ElseKeyword; }
+		else if value == "break"
+			{ type = BreakKeyword; }
+		else if value == "continue"
+			{ type = ContinueKeyword; }
 		else
 			{ type = Identifier; }
 

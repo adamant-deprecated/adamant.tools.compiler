@@ -19,11 +19,12 @@ auto IsValueType_(::Syntax_Node_ const *const type_) -> bool;
 auto ConvertType_(::Syntax_Node_ const *const type_) -> string;
 auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string;
 auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string;
+auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void;
 auto ParseType_() -> ::Syntax_Node_ const *;
-auto ParseAtom_(::Source_File_Builder_ *const builder_) -> bool;
-auto ParseCallArguments_(::Source_File_Builder_ *const builder_) -> void;
-auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrecedence_) -> void;
-auto ParseExpression_(::Source_File_Builder_ *const builder_) -> void;
+auto ParseAtom_() -> ::Syntax_Node_ const *;
+auto ParseCallArguments_() -> ::Syntax_Node_ const *;
+auto ParseExpression_(int const minPrecedence_) -> ::Syntax_Node_ const *;
+auto ParseExpression_() -> ::Syntax_Node_ const *;
 auto ParseStatement_() -> bool;
 auto ParseBlock_() -> void;
 auto ParseParameterList_(bool const isMainFunction_) -> ::Syntax_Node_ const *;
@@ -189,6 +190,31 @@ int const Parameter_ = 49;
 int const SelfParameter_ = 50;
 int const VarKeyword_ = 51;
 int const MutableType_ = 52;
+int const NewExpression_ = 53;
+int const ArgumentList_ = 54;
+int const NotExpression_ = 55;
+int const ParenthesizedExpression_ = 56;
+int const NullLiteralExpression_ = 57;
+int const SelfExpression_ = 58;
+int const TrueLiteralExpression_ = 59;
+int const FalseLiteralExpression_ = 60;
+int const StringLiteralExpression_ = 61;
+int const CodePointLiteralExpression_ = 62;
+int const NumericLiteralExpression_ = 63;
+int const AssignmentExpression_ = 64;
+int const OrExpression_ = 65;
+int const AndExpression_ = 66;
+int const EqualExpression_ = 67;
+int const NotEqualExpression_ = 68;
+int const AndKeyword_ = 69;
+int const OrKeyword_ = 70;
+int const ComparisionExpression_ = 71;
+int const AddExpression_ = 72;
+int const SubtractExpression_ = 73;
+int const InvocationExpression_ = 74;
+int const MemberAccessExpression_ = 75;
+int const ElementAccessExpression_ = 76;
+int const UnaryMinusExpression_ = 77;
 
 // Definitions
 
@@ -385,6 +411,129 @@ auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string
 	return builder_->ToString_();
 }
 
+auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void
+{
+	if (syntax_->Type_ == NewExpression_)
+	{
+		::Syntax_Node_ const *const type_ = syntax_->Children_->Get_(1);
+		if (!IsValueType_(type_))
+		{
+			builder_->Write_(string("new "));
+		}
+
+		builder_->Write_(ConvertType_(type_));
+		::Syntax_Node_ const *const argumentList_ = syntax_->Children_->Get_(2);
+		ConvertExpression_(argumentList_, builder_);
+	}
+	else if (syntax_->Type_ == ArgumentList_)
+	{
+		builder_->Write_(string("("));
+		bool firstExpression_ = true;
+		for (::Syntax_Node_ const *const syntax_ : *(syntax_->Children_))
+		{
+			if (syntax_->Type_ != LeftParen_ && syntax_->Type_ != RightParen_ && syntax_->Type_ != Comma_)
+			{
+				if (firstExpression_)
+				{
+					firstExpression_ = false;
+				}
+				else
+				{
+					builder_->Write_(string(", "));
+				}
+
+				ConvertExpression_(syntax_, builder_);
+			}
+		}
+
+		builder_->Write_(string(")"));
+	}
+	else if (syntax_->Type_ == NotExpression_)
+	{
+		builder_->Write_(string("!"));
+		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+	}
+	else if (syntax_->Type_ == ParenthesizedExpression_)
+	{
+		builder_->Write_(string("("));
+		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+		builder_->Write_(string(")"));
+	}
+	else if (syntax_->Type_ == UnaryMinusExpression_)
+	{
+		builder_->Write_(string("-"));
+		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+	}
+	else if (syntax_->Type_ == NullLiteralExpression_)
+	{
+		builder_->Write_(string("::None"));
+	}
+	else if (syntax_->Type_ == SelfExpression_)
+	{
+		builder_->Write_(string("this"));
+	}
+	else if (syntax_->Type_ == TrueLiteralExpression_ || syntax_->Type_ == FalseLiteralExpression_ || syntax_->Type_ == NumericLiteralExpression_ || syntax_->Type_ == CodePointLiteralExpression_)
+	{
+		builder_->Write_(syntax_->GetText_());
+	}
+	else if (syntax_->Type_ == IdentifierName_)
+	{
+		builder_->Write_(syntax_->GetText_() + string("_"));
+	}
+	else if (syntax_->Type_ == StringLiteralExpression_)
+	{
+		builder_->Write_(string("string(") + syntax_->GetText_() + string(")"));
+	}
+	else if (syntax_->Type_ == AssignmentExpression_ || syntax_->Type_ == EqualExpression_ || syntax_->Type_ == ComparisionExpression_ || syntax_->Type_ == AddExpression_ || syntax_->Type_ == SubtractExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(" "));
+		builder_->Write_(syntax_->Children_->Get_(1)->GetText_());
+		builder_->Write_(string(" "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == OrExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(" || "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == AndExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(" && "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == NotEqualExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(" != "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == InvocationExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+	}
+	else if (syntax_->Type_ == MemberAccessExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string("->"));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == ElementAccessExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string("["));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string("]"));
+	}
+	else
+	{
+		builder_->Error_(string("Could not convert expression of type ") + syntax_->Type_);
+	}
+}
+
 auto ParseType_() -> ::Syntax_Node_ const *
 {
 	if (Token_->Type_ == MutableKeyword_)
@@ -438,221 +587,216 @@ auto ParseType_() -> ::Syntax_Node_ const *
 	return type_;
 }
 
-auto ParseAtom_(::Source_File_Builder_ *const builder_) -> bool
+auto ParseAtom_() -> ::Syntax_Node_ const *
 {
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
 	if (Token_->Type_ == NewKeyword_)
 	{
-		AcceptToken_();
-		::Syntax_Node_ const *const type_ = ParseType_();
-		if (!IsValueType_(type_))
-		{
-			builder_->Write_(string("new "));
-		}
-
-		builder_->Write_(ConvertType_(type_));
-		ExpectToken_(LeftParen_);
-		builder_->Write_(string("("));
-		ParseCallArguments_(builder_);
-		ExpectToken_(RightParen_);
-		builder_->Write_(string(")"));
-		return true;
+		children_->Add_(ExpectToken_(NewKeyword_));
+		children_->Add_(ParseType_());
+		children_->Add_(ParseCallArguments_());
+		return new ::Syntax_Node_(NewExpression_, children_);
 	}
 
 	if (Token_->Type_ == NotOperator_)
 	{
-		AcceptToken_();
-		builder_->Write_(string("!"));
-		ParseExpression_(builder_);
-		return true;
+		children_->Add_(ExpectToken_(NotOperator_));
+		children_->Add_(ParseExpression_());
+		return new ::Syntax_Node_(NotExpression_, children_);
 	}
 
 	if (Token_->Type_ == LeftParen_)
 	{
-		AcceptToken_();
-		builder_->Write_(string("("));
-		ParseExpression_(builder_);
-		ExpectToken_(RightParen_);
-		builder_->Write_(string(")"));
-		return true;
+		children_->Add_(ExpectToken_(LeftParen_));
+		children_->Add_(ParseExpression_());
+		children_->Add_(ExpectToken_(RightParen_));
+		return new ::Syntax_Node_(ParenthesizedExpression_, children_);
 	}
 
 	if (Token_->Type_ == Sub_)
 	{
-		AcceptToken_();
-		builder_->Write_(string("-"));
-		ParseExpression_(builder_, 7);
-		return true;
+		children_->Add_(ExpectToken_(Sub_));
+		children_->Add_(ParseExpression_(7));
+		return new ::Syntax_Node_(UnaryMinusExpression_, children_);
 	}
 
 	if (Token_->Type_ == NullKeyword_)
 	{
-		AcceptToken_();
-		builder_->Write_(string("::None"));
-		return true;
+		children_->Add_(ExpectToken_(NullKeyword_));
+		return new ::Syntax_Node_(NullLiteralExpression_, children_);
 	}
 
 	if (Token_->Type_ == SelfKeyword_)
 	{
-		AcceptToken_();
-		builder_->Write_(string("this"));
-		return true;
+		children_->Add_(ExpectToken_(SelfKeyword_));
+		return new ::Syntax_Node_(SelfExpression_, children_);
 	}
 
-	string const token_ = Token_->GetText_();
-	if (Token_->Type_ == TrueKeyword_ || Token_->Type_ == FalseKeyword_)
+	if (Token_->Type_ == TrueKeyword_)
 	{
-		AcceptToken_();
-		builder_->Write_(token_);
-		return true;
+		children_->Add_(ExpectToken_(TrueKeyword_));
+		return new ::Syntax_Node_(TrueLiteralExpression_, children_);
+	}
+
+	if (Token_->Type_ == FalseKeyword_)
+	{
+		children_->Add_(ExpectToken_(FalseKeyword_));
+		return new ::Syntax_Node_(FalseLiteralExpression_, children_);
 	}
 
 	if (Token_->Type_ == Number_)
 	{
-		builder_->Write_(token_);
-		AcceptToken_();
-		return true;
+		children_->Add_(ExpectToken_(Number_));
+		return new ::Syntax_Node_(NumericLiteralExpression_, children_);
 	}
 
 	if (Token_->Type_ == Identifier_)
 	{
-		builder_->Write_(token_ + string("_"));
-		AcceptToken_();
-		return true;
+		children_->Add_(ExpectToken_(Identifier_));
+		return new ::Syntax_Node_(IdentifierName_, children_);
 	}
 
 	if (Token_->Type_ == StringLiteral_)
 	{
-		builder_->Write_(string("string(") + token_ + string(")"));
-		AcceptToken_();
-		return true;
+		children_->Add_(ExpectToken_(StringLiteral_));
+		return new ::Syntax_Node_(StringLiteralExpression_, children_);
 	}
 
 	if (Token_->Type_ == CodePointLiteral_)
 	{
-		builder_->Write_(token_);
-		AcceptToken_();
-		return true;
+		children_->Add_(ExpectToken_(CodePointLiteral_));
+		return new ::Syntax_Node_(CodePointLiteralExpression_, children_);
 	}
 
-	return false;
+	return ::None;
 }
 
-auto ParseCallArguments_(::Source_File_Builder_ *const builder_) -> void
+auto ParseCallArguments_() -> ::Syntax_Node_ const *
 {
-	bool first_ = true;
-	do
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	children_->Add_(ExpectToken_(LeftParen_));
+	if (Token_->Type_ != RightParen_)
 	{
-		if (first_)
+		for (;;)
 		{
-			first_ = false;
+			children_->Add_(ParseExpression_());
+			if (Token_->Type_ == Comma_)
+			{
+				children_->Add_(ExpectToken_(Comma_));
+			}
+			else
+			{
+				break;
+			}
 		}
-		else
-		{
-			builder_->Write_(string(", "));
-		}
-
-		ParseExpression_(builder_);
 	}
-	while (Accept_(string(",")));
+
+	children_->Add_(ExpectToken_(RightParen_));
+	return new ::Syntax_Node_(ArgumentList_, children_);
 }
 
-auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrecedence_) -> void
+auto ParseExpression_(int const minPrecedence_) -> ::Syntax_Node_ const *
 {
-	if (!ParseAtom_(builder_))
+	::Syntax_Node_ const * expression_ = ParseAtom_();
+	if (expression_ == ::None)
 	{
-		return;
+		return ::None;
 	}
 
 	for (;;)
 	{
-		string const token_ = Token_->GetText_();
+		::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+		children_->Add_(expression_);
 		int precedence_;
 		bool leftAssociative_;
 		bool suffixOperator_ = false;
-		if ((token_ == string("=") || token_ == string("+=") || token_ == string("-=")) && minPrecedence_ <= 1)
+		int expressionType_;
+		if ((Token_->Type_ == Assign_ || Token_->Type_ == AddAssign_ || Token_->Type_ == SubAssign_) && minPrecedence_ <= 1)
 		{
 			precedence_ = 1;
 			leftAssociative_ = false;
-			builder_->Write_(string(" ") + token_ + string(" "));
+			children_->Add_(AcceptToken_());
+			expressionType_ = AssignmentExpression_;
 		}
-		else if (token_ == string("or") && minPrecedence_ <= 2)
+		else if (Token_->Type_ == OrKeyword_ && minPrecedence_ <= 2)
 		{
 			precedence_ = 2;
 			leftAssociative_ = true;
-			builder_->Write_(string(" || "));
+			children_->Add_(ExpectToken_(OrKeyword_));
+			expressionType_ = OrExpression_;
 		}
-		else if (token_ == string("and") && minPrecedence_ <= 3)
+		else if (Token_->Type_ == AndKeyword_ && minPrecedence_ <= 3)
 		{
 			precedence_ = 3;
 			leftAssociative_ = true;
-			builder_->Write_(string(" && "));
+			children_->Add_(ExpectToken_(AndKeyword_));
+			expressionType_ = AndExpression_;
 		}
-		else if (token_ == string("==") && minPrecedence_ <= 4)
+		else if (Token_->Type_ == Equal_ && minPrecedence_ <= 4)
 		{
 			precedence_ = 4;
 			leftAssociative_ = true;
-			builder_->Write_(string(" == "));
+			children_->Add_(ExpectToken_(Equal_));
+			expressionType_ = EqualExpression_;
 		}
-		else if (token_ == string("<>") && minPrecedence_ <= 4)
+		else if (Token_->Type_ == NotEqual_ && minPrecedence_ <= 4)
 		{
 			precedence_ = 4;
 			leftAssociative_ = true;
-			builder_->Write_(string(" != "));
+			children_->Add_(ExpectToken_(NotEqual_));
+			expressionType_ = NotEqualExpression_;
 		}
-		else if ((token_ == string("<") || token_ == string("<=") || token_ == string(">") || token_ == string(">=")) && minPrecedence_ <= 5)
+		else if ((Token_->Type_ == LessThan_ || Token_->Type_ == LessThanOrEqual_ || Token_->Type_ == GreaterThan_ || Token_->Type_ == GreaterThanOrEqual_) && minPrecedence_ <= 5)
 		{
 			precedence_ = 5;
 			leftAssociative_ = true;
-			builder_->Write_(string(" ") + token_ + string(" "));
+			children_->Add_(AcceptToken_());
+			expressionType_ = ComparisionExpression_;
 		}
-		else if ((token_ == string("+") || token_ == string("-")) && minPrecedence_ <= 6)
+		else if (Token_->Type_ == Add_ && minPrecedence_ <= 6)
 		{
 			precedence_ = 6;
 			leftAssociative_ = true;
-			builder_->Write_(string(" ") + token_ + string(" "));
+			children_->Add_(ExpectToken_(Add_));
+			expressionType_ = AddExpression_;
 		}
-		else if (token_ == string("(") && minPrecedence_ <= 8)
+		else if (Token_->Type_ == Sub_ && minPrecedence_ <= 6)
 		{
-			Token_ = tokenStream_->GetNextToken_();
-			builder_->Write_(string("("));
-			ParseCallArguments_(builder_);
-			if (Token_->GetText_() != string(")"))
-			{
-				builder_->Error_(string("Expected `)` found `") + Token_->GetText_() + string("`"));
-			}
-
-			builder_->Write_(string(")"));
+			precedence_ = 6;
+			leftAssociative_ = true;
+			children_->Add_(ExpectToken_(Sub_));
+			expressionType_ = SubtractExpression_;
+		}
+		else if (Token_->Type_ == LeftParen_ && minPrecedence_ <= 8)
+		{
 			precedence_ = 8;
 			leftAssociative_ = true;
 			suffixOperator_ = true;
+			children_->Add_(ParseCallArguments_());
+			expressionType_ = InvocationExpression_;
 		}
-		else if (token_ == string(".") && minPrecedence_ <= 8)
+		else if (Token_->Type_ == Dot_ && minPrecedence_ <= 8)
 		{
 			precedence_ = 8;
 			leftAssociative_ = true;
-			builder_->Write_(string("->"));
+			children_->Add_(ExpectToken_(Dot_));
+			expressionType_ = MemberAccessExpression_;
 		}
-		else if (token_ == string("[") && minPrecedence_ <= 8)
+		else if (Token_->Type_ == LeftBracket_ && minPrecedence_ <= 8)
 		{
-			Token_ = tokenStream_->GetNextToken_();
-			builder_->Write_(string("["));
-			ParseExpression_(builder_);
-			if (Token_->GetText_() != string("]"))
-			{
-				builder_->Error_(string("Expected `]` found `") + Token_->GetText_() + string("`"));
-			}
-
-			builder_->Write_(string("]"));
 			precedence_ = 8;
 			leftAssociative_ = true;
 			suffixOperator_ = true;
+			children_->Add_(ExpectToken_(LeftBracket_));
+			children_->Add_(ParseExpression_());
+			children_->Add_(ExpectToken_(RightBracket_));
+			expressionType_ = ElementAccessExpression_;
 		}
 		else
 		{
-			break;
+			return expression_;
 		}
 
-		Token_ = tokenStream_->GetNextToken_();
 		if (!suffixOperator_)
 		{
 			if (leftAssociative_)
@@ -660,14 +804,20 @@ auto ParseExpression_(::Source_File_Builder_ *const builder_, int const minPrece
 				precedence_ += 1;
 			}
 
-			ParseExpression_(builder_, precedence_);
+			::Syntax_Node_ const *const rhs_ = ParseExpression_(precedence_);
+			children_->Add_(rhs_);
+			expression_ = new ::Syntax_Node_(expressionType_, children_);
+		}
+		else
+		{
+			expression_ = new ::Syntax_Node_(expressionType_, children_);
 		}
 	}
 }
 
-auto ParseExpression_(::Source_File_Builder_ *const builder_) -> void
+auto ParseExpression_() -> ::Syntax_Node_ const *
 {
-	ParseExpression_(builder_, 1);
+	return ParseExpression_(1);
 }
 
 auto ParseStatement_() -> bool
@@ -687,7 +837,7 @@ auto ParseStatement_() -> bool
 		else
 		{
 			Definitions_->BeginLine_(string("return "));
-			ParseExpression_(Definitions_);
+			ConvertExpression_(ParseExpression_(), Definitions_);
 			Expect_(string(";"));
 			Definitions_->EndLine_(string(";"));
 		}
@@ -705,7 +855,7 @@ auto ParseStatement_() -> bool
 	if (Accept_(string("while")))
 	{
 		Definitions_->BeginLine_(string("while ("));
-		ParseExpression_(Definitions_);
+		ConvertExpression_(ParseExpression_(), Definitions_);
 		Definitions_->EndLine_(string(")"));
 		ParseBlock_();
 		return true;
@@ -726,7 +876,7 @@ auto ParseStatement_() -> bool
 		Definitions_->Write_(ConvertType_(k_ == string("var"), type_) + string(" ") + name_ + string("_"));
 		Expect_(string("in"));
 		Definitions_->Write_(string(" : *("));
-		ParseExpression_(Definitions_);
+		ConvertExpression_(ParseExpression_(), Definitions_);
 		Definitions_->EndLine_(string("))"));
 		ParseBlock_();
 		return true;
@@ -738,7 +888,7 @@ auto ParseStatement_() -> bool
 		ParseBlock_();
 		Expect_(string("while"));
 		Definitions_->BeginLine_(string("while ("));
-		ParseExpression_(Definitions_);
+		ConvertExpression_(ParseExpression_(), Definitions_);
 		Expect_(string(";"));
 		Definitions_->EndLine_(string(");"));
 		return true;
@@ -747,7 +897,7 @@ auto ParseStatement_() -> bool
 	if (Accept_(string("if")))
 	{
 		Definitions_->BeginLine_(string("if ("));
-		ParseExpression_(Definitions_);
+		ConvertExpression_(ParseExpression_(), Definitions_);
 		Definitions_->EndLine_(string(")"));
 		ParseBlock_();
 		while (Accept_(string("else")))
@@ -755,7 +905,7 @@ auto ParseStatement_() -> bool
 			if (Accept_(string("if")))
 			{
 				Definitions_->BeginLine_(string("else if ("));
-				ParseExpression_(Definitions_);
+				ConvertExpression_(ParseExpression_(), Definitions_);
 				Definitions_->EndLine_(string(")"));
 				ParseBlock_();
 			}
@@ -796,7 +946,7 @@ auto ParseStatement_() -> bool
 		if (Accept_(string("=")))
 		{
 			Definitions_->Write_(string(" = "));
-			ParseExpression_(Definitions_);
+			ConvertExpression_(ParseExpression_(), Definitions_);
 		}
 
 		Expect_(string(";"));
@@ -805,7 +955,7 @@ auto ParseStatement_() -> bool
 	}
 
 	Definitions_->BeginLine_(string(""));
-	ParseExpression_(Definitions_);
+	ConvertExpression_(ParseExpression_(), Definitions_);
 	Expect_(string(";"));
 	Definitions_->EndLine_(string(";"));
 	return true;
@@ -981,7 +1131,7 @@ auto ParseDeclaration_() -> void
 		string const cppType_ = ConvertType_(kind_ == string("var"), variableType_);
 		GlobalDefinitions_->BeginLine_(cppType_);
 		GlobalDefinitions_->Write_(string(" ") + variableName_ + string("_ = "));
-		ParseExpression_(GlobalDefinitions_);
+		ConvertExpression_(ParseExpression_(), GlobalDefinitions_);
 		Expect_(string(";"));
 		GlobalDefinitions_->EndLine_(string(";"));
 		return;
@@ -1682,6 +1832,14 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(unsigned int const end_) -> ::Synt
 	else if (value_ == string("var"))
 	{
 		type_ = VarKeyword_;
+	}
+	else if (value_ == string("and"))
+	{
+		type_ = AndKeyword_;
+	}
+	else if (value_ == string("or"))
+	{
+		type_ = OrKeyword_;
 	}
 	else
 	{
