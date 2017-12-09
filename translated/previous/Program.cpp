@@ -21,6 +21,7 @@ auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> s
 auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string;
 auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void;
 auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
+auto EmitClassMember_(::Syntax_Node_ const *const member_, string const className_) -> void;
 auto ParseType_() -> ::Syntax_Node_ const *;
 auto ParseAtom_() -> ::Syntax_Node_ const *;
 auto ParseCallArguments_() -> ::Syntax_Node_ const *;
@@ -32,7 +33,7 @@ auto ParseVariableDeclaration_(bool const allowInitializer_) -> ::Syntax_Node_ c
 auto ParseBlock_() -> ::Syntax_Node_ const *;
 auto ParseParameterList_(bool const isMainFunction_) -> ::Syntax_Node_ const *;
 auto ParseParameterList_() -> ::Syntax_Node_ const *;
-auto ParseClassMember_(string const className_) -> void;
+auto ParseClassMember_() -> ::Syntax_Node_ const *;
 auto ParseDeclaration_() -> void;
 auto ParseCompilationUnit_() -> void;
 auto EmitPreamble_() -> void;
@@ -242,6 +243,13 @@ int const BreakStatement_ = 98;
 int const ContinueKeyword_ = 99;
 int const ContinueStatement_ = 100;
 int const ExpressionStatement_ = 101;
+int const PublicKeyword_ = 102;
+int const ProtectedKeyword_ = 103;
+int const InternalKeyword_ = 104;
+int const PrivateKeyword_ = 105;
+int const ConstructorDeclaration_ = 106;
+int const FieldDeclaration_ = 107;
+int const MethodDeclaration_ = 108;
 
 // Definitions
 
@@ -687,6 +695,57 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 	else
 	{
 		Definitions_->Error_(string("Could not emit statement of type ") + statement_->Type_);
+	}
+}
+
+auto EmitClassMember_(::Syntax_Node_ const *const member_, string const className_) -> void
+{
+	if (member_->Type_ == ConstructorDeclaration_)
+	{
+		string const parameters_ = ConvertParameterList_(member_->Children_->Get_(2));
+		ClassDeclarations_->WriteLine_(className_ + string("_") + parameters_ + string(";"));
+		Definitions_->ElementSeparatorLine_();
+		Definitions_->WriteLine_(string("::") + className_ + string("_::") + className_ + string("_") + parameters_ + string(""));
+		EmitStatement_(member_->Children_->Get_(3));
+	}
+	else if (member_->Type_ == FieldDeclaration_)
+	{
+		string const fieldName_ = member_->Children_->Get_(2)->GetText_();
+		::Syntax_Node_ const *const fieldType_ = member_->Children_->Get_(4);
+		string const cppType_ = ConvertType_(true, fieldType_);
+		ClassDeclarations_->WriteLine_(cppType_ + string(" ") + fieldName_ + string("_;"));
+	}
+	else if (member_->Type_ == MethodDeclaration_)
+	{
+		string const methodName_ = member_->Children_->Get_(1)->GetText_();
+		::Syntax_Node_ const *const parameterList_ = member_->Children_->Get_(2);
+		string const parameters_ = ConvertParameterList_(parameterList_);
+		::Syntax_Node_ const *const selfParameter_ = parameterList_->FirstChildOfType_(SelfParameter_);
+		bool const isAssociatedFuntion_ = selfParameter_ == ::None;
+		bool const mutableSelf_ = !isAssociatedFuntion_ && selfParameter_->HasChildOfType_(MutableKeyword_);
+		::Syntax_Node_ const *const returnType_ = member_->Children_->Get_(4);
+		string const cppType_ = ConvertType_(true, returnType_);
+		string staticModifier_ = string("");
+		if (isAssociatedFuntion_)
+		{
+			staticModifier_ = string("static ");
+		}
+
+		string constModifier_ = string("");
+		if (!mutableSelf_ && !isAssociatedFuntion_)
+		{
+			constModifier_ = string("const ");
+		}
+
+		ClassDeclarations_->WriteLine_(staticModifier_ + string("auto ") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_ + string(";"));
+		Definitions_->ElementSeparatorLine_();
+		Definitions_->WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_);
+		::Syntax_Node_ const *const block_ = member_->Children_->Get_(5);
+		EmitStatement_(block_);
+	}
+	else
+	{
+		Definitions_->Error_(string("Could not emit member of type ") + member_->Type_);
 	}
 }
 
@@ -1196,64 +1255,42 @@ auto ParseParameterList_() -> ::Syntax_Node_ const *
 	return ParseParameterList_(false);
 }
 
-auto ParseClassMember_(string const className_) -> void
+auto ParseClassMember_() -> ::Syntax_Node_ const *
 {
-	string const accessModifier_ = Token_->GetText_();
-	if (Accept_(string("public")) || Accept_(string("internal")) || Accept_(string("protected")) || Accept_(string("private")))
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	if (Token_->Type_ == PublicKeyword_ || Token_->Type_ == ProtectedKeyword_ || Token_->Type_ == InternalKeyword_ || Token_->Type_ == PrivateKeyword_)
 	{
+		children_->Add_(AcceptToken_());
 	}
 	else
 	{
-		Definitions_->Error_(string("Expected access modifier, found `") + accessModifier_ + string("`"));
+		ExpectToken_(PublicKeyword_);
 	}
 
-	if (Accept_(string("new")))
+	if (Token_->Type_ == NewKeyword_)
 	{
-		string const parameters_ = ConvertParameterList_(ParseParameterList_());
-		ClassDeclarations_->WriteLine_(className_ + string("_") + parameters_ + string(";"));
-		Definitions_->ElementSeparatorLine_();
-		Definitions_->WriteLine_(string("::") + className_ + string("_::") + className_ + string("_") + parameters_ + string(""));
-		EmitStatement_(ParseBlock_());
-		return;
+		children_->Add_(ExpectToken_(NewKeyword_));
+		children_->Add_(ParseParameterList_());
+		children_->Add_(ParseBlock_());
+		return new ::Syntax_Node_(ConstructorDeclaration_, children_);
 	}
 
-	string const kind_ = Token_->GetText_();
-	if (Accept_(string("var")) || Accept_(string("let")))
+	if (Token_->Type_ == VarKeyword_ || Token_->Type_ == LetKeyword_)
 	{
-		string const fieldName_ = ExpectToken_(Identifier_)->GetText_();
-		Expect_(string(":"));
-		::Syntax_Node_ const *const fieldType_ = ParseType_();
-		string const cppType_ = ConvertType_(true, fieldType_);
-		Expect_(string(";"));
-		ClassDeclarations_->WriteLine_(cppType_ + string(" ") + fieldName_ + string("_;"));
-		return;
+		children_->Add_(AcceptToken_());
+		children_->Add_(ExpectToken_(Identifier_));
+		children_->Add_(ExpectToken_(Colon_));
+		children_->Add_(ParseType_());
+		children_->Add_(ExpectToken_(Semicolon_));
+		return new ::Syntax_Node_(FieldDeclaration_, children_);
 	}
 
-	string const methodName_ = ExpectToken_(Identifier_)->GetText_();
-	::Syntax_Node_ const *const parameterList_ = ParseParameterList_();
-	string const parameters_ = ConvertParameterList_(parameterList_);
-	::Syntax_Node_ const *const selfParameter_ = parameterList_->FirstChildOfType_(SelfParameter_);
-	bool const isAssociatedFuntion_ = selfParameter_ == ::None;
-	bool const mutableSelf_ = !isAssociatedFuntion_ && selfParameter_->HasChildOfType_(MutableKeyword_);
-	Expect_(string("->"));
-	::Syntax_Node_ const *const returnType_ = ParseType_();
-	string const cppType_ = ConvertType_(true, returnType_);
-	string staticModifier_ = string("");
-	if (isAssociatedFuntion_)
-	{
-		staticModifier_ = string("static ");
-	}
-
-	string constModifier_ = string("");
-	if (!mutableSelf_ && !isAssociatedFuntion_)
-	{
-		constModifier_ = string("const ");
-	}
-
-	ClassDeclarations_->WriteLine_(staticModifier_ + string("auto ") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_ + string(";"));
-	Definitions_->ElementSeparatorLine_();
-	Definitions_->WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_);
-	EmitStatement_(ParseBlock_());
+	children_->Add_(ExpectToken_(Identifier_));
+	children_->Add_(ParseParameterList_());
+	children_->Add_(ExpectToken_(Arrow_));
+	children_->Add_(ParseType_());
+	children_->Add_(ParseBlock_());
+	return new ::Syntax_Node_(MethodDeclaration_, children_);
 }
 
 auto ParseDeclaration_() -> void
@@ -1294,7 +1331,7 @@ auto ParseDeclaration_() -> void
 		ClassDeclarations_->EndLine_(string("public:"));
 		while (!Accept_(string("}")))
 		{
-			ParseClassMember_(className_);
+			EmitClassMember_(ParseClassMember_(), className_);
 		}
 
 		ClassDeclarations_->EndBlockWithSemicolon_();
@@ -1355,7 +1392,7 @@ auto ParseDeclaration_() -> void
 
 auto ParseCompilationUnit_() -> void
 {
-	while (Token_ != ::None && Token_->Type_ == Identifier_)
+	while (Token_ != ::None)
 	{
 		ParseDeclaration_();
 	}
@@ -1836,6 +1873,20 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 				continue;
 			}
 
+			if (position_ + 1 < Source_->Text_->Length_ && Source_->Text_[position_ + 1] == '*')
+			{
+				position_ += 2;
+				bool lastCharStar_ = false;
+				while (position_ < Source_->Text_->Length_ && !(lastCharStar_ && Source_->Text_[position_] == '/'))
+				{
+					lastCharStar_ = Source_->Text_[position_] == '*';
+					position_ += 1;
+				}
+
+				position_ += 1;
+				continue;
+			}
+
 			return NewOperator_(Slash_);
 		}
 		else if (curChar_ == '<')
@@ -2030,6 +2081,22 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(unsigned int const end_) -> ::Synt
 	else if (value_ == string("continue"))
 	{
 		type_ = ContinueKeyword_;
+	}
+	else if (value_ == string("private"))
+	{
+		type_ = PrivateKeyword_;
+	}
+	else if (value_ == string("protected"))
+	{
+		type_ = ProtectedKeyword_;
+	}
+	else if (value_ == string("public"))
+	{
+		type_ = PublicKeyword_;
+	}
+	else if (value_ == string("internal"))
+	{
+		type_ = InternalKeyword_;
 	}
 	else
 	{

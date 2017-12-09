@@ -259,6 +259,12 @@ public class Token_Stream
 			{ type = PublicKeyword; }
 		else if value == "internal"
 			{ type = InternalKeyword; }
+		else if value == "class"
+			{ type = ClassKeyword; }
+		else if value == "enum"
+			{ type = EnumKeyword; }
+		else if value == "struct"
+			{ type = StructKeyword; }
 		else
 			{ type = Identifier; }
 

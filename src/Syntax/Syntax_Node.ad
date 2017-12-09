@@ -109,6 +109,14 @@ public let PrivateKeyword: int = 105; // `private`
 public let ConstructorDeclaration: int = 106;
 public let FieldDeclaration: int = 107;
 public let MethodDeclaration: int = 108;
+public let GlobalDeclaration: int = 109;
+public let ClassKeyword: int = 110; // `class`
+public let ClassDeclaration: int = 111;
+public let EnumKeyword: int = 112; // `enum`
+public let StructKeyword: int = 113; // `struct`
+public let EnumDeclaration: int = 114;
+public let EnumMemberDeclaration: int = 115;
+public let FunctionDeclaration: int = 116;
 
 public class Syntax_Node
 {
