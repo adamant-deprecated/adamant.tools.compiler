@@ -102,6 +102,13 @@ public let BreakStatement: int = 98; // `break;`
 public let ContinueKeyword: int = 99; // `continue`
 public let ContinueStatement: int = 100; // `continue;`
 public let ExpressionStatement: int = 101; // `⧼Expression⧽;`
+public let PublicKeyword: int = 102; // `public`
+public let ProtectedKeyword: int = 103; // `protected`
+public let InternalKeyword: int = 104; // `internal`
+public let PrivateKeyword: int = 105; // `private`
+public let ConstructorDeclaration: int = 106;
+public let FieldDeclaration: int = 107;
+public let MethodDeclaration: int = 108;
 
 public class Syntax_Node
 {

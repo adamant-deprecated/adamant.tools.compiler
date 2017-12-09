@@ -438,6 +438,52 @@ public EmitStatement(statement: Syntax_Node) -> void
 	}
 }
 
+public EmitClassMember(member: Syntax_Node, className: string) -> void
+{
+	if member.Type == ConstructorDeclaration
+	{
+		let parameters: string = ConvertParameterList(member.Children.Get(2));
+		// Write out the function declaration for C++ so we can call functions defined after others
+		ClassDeclarations.WriteLine(className + "_" + parameters + ";");
+		Definitions.ElementSeparatorLine();
+		Definitions.WriteLine("::" + className + "_::" + className + "_" + parameters + "");
+		EmitStatement(member.Children.Get(3));
+	}
+	else if member.Type == FieldDeclaration
+	{
+		let fieldName: string = member.Children.Get(2).GetText();
+		let fieldType: Syntax_Node = member.Children.Get(4);
+		let cppType: string = ConvertType(true, fieldType); // because we need to assign them in constructors don't mark fields const
+		ClassDeclarations.WriteLine(cppType + " " + fieldName + "_;");
+	}
+	else if member.Type == MethodDeclaration
+	{
+		let methodName: string = member.Children.Get(1).GetText();
+		let parameterList: Syntax_Node = member.Children.Get(2);
+		let parameters: string = ConvertParameterList(parameterList);
+		let selfParameter: Syntax_Node = parameterList.FirstChildOfType(SelfParameter);
+		let isAssociatedFuntion: bool = selfParameter == null;
+		let mutableSelf: bool = not isAssociatedFuntion and selfParameter.HasChildOfType(MutableKeyword);
+		let returnType: Syntax_Node = member.Children.Get(4);
+		let cppType: string = ConvertType(true, returnType);
+		var staticModifier: string = "";
+		if isAssociatedFuntion
+			{ staticModifier = "static "; }
+		var constModifier: string = "";
+		if not mutableSelf and not isAssociatedFuntion
+			{ constModifier = "const "; }
+		ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_" + parameters + " " + constModifier + "-> " + cppType + ";");
+		Definitions.ElementSeparatorLine();
+		Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_" + parameters + " " + constModifier + "-> " + cppType);
+		let block: Syntax_Node = member.Children.Get(5);
+		EmitStatement(block);
+	}
+	else
+	{
+		Definitions.Error("Could not emit member of type " + member.Type);
+	}
+}
+
 // ----------------------------------------------------------------------------
 // Parser
 // ----------------------------------------------------------------------------
@@ -931,62 +977,50 @@ public ParseParameterList() -> Syntax_Node
 	return ParseParameterList(false);
 }
 
-public ParseClassMember(className: string) -> void
+public ParseClassMember() -> Syntax_Node
 {
-	let accessModifier: string = Token.GetText();
-	if Accept("public") or Accept("internal") or Accept("protected") or Accept("private")
+	let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+
+	if Token.Type == PublicKeyword
+		or Token.Type == ProtectedKeyword
+		or Token.Type == InternalKeyword
+		or Token.Type == PrivateKeyword
 	{
-		// TODO currently not doing anything with the access modifier
+		children.Add(AcceptToken());
 	}
 	else
 	{
-		Definitions.Error("Expected access modifier, found `" + accessModifier + "`");
+		// Really we expect an access modifier
+		ExpectToken(PublicKeyword);
 	}
 
-	if Accept("new")
+	if Token.Type == NewKeyword
 	{
 		// Constructor
-		let parameters: string = ConvertParameterList(ParseParameterList());
-		// Write out the function declaration for C++ so we can call functions defined after others
-		ClassDeclarations.WriteLine(className + "_" + parameters + ";");
-		Definitions.ElementSeparatorLine();
-		Definitions.WriteLine("::" + className + "_::" + className + "_" + parameters + "");
-		EmitStatement(ParseBlock());
-		return;
+		children.Add(ExpectToken(NewKeyword));
+		children.Add(ParseParameterList());
+		children.Add(ParseBlock());
+		return new Syntax_Node(ConstructorDeclaration, children);
 	}
 
-	let kind: string = Token.GetText();
-	if Accept("var") or Accept("let")
+	if Token.Type == VarKeyword
+		or Token.Type == LetKeyword
 	{
-		let fieldName: string = ExpectToken(Identifier).GetText();
-		Expect(":");
-		let fieldType: Syntax_Node = ParseType();
-		let cppType: string = ConvertType(true, fieldType); // because we need to assign them in constructors don't mark fields const
-		Expect(";");
-		ClassDeclarations.WriteLine(cppType + " " + fieldName + "_;");
-		return;
+		children.Add(AcceptToken());
+		children.Add(ExpectToken(Identifier));
+		children.Add(ExpectToken(Colon));
+		children.Add(ParseType());
+		children.Add(ExpectToken(Semicolon));
+		return new Syntax_Node(FieldDeclaration, children);
 	}
 
 	// Method Declaration
-	let methodName: string = ExpectToken(Identifier).GetText();
-	let parameterList: Syntax_Node = ParseParameterList();
-	let parameters: string = ConvertParameterList(parameterList);
-	let selfParameter: Syntax_Node = parameterList.FirstChildOfType(SelfParameter);
-	let isAssociatedFuntion: bool = selfParameter == null;
-	let mutableSelf: bool = not isAssociatedFuntion and selfParameter.HasChildOfType(MutableKeyword);
-	Expect("->");
-	let returnType: Syntax_Node = ParseType();
-	let cppType: string = ConvertType(true, returnType);
-	var staticModifier: string = "";
-	if isAssociatedFuntion
-		{ staticModifier = "static "; }
-	var constModifier: string = "";
-	if not mutableSelf and not isAssociatedFuntion
-		{ constModifier = "const "; }
-	ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_" + parameters + " " + constModifier + "-> " + cppType + ";");
-	Definitions.ElementSeparatorLine();
-	Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_" + parameters + " " + constModifier + "-> " + cppType);
-	EmitStatement(ParseBlock());
+	children.Add(ExpectToken(Identifier));
+	children.Add(ParseParameterList());
+	children.Add(ExpectToken(Arrow));
+	children.Add(ParseType());
+	children.Add(ParseBlock());
+	return new Syntax_Node(MethodDeclaration, children);
 }
 
 public ParseDeclaration() -> void
@@ -1029,7 +1063,7 @@ public ParseDeclaration() -> void
 		ClassDeclarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
 		while not Accept("}")
 		{
-			ParseClassMember(className);
+			EmitClassMember(ParseClassMember(), className);
 		}
 		ClassDeclarations.EndBlockWithSemicolon();
 		return;
@@ -1083,7 +1117,7 @@ public ParseDeclaration() -> void
 
 public ParseCompilationUnit() -> void
 {
-	while Token <> null and Token.Type == Identifier
+	while Token <> null
 	{
 		ParseDeclaration();
 	}

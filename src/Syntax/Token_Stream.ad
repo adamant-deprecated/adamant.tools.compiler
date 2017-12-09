@@ -94,6 +94,22 @@ public class Token_Stream
 
 					continue;
 				}
+
+				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '*'
+				{
+					// it is a block comment `/*`
+					position += 2; // move past the start
+					var lastCharStar: bool = false;
+					while position < Source.Text.Length and not (lastCharStar and Source.Text[position] == '/')
+					{
+						lastCharStar = Source.Text[position] == '*';
+						position += 1;
+					}
+
+					position += 1; // move past the final '/'
+					continue;
+				}
+
 				// it is `/`
 				return NewOperator(Slash);
 			}
@@ -235,6 +251,14 @@ public class Token_Stream
 			{ type = BreakKeyword; }
 		else if value == "continue"
 			{ type = ContinueKeyword; }
+		else if value == "private"
+			{ type = PrivateKeyword; }
+		else if value == "protected"
+			{ type = ProtectedKeyword; }
+		else if value == "public"
+			{ type = PublicKeyword; }
+		else if value == "internal"
+			{ type = InternalKeyword; }
 		else
 			{ type = Identifier; }
 
