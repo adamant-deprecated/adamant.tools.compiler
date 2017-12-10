@@ -24,6 +24,9 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
 auto EmitClassMember_(::Syntax_Node_ const *const member_, string const className_) -> void;
 auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void;
+auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void;
+auto EmitPreamble_() -> void;
+auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void;
 auto ParseType_() -> ::Syntax_Node_ const *;
 auto ParseAtom_() -> ::Syntax_Node_ const *;
 auto ParseCallArguments_() -> ::Syntax_Node_ const *;
@@ -36,9 +39,7 @@ auto ParseBlock_() -> ::Syntax_Node_ const *;
 auto ParseParameterList_() -> ::Syntax_Node_ const *;
 auto ParseClassMember_() -> ::Syntax_Node_ const *;
 auto ParseDeclaration_() -> ::Syntax_Node_ const *;
-auto ParseCompilationUnit_() -> void;
-auto EmitPreamble_() -> void;
-auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void;
+auto ParseCompilationUnit_() -> ::Syntax_Node_ const *;
 auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string;
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
 auto ReadSource_(string const path_) -> ::Source_Text_ const *;
@@ -259,6 +260,7 @@ int const StructKeyword_ = 113;
 int const EnumDeclaration_ = 114;
 int const EnumMemberDeclaration_ = 115;
 int const FunctionDeclaration_ = 116;
+int const CompilationUnit_ = 117;
 
 // Definitions
 
@@ -874,6 +876,78 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 	}
 }
 
+auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void
+{
+	for (::Syntax_Node_ const *const declaration_ : *(unit_->Children_))
+	{
+		EmitDeclaration_(declaration_);
+	}
+}
+
+auto EmitPreamble_() -> void
+{
+	TypeDeclarations_->WriteLine_(string("#include \"RuntimeLibrary.h\""));
+	TypeDeclarations_->BlankLine_();
+	TypeDeclarations_->WriteLine_(string("// Type Declarations"));
+	FunctionDeclarations_->BlankLine_();
+	FunctionDeclarations_->WriteLine_(string("// Function Declarations"));
+	ClassDeclarations_->BlankLine_();
+	ClassDeclarations_->WriteLine_(string("// Class Declarations"));
+	GlobalDefinitions_->BlankLine_();
+	GlobalDefinitions_->WriteLine_(string("// Global Definitions"));
+	Definitions_->BlankLine_();
+	Definitions_->WriteLine_(string("// Definitions"));
+}
+
+auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void
+{
+	Definitions_->ElementSeparatorLine_();
+	Definitions_->WriteLine_(string("// Entry Point Adapter"));
+	Definitions_->WriteLine_(string("int main(int argc, char const *const * argv)"));
+	Definitions_->BeginBlock_();
+	for (::Source_Text_ const *const resource_ : *(resources_))
+	{
+		Definitions_->BeginLine_(string("resource_manager_->AddResource(::string(\""));
+		Definitions_->Write_(resource_->Name_);
+		Definitions_->Write_(string("\"), ::string(\""));
+		Definitions_->Write_(resource_->Text_->Replace_(string("\\"), string("\\\\"))->Replace_(string("\n"), string("\\n"))->Replace_(string("\r"), string("\\r"))->Replace_(string("\""), string("\\\"")));
+		Definitions_->EndLine_(string("\"));"));
+	}
+
+	if (resources_->Length_() > 0)
+	{
+		Definitions_->EndLine_(string(""));
+	}
+
+	::System_::Text_::String_Builder_ *const args_ = new ::System_::Text_::String_Builder_();
+	if (MainFunctionAcceptsConsole_)
+	{
+		args_->Append_(string("new ::System_::Console_::Console_()"));
+	}
+
+	if (MainFunctionAcceptsArgs_)
+	{
+		if (MainFunctionAcceptsConsole_)
+		{
+			args_->Append_(string(", "));
+		}
+
+		args_->Append_(string("new ::System_::Console_::Arguments_(argc, argv)"));
+	}
+
+	if (MainFunctionReturnType_ == string("void"))
+	{
+		Definitions_->WriteLine_(string("Main_(") + args_->ToString_() + string(");"));
+		Definitions_->WriteLine_(string("return 0;"));
+	}
+	else
+	{
+		Definitions_->WriteLine_(string("return Main_(") + args_->ToString_() + string(");"));
+	}
+
+	Definitions_->EndBlock_();
+}
+
 auto ParseType_() -> ::Syntax_Node_ const *
 {
 	if (Token_->Type_ == MutableKeyword_)
@@ -1456,76 +1530,15 @@ auto ParseDeclaration_() -> ::Syntax_Node_ const *
 	return new ::Syntax_Node_(FunctionDeclaration_, children_);
 }
 
-auto ParseCompilationUnit_() -> void
+auto ParseCompilationUnit_() -> ::Syntax_Node_ const *
 {
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
 	while (Token_ != ::None)
 	{
-		EmitDeclaration_(ParseDeclaration_());
-	}
-}
-
-auto EmitPreamble_() -> void
-{
-	TypeDeclarations_->WriteLine_(string("#include \"RuntimeLibrary.h\""));
-	TypeDeclarations_->BlankLine_();
-	TypeDeclarations_->WriteLine_(string("// Type Declarations"));
-	FunctionDeclarations_->BlankLine_();
-	FunctionDeclarations_->WriteLine_(string("// Function Declarations"));
-	ClassDeclarations_->BlankLine_();
-	ClassDeclarations_->WriteLine_(string("// Class Declarations"));
-	GlobalDefinitions_->BlankLine_();
-	GlobalDefinitions_->WriteLine_(string("// Global Definitions"));
-	Definitions_->BlankLine_();
-	Definitions_->WriteLine_(string("// Definitions"));
-}
-
-auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void
-{
-	Definitions_->ElementSeparatorLine_();
-	Definitions_->WriteLine_(string("// Entry Point Adapter"));
-	Definitions_->WriteLine_(string("int main(int argc, char const *const * argv)"));
-	Definitions_->BeginBlock_();
-	for (::Source_Text_ const *const resource_ : *(resources_))
-	{
-		Definitions_->BeginLine_(string("resource_manager_->AddResource(::string(\""));
-		Definitions_->Write_(resource_->Name_);
-		Definitions_->Write_(string("\"), ::string(\""));
-		Definitions_->Write_(resource_->Text_->Replace_(string("\\"), string("\\\\"))->Replace_(string("\n"), string("\\n"))->Replace_(string("\r"), string("\\r"))->Replace_(string("\""), string("\\\"")));
-		Definitions_->EndLine_(string("\"));"));
+		children_->Add_(ParseDeclaration_());
 	}
 
-	if (resources_->Length_() > 0)
-	{
-		Definitions_->EndLine_(string(""));
-	}
-
-	::System_::Text_::String_Builder_ *const args_ = new ::System_::Text_::String_Builder_();
-	if (MainFunctionAcceptsConsole_)
-	{
-		args_->Append_(string("new ::System_::Console_::Console_()"));
-	}
-
-	if (MainFunctionAcceptsArgs_)
-	{
-		if (MainFunctionAcceptsConsole_)
-		{
-			args_->Append_(string(", "));
-		}
-
-		args_->Append_(string("new ::System_::Console_::Arguments_(argc, argv)"));
-	}
-
-	if (MainFunctionReturnType_ == string("void"))
-	{
-		Definitions_->WriteLine_(string("Main_(") + args_->ToString_() + string(");"));
-		Definitions_->WriteLine_(string("return 0;"));
-	}
-	else
-	{
-		Definitions_->WriteLine_(string("return Main_(") + args_->ToString_() + string(");"));
-	}
-
-	Definitions_->EndBlock_();
+	return new ::Syntax_Node_(CompilationUnit_, children_);
 }
 
 auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string
@@ -1536,7 +1549,7 @@ auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *cons
 	{
 		tokenStream_ = lexer_->Analyze_(source_);
 		Token_ = tokenStream_->GetNextToken_();
-		ParseCompilationUnit_();
+		EmitCompilationUnit_(ParseCompilationUnit_());
 	}
 
 	EmitEntryPointAdapter_(resources_);
@@ -1796,10 +1809,19 @@ auto ::Parser_::Parse_(::Token_Stream_ const *const tokenStream_) const -> ::Syn
 ::Syntax_Node_::Syntax_Node_(int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *> const *const children_)
 {
 	Type_ = type_;
-	Source_ = children_->Get_(0)->Source_;
-	Start_ = children_->Get_(0)->Start_;
-	::Syntax_Node_ const *const lastChild_ = children_->Get_(children_->Length_() - 1);
-	Length_ = lastChild_->Start_ - Start_ + lastChild_->Length_;
+	if (children_->Length_() > 0)
+	{
+		Source_ = children_->Get_(0)->Source_;
+		Start_ = children_->Get_(0)->Start_;
+		::Syntax_Node_ const *const lastChild_ = children_->Get_(children_->Length_() - 1);
+		Length_ = lastChild_->Start_ - Start_ + lastChild_->Length_;
+	}
+	else
+	{
+		Start_ = 0;
+		Length_ = 0;
+	}
+
 	Children_ = children_;
 }
 

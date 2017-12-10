@@ -588,6 +588,78 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 	}
 }
 
+public EmitCompilationUnit(unit: Syntax_Node) -> void
+{
+	for let declaration: Syntax_Node in unit.Children
+	{
+		EmitDeclaration(declaration);
+	}
+}
+
+public EmitPreamble() -> void
+{
+	// Setup the beginning of each section
+	TypeDeclarations.WriteLine("#include \"RuntimeLibrary.h\"");
+	TypeDeclarations.BlankLine();
+	TypeDeclarations.WriteLine("// Type Declarations");
+	FunctionDeclarations.BlankLine();
+	FunctionDeclarations.WriteLine("// Function Declarations");
+	ClassDeclarations.BlankLine();
+	ClassDeclarations.WriteLine("// Class Declarations");
+	GlobalDefinitions.BlankLine();
+	GlobalDefinitions.WriteLine("// Global Definitions");
+	Definitions.BlankLine();
+	Definitions.WriteLine("// Definitions");
+}
+
+public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) -> void
+{
+	Definitions.ElementSeparatorLine();
+	Definitions.WriteLine("// Entry Point Adapter");
+	Definitions.WriteLine("int main(int argc, char const *const * argv)");
+	Definitions.BeginBlock();
+
+	for let resource: Source_Text in resources
+	{
+		Definitions.BeginLine("resource_manager_->AddResource(::string(\"");
+		Definitions.Write(resource.Name);
+		Definitions.Write("\"), ::string(\"");
+		Definitions.Write(resource.Text
+								.Replace("\\", "\\\\")
+								.Replace("\n", "\\n")
+								.Replace("\r", "\\r")
+								.Replace("\"", "\\\""));
+		Definitions.EndLine("\"));");
+	}
+	if resources.Length() > 0
+	{
+		Definitions.EndLine(""); // Use EndLine to avoid having an indent on a blank line
+	}
+
+	// TODO should be `new mut`
+	let args: mut System.Text.String_Builder = new System.Text.String_Builder();
+	if MainFunctionAcceptsConsole
+		{ args.Append("new ::System_::Console_::Console_()"); }
+	if MainFunctionAcceptsArgs
+	{
+		if MainFunctionAcceptsConsole
+			{ args.Append(", "); }
+		args.Append("new ::System_::Console_::Arguments_(argc, argv)");
+	}
+
+	if MainFunctionReturnType == "void"
+	{
+		Definitions.WriteLine("Main_(" + args.ToString() + ");");
+		Definitions.WriteLine("return 0;");
+	}
+	else
+	{
+		Definitions.WriteLine("return Main_(" + args.ToString() + ");");
+	}
+
+	Definitions.EndBlock();
+}
+
 // ----------------------------------------------------------------------------
 // Parser
 // ----------------------------------------------------------------------------
@@ -1181,76 +1253,14 @@ public ParseDeclaration() -> Syntax_Node
 	return new Syntax_Node(FunctionDeclaration, children);
 }
 
-public ParseCompilationUnit() -> void
+public ParseCompilationUnit() -> Syntax_Node
 {
+	let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 	while Token <> null
 	{
-		EmitDeclaration(ParseDeclaration());
+		children.Add(ParseDeclaration());
 	}
-}
-
-public EmitPreamble() -> void
-{
-	// Setup the beginning of each section
-	TypeDeclarations.WriteLine("#include \"RuntimeLibrary.h\"");
-	TypeDeclarations.BlankLine();
-	TypeDeclarations.WriteLine("// Type Declarations");
-	FunctionDeclarations.BlankLine();
-	FunctionDeclarations.WriteLine("// Function Declarations");
-	ClassDeclarations.BlankLine();
-	ClassDeclarations.WriteLine("// Class Declarations");
-	GlobalDefinitions.BlankLine();
-	GlobalDefinitions.WriteLine("// Global Definitions");
-	Definitions.BlankLine();
-	Definitions.WriteLine("// Definitions");
-}
-
-public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) -> void
-{
-	Definitions.ElementSeparatorLine();
-	Definitions.WriteLine("// Entry Point Adapter");
-	Definitions.WriteLine("int main(int argc, char const *const * argv)");
-	Definitions.BeginBlock();
-
-	for let resource: Source_Text in resources
-	{
-		Definitions.BeginLine("resource_manager_->AddResource(::string(\"");
-		Definitions.Write(resource.Name);
-		Definitions.Write("\"), ::string(\"");
-		Definitions.Write(resource.Text
-								.Replace("\\", "\\\\")
-								.Replace("\n", "\\n")
-								.Replace("\r", "\\r")
-								.Replace("\"", "\\\""));
-		Definitions.EndLine("\"));");
-	}
-	if resources.Length() > 0
-	{
-		Definitions.EndLine(""); // Use EndLine to avoid having an indent on a blank line
-	}
-
-	// TODO should be `new mut`
-	let args: mut System.Text.String_Builder = new System.Text.String_Builder();
-	if MainFunctionAcceptsConsole
-		{ args.Append("new ::System_::Console_::Console_()"); }
-	if MainFunctionAcceptsArgs
-	{
-		if MainFunctionAcceptsConsole
-			{ args.Append(", "); }
-		args.Append("new ::System_::Console_::Arguments_(argc, argv)");
-	}
-
-	if MainFunctionReturnType == "void"
-	{
-		Definitions.WriteLine("Main_(" + args.ToString() + ");");
-		Definitions.WriteLine("return 0;");
-	}
-	else
-	{
-		Definitions.WriteLine("return Main_(" + args.ToString() + ");");
-	}
-
-	Definitions.EndBlock();
+	return new Syntax_Node(CompilationUnit, children);
 }
 
 // ----------------------------------------------------------------------------
@@ -1265,7 +1275,7 @@ public Compile(sources: System.Collections.List<Source_Text>, resources: System.
 	{
 		tokenStream = lexer.Analyze(source);
 		Token = tokenStream.GetNextToken();
-		ParseCompilationUnit();
+		EmitCompilationUnit(ParseCompilationUnit());
 	}
 	EmitEntryPointAdapter(resources);
 	return TypeDeclarations.ToString()

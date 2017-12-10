@@ -117,6 +117,7 @@ public let StructKeyword: int = 113; // `struct`
 public let EnumDeclaration: int = 114;
 public let EnumMemberDeclaration: int = 115;
 public let FunctionDeclaration: int = 116;
+public let CompilationUnit: int = 117;
 
 public class Syntax_Node
 {
@@ -150,10 +151,18 @@ public class Syntax_Node
 	public new(type: int, children: System.Collections.List<Syntax_Node>)
 	{
 		Type = type;
-		Source = children.Get(0).Source;
-		Start = children.Get(0).Start;
-		let lastChild: Syntax_Node = children.Get(children.Length()-1);
-		Length = lastChild.Start - Start + lastChild.Length;
+		if children.Length() > 0
+		{
+			Source = children.Get(0).Source;
+			Start = children.Get(0).Start;
+			let lastChild: Syntax_Node = children.Get(children.Length()-1);
+			Length = lastChild.Start - Start + lastChild.Length;
+		}
+		else
+		{
+			Start = 0;
+			Length = 0;
+		}
 		Children = children;
 	}
 
