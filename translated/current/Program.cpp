@@ -11,10 +11,10 @@ class Token_Stream_;
 class Token_Type_;
 
 // Function Declarations
-auto AcceptToken_() -> ::Syntax_Node_ const *;
-auto ExpectToken_(int const tokenType_) -> ::Syntax_Node_ const *;
-auto Accept_(string const expected_) -> bool;
-auto Expect_(string const expected_) -> void;
+auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string;
+auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
+auto ReadSource_(string const path_) -> ::Source_Text_ const *;
+auto FormatError_(string const message_) -> string;
 auto IsValueType_(::Syntax_Node_ const *const type_) -> bool;
 auto ConvertType_(::Syntax_Node_ const *const type_) -> string;
 auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string;
@@ -28,6 +28,10 @@ auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void;
 auto EmitPackage_(::Syntax_Node_ const *const package_) -> void;
 auto EmitPreamble_() -> void;
 auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void;
+auto AcceptToken_() -> ::Syntax_Node_ const *;
+auto ExpectToken_(int const tokenType_) -> ::Syntax_Node_ const *;
+auto Accept_(string const expected_) -> bool;
+auto Expect_(string const expected_) -> void;
 auto ParseType_() -> ::Syntax_Node_ const *;
 auto ParseAtom_() -> ::Syntax_Node_ const *;
 auto ParseCallArguments_() -> ::Syntax_Node_ const *;
@@ -42,10 +46,6 @@ auto ParseClassMember_() -> ::Syntax_Node_ const *;
 auto ParseDeclaration_() -> ::Syntax_Node_ const *;
 auto ParseCompilationUnit_() -> ::Syntax_Node_ const *;
 auto ParsePackage_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_) -> ::Syntax_Node_ const *;
-auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string;
-auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
-auto ReadSource_(string const path_) -> ::Source_Text_ const *;
-auto FormatError_(string const message_) -> string;
 
 // Class Declarations
 
@@ -135,8 +135,6 @@ public:
 };
 
 // Global Definitions
-::Token_Stream_ * tokenStream_ = ::None;
-::Syntax_Node_ const * Token_ = ::None;
 ::Source_File_Builder_ *const TypeDeclarations_ = new ::Source_File_Builder_();
 ::Source_File_Builder_ *const FunctionDeclarations_ = new ::Source_File_Builder_();
 ::Source_File_Builder_ *const ClassDeclarations_ = new ::Source_File_Builder_();
@@ -145,6 +143,8 @@ public:
 string MainFunctionReturnType_ = string("");
 bool MainFunctionAcceptsConsole_ = false;
 bool MainFunctionAcceptsArgs_ = false;
+::Token_Stream_ * tokenStream_ = ::None;
+::Syntax_Node_ const * Token_ = ::None;
 int const Error_ = -1;
 int const LeftBrace_ = 1;
 int const RightBrace_ = 2;
@@ -267,49 +267,229 @@ int const Package_ = 118;
 
 // Definitions
 
-auto AcceptToken_() -> ::Syntax_Node_ const *
+auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string
 {
-	::Syntax_Node_ const *const node_ = Token_;
-	Token_ = tokenStream_->GetNextToken_();
-	return node_;
+	::Syntax_Node_ const * package_ = ParsePackage_(sources_);
+	EmitPreamble_();
+	EmitPackage_(package_);
+	EmitEntryPointAdapter_(resources_);
+	return TypeDeclarations_->ToString_() + FunctionDeclarations_->ToString_() + ClassDeclarations_->ToString_() + GlobalDefinitions_->ToString_() + Definitions_->ToString_();
 }
 
-auto ExpectToken_(int const tokenType_) -> ::Syntax_Node_ const *
+auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void
 {
-	if (Token_->Type_ != tokenType_)
+	console_->WriteLine_(string("Adamant Compiler v0.1.0"));
+	::System_::Collections_::List_<string> *const sourceFilePaths_ = new ::System_::Collections_::List_<string>();
+	::System_::Collections_::List_<string> *const resourceFilePaths_ = new ::System_::Collections_::List_<string>();
+	string outputFilePath_ = string("");
+	int argType_ = 0;
+	for (string const arg_ : *(args_))
 	{
-		Definitions_->Error_(string("Expected token type ") + tokenType_ + string(", found `") + Token_->GetText_() + string("` of type ") + Token_->Type_);
-		Token_ = tokenStream_->GetNextToken_();
-		return new ::Syntax_Node_(Error_, Token_->Source_, Token_->Start_, Token_->Length_);
+		if (argType_ == 1)
+		{
+			resourceFilePaths_->Add_(arg_);
+			argType_ = 0;
+		}
+		else if (argType_ == 2)
+		{
+			outputFilePath_ = arg_;
+			argType_ = 0;
+		}
+		else
+		{
+			if (arg_ == string("-r"))
+			{
+				argType_ = 1;
+			}
+			else if (arg_ == string("-o"))
+			{
+				argType_ = 2;
+			}
+			else
+			{
+				sourceFilePaths_->Add_(arg_);
+			}
+		}
 	}
 
-	::Syntax_Node_ const *const node_ = Token_;
-	Token_ = tokenStream_->GetNextToken_();
-	return node_;
+	if (sourceFilePaths_->Length_() == 0 || outputFilePath_ == string(""))
+	{
+		console_->WriteLine_(string("Args: <Input File(s)> -o <OutputFile> -r <Resource File>"));
+		return;
+	}
+
+	::System_::Collections_::List_<::Source_Text_ const *> *const resources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
+	if (resourceFilePaths_->Length_() > 0)
+	{
+		console_->WriteLine_(string("Reading Resources:"));
+		for (string const resourceFilePath_ : *(resourceFilePaths_))
+		{
+			console_->WriteLine_(string("  ") + resourceFilePath_);
+			resources_->Add_(ReadSource_(resourceFilePath_));
+		}
+	}
+
+	console_->WriteLine_(string("Compiling:"));
+	::System_::Collections_::List_<::Source_Text_ const *> *const sources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
+	for (string const sourceFilePath_ : *(sourceFilePaths_))
+	{
+		console_->WriteLine_(string("  ") + sourceFilePath_);
+		sources_->Add_(ReadSource_(sourceFilePath_));
+	}
+
+	string const translated_ = Compile_(sources_, resources_);
+	console_->Write_(string("Output: "));
+	console_->WriteLine_(outputFilePath_);
+	::System_::IO_::File_Writer_ *const outputFile_ = new ::System_::IO_::File_Writer_(outputFilePath_);
+	outputFile_->Write_(translated_);
+	outputFile_->Close_();
+	console_->Write_(string("Outputting RuntimeLibrary to: "));
+	string outputDirPath_ = outputFilePath_;
+	int index_ = outputDirPath_->LastIndexOf_('/');
+	if (index_ != -1)
+	{
+		outputDirPath_ = outputDirPath_->Substring_(0, index_ + 1);
+	}
+
+	index_ = outputDirPath_->LastIndexOf_('\\');
+	if (index_ != -1)
+	{
+		outputDirPath_ = outputDirPath_->Substring_(0, index_ + 1);
+	}
+
+	console_->WriteLine_(outputDirPath_);
+	::System_::IO_::File_Writer_ * resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_ + string("RuntimeLibrary.h"));
+	resourceFile_->Write_(resource_manager_->GetString_(string("RuntimeLibrary.h")));
+	resourceFile_->Close_();
+	resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_ + string("RuntimeLibrary.cpp"));
+	resourceFile_->Write_(resource_manager_->GetString_(string("RuntimeLibrary.cpp")));
+	resourceFile_->Close_();
 }
 
-auto Accept_(string const expected_) -> bool
+auto ReadSource_(string const path_) -> ::Source_Text_ const *
 {
-	bool const accepted_ = Token_->GetText_() == expected_;
-	if (accepted_)
+	::System_::IO_::File_Reader_ *const file_ = new ::System_::IO_::File_Reader_(path_);
+	string const contents_ = file_->ReadToEndSync_();
+	file_->Close_();
+	string name_ = path_;
+	int index_ = name_->LastIndexOf_('/');
+	if (index_ != -1)
 	{
-		Token_ = tokenStream_->GetNextToken_();
+		name_ = name_->Substring_(index_ + 1);
 	}
 
-	return accepted_;
+	index_ = name_->LastIndexOf_('\\');
+	if (index_ != -1)
+	{
+		name_ = name_->Substring_(index_ + 1);
+	}
+
+	return new ::Source_Text_(string("<default>"), name_, contents_);
 }
 
-auto Expect_(string const expected_) -> void
+::Source_Text_::Source_Text_(string const package_, string const name_, string const text_)
 {
-	if (Token_->GetText_() != expected_)
+	Package_ = package_;
+	Name_ = name_;
+	Text_ = text_;
+}
+
+auto FormatError_(string const message_) -> string
+{
+	return string("<$ ") + message_ + string(" $>");
+}
+
+::Source_File_Builder_::Source_File_Builder_()
+{
+	code_ = new ::System_::Text_::String_Builder_();
+	indent_ = new ::System_::Text_::String_Builder_();
+	firstElement_ = true;
+	afterBlock_ = true;
+}
+
+auto ::Source_File_Builder_::Error_(string const message_) -> void
+{
+	code_->Append_(FormatError_(message_));
+}
+
+auto ::Source_File_Builder_::BeginLine_(string const value_) -> void
+{
+	code_->Append_(indent_);
+	code_->Append_(value_);
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::Write_(string const value_) -> void
+{
+	code_->Append_(value_);
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::EndLine_(string const value_) -> void
+{
+	code_->Append_(value_);
+	code_->AppendLine_();
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::WriteLine_(string const value_) -> void
+{
+	code_->Append_(indent_);
+	code_->Append_(value_);
+	code_->AppendLine_();
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::BlankLine_() -> void
+{
+	code_->AppendLine_();
+	firstElement_ = true;
+	afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::ElementSeparatorLine_() -> void
+{
+	if (!firstElement_)
 	{
-		Definitions_->Error_(string("Expected `") + expected_ + string("` but found `") + Token_->GetText_() + string("`"));
-		Token_ = tokenStream_->GetNextToken_();
+		code_->AppendLine_();
+		firstElement_ = true;
+		afterBlock_ = false;
 	}
-	else
+}
+
+auto ::Source_File_Builder_::StatementSeparatorLine_() -> void
+{
+	if (afterBlock_)
 	{
-		Token_ = tokenStream_->GetNextToken_();
+		code_->AppendLine_();
+		firstElement_ = true;
+		afterBlock_ = false;
 	}
+}
+
+auto ::Source_File_Builder_::BeginBlock_() -> void
+{
+	WriteLine_(string("{"));
+	indent_->Append_(string("\t"));
+	firstElement_ = afterBlock_ = false;
+}
+
+auto ::Source_File_Builder_::EndBlock_() -> void
+{
+	indent_->Remove_(0, 1);
+	WriteLine_(string("}"));
+	afterBlock_ = true;
+}
+
+auto ::Source_File_Builder_::EndBlockWithSemicolon_() -> void
+{
+	indent_->Remove_(0, 1);
+	WriteLine_(string("};"));
+}
+
+auto ::Source_File_Builder_::ToString_() const -> string
+{
+	return code_->ToString_();
 }
 
 auto IsValueType_(::Syntax_Node_ const *const type_) -> bool
@@ -959,6 +1139,56 @@ auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const 
 	Definitions_->EndBlock_();
 }
 
+auto ::Lexer_::Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *
+{
+	return new ::Token_Stream_(source_);
+}
+
+auto AcceptToken_() -> ::Syntax_Node_ const *
+{
+	::Syntax_Node_ const *const node_ = Token_;
+	Token_ = tokenStream_->GetNextToken_();
+	return node_;
+}
+
+auto ExpectToken_(int const tokenType_) -> ::Syntax_Node_ const *
+{
+	if (Token_->Type_ != tokenType_)
+	{
+		Definitions_->Error_(string("Expected token type ") + tokenType_ + string(", found `") + Token_->GetText_() + string("` of type ") + Token_->Type_);
+		Token_ = tokenStream_->GetNextToken_();
+		return new ::Syntax_Node_(Error_, Token_->Source_, Token_->Start_, Token_->Length_);
+	}
+
+	::Syntax_Node_ const *const node_ = Token_;
+	Token_ = tokenStream_->GetNextToken_();
+	return node_;
+}
+
+auto Accept_(string const expected_) -> bool
+{
+	bool const accepted_ = Token_->GetText_() == expected_;
+	if (accepted_)
+	{
+		Token_ = tokenStream_->GetNextToken_();
+	}
+
+	return accepted_;
+}
+
+auto Expect_(string const expected_) -> void
+{
+	if (Token_->GetText_() != expected_)
+	{
+		Definitions_->Error_(string("Expected `") + expected_ + string("` but found `") + Token_->GetText_() + string("`"));
+		Token_ = tokenStream_->GetNextToken_();
+	}
+	else
+	{
+		Token_ = tokenStream_->GetNextToken_();
+	}
+}
+
 auto ParseType_() -> ::Syntax_Node_ const *
 {
 	if (Token_->Type_ == MutableKeyword_)
@@ -1564,236 +1794,6 @@ auto ParsePackage_(::System_::Collections_::List_<::Source_Text_ const *> const 
 	}
 
 	return new ::Syntax_Node_(Package_, children_);
-}
-
-auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string
-{
-	::Syntax_Node_ const * package_ = ParsePackage_(sources_);
-	EmitPreamble_();
-	EmitPackage_(package_);
-	EmitEntryPointAdapter_(resources_);
-	return TypeDeclarations_->ToString_() + FunctionDeclarations_->ToString_() + ClassDeclarations_->ToString_() + GlobalDefinitions_->ToString_() + Definitions_->ToString_();
-}
-
-auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void
-{
-	console_->WriteLine_(string("Adamant Compiler v0.1.0"));
-	::System_::Collections_::List_<string> *const sourceFilePaths_ = new ::System_::Collections_::List_<string>();
-	::System_::Collections_::List_<string> *const resourceFilePaths_ = new ::System_::Collections_::List_<string>();
-	string outputFilePath_ = string("");
-	int argType_ = 0;
-	for (string const arg_ : *(args_))
-	{
-		if (argType_ == 1)
-		{
-			resourceFilePaths_->Add_(arg_);
-			argType_ = 0;
-		}
-		else if (argType_ == 2)
-		{
-			outputFilePath_ = arg_;
-			argType_ = 0;
-		}
-		else
-		{
-			if (arg_ == string("-r"))
-			{
-				argType_ = 1;
-			}
-			else if (arg_ == string("-o"))
-			{
-				argType_ = 2;
-			}
-			else
-			{
-				sourceFilePaths_->Add_(arg_);
-			}
-		}
-	}
-
-	if (sourceFilePaths_->Length_() == 0 || outputFilePath_ == string(""))
-	{
-		console_->WriteLine_(string("Args: <Input File(s)> -o <OutputFile> -r <Resource File>"));
-		return;
-	}
-
-	::System_::Collections_::List_<::Source_Text_ const *> *const resources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
-	if (resourceFilePaths_->Length_() > 0)
-	{
-		console_->WriteLine_(string("Reading Resources:"));
-		for (string const resourceFilePath_ : *(resourceFilePaths_))
-		{
-			console_->WriteLine_(string("  ") + resourceFilePath_);
-			resources_->Add_(ReadSource_(resourceFilePath_));
-		}
-	}
-
-	console_->WriteLine_(string("Compiling:"));
-	::System_::Collections_::List_<::Source_Text_ const *> *const sources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
-	for (string const sourceFilePath_ : *(sourceFilePaths_))
-	{
-		console_->WriteLine_(string("  ") + sourceFilePath_);
-		sources_->Add_(ReadSource_(sourceFilePath_));
-	}
-
-	string const translated_ = Compile_(sources_, resources_);
-	console_->Write_(string("Output: "));
-	console_->WriteLine_(outputFilePath_);
-	::System_::IO_::File_Writer_ *const outputFile_ = new ::System_::IO_::File_Writer_(outputFilePath_);
-	outputFile_->Write_(translated_);
-	outputFile_->Close_();
-	console_->Write_(string("Outputting RuntimeLibrary to: "));
-	string outputDirPath_ = outputFilePath_;
-	int index_ = outputDirPath_->LastIndexOf_('/');
-	if (index_ != -1)
-	{
-		outputDirPath_ = outputDirPath_->Substring_(0, index_ + 1);
-	}
-
-	index_ = outputDirPath_->LastIndexOf_('\\');
-	if (index_ != -1)
-	{
-		outputDirPath_ = outputDirPath_->Substring_(0, index_ + 1);
-	}
-
-	console_->WriteLine_(outputDirPath_);
-	::System_::IO_::File_Writer_ * resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_ + string("RuntimeLibrary.h"));
-	resourceFile_->Write_(resource_manager_->GetString_(string("RuntimeLibrary.h")));
-	resourceFile_->Close_();
-	resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_ + string("RuntimeLibrary.cpp"));
-	resourceFile_->Write_(resource_manager_->GetString_(string("RuntimeLibrary.cpp")));
-	resourceFile_->Close_();
-}
-
-auto ReadSource_(string const path_) -> ::Source_Text_ const *
-{
-	::System_::IO_::File_Reader_ *const file_ = new ::System_::IO_::File_Reader_(path_);
-	string const contents_ = file_->ReadToEndSync_();
-	file_->Close_();
-	string name_ = path_;
-	int index_ = name_->LastIndexOf_('/');
-	if (index_ != -1)
-	{
-		name_ = name_->Substring_(index_ + 1);
-	}
-
-	index_ = name_->LastIndexOf_('\\');
-	if (index_ != -1)
-	{
-		name_ = name_->Substring_(index_ + 1);
-	}
-
-	return new ::Source_Text_(string("<default>"), name_, contents_);
-}
-
-::Source_Text_::Source_Text_(string const package_, string const name_, string const text_)
-{
-	Package_ = package_;
-	Name_ = name_;
-	Text_ = text_;
-}
-
-auto FormatError_(string const message_) -> string
-{
-	return string("<$ ") + message_ + string(" $>");
-}
-
-::Source_File_Builder_::Source_File_Builder_()
-{
-	code_ = new ::System_::Text_::String_Builder_();
-	indent_ = new ::System_::Text_::String_Builder_();
-	firstElement_ = true;
-	afterBlock_ = true;
-}
-
-auto ::Source_File_Builder_::Error_(string const message_) -> void
-{
-	code_->Append_(FormatError_(message_));
-}
-
-auto ::Source_File_Builder_::BeginLine_(string const value_) -> void
-{
-	code_->Append_(indent_);
-	code_->Append_(value_);
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::Write_(string const value_) -> void
-{
-	code_->Append_(value_);
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::EndLine_(string const value_) -> void
-{
-	code_->Append_(value_);
-	code_->AppendLine_();
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::WriteLine_(string const value_) -> void
-{
-	code_->Append_(indent_);
-	code_->Append_(value_);
-	code_->AppendLine_();
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::BlankLine_() -> void
-{
-	code_->AppendLine_();
-	firstElement_ = true;
-	afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::ElementSeparatorLine_() -> void
-{
-	if (!firstElement_)
-	{
-		code_->AppendLine_();
-		firstElement_ = true;
-		afterBlock_ = false;
-	}
-}
-
-auto ::Source_File_Builder_::StatementSeparatorLine_() -> void
-{
-	if (afterBlock_)
-	{
-		code_->AppendLine_();
-		firstElement_ = true;
-		afterBlock_ = false;
-	}
-}
-
-auto ::Source_File_Builder_::BeginBlock_() -> void
-{
-	WriteLine_(string("{"));
-	indent_->Append_(string("\t"));
-	firstElement_ = afterBlock_ = false;
-}
-
-auto ::Source_File_Builder_::EndBlock_() -> void
-{
-	indent_->Remove_(0, 1);
-	WriteLine_(string("}"));
-	afterBlock_ = true;
-}
-
-auto ::Source_File_Builder_::EndBlockWithSemicolon_() -> void
-{
-	indent_->Remove_(0, 1);
-	WriteLine_(string("};"));
-}
-
-auto ::Source_File_Builder_::ToString_() const -> string
-{
-	return code_->ToString_();
-}
-
-auto ::Lexer_::Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *
-{
-	return new ::Token_Stream_(source_);
 }
 
 ::Parser_::Parser_()

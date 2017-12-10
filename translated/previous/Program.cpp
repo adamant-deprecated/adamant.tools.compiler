@@ -25,6 +25,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
 auto EmitClassMember_(::Syntax_Node_ const *const member_, string const className_) -> void;
 auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void;
 auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void;
+auto EmitPackage_(::Syntax_Node_ const *const package_) -> void;
 auto EmitPreamble_() -> void;
 auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void;
 auto ParseType_() -> ::Syntax_Node_ const *;
@@ -40,6 +41,7 @@ auto ParseParameterList_() -> ::Syntax_Node_ const *;
 auto ParseClassMember_() -> ::Syntax_Node_ const *;
 auto ParseDeclaration_() -> ::Syntax_Node_ const *;
 auto ParseCompilationUnit_() -> ::Syntax_Node_ const *;
+auto ParsePackage_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_) -> ::Syntax_Node_ const *;
 auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string;
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
 auto ReadSource_(string const path_) -> ::Source_Text_ const *;
@@ -261,6 +263,7 @@ int const EnumDeclaration_ = 114;
 int const EnumMemberDeclaration_ = 115;
 int const FunctionDeclaration_ = 116;
 int const CompilationUnit_ = 117;
+int const Package_ = 118;
 
 // Definitions
 
@@ -881,6 +884,14 @@ auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void
 	for (::Syntax_Node_ const *const declaration_ : *(unit_->Children_))
 	{
 		EmitDeclaration_(declaration_);
+	}
+}
+
+auto EmitPackage_(::Syntax_Node_ const *const package_) -> void
+{
+	for (::Syntax_Node_ const *const compilationUnit_ : *(package_->Children_))
+	{
+		EmitCompilationUnit_(compilationUnit_);
 	}
 }
 
@@ -1541,17 +1552,25 @@ auto ParseCompilationUnit_() -> ::Syntax_Node_ const *
 	return new ::Syntax_Node_(CompilationUnit_, children_);
 }
 
-auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string
+auto ParsePackage_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_) -> ::Syntax_Node_ const *
 {
-	EmitPreamble_();
+	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
 	::Lexer_ const *const lexer_ = new ::Lexer_();
 	for (::Source_Text_ const *const source_ : *(sources_))
 	{
 		tokenStream_ = lexer_->Analyze_(source_);
 		Token_ = tokenStream_->GetNextToken_();
-		EmitCompilationUnit_(ParseCompilationUnit_());
+		children_->Add_(ParseCompilationUnit_());
 	}
 
+	return new ::Syntax_Node_(Package_, children_);
+}
+
+auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string
+{
+	::Syntax_Node_ const * package_ = ParsePackage_(sources_);
+	EmitPreamble_();
+	EmitPackage_(package_);
 	EmitEntryPointAdapter_(resources_);
 	return TypeDeclarations_->ToString_() + FunctionDeclarations_->ToString_() + ClassDeclarations_->ToString_() + GlobalDefinitions_->ToString_() + Definitions_->ToString_();
 }
