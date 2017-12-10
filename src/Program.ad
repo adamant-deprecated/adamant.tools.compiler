@@ -596,6 +596,14 @@ public EmitCompilationUnit(unit: Syntax_Node) -> void
 	}
 }
 
+public EmitPackage(package: Syntax_Node) -> void
+{
+	for let compilationUnit: Syntax_Node in package.Children
+	{
+		EmitCompilationUnit(compilationUnit);
+	}
+}
+
 public EmitPreamble() -> void
 {
 	// Setup the beginning of each section
@@ -1263,21 +1271,31 @@ public ParseCompilationUnit() -> Syntax_Node
 	return new Syntax_Node(CompilationUnit, children);
 }
 
+public ParsePackage(sources: System.Collections.List<Source_Text>) -> Syntax_Node
+{
+	let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+	let lexer: Lexer = new Lexer();
+	for let source: Source_Text in sources
+	{
+		tokenStream = lexer.Analyze(source);
+		Token = tokenStream.GetNextToken();
+		children.Add(ParseCompilationUnit());
+	}
+	return new Syntax_Node(Package, children);
+}
+
 // ----------------------------------------------------------------------------
 // Compiler
 // ----------------------------------------------------------------------------
 
 public Compile(sources: System.Collections.List<Source_Text>, resources: System.Collections.List<Source_Text>) -> string
 {
+	var package: Syntax_Node = ParsePackage(sources);
+
 	EmitPreamble();
-	let lexer: Lexer = new Lexer();
-	for let source: Source_Text in sources
-	{
-		tokenStream = lexer.Analyze(source);
-		Token = tokenStream.GetNextToken();
-		EmitCompilationUnit(ParseCompilationUnit());
-	}
+	EmitPackage(package);
 	EmitEntryPointAdapter(resources);
+
 	return TypeDeclarations.ToString()
 		+ FunctionDeclarations.ToString()
 		+ ClassDeclarations.ToString()

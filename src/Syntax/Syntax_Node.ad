@@ -118,6 +118,7 @@ public let EnumDeclaration: int = 114;
 public let EnumMemberDeclaration: int = 115;
 public let FunctionDeclaration: int = 116;
 public let CompilationUnit: int = 117;
+public let Package: int = 118;
 
 public class Syntax_Node
 {
