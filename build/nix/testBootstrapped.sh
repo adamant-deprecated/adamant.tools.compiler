@@ -6,6 +6,7 @@
 echo ''
 echo '************************'
 echo 'Testing Bootstrapped (compile test-cases with bootstrapped)'
+echo '************************'
 rm -rf ../../translated/test-cases/*
 mkdir -p ../../translated/test-cases/resources
 for testcase in `ls ../../test-cases/*.ad`; do

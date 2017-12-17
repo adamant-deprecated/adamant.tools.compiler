@@ -6,6 +6,7 @@
 echo ''
 echo '************************'
 echo 'Testing Current (compile test-cases with current)'
+echo '************************'
 rm -rf ../../translated/test-cases
 mkdir -p ../../translated/test-cases/resources
 for testcase in `ls ../../test-cases/*.ad`; do

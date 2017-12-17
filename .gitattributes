@@ -1,12 +1,11 @@
-*		text=auto
+*           text=auto
 
-*.vson		text
-*.ad		text
-*.md		text
-*.bat		text eol=crlf
-*.cpp		text eol=lf
-*.cs		text eol=crlf
-*.sln		text eol=crlf
-*.csproj	text eol=crlf
-*.config	text
-*.rsrc		text eol=lf
+*.vson      text
+*.ad        text
+*.md        text
+*.bat       text eol=crlf
+*.cpp       text eol=lf
+*.h         text eol=lf
+*.rsrc      text eol=lf
+*.sh        text eol=lf
+*.yml       text eol=lf
