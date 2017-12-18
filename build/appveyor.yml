@@ -58,8 +58,8 @@ on_success:
 
 - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
 - cmd: |
-    git config --global user.email "Jeff@WalkerCodeRanger.com"
-    git config --global user.name "Jeff Walker Code Ranger"
+    git config --global user.email ""
+    git config --global user.name "AppVeyor Build"
 
     REM Use force to avoid issues with modified files would be overwritten
     git checkout translated/%previousCommitHash% --force
