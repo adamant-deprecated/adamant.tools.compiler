@@ -3,31 +3,18 @@
 // Type Declarations
 class Source_Text_;
 class Source_File_Builder_;
-class Emitter_;
 class Lexer_;
 class Parser_;
 class Syntax_Node_;
 class Token_Stream_;
 class Token_Type_;
+class Emitter_;
 
 // Function Declarations
 auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> string;
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
 auto ReadSource_(string const path_) -> ::Source_Text_ const *;
 auto FormatError_(string const message_) -> string;
-auto IsValueType_(::Syntax_Node_ const *const type_) -> bool;
-auto ConvertType_(::Syntax_Node_ const *const type_) -> string;
-auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string;
-auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, bool const isMainFunction_) -> string;
-auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string;
-auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void;
-auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
-auto EmitClassMember_(::Syntax_Node_ const *const member_, string const className_) -> void;
-auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void;
-auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void;
-auto EmitPackage_(::Syntax_Node_ const *const package_) -> void;
-auto EmitPreamble_() -> void;
-auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void;
 auto AcceptToken_() -> ::Syntax_Node_ const *;
 auto ExpectToken_(int const tokenType_) -> ::Syntax_Node_ const *;
 auto Accept_(string const expected_) -> bool;
@@ -46,6 +33,19 @@ auto ParseClassMember_() -> ::Syntax_Node_ const *;
 auto ParseDeclaration_() -> ::Syntax_Node_ const *;
 auto ParseCompilationUnit_() -> ::Syntax_Node_ const *;
 auto ParsePackage_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_) -> ::Syntax_Node_ const *;
+auto IsValueType_(::Syntax_Node_ const *const type_) -> bool;
+auto ConvertType_(::Syntax_Node_ const *const type_) -> string;
+auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string;
+auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, bool const isMainFunction_) -> string;
+auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string;
+auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void;
+auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
+auto EmitClassMember_(::Syntax_Node_ const *const member_, string const className_) -> void;
+auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void;
+auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void;
+auto EmitPackage_(::Syntax_Node_ const *const package_) -> void;
+auto EmitPreamble_() -> void;
+auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void;
 
 // Class Declarations
 
@@ -78,11 +78,6 @@ public:
 	auto EndBlock_() -> void;
 	auto EndBlockWithSemicolon_() -> void;
 	auto ToString_() const -> string;
-};
-
-class Emitter_
-{
-public:
 };
 
 class Lexer_
@@ -134,15 +129,12 @@ class Token_Type_
 public:
 };
 
+class Emitter_
+{
+public:
+};
+
 // Global Definitions
-::Source_File_Builder_ *const TypeDeclarations_ = new ::Source_File_Builder_();
-::Source_File_Builder_ *const FunctionDeclarations_ = new ::Source_File_Builder_();
-::Source_File_Builder_ *const ClassDeclarations_ = new ::Source_File_Builder_();
-::Source_File_Builder_ *const GlobalDefinitions_ = new ::Source_File_Builder_();
-::Source_File_Builder_ *const Definitions_ = new ::Source_File_Builder_();
-string MainFunctionReturnType_ = string("");
-bool MainFunctionAcceptsConsole_ = false;
-bool MainFunctionAcceptsArgs_ = false;
 ::Token_Stream_ * tokenStream_ = ::None;
 ::Syntax_Node_ const * Token_ = ::None;
 int const Error_ = -1;
@@ -264,6 +256,14 @@ int const EnumMemberDeclaration_ = 115;
 int const FunctionDeclaration_ = 116;
 int const CompilationUnit_ = 117;
 int const Package_ = 118;
+::Source_File_Builder_ *const TypeDeclarations_ = new ::Source_File_Builder_();
+::Source_File_Builder_ *const FunctionDeclarations_ = new ::Source_File_Builder_();
+::Source_File_Builder_ *const ClassDeclarations_ = new ::Source_File_Builder_();
+::Source_File_Builder_ *const GlobalDefinitions_ = new ::Source_File_Builder_();
+::Source_File_Builder_ *const Definitions_ = new ::Source_File_Builder_();
+string MainFunctionReturnType_ = string("");
+bool MainFunctionAcceptsConsole_ = false;
+bool MainFunctionAcceptsArgs_ = false;
 
 // Definitions
 
@@ -490,653 +490,6 @@ auto ::Source_File_Builder_::EndBlockWithSemicolon_() -> void
 auto ::Source_File_Builder_::ToString_() const -> string
 {
 	return code_->ToString_();
-}
-
-auto IsValueType_(::Syntax_Node_ const *const type_) -> bool
-{
-	if (type_->Type_ == PredefinedType_)
-	{
-		return true;
-	}
-
-	if (type_->Type_ == NullableType_)
-	{
-		return IsValueType_(type_->Children_->Get_(0));
-	}
-
-	if (type_->Type_ == QualifiedName_)
-	{
-		return IsValueType_(type_->Children_->Get_(type_->Children_->Length_() - 1));
-	}
-
-	if (type_->Type_ == GenericName_)
-	{
-		char const firstChar_ = type_->FirstChildOfType_(IdentifierName_)->FirstChildOfType_(Identifier_)->GetText_()[0];
-		return firstChar_ >= 'a' && firstChar_ <= 'z';
-	}
-
-	if (type_->Type_ == IdentifierName_)
-	{
-		char const firstChar_ = type_->FirstChildOfType_(Identifier_)->GetText_()[0];
-		return firstChar_ >= 'a' && firstChar_ <= 'z';
-	}
-
-	if (type_->Type_ == MutableType_)
-	{
-		return IsValueType_(type_->Children_->Get_(1));
-	}
-
-	return true;
-}
-
-auto ConvertType_(::Syntax_Node_ const *const type_) -> string
-{
-	if (type_->Type_ == PredefinedType_)
-	{
-		::Syntax_Node_ const *const keyword_ = type_->Children_->Get_(0);
-		if (keyword_->Type_ == CodePoint_)
-		{
-			return string("char");
-		}
-
-		if (keyword_->Type_ == UnsignedInt_)
-		{
-			return string("unsigned int");
-		}
-
-		return keyword_->GetText_();
-	}
-
-	if (type_->Type_ == IdentifierName_)
-	{
-		return string("::") + type_->GetText_() + string("_");
-	}
-
-	if (type_->Type_ == QualifiedName_)
-	{
-		return ConvertType_(type_->Children_->Get_(0)) + ConvertType_(type_->Children_->Get_(2));
-	}
-
-	if (type_->Type_ == GenericName_)
-	{
-		return ConvertType_(type_->Children_->Get_(0)) + string("<") + ConvertType_(true, type_->Children_->Get_(2)) + string(">");
-	}
-
-	return FormatError_(string("Unexpected Token of type ") + type_->Type_ + string(" found in CovertType(), `") + type_->GetText_() + string("`"));
-}
-
-auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string
-{
-	bool const nullable_ = type_->Type_ == NullableType_;
-	if (nullable_)
-	{
-		type_ = type_->Children_->Get_(0);
-	}
-
-	bool const mutableValue_ = type_->Type_ == MutableType_;
-	if (mutableValue_)
-	{
-		type_ = type_->Children_->Get_(1);
-	}
-
-	bool const isValueType_ = IsValueType_(type_);
-	string cppType_ = ConvertType_(type_);
-	if (isValueType_)
-	{
-		if (nullable_)
-		{
-			cppType_ = string("::Maybe<") + cppType_ + string(">");
-		}
-
-		if (!mutableBinding_ && !mutableValue_)
-		{
-			cppType_ = cppType_ + string(" const");
-		}
-	}
-	else
-	{
-		if (!mutableValue_)
-		{
-			cppType_ = cppType_ + string(" const");
-		}
-
-		cppType_ = cppType_ + string(" *");
-		if (!mutableBinding_)
-		{
-			cppType_ = cppType_ + string("const");
-		}
-	}
-
-	return cppType_;
-}
-
-auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, bool const isMainFunction_) -> string
-{
-	::System_::Text_::String_Builder_ *const builder_ = new ::System_::Text_::String_Builder_();
-	builder_->Append_(string("("));
-	bool firstParameter_ = true;
-	for (::Syntax_Node_ const *const parameter_ : *(parameterList_->Children_))
-	{
-		if (parameter_->Type_ == Parameter_)
-		{
-			if (!firstParameter_)
-			{
-				builder_->Append_(string(", "));
-			}
-			else
-			{
-				firstParameter_ = false;
-			}
-
-			bool const mutableBinding_ = parameter_->HasChildOfType_(VarKeyword_);
-			::Syntax_Node_ const *const type_ = parameter_->Children_->Get_(parameter_->Children_->Length_() - 1);
-			builder_->Append_(ConvertType_(mutableBinding_, type_));
-			builder_->Append_(string(" "));
-			builder_->Append_(parameter_->FirstChildOfType_(Identifier_)->GetText_());
-			builder_->Append_(string("_"));
-			if (isMainFunction_)
-			{
-				string typeString_;
-				if (type_->Type_ == MutableType_)
-				{
-					typeString_ = type_->Children_->Get_(1)->GetText_();
-				}
-				else
-				{
-					typeString_ = type_->GetText_();
-				}
-
-				if (typeString_ == string("System.Console.Console"))
-				{
-					MainFunctionAcceptsConsole_ = true;
-				}
-
-				if (typeString_ == string("System.Console.Arguments"))
-				{
-					MainFunctionAcceptsArgs_ = true;
-				}
-			}
-		}
-	}
-
-	builder_->Append_(string(")"));
-	return builder_->ToString_();
-}
-
-auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string
-{
-	return ConvertParameterList_(parameterList_, false);
-}
-
-auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void
-{
-	if (syntax_->Type_ == NewExpression_)
-	{
-		::Syntax_Node_ const *const type_ = syntax_->Children_->Get_(1);
-		if (!IsValueType_(type_))
-		{
-			builder_->Write_(string("new "));
-		}
-
-		builder_->Write_(ConvertType_(type_));
-		::Syntax_Node_ const *const argumentList_ = syntax_->Children_->Get_(2);
-		ConvertExpression_(argumentList_, builder_);
-	}
-	else if (syntax_->Type_ == ArgumentList_)
-	{
-		builder_->Write_(string("("));
-		bool firstExpression_ = true;
-		for (::Syntax_Node_ const *const arg_ : *(syntax_->Children_))
-		{
-			if (arg_->Type_ != LeftParen_ && arg_->Type_ != RightParen_ && arg_->Type_ != Comma_)
-			{
-				if (firstExpression_)
-				{
-					firstExpression_ = false;
-				}
-				else
-				{
-					builder_->Write_(string(", "));
-				}
-
-				ConvertExpression_(arg_, builder_);
-			}
-		}
-
-		builder_->Write_(string(")"));
-	}
-	else if (syntax_->Type_ == NotExpression_)
-	{
-		builder_->Write_(string("!"));
-		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
-	}
-	else if (syntax_->Type_ == ParenthesizedExpression_)
-	{
-		builder_->Write_(string("("));
-		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
-		builder_->Write_(string(")"));
-	}
-	else if (syntax_->Type_ == UnaryMinusExpression_)
-	{
-		builder_->Write_(string("-"));
-		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
-	}
-	else if (syntax_->Type_ == NullLiteralExpression_)
-	{
-		builder_->Write_(string("::None"));
-	}
-	else if (syntax_->Type_ == SelfExpression_)
-	{
-		builder_->Write_(string("this"));
-	}
-	else if (syntax_->Type_ == TrueLiteralExpression_ || syntax_->Type_ == FalseLiteralExpression_ || syntax_->Type_ == NumericLiteralExpression_ || syntax_->Type_ == CodePointLiteralExpression_)
-	{
-		builder_->Write_(syntax_->GetText_());
-	}
-	else if (syntax_->Type_ == IdentifierName_)
-	{
-		builder_->Write_(syntax_->GetText_() + string("_"));
-	}
-	else if (syntax_->Type_ == StringLiteralExpression_)
-	{
-		builder_->Write_(string("string(") + syntax_->GetText_() + string(")"));
-	}
-	else if (syntax_->Type_ == AssignmentExpression_ || syntax_->Type_ == EqualExpression_ || syntax_->Type_ == ComparisionExpression_ || syntax_->Type_ == AddExpression_ || syntax_->Type_ == SubtractExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string(" "));
-		builder_->Write_(syntax_->Children_->Get_(1)->GetText_());
-		builder_->Write_(string(" "));
-		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-	}
-	else if (syntax_->Type_ == OrExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string(" || "));
-		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-	}
-	else if (syntax_->Type_ == AndExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string(" && "));
-		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-	}
-	else if (syntax_->Type_ == NotEqualExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string(" != "));
-		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-	}
-	else if (syntax_->Type_ == InvocationExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
-	}
-	else if (syntax_->Type_ == MemberAccessExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string("->"));
-		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-	}
-	else if (syntax_->Type_ == ElementAccessExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string("["));
-		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-		builder_->Write_(string("]"));
-	}
-	else
-	{
-		builder_->Error_(string("Could not convert expression of type ") + syntax_->Type_);
-	}
-}
-
-auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
-{
-	Definitions_->StatementSeparatorLine_();
-	if (statement_->Type_ == ReturnStatement_)
-	{
-		if (statement_->Children_->Length_() == 2)
-		{
-			Definitions_->WriteLine_(string("return;"));
-		}
-		else
-		{
-			Definitions_->BeginLine_(string("return "));
-			ConvertExpression_(statement_->Children_->Get_(1), Definitions_);
-			Definitions_->EndLine_(string(";"));
-		}
-	}
-	else if (statement_->Type_ == LoopStatement_)
-	{
-		Definitions_->WriteLine_(string("for (;;)"));
-		EmitStatement_(statement_->Children_->Get_(1));
-	}
-	else if (statement_->Type_ == Block_)
-	{
-		Definitions_->BeginBlock_();
-		for (::Syntax_Node_ const *const blockStatement_ : *(statement_->Children_))
-		{
-			if (blockStatement_->Type_ != LeftBrace_ && blockStatement_->Type_ != RightBrace_)
-			{
-				EmitStatement_(blockStatement_);
-			}
-		}
-
-		Definitions_->EndBlock_();
-	}
-	else if (statement_->Type_ == WhileStatement_)
-	{
-		Definitions_->BeginLine_(string("while ("));
-		ConvertExpression_(statement_->Children_->Get_(1), Definitions_);
-		Definitions_->EndLine_(string(")"));
-		EmitStatement_(statement_->Children_->Get_(2));
-	}
-	else if (statement_->Type_ == ForStatement_)
-	{
-		Definitions_->BeginLine_(string("for ("));
-		::Syntax_Node_ const *const variableDeclaration_ = statement_->Children_->Get_(1);
-		bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
-		string const name_ = variableDeclaration_->FirstChildOfType_(Identifier_)->GetText_();
-		::Syntax_Node_ const *const type_ = variableDeclaration_->Children_->Get_(3);
-		Definitions_->Write_(ConvertType_(mutableBinding_, type_) + string(" ") + name_ + string("_"));
-		Definitions_->Write_(string(" : *("));
-		ConvertExpression_(statement_->Children_->Get_(3), Definitions_);
-		Definitions_->EndLine_(string("))"));
-		EmitStatement_(statement_->Children_->Get_(4));
-	}
-	else if (statement_->Type_ == DoWhileStatement_)
-	{
-		Definitions_->WriteLine_(string("do"));
-		EmitStatement_(statement_->Children_->Get_(1));
-		Definitions_->BeginLine_(string("while ("));
-		ConvertExpression_(statement_->Children_->Get_(3), Definitions_);
-		Definitions_->EndLine_(string(");"));
-	}
-	else if (statement_->Type_ == IfStatement_)
-	{
-		::Syntax_Node_ const * ifStatement_ = statement_;
-		Definitions_->BeginLine_(string(""));
-		for (;;)
-		{
-			Definitions_->Write_(string("if ("));
-			ConvertExpression_(ifStatement_->Children_->Get_(1), Definitions_);
-			Definitions_->EndLine_(string(")"));
-			EmitStatement_(ifStatement_->Children_->Get_(2));
-			::Syntax_Node_ const *const elseClause_ = ifStatement_->FirstChildOfType_(ElseClause_);
-			if (elseClause_ != ::None)
-			{
-				ifStatement_ = elseClause_->FirstChildOfType_(IfStatement_);
-				if (ifStatement_ != ::None)
-				{
-					Definitions_->BeginLine_(string("else "));
-				}
-				else
-				{
-					Definitions_->WriteLine_(string("else"));
-					EmitStatement_(elseClause_->Children_->Get_(1));
-					break;
-				}
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-	else if (statement_->Type_ == BreakStatement_)
-	{
-		Definitions_->WriteLine_(string("break;"));
-	}
-	else if (statement_->Type_ == ContinueStatement_)
-	{
-		Definitions_->WriteLine_(string("continue;"));
-	}
-	else if (statement_->Type_ == LocalDeclarationStatement_)
-	{
-		::Syntax_Node_ const *const variableDeclaration_ = statement_->Children_->Get_(0);
-		string const variableName_ = variableDeclaration_->FirstChildOfType_(Identifier_)->GetText_();
-		::Syntax_Node_ const *const variableType_ = variableDeclaration_->Children_->Get_(3);
-		bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
-		Definitions_->BeginLine_(ConvertType_(mutableBinding_, variableType_));
-		Definitions_->Write_(string(" ") + variableName_ + string("_"));
-		if (variableDeclaration_->HasChildOfType_(Assign_))
-		{
-			Definitions_->Write_(string(" = "));
-			ConvertExpression_(variableDeclaration_->Children_->Get_(5), Definitions_);
-		}
-
-		Definitions_->EndLine_(string(";"));
-	}
-	else if (statement_->Type_ == ExpressionStatement_)
-	{
-		Definitions_->BeginLine_(string(""));
-		ConvertExpression_(statement_->Children_->Get_(0), Definitions_);
-		Definitions_->EndLine_(string(";"));
-	}
-	else
-	{
-		Definitions_->Error_(string("Could not emit statement of type ") + statement_->Type_);
-	}
-}
-
-auto EmitClassMember_(::Syntax_Node_ const *const member_, string const className_) -> void
-{
-	if (member_->Type_ == ConstructorDeclaration_)
-	{
-		string const parameters_ = ConvertParameterList_(member_->Children_->Get_(2));
-		ClassDeclarations_->WriteLine_(className_ + string("_") + parameters_ + string(";"));
-		Definitions_->ElementSeparatorLine_();
-		Definitions_->WriteLine_(string("::") + className_ + string("_::") + className_ + string("_") + parameters_ + string(""));
-		EmitStatement_(member_->Children_->Get_(3));
-	}
-	else if (member_->Type_ == FieldDeclaration_)
-	{
-		::Syntax_Node_ const *const variableDeclaration_ = member_->Children_->Get_(1);
-		string const fieldName_ = variableDeclaration_->Children_->Get_(1)->GetText_();
-		::Syntax_Node_ const *const fieldType_ = variableDeclaration_->Children_->Get_(3);
-		string const cppType_ = ConvertType_(true, fieldType_);
-		ClassDeclarations_->WriteLine_(cppType_ + string(" ") + fieldName_ + string("_;"));
-	}
-	else if (member_->Type_ == MethodDeclaration_)
-	{
-		string const methodName_ = member_->Children_->Get_(1)->GetText_();
-		::Syntax_Node_ const *const parameterList_ = member_->Children_->Get_(2);
-		string const parameters_ = ConvertParameterList_(parameterList_);
-		::Syntax_Node_ const *const selfParameter_ = parameterList_->FirstChildOfType_(SelfParameter_);
-		bool const isAssociatedFuntion_ = selfParameter_ == ::None;
-		bool const mutableSelf_ = !isAssociatedFuntion_ && selfParameter_->HasChildOfType_(MutableKeyword_);
-		::Syntax_Node_ const *const returnType_ = member_->Children_->Get_(4);
-		string const cppType_ = ConvertType_(true, returnType_);
-		string staticModifier_ = string("");
-		if (isAssociatedFuntion_)
-		{
-			staticModifier_ = string("static ");
-		}
-
-		string constModifier_ = string("");
-		if (!mutableSelf_ && !isAssociatedFuntion_)
-		{
-			constModifier_ = string("const ");
-		}
-
-		ClassDeclarations_->WriteLine_(staticModifier_ + string("auto ") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_ + string(";"));
-		Definitions_->ElementSeparatorLine_();
-		Definitions_->WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_);
-		::Syntax_Node_ const *const block_ = member_->Children_->Get_(5);
-		EmitStatement_(block_);
-	}
-	else
-	{
-		Definitions_->Error_(string("Could not emit member of type ") + member_->Type_);
-	}
-}
-
-auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
-{
-	if (declaration_->Type_ == GlobalDeclaration_)
-	{
-		::Syntax_Node_ const *const variableDeclaration_ = declaration_->Children_->Get_(1);
-		string const variableName_ = variableDeclaration_->Children_->Get_(1)->GetText_();
-		::Syntax_Node_ const *const variableType_ = variableDeclaration_->Children_->Get_(3);
-		bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
-		string const cppType_ = ConvertType_(mutableBinding_, variableType_);
-		GlobalDefinitions_->BeginLine_(cppType_);
-		GlobalDefinitions_->Write_(string(" ") + variableName_ + string("_ = "));
-		::Syntax_Node_ const *const expression_ = variableDeclaration_->Children_->Get_(5);
-		ConvertExpression_(expression_, GlobalDefinitions_);
-		GlobalDefinitions_->EndLine_(string(";"));
-	}
-	else if (declaration_->Type_ == ClassDeclaration_)
-	{
-		string const className_ = declaration_->Children_->Get_(2)->GetText_();
-		TypeDeclarations_->WriteLine_(string("class ") + className_ + string("_;"));
-		ClassDeclarations_->ElementSeparatorLine_();
-		ClassDeclarations_->WriteLine_(string("class ") + className_ + string("_"));
-		ClassDeclarations_->BeginBlock_();
-		ClassDeclarations_->EndLine_(string("public:"));
-		for (::Syntax_Node_ const *const member_ : *(declaration_->Children_))
-		{
-			if (member_->Type_ == ConstructorDeclaration_ || member_->Type_ == FieldDeclaration_ || member_->Type_ == MethodDeclaration_)
-			{
-				EmitClassMember_(member_, className_);
-			}
-		}
-
-		ClassDeclarations_->EndBlockWithSemicolon_();
-	}
-	else if (declaration_->Type_ == EnumDeclaration_)
-	{
-		string const enumName_ = declaration_->Children_->Get_(3)->GetText_();
-		TypeDeclarations_->WriteLine_(string("enum class ") + enumName_ + string("_;"));
-		ClassDeclarations_->ElementSeparatorLine_();
-		ClassDeclarations_->WriteLine_(string("enum class ") + enumName_ + string("_"));
-		ClassDeclarations_->BeginBlock_();
-		for (::Syntax_Node_ const *const member_ : *(declaration_->Children_))
-		{
-			if (member_->Type_ == EnumMemberDeclaration_)
-			{
-				string const memberName_ = member_->Children_->Get_(0)->GetText_();
-				ClassDeclarations_->BeginLine_(memberName_ + string("_"));
-				::Syntax_Node_ const *const memberValue_ = member_->FirstChildOfType_(Number_);
-				if (memberValue_ != ::None)
-				{
-					ClassDeclarations_->Write_(string(" = "));
-					ClassDeclarations_->Write_(memberValue_->GetText_());
-				}
-
-				ClassDeclarations_->EndLine_(string(","));
-			}
-		}
-
-		ClassDeclarations_->EndBlockWithSemicolon_();
-	}
-	else if (declaration_->Type_ == FunctionDeclaration_)
-	{
-		string const name_ = declaration_->Children_->Get_(1)->GetText_();
-		bool const isMain_ = name_ == string("Main");
-		string const parameters_ = ConvertParameterList_(declaration_->Children_->Get_(2), isMain_);
-		::Syntax_Node_ const *const returnType_ = declaration_->Children_->Get_(4);
-		string const cppType_ = ConvertType_(true, returnType_);
-		FunctionDeclarations_->WriteLine_(string("auto ") + name_ + string("_") + parameters_ + string(" -> ") + cppType_ + string(";"));
-		Definitions_->ElementSeparatorLine_();
-		Definitions_->WriteLine_(string("auto ") + name_ + string("_") + parameters_ + string(" -> ") + cppType_);
-		if (isMain_)
-		{
-			if (MainFunctionReturnType_ != string(""))
-			{
-				Definitions_->Error_(string("Multiple declarations of main"));
-			}
-
-			MainFunctionReturnType_ = cppType_;
-		}
-
-		EmitStatement_(declaration_->Children_->Get_(5));
-	}
-	else
-	{
-		Definitions_->Error_(string("Could not emit declaration of type ") + declaration_->Type_);
-	}
-}
-
-auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void
-{
-	for (::Syntax_Node_ const *const declaration_ : *(unit_->Children_))
-	{
-		EmitDeclaration_(declaration_);
-	}
-}
-
-auto EmitPackage_(::Syntax_Node_ const *const package_) -> void
-{
-	for (::Syntax_Node_ const *const compilationUnit_ : *(package_->Children_))
-	{
-		EmitCompilationUnit_(compilationUnit_);
-	}
-}
-
-auto EmitPreamble_() -> void
-{
-	TypeDeclarations_->WriteLine_(string("#include \"RuntimeLibrary.h\""));
-	TypeDeclarations_->BlankLine_();
-	TypeDeclarations_->WriteLine_(string("// Type Declarations"));
-	FunctionDeclarations_->BlankLine_();
-	FunctionDeclarations_->WriteLine_(string("// Function Declarations"));
-	ClassDeclarations_->BlankLine_();
-	ClassDeclarations_->WriteLine_(string("// Class Declarations"));
-	GlobalDefinitions_->BlankLine_();
-	GlobalDefinitions_->WriteLine_(string("// Global Definitions"));
-	Definitions_->BlankLine_();
-	Definitions_->WriteLine_(string("// Definitions"));
-}
-
-auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void
-{
-	Definitions_->ElementSeparatorLine_();
-	Definitions_->WriteLine_(string("// Entry Point Adapter"));
-	Definitions_->WriteLine_(string("int main(int argc, char const *const * argv)"));
-	Definitions_->BeginBlock_();
-	for (::Source_Text_ const *const resource_ : *(resources_))
-	{
-		Definitions_->BeginLine_(string("resource_manager_->AddResource(::string(\""));
-		Definitions_->Write_(resource_->Name_);
-		Definitions_->Write_(string("\"), ::string(\""));
-		Definitions_->Write_(resource_->Text_->Replace_(string("\\"), string("\\\\"))->Replace_(string("\n"), string("\\n"))->Replace_(string("\r"), string("\\r"))->Replace_(string("\""), string("\\\"")));
-		Definitions_->EndLine_(string("\"));"));
-	}
-
-	if (resources_->Length_() > 0)
-	{
-		Definitions_->EndLine_(string(""));
-	}
-
-	::System_::Text_::String_Builder_ *const args_ = new ::System_::Text_::String_Builder_();
-	if (MainFunctionAcceptsConsole_)
-	{
-		args_->Append_(string("new ::System_::Console_::Console_()"));
-	}
-
-	if (MainFunctionAcceptsArgs_)
-	{
-		if (MainFunctionAcceptsConsole_)
-		{
-			args_->Append_(string(", "));
-		}
-
-		args_->Append_(string("new ::System_::Console_::Arguments_(argc, argv)"));
-	}
-
-	if (MainFunctionReturnType_ == string("void"))
-	{
-		Definitions_->WriteLine_(string("Main_(") + args_->ToString_() + string(");"));
-		Definitions_->WriteLine_(string("return 0;"));
-	}
-	else
-	{
-		Definitions_->WriteLine_(string("return Main_(") + args_->ToString_() + string(");"));
-	}
-
-	Definitions_->EndBlock_();
 }
 
 auto ::Lexer_::Analyze_(::Source_Text_ const *const source_) const -> ::Token_Stream_ *
@@ -2250,6 +1603,653 @@ auto ::Token_Stream_::IsIdentifierChar_(char const c_) -> bool
 auto ::Token_Stream_::IsNumberChar_(char const c_) -> bool
 {
 	return c_ >= '0' && c_ <= '9';
+}
+
+auto IsValueType_(::Syntax_Node_ const *const type_) -> bool
+{
+	if (type_->Type_ == PredefinedType_)
+	{
+		return true;
+	}
+
+	if (type_->Type_ == NullableType_)
+	{
+		return IsValueType_(type_->Children_->Get_(0));
+	}
+
+	if (type_->Type_ == QualifiedName_)
+	{
+		return IsValueType_(type_->Children_->Get_(type_->Children_->Length_() - 1));
+	}
+
+	if (type_->Type_ == GenericName_)
+	{
+		char const firstChar_ = type_->FirstChildOfType_(IdentifierName_)->FirstChildOfType_(Identifier_)->GetText_()[0];
+		return firstChar_ >= 'a' && firstChar_ <= 'z';
+	}
+
+	if (type_->Type_ == IdentifierName_)
+	{
+		char const firstChar_ = type_->FirstChildOfType_(Identifier_)->GetText_()[0];
+		return firstChar_ >= 'a' && firstChar_ <= 'z';
+	}
+
+	if (type_->Type_ == MutableType_)
+	{
+		return IsValueType_(type_->Children_->Get_(1));
+	}
+
+	return true;
+}
+
+auto ConvertType_(::Syntax_Node_ const *const type_) -> string
+{
+	if (type_->Type_ == PredefinedType_)
+	{
+		::Syntax_Node_ const *const keyword_ = type_->Children_->Get_(0);
+		if (keyword_->Type_ == CodePoint_)
+		{
+			return string("char");
+		}
+
+		if (keyword_->Type_ == UnsignedInt_)
+		{
+			return string("unsigned int");
+		}
+
+		return keyword_->GetText_();
+	}
+
+	if (type_->Type_ == IdentifierName_)
+	{
+		return string("::") + type_->GetText_() + string("_");
+	}
+
+	if (type_->Type_ == QualifiedName_)
+	{
+		return ConvertType_(type_->Children_->Get_(0)) + ConvertType_(type_->Children_->Get_(2));
+	}
+
+	if (type_->Type_ == GenericName_)
+	{
+		return ConvertType_(type_->Children_->Get_(0)) + string("<") + ConvertType_(true, type_->Children_->Get_(2)) + string(">");
+	}
+
+	return FormatError_(string("Unexpected Token of type ") + type_->Type_ + string(" found in CovertType(), `") + type_->GetText_() + string("`"));
+}
+
+auto ConvertType_(bool const mutableBinding_, ::Syntax_Node_ const * type_) -> string
+{
+	bool const nullable_ = type_->Type_ == NullableType_;
+	if (nullable_)
+	{
+		type_ = type_->Children_->Get_(0);
+	}
+
+	bool const mutableValue_ = type_->Type_ == MutableType_;
+	if (mutableValue_)
+	{
+		type_ = type_->Children_->Get_(1);
+	}
+
+	bool const isValueType_ = IsValueType_(type_);
+	string cppType_ = ConvertType_(type_);
+	if (isValueType_)
+	{
+		if (nullable_)
+		{
+			cppType_ = string("::Maybe<") + cppType_ + string(">");
+		}
+
+		if (!mutableBinding_ && !mutableValue_)
+		{
+			cppType_ = cppType_ + string(" const");
+		}
+	}
+	else
+	{
+		if (!mutableValue_)
+		{
+			cppType_ = cppType_ + string(" const");
+		}
+
+		cppType_ = cppType_ + string(" *");
+		if (!mutableBinding_)
+		{
+			cppType_ = cppType_ + string("const");
+		}
+	}
+
+	return cppType_;
+}
+
+auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, bool const isMainFunction_) -> string
+{
+	::System_::Text_::String_Builder_ *const builder_ = new ::System_::Text_::String_Builder_();
+	builder_->Append_(string("("));
+	bool firstParameter_ = true;
+	for (::Syntax_Node_ const *const parameter_ : *(parameterList_->Children_))
+	{
+		if (parameter_->Type_ == Parameter_)
+		{
+			if (!firstParameter_)
+			{
+				builder_->Append_(string(", "));
+			}
+			else
+			{
+				firstParameter_ = false;
+			}
+
+			bool const mutableBinding_ = parameter_->HasChildOfType_(VarKeyword_);
+			::Syntax_Node_ const *const type_ = parameter_->Children_->Get_(parameter_->Children_->Length_() - 1);
+			builder_->Append_(ConvertType_(mutableBinding_, type_));
+			builder_->Append_(string(" "));
+			builder_->Append_(parameter_->FirstChildOfType_(Identifier_)->GetText_());
+			builder_->Append_(string("_"));
+			if (isMainFunction_)
+			{
+				string typeString_;
+				if (type_->Type_ == MutableType_)
+				{
+					typeString_ = type_->Children_->Get_(1)->GetText_();
+				}
+				else
+				{
+					typeString_ = type_->GetText_();
+				}
+
+				if (typeString_ == string("System.Console.Console"))
+				{
+					MainFunctionAcceptsConsole_ = true;
+				}
+
+				if (typeString_ == string("System.Console.Arguments"))
+				{
+					MainFunctionAcceptsArgs_ = true;
+				}
+			}
+		}
+	}
+
+	builder_->Append_(string(")"));
+	return builder_->ToString_();
+}
+
+auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> string
+{
+	return ConvertParameterList_(parameterList_, false);
+}
+
+auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void
+{
+	if (syntax_->Type_ == NewExpression_)
+	{
+		::Syntax_Node_ const *const type_ = syntax_->Children_->Get_(1);
+		if (!IsValueType_(type_))
+		{
+			builder_->Write_(string("new "));
+		}
+
+		builder_->Write_(ConvertType_(type_));
+		::Syntax_Node_ const *const argumentList_ = syntax_->Children_->Get_(2);
+		ConvertExpression_(argumentList_, builder_);
+	}
+	else if (syntax_->Type_ == ArgumentList_)
+	{
+		builder_->Write_(string("("));
+		bool firstExpression_ = true;
+		for (::Syntax_Node_ const *const arg_ : *(syntax_->Children_))
+		{
+			if (arg_->Type_ != LeftParen_ && arg_->Type_ != RightParen_ && arg_->Type_ != Comma_)
+			{
+				if (firstExpression_)
+				{
+					firstExpression_ = false;
+				}
+				else
+				{
+					builder_->Write_(string(", "));
+				}
+
+				ConvertExpression_(arg_, builder_);
+			}
+		}
+
+		builder_->Write_(string(")"));
+	}
+	else if (syntax_->Type_ == NotExpression_)
+	{
+		builder_->Write_(string("!"));
+		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+	}
+	else if (syntax_->Type_ == ParenthesizedExpression_)
+	{
+		builder_->Write_(string("("));
+		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+		builder_->Write_(string(")"));
+	}
+	else if (syntax_->Type_ == UnaryMinusExpression_)
+	{
+		builder_->Write_(string("-"));
+		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+	}
+	else if (syntax_->Type_ == NullLiteralExpression_)
+	{
+		builder_->Write_(string("::None"));
+	}
+	else if (syntax_->Type_ == SelfExpression_)
+	{
+		builder_->Write_(string("this"));
+	}
+	else if (syntax_->Type_ == TrueLiteralExpression_ || syntax_->Type_ == FalseLiteralExpression_ || syntax_->Type_ == NumericLiteralExpression_ || syntax_->Type_ == CodePointLiteralExpression_)
+	{
+		builder_->Write_(syntax_->GetText_());
+	}
+	else if (syntax_->Type_ == IdentifierName_)
+	{
+		builder_->Write_(syntax_->GetText_() + string("_"));
+	}
+	else if (syntax_->Type_ == StringLiteralExpression_)
+	{
+		builder_->Write_(string("string(") + syntax_->GetText_() + string(")"));
+	}
+	else if (syntax_->Type_ == AssignmentExpression_ || syntax_->Type_ == EqualExpression_ || syntax_->Type_ == ComparisionExpression_ || syntax_->Type_ == AddExpression_ || syntax_->Type_ == SubtractExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(" "));
+		builder_->Write_(syntax_->Children_->Get_(1)->GetText_());
+		builder_->Write_(string(" "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == OrExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(" || "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == AndExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(" && "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == NotEqualExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(" != "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == InvocationExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+	}
+	else if (syntax_->Type_ == MemberAccessExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string("->"));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+	}
+	else if (syntax_->Type_ == ElementAccessExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string("["));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string("]"));
+	}
+	else
+	{
+		builder_->Error_(string("Could not convert expression of type ") + syntax_->Type_);
+	}
+}
+
+auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
+{
+	Definitions_->StatementSeparatorLine_();
+	if (statement_->Type_ == ReturnStatement_)
+	{
+		if (statement_->Children_->Length_() == 2)
+		{
+			Definitions_->WriteLine_(string("return;"));
+		}
+		else
+		{
+			Definitions_->BeginLine_(string("return "));
+			ConvertExpression_(statement_->Children_->Get_(1), Definitions_);
+			Definitions_->EndLine_(string(";"));
+		}
+	}
+	else if (statement_->Type_ == LoopStatement_)
+	{
+		Definitions_->WriteLine_(string("for (;;)"));
+		EmitStatement_(statement_->Children_->Get_(1));
+	}
+	else if (statement_->Type_ == Block_)
+	{
+		Definitions_->BeginBlock_();
+		for (::Syntax_Node_ const *const blockStatement_ : *(statement_->Children_))
+		{
+			if (blockStatement_->Type_ != LeftBrace_ && blockStatement_->Type_ != RightBrace_)
+			{
+				EmitStatement_(blockStatement_);
+			}
+		}
+
+		Definitions_->EndBlock_();
+	}
+	else if (statement_->Type_ == WhileStatement_)
+	{
+		Definitions_->BeginLine_(string("while ("));
+		ConvertExpression_(statement_->Children_->Get_(1), Definitions_);
+		Definitions_->EndLine_(string(")"));
+		EmitStatement_(statement_->Children_->Get_(2));
+	}
+	else if (statement_->Type_ == ForStatement_)
+	{
+		Definitions_->BeginLine_(string("for ("));
+		::Syntax_Node_ const *const variableDeclaration_ = statement_->Children_->Get_(1);
+		bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
+		string const name_ = variableDeclaration_->FirstChildOfType_(Identifier_)->GetText_();
+		::Syntax_Node_ const *const type_ = variableDeclaration_->Children_->Get_(3);
+		Definitions_->Write_(ConvertType_(mutableBinding_, type_) + string(" ") + name_ + string("_"));
+		Definitions_->Write_(string(" : *("));
+		ConvertExpression_(statement_->Children_->Get_(3), Definitions_);
+		Definitions_->EndLine_(string("))"));
+		EmitStatement_(statement_->Children_->Get_(4));
+	}
+	else if (statement_->Type_ == DoWhileStatement_)
+	{
+		Definitions_->WriteLine_(string("do"));
+		EmitStatement_(statement_->Children_->Get_(1));
+		Definitions_->BeginLine_(string("while ("));
+		ConvertExpression_(statement_->Children_->Get_(3), Definitions_);
+		Definitions_->EndLine_(string(");"));
+	}
+	else if (statement_->Type_ == IfStatement_)
+	{
+		::Syntax_Node_ const * ifStatement_ = statement_;
+		Definitions_->BeginLine_(string(""));
+		for (;;)
+		{
+			Definitions_->Write_(string("if ("));
+			ConvertExpression_(ifStatement_->Children_->Get_(1), Definitions_);
+			Definitions_->EndLine_(string(")"));
+			EmitStatement_(ifStatement_->Children_->Get_(2));
+			::Syntax_Node_ const *const elseClause_ = ifStatement_->FirstChildOfType_(ElseClause_);
+			if (elseClause_ != ::None)
+			{
+				ifStatement_ = elseClause_->FirstChildOfType_(IfStatement_);
+				if (ifStatement_ != ::None)
+				{
+					Definitions_->BeginLine_(string("else "));
+				}
+				else
+				{
+					Definitions_->WriteLine_(string("else"));
+					EmitStatement_(elseClause_->Children_->Get_(1));
+					break;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	else if (statement_->Type_ == BreakStatement_)
+	{
+		Definitions_->WriteLine_(string("break;"));
+	}
+	else if (statement_->Type_ == ContinueStatement_)
+	{
+		Definitions_->WriteLine_(string("continue;"));
+	}
+	else if (statement_->Type_ == LocalDeclarationStatement_)
+	{
+		::Syntax_Node_ const *const variableDeclaration_ = statement_->Children_->Get_(0);
+		string const variableName_ = variableDeclaration_->FirstChildOfType_(Identifier_)->GetText_();
+		::Syntax_Node_ const *const variableType_ = variableDeclaration_->Children_->Get_(3);
+		bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
+		Definitions_->BeginLine_(ConvertType_(mutableBinding_, variableType_));
+		Definitions_->Write_(string(" ") + variableName_ + string("_"));
+		if (variableDeclaration_->HasChildOfType_(Assign_))
+		{
+			Definitions_->Write_(string(" = "));
+			ConvertExpression_(variableDeclaration_->Children_->Get_(5), Definitions_);
+		}
+
+		Definitions_->EndLine_(string(";"));
+	}
+	else if (statement_->Type_ == ExpressionStatement_)
+	{
+		Definitions_->BeginLine_(string(""));
+		ConvertExpression_(statement_->Children_->Get_(0), Definitions_);
+		Definitions_->EndLine_(string(";"));
+	}
+	else
+	{
+		Definitions_->Error_(string("Could not emit statement of type ") + statement_->Type_);
+	}
+}
+
+auto EmitClassMember_(::Syntax_Node_ const *const member_, string const className_) -> void
+{
+	if (member_->Type_ == ConstructorDeclaration_)
+	{
+		string const parameters_ = ConvertParameterList_(member_->Children_->Get_(2));
+		ClassDeclarations_->WriteLine_(className_ + string("_") + parameters_ + string(";"));
+		Definitions_->ElementSeparatorLine_();
+		Definitions_->WriteLine_(string("::") + className_ + string("_::") + className_ + string("_") + parameters_ + string(""));
+		EmitStatement_(member_->Children_->Get_(3));
+	}
+	else if (member_->Type_ == FieldDeclaration_)
+	{
+		::Syntax_Node_ const *const variableDeclaration_ = member_->Children_->Get_(1);
+		string const fieldName_ = variableDeclaration_->Children_->Get_(1)->GetText_();
+		::Syntax_Node_ const *const fieldType_ = variableDeclaration_->Children_->Get_(3);
+		string const cppType_ = ConvertType_(true, fieldType_);
+		ClassDeclarations_->WriteLine_(cppType_ + string(" ") + fieldName_ + string("_;"));
+	}
+	else if (member_->Type_ == MethodDeclaration_)
+	{
+		string const methodName_ = member_->Children_->Get_(1)->GetText_();
+		::Syntax_Node_ const *const parameterList_ = member_->Children_->Get_(2);
+		string const parameters_ = ConvertParameterList_(parameterList_);
+		::Syntax_Node_ const *const selfParameter_ = parameterList_->FirstChildOfType_(SelfParameter_);
+		bool const isAssociatedFuntion_ = selfParameter_ == ::None;
+		bool const mutableSelf_ = !isAssociatedFuntion_ && selfParameter_->HasChildOfType_(MutableKeyword_);
+		::Syntax_Node_ const *const returnType_ = member_->Children_->Get_(4);
+		string const cppType_ = ConvertType_(true, returnType_);
+		string staticModifier_ = string("");
+		if (isAssociatedFuntion_)
+		{
+			staticModifier_ = string("static ");
+		}
+
+		string constModifier_ = string("");
+		if (!mutableSelf_ && !isAssociatedFuntion_)
+		{
+			constModifier_ = string("const ");
+		}
+
+		ClassDeclarations_->WriteLine_(staticModifier_ + string("auto ") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_ + string(";"));
+		Definitions_->ElementSeparatorLine_();
+		Definitions_->WriteLine_(string("auto ::") + className_ + string("_::") + methodName_ + string("_") + parameters_ + string(" ") + constModifier_ + string("-> ") + cppType_);
+		::Syntax_Node_ const *const block_ = member_->Children_->Get_(5);
+		EmitStatement_(block_);
+	}
+	else
+	{
+		Definitions_->Error_(string("Could not emit member of type ") + member_->Type_);
+	}
+}
+
+auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
+{
+	if (declaration_->Type_ == GlobalDeclaration_)
+	{
+		::Syntax_Node_ const *const variableDeclaration_ = declaration_->Children_->Get_(1);
+		string const variableName_ = variableDeclaration_->Children_->Get_(1)->GetText_();
+		::Syntax_Node_ const *const variableType_ = variableDeclaration_->Children_->Get_(3);
+		bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
+		string const cppType_ = ConvertType_(mutableBinding_, variableType_);
+		GlobalDefinitions_->BeginLine_(cppType_);
+		GlobalDefinitions_->Write_(string(" ") + variableName_ + string("_ = "));
+		::Syntax_Node_ const *const expression_ = variableDeclaration_->Children_->Get_(5);
+		ConvertExpression_(expression_, GlobalDefinitions_);
+		GlobalDefinitions_->EndLine_(string(";"));
+	}
+	else if (declaration_->Type_ == ClassDeclaration_)
+	{
+		string const className_ = declaration_->Children_->Get_(2)->GetText_();
+		TypeDeclarations_->WriteLine_(string("class ") + className_ + string("_;"));
+		ClassDeclarations_->ElementSeparatorLine_();
+		ClassDeclarations_->WriteLine_(string("class ") + className_ + string("_"));
+		ClassDeclarations_->BeginBlock_();
+		ClassDeclarations_->EndLine_(string("public:"));
+		for (::Syntax_Node_ const *const member_ : *(declaration_->Children_))
+		{
+			if (member_->Type_ == ConstructorDeclaration_ || member_->Type_ == FieldDeclaration_ || member_->Type_ == MethodDeclaration_)
+			{
+				EmitClassMember_(member_, className_);
+			}
+		}
+
+		ClassDeclarations_->EndBlockWithSemicolon_();
+	}
+	else if (declaration_->Type_ == EnumDeclaration_)
+	{
+		string const enumName_ = declaration_->Children_->Get_(3)->GetText_();
+		TypeDeclarations_->WriteLine_(string("enum class ") + enumName_ + string("_;"));
+		ClassDeclarations_->ElementSeparatorLine_();
+		ClassDeclarations_->WriteLine_(string("enum class ") + enumName_ + string("_"));
+		ClassDeclarations_->BeginBlock_();
+		for (::Syntax_Node_ const *const member_ : *(declaration_->Children_))
+		{
+			if (member_->Type_ == EnumMemberDeclaration_)
+			{
+				string const memberName_ = member_->Children_->Get_(0)->GetText_();
+				ClassDeclarations_->BeginLine_(memberName_ + string("_"));
+				::Syntax_Node_ const *const memberValue_ = member_->FirstChildOfType_(Number_);
+				if (memberValue_ != ::None)
+				{
+					ClassDeclarations_->Write_(string(" = "));
+					ClassDeclarations_->Write_(memberValue_->GetText_());
+				}
+
+				ClassDeclarations_->EndLine_(string(","));
+			}
+		}
+
+		ClassDeclarations_->EndBlockWithSemicolon_();
+	}
+	else if (declaration_->Type_ == FunctionDeclaration_)
+	{
+		string const name_ = declaration_->Children_->Get_(1)->GetText_();
+		bool const isMain_ = name_ == string("Main");
+		string const parameters_ = ConvertParameterList_(declaration_->Children_->Get_(2), isMain_);
+		::Syntax_Node_ const *const returnType_ = declaration_->Children_->Get_(4);
+		string const cppType_ = ConvertType_(true, returnType_);
+		FunctionDeclarations_->WriteLine_(string("auto ") + name_ + string("_") + parameters_ + string(" -> ") + cppType_ + string(";"));
+		Definitions_->ElementSeparatorLine_();
+		Definitions_->WriteLine_(string("auto ") + name_ + string("_") + parameters_ + string(" -> ") + cppType_);
+		if (isMain_)
+		{
+			if (MainFunctionReturnType_ != string(""))
+			{
+				Definitions_->Error_(string("Multiple declarations of main"));
+			}
+
+			MainFunctionReturnType_ = cppType_;
+		}
+
+		EmitStatement_(declaration_->Children_->Get_(5));
+	}
+	else
+	{
+		Definitions_->Error_(string("Could not emit declaration of type ") + declaration_->Type_);
+	}
+}
+
+auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void
+{
+	for (::Syntax_Node_ const *const declaration_ : *(unit_->Children_))
+	{
+		EmitDeclaration_(declaration_);
+	}
+}
+
+auto EmitPackage_(::Syntax_Node_ const *const package_) -> void
+{
+	for (::Syntax_Node_ const *const compilationUnit_ : *(package_->Children_))
+	{
+		EmitCompilationUnit_(compilationUnit_);
+	}
+}
+
+auto EmitPreamble_() -> void
+{
+	TypeDeclarations_->WriteLine_(string("#include \"RuntimeLibrary.h\""));
+	TypeDeclarations_->BlankLine_();
+	TypeDeclarations_->WriteLine_(string("// Type Declarations"));
+	FunctionDeclarations_->BlankLine_();
+	FunctionDeclarations_->WriteLine_(string("// Function Declarations"));
+	ClassDeclarations_->BlankLine_();
+	ClassDeclarations_->WriteLine_(string("// Class Declarations"));
+	GlobalDefinitions_->BlankLine_();
+	GlobalDefinitions_->WriteLine_(string("// Global Definitions"));
+	Definitions_->BlankLine_();
+	Definitions_->WriteLine_(string("// Definitions"));
+}
+
+auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void
+{
+	Definitions_->ElementSeparatorLine_();
+	Definitions_->WriteLine_(string("// Entry Point Adapter"));
+	Definitions_->WriteLine_(string("int main(int argc, char const *const * argv)"));
+	Definitions_->BeginBlock_();
+	for (::Source_Text_ const *const resource_ : *(resources_))
+	{
+		Definitions_->BeginLine_(string("resource_manager_->AddResource(::string(\""));
+		Definitions_->Write_(resource_->Name_);
+		Definitions_->Write_(string("\"), ::string(\""));
+		Definitions_->Write_(resource_->Text_->Replace_(string("\\"), string("\\\\"))->Replace_(string("\n"), string("\\n"))->Replace_(string("\r"), string("\\r"))->Replace_(string("\""), string("\\\"")));
+		Definitions_->EndLine_(string("\"));"));
+	}
+
+	if (resources_->Length_() > 0)
+	{
+		Definitions_->EndLine_(string(""));
+	}
+
+	::System_::Text_::String_Builder_ *const args_ = new ::System_::Text_::String_Builder_();
+	if (MainFunctionAcceptsConsole_)
+	{
+		args_->Append_(string("new ::System_::Console_::Console_()"));
+	}
+
+	if (MainFunctionAcceptsArgs_)
+	{
+		if (MainFunctionAcceptsConsole_)
+		{
+			args_->Append_(string(", "));
+		}
+
+		args_->Append_(string("new ::System_::Console_::Arguments_(argc, argv)"));
+	}
+
+	if (MainFunctionReturnType_ == string("void"))
+	{
+		Definitions_->WriteLine_(string("Main_(") + args_->ToString_() + string(");"));
+		Definitions_->WriteLine_(string("return 0;"));
+	}
+	else
+	{
+		Definitions_->WriteLine_(string("return Main_(") + args_->ToString_() + string(");"));
+	}
+
+	Definitions_->EndBlock_();
 }
 
 // Entry Point Adapter
