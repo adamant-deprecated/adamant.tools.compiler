@@ -9,68 +9,12 @@ image: Visual Studio 2017
 environment:
   access_token:
     secure: JLrJttliM7kLzat6ol8CmJrniBxNxquPu5IcL5KEpNRkZr7ZiwqNq1Ek12q8jERo
-build_script:
-- cmd: |
-    echo Rebuilding Previous
-    REM This reads the last commit hash into a variable
-    for /f "delims=" %%A in ('git rev-parse HEAD~1') do @set "previousCommitHash=%%A"
-    echo Using %previousCommitHash% for previous source
-    git checkout translated/%previousCommitHash% -- translated
-    echo Moving current to previous
-    move translated\current translated\previous
-    mkdir target\previous
-    echo Compiling...
-    clang++ translated\previous\*.cpp -o target\previous\Program.exe -std=c++14 -Xclang -flto-visibility-public-std
-
-    echo.
-    echo ************************
-    echo Building Current
-    echo ************************
-    REM there is no current directory at this point
-    mkdir translated\current
-    set source_files=
-    for /f "tokens=*" %%F in ('dir /b /S "src\*.ad"') do @call set source_files=%%source_files%% "%%F"
-    target\previous\Program.exe %source_files% -o translated\current\Program.cpp -r src\RuntimeLibrary.cpp -r src\RuntimeLibrary.h
-    mkdir target\current
-    echo Compiling...
-    clang++ translated\current\*.cpp -o target\current\Program.exe -std=c++14 -Xclang -flto-visibility-public-std
-
-    echo.
-    echo ************************
-    echo Building Bootstrapped
-    echo ************************
-    mkdir translated\bootstrapped
-    target\current\Program.exe %source_files% -o translated\bootstrapped\Program.cpp -r src\RuntimeLibrary.cpp -r src\RuntimeLibrary.h
-    mkdir target\bootstrapped
-    echo Compiling...
-    clang++ translated\bootstrapped\*.cpp -o target\bootstrapped\Program.exe -std=c++14 -Xclang -flto-visibility-public-std
-deploy: off
-on_success:
-- cmd: |
-    for /f "delims=" %%A in ('git rev-parse HEAD~1') do @set "previousCommitHash=%%A"
-    echo Using %previousCommitHash% for previousCommitHash
-    for /f "delims=" %%A in ('git rev-parse HEAD') do @set "currentCommitHash=%%A"
-    echo Using %currentCommitHash% for currentCommitHash
-
-    xcopy translated\current saved\
-
+before_build:
+- ps:  |
     git config --global credential.helper store
-
-- ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
-- cmd: |
-    git config --global user.email ""
+    Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
+    git config --global user.email "<>"
     git config --global user.name "AppVeyor Build"
-
-    REM Use force to avoid issues with modified files would be overwritten
-    git checkout translated/%previousCommitHash% --force
-
-    rmdir /S/Q translated
-    mkdir translated
-    move saved translated\current
-    git add translated\current
-    git status --untracked-files=no
-    REM Allow empty commits so we can make a properly named commit to match each commit
-    git commit -m "Translated files for %currentCommitHash%" --allow-empty --untracked-files=no
-    REM ignore tag already exists errors
-    git tag translated/%currentCommitHash% & exit 0
-    git push origin translated/%currentCommitHash%
+build_script:
+- ps: .\build.ps1 -Target CI
+deploy: off

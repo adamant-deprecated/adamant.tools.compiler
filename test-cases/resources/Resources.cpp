@@ -20,8 +20,8 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	resource_manager_->AddResource(::string("Hello.rsrc"), ::string("Hello to\nall my \"cool\" friends\\enemies."));
-	resource_manager_->AddResource(::string("World.rsrc"), ::string("Goodbye world!"));
+	resource_manager_->AddResource(::string("Hello.rsrc"), ::string("Hello to\nall my \"cool\" friends\\enemies.\n"));
+	resource_manager_->AddResource(::string("World.rsrc"), ::string("Goodbye world!\n"));
 
 	Main_(new ::System_::Console_::Console_());
 	return 0;
