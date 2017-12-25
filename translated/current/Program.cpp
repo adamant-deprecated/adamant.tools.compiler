@@ -278,10 +278,10 @@ auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *cons
 
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void
 {
-	console_->WriteLine_(string("Adamant Compiler v0.1.0"));
 	::System_::Collections_::List_<string> *const sourceFilePaths_ = new ::System_::Collections_::List_<string>();
 	::System_::Collections_::List_<string> *const resourceFilePaths_ = new ::System_::Collections_::List_<string>();
 	string outputFilePath_ = string("");
+	bool verbose_ = false;
 	int argType_ = 0;
 	for (string const arg_ : *(args_))
 	{
@@ -305,11 +305,20 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 			{
 				argType_ = 2;
 			}
+			else if (arg_ == string("-v") || arg_ == string("--verbose"))
+			{
+				verbose_ = true;
+			}
 			else
 			{
 				sourceFilePaths_->Add_(arg_);
 			}
 		}
+	}
+
+	if ((verbose_))
+	{
+		console_->WriteLine_(string("Adamant Compiler v0.1.0"));
 	}
 
 	if (sourceFilePaths_->Length_() == 0 || outputFilePath_ == string(""))
@@ -321,29 +330,48 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 	::System_::Collections_::List_<::Source_Text_ const *> *const resources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
 	if (resourceFilePaths_->Length_() > 0)
 	{
-		console_->WriteLine_(string("Reading Resources:"));
+		if ((verbose_))
+		{
+			console_->WriteLine_(string("Reading Resources:"));
+		}
+
 		for (string const resourceFilePath_ : *(resourceFilePaths_))
 		{
-			console_->WriteLine_(string("  ") + resourceFilePath_);
+			if ((verbose_))
+			{
+				console_->WriteLine_(string("  ") + resourceFilePath_);
+			}
+
 			resources_->Add_(ReadSource_(resourceFilePath_));
 		}
 	}
 
-	console_->WriteLine_(string("Compiling:"));
+	if ((verbose_))
+	{
+		console_->WriteLine_(string("Compiling:"));
+	}
+
 	::System_::Collections_::List_<::Source_Text_ const *> *const sources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
 	for (string const sourceFilePath_ : *(sourceFilePaths_))
 	{
-		console_->WriteLine_(string("  ") + sourceFilePath_);
+		if ((verbose_))
+		{
+			console_->WriteLine_(string("  ") + sourceFilePath_);
+		}
+
 		sources_->Add_(ReadSource_(sourceFilePath_));
 	}
 
 	string const translated_ = Compile_(sources_, resources_);
-	console_->Write_(string("Output: "));
-	console_->WriteLine_(outputFilePath_);
+	if ((verbose_))
+	{
+		console_->Write_(string("Output: "));
+		console_->WriteLine_(outputFilePath_);
+	}
+
 	::System_::IO_::File_Writer_ *const outputFile_ = new ::System_::IO_::File_Writer_(outputFilePath_);
 	outputFile_->Write_(translated_);
 	outputFile_->Close_();
-	console_->Write_(string("Outputting RuntimeLibrary to: "));
 	string outputDirPath_ = outputFilePath_;
 	int index_ = outputDirPath_->LastIndexOf_('/');
 	if (index_ != -1)
@@ -357,7 +385,12 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 		outputDirPath_ = outputDirPath_->Substring_(0, index_ + 1);
 	}
 
-	console_->WriteLine_(outputDirPath_);
+	if ((verbose_))
+	{
+		console_->Write_(string("Outputting RuntimeLibrary to: "));
+		console_->WriteLine_(outputDirPath_);
+	}
+
 	::System_::IO_::File_Writer_ * resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_ + string("RuntimeLibrary.h"));
 	resourceFile_->Write_(resource_manager_->GetString_(string("RuntimeLibrary.h")));
 	resourceFile_->Close_();
