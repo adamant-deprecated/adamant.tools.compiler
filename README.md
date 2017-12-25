@@ -6,6 +6,11 @@ A compiler for the [Adamant language](http://adamant-lang.org) that is in the pr
 
 The compiler is under active development. It is in a very early stage, and there are likely issues and limitations. APIs are subject to frequent breaking changes.
 
+Platform | Status
+---|---
+Windows | [![Build status](https://ci.appveyor.com/api/projects/status/uy8j809tc3u3cil3/branch/master?svg=true)](https://ci.appveyor.com/project/WalkerCodeRanger/adamant-compiler/branch/master)
+Linux | [![Build Status](https://travis-ci.org/adamant/Adamant.Compiler.svg?branch=master)](https://travis-ci.org/adamant/Adamant.Compiler)
+
 ## Implementation Notes
 
 The list of the currently [implemented language features](docs/ImplementedLanguageFeatures.md) can be found in the docs directory.
@@ -44,7 +49,7 @@ From a Powershell command prompt at the root of the repo run:
 
 	.\build.ps1
 
-or:
+or
 
 	.\bulld.ps1 -Target <Target>
 
@@ -54,9 +59,9 @@ From the command prompt at the root of the repo run:
 
 	./build.sh
 
-or:
+or
 
-	./build.sh -Target=All
+	./build.sh -Target=<Target>
 
 #### Build Targets
 
