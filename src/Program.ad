@@ -15,10 +15,10 @@ public Compile(sources: System.Collections.List<Source_Text>, resources: System.
 
 public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void
 {
-	console.WriteLine("Adamant Compiler v0.1.0");
 	let sourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
 	let resourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
 	var outputFilePath: string = "";
+	var verbose: bool = false;
 	var argType: int = 0; // 0=source file, 1=resource file, 2=output file
 	for let arg: string in args
 	{
@@ -42,6 +42,10 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 			{
 				argType = 2;
 			}
+			else if arg == "-v" or arg == "--verbose"
+			{
+				verbose = true;
+			}
 			else
 			{
 				sourceFilePaths.Add(arg);
@@ -49,6 +53,10 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 		}
 	}
 
+	if(verbose)
+	{
+		console.WriteLine("Adamant Compiler v0.1.0");
+	}
 	if sourceFilePaths.Length() == 0 or outputFilePath == ""
 	{
 		console.WriteLine("Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
@@ -59,35 +67,49 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	let resources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
 	if resourceFilePaths.Length() > 0
 	{
-		console.WriteLine("Reading Resources:");
+		if(verbose)
+		{
+			console.WriteLine("Reading Resources:");
+		}
 		for let resourceFilePath: string in resourceFilePaths
 		{
-			console.WriteLine("  " + resourceFilePath);
+			if(verbose)
+			{
+				console.WriteLine("  " + resourceFilePath);
+			}
 			resources.Add(ReadSource(resourceFilePath));
 		}
 	}
 
 	// Read Source(s)
-	console.WriteLine("Compiling:");
+	if(verbose)
+	{
+		console.WriteLine("Compiling:");
+	}
 	let sources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
 	for let sourceFilePath: string in sourceFilePaths
 	{
-		console.WriteLine("  " + sourceFilePath);
+		if(verbose)
+		{
+			console.WriteLine("  " + sourceFilePath);
+		}
 		sources.Add(ReadSource(sourceFilePath));
 	}
 
 	let translated: string = Compile(sources, resources);
 
 	// Write output
-	console.Write("Output: ");
-	console.WriteLine(outputFilePath);
+	if(verbose)
+	{
+		console.Write("Output: ");
+		console.WriteLine(outputFilePath);
+	}
 	// TODO should be `new mut`
 	let outputFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputFilePath);
 	outputFile.Write(translated);
 	outputFile.Close();
 
 	// Write RuntimeLibrary
-	console.Write("Outputting RuntimeLibrary to: ");
 	var outputDirPath: string = outputFilePath;
 	var index: int = outputDirPath.LastIndexOf('/');
 	if index <> -1
@@ -95,7 +117,11 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	index = outputDirPath.LastIndexOf('\\');
 	if index <> -1
 		{ outputDirPath = outputDirPath.Substring(0, index+1); }
-	console.WriteLine(outputDirPath);
+	if(verbose)
+	{
+		console.Write("Outputting RuntimeLibrary to: ");
+		console.WriteLine(outputDirPath);
+	}
 	var resourceFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.h");
 	resourceFile.Write(resource_manager.GetString("RuntimeLibrary.h"));
 	resourceFile.Close();
