@@ -156,7 +156,7 @@ Task("Build-Expected")
 			var outputDir = Directory("target") + relativePath.GetDirectory();
 			EnsureDirectoryExists(outputDir);
 			var output = outputDir + relativePath.GetFilenameWithoutExtension();
-			CompileCpp(relativePath + " src/*.cpp", output, "src");
+			CompileCpp(new []{ relativePath.ToString(), "src/*.cpp" }, output, "src");
 		}
 		Information("Compiled {0} Test Case Expected Outputs", testCases.Count);
 	});
@@ -173,7 +173,7 @@ Task("Run-Expected")
 		{
 			var program = wd.GetRelativePath(testCase);
 			Information("Running {0}", program);
-			var result = StartProcess(program, "");
+			var result = RunProcess(program, "", false);
 			Information("Exit Code is {0}", result);
 			// TODO if we had a way to know what the expected exit code was, we could check
 			// TODO we could also check the actual output
@@ -304,7 +304,12 @@ void CompileAdamant(FilePath compiler, IEnumerable<FilePath> sources, FilePath o
 	}
 }
 
-void CompileCpp(string source, FilePath output, FilePath includeDirectory = null)
+void CompileCpp(string sourceGlob, FilePath output, FilePath includeDirectory = null)
+{
+	CompileCpp(new [] { sourceGlob }, output, includeDirectory);
+}
+
+void CompileCpp(string[] sourceGlobs, FilePath output, FilePath includeDirectory = null)
 {
 	var options =  " -std=c++14";
 	if(includeDirectory != null)
@@ -317,7 +322,12 @@ void CompileCpp(string source, FilePath output, FilePath includeDirectory = null
 		options += " -Xclang -flto-visibility-public-std";
 	}
 
-	RunProcess("clang++", source + " -o " + output + options);
+	// Becuase wildcard expansion is handled by the shell on Linux and Cake StartProcess() always
+	// sets UseShellExecute=false, we just expand the wildcards ourselves
+	var wd = MakeAbsolute(Directory("."));
+	var sources = string.Join(" ", sourceGlobs.SelectMany(glob => GetFiles(glob)).Select(file => wd.GetRelativePath(file)));
+
+	RunProcess("clang++", sources + " -o " + output + options);
 }
 
 void Test(string version)
@@ -370,12 +380,14 @@ void Test(string version)
 }
 
 // Run a process and report an error on failure
-void RunProcess(FilePath command, string args)
+int RunProcess(FilePath command, string args, bool checkResult = true)
 {
 	Verbose(command + " " + args);
 	var result = StartProcess(command, args);
-	if(result != 0)
+	if(checkResult && result != 0)
 		throw new Exception("Exited with result: "+result);
+
+	return result;
 }
 
 // Run a process, return the ouput and report an error on failure
