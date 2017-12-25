@@ -27,17 +27,21 @@ Task("Build-Previous")
 		var sourceExists = GitTagExists("translated/" + previousCommit);
 		if(!sourceExists)
 		{
-			if(AppVeyor.IsRunningOnAppVeyor)
+			Warning("No source for parent commit. Searching ancestors.");
+			var found = false;
+			for(var generation = 2; generation < 100; generation++)
 			{
-				Error("No source for parent commit.");
-				throw new Exception("No source for parent commit");
+				previousCommit = GitRevParse("HEAD~" + generation);
+				if(GitTagExists("translated/" + previousCommit))
+				{
+					Warning("Found source for HEAD~{0} {1}", generation, previousCommit);
+					found = true;
+					break;
+				}
 			}
-			Warning("No source for parent commit. Trying common ancestor with master.");
-			previousCommit = ReadProcess("git", "merge-base --fork-point master").Single().ToLower();
-			Information("Common ancestor is {0}", previousCommit);
-			if(!GitTagExists("translated/" + previousCommit))
+			if(!found)
 			{
-				Error("No source for common ancestor");
+				Error("No source for previous");
 				throw new Exception("Couldn't find source to use for Build-Previous of the compiler");
 			}
 		}
