@@ -190,12 +190,11 @@ Task("All")
 	.IsDependentOn("Test-Double-Bootstrapped");
 
 Task("Commit-Translated")
-	.IsDependentOn("All")
+	// technically, this is all that is needed,
+	// really though, you should run All as CI does
+	.IsDependentOn("Build-Current")
 	.Does(() =>
 	{
-		Information("Remembering current branch");
-		var currentBranch = ReadProcess("git", "describe --all").Single();
-
 		var deleteSettings = new DeleteDirectorySettings()
 			{
 				Recursive = true,
@@ -224,8 +223,15 @@ Task("Commit-Translated")
 		RunProcess("git", string.Format("commit -m \"{0}\" --allow-empty --untracked-files=no", message));
 
 		var tag = "translated/"+currentCommit;
-		Information("Applying tag {0}", tag);
-		GitTag(".", tag);
+		if(GitTagExists(tag))
+		{
+			Warning("Tag {0} already exists, not modifying", tag);
+		}
+		else
+		{
+			Information("Applying tag {0}", tag);
+			GitTag(".", tag);
+		}
 
 		if(AppVeyor.IsRunningOnAppVeyor)
 		{
@@ -237,9 +243,6 @@ Task("Commit-Translated")
 		{
 			Warning("Skipping push of tag becuase not running in AppVeyor");
 		}
-
-		Information("Restoring to current branch {0}", currentBranch);
-		GitCheckout(".", currentBranch);
 	});
 
 Task("CI")
