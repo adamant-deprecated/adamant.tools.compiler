@@ -1,0 +1,5 @@
+public Main() -> void
+{
+	var x: int = 1;
+	var y: int = -x;
+}

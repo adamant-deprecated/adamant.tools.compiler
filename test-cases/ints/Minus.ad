@@ -1,0 +1,4 @@
+public Main() -> void
+{
+	var x: int = 1 - 2;
+}
