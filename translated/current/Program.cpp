@@ -642,7 +642,7 @@ auto ParseAtom_() -> ::Syntax_Node_ const *
 	if (Token_->Type_ == NotOperator_)
 	{
 		children_->Add_(ExpectToken_(NotOperator_));
-		children_->Add_(ParseExpression_());
+		children_->Add_(ParseExpression_(7));
 		return new ::Syntax_Node_(NotExpression_, children_);
 	}
 
@@ -1680,17 +1680,12 @@ auto ConvertType_(::Syntax_Node_ const *const type_) -> string
 	if (type_->Type_ == PredefinedType_)
 	{
 		::Syntax_Node_ const *const keyword_ = type_->Children_->Get_(0);
-		if (keyword_->Type_ == CodePoint_)
+		if (keyword_->Type_ == Void_)
 		{
-			return string("char");
+			return keyword_->GetText_();
 		}
 
-		if (keyword_->Type_ == UnsignedInt_)
-		{
-			return string("unsigned int");
-		}
-
-		return keyword_->GetText_();
+		return string("p_") + keyword_->GetText_();
 	}
 
 	if (type_->Type_ == IdentifierName_)
@@ -1853,8 +1848,8 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	}
 	else if (syntax_->Type_ == NotExpression_)
 	{
-		builder_->Write_(string("!"));
 		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+		builder_->Write_(string("->op_Not()"));
 	}
 	else if (syntax_->Type_ == ParenthesizedExpression_)
 	{
@@ -1864,8 +1859,8 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	}
 	else if (syntax_->Type_ == UnaryMinusExpression_)
 	{
-		builder_->Write_(string("-"));
 		ConvertExpression_(syntax_->Children_->Get_(1), builder_);
+		builder_->Write_(string("->op_UnaryMinus()"));
 	}
 	else if (syntax_->Type_ == NullLiteralExpression_)
 	{
@@ -1875,9 +1870,17 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	{
 		builder_->Write_(string("this"));
 	}
-	else if (syntax_->Type_ == TrueLiteralExpression_ || syntax_->Type_ == FalseLiteralExpression_ || syntax_->Type_ == NumericLiteralExpression_ || syntax_->Type_ == CodePointLiteralExpression_)
+	else if (syntax_->Type_ == NumericLiteralExpression_)
 	{
-		builder_->Write_(syntax_->GetText_());
+		builder_->Write_(string("p_int(") + syntax_->GetText_() + string(")"));
+	}
+	else if (syntax_->Type_ == TrueLiteralExpression_ || syntax_->Type_ == FalseLiteralExpression_)
+	{
+		builder_->Write_(string("p_bool(") + syntax_->GetText_() + string(")"));
+	}
+	else if (syntax_->Type_ == CodePointLiteralExpression_)
+	{
+		builder_->Write_(string("p_code_point(") + syntax_->GetText_() + string(")"));
 	}
 	else if (syntax_->Type_ == IdentifierName_)
 	{
@@ -1885,33 +1888,114 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	}
 	else if (syntax_->Type_ == StringLiteralExpression_)
 	{
-		builder_->Write_(string("string(") + syntax_->GetText_() + string(")"));
+		builder_->Write_(string("p_string(") + syntax_->GetText_() + string(")"));
 	}
-	else if (syntax_->Type_ == AssignmentExpression_ || syntax_->Type_ == EqualExpression_ || syntax_->Type_ == ComparisionExpression_ || syntax_->Type_ == AddExpression_ || syntax_->Type_ == SubtractExpression_)
+	else if (syntax_->Type_ == AssignmentExpression_)
+	{
+		int const operator_ = syntax_->Children_->Get_(1)->Type_;
+		if (operator_ == Assign_)
+		{
+			ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+			builder_->Write_(string(" "));
+			builder_->Write_(syntax_->Children_->Get_(1)->GetText_());
+			builder_->Write_(string(" "));
+			ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		}
+		else
+		{
+			ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+			builder_->Write_(string("->op_"));
+			if (operator_ == AddAssign_)
+			{
+				builder_->Write_(string("PlusAssign"));
+			}
+			else if (operator_ == SubAssign_)
+			{
+				builder_->Write_(string("MinusAssign"));
+			}
+			else
+			{
+				builder_->Error_(string("Unsupported assignment operator ") + operator_);
+			}
+
+			builder_->Write_(string("("));
+			ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+			builder_->Write_(string(")"));
+		}
+	}
+	else if (syntax_->Type_ == EqualExpression_)
 	{
 		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string(" "));
-		builder_->Write_(syntax_->Children_->Get_(1)->GetText_());
-		builder_->Write_(string(" "));
+		builder_->Write_(string("->op_Equal("));
 		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-	}
-	else if (syntax_->Type_ == OrExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string(" || "));
-		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-	}
-	else if (syntax_->Type_ == AndExpression_)
-	{
-		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string(" && "));
-		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string(")"));
 	}
 	else if (syntax_->Type_ == NotEqualExpression_)
 	{
 		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string(" != "));
+		builder_->Write_(string("->op_NotEqual("));
 		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string(")"));
+	}
+	else if (syntax_->Type_ == ComparisionExpression_)
+	{
+		int const operator_ = syntax_->Children_->Get_(1)->Type_;
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string("->op_"));
+		if (operator_ == LessThan_)
+		{
+			builder_->Write_(string("LessThan"));
+		}
+		else if (operator_ == LessThanOrEqual_)
+		{
+			builder_->Write_(string("LessThanOrEqual"));
+		}
+		else if (operator_ == GreaterThan_)
+		{
+			builder_->Write_(string("GreaterThan"));
+		}
+		else if (operator_ == GreaterThanOrEqual_)
+		{
+			builder_->Write_(string("GreaterThanOrEqual"));
+		}
+		else
+		{
+			builder_->Error_(string("Unsupported comparision operator ") + operator_);
+		}
+
+		builder_->Write_(string("("));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string(")"));
+	}
+	else if (syntax_->Type_ == AddExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string("->op_Plus("));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string(")"));
+	}
+	else if (syntax_->Type_ == SubtractExpression_)
+	{
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string("->op_Minus("));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string(")"));
+	}
+	else if (syntax_->Type_ == OrExpression_)
+	{
+		builder_->Write_(string("LogicalOr("));
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(", [&] { return "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string("; })"));
+	}
+	else if (syntax_->Type_ == AndExpression_)
+	{
+		builder_->Write_(string("LogicalAnd("));
+		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
+		builder_->Write_(string(", [&] { return "));
+		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
+		builder_->Write_(string("; })"));
 	}
 	else if (syntax_->Type_ == InvocationExpression_)
 	{
@@ -1927,9 +2011,9 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	else if (syntax_->Type_ == ElementAccessExpression_)
 	{
 		ConvertExpression_(syntax_->Children_->Get_(0), builder_);
-		builder_->Write_(string("["));
+		builder_->Write_(string("->op_Element("));
 		ConvertExpression_(syntax_->Children_->Get_(2), builder_);
-		builder_->Write_(string("]"));
+		builder_->Write_(string(")"));
 	}
 	else
 	{
@@ -1975,7 +2059,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 	{
 		Definitions_->BeginLine_(string("while ("));
 		ConvertExpression_(statement_->Children_->Get_(1), Definitions_);
-		Definitions_->EndLine_(string(")"));
+		Definitions_->EndLine_(string(".Value)"));
 		EmitStatement_(statement_->Children_->Get_(2));
 	}
 	else if (statement_->Type_ == ForStatement_)
@@ -1997,7 +2081,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 		EmitStatement_(statement_->Children_->Get_(1));
 		Definitions_->BeginLine_(string("while ("));
 		ConvertExpression_(statement_->Children_->Get_(3), Definitions_);
-		Definitions_->EndLine_(string(");"));
+		Definitions_->EndLine_(string(".Value);"));
 	}
 	else if (statement_->Type_ == IfStatement_)
 	{
@@ -2007,7 +2091,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 		{
 			Definitions_->Write_(string("if ("));
 			ConvertExpression_(ifStatement_->Children_->Get_(1), Definitions_);
-			Definitions_->EndLine_(string(")"));
+			Definitions_->EndLine_(string(".Value)"));
 			EmitStatement_(ifStatement_->Children_->Get_(2));
 			::Syntax_Node_ const *const elseClause_ = ifStatement_->FirstChildOfType_(ElseClause_);
 			if (elseClause_ != ::None)
@@ -2141,6 +2225,8 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 		ClassDeclarations_->WriteLine_(string("class ") + className_ + string("_"));
 		ClassDeclarations_->BeginBlock_();
 		ClassDeclarations_->EndLine_(string("public:"));
+		ClassDeclarations_->WriteLine_(string("p_bool op_Equal(") + className_ + string("_ const * other) const { return this == other; }"));
+		ClassDeclarations_->WriteLine_(string("p_bool op_NotEqual(") + className_ + string("_ const * other) const { return this != other; }"));
 		for (::Syntax_Node_ const *const member_ : *(declaration_->Children_))
 		{
 			if (member_->Type_ == ConstructorDeclaration_ || member_->Type_ == FieldDeclaration_ || member_->Type_ == MethodDeclaration_)
@@ -2240,13 +2326,13 @@ auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const 
 {
 	Definitions_->ElementSeparatorLine_();
 	Definitions_->WriteLine_(string("// Entry Point Adapter"));
-	Definitions_->WriteLine_(string("int main(int argc, char const *const * argv)"));
+	Definitions_->WriteLine_(string("std::int32_t main(int argc, char const *const * argv)"));
 	Definitions_->BeginBlock_();
 	for (::Source_Text_ const *const resource_ : *(resources_))
 	{
-		Definitions_->BeginLine_(string("resource_manager_->AddResource(::string(\""));
+		Definitions_->BeginLine_(string("resource_manager_->AddResource(p_string(\""));
 		Definitions_->Write_(resource_->Name_);
-		Definitions_->Write_(string("\"), ::string(\""));
+		Definitions_->Write_(string("\"), p_string(\""));
 		Definitions_->Write_(resource_->Text_->Replace_(string("\\"), string("\\\\"))->Replace_(string("\n"), string("\\n"))->Replace_(string("\r"), string("\\r"))->Replace_(string("\""), string("\\\"")));
 		Definitions_->EndLine_(string("\"));"));
 	}
@@ -2279,7 +2365,7 @@ auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const 
 	}
 	else
 	{
-		Definitions_->WriteLine_(string("return Main_(") + args_->ToString_() + string(");"));
+		Definitions_->WriteLine_(string("return Main_(") + args_->ToString_() + string(").Value;"));
 	}
 
 	Definitions_->EndBlock_();
@@ -2288,8 +2374,8 @@ auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const 
 // Entry Point Adapter
 int main(int argc, char const *const * argv)
 {
-	resource_manager_->AddResource(::string("RuntimeLibrary.cpp"), ::string("#include \"RuntimeLibrary.h\"\n#include <map>\n\nstring::string()\n	: Length_(0), Buffer(0)\n{\n}\n\nstring::string(char c, int repeat)\n	: Length_(repeat)\n{\n	char* buffer = new char[repeat];\n	for (int i = 0; i < repeat; i++)\n		buffer[i] = c;\n\n	Buffer = buffer;\n}\n\nstring::string(const char* s)\n	: Length_(std::strlen(s)), Buffer(s)\n{\n}\n\nstring::string(int length, const char* s)\n	: Length_(length), Buffer(s)\n{\n}\n\nchar const * string::cstr() const\n{\n	auto buffer = new char[Length_ + 1];\n	std::memcpy(buffer, Buffer, Length_);\n	buffer[Length_] = 0;\n	return buffer;\n}\n\nstring string::Substring_(int start, int length) const\n{\n	return string(length, Buffer + start);\n}\n\nstring string::Replace_(string oldValue, string newValue) const\n{\n	string buffer = \"\";\n	int limit = Length_ - oldValue.Length_ + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length_) == oldValue)\n		{\n			buffer = buffer + Substring_(lastIndex, i-lastIndex) + newValue;\n			i += oldValue.Length_; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer + Substring_(lastIndex, Length_ - lastIndex);\n	return buffer;\n}\n\nint string::LastIndexOf_(char c) const\n{\n	for(int i=Length_-1; i>=0; i--)\n		if(Buffer[i]==c)\n			return i;\n\n	return -1;\n}\n\nchar string::operator[] (const int index) const\n{\n	return Buffer[index];\n}\n\nstring string::operator+(const string& value) const\n{\n	int newLength = Length_ + value.Length_;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length_;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length_);\n	return string(newLength, chars);\n}\n\nstring string::operator+(const char& value) const\n{\n	int newLength = Length_ + 1;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char)*Length_;\n	std::memcpy(chars, Buffer, offset);\n	chars[Length_] = value;\n	return string(newLength, chars);\n}\n\nbool string::operator==(const string &other) const\n{\n	if (Length_ != other.Length_)\n		return false;\n\n	for (int i = 0; i < Length_; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (string const& lhs, string const& rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<string, string> resourceValues;\n\nstring const & ResourceManager::GetString_(string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(string name, string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace System_\n{\n	namespace Console_\n	{\n		void Console_::Write_(string value)\n		{\n			std::printf(\"%.*s\", value.Length_, value.Buffer);\n		}\n\n		void Console_::WriteLine_(string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length_, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count_(argc-1)\n		{\n			args = new string[Count_];\n			for (int i = 0; i < Count_; i++)\n				args[i] = string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		File_Reader_::File_Reader_(const string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		string File_Reader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return string(length, buffer);\n		}\n\n		void File_Reader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		File_Writer_::File_Writer_(const string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void File_Writer_::Write_(const string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length_, file);\n		}\n\n		void File_Writer_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		String_Builder_::String_Builder_(string const & value)\n			: buffer(value)\n		{\n		}\n\n		String_Builder_::String_Builder_()\n			: buffer(\"\")\n		{\n		}\n\n		void String_Builder_::Append_(string const & value)\n		{\n			buffer = buffer + value;\n		}\n\n		void String_Builder_::Append_(String_Builder_ const * value)\n		{\n			buffer = buffer + value->buffer;\n		}\n\n		void String_Builder_::AppendLine_(string const & value)\n		{\n			buffer = buffer + value + string(\"\\n\");\n		}\n\n		void String_Builder_::AppendLine_()\n		{\n			buffer = buffer + string(\"\\n\");\n		}\n\n		void String_Builder_::Remove_(int start, int length)\n		{\n			buffer = buffer.Substring_(0, start) + buffer.Substring_(start+length);\n		}\n\n		void String_Builder_::Remove_(int start)\n		{\n			String_Builder_::Remove_(start, buffer.Length_-start);\n		}\n	}\n}\n"));
-	resource_manager_->AddResource(::string("RuntimeLibrary.h"), ::string("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.  The includes have been moved\n// here to avoid leaking this into the program being compiled.  This required the\n// use of void* instead of FILE* in some places.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n\nstruct string\n{\npublic:\n	int Length_;\n	char const * Buffer;\n\n	string();\n	string(char c, int repeat);\n	string(char const * s);\n	string(int length, char const * s);\n	char const * cstr() const;\n	string Substring_(int start, int length) const;\n	string Substring_(int start) const { return Substring_(start, Length_-start); }\n	string Replace_(string oldValue, string newValue) const;\n	int LastIndexOf_(char c) const;\n	char operator[] (int const index) const;\n	string operator+(string const & value) const;\n	string operator+(char const & value) const;\n	string const * operator->() const { return this; }\n	string const & operator* () const { return *this; }\n	bool operator==(string const & other) const;\n	bool operator!=(string const & other) const { return !(*this == other); }\n	friend bool operator<(string const & lhs, string const & rhs);\n\n	typedef char const * const_iterator;\n	const_iterator begin() const { return &Buffer[0]; }\n	const_iterator end() const { return &Buffer[Length_]; }\n};\n\nclass ResourceManager\n{\npublic:\n	string const & GetString_(string resourceName);\n	void AddResource(string name, string value);\n};\n\nextern ResourceManager *const resource_manager_;\n\nclass NoneType\n{\npublic:\n	template<class T>\n	operator T*() const { return static_cast<T*>(0); }\n};\nstatic const NoneType None = NoneType();\n\ntemplate<typename T>\nstruct Maybe\n{\nprivate:\n	T data;\n	bool hasValue;\n\npublic:\n	Maybe(T const & value) : data(value), hasValue(true) {}\n	Maybe(::NoneType const & none) : hasValue(false) {}\n	T& operator->() { return data; }\n	T const & operator->() const\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T  & operator* ()\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator* () const\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	bool operator==(T const & other) const\n	{\n		return hasValue && data == other;\n	}\n	bool operator!=(T const & other) const\n	{\n		return hasValue && data != other;\n	}\n};\n\nnamespace System_\n{\n	namespace Collections_\n	{\n		template<typename T>\n		class List_\n		{\n		private:\n			T* values;\n			int length;\n			int capacity;\n\n		public:\n			typedef T const * const_iterator;\n\n			List_() : values(0), length(0), capacity(0) { }\n			void Add_(T value);\n			int Length_() const { return length; }\n			const_iterator begin() const { return values; }\n			const_iterator end() const { return &values[length]; }\n			T const & Get_(int const index) const { return values[index]; }\n		};\n\n		template<typename T>\n		void List_<T>::Add_(T value)\n		{\n			if(length >= capacity)\n			{\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\n				T* newValues = new T[newCapacity];\n				std::memcpy(newValues, values, length * sizeof(T));\n				values = newValues;\n				capacity = newCapacity;\n			}\n			values[length] = value;\n			length++;\n		}\n	}\n\n	namespace Console_\n	{\n		class Console_\n		{\n		public:\n			void Write_(string value);\n			void WriteLine_(string value);\n			void WriteLine_();\n		};\n\n		class Arguments_\n		{\n		private:\n			string* args;\n		public:\n			typedef string const * const_iterator;\n			const int Count_;\n\n			Arguments_(int argc, char const *const * argv);\n			const_iterator begin() const { return &args[0]; }\n			const_iterator end() const { return &args[Count_]; }\n			string const & Get_(int const index) const { return args[index]; }\n		};\n	}\n\n	namespace IO_\n	{\n		class File_Reader_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Reader_(const string& fileName);\n			string ReadToEndSync_();\n			void Close_();\n		};\n\n		class File_Writer_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Writer_(const string& fileName);\n			void Write_(const string& value);\n			void Close_();\n		};\n	}\n\n	namespace Text_\n	{\n		class String_Builder_\n		{\n		private:\n			string buffer;\n		public:\n			String_Builder_();\n			String_Builder_(string const & value);\n			void Append_(string const & value);\n			void Append_(String_Builder_ const * value);\n			void AppendLine_(string const& value);\n			void AppendLine_();\n			void Remove_(int start, int length);\n			void Remove_(int start);\n			string ToString_() const { return buffer; }\n		};\n	}\n}\n"));
+	resource_manager_->AddResource(::string("RuntimeLibrary.cpp"), ::string("#include \"RuntimeLibrary.h\"\n#include <map>\n\np_uint p_int::AsUInt_() const\n{\n	if(this->Value < 0)\n		throw \"Can't convert negative number to unsigned\";\n\n	return this->Value;\n}\n\nchar p_code_point::CharValue() const\n{\n	if(this->Value > 0xFF)\n		throw \"Unicode char values not yet supported\";\n\n	return this->Value;\n}\n\np_string::p_string()\n	: Length_(0), Buffer(0)\n{\n}\n\np_string::p_string(p_code_point c, p_int repeat)\n	: Length_(repeat)\n{\n	char* buffer = new char[repeat.Value];\n	for (int i = 0; i < repeat.Value; i++)\n		buffer[i] = c.CharValue();\n\n	Buffer = buffer;\n}\n\np_string::p_string(const char* s)\n	: Length_(std::strlen(s)), Buffer(s)\n{\n}\n\np_string::p_string(int length, const char* s)\n	: Length_(length), Buffer(s)\n{\n}\n\nchar const * p_string::cstr() const\n{\n	auto buffer = new char[Length_.Value + 1];\n	std::memcpy(buffer, Buffer, Length_.Value);\n	buffer[Length_.Value] = 0;\n	return buffer;\n}\n\np_string::p_string(p_int other)\n	: Length_(0), Buffer(0)\n{\n	char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator\n	std::sprintf(buffer,\"%d\", other.Value);\n	Length_ = std::strlen(buffer);\n	Buffer = buffer;\n}\n\np_string p_string::Substring_(p_int start, p_int length) const\n{\n	return p_string(length.Value, Buffer + start.Value);\n}\n\np_string p_string::Replace_(p_string oldValue, p_string newValue) const\n{\n	p_string buffer = \"\";\n	int limit = Length_.Value - oldValue.Length_.Value + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length_).op_Equal(oldValue).Value)\n		{\n			buffer = buffer.op_Plus(Substring_(lastIndex, i-lastIndex)).op_Plus(newValue);\n			i += oldValue.Length_.Value; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer.op_Plus(Substring_(lastIndex, Length_.Value - lastIndex));\n	return buffer;\n}\n\np_int p_string::LastIndexOf_(p_code_point c) const\n{\n	for(int i = Length_.Value - 1; i >= 0; i--)\n		if(Buffer[i] == c.CharValue())\n			return i;\n\n	return -1;\n}\n\np_string p_string::op_Plus(p_string const & value) const\n{\n	int newLength = Length_.Value + value.Length_.Value;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char) * Length_.Value;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length_.Value);\n	return p_string(newLength, chars);\n}\n\np_bool p_string::op_Equal(p_string const & other) const\n{\n	if (Length_.Value != other.Length_.Value)\n		return false;\n\n	for (int i = 0; i < Length_.Value; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (p_string const & lhs, p_string const & rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<p_string, p_string> resourceValues;\n\np_string const & ResourceManager::GetString_(p_string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(p_string name, p_string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace System_\n{\n	namespace Console_\n	{\n		void Console_::Write_(p_string value)\n		{\n			std::printf(\"%.*s\", value.Length_.Value, value.Buffer);\n		}\n\n		void Console_::WriteLine_(p_string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length_.Value, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count_(argc-1)\n		{\n			args = new p_string[Count_];\n			for (int i = 0; i < Count_; i++)\n				args[i] = p_string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		File_Reader_::File_Reader_(const p_string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		p_string File_Reader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return p_string(length, buffer);\n		}\n\n		void File_Reader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		File_Writer_::File_Writer_(const p_string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void File_Writer_::Write_(const p_string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length_.Value, file);\n		}\n\n		void File_Writer_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		String_Builder_::String_Builder_(p_string const & value)\n			: buffer(value)\n		{\n		}\n\n		String_Builder_::String_Builder_()\n			: buffer(\"\")\n		{\n		}\n\n		void String_Builder_::Append_(p_string const & value)\n		{\n			buffer = buffer.op_Plus(value);\n		}\n\n		void String_Builder_::Append_(String_Builder_ const * value)\n		{\n			buffer = buffer.op_Plus(value->buffer);\n		}\n\n		void String_Builder_::AppendLine_(p_string const & value)\n		{\n			buffer = buffer.op_Plus(value).op_Plus(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::AppendLine_()\n		{\n			buffer = buffer.op_Plus(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::Remove_(p_int start, p_int length)\n		{\n			buffer = buffer.Substring_(0, start).op_Plus(buffer.Substring_(start.Value+length.Value));\n		}\n\n		void String_Builder_::Remove_(p_int start)\n		{\n			String_Builder_::Remove_(start, buffer.Length_.Value-start.Value);\n		}\n	}\n}\n"));
+	resource_manager_->AddResource(::string("RuntimeLibrary.h"), ::string("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n\ntemplate<typename T, typename F>\nT LogicalAnd(T const & lhs, F rhs)\n{\n	return lhs.op_False().Value ? lhs : lhs.op_And(rhs());\n}\n\ntemplate<typename T, typename F>\nT LogicalOr(T const & lhs, F rhs)\n{\n	return lhs.op_True().Value ? lhs : lhs.op_Or(rhs());\n}\n\n\nstruct p_bool\n{\npublic:\n	// Runtime Use Members\n	bool Value;\n\n	p_bool(): Value(false) {}\n	p_bool(bool value): Value(value) {}\n	p_bool * operator->() { return this; }\n	p_bool const * operator->() const { return this; }\n	p_bool & operator* () { return *this; }\n	p_bool const & operator* () const { return *this; }\n\n	// Adamant Members\n	p_bool op_Not() const { return !this->Value; }\n	p_bool op_True() const { return this->Value; }\n	p_bool op_False() const { return !this->Value; }\n	p_bool op_And(p_bool other) const { return this->Value & other.Value; }\n	p_bool op_Or(p_bool other) const { return this->Value | other.Value; }\n};\n\nstruct p_uint;\n\nstruct p_int\n{\npublic:\n	// Runtime Use Members\n	std::int32_t Value;\n\n	p_int(std::int32_t value): Value(value) {}\n	p_int * operator->() { return this; }\n	p_int const * operator->() const { return this; }\n	p_int & operator* () { return *this; }\n	p_int const & operator* () const { return *this; }\n\n	// Hack to support conversion of uint to int for now\n	p_int(p_uint value);\n\n	// Adamant Members\n	p_int(): Value(0) {}\n	void op_PlusAssign(p_int other) { this->Value += other.Value; }\n	void op_MinusAssign(p_int other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_int other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_int other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_int other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_int other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_int other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_int other) const { return this->Value >= other.Value; }\n	p_int op_Plus(p_int other) const { return this->Value + other.Value; }\n	p_int op_Minus(p_int other) const { return this->Value - other.Value; }\n	p_int op_UnaryMinus() const { return -this->Value; }\n\n	// Hack because we don't support as correctly yet\n	p_uint AsUInt_() const;\n};\n\nstruct p_uint\n{\npublic:\n	// Runtime Use Members\n	std::uint32_t Value;\n\n	p_uint(std::uint32_t value): Value(value) {}\n	p_uint * operator->() { return this; }\n	p_uint const * operator->() const { return this; }\n	p_uint & operator* () { return *this; }\n	p_uint const & operator* () const { return *this; }\n\n	// Hack to support conversion of int to uint for now\n	p_uint(p_int value): Value(value.Value) {}\n\n	// Adamant Members\n	p_uint(): Value(0) {}\n	void op_PlusAssign(p_uint other) { this->Value += other.Value; }\n	void op_MinusAssign(p_uint other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_uint other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_uint other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_uint other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_uint other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_uint other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_uint other) const { return this->Value >= other.Value; }\n	p_uint op_Plus(p_uint other) const { return this->Value + other.Value; }\n	p_uint op_Minus(p_uint other) const { return this->Value - other.Value; }\n};\n\ninline p_int::p_int(p_uint value)\n	: Value(value.Value)\n{\n}\n\nstruct p_code_point\n{\nprivate:\n	std::int32_t Value;\n\npublic:\n	// Runtime Use Members\n	p_code_point(): Value(0) {}\n	p_code_point(char value): Value(value) {}\n	p_code_point * operator->() { return this; }\n	p_code_point const * operator->() const { return this; }\n	p_code_point & operator* () { return *this; }\n	p_code_point const & operator* () const { return *this; }\n	char CharValue() const;\n\n	// Adamant Members\n	p_bool op_Equal(p_code_point const & other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_code_point const & other) const { return this->Value != other.Value; }\n	// TODO: Not sure code_point should support these operations\n	p_bool op_LessThan(p_code_point other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_code_point other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_code_point other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_code_point other) const { return this->Value >= other.Value; }\n\n};\n\nstruct p_string\n{\npublic:\n	// Runtime Use Members\n	char const * Buffer;\n\n	p_string();\n	p_string(char const * s);\n	p_string(int length, char const * s);\n	char const * cstr() const;\n	p_string const * operator->() const { return this; }\n	p_string const & operator* () const { return *this; }\n\n	typedef char const * const_iterator;\n	const_iterator begin() const { return &Buffer[0]; }\n	const_iterator end() const { return &Buffer[Length_.Value]; }\n\n	// Hack to support conversion of integers to strings for now\n	p_string(p_int other);\n\n	// Adamant Members\n	p_int Length_;\n\n	p_string(p_code_point c, p_int repeat);\n\n	p_string Substring_(p_int start, p_int length) const;\n	p_string Substring_(p_int start) const { return Substring_(start, Length_.Value-start.Value); }\n	p_string Replace_(p_string oldValue, p_string newValue) const;\n	p_int LastIndexOf_(p_code_point c) const;\n\n	p_code_point op_Element(p_int const index) const { return Buffer[index.Value]; }\n	p_string op_Plus(p_string const & value) const;\n	p_bool op_Equal(p_string const & other) const;\n	p_bool op_NotEqual(p_string const & other) const { return !this->op_Equal(other).Value; }\n	p_bool op_LessThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }\n	p_bool op_LessThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }\n	p_bool op_GreaterThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }\n	p_bool op_GreaterThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }\n};\n\nclass ResourceManager\n{\npublic:\n	p_string const & GetString_(p_string resourceName);\n	void AddResource(p_string name, p_string value);\n};\n\nextern ResourceManager *const resource_manager_;\n\nclass NoneType\n{\npublic:\n	template<class T>\n	operator T*() const { return static_cast<T*>(0); }\n};\nstatic const NoneType None = NoneType();\n\ntemplate<typename T>\nstruct Maybe\n{\nprivate:\n	T data;\n	bool hasValue;\n\npublic:\n	Maybe(T const & value) : data(value), hasValue(true) {}\n	Maybe(::NoneType const & none) : hasValue(false) {}\n	T& operator->() { return data; }\n	T const & operator->() const\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T  & operator* ()\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator* () const\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	bool operator==(T const & other) const\n	{\n		return hasValue && data == other;\n	}\n	bool operator!=(T const & other) const\n	{\n		return hasValue && data != other;\n	}\n};\n\nnamespace System_\n{\n	namespace Collections_\n	{\n		template<typename T>\n		class List_\n		{\n		private:\n			T* values;\n			int length;\n			int capacity;\n\n		public:\n			// Runtime Use Members\n			typedef T const * const_iterator;\n			const_iterator begin() const { return values; }\n			const_iterator end() const { return &values[length]; }\n\n			// Adamant Members\n			List_() : values(0), length(0), capacity(0) { }\n			void Add_(T value);\n			p_int Length_() const { return length; }\n			T const & Get_(p_int const index) const { return values[index.Value]; }\n		};\n\n		template<typename T>\n		void List_<T>::Add_(T value)\n		{\n			if(length >= capacity)\n			{\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\n				T* newValues = new T[newCapacity];\n				std::memcpy(newValues, values, length * sizeof(T));\n				values = newValues;\n				capacity = newCapacity;\n			}\n			values[length] = value;\n			length++;\n		}\n	}\n\n	namespace Console_\n	{\n		class Console_\n		{\n		public:\n			void Write_(p_string value);\n			void WriteLine_(p_string value);\n			void WriteLine_();\n		};\n\n		class Arguments_\n		{\n		private:\n			p_string* args;\n		public:\n			typedef p_string const * const_iterator;\n			const int Count_;\n\n			Arguments_(int argc, char const *const * argv);\n			const_iterator begin() const { return &args[0]; }\n			const_iterator end() const { return &args[Count_]; }\n			p_string const & Get_(int const index) const { return args[index]; }\n		};\n	}\n\n	namespace IO_\n	{\n		class File_Reader_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Reader_(const p_string& fileName);\n			p_string ReadToEndSync_();\n			void Close_();\n		};\n\n		class File_Writer_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Writer_(const p_string& fileName);\n			void Write_(const p_string& value);\n			void Close_();\n		};\n	}\n\n	namespace Text_\n	{\n		class String_Builder_\n		{\n		private:\n			p_string buffer;\n		public:\n			String_Builder_();\n			String_Builder_(p_string const & value);\n			void Append_(p_string const & value);\n			void Append_(String_Builder_ const * value);\n			void AppendLine_(p_string const& value);\n			void AppendLine_();\n			void Remove_(p_int start, p_int length);\n			void Remove_(p_int start);\n			p_string ToString_() const { return buffer; }\n		};\n	}\n}\n"));
 
 	Main_(new ::System_::Console_::Console_(), new ::System_::Console_::Arguments_(argc, argv));
 	return 0;
