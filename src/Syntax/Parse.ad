@@ -1,5 +1,5 @@
 public var tokenStream: mut Token_Stream = null;
-public var Token: Syntax_Node = null;
+public var Token: Syntax_Node? = null;
 
 // ----------------------------------------------------------------------------
 // Token Handling
@@ -51,17 +51,15 @@ public Expect(expected: string) -> void
 // Parser
 // ----------------------------------------------------------------------------
 
-public ParseType() -> Syntax_Node
+public ParseNonNullableType() -> Syntax_Node
 {
 	if Token.Type == MutableKeyword
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(ExpectToken(MutableKeyword));
-		children.Add(ParseType());
+		children.Add(ParseNonNullableType());
 		return new Syntax_Node(MutableType, children);
 	}
-
-	var type: Syntax_Node;
 
 	if Token.Type == CodePoint
 		or Token.Type == String
@@ -70,11 +68,11 @@ public ParseType() -> Syntax_Node
 		or Token.Type == Void
 		or Token.Type == UnsignedInt
 	{
-		type = new Syntax_Node(PredefinedType, AcceptToken());
+		return new Syntax_Node(PredefinedType, AcceptToken());
 	}
 	else
 	{
-		type = new Syntax_Node(IdentifierName, ExpectToken(Identifier));
+		var type: Syntax_Node = new Syntax_Node(IdentifierName, ExpectToken(Identifier));
 
 		while Token.Type == Dot
 		{
@@ -99,9 +97,16 @@ public ParseType() -> Syntax_Node
 
 			type = new Syntax_Node(QualifiedName, children);
 		}
-	}
 
-	if Token.Type == Question
+		return type;
+	}
+}
+
+public ParseType() -> Syntax_Node
+{
+	var type: Syntax_Node = ParseNonNullableType();
+
+	while Token.Type == Question
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(type);
@@ -228,7 +233,7 @@ public ParseCallArguments() -> Syntax_Node
 // 9 Primary: f() . []
 public ParseExpression(minPrecedence: int) -> Syntax_Node
 {
-	var expression: Syntax_Node = ParseAtom();
+	var expression: Syntax_Node? = ParseAtom();
 	if expression == null
 		{ return null; }
 

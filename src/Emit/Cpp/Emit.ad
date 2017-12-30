@@ -98,7 +98,7 @@ public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 	if isValueType
 	{
 		if nullable
-			{ cppType = "::Maybe<" + cppType + ">"; }
+			{ cppType = "p_maybe<" + cppType + ">"; }
 		if not mutableBinding and not mutableValue
 			{ cppType = cppType + " const"; }
 	}
@@ -107,6 +107,8 @@ public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 		if not mutableValue { cppType = cppType + " const"; }
 		cppType = cppType + " *";
 		if not mutableBinding { cppType = cppType + "const" ; }
+		//if nullable
+		//	{ cppType = "p_maybe<" + cppType + ">"; }
 	}
 
 	return cppType;
@@ -440,7 +442,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 	}
 	else if statement.Type == IfStatement
 	{
-		var ifStatement: Syntax_Node = statement;
+		var ifStatement: Syntax_Node? = statement;
 		Definitions.BeginLine("");
 		loop
 		{
@@ -448,7 +450,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 			ConvertExpression(ifStatement.Children.Get(1), Definitions);
 			Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
 			EmitStatement(ifStatement.Children.Get(2)); // Block Statement
-			let elseClause: Syntax_Node = ifStatement.FirstChildOfType(ElseClause);
+			let elseClause: Syntax_Node? = ifStatement.FirstChildOfType(ElseClause);
 			if elseClause <> null
 			{
 				ifStatement = elseClause.FirstChildOfType(IfStatement);
@@ -526,7 +528,7 @@ public EmitClassMember(member: Syntax_Node, className: string) -> void
 		let methodName: string = member.Children.Get(1).GetText();
 		let parameterList: Syntax_Node = member.Children.Get(2);
 		let parameters: string = ConvertParameterList(parameterList);
-		let selfParameter: Syntax_Node = parameterList.FirstChildOfType(SelfParameter);
+		let selfParameter: Syntax_Node? = parameterList.FirstChildOfType(SelfParameter);
 		let isAssociatedFuntion: bool = selfParameter == null;
 		let mutableSelf: bool = not isAssociatedFuntion and selfParameter.HasChildOfType(MutableKeyword);
 		let returnType: Syntax_Node = member.Children.Get(4);
@@ -600,7 +602,7 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 			{
 				let memberName: string = member.Children.Get(0).GetText();
 				ClassDeclarations.BeginLine(memberName + "_");
-				let memberValue: Syntax_Node = member.FirstChildOfType(Number);
+				let memberValue: Syntax_Node? = member.FirstChildOfType(Number);
 				if memberValue <> null
 				{
 					ClassDeclarations.Write(" = ");

@@ -195,16 +195,20 @@ public:
 static const NoneType None = NoneType();
 
 template<typename T>
-struct Maybe
+struct p_maybe
 {
 private:
 	T data;
 	bool hasValue;
 
 public:
-	Maybe(T const & value) : data(value), hasValue(true) {}
-	Maybe(::NoneType const & none) : hasValue(false) {}
-	T& operator->() { return data; }
+	p_maybe(T const & value) : data(value), hasValue(true) {}
+	p_maybe(::NoneType const & none) : hasValue(false) {}
+	T& operator->()
+	{
+		if(!hasValue) throw "Access to null Maybe value";
+		return data;
+	}
 	T const & operator->() const
 	{
 		if(!hasValue) throw "Access to null Maybe value";
@@ -226,7 +230,49 @@ public:
 	}
 	bool operator!=(T const & other) const
 	{
-		return hasValue && data != other;
+		return !hasValue || data != other;
+	}
+};
+
+template<typename T>
+struct p_maybe<T*>
+{
+private:
+	T* data;
+
+public:
+	p_maybe(T* value) : data(value)
+	{
+		if(value == 0) throw "Constructing p_maybe with null pointer";
+	}
+	p_maybe(::NoneType const & none) : data(0) {}
+	T* operator->()
+	{
+		if(data == 0) throw "Access to null Maybe value";
+		return data;
+	}
+	T const & operator->() const
+	{
+		if(data == 0) throw "Access to null Maybe value";
+		return data;
+	}
+	T & operator* ()
+	{
+		if(data == 0) throw "Access to null Maybe value";
+		return data;
+	}
+	T const & operator* () const
+	{
+		if(data == 0) throw "Access to null Maybe value";
+		return data;
+	}
+	bool operator==(T* other) const
+	{
+		return data != 0 && data == other;
+	}
+	bool operator!=(T* other) const
+	{
+		return data == 0 || data != other;
 	}
 };
 

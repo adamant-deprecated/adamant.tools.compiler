@@ -1,7 +1,12 @@
+public class Test
+{
+}
+
 public Func(x: string?, y: uint?) -> int?
 {
 	let z: int? = null;
-	let s: System.Text.String_Builder? = null;
+	let t: Test? = null;
+	let sb: mut System.Text.String_Builder? = null;
 	return null;
 }
 

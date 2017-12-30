@@ -1,21 +1,30 @@
 #include "RuntimeLibrary.h"
 
 // Type Declarations
+class Test_;
 
 // Function Declarations
-auto Func_(::Maybe<p_string> const x_, ::Maybe<p_uint> const y_) -> ::Maybe<p_int>;
+auto Func_(p_maybe<p_string> const x_, p_maybe<p_uint> const y_) -> p_maybe<p_int>;
 auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Class Declarations
+
+class Test_
+{
+public:
+	p_bool op_Equal(Test_ const * other) const { return this == other; }
+	p_bool op_NotEqual(Test_ const * other) const { return this != other; }
+};
 
 // Global Definitions
 
 // Definitions
 
-auto Func_(::Maybe<p_string> const x_, ::Maybe<p_uint> const y_) -> ::Maybe<p_int>
+auto Func_(p_maybe<p_string> const x_, p_maybe<p_uint> const y_) -> p_maybe<p_int>
 {
-	::Maybe<p_int> const z_ = ::None;
-	::System_::Text_::String_Builder_ const *const s_ = ::None;
+	p_maybe<p_int> const z_ = ::None;
+	::Test_ const *const t_ = ::None;
+	::System_::Text_::String_Builder_ *const sb_ = ::None;
 	return ::None;
 }
 
