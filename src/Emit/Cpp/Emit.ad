@@ -191,6 +191,11 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		ConvertExpression(syntax.Children.Get(1), builder);
 		builder.Write("->op_Not()");
 	}
+	else if syntax.Type == MagnitudeExpression
+	{
+		ConvertExpression(syntax.Children.Get(1), builder);
+		builder.Write("->op_Magnitude()");
+	}
 	else if syntax.Type == ParenthesizedExpression
 	{
 		builder.Write("(");

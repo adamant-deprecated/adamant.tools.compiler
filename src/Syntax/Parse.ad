@@ -139,6 +139,13 @@ public ParseAtom() -> Syntax_Node?
 		children.Add(ExpectToken(RightParen));
 		return new Syntax_Node(ParenthesizedExpression, children);
 	}
+	if Token.Type == Pipe
+	{
+		children.Add(ExpectToken(Pipe));
+		children.Add(ParseExpression());
+		children.Add(ExpectToken(Pipe));
+		return new Syntax_Node(MagnitudeExpression, children);
+	}
 	if Token.Type == Sub
 	{
 		// Unary Minus

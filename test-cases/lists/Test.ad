@@ -3,8 +3,8 @@ public Main(console: mut System.Console.Console) -> void
 	let strings: mut System.Collections.List<string> = new System.Collections.List<string>();
 	strings.Add("Hello");
 	strings.Add("World!");
-	// TODO Length should be a property not a method
-	if strings.Length() <> 2 // Collections of contiguous elements have length that replaces the Count property in the interface
+
+	if |strings| <> 2 // Collections of contiguous elements have length that replaces the Count property in the interface
 	{
 		console.WriteLine("List length not 2!");
 	}

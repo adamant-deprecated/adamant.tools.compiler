@@ -16,7 +16,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void
 	::System_::Collections_::List_<p_string> *const strings_ = new ::System_::Collections_::List_<p_string>();
 	strings_->Add_(p_string("Hello"));
 	strings_->Add_(p_string("World!"));
-	if (strings_->Length_()->op_NotEqual(p_int(2)).Value)
+	if (strings_->op_Magnitude()->op_NotEqual(p_int(2)).Value)
 	{
 		console_->WriteLine_(p_string("List length not 2!"));
 	}
