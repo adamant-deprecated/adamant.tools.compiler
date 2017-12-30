@@ -17,7 +17,6 @@ T LogicalOr(T const & lhs, F rhs)
 	return lhs.op_True().Value ? lhs : lhs.op_Or(rhs());
 }
 
-
 struct p_bool
 {
 public:
@@ -70,6 +69,7 @@ public:
 	p_int op_Minus(p_int other) const { return this->Value - other.Value; }
 	p_int op_UnaryMinus() const { return -this->Value; }
 	p_int op_Mod(p_int other) const { return this->Value % other.Value; }
+	p_int op_Magnitude() const { if(this->Value==INT32_MIN) throw "Overflow exception"; return this->Value < 0 ? -this->Value : this->Value; }
 
 	// Hack because we don't support as correctly yet
 	p_uint AsUInt_() const;
@@ -157,6 +157,8 @@ public:
 
 	// Adamant Members
 	p_int Length_;
+	// TODO ByteLength this should be a property
+	p_int ByteLength_() const { return this->Length_; }
 
 	p_string(p_code_point c, p_int repeat);
 
@@ -250,6 +252,7 @@ namespace System_
 			List_() : values(0), length(0), capacity(0) { }
 			void Add_(T value);
 			p_int Length_() const { return length; }
+			p_int op_Magnitude() const { return length; }
 			T const & Get_(p_int const index) const { return values[index.Value]; }
 		};
 
@@ -284,12 +287,16 @@ namespace System_
 		private:
 			p_string* args;
 		public:
+			// Runtime Use Members
 			typedef p_string const * const_iterator;
-			const int Count_;
 
 			Arguments_(int argc, char const *const * argv);
 			const_iterator begin() const { return &args[0]; }
 			const_iterator end() const { return &args[Count_]; }
+
+			// Adamant Members
+			const int Count_;
+			p_int op_Magnitude() const { return Count_; }
 			p_string const & Get_(int const index) const { return args[index]; }
 		};
 	}
