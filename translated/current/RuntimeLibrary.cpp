@@ -18,12 +18,12 @@ char p_code_point::CharValue() const
 }
 
 p_string::p_string()
-	: Length_(0), Buffer(0)
+	: Length(0), Buffer(0)
 {
 }
 
 p_string::p_string(p_code_point c, p_int repeat)
-	: Length_(repeat)
+	: Length(repeat.Value)
 {
 	char* buffer = new char[repeat.Value];
 	for (int i = 0; i < repeat.Value; i++)
@@ -33,29 +33,29 @@ p_string::p_string(p_code_point c, p_int repeat)
 }
 
 p_string::p_string(const char* s)
-	: Length_(std::strlen(s)), Buffer(s)
+	: Length(std::strlen(s)), Buffer(s)
 {
 }
 
 p_string::p_string(int length, const char* s)
-	: Length_(length), Buffer(s)
+	: Length(length), Buffer(s)
 {
 }
 
 char const * p_string::cstr() const
 {
-	auto buffer = new char[Length_.Value + 1];
-	std::memcpy(buffer, Buffer, Length_.Value);
-	buffer[Length_.Value] = 0;
+	auto buffer = new char[Length + 1];
+	std::memcpy(buffer, Buffer, Length);
+	buffer[Length] = 0;
 	return buffer;
 }
 
 p_string::p_string(p_int other)
-	: Length_(0), Buffer(0)
+	: Length(0), Buffer(0)
 {
 	char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
 	std::sprintf(buffer,"%d", other.Value);
-	Length_ = std::strlen(buffer);
+	Length = std::strlen(buffer);
 	Buffer = buffer;
 }
 
@@ -67,24 +67,24 @@ p_string p_string::Substring_(p_int start, p_int length) const
 p_string p_string::Replace_(p_string oldValue, p_string newValue) const
 {
 	p_string buffer = "";
-	int limit = Length_.Value - oldValue.Length_.Value + 1;
+	int limit = Length - oldValue.Length + 1;
 	int lastIndex = 0;
 	for(int i=0; i < limit; i++)
-		if (Substring_(i, oldValue.Length_).op_Equal(oldValue).Value)
+		if (Substring_(i, oldValue.Length).op_Equal(oldValue).Value)
 		{
 			buffer = buffer.op_Plus(Substring_(lastIndex, i-lastIndex)).op_Plus(newValue);
-			i += oldValue.Length_.Value; // skip over the value we just matched
+			i += oldValue.Length; // skip over the value we just matched
 			lastIndex = i;
 			i--; // we need i-- to offset the i++ that is about to happen
 		}
 
-	buffer = buffer.op_Plus(Substring_(lastIndex, Length_.Value - lastIndex));
+	buffer = buffer.op_Plus(Substring_(lastIndex, Length - lastIndex));
 	return buffer;
 }
 
 p_int p_string::LastIndexOf_(p_code_point c) const
 {
-	for(int i = Length_.Value - 1; i >= 0; i--)
+	for(int i = Length - 1; i >= 0; i--)
 		if(Buffer[i] == c.CharValue())
 			return i;
 
@@ -93,20 +93,20 @@ p_int p_string::LastIndexOf_(p_code_point c) const
 
 p_string p_string::op_Plus(p_string const & value) const
 {
-	int newLength = Length_.Value + value.Length_.Value;
+	int newLength = Length + value.Length;
 	char* chars = new char[newLength];
-	size_t offset = sizeof(char) * Length_.Value;
+	size_t offset = sizeof(char) * Length;
 	std::memcpy(chars, Buffer, offset);
-	std::memcpy(chars + offset, value.Buffer, value.Length_.Value);
+	std::memcpy(chars + offset, value.Buffer, value.Length);
 	return p_string(newLength, chars);
 }
 
 p_bool p_string::op_Equal(p_string const & other) const
 {
-	if (Length_.Value != other.Length_.Value)
+	if (Length != other.Length)
 		return false;
 
-	for (int i = 0; i < Length_.Value; i++)
+	for (int i = 0; i < Length; i++)
 		if (Buffer[i] != other.Buffer[i])
 			return false;
 
@@ -137,12 +137,12 @@ namespace System_
 	{
 		void Console_::Write_(p_string value)
 		{
-			std::printf("%.*s", value.Length_.Value, value.Buffer);
+			std::printf("%.*s", value.Length, value.Buffer);
 		}
 
 		void Console_::WriteLine_(p_string value)
 		{
-			std::printf("%.*s\n", value.Length_.Value, value.Buffer);
+			std::printf("%.*s\n", value.Length, value.Buffer);
 		}
 
 		void Console_::WriteLine_()
@@ -151,10 +151,10 @@ namespace System_
 		}
 
 		Arguments_::Arguments_(int argc, char const *const * argv)
-			: Count_(argc-1)
+			: Count(argc-1)
 		{
-			args = new p_string[Count_];
-			for (int i = 0; i < Count_; i++)
+			args = new p_string[Count];
+			for (int i = 0; i < Count; i++)
 				args[i] = p_string(argv[i+1]);
 		}
 	}
@@ -193,7 +193,7 @@ namespace System_
 
 		void File_Writer_::Write_(const p_string& value)
 		{
-			std::fwrite(value.Buffer, sizeof(char), value.Length_.Value, file);
+			std::fwrite(value.Buffer, sizeof(char), value.Length, file);
 		}
 
 		void File_Writer_::Close_()
@@ -241,7 +241,7 @@ namespace System_
 
 		void String_Builder_::Remove_(p_int start)
 		{
-			String_Builder_::Remove_(start, buffer.Length_.Value-start.Value);
+			String_Builder_::Remove_(start, buffer.Length-start.Value);
 		}
 	}
 }

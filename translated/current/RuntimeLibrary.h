@@ -140,6 +140,7 @@ struct p_string
 public:
 	// Runtime Use Members
 	char const * Buffer;
+	int Length;
 
 	p_string();
 	p_string(char const * s);
@@ -150,20 +151,19 @@ public:
 
 	typedef char const * const_iterator;
 	const_iterator begin() const { return &Buffer[0]; }
-	const_iterator end() const { return &Buffer[Length_.Value]; }
+	const_iterator end() const { return &Buffer[Length]; }
 
 	// Hack to support conversion of integers to strings for now
 	p_string(p_int other);
 
 	// Adamant Members
-	p_int Length_;
-	// TODO ByteLength this should be a property
-	p_int ByteLength_() const { return this->Length_; }
+	// TODO ByteLength should be a property
+	p_int ByteLength_() const { return this->Length; }
 
 	p_string(p_code_point c, p_int repeat);
 
 	p_string Substring_(p_int start, p_int length) const;
-	p_string Substring_(p_int start) const { return Substring_(start, Length_.Value-start.Value); }
+	p_string Substring_(p_int start) const { return Substring_(start, Length-start.Value); }
 	p_string Replace_(p_string oldValue, p_string newValue) const;
 	p_int LastIndexOf_(p_code_point c) const;
 
@@ -251,7 +251,6 @@ namespace System_
 			// Adamant Members
 			List_() : values(0), length(0), capacity(0) { }
 			void Add_(T value);
-			p_int Length_() const { return length; }
 			p_int op_Magnitude() const { return length; }
 			T const & Get_(p_int const index) const { return values[index.Value]; }
 		};
@@ -292,11 +291,13 @@ namespace System_
 
 			Arguments_(int argc, char const *const * argv);
 			const_iterator begin() const { return &args[0]; }
-			const_iterator end() const { return &args[Count_]; }
+			const_iterator end() const { return &args[Count]; }
+
+			const int Count;
 
 			// Adamant Members
-			const int Count_;
-			p_int op_Magnitude() const { return Count_; }
+
+			p_int op_Magnitude() const { return Count; }
 			p_string const & Get_(int const index) const { return args[index]; }
 		};
 	}
