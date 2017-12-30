@@ -6,7 +6,7 @@ System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(System.I
 
 var target = Argument("target", "Default");
 string currentCommit = null;
-string previousCommit = null;
+string sourceCommit = null;
 
 Task("Clean")
 	.Does(() =>
@@ -19,22 +19,37 @@ Task("Build-Previous")
 	.IsDependentOn("Clean")
 	.Does(() =>
 	{
-		currentCommit = GitRevParse("HEAD");
-		Information("Current commit is {0}", currentCommit);
+		var hasUncommitedChanges = ReadProcess("git", "status --porcelain=v2").Any();
+		int generation;
+		if(hasUncommitedChanges)
+		{
+			Information("Uncommitted changes, using current commit source");
+			currentCommit = null; // There is no commit for the uncommitted changes
+			sourceCommit = GitRevParse("HEAD");
+			Information("Source commit is {0}", sourceCommit);
+			generation = 1;
+		}
+		else
+		{
+			Information("NO uncommitted changes, using parent commit source");
+			currentCommit = GitRevParse("HEAD");
+			Information("Current commit is {0}", currentCommit);
+			sourceCommit = GitRevParse("HEAD~1");
+			Information("Source commit is {0}", sourceCommit);
+			generation = 2;
+		}
 
-		previousCommit = GitRevParse("HEAD~1");
-		Information("Parent commit is {0}", previousCommit);
-		var sourceExists = GitTagExists("translated/" + previousCommit);
+		var sourceExists = GitTagExists("translated/" + sourceCommit);
 		if(!sourceExists)
 		{
-			Warning("No source for parent commit. Searching ancestors.");
+			Warning("No source for commit. Searching ancestors.");
 			var found = false;
-			for(var generation = 2; generation < 100; generation++)
+			for(; generation < 100; generation++)
 			{
-				previousCommit = GitRevParse("HEAD~" + generation);
-				if(GitTagExists("translated/" + previousCommit))
+				sourceCommit = GitRevParse("HEAD~" + generation);
+				if(GitTagExists("translated/" + sourceCommit))
 				{
-					Warning("Found source for HEAD~{0} {1}", generation, previousCommit);
+					Warning("Found source for HEAD~{0} {1}", generation, sourceCommit);
 					found = true;
 					break;
 				}
@@ -48,7 +63,7 @@ Task("Build-Previous")
 
 		Information("Getting source for previous");
 		Verbose("Checking out translated from previous source branch"); // Git commands don't have verbose output
-		GitCheckout(".", "translated/" + previousCommit, new FilePath[] { "translated" });
+		GitCheckout(".", "translated/" + sourceCommit, new FilePath[] { "translated" });
 		// Git checkout stanges the changes, we don't want that
 		Verbose("Unstaging files staged by checkout"); // Git commands don't have verbose output
 		GitUnstage(".", new FilePath[] { "translated" });
@@ -199,6 +214,12 @@ Task("Commit-Translated")
 	.IsDependentOn("Build-Current")
 	.Does(() =>
 	{
+		if(currentCommit == null)
+		{
+			Error("Building uncommitted changes, can't commit translated");
+			throw new Exception("Uncommitted changes");
+		}
+
 		if(AppVeyor.IsRunningOnAppVeyor && AppVeyor.Environment.PullRequest.IsPullRequest)
 		{
 			Warning("Not committing translated code becuase this is a pull request build.");
@@ -215,8 +236,8 @@ Task("Commit-Translated")
 			DeleteDirectory("saved", deleteSettings);
 		MoveDirectory("translated/current", "saved");
 
-		Information("Checking out previous source {0}", previousCommit);
-		GitCheckout(".", "translated/" + previousCommit);
+		Information("Checking out previous source {0}", sourceCommit);
+		GitCheckout(".", "translated/" + sourceCommit);
 
 		Information("Restoring saved source");
 		DeleteDirectory("translated/current", deleteSettings);
