@@ -129,7 +129,7 @@ public ParseAtom() -> Syntax_Node?
 	if Token.Type == NotOperator
 	{
 		children.Add(ExpectToken(NotOperator));
-		children.Add(ParseExpression());
+		children.Add(ParseExpression(7));
 		return new Syntax_Node(NotExpression, children);
 	}
 	if Token.Type == LeftParen
@@ -216,7 +216,7 @@ public ParseCallArguments() -> Syntax_Node
 // 4 Equality: == <>
 // 5 Relational: < <= > >=
 // 6 Additive: + -
-// 7 Unary: -
+// 7 Unary: - not
 // 8 Primary: f() . []
 public ParseExpression(minPrecedence: int) -> Syntax_Node
 {

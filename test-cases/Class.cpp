@@ -11,33 +11,35 @@ auto Main_() -> void;
 class C_
 {
 public:
-	string Name_;
-	C_(string const name_);
-	auto Method_() const -> string;
+	p_bool op_Equal(C_ const * other) const { return this == other; }
+	p_bool op_NotEqual(C_ const * other) const { return this != other; }
+	p_string Name_;
+	C_(p_string const name_);
+	auto Method_() const -> p_string;
 };
 
 // Global Definitions
 
 // Definitions
 
-::C_::C_(string const name_)
+::C_::C_(p_string const name_)
 {
 	Name_ = name_;
 }
 
-auto ::C_::Method_() const -> string
+auto ::C_::Method_() const -> p_string
 {
 	return Name_;
 }
 
 auto Main_() -> void
 {
-	::C_ const *const c_ = new ::C_(string("Bob"));
+	::C_ const *const c_ = new ::C_(p_string("Bob"));
 	c_->Method_();
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;

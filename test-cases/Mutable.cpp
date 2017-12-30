@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(int x_, int const y_) -> ::System_::Text_::String_Builder_ *;
+auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *;
 auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Class Declarations
@@ -12,13 +12,13 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Definitions
 
-auto Func_(int x_, int const y_) -> ::System_::Text_::String_Builder_ *
+auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *
 {
-	x_ += 1;
-	int const i_ = x_ + 2;
-	int j_ = y_ - 23;
+	x_->op_PlusAssign(p_int(1));
+	p_int const i_ = x_->op_Plus(p_int(2));
+	p_int j_ = y_->op_Minus(p_int(23));
 	j_ = i_;
-	::System_::Text_::String_Builder_ *const stringA_ = new ::System_::Text_::String_Builder_(string("Hello"));
+	::System_::Text_::String_Builder_ *const stringA_ = new ::System_::Text_::String_Builder_(p_string("Hello"));
 	::System_::Text_::String_Builder_ const * stringB_;
 	stringB_ = stringA_;
 	return stringA_;
@@ -26,11 +26,11 @@ auto Func_(int x_, int const y_) -> ::System_::Text_::String_Builder_ *
 
 auto Main_(::System_::Console_::Console_ *const console_) -> void
 {
-	console_->WriteLine_(Func_(1, 2)->ToString_());
+	console_->WriteLine_(Func_(p_int(1), p_int(2))->ToString_());
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_(new ::System_::Console_::Console_());
 	return 0;

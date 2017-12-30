@@ -3,8 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> p_int;
-auto Func_() -> p_int;
+auto Main_() -> void;
 
 // Class Declarations
 
@@ -12,18 +11,16 @@ auto Func_() -> p_int;
 
 // Definitions
 
-auto Main_() -> p_int
+auto Main_() -> void
 {
-	return Func_();
-}
-
-auto Func_() -> p_int
-{
-	return p_int(1);
+	p_bool x_;
+	x_ = p_code_point('a')->op_Equal(p_code_point('b'));
+	x_ = p_code_point('a')->op_NotEqual(p_code_point('b'));
 }
 
 // Entry Point Adapter
 std::int32_t main(int argc, char const *const * argv)
 {
-	return Main_().Value;
+	Main_();
+	return 0;
 }

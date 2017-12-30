@@ -13,11 +13,11 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 auto Main_(::System_::Console_::Console_ *const console_) -> void
 {
-	console_->WriteLine_(string("Hello World!"));
+	console_->WriteLine_(p_string("Hello World!"));
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_(new ::System_::Console_::Console_());
 	return 0;

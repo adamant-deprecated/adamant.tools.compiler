@@ -13,11 +13,11 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	string(string("foo"));
+	p_string(p_string("foo"));
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;

@@ -13,15 +13,15 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	bool x_;
-	x_ = 1 < 2;
-	x_ = 1 <= 2;
-	x_ = 1 > 2;
-	x_ = 1 >= 2;
+	p_bool x_;
+	x_ = p_int(1)->op_LessThan(p_int(2));
+	x_ = p_int(1)->op_LessThanOrEqual(p_int(2));
+	x_ = p_int(1)->op_GreaterThan(p_int(2));
+	x_ = p_int(1)->op_GreaterThanOrEqual(p_int(2));
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;

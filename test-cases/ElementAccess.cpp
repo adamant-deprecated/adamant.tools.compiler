@@ -13,12 +13,12 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	char result_;
-	result_ = string("hello")[0];
+	p_code_point result_;
+	result_ = p_string("hello")->op_Element(p_int(0));
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;

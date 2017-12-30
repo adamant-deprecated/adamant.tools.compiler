@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> int;
+auto Main_() -> p_int;
 
 // Class Declarations
 
@@ -11,28 +11,28 @@ auto Main_() -> int;
 
 // Definitions
 
-auto Main_() -> int
+auto Main_() -> p_int
 {
-	if (false)
+	if (p_bool(false).Value)
 	{
-		return 0;
+		return p_int(0);
 	}
-	else if (false)
+	else if (p_bool(false).Value)
 	{
-		return 42;
+		return p_int(42);
 	}
-	else if (false)
+	else if (p_bool(false).Value)
 	{
-		return 10;
+		return p_int(10);
 	}
 	else
 	{
-		return 0;
+		return p_int(0);
 	}
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
-	return Main_();
+	return Main_().Value;
 }

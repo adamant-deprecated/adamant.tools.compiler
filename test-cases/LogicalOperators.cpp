@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto True_() -> bool;
+auto True_() -> p_bool;
 auto Main_() -> void;
 
 // Class Declarations
@@ -12,22 +12,22 @@ auto Main_() -> void;
 
 // Definitions
 
-auto True_() -> bool
+auto True_() -> p_bool
 {
-	return true;
+	return p_bool(true);
 }
 
 auto Main_() -> void
 {
-	bool x_;
-	x_ = true && false;
-	x_ = true || false;
-	x_ = !true;
-	x_ = True_() || True_();
+	p_bool x_;
+	x_ = LogicalAnd(p_bool(true), [&] { return p_bool(false); });
+	x_ = LogicalOr(p_bool(true), [&] { return p_bool(false); });
+	x_ = p_bool(true)->op_Not();
+	x_ = LogicalOr(True_(), [&] { return True_(); });
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;

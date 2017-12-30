@@ -1,0 +1,14 @@
+public class Test
+{
+}
+
+public Main() -> void
+{
+	let v: Test = new Test();
+	let n: Test? = null;
+	var x: bool;
+	x = v == n;
+	x = v <> n;
+	x = n == v;
+	x = n <> v;
+}

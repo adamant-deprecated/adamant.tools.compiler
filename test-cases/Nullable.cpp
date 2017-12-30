@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(::Maybe<string> const x_, ::Maybe<unsigned int> const y_) -> ::Maybe<int>;
+auto Func_(::Maybe<p_string> const x_, ::Maybe<p_uint> const y_) -> ::Maybe<p_int>;
 auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Class Declarations
@@ -12,9 +12,9 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Definitions
 
-auto Func_(::Maybe<string> const x_, ::Maybe<unsigned int> const y_) -> ::Maybe<int>
+auto Func_(::Maybe<p_string> const x_, ::Maybe<p_uint> const y_) -> ::Maybe<p_int>
 {
-	::Maybe<int> const z_ = ::None;
+	::Maybe<p_int> const z_ = ::None;
 	::System_::Text_::String_Builder_ const *const s_ = ::None;
 	return ::None;
 }
@@ -25,7 +25,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_(new ::System_::Console_::Console_());
 	return 0;

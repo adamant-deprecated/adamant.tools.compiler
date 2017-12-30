@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> int;
+auto Main_() -> p_int;
 
 // Class Declarations
 
@@ -11,17 +11,17 @@ auto Main_() -> int;
 
 // Definitions
 
-auto Main_() -> int
+auto Main_() -> p_int
 {
-	int result_;
-	result_ = 42;
-	result_ += 1;
-	result_ -= 1;
+	p_int result_;
+	result_ = p_int(42);
+	result_->op_PlusAssign(p_int(1));
+	result_->op_MinusAssign(p_int(1));
 	return result_;
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
-	return Main_();
+	return Main_().Value;
 }

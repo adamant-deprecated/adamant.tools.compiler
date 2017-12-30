@@ -13,12 +13,12 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	int x_ = 1 + 2;
-	x_ = 1 - 2;
+	p_int x_ = p_int(1)->op_Plus(p_int(2));
+	x_ = p_int(1)->op_Minus(p_int(2));
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;

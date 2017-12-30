@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Identity_(char const value_) -> char;
+auto Identity_(p_code_point const value_) -> p_code_point;
 auto Main_() -> void;
 
 // Class Declarations
@@ -12,18 +12,18 @@ auto Main_() -> void;
 
 // Definitions
 
-auto Identity_(char const value_) -> char
+auto Identity_(p_code_point const value_) -> p_code_point
 {
 	return value_;
 }
 
 auto Main_() -> void
 {
-	Identity_('a');
+	Identity_(p_code_point('a'));
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;

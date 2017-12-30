@@ -54,12 +54,11 @@ public ConvertType(type: Syntax_Node) -> string
 	if type.Type == PredefinedType
 	{
 		let keyword: Syntax_Node = type.Children.Get(0);
-		if keyword.Type == CodePoint
-			{ return "char"; }
-		if keyword.Type == UnsignedInt
-			{ return "unsigned int"; }
-		// Int, Bool, Void, String
-		return keyword.GetText();
+		// void we still use the C++ keyword
+		if keyword.Type == Void
+			{ return keyword.GetText(); }
+		// int, bool, string, code_point, uint
+		return "p_" + keyword.GetText();
 	}
 
 	if type.Type == IdentifierName
@@ -189,8 +188,8 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	}
 	else if syntax.Type == NotExpression
 	{
-		builder.Write("!");
 		ConvertExpression(syntax.Children.Get(1), builder);
+		builder.Write("->op_Not()");
 	}
 	else if syntax.Type == ParenthesizedExpression
 	{
@@ -200,8 +199,8 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	}
 	else if syntax.Type == UnaryMinusExpression
 	{
-		builder.Write("-");
 		ConvertExpression(syntax.Children.Get(1), builder);
+		builder.Write("->op_UnaryMinus()");
 	}
 	else if syntax.Type == NullLiteralExpression
 	{
@@ -211,12 +210,18 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	{
 		builder.Write("this");
 	}
+	else if syntax.Type == NumericLiteralExpression
+	{
+		builder.Write("p_int(" + syntax.GetText() + ")");
+	}
 	else if syntax.Type == TrueLiteralExpression
 		or syntax.Type == FalseLiteralExpression
-		or syntax.Type == NumericLiteralExpression
-		or syntax.Type == CodePointLiteralExpression
 	{
-		builder.Write(syntax.GetText());
+		builder.Write("p_bool(" + syntax.GetText() + ")");
+	}
+	else if syntax.Type == CodePointLiteralExpression
+	{
+		builder.Write("p_code_point(" + syntax.GetText() + ")");
 	}
 	else if syntax.Type == IdentifierName
 	{
@@ -224,37 +229,114 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	}
 	else if syntax.Type == StringLiteralExpression
 	{
-		builder.Write("string(" + syntax.GetText() + ")");
+		builder.Write("p_string(" + syntax.GetText() + ")");
 	}
 	else if syntax.Type == AssignmentExpression
-		or syntax.Type == EqualExpression
-		or syntax.Type == ComparisionExpression
-		or syntax.Type == AddExpression
-		or syntax.Type == SubtractExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
-		builder.Write(" ");
-		builder.Write(syntax.Children.Get(1).GetText());
-		builder.Write(" ");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		let operator: int = syntax.Children.Get(1).Type;
+		if operator == Assign
+		{
+			ConvertExpression(syntax.Children.Get(0), builder);
+			builder.Write(" ");
+			builder.Write(syntax.Children.Get(1).GetText());
+			builder.Write(" ");
+			ConvertExpression(syntax.Children.Get(2), builder);
+		}
+		else
+		{
+			ConvertExpression(syntax.Children.Get(0), builder);
+			builder.Write("->op_");
+			if operator == AddAssign
+			{
+				builder.Write("PlusAssign");
+			}
+			else if operator == SubAssign
+			{
+				builder.Write("MinusAssign");
+			}
+			else
+			{
+				builder.Error("Unsupported assignment operator " + operator);
+			}
+			builder.Write("(");
+			ConvertExpression(syntax.Children.Get(2), builder);
+			builder.Write(")");
+		}
 	}
-	else if syntax.Type == OrExpression
+	else if syntax.Type == EqualExpression
 	{
 		ConvertExpression(syntax.Children.Get(0), builder);
-		builder.Write(" || ");
+		builder.Write("->op_Equal(");
 		ConvertExpression(syntax.Children.Get(2), builder);
-	}
-	else if syntax.Type == AndExpression
-	{
-		ConvertExpression(syntax.Children.Get(0), builder);
-		builder.Write(" && ");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		builder.Write(")");
 	}
 	else if syntax.Type == NotEqualExpression
 	{
 		ConvertExpression(syntax.Children.Get(0), builder);
-		builder.Write(" != ");
+		builder.Write("->op_NotEqual(");
 		ConvertExpression(syntax.Children.Get(2), builder);
+		builder.Write(")");
+	}
+	else if syntax.Type == ComparisionExpression
+	{
+		let operator: int = syntax.Children.Get(1).Type;
+		ConvertExpression(syntax.Children.Get(0), builder);
+		builder.Write("->op_");
+		if operator == LessThan
+		{
+			builder.Write("LessThan");
+		}
+		else if operator == LessThanOrEqual
+		{
+			builder.Write("LessThanOrEqual");
+		}
+		else if operator == GreaterThan
+		{
+			builder.Write("GreaterThan");
+		}
+		else if operator == GreaterThanOrEqual
+		{
+			builder.Write("GreaterThanOrEqual");
+		}
+		else
+		{
+			builder.Error("Unsupported comparision operator " + operator);
+		}
+		builder.Write("(");
+		ConvertExpression(syntax.Children.Get(2), builder);
+		builder.Write(")");
+	}
+	else if syntax.Type == AddExpression
+	{
+		ConvertExpression(syntax.Children.Get(0), builder);
+		builder.Write("->op_Plus(");
+		ConvertExpression(syntax.Children.Get(2), builder);
+		builder.Write(")");
+	}
+	else if syntax.Type == SubtractExpression
+	{
+		ConvertExpression(syntax.Children.Get(0), builder);
+		builder.Write("->op_Minus(");
+		ConvertExpression(syntax.Children.Get(2), builder);
+		builder.Write(")");
+	}
+	else if syntax.Type == OrExpression
+	{
+		// TODO based on types decide how to translate
+		builder.Write("LogicalOr(");
+		ConvertExpression(syntax.Children.Get(0), builder);
+		builder.Write(", [&] { return ");
+		ConvertExpression(syntax.Children.Get(2), builder);
+		builder.Write("; })");
+	}
+	else if syntax.Type == AndExpression
+	{
+		// TODO based on types decide how to translate
+		builder.Write("LogicalAnd(");
+		ConvertExpression(syntax.Children.Get(0), builder);
+		builder.Write(", [&] { return ");
+		ConvertExpression(syntax.Children.Get(2), builder);
+		builder.Write("; })");
 	}
 	else if syntax.Type == InvocationExpression
 	{
@@ -270,9 +352,9 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	else if syntax.Type == ElementAccessExpression
 	{
 		ConvertExpression(syntax.Children.Get(0), builder);
-		builder.Write("[");
+		builder.Write("->op_Element(");
 		ConvertExpression(syntax.Children.Get(2), builder);
-		builder.Write("]");
+		builder.Write(")");
 	}
 	else
 	{
@@ -317,7 +399,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 	{
 		Definitions.BeginLine("while (");
 		ConvertExpression(statement.Children.Get(1), Definitions);
-		Definitions.EndLine(")");
+		Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
 		EmitStatement(statement.Children.Get(2)); // Block Statement
 	}
 	else if statement.Type == ForStatement
@@ -342,7 +424,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 		EmitStatement(statement.Children.Get(1)); // Block Statement
 		Definitions.BeginLine("while (");
 		ConvertExpression(statement.Children.Get(3), Definitions);
-		Definitions.EndLine(");");
+		Definitions.EndLine(".Value);"); // if the type isn't just bool, we need op_true() etc.
 	}
 	else if statement.Type == IfStatement
 	{
@@ -352,7 +434,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 		{
 			Definitions.Write("if (");
 			ConvertExpression(ifStatement.Children.Get(1), Definitions);
-			Definitions.EndLine(")");
+			Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
 			EmitStatement(ifStatement.Children.Get(2)); // Block Statement
 			let elseClause: Syntax_Node = ifStatement.FirstChildOfType(ElseClause);
 			if elseClause <> null
@@ -478,6 +560,9 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 		ClassDeclarations.WriteLine("class " + className + "_");
 		ClassDeclarations.BeginBlock();
 		ClassDeclarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
+		// Write out basic reference equality comparisions
+		ClassDeclarations.WriteLine("p_bool op_Equal(" + className + "_ const * other) const { return this == other; }");
+		ClassDeclarations.WriteLine("p_bool op_NotEqual(" + className + "_ const * other) const { return this != other; }");
 		for let member: Syntax_Node in declaration.Children
 		{
 			// TODO fix this to a more reliable means of telling what should be emitted
@@ -575,14 +660,14 @@ public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) ->
 {
 	Definitions.ElementSeparatorLine();
 	Definitions.WriteLine("// Entry Point Adapter");
-	Definitions.WriteLine("int main(int argc, char const *const * argv)");
+	Definitions.WriteLine("std::int32_t main(int argc, char const *const * argv)");
 	Definitions.BeginBlock();
 
 	for let resource: Source_Text in resources
 	{
-		Definitions.BeginLine("resource_manager_->AddResource(::string(\"");
+		Definitions.BeginLine("resource_manager_->AddResource(p_string(\"");
 		Definitions.Write(resource.Name);
-		Definitions.Write("\"), ::string(\"");
+		Definitions.Write("\"), p_string(\"");
 		Definitions.Write(resource.Text
 								.Replace("\\", "\\\\")
 								.Replace("\n", "\\n")
@@ -613,7 +698,7 @@ public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) ->
 	}
 	else
 	{
-		Definitions.WriteLine("return Main_(" + args.ToString() + ");");
+		Definitions.WriteLine("return Main_(" + args.ToString() + ").Value;");
 	}
 
 	Definitions.EndBlock();

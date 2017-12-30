@@ -1,0 +1,12 @@
+public class Test
+{
+}
+
+public Main() -> void
+{
+	let a: Test = new Test();
+	let b: Test = new Test();
+	var x: bool;
+	x = a == b;
+	x = a <> b;
+}

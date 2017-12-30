@@ -13,7 +13,11 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_int x_ = p_int(1)->op_UnaryMinus();
+	p_bool x_;
+	x_ = p_code_point('a')->op_LessThan(p_code_point('b'));
+	x_ = p_code_point('a')->op_LessThanOrEqual(p_code_point('b'));
+	x_ = p_code_point('a')->op_GreaterThan(p_code_point('b'));
+	x_ = p_code_point('a')->op_GreaterThanOrEqual(p_code_point('b'));
 }
 
 // Entry Point Adapter

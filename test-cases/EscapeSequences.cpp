@@ -13,13 +13,13 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	string s_ = string("\"\\");
-	char c_ = '\'';
-	c_ = '\\';
+	p_string s_ = p_string("\"\\");
+	p_code_point c_ = p_code_point('\'');
+	c_ = p_code_point('\\');
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;

@@ -13,7 +13,10 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_int x_ = p_int(1)->op_UnaryMinus();
+	p_bool x_;
+	x_ = LogicalAnd(p_bool(true)->op_Not(), [&] { return p_bool(false); });
+	x_ = LogicalOr(p_bool(true)->op_Not(), [&] { return p_bool(false); });
+	x_ = LogicalOr(p_bool(false), [&] { return LogicalAnd(p_bool(true), [&] { return p_bool(true); }); });
 }
 
 // Entry Point Adapter

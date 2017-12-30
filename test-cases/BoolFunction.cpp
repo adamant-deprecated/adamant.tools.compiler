@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(bool const value_) -> bool;
+auto Func_(p_bool const value_) -> p_bool;
 auto Main_() -> void;
 
 // Class Declarations
@@ -12,18 +12,18 @@ auto Main_() -> void;
 
 // Definitions
 
-auto Func_(bool const value_) -> bool
+auto Func_(p_bool const value_) -> p_bool
 {
-	return false;
+	return p_bool(false);
 }
 
 auto Main_() -> void
 {
-	Func_(true);
+	Func_(p_bool(true));
 }
 
 // Entry Point Adapter
-int main(int argc, char const *const * argv)
+std::int32_t main(int argc, char const *const * argv)
 {
 	Main_();
 	return 0;
