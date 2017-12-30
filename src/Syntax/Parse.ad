@@ -1,19 +1,25 @@
-public var tokenStream: mut Token_Stream = null;
+public var tokenStream: mut Token_Stream? = null;
 public var Token: Syntax_Node? = null;
 
 // ----------------------------------------------------------------------------
 // Token Handling
 // ----------------------------------------------------------------------------
 
-public AcceptToken() -> Syntax_Node
+public AcceptToken() -> Syntax_Node?
 {
-	let node: Syntax_Node = Token;
+	let node: Syntax_Node? = Token;
 	Token = tokenStream.GetNextToken();
 	return node;
 }
 
 public ExpectToken(tokenType: int) -> Syntax_Node
 {
+	if Token == null
+	{
+		// TODO the tokenType isn't being properly converted to a string here
+		Definitions.Error("Expected token type " + tokenType + ", found end of token stream");
+		return new Syntax_Node(Error, Token.Source, Token.Start, Token.Length);
+	}
 	if Token.Type <> tokenType
 	{
 		// TODO the tokenType isn't being properly converted to a string here
@@ -22,7 +28,7 @@ public ExpectToken(tokenType: int) -> Syntax_Node
 		return new Syntax_Node(Error, Token.Source, Token.Start, Token.Length);
 	}
 
-	let node: Syntax_Node = Token;
+	let node: Syntax_Node? = Token;
 	Token = tokenStream.GetNextToken();
 	return node;
 }

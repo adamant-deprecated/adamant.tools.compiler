@@ -106,9 +106,9 @@ public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 	{
 		if not mutableValue { cppType = cppType + " const"; }
 		cppType = cppType + " *";
-		if not mutableBinding { cppType = cppType + "const" ; }
 		//if nullable
 		//	{ cppType = "p_maybe<" + cppType + ">"; }
+		if not mutableBinding { cppType = cppType + "const" ; }
 	}
 
 	return cppType;

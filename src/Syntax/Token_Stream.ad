@@ -9,7 +9,7 @@ public class Token_Stream
 		position = 0; // TODO have to assign this zero for now because we don't have default values working
 	}
 
-	public GetNextToken(mut self) -> Syntax_Node
+	public GetNextToken(mut self) -> Syntax_Node?
 	{
 		var end: uint = -1;
 		while position < Source.Text.ByteLength()
