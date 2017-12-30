@@ -69,6 +69,7 @@ public:
 	p_int op_Plus(p_int other) const { return this->Value + other.Value; }
 	p_int op_Minus(p_int other) const { return this->Value - other.Value; }
 	p_int op_UnaryMinus() const { return -this->Value; }
+	p_int op_Mod(p_int other) const { return this->Value % other.Value; }
 
 	// Hack because we don't support as correctly yet
 	p_uint AsUInt_() const;
