@@ -5,7 +5,7 @@
 	public let TokenType: Token_Type;
 	public let Source: Source_Text;
 	public let Start: uint;
-	public let Length: uint;
+	public let Length: uint; // TODO Is this byte length?
 	//public Text: string;
 
 	public new(tokenType: Token_Type, source: Source_Text, start: uint, length: uint)

@@ -129,7 +129,7 @@ public class Syntax_Node
 	public let Type: int;
 	public let Source: Source_Text;
 	public let Start: uint;
-	public let Length: uint;
+	public let Length: uint; // TODO is this ByteLength?
 	public let Children: System.Collections.List<Syntax_Node>;
 
 	public new(type: int, source: Source_Text, start: uint, length: uint)
@@ -156,11 +156,11 @@ public class Syntax_Node
 	public new(type: int, children: System.Collections.List<Syntax_Node>)
 	{
 		Type = type;
-		if children.Length() > 0
+		if |children| > 0
 		{
 			Source = children.Get(0).Source;
 			Start = children.Get(0).Start;
-			let lastChild: Syntax_Node = children.Get(children.Length()-1);
+			let lastChild: Syntax_Node = children.Get(|children|-1);
 			Length = lastChild.Start - Start + lastChild.Length;
 		}
 		else

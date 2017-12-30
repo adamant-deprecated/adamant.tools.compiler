@@ -27,7 +27,7 @@ public IsValueType(type: Syntax_Node) -> bool
 	if type.Type == QualifiedName
 	{
 		// The last child is the real type
-		return IsValueType(type.Children.Get(type.Children.Length()-1));
+		return IsValueType(type.Children.Get(|type.Children| - 1));
 	}
 	if type.Type == GenericName
 	{
@@ -127,7 +127,7 @@ public ConvertParameterList(parameterList: Syntax_Node, isMainFunction: bool) ->
 				{ firstParameter = false; }
 
 			let mutableBinding: bool = parameter.HasChildOfType(VarKeyword);
-			let type: Syntax_Node = parameter.Children.Get(parameter.Children.Length()-1);
+			let type: Syntax_Node = parameter.Children.Get(|parameter.Children| - 1);
 			builder.Append(ConvertType(mutableBinding, type));
 			builder.Append(" ");
 			builder.Append(parameter.FirstChildOfType(Identifier).GetText());
@@ -381,7 +381,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 	if statement.Type == ReturnStatement
 	{
 
-		if statement.Children.Length() == 2
+		if |statement.Children| == 2
 			{ Definitions.WriteLine("return;"); }
 		else
 		{
@@ -687,7 +687,7 @@ public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) ->
 								.Replace("\"", "\\\""));
 		Definitions.EndLine("\"));");
 	}
-	if resources.Length() > 0
+	if |resources| > 0
 	{
 		Definitions.EndLine(""); // Use EndLine to avoid having an indent on a blank line
 	}

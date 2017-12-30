@@ -57,7 +57,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	{
 		console.WriteLine("Adamant Compiler v0.1.0");
 	}
-	if sourceFilePaths.Length() == 0 or outputFilePath == ""
+	if |sourceFilePaths| == 0 or outputFilePath == ""
 	{
 		console.WriteLine("Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
 		return;
@@ -65,7 +65,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 
 	// Read Resources
 	let resources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
-	if resourceFilePaths.Length() > 0
+	if |resourceFilePaths| > 0
 	{
 		if(verbose)
 		{
