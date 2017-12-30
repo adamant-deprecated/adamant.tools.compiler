@@ -1,6 +1,7 @@
 public Compile(sources: System.Collections.List<Source_Text>, resources: System.Collections.List<Source_Text>) -> string
 {
-	var package: Syntax_Node = ParsePackage(sources);
+	var parser: Parser = new Parser();
+	var package: Syntax_Node = parser.ParsePackage(sources);
 
 	EmitPreamble();
 	EmitPackage(package);
