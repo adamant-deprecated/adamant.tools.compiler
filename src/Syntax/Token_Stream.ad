@@ -113,6 +113,8 @@ public class Token_Stream
 				// it is `/`
 				return NewOperator(Slash);
 			}
+			else if curChar == '%'
+				{ return NewOperator(Percent); }
 			else if curChar == '<'
 			{
 				if position + 1 < Source.Text.Length and Source.Text[position + 1] == '>'

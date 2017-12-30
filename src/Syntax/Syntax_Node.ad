@@ -119,6 +119,8 @@ public let EnumMemberDeclaration: int = 115;
 public let FunctionDeclaration: int = 116;
 public let CompilationUnit: int = 117;
 public let Package: int = 118;
+public let Percent: int = 119; // `%`
+public let ModuloExpression: int = 120;
 
 public class Syntax_Node
 {

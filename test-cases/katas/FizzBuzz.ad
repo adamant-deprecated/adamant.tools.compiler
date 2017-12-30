@@ -1,0 +1,33 @@
+public Main(console: mut System.Console.Console) -> void
+{
+	// TODO: switch to `for let x: int in 1 to 100` or whatever the syntax ends up being
+	var x: int = 1;
+	loop
+	{
+		if x % 3 == 0
+		{
+			if x % 5 == 0
+			{
+				console.WriteLine("FizzBuzz");
+			}
+			else
+			{
+				console.WriteLine("Fizz");
+			}
+		}
+		else if x % 5 == 0
+		{
+			console.WriteLine("Buzz");
+		}
+		else
+		{
+			console.WriteLine(x);
+		}
+
+		x += 1;
+		if x > 100
+		{
+			break;
+		}
+	}
+}

@@ -320,6 +320,13 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		ConvertExpression(syntax.Children.Get(2), builder);
 		builder.Write(")");
 	}
+	else if syntax.Type == ModuloExpression
+	{
+		ConvertExpression(syntax.Children.Get(0), builder);
+		builder.Write("->op_Mod(");
+		ConvertExpression(syntax.Children.Get(2), builder);
+		builder.Write(")");
+	}
 	else if syntax.Type == OrExpression
 	{
 		// TODO based on types decide how to translate
