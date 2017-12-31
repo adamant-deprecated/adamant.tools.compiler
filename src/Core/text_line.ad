@@ -1,0 +1,25 @@
+public class Text_Line
+{
+	public let Source: Source_Text;
+	public let Start: int;
+	public let Length: int;
+
+	public new(source: Source_Text, start: int, length: int)
+	{
+		Source = source;
+		Start = start;
+		Length = length;
+	}
+
+	// TODO get Property
+	public End(self) -> int
+	{
+		return Start + Length;
+	}
+}
+
+// TODO Make this a named constructor
+public TextLineFromTo(source: Source_Text, start: int, end: int) -> Text_Line
+{
+	return new Text_Line(source, start, end - start);
+}

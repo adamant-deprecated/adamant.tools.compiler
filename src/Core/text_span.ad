@@ -1,0 +1,32 @@
+// TODO change to struct
+
+public class Text_Span
+{
+	public let Start: int;
+	public let Length: int;
+
+	public new()
+	{
+		// TODO Needed for C++ default init
+	}
+
+	// @pre start+length doesn't overflow
+	public new(start: int, length: int)
+	{
+		Start = start;
+		Length = length;
+	}
+
+	// TODO make this a named constructor
+	// @pre start <= end
+	public FromTo(start: int, end: int) -> Text_Span
+	{
+		return new Text_Span(start, end - start);
+	}
+
+	// TODO get Property
+	public End(self) -> int
+	{
+		return Start + Length;
+	}
+}

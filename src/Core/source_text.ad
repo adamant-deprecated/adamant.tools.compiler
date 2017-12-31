@@ -3,11 +3,80 @@ public class Source_Text // TODO change immutable class name to snake_case when 
 	public let Package: string;
 	public let Name: string;
 	public let Text: string;
+	public let Lines: Line_Info;
 
 	public new(package: string, name: string, text: string)
 	{
 		Package = package;
 		Name = name;
 		Text = text;
+		Lines = new Line_Info(self, LineStarts());
+	}
+
+	private LineStarts(self) -> System.Collections.List<int>
+	{
+		let length: int = ByteLength();
+		let lineStarts: mut System.Collections.List<int> = new System.Collections.List<int>();
+		lineStarts.Add(0); // there is always the first line
+
+		if 0 == length
+			{ return lineStarts; }
+
+		// performance critical
+		var position: int = 0;
+		while position < length
+		{
+			let c: code_point = Text[position];
+
+			// Common case - ASCII & not a line break
+			if c > '\r' and c <= '\x7F'
+			{
+				position += 1;
+				continue;
+			}
+
+			if c == '\r'
+			{
+				// Assumes that the only 2-char line break sequence is CR+LF
+				if position + 1 < length and Text[position + 1] == '\n'
+					{ position += 1; }
+			}
+			else if c == '\n'
+				or c == '\x0B'
+				or c == '\f'
+				or c == '\x85'
+				// or c == '\u2028'
+				// or c == '\u2029'
+			{
+				// Do Nothing
+			}
+			else
+			{
+				position += 1;
+				continue;
+			}
+
+			// next line starts after the position
+			if position + 1 < length
+				{ lineStarts.Add(position + 1); }
+
+			position += 1;
+		}
+
+		return lineStarts;
+	}
+
+	public ByteLength(self) -> int
+	{
+		return Text.ByteLength();
+	}
+
+	public PositionOfStart(self, span: Text_Span) -> Text_Position
+	{
+		let offset: int = span.Start;
+		let lineNumber: int = Lines.LineNumber(offset);
+		// TODO count tabs as more than one column
+		// TODO handle unicode
+		return new Text_Position(offset, lineNumber, offset - Lines.Get(lineNumber).Start);
 	}
 }

@@ -1,0 +1,19 @@
+public class Diagnostic
+{
+	public let Level: int;
+	public let Phase: int;
+	public let Source: Source_Text;
+	public let Span: Text_Span;
+	public let Position: Text_Position;
+	public let Message: string;
+
+	public new(level: int, phase: int, source: Source_Text, span: Text_Span, message: string)
+	{
+		Level = level;
+		Phase = phase;
+		Source = source;
+		Span = span;
+		Position = Source.PositionOfStart(span);
+		Message = message;
+	}
+}

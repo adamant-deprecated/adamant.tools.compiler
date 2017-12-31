@@ -1,0 +1,17 @@
+// TODO change to struct
+
+/// Represents a position in a source file. All values are zero based.  Newline chars should be
+/// reported as on the line they terminate.
+public class Text_Position
+{
+	public let Offset: int;
+	public let Line: int;
+	public let Column: int;
+
+	public new(offset: int, line: int, column: int)
+	{
+		Offset = offset;
+		Line = line;
+		Column = column;
+	}
+}

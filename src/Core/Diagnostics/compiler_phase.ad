@@ -1,0 +1,4 @@
+// TODO make this an enum struct
+public let Lexing: int = 1;
+public let Parsing: int = 2;
+public let Analysis: int = 3;

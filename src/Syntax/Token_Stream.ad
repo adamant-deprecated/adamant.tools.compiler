@@ -12,7 +12,7 @@ public class Token_Stream
 	public GetNextToken(mut self) -> Syntax_Node?
 	{
 		var end: uint = -1;
-		while position < Source.Text.ByteLength()
+		while position < Source.ByteLength()
 		{
 			let curChar: code_point = Source.Text[position];
 			if curChar == ' '
@@ -51,7 +51,7 @@ public class Token_Stream
 				{ return NewOperator(Asterisk); }
 			else if curChar == '='
 			{
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `==`
 					return NewOperator(EqualsEquals, 2);
@@ -62,7 +62,7 @@ public class Token_Stream
 			}
 			else if curChar == '+'
 			{
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `+=`
 					return NewOperator(PlusEquals, 2);
@@ -73,12 +73,12 @@ public class Token_Stream
 			}
 			else if curChar == '-'
 			{
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '>'
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '>'
 				{
 					// it is `->`
 					return NewOperator(Arrow, 2);
 				}
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `-=`
 					return NewOperator(MinusEquals, 2);
@@ -88,10 +88,10 @@ public class Token_Stream
 			}
 			else if curChar == '/'
 			{
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '/'
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '/'
 				{
 					// it is a line comment `//`
-					while position < Source.Text.ByteLength() and Source.Text[position] <> '\r' and Source.Text[position] <> '\n'
+					while position < Source.ByteLength() and Source.Text[position] <> '\r' and Source.Text[position] <> '\n'
 					{
 						position += 1;
 					}
@@ -99,12 +99,12 @@ public class Token_Stream
 					continue;
 				}
 
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '*'
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '*'
 				{
 					// it is a block comment `/*`
 					position += 2; // move past the start
 					var lastCharStar: bool = false;
-					while position < Source.Text.ByteLength() and not (lastCharStar and Source.Text[position] == '/')
+					while position < Source.ByteLength() and not (lastCharStar and Source.Text[position] == '/')
 					{
 						lastCharStar = Source.Text[position] == '*';
 						position += 1;
@@ -121,12 +121,12 @@ public class Token_Stream
 				{ return NewOperator(Percent); }
 			else if curChar == '<'
 			{
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '>'
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '>'
 				{
 					// it is `<>`
 					return NewOperator(LessThanGreaterThan, 2);
 				}
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `<=`
 					return NewOperator(LessThanEquals, 2);
@@ -136,7 +136,7 @@ public class Token_Stream
 			}
 			else if curChar == '>'
 			{
-				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `>=`
 					return NewOperator(GreaterThanEquals, 2);
@@ -148,7 +148,7 @@ public class Token_Stream
 			{
 				end = position + 1;
 				var escaped: bool = false;
-				while end < Source.Text.ByteLength() and (Source.Text[end] <> '"' or escaped)
+				while end < Source.ByteLength() and (Source.Text[end] <> '"' or escaped)
 				{
 					escaped = Source.Text[end] == '\\' and not escaped;
 					end += 1;
@@ -161,7 +161,7 @@ public class Token_Stream
 			{
 				end = position + 1;
 				var escaped: bool = false;
-				while end < Source.Text.ByteLength() and (Source.Text[end] <> '\'' or escaped)
+				while end < Source.ByteLength() and (Source.Text[end] <> '\'' or escaped)
 				{
 					escaped = Source.Text[end] == '\\' and not escaped;
 					end += 1;

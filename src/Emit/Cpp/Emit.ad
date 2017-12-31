@@ -200,9 +200,7 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	}
 	else if syntax.Type == ParenthesizedExpression
 	{
-		builder.Write("(");
 		ConvertExpression(syntax.Children[1], builder);
-		builder.Write(")");
 	}
 	else if syntax.Type == NegateExpression
 	{

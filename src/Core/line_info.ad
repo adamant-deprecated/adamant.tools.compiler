@@ -1,0 +1,57 @@
+public class Line_Info
+{
+	private let source: Source_Text;
+	private let lineStarts: System.Collections.List<int>;
+
+	public new(source: Source_Text, lineStarts: System.Collections.List<int>)
+	{
+		self.source = source;
+		self.lineStarts = lineStarts;
+	}
+
+	// TODO use magnitude operator
+	public Count(self) -> int
+	{
+		return |lineStarts|;
+	}
+
+	// TODO use element access operator
+	public Get(self, index: int) -> Text_Line
+	{
+		let start: int = lineStarts[index];
+		if index == |lineStarts| - 1 // last line
+			{ return TextLineFromTo(source, start, source.ByteLength()); }
+
+		let end: int = lineStarts[index + 1];
+		return TextLineFromTo(source, start, end);
+	}
+
+	public LineNumber(self, offset: int) -> int
+	{
+		// binary search for the line
+		var left: int = 0;
+		var right: int = |lineStarts| - 1;
+		while left <= right
+		{
+			let mid: int = left + (right - left) / 2;
+
+			// Check if offset is present at mid
+			if lineStarts[mid] == offset
+				{ return mid; }
+
+			if lineStarts[mid] < offset
+			{
+				// If offset greater, ignore left half
+				left = mid + 1;
+			}
+			else
+			{
+				// If offset is smaller, ignore right half
+				right = mid - 1;
+			}
+		}
+
+		// if we reach here, then offset is on the current line
+		return left; // TODO is this really correct?
+	}
+}
