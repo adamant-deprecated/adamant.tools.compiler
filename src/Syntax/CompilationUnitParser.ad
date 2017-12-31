@@ -174,12 +174,12 @@ public class CompilationUnitParser
 			children.Add(ExpectToken(Pipe));
 			return new Syntax_Node(MagnitudeExpression, children);
 		}
-		if token.Type == Sub
+		if token.Type == Minus
 		{
 			// Unary Minus
-			children.Add(ExpectToken(Sub));
+			children.Add(ExpectToken(Minus));
 			children.Add(ParseExpression(8));
-			return new Syntax_Node(UnaryMinusExpression, children);
+			return new Syntax_Node(NegateExpression, children);
 		}
 		if token.Type == NullKeyword
 		{
@@ -269,7 +269,7 @@ public class CompilationUnitParser
 			var leftAssociative: bool;
 			var suffixOperator: bool = false;
 			var expressionType: int;
-			if (token.Type == Assign or token.Type == AddAssign or token.Type == SubAssign) and minPrecedence <= 1
+			if (token.Type == Equals or token.Type == PlusEquals or token.Type == MinusEquals) and minPrecedence <= 1
 			{
 				// Assignment
 				precedence = 1;
@@ -293,23 +293,23 @@ public class CompilationUnitParser
 				children.Add(ExpectToken(AndKeyword));
 				expressionType = AndExpression;
 			}
-			else if token.Type == Equal and minPrecedence <= 4
+			else if token.Type == EqualsEquals and minPrecedence <= 4
 			{
 				// equal
 				precedence = 4;
 				leftAssociative = true;
-				children.Add(ExpectToken(Equal));
+				children.Add(ExpectToken(EqualsEquals));
 				expressionType = EqualExpression;
 			}
-			else if token.Type == NotEqual and minPrecedence <= 4
+			else if token.Type == LessThanGreaterThan and minPrecedence <= 4
 			{
 				// not equal
 				precedence = 4;
 				leftAssociative = true;
-				children.Add(ExpectToken(NotEqual));
+				children.Add(ExpectToken(LessThanGreaterThan));
 				expressionType = NotEqualExpression;
 			}
-			else if (token.Type == LessThan or token.Type == LessThanOrEqual or token.Type == GreaterThan or token.Type == GreaterThanOrEqual) and minPrecedence <= 5
+			else if (token.Type == LessThan or token.Type == LessThanEquals or token.Type == GreaterThan or token.Type == GreaterThanEquals) and minPrecedence <= 5
 			{
 				// relational operators
 				precedence = 5;
@@ -317,20 +317,20 @@ public class CompilationUnitParser
 				children.Add(AcceptToken());
 				expressionType = ComparisionExpression;
 			}
-			else if token.Type == Add and minPrecedence <= 6
+			else if token.Type == Plus and minPrecedence <= 6
 			{
 				// Additive
 				precedence = 6;
 				leftAssociative = true;
-				children.Add(ExpectToken(Add));
+				children.Add(ExpectToken(Plus));
 				expressionType = AddExpression;
 			}
-			else if token.Type == Sub and minPrecedence <= 6
+			else if token.Type == Minus and minPrecedence <= 6
 			{
 				// Additive
 				precedence = 6;
 				leftAssociative = true;
-				children.Add(ExpectToken(Sub));
+				children.Add(ExpectToken(Minus));
 				expressionType = SubtractExpression;
 			}
 			else if token.Type == Asterisk and minPrecedence <= 7
@@ -520,9 +520,9 @@ public class CompilationUnitParser
 		children.Add(ExpectToken(Colon));
 		children.Add(ParseType());
 
-		if allowInitializer and token.Type == Assign
+		if allowInitializer and token.Type == Equals
 		{
-			children.Add(ExpectToken(Assign));
+			children.Add(ExpectToken(Equals));
 			children.Add(ParseExpression());
 		}
 
@@ -675,9 +675,9 @@ public class CompilationUnitParser
 			{
 				let memberChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 				memberChildren.Add(ExpectToken(Identifier));
-				if token.Type == Assign
+				if token.Type == Equals
 				{
-					memberChildren.Add(ExpectToken(Assign));
+					memberChildren.Add(ExpectToken(Equals));
 					memberChildren.Add(ExpectToken(Number));
 				}
 				if token.Type <> RightBrace

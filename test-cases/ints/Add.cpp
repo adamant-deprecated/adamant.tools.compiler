@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_int x_ = p_int(1)->op_Plus(p_int(2));
+	p_int x_ = p_int(1)->op_Add(p_int(2));
 }
 
 // Entry Point Adapter

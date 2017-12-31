@@ -204,10 +204,10 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		ConvertExpression(syntax.Children[1], builder);
 		builder.Write(")");
 	}
-	else if syntax.Type == UnaryMinusExpression
+	else if syntax.Type == NegateExpression
 	{
 		ConvertExpression(syntax.Children[1], builder);
-		builder.Write("->op_UnaryMinus()");
+		builder.Write("->op_Negate()");
 	}
 	else if syntax.Type == NullLiteralExpression
 	{
@@ -241,7 +241,7 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	else if syntax.Type == AssignmentExpression
 	{
 		let operator: int = syntax.Children[1].Type;
-		if operator == Assign
+		if operator == Equals
 		{
 			ConvertExpression(syntax.Children[0], builder);
 			builder.Write(" ");
@@ -253,13 +253,13 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		{
 			ConvertExpression(syntax.Children[0], builder);
 			builder.Write("->op_");
-			if operator == AddAssign
+			if operator == PlusEquals
 			{
-				builder.Write("PlusAssign");
+				builder.Write("AddAssign");
 			}
-			else if operator == SubAssign
+			else if operator == MinusEquals
 			{
-				builder.Write("MinusAssign");
+				builder.Write("SubtractAssign");
 			}
 			else
 			{
@@ -293,7 +293,7 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		{
 			builder.Write("LessThan");
 		}
-		else if operator == LessThanOrEqual
+		else if operator == LessThanEquals
 		{
 			builder.Write("LessThanOrEqual");
 		}
@@ -301,7 +301,7 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		{
 			builder.Write("GreaterThan");
 		}
-		else if operator == GreaterThanOrEqual
+		else if operator == GreaterThanEquals
 		{
 			builder.Write("GreaterThanOrEqual");
 		}
@@ -316,14 +316,14 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	else if syntax.Type == AddExpression
 	{
 		ConvertExpression(syntax.Children[0], builder);
-		builder.Write("->op_Plus(");
+		builder.Write("->op_Add(");
 		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
 	else if syntax.Type == SubtractExpression
 	{
 		ConvertExpression(syntax.Children[0], builder);
-		builder.Write("->op_Minus(");
+		builder.Write("->op_Subtract(");
 		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
@@ -344,7 +344,7 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	else if syntax.Type == RemainderExpression
 	{
 		ConvertExpression(syntax.Children[0], builder);
-		builder.Write("->op_Mod(");
+		builder.Write("->op_Remainder(");
 		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
@@ -499,7 +499,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 		let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 		Definitions.BeginLine(ConvertType(mutableBinding, variableType));
 		Definitions.Write(" " + variableName + "_");
-		if variableDeclaration.HasChildOfType(Assign)
+		if variableDeclaration.HasChildOfType(Equals)
 		{
 			Definitions.Write(" = ");
 			ConvertExpression(variableDeclaration.Children[5], Definitions);

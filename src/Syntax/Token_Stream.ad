@@ -54,22 +54,22 @@ public class Token_Stream
 				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `==`
-					return NewOperator(Equal, 2);
+					return NewOperator(EqualsEquals, 2);
 				}
 
 				// it is `=`
-				return NewOperator(Assign);
+				return NewOperator(Equals);
 			}
 			else if curChar == '+'
 			{
 				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `+=`
-					return NewOperator(AddAssign, 2);
+					return NewOperator(PlusEquals, 2);
 				}
 
 				// it is `+`
-				return NewOperator(Add);
+				return NewOperator(Plus);
 			}
 			else if curChar == '-'
 			{
@@ -81,10 +81,10 @@ public class Token_Stream
 				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `-=`
-					return NewOperator(SubAssign, 2);
+					return NewOperator(MinusEquals, 2);
 				}
 				// it is `-`
-				return NewOperator(Sub);
+				return NewOperator(Minus);
 			}
 			else if curChar == '/'
 			{
@@ -124,12 +124,12 @@ public class Token_Stream
 				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '>'
 				{
 					// it is `<>`
-					return NewOperator(NotEqual, 2);
+					return NewOperator(LessThanGreaterThan, 2);
 				}
 				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `<=`
-					return NewOperator(LessThanOrEqual, 2);
+					return NewOperator(LessThanEquals, 2);
 				}
 				// it is `<`
 				return NewOperator(LessThan);
@@ -139,7 +139,7 @@ public class Token_Stream
 				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `>=`
-					return NewOperator(GreaterThanOrEqual, 2);
+					return NewOperator(GreaterThanEquals, 2);
 				}
 				// it is `>`
 				return NewOperator(GreaterThan);

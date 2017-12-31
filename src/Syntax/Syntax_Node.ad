@@ -12,18 +12,18 @@ public let Colon: int = 8; // `:`
 public let LeftBracket: int = 9; // `[`
 public let RightBracket: int = 10; // `]`
 public let Question: int = 11; // `?`
-public let Equal: int = 12; // `==`
-public let Assign: int = 13; // `=`
-public let AddAssign: int = 14; // `+=`
-public let Add: int = 15; // `+` // TODO use Plus instead
+public let EqualsEquals: int = 12; // `==`
+public let Equals: int = 13; // `=`
+public let PlusEquals: int = 14; // `+=`
+public let Plus: int = 15; // `+`
 public let Arrow: int = 16; // `->`
-public let SubAssign: int = 17; // `-=`
-public let Sub: int = 18; // `-` // TODO use Minus instead
+public let MinusEquals: int = 17; // `-=`
+public let Minus: int = 18; // `-`
 public let Slash: int = 19; // `/`
-public let NotEqual: int = 20; // `<>`
-public let LessThanOrEqual: int = 21; // `<=`
+public let LessThanGreaterThan: int = 20; // `<>`
+public let LessThanEquals: int = 21; // `<=`
 public let LessThan: int = 22; // `<`
-public let GreaterThanOrEqual: int = 23; // `>=`
+public let GreaterThanEquals: int = 23; // `>=`
 public let GreaterThan: int = 24; // `>`
 public let StringLiteral: int = 25;
 public let CodePointLiteral: int = 26;
@@ -77,7 +77,7 @@ public let SubtractExpression: int = 73;
 public let InvocationExpression: int = 74;
 public let MemberAccessExpression: int = 75;
 public let ElementAccessExpression: int = 76;
-public let UnaryMinusExpression: int = 77; // `-⧼Expression⧽`
+public let NegateExpression: int = 77; // `-⧼Expression⧽`
 public let ReturnKeyword: int = 78; // `return`
 public let ReturnStatement: int = 79; // `return ⧼Expression⧽;` or `return;`
 public let LoopKeyword: int = 80; // `loop`

@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_string x_ = p_string("Hello ")->op_Plus(p_string("World!"));
+	p_string x_ = p_string("Hello ")->op_Add(p_string("World!"));
 }
 
 // Entry Point Adapter

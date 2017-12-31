@@ -14,7 +14,7 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	p_int x_ = p_int(1);
-	p_int y_ = x_->op_UnaryMinus();
+	p_int y_ = x_->op_Negate();
 }
 
 // Entry Point Adapter

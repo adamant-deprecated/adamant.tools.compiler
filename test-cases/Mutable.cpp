@@ -14,9 +14,9 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *
 {
-	x_->op_PlusAssign(p_int(1));
-	p_int const i_ = x_->op_Plus(p_int(2));
-	p_int j_ = y_->op_Minus(p_int(23));
+	x_->op_AddAssign(p_int(1));
+	p_int const i_ = x_->op_Add(p_int(2));
+	p_int j_ = y_->op_Subtract(p_int(23));
 	j_ = i_;
 	::System_::Text_::String_Builder_ *const stringA_ = new ::System_::Text_::String_Builder_(p_string("Hello"));
 	::System_::Text_::String_Builder_ const * stringB_;

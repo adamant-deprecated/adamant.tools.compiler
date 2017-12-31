@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_int x_ = p_int(1)->op_UnaryMinus()->op_Magnitude();
+	p_int x_ = p_int(1)->op_Negate()->op_Magnitude();
 }
 
 // Entry Point Adapter
