@@ -298,7 +298,9 @@ namespace System_
 			List_() : values(0), length(0), capacity(0) { }
 			void Add_(T value);
 			p_int op_Magnitude() const { return length; }
+			// TODO remove Get, use [] instead
 			T const & Get_(p_int const index) const { return values[index.Value]; }
+			T const & op_Element(p_int const index) const { return values[index.Value]; }
 		};
 
 		template<typename T>
