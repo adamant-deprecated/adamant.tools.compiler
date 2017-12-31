@@ -4,12 +4,13 @@ public Main(console: mut System.Console.Console) -> void
 	strings.Add("Hello");
 	strings.Add("World!");
 
-	if |strings| <> 2 // Collections of contiguous elements have length that replaces the Count property in the interface
+	if |strings| <> 2
 	{
 		console.WriteLine("List length not 2!");
 	}
 
-	console.WriteLine(strings.Get(0)); // TODO this should be an indexer
+	console.WriteLine(strings[0]);
+
 	for let s: string in strings
 	{
 		console.Write(s);

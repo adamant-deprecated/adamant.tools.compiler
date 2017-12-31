@@ -57,18 +57,26 @@ public:
 
 	// Adamant Members
 	p_int(): Value(0) {}
-	void op_PlusAssign(p_int other) { this->Value += other.Value; }
-	void op_MinusAssign(p_int other) { this->Value -= other.Value; }
+	void op_PlusAssign(p_int other) { this->Value += other.Value; } // TODO remove
+	void op_AddAssign(p_int other) { this->Value += other.Value; }
+	void op_MinusAssign(p_int other) { this->Value -= other.Value; } // TODO remove
+	void op_SubtractAssign(p_int other) { this->Value -= other.Value; }
 	p_bool op_Equal(p_int other) const { return this->Value == other.Value; }
 	p_bool op_NotEqual(p_int other) const { return this->Value != other.Value; }
 	p_bool op_LessThan(p_int other) const { return this->Value < other.Value; }
 	p_bool op_LessThanOrEqual(p_int other) const { return this->Value <= other.Value; }
 	p_bool op_GreaterThan(p_int other) const { return this->Value > other.Value; }
 	p_bool op_GreaterThanOrEqual(p_int other) const { return this->Value >= other.Value; }
-	p_int op_Plus(p_int other) const { return this->Value + other.Value; }
-	p_int op_Minus(p_int other) const { return this->Value - other.Value; }
-	p_int op_UnaryMinus() const { return -this->Value; }
-	p_int op_Mod(p_int other) const { return this->Value % other.Value; }
+	p_int op_Plus(p_int other) const { return this->Value + other.Value; } // TODO remove
+	p_int op_Add(p_int other) const { return this->Value + other.Value; }
+	p_int op_Minus(p_int other) const { return this->Value - other.Value; } // TODO remove
+	p_int op_Subtract(p_int other) const { return this->Value - other.Value; }
+	p_int op_UnaryMinus() const { return -this->Value; } // TODO remove
+	p_int op_Negate() const { return -this->Value; }
+	p_int op_Multiply(p_int other) const { return this->Value * other.Value; }
+	p_int op_Divide(p_int other) const { return this->Value / other.Value; }
+	p_int op_Mod(p_int other) const { return this->Value % other.Value; } // TODO remove
+	p_int op_Remainder(p_int other) const { return this->Value % other.Value; }
 	p_int op_Magnitude() const { if(this->Value==INT32_MIN) throw "Overflow exception"; return this->Value < 0 ? -this->Value : this->Value; }
 
 	// Hack because we don't support as correctly yet
@@ -100,8 +108,10 @@ public:
 	p_bool op_LessThanOrEqual(p_uint other) const { return this->Value <= other.Value; }
 	p_bool op_GreaterThan(p_uint other) const { return this->Value > other.Value; }
 	p_bool op_GreaterThanOrEqual(p_uint other) const { return this->Value >= other.Value; }
-	p_uint op_Plus(p_uint other) const { return this->Value + other.Value; }
-	p_uint op_Minus(p_uint other) const { return this->Value - other.Value; }
+	p_uint op_Plus(p_uint other) const { return this->Value + other.Value; } // TODO remove
+	p_uint op_Add(p_uint other) const { return this->Value + other.Value; }
+	p_uint op_Minus(p_uint other) const { return this->Value - other.Value; } // TODO remove
+	p_uint op_Subtract(p_uint other) const { return this->Value - other.Value; }
 };
 
 inline p_int::p_int(p_uint value)
@@ -168,7 +178,8 @@ public:
 	p_int LastIndexOf_(p_code_point c) const;
 
 	p_code_point op_Element(p_int const index) const { return Buffer[index.Value]; }
-	p_string op_Plus(p_string const & value) const;
+	p_string op_Plus(p_string const & value) const { return this->op_Add(value); }; // TODO remove
+	p_string op_Add(p_string const & value) const;
 	p_bool op_Equal(p_string const & other) const;
 	p_bool op_NotEqual(p_string const & other) const { return !this->op_Equal(other).Value; }
 	p_bool op_LessThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }
@@ -298,8 +309,6 @@ namespace System_
 			List_() : values(0), length(0), capacity(0) { }
 			void Add_(T value);
 			p_int op_Magnitude() const { return length; }
-			// TODO remove Get, use [] instead
-			T const & Get_(p_int const index) const { return values[index.Value]; }
 			T const & op_Element(p_int const index) const { return values[index.Value]; }
 		};
 

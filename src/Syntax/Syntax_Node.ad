@@ -120,9 +120,12 @@ public let FunctionDeclaration: int = 116;
 public let CompilationUnit: int = 117;
 public let Package: int = 118;
 public let Percent: int = 119; // `⧼Expression⧽ % ⧼Expression⧽`
-public let ModuloExpression: int = 120;
+public let RemainderExpression: int = 120;
 public let Pipe: int = 121; // `|`
 public let MagnitudeExpression: int = 122; // `|⧼Expression⧽|`
+public let Asterisk: int = 123; // `*`
+public let MultiplyExpression: int = 124; // `⧼Expression⧽ * ⧼Expression⧽`
+public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`
 
 public class Syntax_Node
 {
@@ -158,9 +161,9 @@ public class Syntax_Node
 		Type = type;
 		if |children| > 0
 		{
-			Source = children.Get(0).Source;
-			Start = children.Get(0).Start;
-			let lastChild: Syntax_Node = children.Get(|children|-1);
+			Source = children[0].Source;
+			Start = children[0].Start;
+			let lastChild: Syntax_Node = children[|children| - 1];
 			Length = lastChild.Start - Start + lastChild.Length;
 		}
 		else

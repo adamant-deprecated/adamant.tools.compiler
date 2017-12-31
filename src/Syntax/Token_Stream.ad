@@ -47,6 +47,8 @@ public class Token_Stream
 				{ return NewOperator(Question); }
 			else if curChar == '|'
 				{ return NewOperator(Pipe); }
+			else if curChar == '*'
+				{ return NewOperator(Asterisk); }
 			else if curChar == '='
 			{
 				if position + 1 < Source.Text.ByteLength() and Source.Text[position + 1] == '='

@@ -72,13 +72,13 @@ p_string p_string::Replace_(p_string oldValue, p_string newValue) const
 	for(int i=0; i < limit; i++)
 		if (Substring_(i, oldValue.Length).op_Equal(oldValue).Value)
 		{
-			buffer = buffer.op_Plus(Substring_(lastIndex, i-lastIndex)).op_Plus(newValue);
+			buffer = buffer.op_Add(Substring_(lastIndex, i-lastIndex)).op_Add(newValue);
 			i += oldValue.Length; // skip over the value we just matched
 			lastIndex = i;
 			i--; // we need i-- to offset the i++ that is about to happen
 		}
 
-	buffer = buffer.op_Plus(Substring_(lastIndex, Length - lastIndex));
+	buffer = buffer.op_Add(Substring_(lastIndex, Length - lastIndex));
 	return buffer;
 }
 
@@ -91,7 +91,7 @@ p_int p_string::LastIndexOf_(p_code_point c) const
 	return -1;
 }
 
-p_string p_string::op_Plus(p_string const & value) const
+p_string p_string::op_Add(p_string const & value) const
 {
 	int newLength = Length + value.Length;
 	char* chars = new char[newLength];
@@ -216,27 +216,27 @@ namespace System_
 
 		void String_Builder_::Append_(p_string const & value)
 		{
-			buffer = buffer.op_Plus(value);
+			buffer = buffer.op_Add(value);
 		}
 
 		void String_Builder_::Append_(String_Builder_ const * value)
 		{
-			buffer = buffer.op_Plus(value->buffer);
+			buffer = buffer.op_Add(value->buffer);
 		}
 
 		void String_Builder_::AppendLine_(p_string const & value)
 		{
-			buffer = buffer.op_Plus(value).op_Plus(p_string("\n"));
+			buffer = buffer.op_Add(value).op_Add(p_string("\n"));
 		}
 
 		void String_Builder_::AppendLine_()
 		{
-			buffer = buffer.op_Plus(p_string("\n"));
+			buffer = buffer.op_Add(p_string("\n"));
 		}
 
 		void String_Builder_::Remove_(p_int start, p_int length)
 		{
-			buffer = buffer.Substring_(0, start).op_Plus(buffer.Substring_(start.Value+length.Value));
+			buffer = buffer.Substring_(0, start).op_Add(buffer.Substring_(start.Value+length.Value));
 		}
 
 		void String_Builder_::Remove_(p_int start)

@@ -22,12 +22,12 @@ public IsValueType(type: Syntax_Node) -> bool
 	if type.Type == NullableType
 	{
 		// The first child is the basic type
-		return IsValueType(type.Children.Get(0)); // The type that is nullable
+		return IsValueType(type.Children[0]); // The type that is nullable
 	}
 	if type.Type == QualifiedName
 	{
 		// The last child is the real type
-		return IsValueType(type.Children.Get(|type.Children| - 1));
+		return IsValueType(type.Children[|type.Children| - 1]);
 	}
 	if type.Type == GenericName
 	{
@@ -41,7 +41,7 @@ public IsValueType(type: Syntax_Node) -> bool
 	}
 	if type.Type == MutableType
 	{
-		return IsValueType(type.Children.Get(1)); // The type that is mutable
+		return IsValueType(type.Children[1]); // The type that is mutable
 	}
 
 	// TODO Error
@@ -53,7 +53,7 @@ public ConvertType(type: Syntax_Node) -> string
 {
 	if type.Type == PredefinedType
 	{
-		let keyword: Syntax_Node = type.Children.Get(0);
+		let keyword: Syntax_Node = type.Children[0];
 		// void we still use the C++ keyword
 		if keyword.Type == Void
 			{ return keyword.GetText(); }
@@ -67,11 +67,11 @@ public ConvertType(type: Syntax_Node) -> string
 	}
 	if type.Type == QualifiedName
 	{
-		return ConvertType(type.Children.Get(0)) + ConvertType(type.Children.Get(2));
+		return ConvertType(type.Children[0]) + ConvertType(type.Children[2]);
 	}
 	if type.Type == GenericName
 	{
-		return ConvertType(type.Children.Get(0)) + "<" + ConvertType(true, type.Children.Get(2)) + ">";
+		return ConvertType(type.Children[0]) + "<" + ConvertType(true, type.Children[2]) + ">";
 	}
 
 	return FormatError("Unexpected Token of type "+type.Type+" found in CovertType(), `"+type.GetText()+"`");
@@ -83,13 +83,13 @@ public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 	let nullable: bool = type.Type == NullableType;
 	if nullable
 	{
-		type = type.Children.Get(0); // Remove the nullable wrapper
+		type = type.Children[0]; // Remove the nullable wrapper
 	}
 
 	let mutableValue: bool = type.Type == MutableType;
 	if mutableValue
 	{
-		type = type.Children.Get(1); // Remove the mutable wrapper
+		type = type.Children[1]; // Remove the mutable wrapper
 	}
 
 	let isValueType: bool = IsValueType(type);
@@ -129,7 +129,7 @@ public ConvertParameterList(parameterList: Syntax_Node, isMainFunction: bool) ->
 				{ firstParameter = false; }
 
 			let mutableBinding: bool = parameter.HasChildOfType(VarKeyword);
-			let type: Syntax_Node = parameter.Children.Get(|parameter.Children| - 1);
+			let type: Syntax_Node = parameter.Children[|parameter.Children| - 1];
 			builder.Append(ConvertType(mutableBinding, type));
 			builder.Append(" ");
 			builder.Append(parameter.FirstChildOfType(Identifier).GetText());
@@ -139,7 +139,7 @@ public ConvertParameterList(parameterList: Syntax_Node, isMainFunction: bool) ->
 			{
 				var typeString: string;
 				if type.Type == MutableType
-					{ typeString = type.Children.Get(1).GetText(); }
+					{ typeString = type.Children[1].GetText(); }
 				else
 					{ typeString = type.GetText(); }
 				if typeString == "System.Console.Console"
@@ -162,11 +162,11 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 {
 	if syntax.Type == NewExpression
 	{
-		let type: Syntax_Node = syntax.Children.Get(1);
+		let type: Syntax_Node = syntax.Children[1];
 		if not IsValueType(type) // place value types on the stack in C++ by not using new
 			{ builder.Write("new "); }
 		builder.Write(ConvertType(type));
-		let argumentList: Syntax_Node = syntax.Children.Get(2);
+		let argumentList: Syntax_Node = syntax.Children[2];
 		ConvertExpression(argumentList, builder);
 	}
 	else if syntax.Type == ArgumentList
@@ -190,23 +190,23 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	}
 	else if syntax.Type == NotExpression
 	{
-		ConvertExpression(syntax.Children.Get(1), builder);
+		ConvertExpression(syntax.Children[1], builder);
 		builder.Write("->op_Not()");
 	}
 	else if syntax.Type == MagnitudeExpression
 	{
-		ConvertExpression(syntax.Children.Get(1), builder);
+		ConvertExpression(syntax.Children[1], builder);
 		builder.Write("->op_Magnitude()");
 	}
 	else if syntax.Type == ParenthesizedExpression
 	{
 		builder.Write("(");
-		ConvertExpression(syntax.Children.Get(1), builder);
+		ConvertExpression(syntax.Children[1], builder);
 		builder.Write(")");
 	}
 	else if syntax.Type == UnaryMinusExpression
 	{
-		ConvertExpression(syntax.Children.Get(1), builder);
+		ConvertExpression(syntax.Children[1], builder);
 		builder.Write("->op_UnaryMinus()");
 	}
 	else if syntax.Type == NullLiteralExpression
@@ -240,18 +240,18 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 	}
 	else if syntax.Type == AssignmentExpression
 	{
-		let operator: int = syntax.Children.Get(1).Type;
+		let operator: int = syntax.Children[1].Type;
 		if operator == Assign
 		{
-			ConvertExpression(syntax.Children.Get(0), builder);
+			ConvertExpression(syntax.Children[0], builder);
 			builder.Write(" ");
-			builder.Write(syntax.Children.Get(1).GetText());
+			builder.Write(syntax.Children[1].GetText());
 			builder.Write(" ");
-			ConvertExpression(syntax.Children.Get(2), builder);
+			ConvertExpression(syntax.Children[2], builder);
 		}
 		else
 		{
-			ConvertExpression(syntax.Children.Get(0), builder);
+			ConvertExpression(syntax.Children[0], builder);
 			builder.Write("->op_");
 			if operator == AddAssign
 			{
@@ -266,28 +266,28 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 				builder.Error("Unsupported assignment operator " + operator);
 			}
 			builder.Write("(");
-			ConvertExpression(syntax.Children.Get(2), builder);
+			ConvertExpression(syntax.Children[2], builder);
 			builder.Write(")");
 		}
 	}
 	else if syntax.Type == EqualExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write("->op_Equal(");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
 	else if syntax.Type == NotEqualExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write("->op_NotEqual(");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
 	else if syntax.Type == ComparisionExpression
 	{
-		let operator: int = syntax.Children.Get(1).Type;
-		ConvertExpression(syntax.Children.Get(0), builder);
+		let operator: int = syntax.Children[1].Type;
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write("->op_");
 		if operator == LessThan
 		{
@@ -310,64 +310,78 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 			builder.Error("Unsupported comparision operator " + operator);
 		}
 		builder.Write("(");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
 	else if syntax.Type == AddExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write("->op_Plus(");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
 	else if syntax.Type == SubtractExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write("->op_Minus(");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
-	else if syntax.Type == ModuloExpression
+	else if syntax.Type == MultiplyExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
+		builder.Write("->op_Multiply(");
+		ConvertExpression(syntax.Children[2], builder);
+		builder.Write(")");
+	}
+	else if syntax.Type == DivideExpression
+	{
+		ConvertExpression(syntax.Children[0], builder);
+		builder.Write("->op_Divide(");
+		ConvertExpression(syntax.Children[2], builder);
+		builder.Write(")");
+	}
+	else if syntax.Type == RemainderExpression
+	{
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write("->op_Mod(");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
 	else if syntax.Type == OrExpression
 	{
 		// TODO based on types decide how to translate
 		builder.Write("LogicalOr(");
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write(", [&] { return ");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write("; })");
 	}
 	else if syntax.Type == AndExpression
 	{
 		// TODO based on types decide how to translate
 		builder.Write("LogicalAnd(");
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write(", [&] { return ");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write("; })");
 	}
 	else if syntax.Type == InvocationExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
-		ConvertExpression(syntax.Children.Get(1), builder);
+		ConvertExpression(syntax.Children[0], builder);
+		ConvertExpression(syntax.Children[1], builder);
 	}
 	else if syntax.Type == MemberAccessExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write("->");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 	}
 	else if syntax.Type == ElementAccessExpression
 	{
-		ConvertExpression(syntax.Children.Get(0), builder);
+		ConvertExpression(syntax.Children[0], builder);
 		builder.Write("->op_Element(");
-		ConvertExpression(syntax.Children.Get(2), builder);
+		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
 	else
@@ -388,14 +402,14 @@ public EmitStatement(statement: Syntax_Node) -> void
 		else
 		{
 			Definitions.BeginLine("return ");
-			ConvertExpression(statement.Children.Get(1), Definitions);
+			ConvertExpression(statement.Children[1], Definitions);
 			Definitions.EndLine(";");
 		}
 	}
 	else if statement.Type == LoopStatement
 	{
 		Definitions.WriteLine("for (;;)");
-		EmitStatement(statement.Children.Get(1)); // Block Statement
+		EmitStatement(statement.Children[1]); // Block Statement
 	}
 	else if statement.Type == Block
 	{
@@ -412,9 +426,9 @@ public EmitStatement(statement: Syntax_Node) -> void
 	else if statement.Type == WhileStatement
 	{
 		Definitions.BeginLine("while (");
-		ConvertExpression(statement.Children.Get(1), Definitions);
+		ConvertExpression(statement.Children[1], Definitions);
 		Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
-		EmitStatement(statement.Children.Get(2)); // Block Statement
+		EmitStatement(statement.Children[2]); // Block Statement
 	}
 	else if statement.Type == ForStatement
 	{
@@ -422,22 +436,22 @@ public EmitStatement(statement: Syntax_Node) -> void
 		//let k: string = Token.GetText();
 		//if not Accept("let") and not Accept("var")
 		//	{ Definitions.Error("Expected `let` or `var` but found `" + Token.GetText() + "`"); }
-		let variableDeclaration: Syntax_Node = statement.Children.Get(1);
+		let variableDeclaration: Syntax_Node = statement.Children[1];
 		let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 		let name: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
-		let type: Syntax_Node = variableDeclaration.Children.Get(3);
+		let type: Syntax_Node = variableDeclaration.Children[3];
 		Definitions.Write(ConvertType(mutableBinding, type) + " " + name + "_");
 		Definitions.Write(" : *(");
-		ConvertExpression(statement.Children.Get(3), Definitions); // expression
+		ConvertExpression(statement.Children[3], Definitions); // expression
 		Definitions.EndLine("))");
-		EmitStatement(statement.Children.Get(4)); // Block Statement
+		EmitStatement(statement.Children[4]); // Block Statement
 	}
 	else if statement.Type == DoWhileStatement
 	{
 		Definitions.WriteLine("do");
-		EmitStatement(statement.Children.Get(1)); // Block Statement
+		EmitStatement(statement.Children[1]); // Block Statement
 		Definitions.BeginLine("while (");
-		ConvertExpression(statement.Children.Get(3), Definitions);
+		ConvertExpression(statement.Children[3], Definitions);
 		Definitions.EndLine(".Value);"); // if the type isn't just bool, we need op_true() etc.
 	}
 	else if statement.Type == IfStatement
@@ -447,9 +461,9 @@ public EmitStatement(statement: Syntax_Node) -> void
 		loop
 		{
 			Definitions.Write("if (");
-			ConvertExpression(ifStatement.Children.Get(1), Definitions);
+			ConvertExpression(ifStatement.Children[1], Definitions);
 			Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
-			EmitStatement(ifStatement.Children.Get(2)); // Block Statement
+			EmitStatement(ifStatement.Children[2]); // Block Statement
 			let elseClause: Syntax_Node? = ifStatement.FirstChildOfType(ElseClause);
 			if elseClause <> null
 			{
@@ -461,7 +475,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 				else
 				{
 					Definitions.WriteLine("else");
-					EmitStatement(elseClause.Children.Get(1)); // Block Statement
+					EmitStatement(elseClause.Children[1]); // Block Statement
 					break;
 				}
 			}
@@ -479,23 +493,23 @@ public EmitStatement(statement: Syntax_Node) -> void
 	}
 	else if statement.Type == LocalDeclarationStatement
 	{
-		let variableDeclaration: Syntax_Node = statement.Children.Get(0);
+		let variableDeclaration: Syntax_Node = statement.Children[0];
 		let variableName: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
-		let variableType: Syntax_Node = variableDeclaration.Children.Get(3);
+		let variableType: Syntax_Node = variableDeclaration.Children[3];
 		let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 		Definitions.BeginLine(ConvertType(mutableBinding, variableType));
 		Definitions.Write(" " + variableName + "_");
 		if variableDeclaration.HasChildOfType(Assign)
 		{
 			Definitions.Write(" = ");
-			ConvertExpression(variableDeclaration.Children.Get(5), Definitions);
+			ConvertExpression(variableDeclaration.Children[5], Definitions);
 		}
 		Definitions.EndLine(";");
 	}
 	else if statement.Type == ExpressionStatement
 	{
 		Definitions.BeginLine("");
-		ConvertExpression(statement.Children.Get(0), Definitions);
+		ConvertExpression(statement.Children[0], Definitions);
 		Definitions.EndLine(";");
 	}
 	else
@@ -508,30 +522,30 @@ public EmitClassMember(member: Syntax_Node, className: string) -> void
 {
 	if member.Type == ConstructorDeclaration
 	{
-		let parameters: string = ConvertParameterList(member.Children.Get(2));
+		let parameters: string = ConvertParameterList(member.Children[2]);
 		// Write out the function declaration for C++ so we can call functions defined after others
 		ClassDeclarations.WriteLine(className + "_" + parameters + ";");
 		Definitions.ElementSeparatorLine();
 		Definitions.WriteLine("::" + className + "_::" + className + "_" + parameters + "");
-		EmitStatement(member.Children.Get(3));
+		EmitStatement(member.Children[3]);
 	}
 	else if member.Type == FieldDeclaration
 	{
-		let variableDeclaration: Syntax_Node = member.Children.Get(1);
-		let fieldName: string = variableDeclaration.Children.Get(1).GetText();
-		let fieldType: Syntax_Node = variableDeclaration.Children.Get(3);
+		let variableDeclaration: Syntax_Node = member.Children[1];
+		let fieldName: string = variableDeclaration.Children[1].GetText();
+		let fieldType: Syntax_Node = variableDeclaration.Children[3];
 		let cppType: string = ConvertType(true, fieldType); // because we need to assign them in constructors don't mark fields const
 		ClassDeclarations.WriteLine(cppType + " " + fieldName + "_;");
 	}
 	else if member.Type == MethodDeclaration
 	{
-		let methodName: string = member.Children.Get(1).GetText();
-		let parameterList: Syntax_Node = member.Children.Get(2);
+		let methodName: string = member.Children[1].GetText();
+		let parameterList: Syntax_Node = member.Children[2];
 		let parameters: string = ConvertParameterList(parameterList);
 		let selfParameter: Syntax_Node? = parameterList.FirstChildOfType(SelfParameter);
 		let isAssociatedFuntion: bool = selfParameter == null;
 		let mutableSelf: bool = not isAssociatedFuntion and selfParameter.HasChildOfType(MutableKeyword);
-		let returnType: Syntax_Node = member.Children.Get(4);
+		let returnType: Syntax_Node = member.Children[4];
 		let cppType: string = ConvertType(true, returnType);
 		var staticModifier: string = "";
 		if isAssociatedFuntion
@@ -542,7 +556,7 @@ public EmitClassMember(member: Syntax_Node, className: string) -> void
 		ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_" + parameters + " " + constModifier + "-> " + cppType + ";");
 		Definitions.ElementSeparatorLine();
 		Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_" + parameters + " " + constModifier + "-> " + cppType);
-		let block: Syntax_Node = member.Children.Get(5);
+		let block: Syntax_Node = member.Children[5];
 		EmitStatement(block);
 	}
 	else
@@ -555,20 +569,20 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 {
 	if declaration.Type == GlobalDeclaration
 	{
-		let variableDeclaration: Syntax_Node = declaration.Children.Get(1);
-		let variableName: string = variableDeclaration.Children.Get(1).GetText();
-		let variableType: Syntax_Node = variableDeclaration.Children.Get(3);
+		let variableDeclaration: Syntax_Node = declaration.Children[1];
+		let variableName: string = variableDeclaration.Children[1].GetText();
+		let variableType: Syntax_Node = variableDeclaration.Children[3];
 		let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 		let cppType: string = ConvertType(mutableBinding, variableType);
 		GlobalDefinitions.BeginLine(cppType);
 		GlobalDefinitions.Write(" " + variableName + "_ = ");
-		let expression: Syntax_Node = variableDeclaration.Children.Get(5);
+		let expression: Syntax_Node = variableDeclaration.Children[5];
 		ConvertExpression(expression, GlobalDefinitions);
 		GlobalDefinitions.EndLine(";");
 	}
 	else if declaration.Type == ClassDeclaration
 	{
-		let className: string = declaration.Children.Get(2).GetText();
+		let className: string = declaration.Children[2].GetText();
 		TypeDeclarations.WriteLine("class " + className + "_;");
 		ClassDeclarations.ElementSeparatorLine();
 		ClassDeclarations.WriteLine("class " + className + "_");
@@ -591,7 +605,7 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 	}
 	else if declaration.Type == EnumDeclaration
 	{
-		let enumName: string = declaration.Children.Get(3).GetText();
+		let enumName: string = declaration.Children[3].GetText();
 		TypeDeclarations.WriteLine("enum class " + enumName + "_;");
 		ClassDeclarations.ElementSeparatorLine();
 		ClassDeclarations.WriteLine("enum class " + enumName + "_");
@@ -600,7 +614,7 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 		{
 			if member.Type == EnumMemberDeclaration
 			{
-				let memberName: string = member.Children.Get(0).GetText();
+				let memberName: string = member.Children[0].GetText();
 				ClassDeclarations.BeginLine(memberName + "_");
 				let memberValue: Syntax_Node? = member.FirstChildOfType(Number);
 				if memberValue <> null
@@ -615,10 +629,10 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 	}
 	else if declaration.Type == FunctionDeclaration
 	{
-		let name: string = declaration.Children.Get(1).GetText();
+		let name: string = declaration.Children[1].GetText();
 		let isMain: bool = name == "Main";
-		let parameters: string = ConvertParameterList(declaration.Children.Get(2), isMain);
-		let returnType: Syntax_Node = declaration.Children.Get(4);
+		let parameters: string = ConvertParameterList(declaration.Children[2], isMain);
+		let returnType: Syntax_Node = declaration.Children[4];
 		let cppType: string = ConvertType(true, returnType);
 		// Write out the function declaration for C++ so we can call functions defined after others
 		FunctionDeclarations.WriteLine("auto " + name + "_" + parameters + " -> " + cppType + ";");
@@ -630,7 +644,7 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 				{ Definitions.Error("Multiple declarations of main"); }
 			MainFunctionReturnType = cppType;
 		}
-		EmitStatement(declaration.Children.Get(5));
+		EmitStatement(declaration.Children[5]);
 	}
 	else
 	{

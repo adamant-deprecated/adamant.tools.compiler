@@ -35,13 +35,11 @@ public class CompilationUnitParser
 	{
 		if token == null
 		{
-			// TODO the tokenType isn't being properly converted to a string here
 			Definitions.Error("Expected token type " + tokenType + ", found end of token stream");
 			return new Syntax_Node(Error, token.Source, token.Start, token.Length);
 		}
 		if token.Type <> tokenType
 		{
-			// TODO the tokenType isn't being properly converted to a string here
 			Definitions.Error("Expected token type " + tokenType + ", found `" + token.GetText() + "` of type " + token.Type);
 			token = tokenStream.GetNextToken(); // Skip token to advance
 			return new Syntax_Node(Error, token.Source, token.Start, token.Length);
@@ -335,13 +333,29 @@ public class CompilationUnitParser
 				children.Add(ExpectToken(Sub));
 				expressionType = SubtractExpression;
 			}
+			else if token.Type == Asterisk and minPrecedence <= 7
+			{
+				// Multiplicative
+				precedence = 7;
+				leftAssociative = true;
+				children.Add(ExpectToken(Asterisk));
+				expressionType = MultiplyExpression;
+			}
+			else if token.Type == Slash and minPrecedence <= 7
+			{
+				// Multiplicative
+				precedence = 7;
+				leftAssociative = true;
+				children.Add(ExpectToken(Slash));
+				expressionType = DivideExpression;
+			}
 			else if token.Type == Percent and minPrecedence <= 7
 			{
 				// Multiplicative
 				precedence = 7;
 				leftAssociative = true;
 				children.Add(ExpectToken(Percent));
-				expressionType = ModuloExpression;
+				expressionType = RemainderExpression;
 			}
 			else if token.Type == LeftParen and minPrecedence <= 9
 			{
