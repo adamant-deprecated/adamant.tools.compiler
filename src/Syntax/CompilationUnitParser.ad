@@ -35,39 +35,17 @@ public class CompilationUnitParser
 	{
 		if token == null
 		{
-			Definitions.Error("Expected token type " + tokenType + ", found end of token stream");
-			return new Syntax_Node(Error, token.Source, token.Start, token.Length);
+			return new new_Syntax_Node_Missing(tokenType,  tokenStream.Source, tokenStream.Source.ByteLength());
 		}
-		if token.Type <> tokenType
+
+		if token == null or token.Type <> tokenType
 		{
-			Definitions.Error("Expected token type " + tokenType + ", found `" + token.GetText() + "` of type " + token.Type);
-			token = tokenStream.GetNextToken(); // Skip token to advance
-			return new Syntax_Node(Error, token.Source, token.Start, token.Length);
+			return new new_Syntax_Node_Missing(tokenType,  tokenStream.Source, token.Start);
 		}
 
 		let node: Syntax_Node? = token;
 		token = tokenStream.GetNextToken();
 		return node;
-	}
-
-	private Accept(mut self, expected: string) -> bool
-	{
-		let accepted: bool = token.GetText() == expected;
-		if accepted { token = tokenStream.GetNextToken(); }
-		return accepted;
-	}
-
-	private Expect(mut self, expected: string) -> void
-	{
-		if token.GetText() <> expected
-		{
-			Definitions.Error("Expected `" + expected + "` but found `" + token.GetText() + "`");
-			token = tokenStream.GetNextToken(); // Skip token to advance
-		}
-		else
-		{
-			token = tokenStream.GetNextToken();
-		}
 	}
 
 	// ----------------------------------------------------------------------------
@@ -639,7 +617,7 @@ public class CompilationUnitParser
 		}
 		else
 		{
-			// Really we expect an access modifier
+			// TODO Really we expect an access modifier
 			ExpectToken(PublicKeyword);
 		}
 
@@ -703,10 +681,11 @@ public class CompilationUnitParser
 	private ParseCompilationUnit(mut self) -> Syntax_Node
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-		while token <> null
+		while token <> null and token.Type <> EndOfFileToken
 		{
 			children.Add(ParseDeclaration());
 		}
+		children.Add(ExpectToken(EndOfFileToken));
 		return new Syntax_Node(CompilationUnit, children);
 	}
 }

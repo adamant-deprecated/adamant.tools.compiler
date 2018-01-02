@@ -1,6 +1,5 @@
-public let Error: int = -1;
-
 // Note, a lot of these names should say Token
+public let EndOfFileToken: int = 0;
 public let LeftBrace: int = 1; // `{`
 public let RightBrace: int = 2; // `}`
 public let LeftParen: int = 3; // `(`
@@ -130,10 +129,12 @@ public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`
 public class Syntax_Node
 {
 	public let Type: int;
+	public let IsMissing: bool;
 	public let Source: Source_Text;
 	public let Start: uint;
 	public let Length: uint; // TODO is this ByteLength?
 	public let Children: System.Collections.List<Syntax_Node>;
+	public let Diagnostics: mut System.Collections.List<Diagnostic>;
 
 	public new(type: int, source: Source_Text, start: uint, length: uint)
 	{
@@ -142,6 +143,18 @@ public class Syntax_Node
 		Start = start;
 		Length = length;
 		Children = new System.Collections.List<Syntax_Node>();
+		Diagnostics = new System.Collections.List<Diagnostic>();
+	}
+
+	public new(type: int, isMissing: bool, source: Source_Text, start: uint, length: uint)
+	{
+		Type = type;
+		IsMissing = isMissing;
+		Source = source;
+		Start = start;
+		Length = length;
+		Children = new System.Collections.List<Syntax_Node>();
+		Diagnostics = new System.Collections.List<Diagnostic>();
 	}
 
 	public new(type: int, child: Syntax_Node)
@@ -198,4 +211,18 @@ public class Syntax_Node
 		}
 		return false;
 	}
+
+	public Add(self, diagnostic: Diagnostic) -> void
+	{
+		Diagnostics.Add(diagnostic);
+	}
+}
+
+// TODO make this a named constructor
+public new_Syntax_Node_Missing(type: int, source: Source_Text, start: uint) -> Syntax_Node
+{
+	let node: mut Syntax_Node = new Syntax_Node(type, true, source, start, 0);
+	let span: Text_Span = new Text_Span(start, 0);
+	node.Add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
+	return node;
 }

@@ -431,9 +431,6 @@ public EmitStatement(statement: Syntax_Node) -> void
 	else if statement.Type == ForStatement
 	{
 		Definitions.BeginLine("for (");
-		//let k: string = Token.GetText();
-		//if not Accept("let") and not Accept("var")
-		//	{ Definitions.Error("Expected `let` or `var` but found `" + Token.GetText() + "`"); }
 		let variableDeclaration: Syntax_Node = statement.Children[1];
 		let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 		let name: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
@@ -643,6 +640,10 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 			MainFunctionReturnType = cppType;
 		}
 		EmitStatement(declaration.Children[5]);
+	}
+	else if declaration.Type == EndOfFileToken
+	{
+		// Ignore the end of file
 	}
 	else
 	{
