@@ -237,7 +237,7 @@ public:
 };
 
 // Global Definitions
-p_int const Error_ = p_int(1)->op_UnaryMinus();
+p_int const Error_ = p_int(1)->op_Negate();
 p_int const LeftBrace_ = p_int(1);
 p_int const RightBrace_ = p_int(2);
 p_int const LeftParen_ = p_int(3);
@@ -389,7 +389,7 @@ auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *cons
 	EmitPreamble_();
 	EmitPackage_(package_);
 	EmitEntryPointAdapter_(resources_);
-	return TypeDeclarations_->ToString_()->op_Plus(FunctionDeclarations_->ToString_())->op_Plus(ClassDeclarations_->ToString_())->op_Plus(GlobalDefinitions_->ToString_())->op_Plus(Definitions_->ToString_());
+	return TypeDeclarations_->ToString_()->op_Add(FunctionDeclarations_->ToString_())->op_Add(ClassDeclarations_->ToString_())->op_Add(GlobalDefinitions_->ToString_())->op_Add(Definitions_->ToString_());
 }
 
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void
@@ -432,7 +432,7 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 		}
 	}
 
-	if ((verbose_).Value)
+	if (verbose_.Value)
 	{
 		console_->WriteLine_(p_string("Adamant Compiler v0.1.0"));
 	}
@@ -446,23 +446,23 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 	::System_::Collections_::List_<::Source_Text_ const *> *const resources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
 	if (resourceFilePaths_->op_Magnitude()->op_GreaterThan(p_int(0)).Value)
 	{
-		if ((verbose_).Value)
+		if (verbose_.Value)
 		{
 			console_->WriteLine_(p_string("Reading Resources:"));
 		}
 
 		for (p_string const resourceFilePath_ : *(resourceFilePaths_))
 		{
-			if ((verbose_).Value)
+			if (verbose_.Value)
 			{
-				console_->WriteLine_(p_string("  ")->op_Plus(resourceFilePath_));
+				console_->WriteLine_(p_string("  ")->op_Add(resourceFilePath_));
 			}
 
 			resources_->Add_(ReadSource_(resourceFilePath_));
 		}
 	}
 
-	if ((verbose_).Value)
+	if (verbose_.Value)
 	{
 		console_->WriteLine_(p_string("Compiling:"));
 	}
@@ -470,16 +470,16 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 	::System_::Collections_::List_<::Source_Text_ const *> *const sources_ = new ::System_::Collections_::List_<::Source_Text_ const *>();
 	for (p_string const sourceFilePath_ : *(sourceFilePaths_))
 	{
-		if ((verbose_).Value)
+		if (verbose_.Value)
 		{
-			console_->WriteLine_(p_string("  ")->op_Plus(sourceFilePath_));
+			console_->WriteLine_(p_string("  ")->op_Add(sourceFilePath_));
 		}
 
 		sources_->Add_(ReadSource_(sourceFilePath_));
 	}
 
 	p_string const translated_ = Compile_(sources_, resources_);
-	if ((verbose_).Value)
+	if (verbose_.Value)
 	{
 		console_->Write_(p_string("Output: "));
 		console_->WriteLine_(outputFilePath_);
@@ -490,27 +490,27 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 	outputFile_->Close_();
 	p_string outputDirPath_ = outputFilePath_;
 	p_int index_ = outputDirPath_->LastIndexOf_(p_code_point('/'));
-	if (index_->op_NotEqual(p_int(1)->op_UnaryMinus()).Value)
+	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
 	{
-		outputDirPath_ = outputDirPath_->Substring_(p_int(0), index_->op_Plus(p_int(1)));
+		outputDirPath_ = outputDirPath_->Substring_(p_int(0), index_->op_Add(p_int(1)));
 	}
 
 	index_ = outputDirPath_->LastIndexOf_(p_code_point('\\'));
-	if (index_->op_NotEqual(p_int(1)->op_UnaryMinus()).Value)
+	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
 	{
-		outputDirPath_ = outputDirPath_->Substring_(p_int(0), index_->op_Plus(p_int(1)));
+		outputDirPath_ = outputDirPath_->Substring_(p_int(0), index_->op_Add(p_int(1)));
 	}
 
-	if ((verbose_).Value)
+	if (verbose_.Value)
 	{
 		console_->Write_(p_string("Outputting RuntimeLibrary to: "));
 		console_->WriteLine_(outputDirPath_);
 	}
 
-	::System_::IO_::File_Writer_ * resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_->op_Plus(p_string("RuntimeLibrary.h")));
+	::System_::IO_::File_Writer_ * resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_->op_Add(p_string("RuntimeLibrary.h")));
 	resourceFile_->Write_(resource_manager_->GetString_(p_string("RuntimeLibrary.h")));
 	resourceFile_->Close_();
-	resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_->op_Plus(p_string("RuntimeLibrary.cpp")));
+	resourceFile_ = new ::System_::IO_::File_Writer_(outputDirPath_->op_Add(p_string("RuntimeLibrary.cpp")));
 	resourceFile_->Write_(resource_manager_->GetString_(p_string("RuntimeLibrary.cpp")));
 	resourceFile_->Close_();
 }
@@ -522,15 +522,15 @@ auto ReadSource_(p_string const path_) -> ::Source_Text_ const *
 	file_->Close_();
 	p_string name_ = path_;
 	p_int index_ = name_->LastIndexOf_(p_code_point('/'));
-	if (index_->op_NotEqual(p_int(1)->op_UnaryMinus()).Value)
+	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
 	{
-		name_ = name_->Substring_(index_->op_Plus(p_int(1)));
+		name_ = name_->Substring_(index_->op_Add(p_int(1)));
 	}
 
 	index_ = name_->LastIndexOf_(p_code_point('\\'));
-	if (index_->op_NotEqual(p_int(1)->op_UnaryMinus()).Value)
+	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
 	{
-		name_ = name_->Substring_(index_->op_Plus(p_int(1)));
+		name_ = name_->Substring_(index_->op_Add(p_int(1)));
 	}
 
 	return new ::Source_Text_(p_string("<default>"), name_, contents_);
@@ -550,22 +550,22 @@ auto ::Line_Info_::Count_() const -> p_int
 auto ::Line_Info_::Get_(p_int const index_) const -> ::Text_Line_ const *
 {
 	p_int const start_ = lineStarts_->op_Element(index_);
-	if (index_->op_Equal(lineStarts_->op_Magnitude()->op_Minus(p_int(1))).Value)
+	if (index_->op_Equal(lineStarts_->op_Magnitude()->op_Subtract(p_int(1))).Value)
 	{
 		return TextLineFromTo_(source_, start_, source_->ByteLength_());
 	}
 
-	p_int const end_ = lineStarts_->op_Element(index_->op_Plus(p_int(1)));
+	p_int const end_ = lineStarts_->op_Element(index_->op_Add(p_int(1)));
 	return TextLineFromTo_(source_, start_, end_);
 }
 
 auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 {
 	p_int left_ = p_int(0);
-	p_int right_ = lineStarts_->op_Magnitude()->op_Minus(p_int(1));
+	p_int right_ = lineStarts_->op_Magnitude()->op_Subtract(p_int(1));
 	while (left_->op_LessThanOrEqual(right_).Value)
 	{
-		p_int const mid_ = left_->op_Plus((right_->op_Minus(left_))->op_Divide(p_int(2)));
+		p_int const mid_ = left_->op_Add(right_->op_Subtract(left_)->op_Divide(p_int(2)));
 		if (lineStarts_->op_Element(mid_)->op_Equal(offset_).Value)
 		{
 			return mid_;
@@ -573,11 +573,11 @@ auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 
 		if (lineStarts_->op_Element(mid_)->op_LessThan(offset_).Value)
 		{
-			left_ = mid_->op_Plus(p_int(1));
+			left_ = mid_->op_Add(p_int(1));
 		}
 		else
 		{
-			right_ = mid_->op_Minus(p_int(1));
+			right_ = mid_->op_Subtract(p_int(1));
 		}
 	}
 
@@ -608,15 +608,15 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 		p_code_point const c_ = Text_->op_Element(position_);
 		if (LogicalAnd(c_->op_GreaterThan(p_code_point('\r')), [&] { return c_->op_LessThanOrEqual(p_code_point('\x7F')); }).Value)
 		{
-			position_->op_PlusAssign(p_int(1));
+			position_->op_AddAssign(p_int(1));
 			continue;
 		}
 
 		if (c_->op_Equal(p_code_point('\r')).Value)
 		{
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(length_), [&] { return Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('\n')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(length_), [&] { return Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('\n')); }).Value)
 			{
-				position_->op_PlusAssign(p_int(1));
+				position_->op_AddAssign(p_int(1));
 			}
 		}
 		else if (LogicalOr(LogicalOr(LogicalOr(c_->op_Equal(p_code_point('\n')), [&] { return c_->op_Equal(p_code_point('\x0B')); }), [&] { return c_->op_Equal(p_code_point('\f')); }), [&] { return c_->op_Equal(p_code_point('\x85')); }).Value)
@@ -624,16 +624,16 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 		}
 		else
 		{
-			position_->op_PlusAssign(p_int(1));
+			position_->op_AddAssign(p_int(1));
 			continue;
 		}
 
-		if (position_->op_Plus(p_int(1))->op_LessThan(length_).Value)
+		if (position_->op_Add(p_int(1))->op_LessThan(length_).Value)
 		{
-			lineStarts_->Add_(position_->op_Plus(p_int(1)));
+			lineStarts_->Add_(position_->op_Add(p_int(1)));
 		}
 
-		position_->op_PlusAssign(p_int(1));
+		position_->op_AddAssign(p_int(1));
 	}
 
 	return lineStarts_;
@@ -648,7 +648,7 @@ auto ::Source_Text_::PositionOfStart_(::Text_Span_ const *const span_) const -> 
 {
 	p_int const offset_ = span_->Start_;
 	p_int const lineNumber_ = Lines_->LineNumber_(offset_);
-	return new ::Text_Position_(offset_, lineNumber_, offset_->op_Minus(Lines_->Get_(lineNumber_)->Start_));
+	return new ::Text_Position_(offset_, lineNumber_, offset_->op_Subtract(Lines_->Get_(lineNumber_)->Start_));
 }
 
 ::Text_Line_::Text_Line_(::Source_Text_ const *const source_, p_int const start_, p_int const length_)
@@ -660,12 +660,12 @@ auto ::Source_Text_::PositionOfStart_(::Text_Span_ const *const span_) const -> 
 
 auto ::Text_Line_::End_() const -> p_int
 {
-	return Start_->op_Plus(Length_);
+	return Start_->op_Add(Length_);
 }
 
 auto TextLineFromTo_(::Source_Text_ const *const source_, p_int const start_, p_int const end_) -> ::Text_Line_ const *
 {
-	return new ::Text_Line_(source_, start_, end_->op_Minus(start_));
+	return new ::Text_Line_(source_, start_, end_->op_Subtract(start_));
 }
 
 ::Text_Position_::Text_Position_(p_int const offset_, p_int const line_, p_int const column_)
@@ -687,17 +687,17 @@ auto TextLineFromTo_(::Source_Text_ const *const source_, p_int const start_, p_
 
 auto ::Text_Span_::FromTo_(p_int const start_, p_int const end_) -> ::Text_Span_ const *
 {
-	return new ::Text_Span_(start_, end_->op_Minus(start_));
+	return new ::Text_Span_(start_, end_->op_Subtract(start_));
 }
 
 auto ::Text_Span_::End_() const -> p_int
 {
-	return Start_->op_Plus(Length_);
+	return Start_->op_Add(Length_);
 }
 
 auto FormatError_(p_string const message_) -> p_string
 {
-	return p_string("<$ ")->op_Plus(message_)->op_Plus(p_string(" $>"));
+	return p_string("<$ ")->op_Add(message_)->op_Add(p_string(" $>"));
 }
 
 ::Source_File_Builder_::Source_File_Builder_()
@@ -821,13 +821,13 @@ auto ::CompilationUnitParser_::ExpectToken_(p_int const tokenType_) -> ::Syntax_
 {
 	if (token_->op_Equal(::None).Value)
 	{
-		Definitions_->Error_(p_string("Expected token type ")->op_Plus(tokenType_)->op_Plus(p_string(", found end of token stream")));
+		Definitions_->Error_(p_string("Expected token type ")->op_Add(tokenType_)->op_Add(p_string(", found end of token stream")));
 		return new ::Syntax_Node_(Error_, token_->Source_, token_->Start_, token_->Length_);
 	}
 
 	if (token_->Type_->op_NotEqual(tokenType_).Value)
 	{
-		Definitions_->Error_(p_string("Expected token type ")->op_Plus(tokenType_)->op_Plus(p_string(", found `"))->op_Plus(token_->GetText_())->op_Plus(p_string("` of type "))->op_Plus(token_->Type_));
+		Definitions_->Error_(p_string("Expected token type ")->op_Add(tokenType_)->op_Add(p_string(", found `"))->op_Add(token_->GetText_())->op_Add(p_string("` of type "))->op_Add(token_->Type_));
 		token_ = tokenStream_->GetNextToken_();
 		return new ::Syntax_Node_(Error_, token_->Source_, token_->Start_, token_->Length_);
 	}
@@ -852,7 +852,7 @@ auto ::CompilationUnitParser_::Expect_(p_string const expected_) -> void
 {
 	if (token_->GetText_()->op_NotEqual(expected_).Value)
 	{
-		Definitions_->Error_(p_string("Expected `")->op_Plus(expected_)->op_Plus(p_string("` but found `"))->op_Plus(token_->GetText_())->op_Plus(p_string("`")));
+		Definitions_->Error_(p_string("Expected `")->op_Add(expected_)->op_Add(p_string("` but found `"))->op_Add(token_->GetText_())->op_Add(p_string("`")));
 		token_ = tokenStream_->GetNextToken_();
 	}
 	else
@@ -1051,7 +1051,7 @@ auto ::CompilationUnitParser_::ParseExpression_(p_int const minPrecedence_) -> :
 		p_bool leftAssociative_;
 		p_bool suffixOperator_ = p_bool(false);
 		p_int expressionType_;
-		if (LogicalAnd((LogicalOr(LogicalOr(token_->Type_->op_Equal(Equals_), [&] { return token_->Type_->op_Equal(PlusEquals_); }), [&] { return token_->Type_->op_Equal(MinusEquals_); })), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(1)); }).Value)
+		if (LogicalAnd(LogicalOr(LogicalOr(token_->Type_->op_Equal(Equals_), [&] { return token_->Type_->op_Equal(PlusEquals_); }), [&] { return token_->Type_->op_Equal(MinusEquals_); }), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(1)); }).Value)
 		{
 			precedence_ = p_int(1);
 			leftAssociative_ = p_bool(false);
@@ -1086,7 +1086,7 @@ auto ::CompilationUnitParser_::ParseExpression_(p_int const minPrecedence_) -> :
 			children_->Add_(ExpectToken_(LessThanGreaterThan_));
 			expressionType_ = NotEqualExpression_;
 		}
-		else if (LogicalAnd((LogicalOr(LogicalOr(LogicalOr(token_->Type_->op_Equal(LessThan_), [&] { return token_->Type_->op_Equal(LessThanEquals_); }), [&] { return token_->Type_->op_Equal(GreaterThan_); }), [&] { return token_->Type_->op_Equal(GreaterThanEquals_); })), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(5)); }).Value)
+		else if (LogicalAnd(LogicalOr(LogicalOr(LogicalOr(token_->Type_->op_Equal(LessThan_), [&] { return token_->Type_->op_Equal(LessThanEquals_); }), [&] { return token_->Type_->op_Equal(GreaterThan_); }), [&] { return token_->Type_->op_Equal(GreaterThanEquals_); }), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(5)); }).Value)
 		{
 			precedence_ = p_int(5);
 			leftAssociative_ = p_bool(true);
@@ -1162,7 +1162,7 @@ auto ::CompilationUnitParser_::ParseExpression_(p_int const minPrecedence_) -> :
 		{
 			if (leftAssociative_.Value)
 			{
-				precedence_->op_PlusAssign(p_int(1));
+				precedence_->op_AddAssign(p_int(1));
 			}
 
 			::Syntax_Node_ const *const rhs_ = ParseExpression_(precedence_);
@@ -1538,8 +1538,8 @@ auto ::Parser_::ParsePackage_(::System_::Collections_::List_<::Source_Text_ cons
 	{
 		Source_ = children_->op_Element(p_int(0))->Source_;
 		Start_ = children_->op_Element(p_int(0))->Start_;
-		::Syntax_Node_ const *const lastChild_ = children_->op_Element(children_->op_Magnitude()->op_Minus(p_int(1)));
-		Length_ = lastChild_->Start_->op_Minus(Start_)->op_Plus(lastChild_->Length_);
+		::Syntax_Node_ const *const lastChild_ = children_->op_Element(children_->op_Magnitude()->op_Subtract(p_int(1)));
+		Length_ = lastChild_->Start_->op_Subtract(Start_)->op_Add(lastChild_->Length_);
 	}
 	else
 	{
@@ -1589,13 +1589,13 @@ auto ::Syntax_Node_::HasChildOfType_(p_int const type_) const -> p_bool
 
 auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 {
-	p_uint end_ = p_int(1)->op_UnaryMinus();
+	p_uint end_ = p_int(1)->op_Negate();
 	while (position_->op_LessThan(Source_->ByteLength_()).Value)
 	{
 		p_code_point const curChar_ = Source_->Text_->op_Element(position_);
 		if (LogicalOr(LogicalOr(LogicalOr(curChar_->op_Equal(p_code_point(' ')), [&] { return curChar_->op_Equal(p_code_point('\t')); }), [&] { return curChar_->op_Equal(p_code_point('\n')); }), [&] { return curChar_->op_Equal(p_code_point('\r')); }).Value)
 		{
-			position_->op_PlusAssign(p_int(1));
+			position_->op_AddAssign(p_int(1));
 			continue;
 		}
 		else if (curChar_->op_Equal(p_code_point('{')).Value)
@@ -1652,7 +1652,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 		else if (curChar_->op_Equal(p_code_point('=')).Value)
 		{
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
 				return NewOperator_(EqualsEquals_, p_int(2));
 			}
@@ -1661,7 +1661,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 		else if (curChar_->op_Equal(p_code_point('+')).Value)
 		{
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
 				return NewOperator_(PlusEquals_, p_int(2));
 			}
@@ -1670,12 +1670,12 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 		else if (curChar_->op_Equal(p_code_point('-')).Value)
 		{
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('>')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('>')); }).Value)
 			{
 				return NewOperator_(Arrow_, p_int(2));
 			}
 
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
 				return NewOperator_(MinusEquals_, p_int(2));
 			}
@@ -1684,27 +1684,27 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 		else if (curChar_->op_Equal(p_code_point('/')).Value)
 		{
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('/')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('/')); }).Value)
 			{
 				while (LogicalAnd(LogicalAnd(position_->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_)->op_NotEqual(p_code_point('\r')); }), [&] { return Source_->Text_->op_Element(position_)->op_NotEqual(p_code_point('\n')); }).Value)
 				{
-					position_->op_PlusAssign(p_int(1));
+					position_->op_AddAssign(p_int(1));
 				}
 
 				continue;
 			}
 
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('*')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('*')); }).Value)
 			{
-				position_->op_PlusAssign(p_int(2));
+				position_->op_AddAssign(p_int(2));
 				p_bool lastCharStar_ = p_bool(false);
-				while (LogicalAnd(position_->op_LessThan(Source_->ByteLength_()), [&] { return (LogicalAnd(lastCharStar_, [&] { return Source_->Text_->op_Element(position_)->op_Equal(p_code_point('/')); }))->op_Not(); }).Value)
+				while (LogicalAnd(position_->op_LessThan(Source_->ByteLength_()), [&] { return LogicalAnd(lastCharStar_, [&] { return Source_->Text_->op_Element(position_)->op_Equal(p_code_point('/')); })->op_Not(); }).Value)
 				{
 					lastCharStar_ = Source_->Text_->op_Element(position_)->op_Equal(p_code_point('*'));
-					position_->op_PlusAssign(p_int(1));
+					position_->op_AddAssign(p_int(1));
 				}
 
-				position_->op_PlusAssign(p_int(1));
+				position_->op_AddAssign(p_int(1));
 				continue;
 			}
 
@@ -1716,12 +1716,12 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 		else if (curChar_->op_Equal(p_code_point('<')).Value)
 		{
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('>')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('>')); }).Value)
 			{
 				return NewOperator_(LessThanGreaterThan_, p_int(2));
 			}
 
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
 				return NewOperator_(LessThanEquals_, p_int(2));
 			}
@@ -1730,7 +1730,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 		else if (curChar_->op_Equal(p_code_point('>')).Value)
 		{
-			if (LogicalAnd(position_->op_Plus(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Plus(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
+			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
 				return NewOperator_(GreaterThanEquals_, p_int(2));
 			}
@@ -1739,55 +1739,55 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 		else if (curChar_->op_Equal(p_code_point('"')).Value)
 		{
-			end_ = position_->op_Plus(p_int(1));
+			end_ = position_->op_Add(p_int(1));
 			p_bool escaped_ = p_bool(false);
-			while (LogicalAnd(end_->op_LessThan(Source_->ByteLength_()), [&] { return (LogicalOr(Source_->Text_->op_Element(end_)->op_NotEqual(p_code_point('"')), [&] { return escaped_; })); }).Value)
+			while (LogicalAnd(end_->op_LessThan(Source_->ByteLength_()), [&] { return LogicalOr(Source_->Text_->op_Element(end_)->op_NotEqual(p_code_point('"')), [&] { return escaped_; }); }).Value)
 			{
 				escaped_ = LogicalAnd(Source_->Text_->op_Element(end_)->op_Equal(p_code_point('\\')), [&] { return escaped_->op_Not(); });
-				end_->op_PlusAssign(p_int(1));
+				end_->op_AddAssign(p_int(1));
 			}
 
-			end_->op_PlusAssign(p_int(1));
+			end_->op_AddAssign(p_int(1));
 			return NewToken_(StringLiteral_, end_);
 		}
 		else if (curChar_->op_Equal(p_code_point('\'')).Value)
 		{
-			end_ = position_->op_Plus(p_int(1));
+			end_ = position_->op_Add(p_int(1));
 			p_bool escaped_ = p_bool(false);
-			while (LogicalAnd(end_->op_LessThan(Source_->ByteLength_()), [&] { return (LogicalOr(Source_->Text_->op_Element(end_)->op_NotEqual(p_code_point('\'')), [&] { return escaped_; })); }).Value)
+			while (LogicalAnd(end_->op_LessThan(Source_->ByteLength_()), [&] { return LogicalOr(Source_->Text_->op_Element(end_)->op_NotEqual(p_code_point('\'')), [&] { return escaped_; }); }).Value)
 			{
 				escaped_ = LogicalAnd(Source_->Text_->op_Element(end_)->op_Equal(p_code_point('\\')), [&] { return escaped_->op_Not(); });
-				end_->op_PlusAssign(p_int(1));
+				end_->op_AddAssign(p_int(1));
 			}
 
-			end_->op_PlusAssign(p_int(1));
+			end_->op_AddAssign(p_int(1));
 			return NewToken_(CodePointLiteral_, end_);
 		}
 		else
 		{
 			if (IsIdentifierChar_(curChar_).Value)
 			{
-				end_ = position_->op_Plus(p_int(1));
+				end_ = position_->op_Add(p_int(1));
 				while (IsIdentifierChar_(Source_->Text_->op_Element(end_)).Value)
 				{
-					end_->op_PlusAssign(p_int(1));
+					end_->op_AddAssign(p_int(1));
 				}
 
 				return NewIdentifierOrKeyword_(end_);
 			}
 
-			if ((IsNumberChar_(curChar_)).Value)
+			if (IsNumberChar_(curChar_).Value)
 			{
-				end_ = position_->op_Plus(p_int(1));
+				end_ = position_->op_Add(p_int(1));
 				while (IsNumberChar_(Source_->Text_->op_Element(end_)).Value)
 				{
-					end_->op_PlusAssign(p_int(1));
+					end_->op_AddAssign(p_int(1));
 				}
 
 				return NewToken_(Number_, end_);
 			}
 
-			return NewToken_(Error_, position_->op_Plus(p_int(1)));
+			return NewToken_(Error_, position_->op_Add(p_int(1)));
 		}
 	}
 
@@ -1796,7 +1796,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 
 auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Node_ const *
 {
-	p_uint const length_ = end_->op_Minus(position_);
+	p_uint const length_ = end_->op_Subtract(position_);
 	p_string const value_ = Source_->Text_->Substring_(position_, length_);
 	p_int type_;
 	if (value_->op_Equal(p_string("new")).Value)
@@ -1945,24 +1945,24 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Nod
 
 auto ::Token_Stream_::NewOperator_(p_int const type_) -> ::Syntax_Node_ const *
 {
-	return NewToken_(type_, position_->op_Plus(p_int(1)));
+	return NewToken_(type_, position_->op_Add(p_int(1)));
 }
 
 auto ::Token_Stream_::NewOperator_(p_int const type_, p_uint const length_) -> ::Syntax_Node_ const *
 {
-	return NewToken_(type_, position_->op_Plus(length_));
+	return NewToken_(type_, position_->op_Add(length_));
 }
 
 auto ::Token_Stream_::NewToken_(p_int const type_, p_uint const end_) -> ::Syntax_Node_ const *
 {
-	::Syntax_Node_ const *const token_ = new ::Syntax_Node_(type_, Source_, position_, end_->op_Minus(position_));
+	::Syntax_Node_ const *const token_ = new ::Syntax_Node_(type_, Source_, position_, end_->op_Subtract(position_));
 	position_ = end_;
 	return token_;
 }
 
 auto ::Token_Stream_::IsIdentifierChar_(p_code_point const c_) -> p_bool
 {
-	return LogicalOr(LogicalOr((LogicalAnd(c_->op_GreaterThanOrEqual(p_code_point('a')), [&] { return c_->op_LessThanOrEqual(p_code_point('z')); })), [&] { return (LogicalAnd(c_->op_GreaterThanOrEqual(p_code_point('A')), [&] { return c_->op_LessThanOrEqual(p_code_point('Z')); })); }), [&] { return c_->op_Equal(p_code_point('_')); });
+	return LogicalOr(LogicalOr(LogicalAnd(c_->op_GreaterThanOrEqual(p_code_point('a')), [&] { return c_->op_LessThanOrEqual(p_code_point('z')); }), [&] { return LogicalAnd(c_->op_GreaterThanOrEqual(p_code_point('A')), [&] { return c_->op_LessThanOrEqual(p_code_point('Z')); }); }), [&] { return c_->op_Equal(p_code_point('_')); });
 }
 
 auto ::Token_Stream_::IsNumberChar_(p_code_point const c_) -> p_bool
@@ -1994,7 +1994,7 @@ auto IsValueType_(::Syntax_Node_ const *const type_) -> p_bool
 
 	if (type_->Type_->op_Equal(QualifiedName_).Value)
 	{
-		return IsValueType_(type_->Children_->op_Element(type_->Children_->op_Magnitude()->op_Minus(p_int(1))));
+		return IsValueType_(type_->Children_->op_Element(type_->Children_->op_Magnitude()->op_Subtract(p_int(1))));
 	}
 
 	if (type_->Type_->op_Equal(GenericName_).Value)
@@ -2027,25 +2027,25 @@ auto ConvertType_(::Syntax_Node_ const *const type_) -> p_string
 			return keyword_->GetText_();
 		}
 
-		return p_string("p_")->op_Plus(keyword_->GetText_());
+		return p_string("p_")->op_Add(keyword_->GetText_());
 	}
 
 	if (type_->Type_->op_Equal(IdentifierName_).Value)
 	{
-		return p_string("::")->op_Plus(type_->GetText_())->op_Plus(p_string("_"));
+		return p_string("::")->op_Add(type_->GetText_())->op_Add(p_string("_"));
 	}
 
 	if (type_->Type_->op_Equal(QualifiedName_).Value)
 	{
-		return ConvertType_(type_->Children_->op_Element(p_int(0)))->op_Plus(ConvertType_(type_->Children_->op_Element(p_int(2))));
+		return ConvertType_(type_->Children_->op_Element(p_int(0)))->op_Add(ConvertType_(type_->Children_->op_Element(p_int(2))));
 	}
 
 	if (type_->Type_->op_Equal(GenericName_).Value)
 	{
-		return ConvertType_(type_->Children_->op_Element(p_int(0)))->op_Plus(p_string("<"))->op_Plus(ConvertType_(p_bool(true), type_->Children_->op_Element(p_int(2))))->op_Plus(p_string(">"));
+		return ConvertType_(type_->Children_->op_Element(p_int(0)))->op_Add(p_string("<"))->op_Add(ConvertType_(p_bool(true), type_->Children_->op_Element(p_int(2))))->op_Add(p_string(">"));
 	}
 
-	return FormatError_(p_string("Unexpected Token of type ")->op_Plus(type_->Type_)->op_Plus(p_string(" found in CovertType(), `"))->op_Plus(type_->GetText_())->op_Plus(p_string("`")));
+	return FormatError_(p_string("Unexpected Token of type ")->op_Add(type_->Type_)->op_Add(p_string(" found in CovertType(), `"))->op_Add(type_->GetText_())->op_Add(p_string("`")));
 }
 
 auto ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) -> p_string
@@ -2068,25 +2068,25 @@ auto ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) ->
 	{
 		if (nullable_.Value)
 		{
-			cppType_ = p_string("p_maybe<")->op_Plus(cppType_)->op_Plus(p_string(">"));
+			cppType_ = p_string("p_maybe<")->op_Add(cppType_)->op_Add(p_string(">"));
 		}
 
 		if (LogicalAnd(mutableBinding_->op_Not(), [&] { return mutableValue_->op_Not(); }).Value)
 		{
-			cppType_ = cppType_->op_Plus(p_string(" const"));
+			cppType_ = cppType_->op_Add(p_string(" const"));
 		}
 	}
 	else
 	{
 		if (mutableValue_->op_Not().Value)
 		{
-			cppType_ = cppType_->op_Plus(p_string(" const"));
+			cppType_ = cppType_->op_Add(p_string(" const"));
 		}
 
-		cppType_ = cppType_->op_Plus(p_string(" *"));
+		cppType_ = cppType_->op_Add(p_string(" *"));
 		if (mutableBinding_->op_Not().Value)
 		{
-			cppType_ = cppType_->op_Plus(p_string("const"));
+			cppType_ = cppType_->op_Add(p_string("const"));
 		}
 	}
 
@@ -2112,7 +2112,7 @@ auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, p_bool co
 			}
 
 			p_bool const mutableBinding_ = parameter_->HasChildOfType_(VarKeyword_);
-			::Syntax_Node_ const *const type_ = parameter_->Children_->op_Element(parameter_->Children_->op_Magnitude()->op_Minus(p_int(1)));
+			::Syntax_Node_ const *const type_ = parameter_->Children_->op_Element(parameter_->Children_->op_Magnitude()->op_Subtract(p_int(1)));
 			builder_->Append_(ConvertType_(mutableBinding_, type_));
 			builder_->Append_(p_string(" "));
 			builder_->Append_(parameter_->FirstChildOfType_(Identifier_)->GetText_());
@@ -2217,23 +2217,23 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	}
 	else if (syntax_->Type_->op_Equal(NumericLiteralExpression_).Value)
 	{
-		builder_->Write_(p_string("p_int(")->op_Plus(syntax_->GetText_())->op_Plus(p_string(")")));
+		builder_->Write_(p_string("p_int(")->op_Add(syntax_->GetText_())->op_Add(p_string(")")));
 	}
 	else if (LogicalOr(syntax_->Type_->op_Equal(TrueLiteralExpression_), [&] { return syntax_->Type_->op_Equal(FalseLiteralExpression_); }).Value)
 	{
-		builder_->Write_(p_string("p_bool(")->op_Plus(syntax_->GetText_())->op_Plus(p_string(")")));
+		builder_->Write_(p_string("p_bool(")->op_Add(syntax_->GetText_())->op_Add(p_string(")")));
 	}
 	else if (syntax_->Type_->op_Equal(CodePointLiteralExpression_).Value)
 	{
-		builder_->Write_(p_string("p_code_point(")->op_Plus(syntax_->GetText_())->op_Plus(p_string(")")));
+		builder_->Write_(p_string("p_code_point(")->op_Add(syntax_->GetText_())->op_Add(p_string(")")));
 	}
 	else if (syntax_->Type_->op_Equal(IdentifierName_).Value)
 	{
-		builder_->Write_(syntax_->GetText_()->op_Plus(p_string("_")));
+		builder_->Write_(syntax_->GetText_()->op_Add(p_string("_")));
 	}
 	else if (syntax_->Type_->op_Equal(StringLiteralExpression_).Value)
 	{
-		builder_->Write_(p_string("p_string(")->op_Plus(syntax_->GetText_())->op_Plus(p_string(")")));
+		builder_->Write_(p_string("p_string(")->op_Add(syntax_->GetText_())->op_Add(p_string(")")));
 	}
 	else if (syntax_->Type_->op_Equal(AssignmentExpression_).Value)
 	{
@@ -2260,7 +2260,7 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 			}
 			else
 			{
-				builder_->Error_(p_string("Unsupported assignment operator ")->op_Plus(operator_));
+				builder_->Error_(p_string("Unsupported assignment operator ")->op_Add(operator_));
 			}
 
 			builder_->Write_(p_string("("));
@@ -2305,7 +2305,7 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 		}
 		else
 		{
-			builder_->Error_(p_string("Unsupported comparision operator ")->op_Plus(operator_));
+			builder_->Error_(p_string("Unsupported comparision operator ")->op_Add(operator_));
 		}
 
 		builder_->Write_(p_string("("));
@@ -2383,7 +2383,7 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	}
 	else
 	{
-		builder_->Error_(p_string("Could not convert expression of type ")->op_Plus(syntax_->Type_));
+		builder_->Error_(p_string("Could not convert expression of type ")->op_Add(syntax_->Type_));
 	}
 }
 
@@ -2435,7 +2435,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 		p_bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
 		p_string const name_ = variableDeclaration_->FirstChildOfType_(Identifier_)->GetText_();
 		::Syntax_Node_ const *const type_ = variableDeclaration_->Children_->op_Element(p_int(3));
-		Definitions_->Write_(ConvertType_(mutableBinding_, type_)->op_Plus(p_string(" "))->op_Plus(name_)->op_Plus(p_string("_")));
+		Definitions_->Write_(ConvertType_(mutableBinding_, type_)->op_Add(p_string(" "))->op_Add(name_)->op_Add(p_string("_")));
 		Definitions_->Write_(p_string(" : *("));
 		ConvertExpression_(statement_->Children_->op_Element(p_int(3)), Definitions_);
 		Definitions_->EndLine_(p_string("))"));
@@ -2495,7 +2495,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 		::Syntax_Node_ const *const variableType_ = variableDeclaration_->Children_->op_Element(p_int(3));
 		p_bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
 		Definitions_->BeginLine_(ConvertType_(mutableBinding_, variableType_));
-		Definitions_->Write_(p_string(" ")->op_Plus(variableName_)->op_Plus(p_string("_")));
+		Definitions_->Write_(p_string(" ")->op_Add(variableName_)->op_Add(p_string("_")));
 		if (variableDeclaration_->HasChildOfType_(Equals_).Value)
 		{
 			Definitions_->Write_(p_string(" = "));
@@ -2512,7 +2512,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 	}
 	else
 	{
-		Definitions_->Error_(p_string("Could not emit statement of type ")->op_Plus(statement_->Type_));
+		Definitions_->Error_(p_string("Could not emit statement of type ")->op_Add(statement_->Type_));
 	}
 }
 
@@ -2521,9 +2521,9 @@ auto EmitClassMember_(::Syntax_Node_ const *const member_, p_string const classN
 	if (member_->Type_->op_Equal(ConstructorDeclaration_).Value)
 	{
 		p_string const parameters_ = ConvertParameterList_(member_->Children_->op_Element(p_int(2)));
-		ClassDeclarations_->WriteLine_(className_->op_Plus(p_string("_"))->op_Plus(parameters_)->op_Plus(p_string(";")));
+		ClassDeclarations_->WriteLine_(className_->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(";")));
 		Definitions_->ElementSeparatorLine_();
-		Definitions_->WriteLine_(p_string("::")->op_Plus(className_)->op_Plus(p_string("_::"))->op_Plus(className_)->op_Plus(p_string("_"))->op_Plus(parameters_)->op_Plus(p_string("")));
+		Definitions_->WriteLine_(p_string("::")->op_Add(className_)->op_Add(p_string("_::"))->op_Add(className_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string("")));
 		EmitStatement_(member_->Children_->op_Element(p_int(3)));
 	}
 	else if (member_->Type_->op_Equal(FieldDeclaration_).Value)
@@ -2532,7 +2532,7 @@ auto EmitClassMember_(::Syntax_Node_ const *const member_, p_string const classN
 		p_string const fieldName_ = variableDeclaration_->Children_->op_Element(p_int(1))->GetText_();
 		::Syntax_Node_ const *const fieldType_ = variableDeclaration_->Children_->op_Element(p_int(3));
 		p_string const cppType_ = ConvertType_(p_bool(true), fieldType_);
-		ClassDeclarations_->WriteLine_(cppType_->op_Plus(p_string(" "))->op_Plus(fieldName_)->op_Plus(p_string("_;")));
+		ClassDeclarations_->WriteLine_(cppType_->op_Add(p_string(" "))->op_Add(fieldName_)->op_Add(p_string("_;")));
 	}
 	else if (member_->Type_->op_Equal(MethodDeclaration_).Value)
 	{
@@ -2556,15 +2556,15 @@ auto EmitClassMember_(::Syntax_Node_ const *const member_, p_string const classN
 			constModifier_ = p_string("const ");
 		}
 
-		ClassDeclarations_->WriteLine_(staticModifier_->op_Plus(p_string("auto "))->op_Plus(methodName_)->op_Plus(p_string("_"))->op_Plus(parameters_)->op_Plus(p_string(" "))->op_Plus(constModifier_)->op_Plus(p_string("-> "))->op_Plus(cppType_)->op_Plus(p_string(";")));
+		ClassDeclarations_->WriteLine_(staticModifier_->op_Add(p_string("auto "))->op_Add(methodName_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" "))->op_Add(constModifier_)->op_Add(p_string("-> "))->op_Add(cppType_)->op_Add(p_string(";")));
 		Definitions_->ElementSeparatorLine_();
-		Definitions_->WriteLine_(p_string("auto ::")->op_Plus(className_)->op_Plus(p_string("_::"))->op_Plus(methodName_)->op_Plus(p_string("_"))->op_Plus(parameters_)->op_Plus(p_string(" "))->op_Plus(constModifier_)->op_Plus(p_string("-> "))->op_Plus(cppType_));
+		Definitions_->WriteLine_(p_string("auto ::")->op_Add(className_)->op_Add(p_string("_::"))->op_Add(methodName_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" "))->op_Add(constModifier_)->op_Add(p_string("-> "))->op_Add(cppType_));
 		::Syntax_Node_ const *const block_ = member_->Children_->op_Element(p_int(5));
 		EmitStatement_(block_);
 	}
 	else
 	{
-		Definitions_->Error_(p_string("Could not emit member of type ")->op_Plus(member_->Type_));
+		Definitions_->Error_(p_string("Could not emit member of type ")->op_Add(member_->Type_));
 	}
 }
 
@@ -2578,7 +2578,7 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 		p_bool const mutableBinding_ = variableDeclaration_->HasChildOfType_(VarKeyword_);
 		p_string const cppType_ = ConvertType_(mutableBinding_, variableType_);
 		GlobalDefinitions_->BeginLine_(cppType_);
-		GlobalDefinitions_->Write_(p_string(" ")->op_Plus(variableName_)->op_Plus(p_string("_ = ")));
+		GlobalDefinitions_->Write_(p_string(" ")->op_Add(variableName_)->op_Add(p_string("_ = ")));
 		::Syntax_Node_ const *const expression_ = variableDeclaration_->Children_->op_Element(p_int(5));
 		ConvertExpression_(expression_, GlobalDefinitions_);
 		GlobalDefinitions_->EndLine_(p_string(";"));
@@ -2586,13 +2586,13 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 	else if (declaration_->Type_->op_Equal(ClassDeclaration_).Value)
 	{
 		p_string const className_ = declaration_->Children_->op_Element(p_int(2))->GetText_();
-		TypeDeclarations_->WriteLine_(p_string("class ")->op_Plus(className_)->op_Plus(p_string("_;")));
+		TypeDeclarations_->WriteLine_(p_string("class ")->op_Add(className_)->op_Add(p_string("_;")));
 		ClassDeclarations_->ElementSeparatorLine_();
-		ClassDeclarations_->WriteLine_(p_string("class ")->op_Plus(className_)->op_Plus(p_string("_")));
+		ClassDeclarations_->WriteLine_(p_string("class ")->op_Add(className_)->op_Add(p_string("_")));
 		ClassDeclarations_->BeginBlock_();
 		ClassDeclarations_->EndLine_(p_string("public:"));
-		ClassDeclarations_->WriteLine_(p_string("p_bool op_Equal(")->op_Plus(className_)->op_Plus(p_string("_ const * other) const { return this == other; }")));
-		ClassDeclarations_->WriteLine_(p_string("p_bool op_NotEqual(")->op_Plus(className_)->op_Plus(p_string("_ const * other) const { return this != other; }")));
+		ClassDeclarations_->WriteLine_(p_string("p_bool op_Equal(")->op_Add(className_)->op_Add(p_string("_ const * other) const { return this == other; }")));
+		ClassDeclarations_->WriteLine_(p_string("p_bool op_NotEqual(")->op_Add(className_)->op_Add(p_string("_ const * other) const { return this != other; }")));
 		for (::Syntax_Node_ const *const member_ : *(declaration_->Children_))
 		{
 			if (LogicalOr(LogicalOr(member_->Type_->op_Equal(ConstructorDeclaration_), [&] { return member_->Type_->op_Equal(FieldDeclaration_); }), [&] { return member_->Type_->op_Equal(MethodDeclaration_); }).Value)
@@ -2606,16 +2606,16 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 	else if (declaration_->Type_->op_Equal(EnumDeclaration_).Value)
 	{
 		p_string const enumName_ = declaration_->Children_->op_Element(p_int(3))->GetText_();
-		TypeDeclarations_->WriteLine_(p_string("enum class ")->op_Plus(enumName_)->op_Plus(p_string("_;")));
+		TypeDeclarations_->WriteLine_(p_string("enum class ")->op_Add(enumName_)->op_Add(p_string("_;")));
 		ClassDeclarations_->ElementSeparatorLine_();
-		ClassDeclarations_->WriteLine_(p_string("enum class ")->op_Plus(enumName_)->op_Plus(p_string("_")));
+		ClassDeclarations_->WriteLine_(p_string("enum class ")->op_Add(enumName_)->op_Add(p_string("_")));
 		ClassDeclarations_->BeginBlock_();
 		for (::Syntax_Node_ const *const member_ : *(declaration_->Children_))
 		{
 			if (member_->Type_->op_Equal(EnumMemberDeclaration_).Value)
 			{
 				p_string const memberName_ = member_->Children_->op_Element(p_int(0))->GetText_();
-				ClassDeclarations_->BeginLine_(memberName_->op_Plus(p_string("_")));
+				ClassDeclarations_->BeginLine_(memberName_->op_Add(p_string("_")));
 				::Syntax_Node_ const *const memberValue_ = member_->FirstChildOfType_(Number_);
 				if (memberValue_->op_NotEqual(::None).Value)
 				{
@@ -2636,9 +2636,9 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 		p_string const parameters_ = ConvertParameterList_(declaration_->Children_->op_Element(p_int(2)), isMain_);
 		::Syntax_Node_ const *const returnType_ = declaration_->Children_->op_Element(p_int(4));
 		p_string const cppType_ = ConvertType_(p_bool(true), returnType_);
-		FunctionDeclarations_->WriteLine_(p_string("auto ")->op_Plus(name_)->op_Plus(p_string("_"))->op_Plus(parameters_)->op_Plus(p_string(" -> "))->op_Plus(cppType_)->op_Plus(p_string(";")));
+		FunctionDeclarations_->WriteLine_(p_string("auto ")->op_Add(name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" -> "))->op_Add(cppType_)->op_Add(p_string(";")));
 		Definitions_->ElementSeparatorLine_();
-		Definitions_->WriteLine_(p_string("auto ")->op_Plus(name_)->op_Plus(p_string("_"))->op_Plus(parameters_)->op_Plus(p_string(" -> "))->op_Plus(cppType_));
+		Definitions_->WriteLine_(p_string("auto ")->op_Add(name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" -> "))->op_Add(cppType_));
 		if (isMain_.Value)
 		{
 			if (MainFunctionReturnType_->op_NotEqual(p_string("")).Value)
@@ -2653,7 +2653,7 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 	}
 	else
 	{
-		Definitions_->Error_(p_string("Could not emit declaration of type ")->op_Plus(declaration_->Type_));
+		Definitions_->Error_(p_string("Could not emit declaration of type ")->op_Add(declaration_->Type_));
 	}
 }
 
@@ -2726,12 +2726,12 @@ auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const 
 
 	if (MainFunctionReturnType_->op_Equal(p_string("void")).Value)
 	{
-		Definitions_->WriteLine_(p_string("Main_(")->op_Plus(args_->ToString_())->op_Plus(p_string(");")));
+		Definitions_->WriteLine_(p_string("Main_(")->op_Add(args_->ToString_())->op_Add(p_string(");")));
 		Definitions_->WriteLine_(p_string("return 0;"));
 	}
 	else
 	{
-		Definitions_->WriteLine_(p_string("return Main_(")->op_Plus(args_->ToString_())->op_Plus(p_string(").Value;")));
+		Definitions_->WriteLine_(p_string("return Main_(")->op_Add(args_->ToString_())->op_Add(p_string(").Value;")));
 	}
 
 	Definitions_->EndBlock_();
@@ -2740,8 +2740,8 @@ auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const 
 // Entry Point Adapter
 std::int32_t main(int argc, char const *const * argv)
 {
-	resource_manager_->AddResource(p_string("RuntimeLibrary.cpp"), p_string("#include \"RuntimeLibrary.h\"\n#include <map>\n\np_uint p_int::AsUInt_() const\n{\n	if(this->Value < 0)\n		throw \"Can't convert negative number to unsigned\";\n\n	return this->Value;\n}\n\nchar p_code_point::CharValue() const\n{\n	if(this->Value > 0xFF)\n		throw \"Unicode char values not yet supported\";\n\n	return this->Value;\n}\n\np_string::p_string()\n	: Length(0), Buffer(0)\n{\n}\n\np_string::p_string(p_code_point c, p_int repeat)\n	: Length(repeat.Value)\n{\n	char* buffer = new char[repeat.Value];\n	for (int i = 0; i < repeat.Value; i++)\n		buffer[i] = c.CharValue();\n\n	Buffer = buffer;\n}\n\np_string::p_string(const char* s)\n	: Length(std::strlen(s)), Buffer(s)\n{\n}\n\np_string::p_string(int length, const char* s)\n	: Length(length), Buffer(s)\n{\n}\n\nchar const * p_string::cstr() const\n{\n	auto buffer = new char[Length + 1];\n	std::memcpy(buffer, Buffer, Length);\n	buffer[Length] = 0;\n	return buffer;\n}\n\np_string::p_string(p_int other)\n	: Length(0), Buffer(0)\n{\n	char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator\n	std::sprintf(buffer,\"%d\", other.Value);\n	Length = std::strlen(buffer);\n	Buffer = buffer;\n}\n\np_string p_string::Substring_(p_int start, p_int length) const\n{\n	return p_string(length.Value, Buffer + start.Value);\n}\n\np_string p_string::Replace_(p_string oldValue, p_string newValue) const\n{\n	p_string buffer = \"\";\n	int limit = Length - oldValue.Length + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length).op_Equal(oldValue).Value)\n		{\n			buffer = buffer.op_Add(Substring_(lastIndex, i-lastIndex)).op_Add(newValue);\n			i += oldValue.Length; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer.op_Add(Substring_(lastIndex, Length - lastIndex));\n	return buffer;\n}\n\np_int p_string::LastIndexOf_(p_code_point c) const\n{\n	for(int i = Length - 1; i >= 0; i--)\n		if(Buffer[i] == c.CharValue())\n			return i;\n\n	return -1;\n}\n\np_string p_string::op_Add(p_string const & value) const\n{\n	int newLength = Length + value.Length;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char) * Length;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length);\n	return p_string(newLength, chars);\n}\n\np_bool p_string::op_Equal(p_string const & other) const\n{\n	if (Length != other.Length)\n		return false;\n\n	for (int i = 0; i < Length; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (p_string const & lhs, p_string const & rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<p_string, p_string> resourceValues;\n\np_string const & ResourceManager::GetString_(p_string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(p_string name, p_string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace System_\n{\n	namespace Console_\n	{\n		void Console_::Write_(p_string value)\n		{\n			std::printf(\"%.*s\", value.Length, value.Buffer);\n		}\n\n		void Console_::WriteLine_(p_string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count(argc-1)\n		{\n			args = new p_string[Count];\n			for (int i = 0; i < Count; i++)\n				args[i] = p_string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		File_Reader_::File_Reader_(const p_string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		p_string File_Reader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return p_string(length, buffer);\n		}\n\n		void File_Reader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		File_Writer_::File_Writer_(const p_string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void File_Writer_::Write_(const p_string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length, file);\n		}\n\n		void File_Writer_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		String_Builder_::String_Builder_(p_string const & value)\n			: buffer(value)\n		{\n		}\n\n		String_Builder_::String_Builder_()\n			: buffer(\"\")\n		{\n		}\n\n		void String_Builder_::Append_(p_string const & value)\n		{\n			buffer = buffer.op_Add(value);\n		}\n\n		void String_Builder_::Append_(String_Builder_ const * value)\n		{\n			buffer = buffer.op_Add(value->buffer);\n		}\n\n		void String_Builder_::AppendLine_(p_string const & value)\n		{\n			buffer = buffer.op_Add(value).op_Add(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::AppendLine_()\n		{\n			buffer = buffer.op_Add(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::Remove_(p_int start, p_int length)\n		{\n			buffer = buffer.Substring_(0, start).op_Add(buffer.Substring_(start.Value+length.Value));\n		}\n\n		void String_Builder_::Remove_(p_int start)\n		{\n			String_Builder_::Remove_(start, buffer.Length-start.Value);\n		}\n	}\n}\n"));
-	resource_manager_->AddResource(p_string("RuntimeLibrary.h"), p_string("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n\ntemplate<typename T, typename F>\nT LogicalAnd(T const & lhs, F rhs)\n{\n	return lhs.op_False().Value ? lhs : lhs.op_And(rhs());\n}\n\ntemplate<typename T, typename F>\nT LogicalOr(T const & lhs, F rhs)\n{\n	return lhs.op_True().Value ? lhs : lhs.op_Or(rhs());\n}\n\nstruct p_bool\n{\npublic:\n	// Runtime Use Members\n	bool Value;\n\n	p_bool(): Value(false) {}\n	p_bool(bool value): Value(value) {}\n	p_bool * operator->() { return this; }\n	p_bool const * operator->() const { return this; }\n	p_bool & operator* () { return *this; }\n	p_bool const & operator* () const { return *this; }\n\n	// Adamant Members\n	p_bool op_Not() const { return !this->Value; }\n	p_bool op_True() const { return this->Value; }\n	p_bool op_False() const { return !this->Value; }\n	p_bool op_And(p_bool other) const { return this->Value & other.Value; }\n	p_bool op_Or(p_bool other) const { return this->Value | other.Value; }\n};\n\nstruct p_uint;\n\nstruct p_int\n{\npublic:\n	// Runtime Use Members\n	std::int32_t Value;\n\n	p_int(std::int32_t value): Value(value) {}\n	p_int * operator->() { return this; }\n	p_int const * operator->() const { return this; }\n	p_int & operator* () { return *this; }\n	p_int const & operator* () const { return *this; }\n\n	// Hack to support conversion of uint to int for now\n	p_int(p_uint value);\n\n	// Adamant Members\n	p_int(): Value(0) {}\n	void op_AddAssign(p_int other) { this->Value += other.Value; }\n	void op_SubtractAssign(p_int other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_int other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_int other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_int other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_int other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_int other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_int other) const { return this->Value >= other.Value; }\n	p_int op_Add(p_int other) const { return this->Value + other.Value; }\n	p_int op_Subtract(p_int other) const { return this->Value - other.Value; }\n	p_int op_Negate() const { return -this->Value; }\n	p_int op_Multiply(p_int other) const { return this->Value * other.Value; }\n	p_int op_Divide(p_int other) const { return this->Value / other.Value; }\n	p_int op_Remainder(p_int other) const { return this->Value % other.Value; }\n	p_int op_Magnitude() const { if(this->Value==INT32_MIN) throw \"Overflow exception\"; return this->Value < 0 ? -this->Value : this->Value; }\n\n	// Hack because we don't support as correctly yet\n	p_uint AsUInt_() const;\n};\n\nstruct p_uint\n{\npublic:\n	// Runtime Use Members\n	std::uint32_t Value;\n\n	p_uint(std::uint32_t value): Value(value) {}\n	p_uint * operator->() { return this; }\n	p_uint const * operator->() const { return this; }\n	p_uint & operator* () { return *this; }\n	p_uint const & operator* () const { return *this; }\n\n	// Hack to support conversion of int to uint for now\n	p_uint(p_int value): Value(value.Value) {}\n\n	// Adamant Members\n	p_uint(): Value(0) {}\n	void op_AddAssign(p_uint other) { this->Value += other.Value; }\n	void op_SubtractAssign(p_uint other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_uint other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_uint other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_uint other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_uint other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_uint other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_uint other) const { return this->Value >= other.Value; }\n	p_uint op_Add(p_uint other) const { return this->Value + other.Value; }\n	p_uint op_Subtract(p_uint other) const { return this->Value - other.Value; }\n};\n\ninline p_int::p_int(p_uint value)\n	: Value(value.Value)\n{\n}\n\nstruct p_code_point\n{\nprivate:\n	std::int32_t Value;\n\npublic:\n	// Runtime Use Members\n	p_code_point(): Value(0) {}\n	p_code_point(char value): Value(value) {}\n	p_code_point * operator->() { return this; }\n	p_code_point const * operator->() const { return this; }\n	p_code_point & operator* () { return *this; }\n	p_code_point const & operator* () const { return *this; }\n	char CharValue() const;\n\n	// Adamant Members\n	p_bool op_Equal(p_code_point const & other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_code_point const & other) const { return this->Value != other.Value; }\n	// TODO: Not sure code_point should support these operations\n	p_bool op_LessThan(p_code_point other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_code_point other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_code_point other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_code_point other) const { return this->Value >= other.Value; }\n\n};\n\nstruct p_string\n{\npublic:\n	// Runtime Use Members\n	char const * Buffer;\n	int Length;\n\n	p_string();\n	p_string(char const * s);\n	p_string(int length, char const * s);\n	char const * cstr() const;\n	p_string const * operator->() const { return this; }\n	p_string const & operator* () const { return *this; }\n\n	typedef char const * const_iterator;\n	const_iterator begin() const { return &Buffer[0]; }\n	const_iterator end() const { return &Buffer[Length]; }\n\n	// Hack to support conversion of integers to strings for now\n	p_string(p_int other);\n\n	// Adamant Members\n	// TODO ByteLength should be a property\n	p_int ByteLength_() const { return this->Length; }\n\n	p_string(p_code_point c, p_int repeat);\n\n	p_string Substring_(p_int start, p_int length) const;\n	p_string Substring_(p_int start) const { return Substring_(start, Length-start.Value); }\n	p_string Replace_(p_string oldValue, p_string newValue) const;\n	p_int LastIndexOf_(p_code_point c) const;\n\n	p_code_point op_Element(p_int const index) const { return Buffer[index.Value]; }\n	p_string op_Add(p_string const & value) const;\n	p_bool op_Equal(p_string const & other) const;\n	p_bool op_NotEqual(p_string const & other) const { return !this->op_Equal(other).Value; }\n	p_bool op_LessThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }\n	p_bool op_LessThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }\n	p_bool op_GreaterThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }\n	p_bool op_GreaterThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }\n};\n\nclass ResourceManager\n{\npublic:\n	p_string const & GetString_(p_string resourceName);\n	void AddResource(p_string name, p_string value);\n};\n\nextern ResourceManager *const resource_manager_;\n\nclass NoneType\n{\npublic:\n	template<class T>\n	operator T*() const { return static_cast<T*>(0); }\n};\nstatic const NoneType None = NoneType();\n\ntemplate<typename T>\nstruct p_maybe\n{\nprivate:\n	T data;\n	bool hasValue;\n\npublic:\n	p_maybe(T const & value) : data(value), hasValue(true) {}\n	p_maybe(::NoneType const & none) : hasValue(false) {}\n	T& operator->()\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator->() const\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T  & operator* ()\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator* () const\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	bool operator==(T const & other) const\n	{\n		return hasValue && data == other;\n	}\n	bool operator!=(T const & other) const\n	{\n		return !hasValue || data != other;\n	}\n};\n\ntemplate<typename T>\nstruct p_maybe<T*>\n{\nprivate:\n	T* data;\n\npublic:\n	p_maybe(T* value) : data(value)\n	{\n		if(value == 0) throw \"Constructing p_maybe with null pointer\";\n	}\n	p_maybe(::NoneType const & none) : data(0) {}\n	T* operator->()\n	{\n		if(data == 0) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator->() const\n	{\n		if(data == 0) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T & operator* ()\n	{\n		if(data == 0) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator* () const\n	{\n		if(data == 0) throw \"Access to null Maybe value\";\n		return data;\n	}\n	bool operator==(T* other) const\n	{\n		return data != 0 && data == other;\n	}\n	bool operator!=(T* other) const\n	{\n		return data == 0 || data != other;\n	}\n};\n\nnamespace System_\n{\n	namespace Collections_\n	{\n		template<typename T>\n		class List_\n		{\n		private:\n			T* values;\n			int length;\n			int capacity;\n\n		public:\n			// Runtime Use Members\n			typedef T const * const_iterator;\n			const_iterator begin() const { return values; }\n			const_iterator end() const { return &values[length]; }\n\n			// Adamant Members\n			List_() : values(0), length(0), capacity(0) { }\n			void Add_(T value);\n			p_int op_Magnitude() const { return length; }\n			T const & op_Element(p_int const index) const { return values[index.Value]; }\n		};\n\n		template<typename T>\n		void List_<T>::Add_(T value)\n		{\n			if(length >= capacity)\n			{\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\n				T* newValues = new T[newCapacity];\n				std::memcpy(newValues, values, length * sizeof(T));\n				values = newValues;\n				capacity = newCapacity;\n			}\n			values[length] = value;\n			length++;\n		}\n	}\n\n	namespace Console_\n	{\n		class Console_\n		{\n		public:\n			void Write_(p_string value);\n			void WriteLine_(p_string value);\n			void WriteLine_();\n		};\n\n		class Arguments_\n		{\n		private:\n			p_string* args;\n		public:\n			// Runtime Use Members\n			typedef p_string const * const_iterator;\n\n			Arguments_(int argc, char const *const * argv);\n			const_iterator begin() const { return &args[0]; }\n			const_iterator end() const { return &args[Count]; }\n\n			const int Count;\n\n			// Adamant Members\n\n			p_int op_Magnitude() const { return Count; }\n			p_string const & Get_(int const index) const { return args[index]; }\n		};\n	}\n\n	namespace IO_\n	{\n		class File_Reader_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Reader_(const p_string& fileName);\n			p_string ReadToEndSync_();\n			void Close_();\n		};\n\n		class File_Writer_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Writer_(const p_string& fileName);\n			void Write_(const p_string& value);\n			void Close_();\n		};\n	}\n\n	namespace Text_\n	{\n		class String_Builder_\n		{\n		private:\n			p_string buffer;\n		public:\n			String_Builder_();\n			String_Builder_(p_string const & value);\n			void Append_(p_string const & value);\n			void Append_(String_Builder_ const * value);\n			void AppendLine_(p_string const& value);\n			void AppendLine_();\n			void Remove_(p_int start, p_int length);\n			void Remove_(p_int start);\n			p_string ToString_() const { return buffer; }\n		};\n	}\n}\n"));
+	resource_manager_->AddResource(p_string("RuntimeLibrary.cpp"), p_string("#include \"RuntimeLibrary.h\"\n#include <map>\n\np_uint p_int::AsUInt_() const\n{\n	if(this->Value < 0)\n		throw \"Can't convert negative number to unsigned\";\n\n	return this->Value;\n}\n\nchar p_code_point::CharValue() const\n{\n	if(this->Value > 0xFF)\n		throw \"Unicode char values not yet supported\";\n\n	return this->Value;\n}\n\np_string::p_string()\n	: Length(0), Buffer(0)\n{\n}\n\np_string::p_string(p_code_point c, p_int repeat)\n	: Length(repeat.Value)\n{\n	char* buffer = new char[repeat.Value];\n	for (int i = 0; i < repeat.Value; i++)\n		buffer[i] = c.CharValue();\n\n	Buffer = buffer;\n}\n\np_string::p_string(const char* s)\n	: Length(std::strlen(s)), Buffer(s)\n{\n}\n\np_string::p_string(int length, const char* s)\n	: Length(length), Buffer(s)\n{\n}\n\nchar const * p_string::cstr() const\n{\n	auto buffer = new char[Length + 1];\n	std::memcpy(buffer, Buffer, Length);\n	buffer[Length] = 0;\n	return buffer;\n}\n\np_string::p_string(p_int other)\n	: Length(0), Buffer(0)\n{\n	char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator\n	std::sprintf(buffer,\"%d\", other.Value);\n	Length = std::strlen(buffer);\n	Buffer = buffer;\n}\n\np_string::p_string(p_code_point other)\n	: Length(1), Buffer(new char[1] { other.CharValue() })\n{\n}\n\np_string p_string::Substring_(p_int start, p_int length) const\n{\n	return p_string(length.Value, Buffer + start.Value);\n}\n\np_string p_string::Replace_(p_string oldValue, p_string newValue) const\n{\n	p_string buffer = \"\";\n	int limit = Length - oldValue.Length + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length).op_Equal(oldValue).Value)\n		{\n			buffer = buffer.op_Add(Substring_(lastIndex, i-lastIndex)).op_Add(newValue);\n			i += oldValue.Length; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer.op_Add(Substring_(lastIndex, Length - lastIndex));\n	return buffer;\n}\n\np_int p_string::LastIndexOf_(p_code_point c) const\n{\n	for(int i = Length - 1; i >= 0; i--)\n		if(Buffer[i] == c.CharValue())\n			return i;\n\n	return -1;\n}\n\np_string p_string::op_Add(p_string const & value) const\n{\n	int newLength = Length + value.Length;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char) * Length;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length);\n	return p_string(newLength, chars);\n}\n\np_bool p_string::op_Equal(p_string const & other) const\n{\n	if (Length != other.Length)\n		return false;\n\n	for (int i = 0; i < Length; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (p_string const & lhs, p_string const & rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<p_string, p_string> resourceValues;\n\np_string const & ResourceManager::GetString_(p_string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(p_string name, p_string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace System_\n{\n	namespace Console_\n	{\n		void Console_::Write_(p_string value)\n		{\n			std::printf(\"%.*s\", value.Length, value.Buffer);\n		}\n\n		void Console_::WriteLine_(p_string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count(argc-1)\n		{\n			args = new p_string[Count];\n			for (int i = 0; i < Count; i++)\n				args[i] = p_string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		File_Reader_::File_Reader_(const p_string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		p_string File_Reader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return p_string(length, buffer);\n		}\n\n		void File_Reader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		File_Writer_::File_Writer_(const p_string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void File_Writer_::Write_(const p_string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length, file);\n		}\n\n		void File_Writer_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		String_Builder_::String_Builder_(p_string const & value)\n			: buffer(value)\n		{\n		}\n\n		String_Builder_::String_Builder_()\n			: buffer(\"\")\n		{\n		}\n\n		void String_Builder_::Append_(p_string const & value)\n		{\n			buffer = buffer.op_Add(value);\n		}\n\n		void String_Builder_::Append_(String_Builder_ const * value)\n		{\n			buffer = buffer.op_Add(value->buffer);\n		}\n\n		void String_Builder_::AppendLine_(p_string const & value)\n		{\n			buffer = buffer.op_Add(value).op_Add(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::AppendLine_()\n		{\n			buffer = buffer.op_Add(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::Remove_(p_int start, p_int length)\n		{\n			buffer = buffer.Substring_(0, start).op_Add(buffer.Substring_(start.Value+length.Value));\n		}\n\n		void String_Builder_::Remove_(p_int start)\n		{\n			String_Builder_::Remove_(start, buffer.Length-start.Value);\n		}\n	}\n}\n"));
+	resource_manager_->AddResource(p_string("RuntimeLibrary.h"), p_string("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n\ntemplate<typename T, typename F>\nT LogicalAnd(T const & lhs, F rhs)\n{\n	return lhs.op_False().Value ? lhs : lhs.op_And(rhs());\n}\n\ntemplate<typename T, typename F>\nT LogicalOr(T const & lhs, F rhs)\n{\n	return lhs.op_True().Value ? lhs : lhs.op_Or(rhs());\n}\n\nstruct p_bool\n{\npublic:\n	// Runtime Use Members\n	bool Value;\n\n	p_bool(): Value(false) {}\n	p_bool(bool value): Value(value) {}\n	p_bool * operator->() { return this; }\n	p_bool const * operator->() const { return this; }\n	p_bool & operator* () { return *this; }\n	p_bool const & operator* () const { return *this; }\n\n	// Adamant Members\n	p_bool op_Not() const { return !this->Value; }\n	p_bool op_True() const { return this->Value; }\n	p_bool op_False() const { return !this->Value; }\n	p_bool op_And(p_bool other) const { return this->Value & other.Value; }\n	p_bool op_Or(p_bool other) const { return this->Value | other.Value; }\n};\n\nstruct p_uint;\n\nstruct p_int\n{\npublic:\n	// Runtime Use Members\n	std::int32_t Value;\n\n	p_int(std::int32_t value): Value(value) {}\n	p_int * operator->() { return this; }\n	p_int const * operator->() const { return this; }\n	p_int & operator* () { return *this; }\n	p_int const & operator* () const { return *this; }\n\n	// Hack to support conversion of uint to int for now\n	p_int(p_uint value);\n\n	// Adamant Members\n	p_int(): Value(0) {}\n	void op_AddAssign(p_int other) { this->Value += other.Value; }\n	void op_SubtractAssign(p_int other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_int other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_int other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_int other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_int other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_int other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_int other) const { return this->Value >= other.Value; }\n	p_int op_Add(p_int other) const { return this->Value + other.Value; }\n	p_int op_Subtract(p_int other) const { return this->Value - other.Value; }\n	p_int op_Negate() const { return -this->Value; }\n	p_int op_Multiply(p_int other) const { return this->Value * other.Value; }\n	p_int op_Divide(p_int other) const { return this->Value / other.Value; }\n	p_int op_Remainder(p_int other) const { return this->Value % other.Value; }\n	p_int op_Magnitude() const { if(this->Value==INT32_MIN) throw \"Overflow exception\"; return this->Value < 0 ? -this->Value : this->Value; }\n\n	// Hack because we don't support as correctly yet\n	p_uint AsUInt_() const;\n};\n\nstruct p_uint\n{\npublic:\n	// Runtime Use Members\n	std::uint32_t Value;\n\n	p_uint(std::uint32_t value): Value(value) {}\n	p_uint * operator->() { return this; }\n	p_uint const * operator->() const { return this; }\n	p_uint & operator* () { return *this; }\n	p_uint const & operator* () const { return *this; }\n\n	// Hack to support conversion of int to uint for now\n	p_uint(p_int value): Value(value.Value) {}\n\n	// Adamant Members\n	p_uint(): Value(0) {}\n	void op_AddAssign(p_uint other) { this->Value += other.Value; }\n	void op_SubtractAssign(p_uint other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_uint other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_uint other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_uint other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_uint other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_uint other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_uint other) const { return this->Value >= other.Value; }\n	p_uint op_Add(p_uint other) const { return this->Value + other.Value; }\n	p_uint op_Subtract(p_uint other) const { return this->Value - other.Value; }\n};\n\ninline p_int::p_int(p_uint value)\n	: Value(value.Value)\n{\n}\n\nstruct p_code_point\n{\nprivate:\n	std::int32_t Value;\n\npublic:\n	// Runtime Use Members\n	p_code_point(): Value(0) {}\n	p_code_point(char value): Value(value) {}\n	p_code_point * operator->() { return this; }\n	p_code_point const * operator->() const { return this; }\n	p_code_point & operator* () { return *this; }\n	p_code_point const & operator* () const { return *this; }\n	char CharValue() const;\n\n	// Adamant Members\n	p_bool op_Equal(p_code_point const & other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_code_point const & other) const { return this->Value != other.Value; }\n	// TODO: Not sure code_point should support these operations\n	p_bool op_LessThan(p_code_point other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_code_point other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_code_point other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_code_point other) const { return this->Value >= other.Value; }\n\n};\n\nstruct p_string\n{\npublic:\n	// Runtime Use Members\n	char const * Buffer;\n	int Length;\n\n	p_string();\n	p_string(char const * s);\n	p_string(int length, char const * s);\n	char const * cstr() const;\n	p_string const * operator->() const { return this; }\n	p_string const & operator* () const { return *this; }\n\n	typedef char const * const_iterator;\n	const_iterator begin() const { return &Buffer[0]; }\n	const_iterator end() const { return &Buffer[Length]; }\n\n	// Hack to support conversion of int and code_point to strings for now\n	p_string(p_int other);\n	p_string(p_code_point other);\n\n	// Adamant Members\n	// TODO ByteLength should be a property\n	p_int ByteLength_() const { return this->Length; }\n\n	p_string(p_code_point c, p_int repeat);\n\n	p_string Substring_(p_int start, p_int length) const;\n	p_string Substring_(p_int start) const { return Substring_(start, Length-start.Value); }\n	p_string Replace_(p_string oldValue, p_string newValue) const;\n	p_int LastIndexOf_(p_code_point c) const;\n\n	p_code_point op_Element(p_int const index) const { return Buffer[index.Value]; }\n	p_string op_Add(p_string const & value) const;\n	p_bool op_Equal(p_string const & other) const;\n	p_bool op_NotEqual(p_string const & other) const { return !this->op_Equal(other).Value; }\n	p_bool op_LessThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }\n	p_bool op_LessThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }\n	p_bool op_GreaterThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }\n	p_bool op_GreaterThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }\n};\n\nclass ResourceManager\n{\npublic:\n	p_string const & GetString_(p_string resourceName);\n	void AddResource(p_string name, p_string value);\n};\n\nextern ResourceManager *const resource_manager_;\n\nclass NoneType\n{\npublic:\n	template<class T>\n	operator T*() const { return static_cast<T*>(0); }\n};\nstatic const NoneType None = NoneType();\n\ntemplate<typename T>\nstruct p_maybe\n{\nprivate:\n	T data;\n	bool hasValue;\n\npublic:\n	p_maybe(T const & value) : data(value), hasValue(true) {}\n	p_maybe(::NoneType const & none) : hasValue(false) {}\n	T& operator->()\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator->() const\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T  & operator* ()\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator* () const\n	{\n		if(!hasValue) throw \"Access to null Maybe value\";\n		return data;\n	}\n	bool operator==(T const & other) const\n	{\n		return hasValue && data == other;\n	}\n	bool operator!=(T const & other) const\n	{\n		return !hasValue || data != other;\n	}\n};\n\ntemplate<typename T>\nstruct p_maybe<T*>\n{\nprivate:\n	T* data;\n\npublic:\n	p_maybe(T* value) : data(value)\n	{\n		if(value == 0) throw \"Constructing p_maybe with null pointer\";\n	}\n	p_maybe(::NoneType const & none) : data(0) {}\n	T* operator->()\n	{\n		if(data == 0) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator->() const\n	{\n		if(data == 0) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T & operator* ()\n	{\n		if(data == 0) throw \"Access to null Maybe value\";\n		return data;\n	}\n	T const & operator* () const\n	{\n		if(data == 0) throw \"Access to null Maybe value\";\n		return data;\n	}\n	bool operator==(T* other) const\n	{\n		return data != 0 && data == other;\n	}\n	bool operator!=(T* other) const\n	{\n		return data == 0 || data != other;\n	}\n};\n\nnamespace System_\n{\n	namespace Collections_\n	{\n		template<typename T>\n		class List_\n		{\n		private:\n			T* values;\n			int length;\n			int capacity;\n\n		public:\n			// Runtime Use Members\n			typedef T const * const_iterator;\n			const_iterator begin() const { return values; }\n			const_iterator end() const { return &values[length]; }\n\n			// Adamant Members\n			List_() : values(0), length(0), capacity(0) { }\n			void Add_(T value);\n			void Clear_() { length = 0; }\n			p_int op_Magnitude() const { return length; }\n			T const & op_Element(p_int const index) const { return values[index.Value]; }\n		};\n\n		template<typename T>\n		void List_<T>::Add_(T value)\n		{\n			if(length >= capacity)\n			{\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\n				T* newValues = new T[newCapacity];\n				std::memcpy(newValues, values, length * sizeof(T));\n				values = newValues;\n				capacity = newCapacity;\n			}\n			values[length] = value;\n			length++;\n		}\n	}\n\n	namespace Console_\n	{\n		class Console_\n		{\n		public:\n			void Write_(p_string value);\n			void WriteLine_(p_string value);\n			void WriteLine_();\n		};\n\n		class Arguments_\n		{\n		private:\n			p_string* args;\n		public:\n			// Runtime Use Members\n			typedef p_string const * const_iterator;\n\n			Arguments_(int argc, char const *const * argv);\n			const_iterator begin() const { return &args[0]; }\n			const_iterator end() const { return &args[Count]; }\n\n			const int Count;\n\n			// Adamant Members\n\n			p_int op_Magnitude() const { return Count; }\n			p_string const & Get_(int const index) const { return args[index]; }\n		};\n	}\n\n	namespace IO_\n	{\n		class File_Reader_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Reader_(const p_string& fileName);\n			p_string ReadToEndSync_();\n			void Close_();\n		};\n\n		class File_Writer_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Writer_(const p_string& fileName);\n			void Write_(const p_string& value);\n			void Close_();\n		};\n	}\n\n	namespace Text_\n	{\n		class String_Builder_\n		{\n		private:\n			p_string buffer;\n		public:\n			String_Builder_();\n			String_Builder_(p_string const & value);\n			void Append_(p_string const & value);\n			void Append_(String_Builder_ const * value);\n			void AppendLine_(p_string const& value);\n			void AppendLine_();\n			void Remove_(p_int start, p_int length);\n			void Remove_(p_int start);\n			p_string ToString_() const { return buffer; }\n		};\n	}\n}\n"));
 
 	Main_(new ::System_::Console_::Console_(), new ::System_::Console_::Arguments_(argc, argv));
 	return 0;
