@@ -59,6 +59,11 @@ p_string::p_string(p_int other)
 	Buffer = buffer;
 }
 
+p_string::p_string(p_code_point other)
+	: Length(1), Buffer(new char[1] { other.CharValue() })
+{
+}
+
 p_string p_string::Substring_(p_int start, p_int length) const
 {
 	return p_string(length.Value, Buffer + start.Value);

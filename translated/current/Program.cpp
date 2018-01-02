@@ -21,7 +21,9 @@ auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *cons
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
 auto ReadSource_(p_string const path_) -> ::Source_Text_ const *;
 auto TextLineFromTo_(::Source_Text_ const *const source_, p_int const start_, p_int const end_) -> ::Text_Line_ const *;
+auto TextSpanFromTo_(p_int const start_, p_int const end_) -> ::Text_Span_ const *;
 auto FormatError_(p_string const message_) -> p_string;
+auto new_Syntax_Node_Missing_(p_int const type_, ::Source_Text_ const *const source_, p_uint const start_) -> ::Syntax_Node_ const *;
 auto IsValueType_(::Syntax_Node_ const *const type_) -> p_bool;
 auto ConvertType_(::Syntax_Node_ const *const type_) -> p_string;
 auto ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) -> p_string;
@@ -98,7 +100,6 @@ public:
 	p_int Length_;
 	Text_Span_();
 	Text_Span_(p_int const start_, p_int const length_);
-	static auto FromTo_(p_int const start_, p_int const end_) -> ::Text_Span_ const *;
 	auto End_() const -> p_int;
 };
 
@@ -138,8 +139,6 @@ public:
 	auto Parse_() -> ::Syntax_Node_ const *;
 	auto AcceptToken_() -> ::Syntax_Node_ const *;
 	auto ExpectToken_(p_int const tokenType_) -> ::Syntax_Node_ const *;
-	auto Accept_(p_string const expected_) -> p_bool;
-	auto Expect_(p_string const expected_) -> void;
 	auto ParseNonNullableType_() -> ::Syntax_Node_ const *;
 	auto ParseType_() -> ::Syntax_Node_ const *;
 	auto ParseAtom_() -> ::Syntax_Node_ const *;
@@ -179,16 +178,20 @@ public:
 	p_bool op_Equal(Syntax_Node_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Syntax_Node_ const * other) const { return this != other; }
 	p_int Type_;
+	p_bool IsMissing_;
 	::Source_Text_ const * Source_;
 	p_uint Start_;
 	p_uint Length_;
 	::System_::Collections_::List_<::Syntax_Node_ const *> const * Children_;
+	::System_::Collections_::List_<::Diagnostic_ const *> * Diagnostics_;
 	Syntax_Node_(p_int const type_, ::Source_Text_ const *const source_, p_uint const start_, p_uint const length_);
+	Syntax_Node_(p_int const type_, p_bool const isMissing_, ::Source_Text_ const *const source_, p_uint const start_, p_uint const length_);
 	Syntax_Node_(p_int const type_, ::Syntax_Node_ const *const child_);
 	Syntax_Node_(p_int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *> const *const children_);
 	auto GetText_() const -> p_string;
 	auto FirstChildOfType_(p_int const type_) const -> ::Syntax_Node_ const *;
 	auto HasChildOfType_(p_int const type_) const -> p_bool;
+	auto Add_(::Diagnostic_ const *const diagnostic_) const -> void;
 };
 
 class Token_Stream_
@@ -198,6 +201,7 @@ public:
 	p_bool op_NotEqual(Token_Stream_ const * other) const { return this != other; }
 	::Source_Text_ const * Source_;
 	p_uint position_;
+	::System_::Collections_::List_<::Diagnostic_ const *> * diagnostics_;
 	Token_Stream_(::Source_Text_ const *const source_);
 	auto GetNextToken_() -> ::Syntax_Node_ const *;
 	auto NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Node_ const *;
@@ -237,7 +241,7 @@ public:
 };
 
 // Global Definitions
-p_int const Error_ = p_int(1)->op_Negate();
+p_int const EndOfFileToken_ = p_int(0);
 p_int const LeftBrace_ = p_int(1);
 p_int const RightBrace_ = p_int(2);
 p_int const LeftParen_ = p_int(3);
@@ -685,14 +689,14 @@ auto TextLineFromTo_(::Source_Text_ const *const source_, p_int const start_, p_
 	Length_ = length_;
 }
 
-auto ::Text_Span_::FromTo_(p_int const start_, p_int const end_) -> ::Text_Span_ const *
-{
-	return new ::Text_Span_(start_, end_->op_Subtract(start_));
-}
-
 auto ::Text_Span_::End_() const -> p_int
 {
 	return Start_->op_Add(Length_);
+}
+
+auto TextSpanFromTo_(p_int const start_, p_int const end_) -> ::Text_Span_ const *
+{
+	return new ::Text_Span_(start_, end_->op_Subtract(start_));
 }
 
 auto FormatError_(p_string const message_) -> p_string
@@ -821,44 +825,17 @@ auto ::CompilationUnitParser_::ExpectToken_(p_int const tokenType_) -> ::Syntax_
 {
 	if (token_->op_Equal(::None).Value)
 	{
-		Definitions_->Error_(p_string("Expected token type ")->op_Add(tokenType_)->op_Add(p_string(", found end of token stream")));
-		return new ::Syntax_Node_(Error_, token_->Source_, token_->Start_, token_->Length_);
+		return ::new_Syntax_Node_Missing_(tokenType_, tokenStream_->Source_, tokenStream_->Source_->ByteLength_());
 	}
 
-	if (token_->Type_->op_NotEqual(tokenType_).Value)
+	if (LogicalOr(token_->op_Equal(::None), [&] { return token_->Type_->op_NotEqual(tokenType_); }).Value)
 	{
-		Definitions_->Error_(p_string("Expected token type ")->op_Add(tokenType_)->op_Add(p_string(", found `"))->op_Add(token_->GetText_())->op_Add(p_string("` of type "))->op_Add(token_->Type_));
-		token_ = tokenStream_->GetNextToken_();
-		return new ::Syntax_Node_(Error_, token_->Source_, token_->Start_, token_->Length_);
+		return ::new_Syntax_Node_Missing_(tokenType_, tokenStream_->Source_, token_->Start_);
 	}
 
 	::Syntax_Node_ const *const node_ = token_;
 	token_ = tokenStream_->GetNextToken_();
 	return node_;
-}
-
-auto ::CompilationUnitParser_::Accept_(p_string const expected_) -> p_bool
-{
-	p_bool const accepted_ = token_->GetText_()->op_Equal(expected_);
-	if (accepted_.Value)
-	{
-		token_ = tokenStream_->GetNextToken_();
-	}
-
-	return accepted_;
-}
-
-auto ::CompilationUnitParser_::Expect_(p_string const expected_) -> void
-{
-	if (token_->GetText_()->op_NotEqual(expected_).Value)
-	{
-		Definitions_->Error_(p_string("Expected `")->op_Add(expected_)->op_Add(p_string("` but found `"))->op_Add(token_->GetText_())->op_Add(p_string("`")));
-		token_ = tokenStream_->GetNextToken_();
-	}
-	else
-	{
-		token_ = tokenStream_->GetNextToken_();
-	}
 }
 
 auto ::CompilationUnitParser_::ParseNonNullableType_() -> ::Syntax_Node_ const *
@@ -1480,11 +1457,12 @@ auto ::CompilationUnitParser_::ParseDeclaration_() -> ::Syntax_Node_ const *
 auto ::CompilationUnitParser_::ParseCompilationUnit_() -> ::Syntax_Node_ const *
 {
 	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
-	while (token_->op_NotEqual(::None).Value)
+	while (LogicalAnd(token_->op_NotEqual(::None), [&] { return token_->Type_->op_NotEqual(EndOfFileToken_); }).Value)
 	{
 		children_->Add_(ParseDeclaration_());
 	}
 
+	children_->Add_(ExpectToken_(EndOfFileToken_));
 	return new ::Syntax_Node_(CompilationUnit_, children_);
 }
 
@@ -1518,6 +1496,18 @@ auto ::Parser_::ParsePackage_(::System_::Collections_::List_<::Source_Text_ cons
 	Start_ = start_;
 	Length_ = length_;
 	Children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	Diagnostics_ = new ::System_::Collections_::List_<::Diagnostic_ const *>();
+}
+
+::Syntax_Node_::Syntax_Node_(p_int const type_, p_bool const isMissing_, ::Source_Text_ const *const source_, p_uint const start_, p_uint const length_)
+{
+	Type_ = type_;
+	IsMissing_ = isMissing_;
+	Source_ = source_;
+	Start_ = start_;
+	Length_ = length_;
+	Children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	Diagnostics_ = new ::System_::Collections_::List_<::Diagnostic_ const *>();
 }
 
 ::Syntax_Node_::Syntax_Node_(p_int const type_, ::Syntax_Node_ const *const child_)
@@ -1581,14 +1571,33 @@ auto ::Syntax_Node_::HasChildOfType_(p_int const type_) const -> p_bool
 	return p_bool(false);
 }
 
+auto ::Syntax_Node_::Add_(::Diagnostic_ const *const diagnostic_) const -> void
+{
+	Diagnostics_->Add_(diagnostic_);
+}
+
+auto new_Syntax_Node_Missing_(p_int const type_, ::Source_Text_ const *const source_, p_uint const start_) -> ::Syntax_Node_ const *
+{
+	::Syntax_Node_ *const node_ = new ::Syntax_Node_(type_, p_bool(true), source_, start_, p_int(0));
+	::Text_Span_ const *const span_ = new ::Text_Span_(start_, p_int(0));
+	node_->Add_(new ::Diagnostic_(CompilationError_, Parsing_, source_, span_, p_string("Missing token of type ")->op_Add(type_)));
+	return node_;
+}
+
 ::Token_Stream_::Token_Stream_(::Source_Text_ const *const source_)
 {
 	Source_ = source_;
 	position_ = p_int(0);
+	diagnostics_ = new ::System_::Collections_::List_<::Diagnostic_ const *>();
 }
 
 auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 {
+	if (position_->op_GreaterThanOrEqual(Source_->ByteLength_()).Value)
+	{
+		return ::None;
+	}
+
 	p_uint end_ = p_int(1)->op_Negate();
 	while (position_->op_LessThan(Source_->ByteLength_()).Value)
 	{
@@ -1787,11 +1796,13 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 				return NewToken_(Number_, end_);
 			}
 
-			return NewToken_(Error_, position_->op_Add(p_int(1)));
+			::Text_Span_ const * diagnosticSpan_ = TextSpanFromTo_(position_, position_->op_Add(p_int(1)));
+			diagnostics_->Add_(new ::Diagnostic_(CompilationError_, Lexing_, Source_, diagnosticSpan_, p_string("Invalid character `")->op_Add(curChar_)->op_Add(p_string("`"))));
+			position_ = end_;
 		}
 	}
 
-	return ::None;
+	return NewToken_(EndOfFileToken_, position_);
 }
 
 auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Node_ const *
@@ -1955,7 +1966,13 @@ auto ::Token_Stream_::NewOperator_(p_int const type_, p_uint const length_) -> :
 
 auto ::Token_Stream_::NewToken_(p_int const type_, p_uint const end_) -> ::Syntax_Node_ const *
 {
-	::Syntax_Node_ const *const token_ = new ::Syntax_Node_(type_, Source_, position_, end_->op_Subtract(position_));
+	::Syntax_Node_ *const token_ = new ::Syntax_Node_(type_, Source_, position_, end_->op_Subtract(position_));
+	for (::Diagnostic_ const *const diagnostic_ : *(diagnostics_))
+	{
+		token_->Add_(diagnostic_);
+	}
+
+	diagnostics_->Clear_();
 	position_ = end_;
 	return token_;
 }
@@ -2650,6 +2667,9 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 		}
 
 		EmitStatement_(declaration_->Children_->op_Element(p_int(5)));
+	}
+	else if (declaration_->Type_->op_Equal(EndOfFileToken_).Value)
+	{
 	}
 	else
 	{
