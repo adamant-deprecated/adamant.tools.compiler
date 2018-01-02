@@ -16,6 +16,7 @@ public Main(console: mut System.Console.Console) -> void
 		console.Write(s);
 	}
 	console.WriteLine();
+	strings.Clear();
 
 	let builders: mut System.Collections.List<mut System.Text.String_Builder> = new System.Collections.List<mut System.Text.String_Builder>();
 	builders.Add(new System.Text.String_Builder("sb[0]: "));

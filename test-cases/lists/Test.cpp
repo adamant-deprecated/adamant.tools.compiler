@@ -28,6 +28,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void
 	}
 
 	console_->WriteLine_();
+	strings_->Clear_();
 	::System_::Collections_::List_<::System_::Text_::String_Builder_ *> *const builders_ = new ::System_::Collections_::List_<::System_::Text_::String_Builder_ *>();
 	builders_->Add_(new ::System_::Text_::String_Builder_(p_string("sb[0]: ")));
 	builders_->Add_(new ::System_::Text_::String_Builder_(p_string("sb[1]: ")));

@@ -155,8 +155,9 @@ public:
 	const_iterator begin() const { return &Buffer[0]; }
 	const_iterator end() const { return &Buffer[Length]; }
 
-	// Hack to support conversion of integers to strings for now
+	// Hack to support conversion of int and code_point to strings for now
 	p_string(p_int other);
+	p_string(p_code_point other);
 
 	// Adamant Members
 	// TODO ByteLength should be a property
@@ -299,6 +300,7 @@ namespace System_
 			// Adamant Members
 			List_() : values(0), length(0), capacity(0) { }
 			void Add_(T value);
+			void Clear_() { length = 0; }
 			p_int op_Magnitude() const { return length; }
 			T const & op_Element(p_int const index) const { return values[index.Value]; }
 		};

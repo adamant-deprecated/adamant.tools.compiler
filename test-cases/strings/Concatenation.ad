@@ -1,4 +1,4 @@
 public Main() -> void
 {
-	var x: string = "Hello " + "World!";
+	var x: string = "Hello " + "World! " + 4 + 'c';
 }
