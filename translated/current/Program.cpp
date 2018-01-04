@@ -24,6 +24,8 @@ auto TextLineFromTo_(::Source_Text_ const *const source_, p_int const start_, p_
 auto TextSpanFromTo_(p_int const start_, p_int const end_) -> ::Text_Span_ const *;
 auto FormatError_(p_string const message_) -> p_string;
 auto new_Syntax_Node_Missing_(p_int const type_, ::Source_Text_ const *const source_, p_uint const start_) -> ::Syntax_Node_ const *;
+auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *const skipped_) -> ::Syntax_Node_ const *;
+auto new_Syntax_Node_Skipped_(::System_::Collections_::List_<::Syntax_Node_ const *> const *const skipped_) -> ::Syntax_Node_ const *;
 auto IsValueType_(::Syntax_Node_ const *const type_) -> p_bool;
 auto ConvertType_(::Syntax_Node_ const *const type_) -> p_string;
 auto ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) -> p_string;
@@ -241,6 +243,7 @@ public:
 };
 
 // Global Definitions
+p_int const SkippedTokens_ = p_int(1)->op_Negate();
 p_int const EndOfFileToken_ = p_int(0);
 p_int const LeftBrace_ = p_int(1);
 p_int const RightBrace_ = p_int(2);
@@ -1294,7 +1297,23 @@ auto ::CompilationUnitParser_::ParseBlock_() -> ::Syntax_Node_ const *
 	children_->Add_(ExpectToken_(LeftBrace_));
 	while (token_->Type_->op_NotEqual(RightBrace_).Value)
 	{
+		::Syntax_Node_ const *const startToken_ = token_;
 		children_->Add_(ParseStatement_());
+		if (token_->op_Equal(startToken_).Value)
+		{
+			::System_::Collections_::List_<::Syntax_Node_ const *> *const skipped_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+			while (LogicalAnd(token_->Type_->op_NotEqual(LeftBrace_), [&] { return token_->Type_->op_NotEqual(RightBrace_); }).Value)
+			{
+				p_int const currentTokenType_ = token_->Type_;
+				skipped_->Add_(AcceptToken_());
+				if (currentTokenType_->op_Equal(Semicolon_).Value)
+				{
+					break;
+				}
+			}
+
+			children_->Add_(new_Syntax_Node_Skipped_(skipped_));
+		}
 	}
 
 	children_->Add_(ExpectToken_(RightBrace_));
@@ -1411,7 +1430,12 @@ auto ::CompilationUnitParser_::ParseDeclaration_() -> ::Syntax_Node_ const *
 		children_->Add_(ExpectToken_(LeftBrace_));
 		while (token_->Type_->op_NotEqual(RightBrace_).Value)
 		{
+			::Syntax_Node_ const *const startToken_ = token_;
 			children_->Add_(ParseClassMember_());
+			if (token_->op_Equal(startToken_).Value)
+			{
+				children_->Add_(new_Syntax_Node_Skipped_(AcceptToken_()));
+			}
 		}
 
 		children_->Add_(ExpectToken_(RightBrace_));
@@ -1459,7 +1483,12 @@ auto ::CompilationUnitParser_::ParseCompilationUnit_() -> ::Syntax_Node_ const *
 	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
 	while (LogicalAnd(token_->op_NotEqual(::None), [&] { return token_->Type_->op_NotEqual(EndOfFileToken_); }).Value)
 	{
+		::Syntax_Node_ const *const startToken_ = token_;
 		children_->Add_(ParseDeclaration_());
+		if (token_->op_Equal(startToken_).Value)
+		{
+			children_->Add_(new_Syntax_Node_Skipped_(AcceptToken_()));
+		}
 	}
 
 	children_->Add_(ExpectToken_(EndOfFileToken_));
@@ -1581,6 +1610,22 @@ auto new_Syntax_Node_Missing_(p_int const type_, ::Source_Text_ const *const sou
 	::Syntax_Node_ *const node_ = new ::Syntax_Node_(type_, p_bool(true), source_, start_, p_int(0));
 	::Text_Span_ const *const span_ = new ::Text_Span_(start_, p_int(0));
 	node_->Add_(new ::Diagnostic_(CompilationError_, Parsing_, source_, span_, p_string("Missing token of type ")->op_Add(type_)));
+	return node_;
+}
+
+auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *const skipped_) -> ::Syntax_Node_ const *
+{
+	::Syntax_Node_ *const node_ = new ::Syntax_Node_(SkippedTokens_, skipped_);
+	::Text_Span_ const *const span_ = new ::Text_Span_(skipped_->Start_, skipped_->Length_);
+	node_->Add_(new ::Diagnostic_(CompilationError_, Parsing_, skipped_->Source_, span_, p_string("Skipped unexpected token of type ")->op_Add(skipped_->Type_)));
+	return node_;
+}
+
+auto new_Syntax_Node_Skipped_(::System_::Collections_::List_<::Syntax_Node_ const *> const *const skipped_) -> ::Syntax_Node_ const *
+{
+	::Syntax_Node_ *const node_ = new ::Syntax_Node_(SkippedTokens_, skipped_);
+	::Text_Span_ const *const span_ = new ::Text_Span_(node_->Start_, node_->Length_);
+	node_->Add_(new ::Diagnostic_(CompilationError_, Parsing_, node_->Source_, span_, p_string("Skipped ")->op_Add(skipped_->op_Magnitude())->op_Add(p_string(" unexpected token(s)"))));
 	return node_;
 }
 
