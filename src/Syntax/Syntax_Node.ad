@@ -1,4 +1,5 @@
 // Note, a lot of these names should say Token
+public let SkippedTokens: int = -1;
 public let EndOfFileToken: int = 0;
 public let LeftBrace: int = 1; // `{`
 public let RightBrace: int = 2; // `}`
@@ -224,5 +225,23 @@ public new_Syntax_Node_Missing(type: int, source: Source_Text, start: uint) -> S
 	let node: mut Syntax_Node = new Syntax_Node(type, true, source, start, 0);
 	let span: Text_Span = new Text_Span(start, 0);
 	node.Add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
+	return node;
+}
+
+// TODO make this a named constructor
+public new_Syntax_Node_Skipped(skipped: Syntax_Node) -> Syntax_Node
+{
+	let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
+	let span: Text_Span = new Text_Span(skipped.Start, skipped.Length);
+	node.Add(new Diagnostic(CompilationError, Parsing, skipped.Source, span, "Skipped unexpected token of type " + skipped.Type));
+	return node;
+}
+
+// TODO make this a named constructor
+public new_Syntax_Node_Skipped(skipped: System.Collections.List<Syntax_Node>) -> Syntax_Node
+{
+	let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
+	let span: Text_Span = new Text_Span(node.Start, node.Length);
+	node.Add(new Diagnostic(CompilationError, Parsing, node.Source, span, "Skipped " + |skipped| + " unexpected token(s)"));
 	return node;
 }

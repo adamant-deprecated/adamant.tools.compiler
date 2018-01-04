@@ -513,7 +513,24 @@ public class CompilationUnitParser
 		children.Add(ExpectToken(LeftBrace));
 		while token.Type <> RightBrace
 		{
+			let startToken: Syntax_Node = token;
 			children.Add(ParseStatement());
+			if token == startToken
+			{
+				// We have not advanced at all when trying to parse a statement.
+				// Better skip some tokens to get unstuck
+				let skipped: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+				while token.Type <> LeftBrace
+					and token.Type <> RightBrace
+				{
+					let currentTokenType: int = token.Type;
+					skipped.Add(AcceptToken());
+					// If we hit a semicolon, assume that was the end of the statement
+					if currentTokenType == Semicolon
+						{ break; }
+				}
+				children.Add(new_Syntax_Node_Skipped(skipped));
+			}
 		}
 		children.Add(ExpectToken(RightBrace));
 		return new Syntax_Node(Block, children);
@@ -636,7 +653,14 @@ public class CompilationUnitParser
 			children.Add(ExpectToken(LeftBrace));
 			while token.Type <> RightBrace
 			{
+				let startToken: Syntax_Node = token;
 				children.Add(ParseClassMember());
+				if token == startToken
+				{
+					// We have not advanced at all when trying to parse a class member.
+					// Skip a token to try to see if we can find the start of a member.
+					children.Add(new_Syntax_Node_Skipped(AcceptToken()));
+				}
 			}
 			children.Add(ExpectToken(RightBrace));
 			return new Syntax_Node(ClassDeclaration, children);
@@ -683,7 +707,14 @@ public class CompilationUnitParser
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		while token <> null and token.Type <> EndOfFileToken
 		{
+			let startToken: Syntax_Node = token;
 			children.Add(ParseDeclaration());
+			if token == startToken
+			{
+				// We have not advanced at all when trying to parse a declaration.
+				// Skip a token to try to see if we can find the start of a declaration.
+				children.Add(new_Syntax_Node_Skipped(AcceptToken()));
+			}
 		}
 		children.Add(ExpectToken(EndOfFileToken));
 		return new Syntax_Node(CompilationUnit, children);

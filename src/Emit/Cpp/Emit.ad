@@ -1,9 +1,12 @@
+// TODO move all emitting into the `emitter` class
+
 public let TypeDeclarations: mut Source_File_Builder = new Source_File_Builder();
 public let FunctionDeclarations: mut Source_File_Builder = new Source_File_Builder();
 public let ClassDeclarations: mut Source_File_Builder= new Source_File_Builder();
 public let GlobalDefinitions: mut Source_File_Builder = new Source_File_Builder();
 public let Definitions: mut Source_File_Builder = new Source_File_Builder();
 
+// TODO compute these in a semantic analysis phase
 public var MainFunctionReturnType: string = "";
 public var MainFunctionAcceptsConsole: bool = false;
 public var MainFunctionAcceptsArgs: bool = false;

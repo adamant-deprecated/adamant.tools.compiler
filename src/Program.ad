@@ -3,6 +3,8 @@ public Compile(sources: System.Collections.List<Source_Text>, resources: System.
 	var parser: Parser = new Parser();
 	var package: Syntax_Node = parser.ParsePackage(sources);
 
+	// TODO Check and report diagnostics
+
 	EmitPreamble();
 	EmitPackage(package);
 	EmitEntryPointAdapter(resources);
