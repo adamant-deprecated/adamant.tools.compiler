@@ -167,6 +167,7 @@ public class Syntax_Node
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(child);
 		Children = children;
+		Diagnostics = new System.Collections.List<Diagnostic>();
 	}
 
 	// TODO we want to take ownership of the child list
@@ -186,6 +187,7 @@ public class Syntax_Node
 			Length = 0;
 		}
 		Children = children;
+		Diagnostics = new System.Collections.List<Diagnostic>();
 	}
 
 	public GetText(self) -> string
@@ -216,6 +218,26 @@ public class Syntax_Node
 	public Add(self, diagnostic: Diagnostic) -> void
 	{
 		Diagnostics.Add(diagnostic);
+	}
+
+	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
+	{
+		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+		CollectDiagnostics(diagnostics);
+		return diagnostics;
+	}
+
+	protected CollectDiagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+	{
+		for let diagnostic: Diagnostic in Diagnostics
+		{
+			diagnostics.Add(diagnostic);
+		}
+
+		for let child: Syntax_Node in Children
+		{
+			child.CollectDiagnostics(diagnostics);
+		}
 	}
 }
 

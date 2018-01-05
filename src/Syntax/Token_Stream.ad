@@ -3,20 +3,21 @@ public class Token_Stream
 	public let Source: Source_Text;
 	private var position: uint;
 	private let diagnostics: mut System.Collections.List<Diagnostic>;
+	private var endOfFile: bool;
 
 	public new(source: Source_Text)
 	{
 		Source = source;
 		position = 0; // TODO have to assign this zero for now because we don't have default values working
 		diagnostics = new System.Collections.List<Diagnostic>();
+		endOfFile = false; // TODO implement auto initialize so this doesn't have to be initialized
 	}
 
 	public GetNextToken(mut self) -> Syntax_Node?
 	{
 		if position >= Source.ByteLength()
 		{
-			// We started past the end so there are no more tokens, not even end of file
-			return null;
+			return EndOfFile();
 		}
 
 		var end: uint = -1;
@@ -207,6 +208,16 @@ public class Token_Stream
 			}
 		}
 
+		return EndOfFile();
+	}
+
+	private EndOfFile(mut self) -> Syntax_Node?
+	{
+		if endOfFile
+			{ return null; }
+
+		// Mark that we have returned the end of file token
+		endOfFile = true;
 		// The end of file token provides something to attach any final errors to
 		return NewToken(EndOfFileToken, position);
 	}

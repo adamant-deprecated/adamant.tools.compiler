@@ -77,6 +77,7 @@ public class Source_Text // TODO change immutable class name to snake_case when 
 		let lineNumber: int = Lines.LineNumber(offset);
 		// TODO count tabs as more than one column
 		// TODO handle unicode
+		// TODO column number seems to be giving weird values
 		return new Text_Position(offset, lineNumber, offset - Lines.Get(lineNumber).Start);
 	}
 }

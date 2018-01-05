@@ -1,10 +1,43 @@
-public Compile(sources: System.Collections.List<Source_Text>, resources: System.Collections.List<Source_Text>) -> string
+public Compile(sources: System.Collections.List<Source_Text>) -> Syntax_Node
 {
 	var parser: Parser = new Parser();
 	var package: Syntax_Node = parser.ParsePackage(sources);
 
-	// TODO Check and report diagnostics
+	return package;
+}
 
+public Write(console: mut System.Console.Console, diagnostics: System.Collections.List<Diagnostic>) -> void
+{
+	for let diagnostic: Diagnostic in diagnostics
+	{
+		let position: Text_Position = diagnostic.Position;
+		var severity: string;
+		if diagnostic.Level == Info
+			{ severity = "Informational"; }
+		else if diagnostic.Level == Warning
+			{ severity = "Warning"; }
+		else
+			{ severity = "Error"; }
+
+		console.WriteLine(diagnostic.Source.Name+":"+position.Line+":"+position.Column+" "+severity+":");
+		console.WriteLine("  "+diagnostic.Message);
+	}
+}
+
+public HasErrors(diagnostics: System.Collections.List<Diagnostic>) -> bool
+{
+	for let diagnostic: Diagnostic in diagnostics
+	{
+		if diagnostic.Level >= CompilationError
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+public Emit(package: Syntax_Node, resources: System.Collections.List<Source_Text>) -> string
+{
 	EmitPreamble();
 	EmitPackage(package);
 	EmitEntryPointAdapter(resources);
@@ -99,7 +132,17 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 		sources.Add(ReadSource(sourceFilePath));
 	}
 
-	let translated: string = Compile(sources, resources);
+	let package: Syntax_Node = Compile(sources);
+
+	let diagnostics: System.Collections.List<Diagnostic> = package.AllDiagnostics();
+	Write(console, diagnostics);
+
+	if HasErrors(diagnostics)
+	{
+		return;
+	}
+
+	let translated: string = Emit(package, resources);
 
 	// Write output
 	if(verbose)
