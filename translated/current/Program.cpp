@@ -17,7 +17,10 @@ class Diagnostic_;
 class Emitter_;
 
 // Function Declarations
-auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> p_string;
+auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_) -> ::Syntax_Node_ const *;
+auto Write_(::System_::Console_::Console_ *const console_, ::System_::Collections_::List_<::Diagnostic_ const *> const *const diagnostics_) -> void;
+auto HasErrors_(::System_::Collections_::List_<::Diagnostic_ const *> const *const diagnostics_) -> p_bool;
+auto Emit_(::Syntax_Node_ const *const package_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> p_string;
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
 auto ReadSource_(p_string const path_) -> ::Source_Text_ const *;
 auto TextLineFromTo_(::Source_Text_ const *const source_, p_int const start_, p_int const end_) -> ::Text_Line_ const *;
@@ -194,6 +197,8 @@ public:
 	auto FirstChildOfType_(p_int const type_) const -> ::Syntax_Node_ const *;
 	auto HasChildOfType_(p_int const type_) const -> p_bool;
 	auto Add_(::Diagnostic_ const *const diagnostic_) const -> void;
+	auto AllDiagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *> const *;
+	auto CollectDiagnostics_(::System_::Collections_::List_<::Diagnostic_ const *> *const diagnostics_) const -> void;
 };
 
 class Token_Stream_
@@ -204,8 +209,10 @@ public:
 	::Source_Text_ const * Source_;
 	p_uint position_;
 	::System_::Collections_::List_<::Diagnostic_ const *> * diagnostics_;
+	p_bool endOfFile_;
 	Token_Stream_(::Source_Text_ const *const source_);
 	auto GetNextToken_() -> ::Syntax_Node_ const *;
+	auto EndOfFile_() -> ::Syntax_Node_ const *;
 	auto NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Node_ const *;
 	auto NewOperator_(p_int const type_) -> ::Syntax_Node_ const *;
 	auto NewOperator_(p_int const type_, p_uint const length_) -> ::Syntax_Node_ const *;
@@ -389,10 +396,52 @@ p_bool MainFunctionAcceptsArgs_ = p_bool(false);
 
 // Definitions
 
-auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> p_string
+auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *const sources_) -> ::Syntax_Node_ const *
 {
 	::Parser_ const * parser_ = new ::Parser_();
 	::Syntax_Node_ const * package_ = parser_->ParsePackage_(sources_);
+	return package_;
+}
+
+auto Write_(::System_::Console_::Console_ *const console_, ::System_::Collections_::List_<::Diagnostic_ const *> const *const diagnostics_) -> void
+{
+	for (::Diagnostic_ const *const diagnostic_ : *(diagnostics_))
+	{
+		::Text_Position_ const *const position_ = diagnostic_->Position_;
+		p_string severity_;
+		if (diagnostic_->Level_->op_Equal(Info_).Value)
+		{
+			severity_ = p_string("Informational");
+		}
+		else if (diagnostic_->Level_->op_Equal(Warning_).Value)
+		{
+			severity_ = p_string("Warning");
+		}
+		else
+		{
+			severity_ = p_string("Error");
+		}
+
+		console_->WriteLine_(diagnostic_->Source_->Name_->op_Add(p_string(":"))->op_Add(position_->Line_)->op_Add(p_string(":"))->op_Add(position_->Column_)->op_Add(p_string(" "))->op_Add(severity_)->op_Add(p_string(":")));
+		console_->WriteLine_(p_string("  ")->op_Add(diagnostic_->Message_));
+	}
+}
+
+auto HasErrors_(::System_::Collections_::List_<::Diagnostic_ const *> const *const diagnostics_) -> p_bool
+{
+	for (::Diagnostic_ const *const diagnostic_ : *(diagnostics_))
+	{
+		if (diagnostic_->Level_->op_GreaterThanOrEqual(CompilationError_).Value)
+		{
+			return p_bool(true);
+		}
+	}
+
+	return p_bool(false);
+}
+
+auto Emit_(::Syntax_Node_ const *const package_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> p_string
+{
 	EmitPreamble_();
 	EmitPackage_(package_);
 	EmitEntryPointAdapter_(resources_);
@@ -485,7 +534,15 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 		sources_->Add_(ReadSource_(sourceFilePath_));
 	}
 
-	p_string const translated_ = Compile_(sources_, resources_);
+	::Syntax_Node_ const *const package_ = Compile_(sources_);
+	::System_::Collections_::List_<::Diagnostic_ const *> const *const diagnostics_ = package_->AllDiagnostics_();
+	Write_(console_, diagnostics_);
+	if (HasErrors_(diagnostics_).Value)
+	{
+		return;
+	}
+
+	p_string const translated_ = Emit_(package_, resources_);
 	if (verbose_.Value)
 	{
 		console_->Write_(p_string("Output: "));
@@ -1548,6 +1605,7 @@ auto ::Parser_::ParsePackage_(::System_::Collections_::List_<::Source_Text_ cons
 	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
 	children_->Add_(child_);
 	Children_ = children_;
+	Diagnostics_ = new ::System_::Collections_::List_<::Diagnostic_ const *>();
 }
 
 ::Syntax_Node_::Syntax_Node_(p_int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *> const *const children_)
@@ -1567,6 +1625,7 @@ auto ::Parser_::ParsePackage_(::System_::Collections_::List_<::Source_Text_ cons
 	}
 
 	Children_ = children_;
+	Diagnostics_ = new ::System_::Collections_::List_<::Diagnostic_ const *>();
 }
 
 auto ::Syntax_Node_::GetText_() const -> p_string
@@ -1605,6 +1664,26 @@ auto ::Syntax_Node_::Add_(::Diagnostic_ const *const diagnostic_) const -> void
 	Diagnostics_->Add_(diagnostic_);
 }
 
+auto ::Syntax_Node_::AllDiagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *> const *
+{
+	::System_::Collections_::List_<::Diagnostic_ const *> * diagnostics_ = new ::System_::Collections_::List_<::Diagnostic_ const *>();
+	CollectDiagnostics_(diagnostics_);
+	return diagnostics_;
+}
+
+auto ::Syntax_Node_::CollectDiagnostics_(::System_::Collections_::List_<::Diagnostic_ const *> *const diagnostics_) const -> void
+{
+	for (::Diagnostic_ const *const diagnostic_ : *(Diagnostics_))
+	{
+		diagnostics_->Add_(diagnostic_);
+	}
+
+	for (::Syntax_Node_ const *const child_ : *(Children_))
+	{
+		child_->CollectDiagnostics_(diagnostics_);
+	}
+}
+
 auto new_Syntax_Node_Missing_(p_int const type_, ::Source_Text_ const *const source_, p_uint const start_) -> ::Syntax_Node_ const *
 {
 	::Syntax_Node_ *const node_ = new ::Syntax_Node_(type_, p_bool(true), source_, start_, p_int(0));
@@ -1634,13 +1713,14 @@ auto new_Syntax_Node_Skipped_(::System_::Collections_::List_<::Syntax_Node_ cons
 	Source_ = source_;
 	position_ = p_int(0);
 	diagnostics_ = new ::System_::Collections_::List_<::Diagnostic_ const *>();
+	endOfFile_ = p_bool(false);
 }
 
 auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 {
 	if (position_->op_GreaterThanOrEqual(Source_->ByteLength_()).Value)
 	{
-		return ::None;
+		return EndOfFile_();
 	}
 
 	p_uint end_ = p_int(1)->op_Negate();
@@ -1847,6 +1927,17 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 	}
 
+	return EndOfFile_();
+}
+
+auto ::Token_Stream_::EndOfFile_() -> ::Syntax_Node_ const *
+{
+	if (endOfFile_.Value)
+	{
+		return ::None;
+	}
+
+	endOfFile_ = p_bool(true);
 	return NewToken_(EndOfFileToken_, position_);
 }
 
