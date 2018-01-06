@@ -1,0 +1,7 @@
+0
+strings[0]=Hello
+Hello
+World!
+
+sb[0]: value
+sb[1]: value

@@ -1,6 +1,6 @@
 public Func() -> int
 {
-	return 1;
+	return 42;
 }
 
 public Main() -> int

@@ -14,7 +14,7 @@ auto Main_() -> p_int;
 
 auto Func_() -> p_int
 {
-	return p_int(1);
+	return p_int(42);
 }
 
 auto Main_() -> p_int

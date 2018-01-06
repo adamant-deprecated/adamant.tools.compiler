@@ -9,11 +9,11 @@ public Main(console: mut System.Console.Console) -> void
 		console.WriteLine("List length not 2!");
 	}
 
-	console.WriteLine(strings[0]);
+	console.WriteLine("strings[0]="+strings[0]);
 
 	for let s: string in strings
 	{
-		console.Write(s);
+		console.WriteLine(s);
 	}
 	console.WriteLine();
 	strings.Clear();

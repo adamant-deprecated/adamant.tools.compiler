@@ -13,8 +13,8 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 auto Main_(::System_::Console_::Console_ *const console_) -> void
 {
-	console_->WriteLine_(resource_manager_->GetString_(p_string("Hello.rsrc")));
-	console_->WriteLine_(resource_manager_->GetString_(p_string("World.rsrc")));
+	console_->Write_(resource_manager_->GetString_(p_string("Hello.rsrc")));
+	console_->Write_(resource_manager_->GetString_(p_string("World.rsrc")));
 }
 
 // Entry Point Adapter

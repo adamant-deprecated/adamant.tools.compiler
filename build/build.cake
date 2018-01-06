@@ -183,17 +183,63 @@ Task("Run-Expected")
 	{
 		var wd = MakeAbsolute(Directory("."));
 		var testCases = GetFiles("target/test-cases/**/*");
+		var testCasesDir = Directory("test-cases");
+		var targetTestCasesDir = MakeAbsolute(Directory("target/test-cases"));
 		Information("Found {0} Test Cases to Execute", testCases.Count);
+		var failed = 0;
 		foreach(var testCase in testCases)
 		{
 			var program = wd.GetRelativePath(testCase);
-			Information("Running {0}", program);
-			var result = RunProcess(program, "", false);
-			Information("Exit Code is {0}", result);
-			// TODO if we had a way to know what the expected exit code was, we could check
-			// TODO we could also check the actual output
+			var results = TestProcess(program, "");
+			var exitCode = results.Item1;
+			var output = results.Item2.ToArray();
+
+			FileWriteLines(program.ChangeExtension(".run.txt"), new [] {exitCode.ToString()}.Concat(output).ToArray());
+
+			int expectedExitCode;
+			string[] expectedOutput;
+			var expectedOutFile = (testCasesDir + targetTestCasesDir.GetRelativePath(testCase)).Path.ChangeExtension(".run.txt");
+			if(FileExists(expectedOutFile))
+			{
+				var expectedOutFileLines = FileReadLines(expectedOutFile);
+				expectedExitCode = int.Parse(expectedOutFileLines[0]);
+				expectedOutput = expectedOutFileLines.Skip(1).ToArray();
+			}
+			else
+			{
+				expectedExitCode = 0;
+				expectedOutput = new string[0];
+			}
+
+			if(expectedExitCode != exitCode || !expectedOutput.SequenceEqual(output))
+			{
+				failed++;
+				Error("  {0} [FAIL]", program);
+				if(expectedExitCode != exitCode)
+					Information("    Exit code of {0} did not match expected value {1}", exitCode, expectedExitCode);
+
+				if(expectedOutput.Length != output.Length)
+					Information("    {0} lines output did not match the {1} expected", output.Length, expectedOutput.Length);
+				else
+					for(var i = 0; i < output.Length; i++)
+						if(output[i] != expectedOutput[i])
+						{
+							Information("    Line {1} didn't match", i);
+							Information("    Expected: {0}", expectedOutput[i]);
+							Information("    Actual:   {0}", output[i]);
+						}
+			}
+			else
+			{
+
+				Verbose("  {0} [PASS]", program);
+			}
 		}
-		Information("Ran {0} Test Cases", testCases.Count);
+
+		Information("=== RUN SUMMARY ===");
+		Information("  Total: {0}, Failed: {1}", testCases.Count, failed);
+		if(failed > 0)
+			throw new Exception("Run-Expected Failed");
 	});
 
 Task("Default")
@@ -348,7 +394,7 @@ void CompileCpp(string[] sourceGlobs, FilePath output, FilePath includeDirectory
 		options += " -Xclang -flto-visibility-public-std";
 	}
 
-	// Becuase wildcard expansion is handled by the shell on Linux and Cake StartProcess() always
+	// Because wildcard expansion is handled by the shell on Linux and Cake StartProcess() always
 	// sets UseShellExecute=false, we just expand the wildcards ourselves
 	var wd = MakeAbsolute(Directory("."));
 	var sources = string.Join(" ", sourceGlobs.SelectMany(glob => GetFiles(glob)).Select(file => wd.GetRelativePath(file)));
@@ -406,17 +452,17 @@ void Test(string version)
 }
 
 // Run a process and report an error on failure
-int RunProcess(FilePath command, string args, bool checkResult = true)
+int RunProcess(FilePath command, string args)
 {
 	Verbose(command + " " + args);
 	var result = StartProcess(command, args);
-	if(checkResult && result != 0)
+	if(result != 0)
 		throw new Exception("Exited with result: "+result);
 
 	return result;
 }
 
-// Run a process, return the ouput and report an error on failure
+// Run a process, return the output and report an error on failure
 IEnumerable<string> ReadProcess(FilePath command, string args)
 {
 	Verbose(command + " " + args);
@@ -430,4 +476,17 @@ IEnumerable<string> ReadProcess(FilePath command, string args)
 	if(result != 0)
 		throw new Exception("Exited with result: "+result);
 	return process.GetStandardOutput();
+}
+
+// Run a process, return both the exit code and output
+Tuple<int, IEnumerable<string>> TestProcess(FilePath command, string args)
+{
+	Verbose(command + " " + args);
+	var process = StartAndReturnProcess(command, new ProcessSettings()
+		{
+			Arguments = args,
+			RedirectStandardOutput = true,
+		});
+	process.WaitForExit();
+	return Tuple.Create(process.GetExitCode(), process.GetStandardOutput());
 }
