@@ -49,7 +49,12 @@ public Emit(package: Syntax_Node, resources: System.Collections.List<Source_Text
 		+ Definitions.ToString();
 }
 
-public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> void
+// based on sysexits.h
+public let Success: int = 0;
+public let UsageError: int = 64;
+public let DataError: int = 65;
+
+public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> int
 {
 	let sourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
 	let resourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
@@ -96,7 +101,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	if |sourceFilePaths| == 0 or outputFilePath == ""
 	{
 		console.WriteLine("Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
-		return;
+		return UsageError;
 	}
 
 	// Read Resources
@@ -139,7 +144,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 
 	if HasErrors(diagnostics)
 	{
-		return;
+		return DataError;
 	}
 
 	let translated: string = Emit(package, resources);
@@ -174,6 +179,8 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	resourceFile = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.cpp");
 	resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
 	resourceFile.Close();
+
+	return Success;
 }
 
 public ReadSource(path: string) -> Source_Text

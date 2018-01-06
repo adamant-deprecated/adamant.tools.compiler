@@ -19,7 +19,7 @@ Task("Build-Previous")
 	.IsDependentOn("Clean")
 	.Does(() =>
 	{
-		var hasUncommitedChanges = ReadProcess("git", "status --porcelain=v2").Any();
+		var hasUncommitedChanges = Command("git", "status --porcelain=v2").Read().Any();
 		int generation;
 		if(hasUncommitedChanges)
 		{
@@ -71,7 +71,7 @@ Task("Build-Previous")
 
 		Information("Compiling previous C++");
 		EnsureDirectoryExists("target/previous");
-		CompileCpp("translated/previous/*.cpp", "target/previous/Program");
+		CompileCpp("translated/previous/*.cpp", "target/previous/Program").Run();
 	});
 
 Task("Build-Current")
@@ -81,11 +81,11 @@ Task("Build-Current")
 	{
 		Information("Compiling Adamant to C++");
 		EnsureDirectoryExists("translated/current");
-		CompileAdamant("previous", "current");
+		CompileAdamant("previous", "current").Run();
 
 		Information("Compiling current C++");
 		EnsureDirectoryExists("target/current");
-		CompileCpp("translated/current/*.cpp", "target/current/Program");
+		CompileCpp("translated/current/*.cpp", "target/current/Program").Run();
 	});
 
 Task("Test-Current")
@@ -103,11 +103,11 @@ Task("Build-Bootstrapped")
 	{
 		Information("Compiling Adamant to C++");
 		EnsureDirectoryExists("translated/bootstrapped");
-		CompileAdamant("current", "bootstrapped");
+		CompileAdamant("current", "bootstrapped").Run();
 
 		Information("Compiling bootstrapped C++");
 		EnsureDirectoryExists("target/bootstrapped");
-		CompileCpp("translated/bootstrapped/*.cpp", "target/bootstrapped/Program");
+		CompileCpp("translated/bootstrapped/*.cpp", "target/bootstrapped/Program").Run();
 	});
 
 Task("Test-Bootstrapped")
@@ -125,11 +125,11 @@ Task("Build-Double-Bootstrapped")
 	{
 		Information("Compiling Adamant to C++");
 		EnsureDirectoryExists("translated/double-bootstrapped");
-		CompileAdamant("bootstrapped", "double-bootstrapped");
+		CompileAdamant("bootstrapped", "double-bootstrapped").Run();
 
 		Information("Compiling double-bootstrapped C++");
 		EnsureDirectoryExists("target/double-bootstrapped");
-		CompileCpp("translated/double-bootstrapped/*.cpp", "target/double-bootstrapped/Program");
+		CompileCpp("translated/double-bootstrapped/*.cpp", "target/double-bootstrapped/Program").Run();
 
 		Information("Verifying bootstrapped and double-bootstrapped are equal");
 		var bootstrappedFiles = GetFiles("translated/bootstrapped/**/*");
@@ -171,7 +171,7 @@ Task("Build-Expected")
 			var outputDir = Directory("target") + relativePath.GetDirectory();
 			EnsureDirectoryExists(outputDir);
 			var output = outputDir + relativePath.GetFilenameWithoutExtension();
-			CompileCpp(new []{ relativePath.ToString(), "src/*.cpp" }, output, "src");
+			CompileCpp(new []{ relativePath.ToString(), "src/*.cpp" }, output, "src").Run();
 		}
 		Information("Compiled {0} Test Case Expected Outputs", testCases.Count);
 	});
@@ -190,50 +190,16 @@ Task("Run-Expected")
 		foreach(var testCase in testCases)
 		{
 			var program = wd.GetRelativePath(testCase);
-			var results = TestProcess(program, "");
-			var exitCode = results.Item1;
-			var output = results.Item2.ToArray();
+			var actual = Command(program).Test();
+			actual.WriteFile(program.ChangeExtension(".run.txt"));
 
-			FileWriteLines(program.ChangeExtension(".run.txt"), new [] {exitCode.ToString()}.Concat(output).ToArray());
+			var expectedFile = (testCasesDir + targetTestCasesDir.GetRelativePath(testCase)).Path.ChangeExtension(".run.txt");
+			var expected = FileExists(expectedFile) ? ReadResultFile(expectedFile) : DefaultResult();
 
-			int expectedExitCode;
-			string[] expectedOutput;
-			var expectedOutFile = (testCasesDir + targetTestCasesDir.GetRelativePath(testCase)).Path.ChangeExtension(".run.txt");
-			if(FileExists(expectedOutFile))
-			{
-				var expectedOutFileLines = FileReadLines(expectedOutFile);
-				expectedExitCode = int.Parse(expectedOutFileLines[0]);
-				expectedOutput = expectedOutFileLines.Skip(1).ToArray();
-			}
-			else
-			{
-				expectedExitCode = 0;
-				expectedOutput = new string[0];
-			}
-
-			if(expectedExitCode != exitCode || !expectedOutput.SequenceEqual(output))
-			{
+			if(TestResult(program, expected, actual))
 				failed++;
-				Error("  {0} [FAIL]", program);
-				if(expectedExitCode != exitCode)
-					Information("    Exit code of {0} did not match expected value {1}", exitCode, expectedExitCode);
-
-				if(expectedOutput.Length != output.Length)
-					Information("    {0} lines output did not match the {1} expected", output.Length, expectedOutput.Length);
-				else
-					for(var i = 0; i < output.Length; i++)
-						if(output[i] != expectedOutput[i])
-						{
-							Information("    Line {1} didn't match", i);
-							Information("    Expected: {0}", expectedOutput[i]);
-							Information("    Actual:   {0}", output[i]);
-						}
-			}
 			else
-			{
-
 				Verbose("  {0} [PASS]", program);
-			}
 		}
 
 		Information("=== RUN SUMMARY ===");
@@ -291,12 +257,12 @@ Task("Commit-Translated")
 
 		Information("Staging files");
 		GitAdd(".", "translated/current");
-		RunProcess("git", "status --untracked-files=no");
+		Command("git", "status --untracked-files=no").Run();
 
 		Information("Commiting changes");
 		// Allow empty commits so we can make a properly named commit to match each commit
 		var message = string.Format("Translated files for {0}", currentCommit);
-		RunProcess("git", string.Format("commit -m \"{0}\" --allow-empty --untracked-files=no", message));
+		Command("git", string.Format("commit -m \"{0}\" --allow-empty --untracked-files=no", message)).Run();
 
 		var tag = "translated/"+currentCommit;
 		if(GitTagExists(tag))
@@ -313,11 +279,11 @@ Task("Commit-Translated")
 		{
 			Information("Pushing tag to server");
 			// Have to use the command line because of authentication
-			RunProcess("git", "push origin " + tag);
+			Command("git", "push origin " + tag).Run();
 		}
 		else
 		{
-			Warning("Skipping push of tag becuase not running in AppVeyor");
+			Warning("Skipping push of tag because not running in AppVeyor");
 		}
 	});
 
@@ -327,6 +293,126 @@ Task("CI")
 
 RunTarget(target);
 
+void Test(string version)
+{
+	var compiler = string.Format("target/{0}/Program", version);
+	var testCases = GetFiles("test-cases/**/*.ad");
+	var testCasesDir = MakeAbsolute(Directory("test-cases"));
+	var outputDir = Directory(string.Format("translated/{0}-test-cases", version));
+	var failed = 0;
+	foreach(var testCase in testCases)
+	{
+		var testCaseName = testCasesDir.GetRelativePath(testCase);
+		var output = outputDir + testCaseName.ChangeExtension("cpp");
+		EnsureDirectoryExists(output.Path.GetDirectory());
+		var resources = GetFiles(testCase.GetDirectory().ToString() + "/*.rsrc");
+		var actual = CompileAdamant(compiler, new [] { testCase }, output, resources).Test();
+		actual.WriteFile(output.Path.ChangeExtension(".compile.txt"));
+
+		var expectedFile = testCase.ChangeExtension(".compile.txt");
+		var expected = FileExists(expectedFile) ? ReadResultFile(expectedFile) : DefaultResult();
+
+		var expectedCpp = testCase.ChangeExtension(".cpp");
+		var caseFailed = TestResult(testCaseName, expected, actual);
+
+		if(!caseFailed && actual.ExitCode == 0)
+		{
+			if(!FileExists(output))
+			{
+				Error("  {0} [FAIL]", testCaseName);
+				Information("    C++ output does not exist.");
+				caseFailed = true;
+			}
+			else if(FileReadText(expectedCpp) != FileReadText(output))
+			{
+				Error("  {0} [FAIL]", testCaseName);
+				Information("    C++ does not match expected.");
+				caseFailed = true;
+			}
+		}
+
+		if(caseFailed)
+			failed++;
+		else
+			Verbose("  {0} [PASS]", testCaseName);
+	}
+
+	Information("=== TEST EXECUTION SUMMARY ===");
+	Information("  Total: {0}, Failed: {1}", testCases.Count, failed);
+	if(failed > 0)
+		throw new Exception("Test cases failed for " + version);
+}
+
+bool TestResult(FilePath testCase, CommandResult expected, CommandResult actual)
+{
+	if(expected.ExitCode == actual.ExitCode && expected.Output.SequenceEqual(actual.Output))
+		return false;
+
+	Error("  {0} [FAIL]", testCase.ToString());
+	if(expected.ExitCode != actual.ExitCode)
+		Information("    Exit code of {0} did not match expected value {1}", actual.ExitCode, expected.ExitCode);
+
+	if(expected.Output.Count != actual.Output.Count)
+		Information("    {0} lines output did not match the {1} expected", actual.Output.Count, expected.Output.Count);
+	else
+		for(var i = 0; i < actual.Output.Count; i++)
+			if(expected.Output[i] != actual.Output[i])
+			{
+				Information("    Line {1} didn't match", i);
+				Information("    Expected: {0}", expected.Output[i]);
+				Information("    Actual:   {0}", actual.Output[i]);
+			}
+	return true;
+}
+
+ConsoleCommand CompileAdamant(string sourceVersion, string targetVersion)
+{
+	var compiler = string.Format("target/{0}/Program", sourceVersion);
+	var sources = GetFiles("src/**/*.ad");
+	var output = string.Format("translated/{0}/Program.cpp", targetVersion);
+	var resources = new FilePath[] { "src/RuntimeLibrary.cpp", "src/RuntimeLibrary.h" };
+	return CompileAdamant(compiler, sources, output, resources);
+}
+
+ConsoleCommand CompileAdamant(FilePath compiler, IEnumerable<FilePath> sources, FilePath output, IEnumerable<FilePath> resources)
+{
+	var windows = IsRunningOnWindows();
+	if(IsRunningOnWindows())
+	{
+		compiler = compiler.AppendExtension("exe");
+	}
+	// Make sure the paths are relative.  To handle either, we first make absolute then compute relative
+	var wd = MakeAbsolute(Directory("."));
+	var relativeSources = sources.Select(s => wd.GetRelativePath(MakeAbsolute(s)));
+	var relativeResources = resources.Select(r => wd.GetRelativePath(MakeAbsolute(r)));
+	return Command(compiler, string.Join(" ", relativeSources) + " -o " + output + string.Concat(relativeResources.Select(r => " -r " + r)));
+}
+
+ConsoleCommand CompileCpp(string sourceGlob, FilePath output, FilePath includeDirectory = null)
+{
+	return CompileCpp(new [] { sourceGlob }, output, includeDirectory);
+}
+
+ConsoleCommand CompileCpp(string[] sourceGlobs, FilePath output, FilePath includeDirectory = null)
+{
+	var options =  " -std=c++14";
+	if(includeDirectory != null)
+	{
+		options += string.Format(" --include-directory \"{0}\"", includeDirectory);
+	}
+	if(IsRunningOnWindows())
+	{
+		output = output.AppendExtension("exe");
+		options += " -Xclang -flto-visibility-public-std";
+	}
+
+	// Because wildcard expansion is handled by the shell on Linux and Cake StartProcess() always
+	// sets UseShellExecute=false, we just expand the wildcards ourselves
+	var wd = MakeAbsolute(Directory("."));
+	var sources = string.Join(" ", sourceGlobs.SelectMany(glob => GetFiles(glob)).Select(file => wd.GetRelativePath(file)));
+
+	return Command("clang++", sources + " -o " + output + options);
+}
 
 bool GitTagExists(string tag)
 {
@@ -345,148 +431,102 @@ bool GitTagExists(string tag)
 
 string GitRevParse(string revision)
 {
-	return ReadProcess("git", string.Format("rev-parse \"{0}\"", revision)).SingleOrDefault().ToLower();
+	return Command("git", string.Format("rev-parse \"{0}\"", revision)).Read().SingleOrDefault().ToLower();
 }
 
-void CompileAdamant(string sourceVersion, string targetVersion)
+// Command Library
+// Separates the construction of command arguments from how we want to run the process
+
+ConsoleCommand Command(FilePath command, string arguments)
 {
-	var compiler = string.Format("target/{0}/Program", sourceVersion);
-	var sources = GetFiles("src/**/*.ad");
-	var output = string.Format("translated/{0}/Program.cpp", targetVersion);
-	var resources = new FilePath[] { "src/RuntimeLibrary.cpp", "src/RuntimeLibrary.h" };
-	CompileAdamant(compiler, sources, output, resources);
+	return new ConsoleCommand(Context, command, arguments);
 }
 
-void CompileAdamant(FilePath compiler, IEnumerable<FilePath> sources, FilePath output, IEnumerable<FilePath> resources)
+ConsoleCommand Command(FilePath command)
 {
-	var windows = IsRunningOnWindows();
-	if(IsRunningOnWindows())
-	{
-		compiler = compiler.AppendExtension("exe");
-	}
-	// Make sure the paths are relative.  To handle either, we first make absolute then compute relative
-	var wd = MakeAbsolute(Directory("."));
-	var relativeSources = sources.Select(s => wd.GetRelativePath(MakeAbsolute(s)));
-	var relativeResources = resources.Select(r => wd.GetRelativePath(MakeAbsolute(r)));
-	RunProcess(compiler, string.Join(" ", relativeSources) + " -o " + output + string.Concat(relativeResources.Select(r => " -r " + r)));
-	if(!FileExists(output))
-	{
-		Error("Compilation output file '{0}' not created.", output);
-		throw new Exception("Adamant compilation failed");
-	}
+	return new ConsoleCommand(Context, command, null);
 }
 
-void CompileCpp(string sourceGlob, FilePath output, FilePath includeDirectory = null)
+public class ConsoleCommand
 {
-	CompileCpp(new [] { sourceGlob }, output, includeDirectory);
-}
+	private readonly ICakeContext context;
+	public readonly FilePath Command;
+	public readonly string Arguments;
 
-void CompileCpp(string[] sourceGlobs, FilePath output, FilePath includeDirectory = null)
-{
-	var options =  " -std=c++14";
-	if(includeDirectory != null)
+	public ConsoleCommand(ICakeContext context, FilePath command, string arguments)
 	{
-		options += string.Format(" --include-directory \"{0}\"", includeDirectory);
-	}
-	if(IsRunningOnWindows())
-	{
-		output = output.AppendExtension("exe");
-		options += " -Xclang -flto-visibility-public-std";
+		this.context = context;
+		Command = command;
+		Arguments = arguments;
 	}
 
-	// Because wildcard expansion is handled by the shell on Linux and Cake StartProcess() always
-	// sets UseShellExecute=false, we just expand the wildcards ourselves
-	var wd = MakeAbsolute(Directory("."));
-	var sources = string.Join(" ", sourceGlobs.SelectMany(glob => GetFiles(glob)).Select(file => wd.GetRelativePath(file)));
-
-	RunProcess("clang++", sources + " -o " + output + options);
-}
-
-void Test(string version)
-{
-	Information("Compiling Adamant test cases to C++");
-	var compiler = string.Format("target/{0}/Program", version);
-	var testCases = GetFiles("test-cases/**/*.ad");
-	var testCasesDir = MakeAbsolute(Directory("test-cases"));
-	var outputDir = Directory(string.Format("translated/{0}-test-cases", version));
-	foreach(var testCase in testCases)
+	// Run the command and report an error on failure
+	public void Run()
 	{
-		var output = outputDir + testCasesDir.GetRelativePath(testCase).ChangeExtension("cpp");
-		EnsureDirectoryExists(output.Path.GetDirectory());
-		var resources = GetFiles(testCase.GetDirectory().ToString() + "/*.rsrc");
-		CompileAdamant(compiler, new [] { testCase }, output, resources);
+		context.Verbose(Command + " " + Arguments);
+		var result = context.StartProcess(Command, Arguments);
+		if(result != 0)
+			throw new Exception("Exited with result: " + result);
 	}
 
-	Information("Checking test cases for {0}", version);
-	var expectedResults = GetFiles("test-cases/**/*.cpp");
-	var total = 0;
-	var failed = 0;
-	foreach(var expected in expectedResults)
+	// Run the command, return the output and report an error on failure
+	public IEnumerable<string> Read()
 	{
-		total++;
-		var relativeToExpected = testCasesDir.GetRelativePath(expected);
-		var actual = outputDir + relativeToExpected;
-		var testCase = relativeToExpected.ChangeExtension("ad");
-		if(!FileExists(actual))
-		{
-			Error("  {0} [FAIL]", testCase);
-			Information("    {0} does not exist.", actual);
-			failed++;
-		}
-		else if(FileReadText(expected) != FileReadText(actual))
-		{
-			Error("  {0} [FAIL]", testCase);
-			Information("    {0} does not match expected.", actual);
-			failed++;
-		}
-		else
-		{
-			Verbose("  {0} [PASS]", testCase);
-		}
+		context.Verbose("Read: " + Command + " " + Arguments);
+		var process = context.StartAndReturnProcess(Command, new ProcessSettings()
+			{
+				Arguments = Arguments,
+				RedirectStandardOutput = true,
+			});
+		process.WaitForExit();
+		var result = process.GetExitCode();
+		if(result != 0)
+			throw new Exception("Exited with result: "+result);
+		return process.GetStandardOutput();
 	}
 
-	Information("=== TEST EXECUTION SUMMARY ===");
-	Information("  Total: {0}, Failed: {1}", total, failed);
-	if(failed > 0)
-		throw new Exception("Test cases failed for " + version);
+	// Run the command, return both the exit code and output
+	public CommandResult Test()
+	{
+		context.Verbose("Test: " + Command + " " + Arguments);
+		var process = context.StartAndReturnProcess(Command, new ProcessSettings()
+			{
+				Arguments = Arguments,
+				RedirectStandardOutput = true,
+			});
+		process.WaitForExit();
+		return new CommandResult(context, process.GetExitCode(), process.GetStandardOutput());
+	}
 }
 
-// Run a process and report an error on failure
-int RunProcess(FilePath command, string args)
+public class CommandResult
 {
-	Verbose(command + " " + args);
-	var result = StartProcess(command, args);
-	if(result != 0)
-		throw new Exception("Exited with result: "+result);
+	private readonly ICakeContext context;
+	public readonly int ExitCode;
+	public readonly IReadOnlyList<string> Output;
 
-	return result;
+	public CommandResult(ICakeContext context, int exitCode, IEnumerable<string> output)
+	{
+		this.context = context;
+		ExitCode = exitCode;
+		Output = output.ToList().AsReadOnly();
+	}
+
+	public void WriteFile(FilePath file)
+	{
+		context.FileWriteLines(file, new [] { ExitCode.ToString()}.Concat(Output).ToArray());
+	}
 }
 
-// Run a process, return the output and report an error on failure
-IEnumerable<string> ReadProcess(FilePath command, string args)
+// Can't be a static field because we need access to `Context`
+CommandResult DefaultResult()
 {
-	Verbose(command + " " + args);
-	var process = StartAndReturnProcess(command, new ProcessSettings()
-		{
-			Arguments = args,
-			RedirectStandardOutput = true,
-		});
-	process.WaitForExit();
-	var result = process.GetExitCode();
-	if(result != 0)
-		throw new Exception("Exited with result: "+result);
-	return process.GetStandardOutput();
+	return new CommandResult(Context, 0, Enumerable.Empty<string>());
 }
 
-// Run a process, return both the exit code and output
-Tuple<int, IEnumerable<string>> TestProcess(FilePath command, string args)
+// Can't be a static method because we need access to `Context`
+CommandResult ReadResultFile(FilePath file)
 {
-	Verbose(command + " " + args);
-	var process = StartAndReturnProcess(command, new ProcessSettings()
-		{
-			Arguments = args,
-			RedirectStandardOutput = true,
-		});
-	process.WaitForExit();
-	return Tuple.Create(process.GetExitCode(), process.GetStandardOutput());
+	var lines = FileReadLines(file);
+	return new CommandResult(Context, int.Parse(lines[0]), lines.Skip(1));
 }
