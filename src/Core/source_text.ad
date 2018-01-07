@@ -65,9 +65,20 @@ public class Source_Text // TODO change immutable class name to snake_case when 
 	{
 		let offset: int = span.Start;
 		let lineNumber: int = Lines.LineNumber(offset);
-		// TODO count tabs as more than one column
+		let lineStart: int = Lines.Get(lineNumber).Start;
+
 		// TODO handle unicode
-		// TODO column number seems to be giving weird values
-		return new Text_Position(offset, lineNumber, offset - Lines.Get(lineNumber).Start);
+		var column: int = offset - lineStart + 1; // column is one based
+		// Account for tabs being multiple columns
+		// TODO switch to a for loop when we have range expressions
+		var i: int = lineStart;
+		while(i < offset)
+		{
+			if Text[i] == '\t'
+				{ column += 3; } // tabs are 4 columns, but the character was already counted as 1
+			i += 1;
+		}
+
+		return new Text_Position(offset, lineNumber, column);
 	}
 }

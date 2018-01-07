@@ -34,14 +34,15 @@ public class Line_Info
 		var right: int = |lineStarts| - 1;
 		while left <= right
 		{
-			let mid: int = left + (right - left) / 2;
+			let mid: int = left + (right - left) / 2; // avoids overflow compared to (left + right) / 2
 
-			if lineStarts[mid] < offset
+			let midLineStart: int = lineStarts[mid];
+			if midLineStart < offset
 			{
 				// If offset greater, ignore left half
 				left = mid + 1;
 			}
-			else if lineStarts[mid] > offset
+			else if midLineStart > offset
 			{
 				// If offset is smaller, ignore right half
 				right = mid - 1;
@@ -52,7 +53,8 @@ public class Line_Info
 			}
 		}
 
-		// if we reach here, then offset is on the current line
-		return left + 1; // Line number is one based
+		// Now `lineStarts[left] > offset`, so `left - 1` is the line we want.
+		// However, line number is one based, so we would add one, so just `left`
+		return left;
 	}
 }

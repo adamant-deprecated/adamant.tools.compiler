@@ -174,18 +174,11 @@ public class Syntax_Node
 	public new(type: int, children: System.Collections.List<Syntax_Node>)
 	{
 		Type = type;
-		if |children| > 0
-		{
-			Source = children[0].Source;
-			Start = children[0].Start;
-			let lastChild: Syntax_Node = children[|children| - 1];
-			Length = lastChild.Start - Start + lastChild.Length;
-		}
-		else
-		{
-			Start = 0;
-			Length = 0;
-		}
+		// TODO enforce that list is not empty, for now we rely on `children[0]` failing
+		Source = children[0].Source;
+		Start = children[0].Start;
+		let lastChild: Syntax_Node = children[|children| - 1];
+		Length = lastChild.Start - Start + lastChild.Length;
 		Children = children;
 		Diagnostics = new System.Collections.List<Diagnostic>();
 	}

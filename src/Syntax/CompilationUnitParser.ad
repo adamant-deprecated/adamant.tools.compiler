@@ -119,7 +119,7 @@ public class CompilationUnitParser
 	}
 
 	// An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
-	private ParseAtom(mut self) -> Syntax_Node?
+	private ParseAtom(mut self) -> Syntax_Node
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
@@ -200,7 +200,8 @@ public class CompilationUnitParser
 			return new Syntax_Node(CodePointLiteralExpression, children);
 		}
 
-		return null;
+		// Missing and atom, assume it should have been an identifier
+		return new Syntax_Node(IdentifierName, ExpectToken(Identifier));
 	}
 
 	private ParseCallArguments(mut self) -> Syntax_Node
@@ -234,9 +235,7 @@ public class CompilationUnitParser
 	// 9 Primary: f() . []
 	private ParseExpression(mut self, minPrecedence: int) -> Syntax_Node
 	{
-		var expression: Syntax_Node? = ParseAtom();
-		if expression == null
-			{ return null; }
+		var expression: Syntax_Node = ParseAtom();
 
 		loop
 		{
@@ -374,8 +373,7 @@ public class CompilationUnitParser
 			{
 				if leftAssociative
 					{ precedence += 1; }
-				let rhs: Syntax_Node = ParseExpression(precedence);
-				children.Add(rhs);
+				children.Add(ParseExpression(precedence));
 				expression = new Syntax_Node(expressionType, children);
 			}
 			else
@@ -457,6 +455,10 @@ public class CompilationUnitParser
 			children.Add(ExpectToken(Semicolon));
 			return new Syntax_Node(LocalDeclarationStatement, children);
 		}
+		if token.Type == LeftBrace
+		{
+			return ParseBlock();
+		}
 
 		// Assume it is an expression statement
 		children.Add(ParseExpression());
@@ -511,7 +513,7 @@ public class CompilationUnitParser
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(ExpectToken(LeftBrace));
-		while token.Type <> RightBrace
+		while token.Type <> RightBrace and token.Type <> EndOfFileToken
 		{
 			let startToken: Syntax_Node = token;
 			children.Add(ParseStatement());
@@ -522,6 +524,7 @@ public class CompilationUnitParser
 				let skipped: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 				while token.Type <> LeftBrace
 					and token.Type <> RightBrace
+					and token.Type <> EndOfFileToken
 				{
 					let currentTokenType: int = token.Type;
 					skipped.Add(AcceptToken());
@@ -651,7 +654,7 @@ public class CompilationUnitParser
 			children.Add(ExpectToken(ClassKeyword));
 			children.Add(ExpectToken(Identifier));
 			children.Add(ExpectToken(LeftBrace));
-			while token.Type <> RightBrace
+			while token.Type <> RightBrace and token.Type <> EndOfFileToken
 			{
 				let startToken: Syntax_Node = token;
 				children.Add(ParseClassMember());
@@ -673,7 +676,7 @@ public class CompilationUnitParser
 			children.Add(ExpectToken(Identifier));
 			children.Add(ExpectToken(LeftBrace));
 
-			while token.Type <> RightBrace
+			while token.Type <> RightBrace and token.Type <> EndOfFileToken
 			{
 				let memberChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 				memberChildren.Add(ExpectToken(Identifier));
