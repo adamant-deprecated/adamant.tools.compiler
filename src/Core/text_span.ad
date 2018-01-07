@@ -23,10 +23,3 @@ public class Text_Span
 		return Start + Length;
 	}
 }
-
-// TODO make this a named constructor
-// @pre start <= end
-public TextSpanFromTo(start: int, end: int) -> Text_Span
-{
-	return new Text_Span(start, end - start);
-}

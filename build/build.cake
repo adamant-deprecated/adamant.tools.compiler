@@ -358,7 +358,7 @@ bool TestResult(FilePath testCase, CommandResult expected, CommandResult actual)
 		for(var i = 0; i < actual.Output.Count; i++)
 			if(expected.Output[i] != actual.Output[i])
 			{
-				Information("    Line {1} didn't match", i);
+				Information("    Line {0} didn't match", i);
 				Information("    Expected: {0}", expected.Output[i]);
 				Information("    Actual:   {0}", actual.Output[i]);
 			}

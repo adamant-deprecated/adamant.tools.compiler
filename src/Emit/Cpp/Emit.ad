@@ -285,7 +285,7 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		ConvertExpression(syntax.Children[2], builder);
 		builder.Write(")");
 	}
-	else if syntax.Type == ComparisionExpression
+	else if syntax.Type == ComparisonExpression
 	{
 		let operator: int = syntax.Children[1].Type;
 		ConvertExpression(syntax.Children[0], builder);

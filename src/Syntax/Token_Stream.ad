@@ -201,7 +201,7 @@ public class Token_Stream
 				}
 
 				// Add an error to the next token
-				var diagnosticSpan: Text_Span = TextSpanFromTo(position, position + 1);
+				var diagnosticSpan: Text_Span = new Text_Span(position, 1);
 				diagnostics.Add(new Diagnostic(CompilationError, Lexing, Source, diagnosticSpan, "Invalid character `" + curChar + "`"));
 				// Skip past the character and continue lexing
 				position = end;
@@ -313,7 +313,7 @@ public class Token_Stream
 
 	private NewToken(mut self, type: int, end: uint) -> Syntax_Node
 	{
-		let token: mut Syntax_Node = new Syntax_Node(type, Source, position, end-position);
+		let token: mut Syntax_Node = new Syntax_Node(type, Source, position, end - position);
 
 		for let diagnostic: Diagnostic in diagnostics
 		{

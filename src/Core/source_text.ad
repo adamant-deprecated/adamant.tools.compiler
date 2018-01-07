@@ -19,26 +19,21 @@ public class Source_Text // TODO change immutable class name to snake_case when 
 		let lineStarts: mut System.Collections.List<int> = new System.Collections.List<int>();
 		lineStarts.Add(0); // there is always the first line
 
-		if 0 == length
-			{ return lineStarts; }
-
 		// performance critical
 		var position: int = 0;
 		while position < length
 		{
 			let c: code_point = Text[position];
+			position += 1;
 
 			// Common case - ASCII & not a line break
 			if c > '\r' and c <= '\x7F'
-			{
-				position += 1;
-				continue;
-			}
+				{ continue; }
 
 			if c == '\r'
 			{
 				// Assumes that the only 2-char line break sequence is CR+LF
-				if position + 1 < length and Text[position + 1] == '\n'
+				if position < length and Text[position] == '\n'
 					{ position += 1; }
 			}
 			else if c == '\n'
@@ -51,16 +46,11 @@ public class Source_Text // TODO change immutable class name to snake_case when 
 				// Do Nothing
 			}
 			else
-			{
-				position += 1;
-				continue;
-			}
+				{ continue; }
 
-			// next line starts after the position
-			if position + 1 < length
-				{ lineStarts.Add(position + 1); }
-
-			position += 1;
+			// Already advanced position, so next line starts there
+			if position < length
+				{ lineStarts.Add(position); }
 		}
 
 		return lineStarts;

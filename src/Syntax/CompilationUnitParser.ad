@@ -7,7 +7,7 @@ public class CompilationUnitParser
 	public new(tokenStream: mut Token_Stream)
 	{
 		self.tokenStream = tokenStream;
-		self.compilationUnit = null; // TODO We currently don't auto-initalize members
+		self.compilationUnit = null; // TODO We currently don't auto-initialize members
 	}
 
 	public Parse(mut self) -> Syntax_Node
@@ -293,7 +293,7 @@ public class CompilationUnitParser
 				precedence = 5;
 				leftAssociative = true;
 				children.Add(AcceptToken());
-				expressionType = ComparisionExpression;
+				expressionType = ComparisonExpression;
 			}
 			else if token.Type == Plus and minPrecedence <= 6
 			{
@@ -635,7 +635,7 @@ public class CompilationUnitParser
 		else
 		{
 			// TODO Really we expect an access modifier
-			ExpectToken(PublicKeyword);
+			children.Add(ExpectToken(PublicKeyword));
 		}
 
 		if token.Type == VarKeyword

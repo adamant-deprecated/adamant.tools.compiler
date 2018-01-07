@@ -1,0 +1,6 @@
+let ImmutableValue: int = 42;
+var MutableValue: int = 42;
+
+public Main() -> void
+{
+}

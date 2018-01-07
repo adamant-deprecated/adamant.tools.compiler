@@ -19,6 +19,7 @@ public class Text_Line
 }
 
 // TODO Make this a named constructor
+// end is the character after the last character on the line
 public TextLineFromTo(source: Source_Text, start: int, end: int) -> Text_Line
 {
 	return new Text_Line(source, start, end - start);
