@@ -24,7 +24,6 @@ auto Emit_(::Syntax_Node_ const *const package_, ::System_::Collections_::List_<
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> p_int;
 auto ReadSource_(p_string const path_) -> ::Source_Text_ const *;
 auto TextLineFromTo_(::Source_Text_ const *const source_, p_int const start_, p_int const end_) -> ::Text_Line_ const *;
-auto TextSpanFromTo_(p_int const start_, p_int const end_) -> ::Text_Span_ const *;
 auto FormatError_(p_string const message_) -> p_string;
 auto new_Syntax_Node_Missing_(p_int const type_, ::Source_Text_ const *const source_, p_uint const start_) -> ::Syntax_Node_ const *;
 auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *const skipped_) -> ::Syntax_Node_ const *;
@@ -54,7 +53,7 @@ public:
 	::System_::Collections_::List_<p_int> const * lineStarts_;
 	Line_Info_(::Source_Text_ const *const source_, ::System_::Collections_::List_<p_int> const *const lineStarts_);
 	auto Count_() const -> p_int;
-	auto Get_(p_int const index_) const -> ::Text_Line_ const *;
+	auto Get_(p_int const lineNumber_) const -> ::Text_Line_ const *;
 	auto LineNumber_(p_int const offset_) const -> p_int;
 };
 
@@ -325,7 +324,7 @@ p_int const EqualExpression_ = p_int(67);
 p_int const NotEqualExpression_ = p_int(68);
 p_int const AndKeyword_ = p_int(69);
 p_int const OrKeyword_ = p_int(70);
-p_int const ComparisionExpression_ = p_int(71);
+p_int const ComparisonExpression_ = p_int(71);
 p_int const AddExpression_ = p_int(72);
 p_int const SubtractExpression_ = p_int(73);
 p_int const InvocationExpression_ = p_int(74);
@@ -615,8 +614,9 @@ auto ::Line_Info_::Count_() const -> p_int
 	return lineStarts_->op_Magnitude();
 }
 
-auto ::Line_Info_::Get_(p_int const index_) const -> ::Text_Line_ const *
+auto ::Line_Info_::Get_(p_int const lineNumber_) const -> ::Text_Line_ const *
 {
+	p_int const index_ = lineNumber_->op_Subtract(p_int(1));
 	p_int const start_ = lineStarts_->op_Element(index_);
 	if (index_->op_Equal(lineStarts_->op_Magnitude()->op_Subtract(p_int(1))).Value)
 	{
@@ -634,22 +634,21 @@ auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 	while (left_->op_LessThanOrEqual(right_).Value)
 	{
 		p_int const mid_ = left_->op_Add(right_->op_Subtract(left_)->op_Divide(p_int(2)));
-		if (lineStarts_->op_Element(mid_)->op_Equal(offset_).Value)
-		{
-			return mid_;
-		}
-
 		if (lineStarts_->op_Element(mid_)->op_LessThan(offset_).Value)
 		{
 			left_ = mid_->op_Add(p_int(1));
 		}
-		else
+		else if (lineStarts_->op_Element(mid_)->op_GreaterThan(offset_).Value)
 		{
 			right_ = mid_->op_Subtract(p_int(1));
 		}
+		else
+		{
+			return mid_->op_Add(p_int(1));
+		}
 	}
 
-	return left_;
+	return left_->op_Add(p_int(1));
 }
 
 ::Source_Text_::Source_Text_(p_string const package_, p_string const name_, p_string const text_)
@@ -665,24 +664,19 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 	p_int const length_ = ByteLength_();
 	::System_::Collections_::List_<p_int> *const lineStarts_ = new ::System_::Collections_::List_<p_int>();
 	lineStarts_->Add_(p_int(0));
-	if (p_int(0)->op_Equal(length_).Value)
-	{
-		return lineStarts_;
-	}
-
 	p_int position_ = p_int(0);
 	while (position_->op_LessThan(length_).Value)
 	{
 		p_code_point const c_ = Text_->op_Element(position_);
+		position_->op_AddAssign(p_int(1));
 		if (LogicalAnd(c_->op_GreaterThan(p_code_point('\r')), [&] { return c_->op_LessThanOrEqual(p_code_point('\x7F')); }).Value)
 		{
-			position_->op_AddAssign(p_int(1));
 			continue;
 		}
 
 		if (c_->op_Equal(p_code_point('\r')).Value)
 		{
-			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(length_), [&] { return Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('\n')); }).Value)
+			if (LogicalAnd(position_->op_LessThan(length_), [&] { return Text_->op_Element(position_)->op_Equal(p_code_point('\n')); }).Value)
 			{
 				position_->op_AddAssign(p_int(1));
 			}
@@ -692,16 +686,13 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 		}
 		else
 		{
-			position_->op_AddAssign(p_int(1));
 			continue;
 		}
 
-		if (position_->op_Add(p_int(1))->op_LessThan(length_).Value)
+		if (position_->op_LessThan(length_).Value)
 		{
-			lineStarts_->Add_(position_->op_Add(p_int(1)));
+			lineStarts_->Add_(position_);
 		}
-
-		position_->op_AddAssign(p_int(1));
 	}
 
 	return lineStarts_;
@@ -756,11 +747,6 @@ auto TextLineFromTo_(::Source_Text_ const *const source_, p_int const start_, p_
 auto ::Text_Span_::End_() const -> p_int
 {
 	return Start_->op_Add(Length_);
-}
-
-auto TextSpanFromTo_(p_int const start_, p_int const end_) -> ::Text_Span_ const *
-{
-	return new ::Text_Span_(start_, end_->op_Subtract(start_));
 }
 
 auto FormatError_(p_string const message_) -> p_string
@@ -1132,7 +1118,7 @@ auto ::CompilationUnitParser_::ParseExpression_(p_int const minPrecedence_) -> :
 			precedence_ = p_int(5);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(AcceptToken_());
-			expressionType_ = ComparisionExpression_;
+			expressionType_ = ComparisonExpression_;
 		}
 		else if (LogicalAnd(token_->Type_->op_Equal(Plus_), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(6)); }).Value)
 		{
@@ -1474,7 +1460,7 @@ auto ::CompilationUnitParser_::ParseDeclaration_() -> ::Syntax_Node_ const *
 	}
 	else
 	{
-		ExpectToken_(PublicKeyword_);
+		children_->Add_(ExpectToken_(PublicKeyword_));
 	}
 
 	if (LogicalOr(token_->Type_->op_Equal(VarKeyword_), [&] { return token_->Type_->op_Equal(LetKeyword_); }).Value)
@@ -1925,7 +1911,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 				return NewToken_(Number_, end_);
 			}
 
-			::Text_Span_ const * diagnosticSpan_ = TextSpanFromTo_(position_, position_->op_Add(p_int(1)));
+			::Text_Span_ const * diagnosticSpan_ = new ::Text_Span_(position_, p_int(1));
 			diagnostics_->Add_(new ::Diagnostic_(CompilationError_, Lexing_, Source_, diagnosticSpan_, p_string("Invalid character `")->op_Add(curChar_)->op_Add(p_string("`"))));
 			position_ = end_;
 		}
@@ -2439,7 +2425,7 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 		ConvertExpression_(syntax_->Children_->op_Element(p_int(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
-	else if (syntax_->Type_->op_Equal(ComparisionExpression_).Value)
+	else if (syntax_->Type_->op_Equal(ComparisonExpression_).Value)
 	{
 		p_int const operator_ = syntax_->Children_->op_Element(p_int(1))->Type_;
 		ConvertExpression_(syntax_->Children_->op_Element(p_int(0)), builder_);
