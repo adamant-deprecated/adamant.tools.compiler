@@ -63,17 +63,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	var argType: int = 0; // 0=source file, 1=resource file, 2=output file
 	for let arg: string in args
 	{
-		if argType == 1 // resource file
-		{
-			resourceFilePaths.Add(arg);
-			argType = 0;
-		}
-		else if argType == 2 // output file
-		{
-			outputFilePath = arg;
-			argType = 0;
-		}
-		else // source file TODO check argType == 0
+		if argType == 0 // Not option value
 		{
 			if arg == "-r"
 			{
@@ -92,6 +82,18 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 				sourceFilePaths.Add(arg);
 			}
 		}
+		else if argType == 1 // resource file
+		{
+			resourceFilePaths.Add(arg);
+			argType = 0;
+		}
+		else if argType == 2 // output file
+		{
+			outputFilePath = arg;
+			argType = 0;
+		}
+
+		// else should be impossible
 	}
 
 	if(verbose)
