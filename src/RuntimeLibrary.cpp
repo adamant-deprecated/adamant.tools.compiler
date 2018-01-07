@@ -4,7 +4,7 @@
 p_uint p_int::AsUInt_() const
 {
 	if(this->Value < 0)
-		throw "Can't convert negative number to unsigned";
+		throw std::range_error("Can't convert negative number to unsigned");
 
 	return this->Value;
 }
@@ -12,7 +12,7 @@ p_uint p_int::AsUInt_() const
 char p_code_point::CharValue() const
 {
 	if(this->Value > 0xFF)
-		throw "Unicode char values not yet supported";
+		throw std::range_error("Unicode char values not yet supported");
 
 	return this->Value;
 }

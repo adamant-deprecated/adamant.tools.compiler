@@ -693,6 +693,9 @@ public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) ->
 	Definitions.WriteLine("std::int32_t main(int argc, char const *const * argv)");
 	Definitions.BeginBlock();
 
+	Definitions.WriteLine("try");
+	Definitions.BeginBlock();
+
 	for let resource: Source_Text in resources
 	{
 		Definitions.BeginLine("resource_manager_->AddResource(p_string(\"");
@@ -730,6 +733,14 @@ public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) ->
 	{
 		Definitions.WriteLine("return Main_(" + args.ToString() + ").Value;");
 	}
+
+	Definitions.EndBlock(); // try
+	Definitions.WriteLine("catch(std::exception &ex)");
+	Definitions.BeginBlock();
+	Definitions.WriteLine("std::printf(\"Program exited due to error:\n\");");
+	Definitions.WriteLine("std::printf(\"%s\", ex.what());");
+	Definitions.WriteLine("return 70;"); // Defined by sysexits.h as EX_SOFTWARE
+	Definitions.EndBlock();
 
 	Definitions.EndBlock();
 }

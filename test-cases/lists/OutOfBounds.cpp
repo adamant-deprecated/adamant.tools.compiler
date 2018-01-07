@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_(::System_::Console_::Console_ *const console_) -> void;
+auto Main_() -> p_int;
 
 // Class Declarations
 
@@ -11,9 +11,10 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Definitions
 
-auto Main_(::System_::Console_::Console_ *const console_) -> void
+auto Main_() -> p_int
 {
-	console_->WriteLine_(p_string("Hello World!"));
+	::System_::Collections_::List_<p_int> const *const values_ = new ::System_::Collections_::List_<p_int>();
+	return values_->op_Element(p_int(0));
 }
 
 // Entry Point Adapter
@@ -21,8 +22,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_(new ::System_::Console_::Console_());
-		return 0;
+		return Main_().Value;
 	}
 	catch(std::exception &ex)
 	{
