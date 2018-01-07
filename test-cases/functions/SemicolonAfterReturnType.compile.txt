@@ -3,5 +3,5 @@ SemicolonAfterReturnType.ad:1:22 Error:
   Missing token of type 1
 SemicolonAfterReturnType.ad:1:22 Error:
   Missing token of type 27
-SemicolonAfterReturnType.ad:3:4 Error:
+SemicolonAfterReturnType.ad:4:1 Error:
   Missing token of type 2

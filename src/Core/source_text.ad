@@ -49,8 +49,7 @@ public class Source_Text // TODO change immutable class name to snake_case when 
 				{ continue; }
 
 			// Already advanced position, so next line starts there
-			if position < length
-				{ lineStarts.Add(position); }
+			lineStarts.Add(position);
 		}
 
 		return lineStarts;
