@@ -4,6 +4,7 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdint>
+#include <stdexcept>
 
 template<typename T, typename F>
 T LogicalAnd(T const & lhs, F rhs)
@@ -71,7 +72,7 @@ public:
 	p_int op_Multiply(p_int other) const { return this->Value * other.Value; }
 	p_int op_Divide(p_int other) const { return this->Value / other.Value; }
 	p_int op_Remainder(p_int other) const { return this->Value % other.Value; }
-	p_int op_Magnitude() const { if(this->Value==INT32_MIN) throw "Overflow exception"; return this->Value < 0 ? -this->Value : this->Value; }
+	p_int op_Magnitude() const { if(this->Value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return this->Value < 0 ? -this->Value : this->Value; }
 
 	// Hack because we don't support as correctly yet
 	p_uint AsUInt_() const;
@@ -209,22 +210,22 @@ public:
 	p_maybe(::NoneType const & none) : hasValue(false) {}
 	T& operator->()
 	{
-		if(!hasValue) throw "Access to null Maybe value";
+		if(!hasValue) throw std::runtime_error("Access to null Maybe value");
 		return data;
 	}
 	T const & operator->() const
 	{
-		if(!hasValue) throw "Access to null Maybe value";
+		if(!hasValue) throw std::runtime_error("Access to null Maybe value");
 		return data;
 	}
 	T  & operator* ()
 	{
-		if(!hasValue) throw "Access to null Maybe value";
+		if(!hasValue) throw std::runtime_error("Access to null Maybe value");
 		return data;
 	}
 	T const & operator* () const
 	{
-		if(!hasValue) throw "Access to null Maybe value";
+		if(!hasValue) throw std::runtime_error("Access to null Maybe value");
 		return data;
 	}
 	bool operator==(T const & other) const
@@ -246,27 +247,27 @@ private:
 public:
 	p_maybe(T* value) : data(value)
 	{
-		if(value == 0) throw "Constructing p_maybe with null pointer";
+		if(value == 0) throw std::runtime_error("Constructing p_maybe with null pointer");
 	}
 	p_maybe(::NoneType const & none) : data(0) {}
 	T* operator->()
 	{
-		if(data == 0) throw "Access to null Maybe value";
+		if(data == 0) throw std::runtime_error("Access to null Maybe value");
 		return data;
 	}
 	T const & operator->() const
 	{
-		if(data == 0) throw "Access to null Maybe value";
+		if(data == 0) throw std::runtime_error("Access to null Maybe value");
 		return data;
 	}
 	T & operator* ()
 	{
-		if(data == 0) throw "Access to null Maybe value";
+		if(data == 0) throw std::runtime_error("Access to null Maybe value");
 		return data;
 	}
 	T const & operator* () const
 	{
-		if(data == 0) throw "Access to null Maybe value";
+		if(data == 0) throw std::runtime_error("Access to null Maybe value");
 		return data;
 	}
 	bool operator==(T* other) const
@@ -302,7 +303,7 @@ namespace System_
 			void Add_(T value);
 			void Clear_() { length = 0; }
 			p_int op_Magnitude() const { return length; }
-			T const & op_Element(p_int const index) const { return values[index.Value]; }
+			T const & op_Element(p_int const index) const;
 		};
 
 		template<typename T>
@@ -318,6 +319,14 @@ namespace System_
 			}
 			values[length] = value;
 			length++;
+		}
+
+		template<typename T>
+		T const & List_<T>::op_Element(p_int const index) const
+		{
+			if(index.Value < 0 || index.Value >= length)
+				throw std::out_of_range("List index out of bounds");
+			return values[index.Value];
 		}
 	}
 
