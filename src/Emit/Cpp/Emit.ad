@@ -737,7 +737,7 @@ public EmitEntryPointAdapter(resources: System.Collections.List<Source_Text>) ->
 	Definitions.EndBlock(); // try
 	Definitions.WriteLine("catch(std::exception &ex)");
 	Definitions.BeginBlock();
-	Definitions.WriteLine("std::printf(\"Program exited due to error:\n\");");
+	Definitions.WriteLine("std::printf(\"Program exited due to error:\\n\");");
 	Definitions.WriteLine("std::printf(\"%s\", ex.what());");
 	Definitions.WriteLine("return 70;"); // Defined by sysexits.h as EX_SOFTWARE
 	Definitions.EndBlock();
