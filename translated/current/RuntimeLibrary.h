@@ -199,33 +199,33 @@ public:
 static const NoneType None = NoneType();
 
 template<typename T>
-struct p_maybe
+struct p_optional
 {
 private:
 	T data;
 	bool hasValue;
 
 public:
-	p_maybe(T const & value) : data(value), hasValue(true) {}
-	p_maybe(::NoneType const & none) : hasValue(false) {}
+	p_optional(T const & value) : data(value), hasValue(true) {}
+	p_optional(::NoneType const & none) : hasValue(false) {}
 	T& operator->()
 	{
-		if(!hasValue) throw std::runtime_error("Access to null Maybe value");
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	T const & operator->() const
 	{
-		if(!hasValue) throw std::runtime_error("Access to null Maybe value");
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	T  & operator* ()
 	{
-		if(!hasValue) throw std::runtime_error("Access to null Maybe value");
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	T const & operator* () const
 	{
-		if(!hasValue) throw std::runtime_error("Access to null Maybe value");
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	bool operator==(T const & other) const
@@ -239,35 +239,35 @@ public:
 };
 
 template<typename T>
-struct p_maybe<T*>
+struct p_optional<T*>
 {
 private:
 	T* data;
 
 public:
-	p_maybe(T* value) : data(value)
+	p_optional(T* value) : data(value)
 	{
-		if(value == 0) throw std::runtime_error("Constructing p_maybe with null pointer");
+		if(value == 0) throw std::runtime_error("Constructing p_optional with null pointer");
 	}
-	p_maybe(::NoneType const & none) : data(0) {}
+	p_optional(::NoneType const & none) : data(0) {}
 	T* operator->()
 	{
-		if(data == 0) throw std::runtime_error("Access to null Maybe value");
+		if(data == 0) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	T const & operator->() const
 	{
-		if(data == 0) throw std::runtime_error("Access to null Maybe value");
+		if(data == 0) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	T & operator* ()
 	{
-		if(data == 0) throw std::runtime_error("Access to null Maybe value");
+		if(data == 0) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	T const & operator* () const
 	{
-		if(data == 0) throw std::runtime_error("Access to null Maybe value");
+		if(data == 0) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	bool operator==(T* other) const

@@ -283,7 +283,7 @@ p_int const Identifier_ = p_int(27);
 p_int const Number_ = p_int(28);
 p_int const NewKeyword_ = p_int(29);
 p_int const NotOperator_ = p_int(30);
-p_int const NullKeyword_ = p_int(31);
+p_int const NullReservedWord_ = p_int(31);
 p_int const SelfKeyword_ = p_int(32);
 p_int const TrueKeyword_ = p_int(33);
 p_int const FalseKeyword_ = p_int(34);
@@ -992,12 +992,6 @@ auto ::CompilationUnitParser_::ParseAtom_() -> ::Syntax_Node_ const *
 		children_->Add_(ExpectToken_(Minus_));
 		children_->Add_(ParseExpression_(p_int(8)));
 		return new ::Syntax_Node_(NegateExpression_, children_);
-	}
-
-	if (token_->Type_->op_Equal(NullKeyword_).Value)
-	{
-		children_->Add_(ExpectToken_(NullKeyword_));
-		return new ::Syntax_Node_(NoneLiteralExpression_, children_);
 	}
 
 	if (token_->Type_->op_Equal(NoneKeyword_).Value)
@@ -1949,7 +1943,7 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Nod
 	}
 	else if (value_->op_Equal(p_string("null")).Value)
 	{
-		type_ = NullKeyword_;
+		type_ = NullReservedWord_;
 	}
 	else if (value_->op_Equal(p_string("self")).Value)
 	{
