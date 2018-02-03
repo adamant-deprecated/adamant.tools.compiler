@@ -7,12 +7,12 @@ public class CompilationUnitParser
 	public new(tokenStream: mut Token_Stream)
 	{
 		self.tokenStream = tokenStream;
-		self.compilationUnit = null; // TODO We currently don't auto-initialize members
+		self.compilationUnit = none; // TODO We currently don't auto-initialize members
 	}
 
 	public Parse(mut self) -> Syntax_Node
 	{
-		if compilationUnit == null
+		if compilationUnit == none
 		{
 			token = tokenStream.GetNextToken();
 			compilationUnit = ParseCompilationUnit();
@@ -33,12 +33,12 @@ public class CompilationUnitParser
 
 	private ExpectToken(mut self, tokenType: int) -> Syntax_Node
 	{
-		if token == null
+		if token == none
 		{
 			return new new_Syntax_Node_Missing(tokenType,  tokenStream.Source, tokenStream.Source.ByteLength());
 		}
 
-		if token == null or token.Type <> tokenType
+		if token == none or token.Type <> tokenType
 		{
 			return new new_Syntax_Node_Missing(tokenType,  tokenStream.Source, token.Start);
 		}
@@ -158,11 +158,6 @@ public class CompilationUnitParser
 			children.Add(ExpectToken(Minus));
 			children.Add(ParseExpression(8));
 			return new Syntax_Node(NegateExpression, children);
-		}
-		if token.Type == NullKeyword
-		{
-			children.Add(ExpectToken(NullKeyword));
-			return new Syntax_Node(NoneLiteralExpression, children);
 		}
 		if token.Type == NoneKeyword
 		{
@@ -713,7 +708,7 @@ public class CompilationUnitParser
 	private ParseCompilationUnit(mut self) -> Syntax_Node
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-		while token <> null and token.Type <> EndOfFileToken
+		while token <> none and token.Type <> EndOfFileToken
 		{
 			let startToken: Syntax_Node = token;
 			children.Add(ParseDeclaration());

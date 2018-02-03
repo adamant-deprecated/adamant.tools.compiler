@@ -214,7 +214,7 @@ public class Token_Stream
 	private EndOfFile(mut self) -> Syntax_Node?
 	{
 		if endOfFile
-			{ return null; }
+			{ return none; }
 
 		// Mark that we have returned the end of file token
 		endOfFile = true;
@@ -232,7 +232,7 @@ public class Token_Stream
 		else if value == "not"
 			{ type = NotOperator; }
 		else if value == "null"
-			{ type = NullKeyword; }
+			{ type = NullReservedWord; }
 		else if value == "self"
 			{ type = SelfKeyword; }
 		else if value == "true"

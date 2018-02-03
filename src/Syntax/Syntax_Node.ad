@@ -31,7 +31,7 @@ public let Identifier: int = 27;
 public let Number: int = 28;
 public let NewKeyword: int = 29; // `new`
 public let NotOperator: int = 30; // `not`
-public let NullKeyword: int = 31; // `null`
+public let NullReservedWord: int = 31; // `null`
 public let SelfKeyword: int = 32; // `self`
 public let TrueKeyword: int = 33; // `true`
 public let FalseKeyword: int = 34; // `false`
@@ -196,7 +196,7 @@ public class Syntax_Node
 			if child.Type == type
 				{ return child; }
 		}
-		return null;
+		return none;
 	}
 
 	public HasChildOfType(self, type: int) -> bool
