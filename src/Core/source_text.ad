@@ -1,13 +1,25 @@
 public class Source_Text // TODO change immutable class name to snake_case when supported
 {
 	public let Package: string;
+	public let Path: string; // TODO use a path object?
 	public let Name: string;
 	public let Text: string;
 	public let Lines: Line_Info;
 
-	public new(package: string, name: string, text: string)
+	public new(package: string, path: string, text: string)
 	{
 		Package = package;
+		// The path passed in. It should be be the path relative to the project or something.
+		Path = path;
+		var name: string = path;
+		var index: int = name.LastIndexOf('/');
+		if index <> -1
+			{ name = name.Substring(index+1); }
+
+		index = name.LastIndexOf('\\');
+		if index <> -1
+			{ name = name.Substring(index+1); }
+
 		Name = name;
 		Text = text;
 		Lines = new Line_Info(self, LineStarts());
