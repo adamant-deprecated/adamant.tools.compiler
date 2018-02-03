@@ -308,7 +308,7 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		}
 		else
 		{
-			builder.Error("Unsupported comparision operator " + operator);
+			builder.Error("Unsupported comparison operator " + operator);
 		}
 		builder.Write("(");
 		ConvertExpression(syntax.Children[2], builder);
@@ -541,15 +541,15 @@ public EmitClassMember(member: Syntax_Node, className: string) -> void
 		let parameterList: Syntax_Node = member.Children[2];
 		let parameters: string = ConvertParameterList(parameterList);
 		let selfParameter: Syntax_Node? = parameterList.FirstChildOfType(SelfParameter);
-		let isAssociatedFuntion: bool = selfParameter == none;
-		let mutableSelf: bool = not isAssociatedFuntion and selfParameter.HasChildOfType(MutableKeyword);
+		let isAssociatedFunction: bool = selfParameter == none;
+		let mutableSelf: bool = not isAssociatedFunction and selfParameter.HasChildOfType(MutableKeyword);
 		let returnType: Syntax_Node = member.Children[4];
 		let cppType: string = ConvertType(true, returnType);
 		var staticModifier: string = "";
-		if isAssociatedFuntion
+		if isAssociatedFunction
 			{ staticModifier = "static "; }
 		var constModifier: string = "";
-		if not mutableSelf and not isAssociatedFuntion
+		if not mutableSelf and not isAssociatedFunction
 			{ constModifier = "const "; }
 		ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_" + parameters + " " + constModifier + "-> " + cppType + ";");
 		Definitions.ElementSeparatorLine();
@@ -586,7 +586,7 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 		ClassDeclarations.WriteLine("class " + className + "_");
 		ClassDeclarations.BeginBlock();
 		ClassDeclarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
-		// Write out basic reference equality comparisions
+		// Write out basic reference equality comparisons
 		ClassDeclarations.WriteLine("p_bool op_Equal(" + className + "_ const * other) const { return this == other; }");
 		ClassDeclarations.WriteLine("p_bool op_NotEqual(" + className + "_ const * other) const { return this != other; }");
 		for let member: Syntax_Node in declaration.Children
@@ -662,9 +662,9 @@ public EmitCompilationUnit(unit: Syntax_Node) -> void
 	}
 }
 
-public EmitPackage(package: Syntax_Node) -> void
+public EmitPackage(package: Package) -> void
 {
-	for let compilationUnit: Syntax_Node in package.Children
+	for let compilationUnit: Syntax_Node in package.Syntax.Children
 	{
 		EmitCompilationUnit(compilationUnit);
 	}

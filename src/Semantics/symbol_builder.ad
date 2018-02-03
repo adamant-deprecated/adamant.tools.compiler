@@ -1,0 +1,8 @@
+public class Symbol_Builder // TODO change immutable class name to snake_case when supported
+{
+	// Takes a package and builds the symbols for it
+	public buildSymbols(package: Syntax_Node) -> Symbol
+	{
+		return none;
+	}
+}

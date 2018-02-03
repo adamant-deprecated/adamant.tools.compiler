@@ -1,8 +1,10 @@
-public Compile(sources: System.Collections.List<Source_Text>) -> Syntax_Node
+public Compile(sources: System.Collections.List<Source_Text>) -> Package
 {
-	var parser: Parser = new Parser();
-	var package: Syntax_Node = parser.ParsePackage(sources);
-
+	let parser: Parser = new Parser();
+	let packageSyntax: Syntax_Node = parser.ParsePackage(sources);
+	let symbolBuilder: Symbol_Builder = new Symbol_Builder();
+	let packageSymbol: Symbol = symbolBuilder.buildSymbols(packageSyntax);
+	let package: Package = new Package(packageSyntax, packageSymbol);
 	return package;
 }
 
@@ -36,7 +38,7 @@ public HasErrors(diagnostics: System.Collections.List<Diagnostic>) -> bool
 	return false;
 }
 
-public Emit(package: Syntax_Node, resources: System.Collections.List<Source_Text>) -> string
+public Emit(package: Package, resources: System.Collections.List<Source_Text>) -> string
 {
 	EmitPreamble();
 	EmitPackage(package);
@@ -139,7 +141,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 		sources.Add(ReadSource(sourceFilePath));
 	}
 
-	let package: Syntax_Node = Compile(sources);
+	let package: Package = Compile(sources);
 
 	let diagnostics: System.Collections.List<Diagnostic> = package.AllDiagnostics();
 	Write(console, diagnostics);

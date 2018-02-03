@@ -1,0 +1,15 @@
+public class Symbol // TODO change immutable class name to snake_case when supported
+{
+	public let Parent: Symbol?;
+	public let Name: string;
+	public let Declarations: mut System.Collections.List<Syntax_Node>;
+	public let Children: mut System.Collections.List<Symbol>;
+
+	public new(parent: Symbol?, name: string)
+	{
+		Parent = parent;
+		Name = name;
+		Declarations = new System.Collections.List<Syntax_Node>();
+		Children = new System.Collections.List<Symbol>();
+	}
+}

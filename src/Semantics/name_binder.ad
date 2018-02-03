@@ -1,0 +1,3 @@
+public class Name_Binder // TODO change immutable class name to snake_case when supported
+{
+}

@@ -14,6 +14,6 @@ public class Parser // TODO change immutable class name to snake_case when suppo
 			let compilationUnitParser: mut CompilationUnitParser = new CompilationUnitParser(tokenStream);
 			children.Add(compilationUnitParser.Parse());
 		}
-		return new Syntax_Node(Package, children);
+		return new Syntax_Node(PackageNode, children);
 	}
 }
