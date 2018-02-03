@@ -3,8 +3,107 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 	// Takes a package and builds the symbols for it
 	public BuildSymbols(package: Syntax_Node) -> Symbol
 	{
-		return none;
+		if package.Type <> PackageNode
+			{ ThrowException("`Symbol_Builder.BuildSymbols()` called with node of type " + package.Type); }
+
+		let packageSymbol: mut Symbol = new Symbol(none, "");
+		for let compilationUnit: Syntax_Node in package.Children
+		{
+			BuildSymbols(packageSymbol, compilationUnit);
+		}
+
+		return packageSymbol;
 	}
 
-	//private BuildSymbols()
+	// Because a single call could produce multiple symbols, we pass the symbol collection in and add symbols to it.
+	// Once we have generators, this would be a good place to use them.
+	private BuildSymbols(parent: Symbol, node: Syntax_Node) -> void
+	{
+		if node.Type == CompilationUnit
+		{
+			for let declaration: Syntax_Node in node.Children
+			{
+				BuildSymbols(parent, declaration);
+			}
+		}
+		else if node.Type == FunctionDeclaration
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let functionSymbol: Symbol = new Symbol(parent, name);
+			functionSymbol.Declarations.Add(node);
+
+			// TODO add parameter symbols
+			// TODO figure out how to handle body
+
+			parent.Children.Add(functionSymbol);
+		}
+		else if node.Type == ClassDeclaration
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let classSymbol: Symbol = new Symbol(parent, name);
+			classSymbol.Declarations.Add(node);
+			for let member: Syntax_Node in node.Children
+			{
+				// TODO fix this to a more reliable means of telling what should be visited
+				if member.Type == ConstructorDeclaration
+					or member.Type == FieldDeclaration
+					or member.Type == MethodDeclaration
+				{
+					BuildSymbols(classSymbol, member);
+				}
+			}
+
+			parent.Children.Add(classSymbol);
+		}
+		else if node.Type == ConstructorDeclaration
+		{
+			// TODO how do we distinguish this from a symbol someone could get to by using `new ?
+			let constructorSymbol: Symbol = new Symbol(none, "new");
+			constructorSymbol.Declarations.Add(node);
+			parent.Children.Add(constructorSymbol);
+		}
+		else if node.Type == FieldDeclaration
+		{
+			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let fieldSymbol: Symbol = new Symbol(none, name);
+			fieldSymbol.Declarations.Add(node);
+			parent.Children.Add(fieldSymbol);
+		}
+		else if node.Type == MethodDeclaration
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let methodSymbol: Symbol = new Symbol(parent, name);
+			methodSymbol.Declarations.Add(node);
+
+			// TODO add parameter symbols
+			// TODO figure out how to handle body
+
+			parent.Children.Add(methodSymbol);
+		}
+		else if node.Type == EnumDeclaration
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let enumSymbol: Symbol = new Symbol(parent, name);
+			enumSymbol.Declarations.Add(node);
+			// TODO add enum member symbols
+			parent.Children.Add(enumSymbol);
+		}
+		else if node.Type == GlobalDeclaration
+		{
+			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let globalDeclarationSymbol: Symbol = new Symbol(none, name);
+			globalDeclarationSymbol.Declarations.Add(node);
+			parent.Children.Add(globalDeclarationSymbol);
+		}
+		else if node.Type == LeftBrace
+			or node.Type == RightBrace
+			or node.Type == EndOfFileToken
+		{
+			// Ignore these nodes
+		}
+		else
+		{
+			ThrowException("`Symbol_Builder.Build()` unimplemented node type " + node.Type);
+		}
+	}
 }

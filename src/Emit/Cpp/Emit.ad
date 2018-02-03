@@ -47,8 +47,9 @@ public IsValueType(type: Syntax_Node) -> bool
 		return IsValueType(type.Children[1]); // The type that is mutable
 	}
 
-	// TODO Error
-	return true; // The value true is more likely to cause some kind of compiler error in the emitted source that we will notice
+	// TODO this is not supposed to be reachable
+	ThrowException("Unable to parse value type. Syntax node type "+type.Type);
+	return true; // avoid compiler warning about possibly reaching end of function
 }
 
 // Converts a type to C++
