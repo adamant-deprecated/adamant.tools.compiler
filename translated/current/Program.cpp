@@ -170,6 +170,7 @@ public:
 	p_bool op_Equal(Symbol_Builder_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Symbol_Builder_ const * other) const { return this != other; }
 	static auto BuildSymbols_(::Syntax_Node_ const *const package_) -> ::Symbol_ const *;
+	static auto BuildSymbols_(::Symbol_ const *const parent_, ::Syntax_Node_ const *const node_) -> void;
 };
 
 class CompilationUnitParser_
@@ -920,7 +921,92 @@ auto ::Package_::AllDiagnostics_() const -> ::System_::Collections_::List_<::Dia
 
 auto ::Symbol_Builder_::BuildSymbols_(::Syntax_Node_ const *const package_) -> ::Symbol_ const *
 {
-	return ::None;
+	if (package_->Type_->op_NotEqual(PackageNode_).Value)
+	{
+		ThrowException_(p_string("`Symbol_Builder.BuildSymbols()` called with node of type ")->op_Add(package_->Type_));
+	}
+
+	::Symbol_ *const packageSymbol_ = new ::Symbol_(::None, p_string(""));
+	for (::Syntax_Node_ const *const compilationUnit_ : *(package_->Children_))
+	{
+		BuildSymbols_(packageSymbol_, compilationUnit_);
+	}
+
+	return packageSymbol_;
+}
+
+auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Syntax_Node_ const *const node_) -> void
+{
+	if (node_->Type_->op_Equal(CompilationUnit_).Value)
+	{
+		for (::Syntax_Node_ const *const declaration_ : *(node_->Children_))
+		{
+			BuildSymbols_(parent_, declaration_);
+		}
+	}
+	else if (node_->Type_->op_Equal(FunctionDeclaration_).Value)
+	{
+		p_string const name_ = node_->FirstChildOfType_(Identifier_)->GetText_();
+		::Symbol_ const *const functionSymbol_ = new ::Symbol_(parent_, name_);
+		functionSymbol_->Declarations_->Add_(node_);
+		parent_->Children_->Add_(functionSymbol_);
+	}
+	else if (node_->Type_->op_Equal(ClassDeclaration_).Value)
+	{
+		p_string const name_ = node_->FirstChildOfType_(Identifier_)->GetText_();
+		::Symbol_ const *const classSymbol_ = new ::Symbol_(parent_, name_);
+		classSymbol_->Declarations_->Add_(node_);
+		for (::Syntax_Node_ const *const member_ : *(node_->Children_))
+		{
+			if (LogicalOr(LogicalOr(member_->Type_->op_Equal(ConstructorDeclaration_), [&] { return member_->Type_->op_Equal(FieldDeclaration_); }), [&] { return member_->Type_->op_Equal(MethodDeclaration_); }).Value)
+			{
+				BuildSymbols_(classSymbol_, member_);
+			}
+		}
+
+		parent_->Children_->Add_(classSymbol_);
+	}
+	else if (node_->Type_->op_Equal(ConstructorDeclaration_).Value)
+	{
+		::Symbol_ const *const constructorSymbol_ = new ::Symbol_(::None, p_string("new"));
+		constructorSymbol_->Declarations_->Add_(node_);
+		parent_->Children_->Add_(constructorSymbol_);
+	}
+	else if (node_->Type_->op_Equal(FieldDeclaration_).Value)
+	{
+		p_string const name_ = node_->FirstChildOfType_(VariableDeclaration_)->FirstChildOfType_(Identifier_)->GetText_();
+		::Symbol_ const *const fieldSymbol_ = new ::Symbol_(::None, name_);
+		fieldSymbol_->Declarations_->Add_(node_);
+		parent_->Children_->Add_(fieldSymbol_);
+	}
+	else if (node_->Type_->op_Equal(MethodDeclaration_).Value)
+	{
+		p_string const name_ = node_->FirstChildOfType_(Identifier_)->GetText_();
+		::Symbol_ const *const methodSymbol_ = new ::Symbol_(parent_, name_);
+		methodSymbol_->Declarations_->Add_(node_);
+		parent_->Children_->Add_(methodSymbol_);
+	}
+	else if (node_->Type_->op_Equal(EnumDeclaration_).Value)
+	{
+		p_string const name_ = node_->FirstChildOfType_(Identifier_)->GetText_();
+		::Symbol_ const *const enumSymbol_ = new ::Symbol_(parent_, name_);
+		enumSymbol_->Declarations_->Add_(node_);
+		parent_->Children_->Add_(enumSymbol_);
+	}
+	else if (node_->Type_->op_Equal(GlobalDeclaration_).Value)
+	{
+		p_string const name_ = node_->FirstChildOfType_(VariableDeclaration_)->FirstChildOfType_(Identifier_)->GetText_();
+		::Symbol_ const *const globalDeclarationSymbol_ = new ::Symbol_(::None, name_);
+		globalDeclarationSymbol_->Declarations_->Add_(node_);
+		parent_->Children_->Add_(globalDeclarationSymbol_);
+	}
+	else if (LogicalOr(LogicalOr(node_->Type_->op_Equal(LeftBrace_), [&] { return node_->Type_->op_Equal(RightBrace_); }), [&] { return node_->Type_->op_Equal(EndOfFileToken_); }).Value)
+	{
+	}
+	else
+	{
+		ThrowException_(p_string("`Symbol_Builder.Build()` unimplemented node type ")->op_Add(node_->Type_));
+	}
 }
 
 ::CompilationUnitParser_::CompilationUnitParser_(::Token_Stream_ *const tokenStream_)
@@ -2227,6 +2313,7 @@ auto IsValueType_(::Syntax_Node_ const *const type_) -> p_bool
 		return IsValueType_(type_->Children_->op_Element(p_int(1)));
 	}
 
+	ThrowException_(p_string("Unable to parse value type. Syntax node type ")->op_Add(type_->Type_));
 	return p_bool(true);
 }
 
