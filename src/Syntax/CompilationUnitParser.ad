@@ -52,13 +52,13 @@ public class CompilationUnitParser
 	// Parser
 	// ----------------------------------------------------------------------------
 
-	private ParseNonNullableType(mut self) -> Syntax_Node
+	private ParseNonOptionalType(mut self) -> Syntax_Node
 	{
 		if token.Type == MutableKeyword
 		{
 			let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 			children.Add(ExpectToken(MutableKeyword));
-			children.Add(ParseNonNullableType());
+			children.Add(ParseNonOptionalType());
 			return new Syntax_Node(MutableType, children);
 		}
 
@@ -105,14 +105,14 @@ public class CompilationUnitParser
 
 	private ParseType(mut self) -> Syntax_Node
 	{
-		var type: Syntax_Node = ParseNonNullableType();
+		var type: Syntax_Node = ParseNonOptionalType();
 
 		while token.Type == Question
 		{
 			let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 			children.Add(type);
 			children.Add(ExpectToken(Question));
-			type = new Syntax_Node(NullableType, children);
+			type = new Syntax_Node(OptionalType, children);
 		}
 
 		return type;
@@ -162,7 +162,12 @@ public class CompilationUnitParser
 		if token.Type == NullKeyword
 		{
 			children.Add(ExpectToken(NullKeyword));
-			return new Syntax_Node(NullLiteralExpression, children);
+			return new Syntax_Node(NoneLiteralExpression, children);
+		}
+		if token.Type == NoneKeyword
+		{
+			children.Add(ExpectToken(NoneKeyword));
+			return new Syntax_Node(NoneLiteralExpression, children);
 		}
 		if token.Type == SelfKeyword
 		{

@@ -40,7 +40,7 @@ public let GenericName: int = 36; // An identifier with type arguments
 public let QualifiedName: int = 37; // A name that is qualified by a name and a dot
 public let PackageQualifiedName: int = 38; // IdentifierName::Name
 public let MutableKeyword: int = 39; // `mut`
-public let NullableType: int = 40; // `⧼Type⧽?`
+public let OptionalType: int = 40; // `⧼Type⧽?`
 public let PredefinedType: int = 41;
 public let CodePoint: int = 42; // `code_point`
 public let String: int = 43; // `string`
@@ -57,7 +57,7 @@ public let NewExpression: int = 53; // `new ⧼Type⧽⧼ParameterList⧽`
 public let ArgumentList: int = 54; // `(⧼Expression⧽, ⧼...⧽)` may include a SelfParameter
 public let NotExpression: int = 55; // `not ⧼Expression⧽`
 public let ParenthesizedExpression: int = 56; // `(⧼Expression⧽)`
-public let NullLiteralExpression: int = 57; // `null`
+public let NoneLiteralExpression: int = 57; // `none`
 public let SelfExpression: int = 58; // `self`
 public let TrueLiteralExpression: int = 59; // `true`
 public let FalseLiteralExpression: int = 60; // `false`
@@ -126,6 +126,7 @@ public let MagnitudeExpression: int = 122; // `|⧼Expression⧽|`
 public let Asterisk: int = 123; // `*`
 public let MultiplyExpression: int = 124; // `⧼Expression⧽ * ⧼Expression⧽`
 public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`
+public let NoneKeyword: int = 126; // `none`
 
 public class Syntax_Node
 {

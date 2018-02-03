@@ -4,7 +4,7 @@
 class Test_;
 
 // Function Declarations
-auto Func_(p_maybe<p_string> const x_, p_maybe<p_uint> const y_) -> p_maybe<p_int>;
+auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int>;
 auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Class Declarations
@@ -20,9 +20,9 @@ public:
 
 // Definitions
 
-auto Func_(p_maybe<p_string> const x_, p_maybe<p_uint> const y_) -> p_maybe<p_int>
+auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int>
 {
-	p_maybe<p_int> const z_ = ::None;
+	p_optional<p_int> const z_ = ::None;
 	::Test_ const *const t_ = ::None;
 	::System_::Text_::String_Builder_ *const sb_ = ::None;
 	return ::None;

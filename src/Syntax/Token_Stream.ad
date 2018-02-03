@@ -295,6 +295,8 @@ public class Token_Stream
 			{ type = EnumKeyword; }
 		else if value == "struct"
 			{ type = StructKeyword; }
+		else if value == "none"
+			{ type = NoneKeyword; }
 		else
 			{ type = Identifier; }
 

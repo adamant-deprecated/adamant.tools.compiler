@@ -13,7 +13,7 @@ public class Token_Type // TODO change immutable class name to snake_case when s
 	//Dot,
 	//Semicolon,
 	//Equals,
-	//IsNull,
+	//IsNone,
 	//Plus,
 	//Comma,
 }

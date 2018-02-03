@@ -22,10 +22,10 @@ public IsValueType(type: Syntax_Node) -> bool
 	{
 		return true;
 	}
-	if type.Type == NullableType
+	if type.Type == OptionalType
 	{
 		// The first child is the basic type
-		return IsValueType(type.Children[0]); // The type that is nullable
+		return IsValueType(type.Children[0]); // The type that is optional
 	}
 	if type.Type == QualifiedName
 	{
@@ -83,10 +83,10 @@ public ConvertType(type: Syntax_Node) -> string
 // Converts a type to C++
 public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 {
-	let nullable: bool = type.Type == NullableType;
-	if nullable
+	let optional: bool = type.Type == OptionalType;
+	if optional
 	{
-		type = type.Children[0]; // Remove the nullable wrapper
+		type = type.Children[0]; // Remove the optional wrapper
 	}
 
 	let mutableValue: bool = type.Type == MutableType;
@@ -100,8 +100,8 @@ public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 
 	if isValueType
 	{
-		if nullable
-			{ cppType = "p_maybe<" + cppType + ">"; }
+		if optional
+			{ cppType = "p_optional<" + cppType + ">"; }
 		if not mutableBinding and not mutableValue
 			{ cppType = cppType + " const"; }
 	}
@@ -109,8 +109,8 @@ public ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
 	{
 		if not mutableValue { cppType = cppType + " const"; }
 		cppType = cppType + " *";
-		//if nullable
-		//	{ cppType = "p_maybe<" + cppType + ">"; }
+		//if optional
+		//	{ cppType = "p_optional<" + cppType + ">"; }
 		if not mutableBinding { cppType = cppType + "const" ; }
 	}
 
@@ -210,7 +210,7 @@ public ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) 
 		ConvertExpression(syntax.Children[1], builder);
 		builder.Write("->op_Negate()");
 	}
-	else if syntax.Type == NullLiteralExpression
+	else if syntax.Type == NoneLiteralExpression
 	{
 		builder.Write("::None");
 	}

@@ -4,13 +4,13 @@ public class Test
 
 public Func(x: string?, y: uint?) -> int?
 {
-	let z: int? = null;
-	let t: Test? = null;
-	let sb: mut System.Text.String_Builder? = null;
-	return null;
+	let z: int? = none;
+	let t: Test? = none;
+	let sb: mut System.Text.String_Builder? = none;
+	return none;
 }
 
 public Main(console: mut System.Console.Console) -> void
 {
-	Func(null, null);
+	Func(none, none);
 }
