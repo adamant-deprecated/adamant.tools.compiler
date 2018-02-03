@@ -67,10 +67,11 @@ public:
 	p_bool op_Equal(Source_Text_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Source_Text_ const * other) const { return this != other; }
 	p_string Package_;
+	p_string Path_;
 	p_string Name_;
 	p_string Text_;
 	::Line_Info_ const * Lines_;
-	Source_Text_(p_string const package_, p_string const name_, p_string const text_);
+	Source_Text_(p_string const package_, p_string const path_, p_string const text_);
 	auto LineStarts_() const -> ::System_::Collections_::List_<p_int> const *;
 	auto ByteLength_() const -> p_int;
 	auto PositionOfStart_(::Text_Span_ const *const span_) const -> ::Text_Position_ const *;
@@ -470,7 +471,7 @@ auto Write_(::System_::Console_::Console_ *const console_, ::System_::Collection
 			severity_ = p_string("Error");
 		}
 
-		console_->WriteLine_(diagnostic_->Source_->Name_->op_Add(p_string(":"))->op_Add(position_->Line_)->op_Add(p_string(":"))->op_Add(position_->Column_)->op_Add(p_string(" "))->op_Add(severity_)->op_Add(p_string(":")));
+		console_->WriteLine_(diagnostic_->Source_->Path_->op_Add(p_string(":"))->op_Add(position_->Line_)->op_Add(p_string(":"))->op_Add(position_->Column_)->op_Add(p_string(" "))->op_Add(severity_)->op_Add(p_string(":")));
 		console_->WriteLine_(p_string("  ")->op_Add(diagnostic_->Message_));
 	}
 }
@@ -633,20 +634,7 @@ auto ReadSource_(p_string const path_) -> ::Source_Text_ const *
 	::System_::IO_::File_Reader_ *const file_ = new ::System_::IO_::File_Reader_(path_);
 	p_string const contents_ = file_->ReadToEndSync_();
 	file_->Close_();
-	p_string name_ = path_;
-	p_int index_ = name_->LastIndexOf_(p_code_point('/'));
-	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
-	{
-		name_ = name_->Substring_(index_->op_Add(p_int(1)));
-	}
-
-	index_ = name_->LastIndexOf_(p_code_point('\\'));
-	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
-	{
-		name_ = name_->Substring_(index_->op_Add(p_int(1)));
-	}
-
-	return new ::Source_Text_(p_string("<default>"), name_, contents_);
+	return new ::Source_Text_(p_string("<default>"), path_, contents_);
 }
 
 ::Line_Info_::Line_Info_(::Source_Text_ const *const source_, ::System_::Collections_::List_<p_int> const *const lineStarts_)
@@ -698,9 +686,23 @@ auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 	return left_;
 }
 
-::Source_Text_::Source_Text_(p_string const package_, p_string const name_, p_string const text_)
+::Source_Text_::Source_Text_(p_string const package_, p_string const path_, p_string const text_)
 {
 	Package_ = package_;
+	Path_ = path_;
+	p_string name_ = path_;
+	p_int index_ = name_->LastIndexOf_(p_code_point('/'));
+	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
+	{
+		name_ = name_->Substring_(index_->op_Add(p_int(1)));
+	}
+
+	index_ = name_->LastIndexOf_(p_code_point('\\'));
+	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
+	{
+		name_ = name_->Substring_(index_->op_Add(p_int(1)));
+	}
+
 	Name_ = name_;
 	Text_ = text_;
 	Lines_ = new ::Line_Info_(this, LineStarts_());
