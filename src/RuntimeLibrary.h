@@ -280,6 +280,12 @@ public:
 	}
 };
 
+// A placeholder function until we get proper exceptions implemented
+inline void ThrowException(const p_string& value)
+{
+	throw std::runtime_error(value.Buffer);
+}
+
 namespace System_
 {
 	namespace Collections_

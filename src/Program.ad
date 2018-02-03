@@ -3,7 +3,7 @@ public Compile(sources: System.Collections.List<Source_Text>) -> Package
 	let parser: Parser = new Parser();
 	let packageSyntax: Syntax_Node = parser.ParsePackage(sources);
 	let symbolBuilder: Symbol_Builder = new Symbol_Builder();
-	let packageSymbol: Symbol = symbolBuilder.buildSymbols(packageSyntax);
+	let packageSymbol: Symbol = symbolBuilder.BuildSymbols(packageSyntax);
 	let package: Package = new Package(packageSyntax, packageSymbol);
 	return package;
 }

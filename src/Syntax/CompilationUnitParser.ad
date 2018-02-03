@@ -200,7 +200,7 @@ public class CompilationUnitParser
 			return new Syntax_Node(CodePointLiteralExpression, children);
 		}
 
-		// Missing and atom, assume it should have been an identifier
+		// Missing an atom, assume it should have been an identifier
 		return new Syntax_Node(IdentifierName, ExpectToken(Identifier));
 	}
 
