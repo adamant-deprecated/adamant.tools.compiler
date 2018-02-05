@@ -127,6 +127,7 @@ public let Asterisk: int = 123; // `*`
 public let MultiplyExpression: int = 124; // `⧼Expression⧽ * ⧼Expression⧽`
 public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`
 public let NoneKeyword: int = 126; // `none`
+public let StructDeclaration: int = 127;
 
 public class Syntax_Node
 {

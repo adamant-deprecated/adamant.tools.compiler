@@ -1,0 +1,20 @@
+public struct test
+{
+	public let Name: string;
+
+	public new(name: string)
+	{
+		Name = name;
+	}
+
+	public Method(self) -> string
+	{
+		return Name;
+	}
+}
+
+public Main() -> void
+{
+	let t: test = new test("Bob");
+	t.Method();
+}

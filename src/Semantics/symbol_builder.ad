@@ -55,6 +55,24 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 
 			parent.Children.Add(classSymbol);
 		}
+		else if node.Type == StructDeclaration
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let structSymbol: Symbol = new Symbol(parent, name);
+			structSymbol.Declarations.Add(node);
+			for let member: Syntax_Node in node.Children
+			{
+				// TODO fix this to a more reliable means of telling what should be visited
+				if member.Type == ConstructorDeclaration
+					or member.Type == FieldDeclaration
+					or member.Type == MethodDeclaration
+				{
+					BuildSymbols(structSymbol, member);
+				}
+			}
+
+			parent.Children.Add(structSymbol);
+		}
 		else if node.Type == ConstructorDeclaration
 		{
 			// TODO how do we distinguish this from a symbol someone could get to by using `new ?

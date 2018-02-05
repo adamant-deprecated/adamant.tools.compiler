@@ -517,7 +517,7 @@ public EmitStatement(statement: Syntax_Node) -> void
 	}
 }
 
-public EmitClassMember(member: Syntax_Node, className: string) -> void
+public EmitMemberDeclaration(member: Syntax_Node, className: string) -> void
 {
 	if member.Type == ConstructorDeclaration
 	{
@@ -597,7 +597,27 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 				or member.Type == FieldDeclaration
 				or member.Type == MethodDeclaration
 			{
-				EmitClassMember(member, className);
+				EmitMemberDeclaration(member, className);
+			}
+		}
+		ClassDeclarations.EndBlockWithSemicolon();
+	}
+	else if declaration.Type == StructDeclaration
+	{
+		let structName: string = declaration.Children[2].GetText();
+		TypeDeclarations.WriteLine("struct " + structName + "_;");
+		ClassDeclarations.ElementSeparatorLine();
+		ClassDeclarations.WriteLine("struct " + structName + "_");
+		ClassDeclarations.BeginBlock();
+		ClassDeclarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
+		for let member: Syntax_Node in declaration.Children
+		{
+			// TODO fix this to a more reliable means of telling what should be emitted
+			if member.Type == ConstructorDeclaration
+				or member.Type == FieldDeclaration
+				or member.Type == MethodDeclaration
+			{
+				EmitMemberDeclaration(member, structName);
 			}
 		}
 		ClassDeclarations.EndBlockWithSemicolon();

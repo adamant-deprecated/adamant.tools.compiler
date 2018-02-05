@@ -581,7 +581,7 @@ public class CompilationUnitParser
 		return new Syntax_Node(ParameterList, children);
 	}
 
-	private ParseClassMember(mut self) -> Syntax_Node
+	private ParseMemberDeclaration(mut self) -> Syntax_Node
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
@@ -657,16 +657,36 @@ public class CompilationUnitParser
 			while token.Type <> RightBrace and token.Type <> EndOfFileToken
 			{
 				let startToken: Syntax_Node = token;
-				children.Add(ParseClassMember());
+				children.Add(ParseMemberDeclaration());
 				if token == startToken
 				{
-					// We have not advanced at all when trying to parse a class member.
+					// We have not advanced at all when trying to parse a member.
 					// Skip a token to try to see if we can find the start of a member.
 					children.Add(new_Syntax_Node_Skipped(AcceptToken()));
 				}
 			}
 			children.Add(ExpectToken(RightBrace));
 			return new Syntax_Node(ClassDeclaration, children);
+		}
+
+		if token.Type == StructKeyword
+		{
+			children.Add(ExpectToken(StructKeyword));
+			children.Add(ExpectToken(Identifier));
+			children.Add(ExpectToken(LeftBrace));
+			while token.Type <> RightBrace and token.Type <> EndOfFileToken
+			{
+				let startToken: Syntax_Node = token;
+				children.Add(ParseMemberDeclaration());
+				if token == startToken
+				{
+					// We have not advanced at all when trying to parse a member.
+					// Skip a token to try to see if we can find the start of a member.
+					children.Add(new_Syntax_Node_Skipped(AcceptToken()));
+				}
+			}
+			children.Add(ExpectToken(RightBrace));
+			return new Syntax_Node(StructDeclaration, children);
 		}
 
 		if token.Type == EnumKeyword
