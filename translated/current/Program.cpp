@@ -32,19 +32,6 @@ auto FormatError_(p_string const message_) -> p_string;
 auto new_Syntax_Node_Missing_(p_int const type_, ::Source_Text_ const *const source_, p_uint const start_) -> ::Syntax_Node_ const *;
 auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *const skipped_) -> ::Syntax_Node_ const *;
 auto new_Syntax_Node_Skipped_(::System_::Collections_::List_<::Syntax_Node_ const *> const *const skipped_) -> ::Syntax_Node_ const *;
-auto IsValueType_(::Syntax_Node_ const *const type_) -> p_bool;
-auto ConvertType_(::Syntax_Node_ const *const type_) -> p_string;
-auto ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) -> p_string;
-auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, p_bool const isMainFunction_) -> p_string;
-auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> p_string;
-auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void;
-auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
-auto EmitMemberDeclaration_(::Syntax_Node_ const *const member_, p_string const className_) -> void;
-auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void;
-auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void;
-auto EmitPackage_(::Package_ const *const package_) -> void;
-auto EmitPreamble_() -> void;
-auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void;
 
 // Class Declarations
 
@@ -289,6 +276,30 @@ class Emitter_
 public:
 	p_bool op_Equal(Emitter_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Emitter_ const * other) const { return this != other; }
+	::Package_ const * package_;
+	::System_::Collections_::List_<::Source_Text_ const *> const * resources_;
+	::Source_File_Builder_ * TypeDeclarations_;
+	::Source_File_Builder_ * FunctionDeclarations_;
+	::Source_File_Builder_ * ClassDeclarations_;
+	::Source_File_Builder_ * GlobalDefinitions_;
+	::Source_File_Builder_ * Definitions_;
+	p_string MainFunctionReturnType_;
+	p_bool MainFunctionAcceptsConsole_;
+	p_bool MainFunctionAcceptsArgs_;
+	Emitter_(::Package_ const *const package_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_);
+	auto Emit_() -> p_string;
+	static auto IsValueType_(::Syntax_Node_ const *const type_) -> p_bool;
+	static auto ConvertType_(::Syntax_Node_ const *const type_) -> p_string;
+	static auto ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) -> p_string;
+	auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, p_bool const isMainFunction_) -> p_string;
+	auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> p_string;
+	static auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void;
+	auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
+	auto EmitMemberDeclaration_(::Syntax_Node_ const *const member_, p_string const className_) -> void;
+	auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void;
+	auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void;
+	auto EmitPreamble_() -> void;
+	auto EmitEntryPointAdapter_() -> void;
 };
 
 // Global Definitions
@@ -432,14 +443,6 @@ p_int const Warning_ = p_int(2);
 p_int const RuntimeError_ = p_int(3);
 p_int const CompilationError_ = p_int(4);
 p_int const FatalCompilationError_ = p_int(5);
-::Source_File_Builder_ *const TypeDeclarations_ = new ::Source_File_Builder_();
-::Source_File_Builder_ *const FunctionDeclarations_ = new ::Source_File_Builder_();
-::Source_File_Builder_ *const ClassDeclarations_ = new ::Source_File_Builder_();
-::Source_File_Builder_ *const GlobalDefinitions_ = new ::Source_File_Builder_();
-::Source_File_Builder_ *const Definitions_ = new ::Source_File_Builder_();
-p_string MainFunctionReturnType_ = p_string("");
-p_bool MainFunctionAcceptsConsole_ = p_bool(false);
-p_bool MainFunctionAcceptsArgs_ = p_bool(false);
 
 // Definitions
 
@@ -492,10 +495,6 @@ auto HasErrors_(::System_::Collections_::List_<::Diagnostic_ const *> const *con
 
 auto Emit_(::Package_ const *const package_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> p_string
 {
-	EmitPreamble_();
-	EmitPackage_(package_);
-	EmitEntryPointAdapter_(resources_);
-	return TypeDeclarations_->ToString_()->op_Add(FunctionDeclarations_->ToString_())->op_Add(ClassDeclarations_->ToString_())->op_Add(GlobalDefinitions_->ToString_())->op_Add(Definitions_->ToString_());
 }
 
 auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> p_int
@@ -592,7 +591,8 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 		return DataError_;
 	}
 
-	p_string const translated_ = Emit_(package_, resources_);
+	::Emitter_ * emitter_ = new ::Emitter_(package_, resources_);
+	p_string const translated_ = emitter_->Emit_();
 	if (verbose_.Value)
 	{
 		console_->Write_(p_string("Output: "));
@@ -2316,7 +2316,33 @@ auto ::Token_Stream_::IsNumberChar_(p_code_point const c_) -> p_bool
 	Message_ = message_;
 }
 
-auto IsValueType_(::Syntax_Node_ const *const type_) -> p_bool
+::Emitter_::Emitter_(::Package_ const *const package_, ::System_::Collections_::List_<::Source_Text_ const *> const *const resources_)
+{
+	this->package_ = package_;
+	this->resources_ = resources_;
+}
+
+auto ::Emitter_::Emit_() -> p_string
+{
+	TypeDeclarations_ = new ::Source_File_Builder_();
+	FunctionDeclarations_ = new ::Source_File_Builder_();
+	ClassDeclarations_ = new ::Source_File_Builder_();
+	GlobalDefinitions_ = new ::Source_File_Builder_();
+	Definitions_ = new ::Source_File_Builder_();
+	MainFunctionReturnType_ = p_string("");
+	MainFunctionAcceptsConsole_ = p_bool(false);
+	MainFunctionAcceptsArgs_ = p_bool(false);
+	EmitPreamble_();
+	for (::Syntax_Node_ const *const compilationUnit_ : *(package_->Syntax_->Children_))
+	{
+		EmitCompilationUnit_(compilationUnit_);
+	}
+
+	EmitEntryPointAdapter_();
+	return TypeDeclarations_->ToString_()->op_Add(FunctionDeclarations_->ToString_())->op_Add(ClassDeclarations_->ToString_())->op_Add(GlobalDefinitions_->ToString_())->op_Add(Definitions_->ToString_());
+}
+
+auto ::Emitter_::IsValueType_(::Syntax_Node_ const *const type_) -> p_bool
 {
 	if (type_->Type_->op_Equal(PredefinedType_).Value)
 	{
@@ -2354,7 +2380,7 @@ auto IsValueType_(::Syntax_Node_ const *const type_) -> p_bool
 	return p_bool(true);
 }
 
-auto ConvertType_(::Syntax_Node_ const *const type_) -> p_string
+auto ::Emitter_::ConvertType_(::Syntax_Node_ const *const type_) -> p_string
 {
 	if (type_->Type_->op_Equal(PredefinedType_).Value)
 	{
@@ -2385,7 +2411,7 @@ auto ConvertType_(::Syntax_Node_ const *const type_) -> p_string
 	return FormatError_(p_string("Unexpected Token of type ")->op_Add(type_->Type_)->op_Add(p_string(" found in CovertType(), `"))->op_Add(type_->GetText_())->op_Add(p_string("`")));
 }
 
-auto ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) -> p_string
+auto ::Emitter_::ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) -> p_string
 {
 	p_bool const optional_ = type_->Type_->op_Equal(OptionalType_);
 	if (optional_.Value)
@@ -2430,7 +2456,7 @@ auto ConvertType_(p_bool const mutableBinding_, ::Syntax_Node_ const * type_) ->
 	return cppType_;
 }
 
-auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, p_bool const isMainFunction_) -> p_string
+auto ::Emitter_::ConvertParameterList_(::Syntax_Node_ const *const parameterList_, p_bool const isMainFunction_) -> p_string
 {
 	::System_::Text_::String_Builder_ *const builder_ = new ::System_::Text_::String_Builder_();
 	builder_->Append_(p_string("("));
@@ -2483,12 +2509,12 @@ auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, p_bool co
 	return builder_->ToString_();
 }
 
-auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> p_string
+auto ::Emitter_::ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> p_string
 {
 	return ConvertParameterList_(parameterList_, p_bool(false));
 }
 
-auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void
+auto ::Emitter_::ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void
 {
 	if (syntax_->Type_->op_Equal(NewExpression_).Value)
 	{
@@ -2724,7 +2750,7 @@ auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Build
 	}
 }
 
-auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
+auto ::Emitter_::EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 {
 	Definitions_->StatementSeparatorLine_();
 	if (statement_->Type_->op_Equal(ReturnStatement_).Value)
@@ -2853,7 +2879,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 	}
 }
 
-auto EmitMemberDeclaration_(::Syntax_Node_ const *const member_, p_string const className_) -> void
+auto ::Emitter_::EmitMemberDeclaration_(::Syntax_Node_ const *const member_, p_string const className_) -> void
 {
 	if (member_->Type_->op_Equal(ConstructorDeclaration_).Value)
 	{
@@ -2905,7 +2931,7 @@ auto EmitMemberDeclaration_(::Syntax_Node_ const *const member_, p_string const 
 	}
 }
 
-auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
+auto ::Emitter_::EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 {
 	if (declaration_->Type_->op_Equal(GlobalDeclaration_).Value)
 	{
@@ -3019,7 +3045,7 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 	}
 }
 
-auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void
+auto ::Emitter_::EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void
 {
 	for (::Syntax_Node_ const *const declaration_ : *(unit_->Children_))
 	{
@@ -3027,15 +3053,7 @@ auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void
 	}
 }
 
-auto EmitPackage_(::Package_ const *const package_) -> void
-{
-	for (::Syntax_Node_ const *const compilationUnit_ : *(package_->Syntax_->Children_))
-	{
-		EmitCompilationUnit_(compilationUnit_);
-	}
-}
-
-auto EmitPreamble_() -> void
+auto ::Emitter_::EmitPreamble_() -> void
 {
 	TypeDeclarations_->WriteLine_(p_string("#include \"RuntimeLibrary.h\""));
 	TypeDeclarations_->BlankLine_();
@@ -3050,7 +3068,7 @@ auto EmitPreamble_() -> void
 	Definitions_->WriteLine_(p_string("// Definitions"));
 }
 
-auto EmitEntryPointAdapter_(::System_::Collections_::List_<::Source_Text_ const *> const *const resources_) -> void
+auto ::Emitter_::EmitEntryPointAdapter_() -> void
 {
 	Definitions_->ElementSeparatorLine_();
 	Definitions_->WriteLine_(p_string("// Entry Point Adapter"));
