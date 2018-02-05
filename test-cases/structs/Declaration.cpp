@@ -12,7 +12,7 @@ struct test_
 {
 public:
 	test_ * operator->() { return this; }
-	test_ * operator->() const { return this; }
+	test_ const * operator->() const { return this; }
 	test_ & operator* () { return *this; }
 	test_ const & operator* () const { return *this; }
 	p_string Name_;

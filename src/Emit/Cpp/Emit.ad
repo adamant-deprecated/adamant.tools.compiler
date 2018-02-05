@@ -613,7 +613,7 @@ public EmitDeclaration(declaration: Syntax_Node) -> void
 		// Write out arrow and dereference operators for using value types like reference types
 		// TODO Emit correct code to use value types as value types rather than reference types and drop this code
 		ClassDeclarations.WriteLine(structName + "_ * operator->() { return this; }");
-		ClassDeclarations.WriteLine(structName + "_ * operator->() const { return this; }");
+		ClassDeclarations.WriteLine(structName + "_ const * operator->() const { return this; }");
 		ClassDeclarations.WriteLine(structName + "_ & operator* () { return *this; }");
 		ClassDeclarations.WriteLine(structName + "_ const & operator* () const { return *this; }");
 
