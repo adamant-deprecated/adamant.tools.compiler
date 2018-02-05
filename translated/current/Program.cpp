@@ -39,7 +39,7 @@ auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_, p_bool co
 auto ConvertParameterList_(::Syntax_Node_ const *const parameterList_) -> p_string;
 auto ConvertExpression_(::Syntax_Node_ const *const syntax_, ::Source_File_Builder_ *const builder_) -> void;
 auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void;
-auto EmitClassMember_(::Syntax_Node_ const *const member_, p_string const className_) -> void;
+auto EmitMemberDeclaration_(::Syntax_Node_ const *const member_, p_string const className_) -> void;
 auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void;
 auto EmitCompilationUnit_(::Syntax_Node_ const *const unit_) -> void;
 auto EmitPackage_(::Package_ const *const package_) -> void;
@@ -197,7 +197,7 @@ public:
 	auto ParseVariableDeclaration_(p_bool const allowInitializer_) -> ::Syntax_Node_ const *;
 	auto ParseBlock_() -> ::Syntax_Node_ const *;
 	auto ParseParameterList_() -> ::Syntax_Node_ const *;
-	auto ParseClassMember_() -> ::Syntax_Node_ const *;
+	auto ParseMemberDeclaration_() -> ::Syntax_Node_ const *;
 	auto ParseDeclaration_() -> ::Syntax_Node_ const *;
 	auto ParseCompilationUnit_() -> ::Syntax_Node_ const *;
 };
@@ -423,6 +423,7 @@ p_int const Asterisk_ = p_int(123);
 p_int const MultiplyExpression_ = p_int(124);
 p_int const DivideExpression_ = p_int(125);
 p_int const NoneKeyword_ = p_int(126);
+p_int const StructDeclaration_ = p_int(127);
 p_int const Lexing_ = p_int(1);
 p_int const Parsing_ = p_int(2);
 p_int const Analysis_ = p_int(3);
@@ -967,6 +968,21 @@ auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Syntax_N
 		}
 
 		parent_->Children_->Add_(classSymbol_);
+	}
+	else if (node_->Type_->op_Equal(StructDeclaration_).Value)
+	{
+		p_string const name_ = node_->FirstChildOfType_(Identifier_)->GetText_();
+		::Symbol_ const *const structSymbol_ = new ::Symbol_(parent_, name_);
+		structSymbol_->Declarations_->Add_(node_);
+		for (::Syntax_Node_ const *const member_ : *(node_->Children_))
+		{
+			if (LogicalOr(LogicalOr(member_->Type_->op_Equal(ConstructorDeclaration_), [&] { return member_->Type_->op_Equal(FieldDeclaration_); }), [&] { return member_->Type_->op_Equal(MethodDeclaration_); }).Value)
+			{
+				BuildSymbols_(structSymbol_, member_);
+			}
+		}
+
+		parent_->Children_->Add_(structSymbol_);
 	}
 	else if (node_->Type_->op_Equal(ConstructorDeclaration_).Value)
 	{
@@ -1579,7 +1595,7 @@ auto ::CompilationUnitParser_::ParseParameterList_() -> ::Syntax_Node_ const *
 	return new ::Syntax_Node_(ParameterList_, children_);
 }
 
-auto ::CompilationUnitParser_::ParseClassMember_() -> ::Syntax_Node_ const *
+auto ::CompilationUnitParser_::ParseMemberDeclaration_() -> ::Syntax_Node_ const *
 {
 	::System_::Collections_::List_<::Syntax_Node_ const *> *const children_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
 	if (LogicalOr(LogicalOr(LogicalOr(token_->Type_->op_Equal(PublicKeyword_), [&] { return token_->Type_->op_Equal(ProtectedKeyword_); }), [&] { return token_->Type_->op_Equal(InternalKeyword_); }), [&] { return token_->Type_->op_Equal(PrivateKeyword_); }).Value)
@@ -1641,7 +1657,7 @@ auto ::CompilationUnitParser_::ParseDeclaration_() -> ::Syntax_Node_ const *
 		while (LogicalAnd(token_->Type_->op_NotEqual(RightBrace_), [&] { return token_->Type_->op_NotEqual(EndOfFileToken_); }).Value)
 		{
 			::Syntax_Node_ const *const startToken_ = token_;
-			children_->Add_(ParseClassMember_());
+			children_->Add_(ParseMemberDeclaration_());
 			if (token_->op_Equal(startToken_).Value)
 			{
 				children_->Add_(new_Syntax_Node_Skipped_(AcceptToken_()));
@@ -1650,6 +1666,25 @@ auto ::CompilationUnitParser_::ParseDeclaration_() -> ::Syntax_Node_ const *
 
 		children_->Add_(ExpectToken_(RightBrace_));
 		return new ::Syntax_Node_(ClassDeclaration_, children_);
+	}
+
+	if (token_->Type_->op_Equal(StructKeyword_).Value)
+	{
+		children_->Add_(ExpectToken_(StructKeyword_));
+		children_->Add_(ExpectToken_(Identifier_));
+		children_->Add_(ExpectToken_(LeftBrace_));
+		while (LogicalAnd(token_->Type_->op_NotEqual(RightBrace_), [&] { return token_->Type_->op_NotEqual(EndOfFileToken_); }).Value)
+		{
+			::Syntax_Node_ const *const startToken_ = token_;
+			children_->Add_(ParseMemberDeclaration_());
+			if (token_->op_Equal(startToken_).Value)
+			{
+				children_->Add_(new_Syntax_Node_Skipped_(AcceptToken_()));
+			}
+		}
+
+		children_->Add_(ExpectToken_(RightBrace_));
+		return new ::Syntax_Node_(StructDeclaration_, children_);
 	}
 
 	if (token_->Type_->op_Equal(EnumKeyword_).Value)
@@ -2818,7 +2853,7 @@ auto EmitStatement_(::Syntax_Node_ const *const statement_) -> void
 	}
 }
 
-auto EmitClassMember_(::Syntax_Node_ const *const member_, p_string const className_) -> void
+auto EmitMemberDeclaration_(::Syntax_Node_ const *const member_, p_string const className_) -> void
 {
 	if (member_->Type_->op_Equal(ConstructorDeclaration_).Value)
 	{
@@ -2899,7 +2934,29 @@ auto EmitDeclaration_(::Syntax_Node_ const *const declaration_) -> void
 		{
 			if (LogicalOr(LogicalOr(member_->Type_->op_Equal(ConstructorDeclaration_), [&] { return member_->Type_->op_Equal(FieldDeclaration_); }), [&] { return member_->Type_->op_Equal(MethodDeclaration_); }).Value)
 			{
-				EmitClassMember_(member_, className_);
+				EmitMemberDeclaration_(member_, className_);
+			}
+		}
+
+		ClassDeclarations_->EndBlockWithSemicolon_();
+	}
+	else if (declaration_->Type_->op_Equal(StructDeclaration_).Value)
+	{
+		p_string const structName_ = declaration_->Children_->op_Element(p_int(2))->GetText_();
+		TypeDeclarations_->WriteLine_(p_string("struct ")->op_Add(structName_)->op_Add(p_string("_;")));
+		ClassDeclarations_->ElementSeparatorLine_();
+		ClassDeclarations_->WriteLine_(p_string("struct ")->op_Add(structName_)->op_Add(p_string("_")));
+		ClassDeclarations_->BeginBlock_();
+		ClassDeclarations_->EndLine_(p_string("public:"));
+		ClassDeclarations_->WriteLine_(structName_->op_Add(p_string("_ * operator->() { return this; }")));
+		ClassDeclarations_->WriteLine_(structName_->op_Add(p_string("_ const * operator->() const { return this; }")));
+		ClassDeclarations_->WriteLine_(structName_->op_Add(p_string("_ & operator* () { return *this; }")));
+		ClassDeclarations_->WriteLine_(structName_->op_Add(p_string("_ const & operator* () const { return *this; }")));
+		for (::Syntax_Node_ const *const member_ : *(declaration_->Children_))
+		{
+			if (LogicalOr(LogicalOr(member_->Type_->op_Equal(ConstructorDeclaration_), [&] { return member_->Type_->op_Equal(FieldDeclaration_); }), [&] { return member_->Type_->op_Equal(MethodDeclaration_); }).Value)
+			{
+				EmitMemberDeclaration_(member_, structName_);
 			}
 		}
 
