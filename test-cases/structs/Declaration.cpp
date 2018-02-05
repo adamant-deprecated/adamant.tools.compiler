@@ -11,6 +11,10 @@ auto Main_() -> void;
 struct test_
 {
 public:
+	test_ * operator->() { return this; }
+	test_ * operator->() const { return this; }
+	test_ & operator* () { return *this; }
+	test_ const & operator* () const { return *this; }
 	p_string Name_;
 	test_(p_string const name_);
 	auto Method_() const -> p_string;
