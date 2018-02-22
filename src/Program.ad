@@ -38,11 +38,6 @@ public HasErrors(diagnostics: System.Collections.List<Diagnostic>) -> bool
 	return false;
 }
 
-public Emit(package: Package, resources: System.Collections.List<Source_Text>) -> string
-{
-
-}
-
 // based on sysexits.h
 public let Success: int = 0;
 public let UsageError: int = 64;

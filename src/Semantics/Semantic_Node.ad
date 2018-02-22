@@ -1,0 +1,38 @@
+// Long term, the idea is to have a tree that implements the interface of the
+// syntax tree, but adds additional methods and functionality
+
+// TODO implement a semantic node that wraps a Syntax_Node
+
+public class Semantic_Node
+{
+	public let Syntax: Syntax_Node;
+	public let Type: int;
+	public let IsMissing: bool;
+	public let Source: Source_Text;
+	public let Start: uint;
+	public let Length: uint; // TODO is this ByteLength?
+	public let Children: System.Collections.List<Semantic_Node>;
+	public let Diagnostics: mut System.Collections.List<Diagnostic>;
+
+	public new(syntax: Syntax_Node)
+	{
+		Syntax = syntax;
+		Type = syntax.Type;
+		IsMissing = syntax.IsMissing;
+		Source = syntax.Source;
+		Start = syntax.Start;
+		Length = syntax.Length;
+		let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		for let childSyntax: Syntax_Node in syntax.Children
+		{
+			children.Add(new Semantic_Node(childSyntax));
+		}
+		Children = children;
+		let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+		for let diagnostic: Diagnostic in syntax.Diagnostics
+		{
+			diagnostics.Add(diagnostic);
+		}
+		Diagnostics = diagnostics;
+	}
+}
