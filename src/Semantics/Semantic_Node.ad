@@ -35,4 +35,49 @@ public class Semantic_Node
 		}
 		Diagnostics = diagnostics;
 	}
+
+	public GetText(self) -> string
+	{
+		return Source.Text.Substring(Start, Length);
+	}
+
+	public FirstChildOfType(self, type: int) -> Semantic_Node?
+	{
+		for let child: Semantic_Node in Children
+		{
+			if child.Type == type
+				{ return child; }
+		}
+		return none;
+	}
+
+	public HasChildOfType(self, type: int) -> bool
+	{
+		for let child: Semantic_Node in Children
+		{
+			if child.Type == type
+				{ return true; }
+		}
+		return false;
+	}
+
+	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
+	{
+		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+		CollectDiagnostics(diagnostics);
+		return diagnostics;
+	}
+
+	protected CollectDiagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+	{
+		for let diagnostic: Diagnostic in Diagnostics
+		{
+			diagnostics.Add(diagnostic);
+		}
+
+		for let child: Semantic_Node in Children
+		{
+			child.CollectDiagnostics(diagnostics);
+		}
+	}
 }

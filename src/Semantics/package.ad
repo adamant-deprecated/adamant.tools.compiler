@@ -1,17 +1,17 @@
 // A compiled package with all of its syntax and semantics
 public class Package // TODO change immutable class name to snake_case when supported
 {
-	public let Syntax: Syntax_Node;
+	public let Semantics: Semantic_Node;
 	public let Symbol: Symbol;
 
-	public new(syntax: Syntax_Node, symbol: Symbol)
+	public new(semantics: Semantic_Node, symbol: Symbol)
 	{
-		Syntax = syntax;
+		Semantics = semantics;
 		Symbol = symbol;
 	}
 
 	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
 	{
-		return Syntax.AllDiagnostics();
+		return Semantics.AllDiagnostics();
 	}
 }

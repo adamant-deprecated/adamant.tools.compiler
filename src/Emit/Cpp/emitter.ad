@@ -33,7 +33,7 @@ public class Emitter // TODO change to snake_case when possible
 
 		EmitPreamble();
 
-		for let compilationUnit: Syntax_Node in package.Syntax.Children
+		for let compilationUnit: Semantic_Node in package.Semantics.Children
 		{
 			EmitCompilationUnit(compilationUnit);
 		}
@@ -47,7 +47,7 @@ public class Emitter // TODO change to snake_case when possible
 			+ Definitions.ToString();
 	}
 
-	private IsValueType(type: Syntax_Node) -> bool
+	private IsValueType(type: Semantic_Node) -> bool
 	{
 		// Here we assume that they follow convention and value types start lowercase
 		if type.Type == PredefinedType
@@ -85,11 +85,11 @@ public class Emitter // TODO change to snake_case when possible
 	}
 
 	// Converts a type to C++
-	private ConvertType(type: Syntax_Node) -> string
+	private ConvertType(type: Semantic_Node) -> string
 	{
 		if type.Type == PredefinedType
 		{
-			let keyword: Syntax_Node = type.Children[0];
+			let keyword: Semantic_Node = type.Children[0];
 			// void we still use the C++ keyword
 			if keyword.Type == Void
 				{ return keyword.GetText(); }
@@ -114,7 +114,7 @@ public class Emitter // TODO change to snake_case when possible
 	}
 
 	// Converts a type to C++
-	private ConvertType(mutableBinding: bool, var type: Syntax_Node) -> string
+	private ConvertType(mutableBinding: bool, var type: Semantic_Node) -> string
 	{
 		let optional: bool = type.Type == OptionalType;
 		if optional
@@ -150,12 +150,12 @@ public class Emitter // TODO change to snake_case when possible
 		return cppType;
 	}
 
-	private ConvertParameterList(mut self, parameterList: Syntax_Node, isMainFunction: bool) -> string
+	private ConvertParameterList(mut self, parameterList: Semantic_Node, isMainFunction: bool) -> string
 	{
 		let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
 		builder.Append("(");
 		var firstParameter: bool = true;
-		for let parameter: Syntax_Node in parameterList.Children
+		for let parameter: Semantic_Node in parameterList.Children
 		{
 			if parameter.Type == Parameter
 			{
@@ -165,7 +165,7 @@ public class Emitter // TODO change to snake_case when possible
 					{ firstParameter = false; }
 
 				let mutableBinding: bool = parameter.HasChildOfType(VarKeyword);
-				let type: Syntax_Node = parameter.Children[|parameter.Children| - 1];
+				let type: Semantic_Node = parameter.Children[|parameter.Children| - 1];
 				builder.Append(ConvertType(mutableBinding, type));
 				builder.Append(" ");
 				builder.Append(parameter.FirstChildOfType(Identifier).GetText());
@@ -189,27 +189,27 @@ public class Emitter // TODO change to snake_case when possible
 		return builder.ToString();
 	}
 
-	private ConvertParameterList(mut self, parameterList: Syntax_Node) -> string
+	private ConvertParameterList(mut self, parameterList: Semantic_Node) -> string
 	{
 		return ConvertParameterList(parameterList, false);
 	}
 
-	private ConvertExpression(syntax: Syntax_Node, builder: mut Source_File_Builder) -> void
+	private ConvertExpression(syntax: Semantic_Node, builder: mut Source_File_Builder) -> void
 	{
 		if syntax.Type == NewExpression
 		{
-			let type: Syntax_Node = syntax.Children[1];
+			let type: Semantic_Node = syntax.Children[1];
 			if not IsValueType(type) // place value types on the stack in C++ by not using new
 				{ builder.Write("new "); }
 			builder.Write(ConvertType(type));
-			let argumentList: Syntax_Node = syntax.Children[2];
+			let argumentList: Semantic_Node = syntax.Children[2];
 			ConvertExpression(argumentList, builder);
 		}
 		else if syntax.Type == ArgumentList
 		{
 			builder.Write("(");
 			var firstExpression: bool = true;
-			for let arg: Syntax_Node in syntax.Children
+			for let arg: Semantic_Node in syntax.Children
 			{
 				if arg.Type <> LeftParen
 					and arg.Type <> RightParen
@@ -424,7 +424,7 @@ public class Emitter // TODO change to snake_case when possible
 		}
 	}
 
-	private EmitStatement(mut self, statement: Syntax_Node) -> void
+	private EmitStatement(mut self, statement: Semantic_Node) -> void
 	{
 		Definitions.StatementSeparatorLine();
 
@@ -448,7 +448,7 @@ public class Emitter // TODO change to snake_case when possible
 		else if statement.Type == Block
 		{
 			Definitions.BeginBlock();
-			for let blockStatement: Syntax_Node in statement.Children
+			for let blockStatement: Semantic_Node in statement.Children
 			{
 				if blockStatement.Type <> LeftBrace and blockStatement.Type <> RightBrace
 				{
@@ -467,10 +467,10 @@ public class Emitter // TODO change to snake_case when possible
 		else if statement.Type == ForStatement
 		{
 			Definitions.BeginLine("for (");
-			let variableDeclaration: Syntax_Node = statement.Children[1];
+			let variableDeclaration: Semantic_Node = statement.Children[1];
 			let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 			let name: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
-			let type: Syntax_Node = variableDeclaration.Children[3];
+			let type: Semantic_Node = variableDeclaration.Children[3];
 			Definitions.Write(ConvertType(mutableBinding, type) + " " + name + "_");
 			Definitions.Write(" : *(");
 			ConvertExpression(statement.Children[3], Definitions); // expression
@@ -487,7 +487,7 @@ public class Emitter // TODO change to snake_case when possible
 		}
 		else if statement.Type == IfStatement
 		{
-			var ifStatement: Syntax_Node? = statement;
+			var ifStatement: Semantic_Node? = statement;
 			Definitions.BeginLine("");
 			loop
 			{
@@ -495,7 +495,7 @@ public class Emitter // TODO change to snake_case when possible
 				ConvertExpression(ifStatement.Children[1], Definitions);
 				Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
 				EmitStatement(ifStatement.Children[2]); // Block Statement
-				let elseClause: Syntax_Node? = ifStatement.FirstChildOfType(ElseClause);
+				let elseClause: Semantic_Node? = ifStatement.FirstChildOfType(ElseClause);
 				if elseClause <> none
 				{
 					ifStatement = elseClause.FirstChildOfType(IfStatement);
@@ -524,9 +524,9 @@ public class Emitter // TODO change to snake_case when possible
 		}
 		else if statement.Type == LocalDeclarationStatement
 		{
-			let variableDeclaration: Syntax_Node = statement.Children[0];
+			let variableDeclaration: Semantic_Node = statement.Children[0];
 			let variableName: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
-			let variableType: Syntax_Node = variableDeclaration.Children[3];
+			let variableType: Semantic_Node = variableDeclaration.Children[3];
 			let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 			Definitions.BeginLine(ConvertType(mutableBinding, variableType));
 			Definitions.Write(" " + variableName + "_");
@@ -549,7 +549,7 @@ public class Emitter // TODO change to snake_case when possible
 		}
 	}
 
-	private EmitMemberDeclaration(mut self, member: Syntax_Node, className: string) -> void
+	private EmitMemberDeclaration(mut self, member: Semantic_Node, className: string) -> void
 	{
 		if member.Type == ConstructorDeclaration
 		{
@@ -562,21 +562,21 @@ public class Emitter // TODO change to snake_case when possible
 		}
 		else if member.Type == FieldDeclaration
 		{
-			let variableDeclaration: Syntax_Node = member.Children[1];
+			let variableDeclaration: Semantic_Node = member.Children[1];
 			let fieldName: string = variableDeclaration.Children[1].GetText();
-			let fieldType: Syntax_Node = variableDeclaration.Children[3];
+			let fieldType: Semantic_Node = variableDeclaration.Children[3];
 			let cppType: string = ConvertType(true, fieldType); // because we need to assign them in constructors don't mark fields const
 			ClassDeclarations.WriteLine(cppType + " " + fieldName + "_;");
 		}
 		else if member.Type == MethodDeclaration
 		{
 			let methodName: string = member.Children[1].GetText();
-			let parameterList: Syntax_Node = member.Children[2];
+			let parameterList: Semantic_Node = member.Children[2];
 			let parameters: string = ConvertParameterList(parameterList);
-			let selfParameter: Syntax_Node? = parameterList.FirstChildOfType(SelfParameter);
+			let selfParameter: Semantic_Node? = parameterList.FirstChildOfType(SelfParameter);
 			let isAssociatedFunction: bool = selfParameter == none;
 			let mutableSelf: bool = not isAssociatedFunction and selfParameter.HasChildOfType(MutableKeyword);
-			let returnType: Syntax_Node = member.Children[4];
+			let returnType: Semantic_Node = member.Children[4];
 			let cppType: string = ConvertType(true, returnType);
 			var staticModifier: string = "";
 			if isAssociatedFunction
@@ -587,7 +587,7 @@ public class Emitter // TODO change to snake_case when possible
 			ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_" + parameters + " " + constModifier + "-> " + cppType + ";");
 			Definitions.ElementSeparatorLine();
 			Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_" + parameters + " " + constModifier + "-> " + cppType);
-			let block: Syntax_Node = member.Children[5];
+			let block: Semantic_Node = member.Children[5];
 			EmitStatement(block);
 		}
 		else
@@ -596,18 +596,18 @@ public class Emitter // TODO change to snake_case when possible
 		}
 	}
 
-	private EmitDeclaration(mut self, declaration: Syntax_Node) -> void
+	private EmitDeclaration(mut self, declaration: Semantic_Node) -> void
 	{
 		if declaration.Type == GlobalDeclaration
 		{
-			let variableDeclaration: Syntax_Node = declaration.Children[1];
+			let variableDeclaration: Semantic_Node = declaration.Children[1];
 			let variableName: string = variableDeclaration.Children[1].GetText();
-			let variableType: Syntax_Node = variableDeclaration.Children[3];
+			let variableType: Semantic_Node = variableDeclaration.Children[3];
 			let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 			let cppType: string = ConvertType(mutableBinding, variableType);
 			GlobalDefinitions.BeginLine(cppType);
 			GlobalDefinitions.Write(" " + variableName + "_ = ");
-			let expression: Syntax_Node = variableDeclaration.Children[5];
+			let expression: Semantic_Node = variableDeclaration.Children[5];
 			ConvertExpression(expression, GlobalDefinitions);
 			GlobalDefinitions.EndLine(";");
 		}
@@ -622,7 +622,7 @@ public class Emitter // TODO change to snake_case when possible
 			// Write out basic reference equality comparisons
 			ClassDeclarations.WriteLine("p_bool op_Equal(" + className + "_ const * other) const { return this == other; }");
 			ClassDeclarations.WriteLine("p_bool op_NotEqual(" + className + "_ const * other) const { return this != other; }");
-			for let member: Syntax_Node in declaration.Children
+			for let member: Semantic_Node in declaration.Children
 			{
 				// TODO fix this to a more reliable means of telling what should be emitted
 				if member.Type == ConstructorDeclaration
@@ -649,7 +649,7 @@ public class Emitter // TODO change to snake_case when possible
 			ClassDeclarations.WriteLine(structName + "_ & operator* () { return *this; }");
 			ClassDeclarations.WriteLine(structName + "_ const & operator* () const { return *this; }");
 
-			for let member: Syntax_Node in declaration.Children
+			for let member: Semantic_Node in declaration.Children
 			{
 				// TODO fix this to a more reliable means of telling what should be emitted
 				if member.Type == ConstructorDeclaration
@@ -668,13 +668,13 @@ public class Emitter // TODO change to snake_case when possible
 			ClassDeclarations.ElementSeparatorLine();
 			ClassDeclarations.WriteLine("enum class " + enumName + "_");
 			ClassDeclarations.BeginBlock();
-			for let member: Syntax_Node in declaration.Children
+			for let member: Semantic_Node in declaration.Children
 			{
 				if member.Type == EnumMemberDeclaration
 				{
 					let memberName: string = member.Children[0].GetText();
 					ClassDeclarations.BeginLine(memberName + "_");
-					let memberValue: Syntax_Node? = member.FirstChildOfType(Number);
+					let memberValue: Semantic_Node? = member.FirstChildOfType(Number);
 					if memberValue <> none
 					{
 						ClassDeclarations.Write(" = ");
@@ -690,7 +690,7 @@ public class Emitter // TODO change to snake_case when possible
 			let name: string = declaration.Children[1].GetText();
 			let isMain: bool = name == "Main";
 			let parameters: string = ConvertParameterList(declaration.Children[2], isMain);
-			let returnType: Syntax_Node = declaration.Children[4];
+			let returnType: Semantic_Node = declaration.Children[4];
 			let cppType: string = ConvertType(true, returnType);
 			// Write out the function declaration for C++ so we can call functions defined after others
 			FunctionDeclarations.WriteLine("auto " + name + "_" + parameters + " -> " + cppType + ";");
@@ -714,9 +714,9 @@ public class Emitter // TODO change to snake_case when possible
 		}
 	}
 
-	private EmitCompilationUnit(mut self, unit: Syntax_Node) -> void
+	private EmitCompilationUnit(mut self, unit: Semantic_Node) -> void
 	{
-		for let declaration: Syntax_Node in unit.Children
+		for let declaration: Semantic_Node in unit.Children
 		{
 			EmitDeclaration(declaration);
 		}
