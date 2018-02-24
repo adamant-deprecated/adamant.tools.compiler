@@ -1229,12 +1229,12 @@ auto ::CompilationUnitParser_::ExpectToken_(p_int const tokenType_) -> ::Syntax_
 {
 	if (token_->op_Equal(::None).Value)
 	{
-		return ::new_Syntax_Node_Missing_(tokenType_, tokenStream_->Source_, tokenStream_->Source_->ByteLength_());
+		return new_Syntax_Node_Missing_(tokenType_, tokenStream_->Source_, tokenStream_->Source_->ByteLength_());
 	}
 
 	if (LogicalOr(token_->op_Equal(::None), [&] { return token_->Type_->op_NotEqual(tokenType_); }).Value)
 	{
-		return ::new_Syntax_Node_Missing_(tokenType_, tokenStream_->Source_, token_->Start_);
+		return new_Syntax_Node_Missing_(tokenType_, tokenStream_->Source_, token_->Start_);
 	}
 
 	::Syntax_Node_ const *const node_ = token_;
@@ -1778,7 +1778,7 @@ auto ::CompilationUnitParser_::ParseMemberDeclaration_() -> ::Syntax_Node_ const
 	}
 	else
 	{
-		ExpectToken_(PublicKeyword_);
+		children_->Add_(ExpectToken_(PublicKeyword_));
 	}
 
 	if (token_->Type_->op_Equal(NewKeyword_).Value)
