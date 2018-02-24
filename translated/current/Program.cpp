@@ -7,8 +7,10 @@ class Text_Line_;
 class Text_Position_;
 class Text_Span_;
 class Source_File_Builder_;
+class Binding_Scope_;
 class Name_Binder_;
 class Package_;
+class Primitive_Types_;
 class Semantic_Node_;
 class Symbol_;
 class Symbol_Builder_;
@@ -122,11 +124,21 @@ public:
 	auto ToString_() const -> p_string;
 };
 
+class Binding_Scope_
+{
+public:
+	p_bool op_Equal(Binding_Scope_ const * other) const { return this == other; }
+	p_bool op_NotEqual(Binding_Scope_ const * other) const { return this != other; }
+	::Binding_Scope_ const * ContainingScope_;
+	Binding_Scope_(::Binding_Scope_ const *const containingScope_);
+};
+
 class Name_Binder_
 {
 public:
 	p_bool op_Equal(Name_Binder_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Name_Binder_ const * other) const { return this != other; }
+	static auto Bind_(::Package_ const *const package_) -> void;
 };
 
 class Package_
@@ -136,8 +148,19 @@ public:
 	p_bool op_NotEqual(Package_ const * other) const { return this != other; }
 	::Semantic_Node_ const * Semantics_;
 	::Symbol_ const * Symbol_;
+	::Primitive_Types_ const * PrimitiveTypes_;
 	Package_(::Semantic_Node_ const *const semantics_, ::Symbol_ const *const symbol_);
 	auto AllDiagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *> const *;
+};
+
+class Primitive_Types_
+{
+public:
+	p_bool op_Equal(Primitive_Types_ const * other) const { return this == other; }
+	p_bool op_NotEqual(Primitive_Types_ const * other) const { return this != other; }
+	::System_::Collections_::List_<::Symbol_ const *> const * Symbols_;
+	Primitive_Types_();
+	static auto AddFixedPointTypes_(::System_::Collections_::List_<::Symbol_ const *> *const symbols_, p_int const bitLength_) -> void;
 };
 
 class Semantic_Node_
@@ -170,7 +193,9 @@ public:
 	p_string Name_;
 	::System_::Collections_::List_<::Syntax_Node_ const *> * Declarations_;
 	::System_::Collections_::List_<::Symbol_ const *> * Children_;
+	p_bool IsPrimitive_;
 	Symbol_(::Symbol_ const *const parent_, p_string const name_);
+	Symbol_(p_string const name_);
 };
 
 class Symbol_Builder_
@@ -474,6 +499,8 @@ auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *cons
 	::Symbol_Builder_ const *const symbolBuilder_ = new ::Symbol_Builder_();
 	::Symbol_ const *const packageSymbol_ = symbolBuilder_->BuildSymbols_(packageSyntax_);
 	::Package_ const *const package_ = new ::Package_(new ::Semantic_Node_(packageSyntax_), packageSymbol_);
+	::Name_Binder_ const *const nameBinder_ = new ::Name_Binder_();
+	nameBinder_->Bind_(package_);
 	return package_;
 }
 
@@ -920,15 +947,60 @@ auto ::Source_File_Builder_::ToString_() const -> p_string
 	return code_->ToString_();
 }
 
+::Binding_Scope_::Binding_Scope_(::Binding_Scope_ const *const containingScope_)
+{
+	ContainingScope_ = containingScope_;
+}
+
+auto ::Name_Binder_::Bind_(::Package_ const *const package_) -> void
+{
+}
+
 ::Package_::Package_(::Semantic_Node_ const *const semantics_, ::Symbol_ const *const symbol_)
 {
 	Semantics_ = semantics_;
 	Symbol_ = symbol_;
+	PrimitiveTypes_ = new ::Primitive_Types_();
 }
 
 auto ::Package_::AllDiagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *> const *
 {
 	return Semantics_->AllDiagnostics_();
+}
+
+::Primitive_Types_::Primitive_Types_()
+{
+	::System_::Collections_::List_<::Symbol_ const *> *const symbols_ = new ::System_::Collections_::List_<::Symbol_ const *>();
+	symbols_->Add_(new ::Symbol_(p_string("bool")));
+	symbols_->Add_(new ::Symbol_(p_string("code_point")));
+	symbols_->Add_(new ::Symbol_(p_string("string")));
+	symbols_->Add_(new ::Symbol_(p_string("int8")));
+	symbols_->Add_(new ::Symbol_(p_string("int16")));
+	symbols_->Add_(new ::Symbol_(p_string("int")));
+	symbols_->Add_(new ::Symbol_(p_string("int64")));
+	symbols_->Add_(new ::Symbol_(p_string("int128")));
+	symbols_->Add_(new ::Symbol_(p_string("byte")));
+	symbols_->Add_(new ::Symbol_(p_string("uint16")));
+	symbols_->Add_(new ::Symbol_(p_string("uint")));
+	symbols_->Add_(new ::Symbol_(p_string("uint64")));
+	symbols_->Add_(new ::Symbol_(p_string("uint128")));
+	symbols_->Add_(new ::Symbol_(p_string("float32")));
+	symbols_->Add_(new ::Symbol_(p_string("float")));
+	symbols_->Add_(new ::Symbol_(p_string("float128")));
+	AddFixedPointTypes_(symbols_, p_int(8));
+	AddFixedPointTypes_(symbols_, p_int(16));
+	AddFixedPointTypes_(symbols_, p_int(32));
+	AddFixedPointTypes_(symbols_, p_int(64));
+	symbols_->Add_(new ::Symbol_(p_string("decimal32")));
+	symbols_->Add_(new ::Symbol_(p_string("decimal")));
+	symbols_->Add_(new ::Symbol_(p_string("decimal128")));
+	symbols_->Add_(new ::Symbol_(p_string("size")));
+	symbols_->Add_(new ::Symbol_(p_string("offset")));
+	Symbols_ = symbols_;
+}
+
+auto ::Primitive_Types_::AddFixedPointTypes_(::System_::Collections_::List_<::Symbol_ const *> *const symbols_, p_int const bitLength_) -> void
+{
 }
 
 ::Semantic_Node_::Semantic_Node_(::Syntax_Node_ const *const syntax_)
@@ -1012,6 +1084,16 @@ auto ::Semantic_Node_::CollectDiagnostics_(::System_::Collections_::List_<::Diag
 	Name_ = name_;
 	Declarations_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
 	Children_ = new ::System_::Collections_::List_<::Symbol_ const *>();
+	IsPrimitive_ = p_bool(false);
+}
+
+::Symbol_::Symbol_(p_string const name_)
+{
+	Parent_ = ::None;
+	Name_ = name_;
+	Declarations_ = new ::System_::Collections_::List_<::Syntax_Node_ const *>();
+	Children_ = new ::System_::Collections_::List_<::Symbol_ const *>();
+	IsPrimitive_ = p_bool(true);
 }
 
 auto ::Symbol_Builder_::BuildSymbols_(::Syntax_Node_ const *const package_) -> ::Symbol_ const *
@@ -2983,7 +3065,7 @@ auto ::Emitter_::EmitMemberDeclaration_(::Semantic_Node_ const *const member_, p
 	}
 	else if (member_->Type_->op_Equal(FieldDeclaration_).Value)
 	{
-		::Semantic_Node_ const *const variableDeclaration_ = member_->Children_->op_Element(p_int(1));
+		::Semantic_Node_ const *const variableDeclaration_ = member_->FirstChildOfType_(VariableDeclaration_);
 		p_string const fieldName_ = variableDeclaration_->Children_->op_Element(p_int(1))->GetText_();
 		::Semantic_Node_ const *const fieldType_ = variableDeclaration_->Children_->op_Element(p_int(3));
 		p_string const cppType_ = ConvertType_(p_bool(true), fieldType_);
