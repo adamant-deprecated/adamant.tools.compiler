@@ -33,7 +33,7 @@ public class Emitter // TODO change to snake_case when possible
 
 		EmitPreamble();
 
-		for let compilationUnit: Semantic_Node in package.Semantics.Children
+		for let compilationUnit: Semantic_Node in package.CompilationUnits
 		{
 			EmitCompilationUnit(compilationUnit);
 		}
@@ -199,11 +199,14 @@ public class Emitter // TODO change to snake_case when possible
 		if syntax.Type == NewExpression
 		{
 			let type: Semantic_Node = syntax.Children[1];
-			if not IsValueType(type) // place value types on the stack in C++ by not using new
-				{ builder.Write("new "); }
+			let isValueType: bool = IsValueType(type);
+			if not isValueType // place value types on the stack in C++ by not using new
+				{ builder.Write("(new "); }
 			builder.Write(ConvertType(type));
 			let argumentList: Semantic_Node = syntax.Children[2];
 			ConvertExpression(argumentList, builder);
+			if not isValueType
+				{ builder.Write(")"); }
 		}
 		else if syntax.Type == ArgumentList
 		{

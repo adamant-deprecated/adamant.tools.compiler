@@ -1,0 +1,14 @@
+public class Test
+{
+	public let Value: bool;
+
+	public new()
+	{
+		Value = true;
+	}
+}
+
+public Main() -> void
+{
+	let value: bool = new Test().Value;
+}

@@ -1,19 +1,31 @@
 // A compiled package with all of its syntax and semantics
 public class Package // TODO change immutable class name to snake_case when supported
 {
-	public let Semantics: Semantic_Node;
+	public let CompilationUnits: System.Collections.List<Semantic_Node>;
 	public let Symbol: Symbol;
 	public let PrimitiveTypes: Primitive_Types;
 
-	public new(semantics: Semantic_Node, symbol: Symbol)
+	public new(syntax: Syntax_Node, symbol: Symbol)
 	{
-		Semantics = semantics;
+		if syntax.Type <> PackageNode { ThrowException("`new Package(...)` called with node of type " + syntax.Type); }
+
+		// TODO combine these lines into one when the compiler supports
+		let packageSemantics: Semantic_Node = new Semantic_Node(syntax);
+		CompilationUnits = packageSemantics.Children;
 		Symbol = symbol;
 		PrimitiveTypes = new Primitive_Types();
 	}
 
 	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
 	{
-		return Semantics.AllDiagnostics();
+		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+		for let compilationUnit: Semantic_Node in CompilationUnits
+		{
+			for let diagnostic: Diagnostic in compilationUnit.AllDiagnostics()
+			{
+				diagnostics.Add(diagnostic);
+			}
+		}
+		return diagnostics;
 	}
 }

@@ -6,6 +6,7 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 		if package.Type <> PackageNode
 			{ ThrowException("`Symbol_Builder.BuildSymbols()` called with node of type " + package.Type); }
 
+		// TODO eventually the package symbol should have a name so that we can look up names in front of the package qualifier
 		let packageSymbol: mut Symbol = new Symbol(none, "");
 		for let compilationUnit: Syntax_Node in package.Children
 		{

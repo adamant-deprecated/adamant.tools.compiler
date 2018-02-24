@@ -2,6 +2,15 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 {
 	public Bind(package: Package) -> void
 	{
+		let globalScope: Binding_Scope = new Binding_Scope(none, package.Symbol.Children);
+		for let compilationUnit: Semantic_Node in package.CompilationUnits
+		{
+			Bind(compilationUnit, globalScope);
+		}
+	}
 
+	private Bind(node: Semantic_Node, scope: Binding_Scope) -> void
+	{
+		// ThrowException("`Name_Binder.Bind()` unimplemented node type " + node.Type);
 	}
 }

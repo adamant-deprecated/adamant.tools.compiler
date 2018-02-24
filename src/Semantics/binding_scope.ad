@@ -1,9 +1,11 @@
 public class Binding_Scope
 {
 	public let ContainingScope: Binding_Scope?;
+	public let Symbols: System.Collections.List<Symbol>;
 
-	public new(containingScope: Binding_Scope?)
+	public new(containingScope: Binding_Scope?, symbols: System.Collections.List<Symbol>)
 	{
 		ContainingScope = containingScope;
+		Symbols = symbols;
 	}
 }
