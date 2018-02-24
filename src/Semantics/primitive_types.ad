@@ -1,0 +1,54 @@
+// TODO this should be a const global object
+public class Primitive_Types
+{
+	public let Symbols: System.Collection.List<Symbol>;
+
+	public new()
+	{
+		let symbols: mut System.Collection.List<Symbol> = new System.Collection.List<Symbol>();
+
+		symbols.Add(new Symbol("bool"));
+		symbols.Add(new Symbol("code_point"));
+		symbols.Add(new Symbol("string"));
+
+		symbols.Add(new Symbol("int8"));
+		symbols.Add(new Symbol("int16"));
+		symbols.Add(new Symbol("int"));
+		symbols.Add(new Symbol("int64"));
+		symbols.Add(new Symbol("int128"));
+
+		symbols.Add(new Symbol("byte"));
+		symbols.Add(new Symbol("uint16"));
+		symbols.Add(new Symbol("uint"));
+		symbols.Add(new Symbol("uint64"));
+		symbols.Add(new Symbol("uint128"));
+
+		symbols.Add(new Symbol("float32"));
+		symbols.Add(new Symbol("float"));
+		symbols.Add(new Symbol("float128"));
+
+		AddFixedPointTypes(symbols, 8);
+		AddFixedPointTypes(symbols, 16);
+		AddFixedPointTypes(symbols, 32);
+		AddFixedPointTypes(symbols, 64);
+
+		symbols.Add(new Symbol("decimal32"));
+		symbols.Add(new Symbol("decimal"));
+		symbols.Add(new Symbol("decimal128"));
+
+		symbols.Add(new Symbol("size"));
+		symbols.Add(new Symbol("offset"));
+
+		Symbols = symbols;
+	}
+
+	private AddFixedPointTypes(symbols: mut System.Collection.List<Symbol>, bitLength: usize) -> void
+	{
+		// TODO implement when language features make it easier
+		// for let i: usize in 1..usize-1
+		// {
+		// 	symbols.Add(new Symbol("fixed"+i+"."+(bitLength-i)));
+		// 	symbols.Add(new Symbol("fixed"+i+"."+(bitLength-i)));
+		// }
+	}
+}

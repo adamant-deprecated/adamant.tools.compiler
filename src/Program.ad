@@ -5,6 +5,8 @@ public Compile(sources: System.Collections.List<Source_Text>) -> Package
 	let symbolBuilder: Symbol_Builder = new Symbol_Builder();
 	let packageSymbol: Symbol = symbolBuilder.BuildSymbols(packageSyntax);
 	let package: Package = new Package(new Semantic_Node(packageSyntax), packageSymbol);
+	let nameBinder: Name_Binder = new Name_Binder();
+	nameBinder.Bind(package);
 	return package;
 }
 

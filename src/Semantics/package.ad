@@ -3,11 +3,13 @@ public class Package // TODO change immutable class name to snake_case when supp
 {
 	public let Semantics: Semantic_Node;
 	public let Symbol: Symbol;
+	public let PrimitiveTypes: Primitive_Types;
 
 	public new(semantics: Semantic_Node, symbol: Symbol)
 	{
 		Semantics = semantics;
 		Symbol = symbol;
+		PrimitiveTypes = new Primitive_Types();
 	}
 
 	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
