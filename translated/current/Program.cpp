@@ -140,8 +140,8 @@ class Name_Binder_
 public:
 	p_bool op_Equal(Name_Binder_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Name_Binder_ const * other) const { return this != other; }
-	static auto Bind_(::Package_ const *const package_) -> void;
-	static auto Bind_(::Semantic_Node_ const *const node_, ::Binding_Scope_ const *const scope_) -> void;
+	auto Bind_(::Package_ const *const package_) const -> void;
+	auto Bind_(::Semantic_Node_ const *const node_, ::Binding_Scope_ const *const scope_) const -> void;
 };
 
 class Package_
@@ -149,10 +149,10 @@ class Package_
 public:
 	p_bool op_Equal(Package_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Package_ const * other) const { return this != other; }
-	::System_::Collections_::List_<::Semantic_Node_ const *> const * CompilationUnits_;
+	::System_::Collections_::List_<::Semantic_Node_ *> const * CompilationUnits_;
 	::Symbol_ const * Symbol_;
 	::Primitive_Types_ const * PrimitiveTypes_;
-	Package_(::System_::Collections_::List_<::Semantic_Node_ const *> const *const compilationUnits_, ::Primitive_Types_ const *const primitiveTypes_, ::Symbol_ const *const symbol_);
+	Package_(::System_::Collections_::List_<::Semantic_Node_ *> const *const compilationUnits_, ::Primitive_Types_ const *const primitiveTypes_, ::Symbol_ const *const symbol_);
 	auto AllDiagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *> const *;
 };
 
@@ -185,12 +185,12 @@ public:
 	::Source_Text_ const * Source_;
 	p_uint Start_;
 	p_uint Length_;
-	::System_::Collections_::List_<::Semantic_Node_ const *> const * Children_;
+	::System_::Collections_::List_<::Semantic_Node_ *> const * Children_;
 	::System_::Collections_::List_<::Diagnostic_ const *> * Diagnostics_;
 	::Symbol_ const * Symbol_;
 	Semantic_Node_(::Syntax_Node_ const *const syntax_);
 	auto GetText_() const -> p_string;
-	auto BindSymbol_(::Symbol_ const *const symbol_) const -> void;
+	auto BindSymbol_(::Symbol_ const *const symbol_) -> void;
 	auto FirstChildOfType_(p_int const type_) const -> ::Semantic_Node_ const *;
 	auto HasChildOfType_(p_int const type_) const -> p_bool;
 	auto AllDiagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *> const *;
@@ -216,8 +216,8 @@ class Symbol_Builder_
 public:
 	p_bool op_Equal(Symbol_Builder_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Symbol_Builder_ const * other) const { return this != other; }
-	static auto BuildSymbols_(::System_::Collections_::List_<::Semantic_Node_ const *> const *const compilationUnits_) -> ::Symbol_ const *;
-	static auto BuildSymbols_(::Symbol_ const *const parent_, ::Semantic_Node_ const *const node_) -> void;
+	auto BuildSymbols_(::System_::Collections_::List_<::Semantic_Node_ *> const *const compilationUnits_) const -> ::Symbol_ const *;
+	auto BuildSymbols_(::Symbol_ const *const parent_, ::Semantic_Node_ *const node_) const -> void;
 };
 
 class CompilationUnitParser_
@@ -963,7 +963,7 @@ auto ::Source_File_Builder_::ToString_() const -> p_string
 	Symbols_ = symbols_;
 }
 
-auto ::Name_Binder_::Bind_(::Package_ const *const package_) -> void
+auto ::Name_Binder_::Bind_(::Package_ const *const package_) const -> void
 {
 	::Binding_Scope_ const *const globalScope_ = (new ::Binding_Scope_(::None, package_->Symbol_->Children_));
 	for (::Semantic_Node_ const *const compilationUnit_ : *(package_->CompilationUnits_))
@@ -972,7 +972,7 @@ auto ::Name_Binder_::Bind_(::Package_ const *const package_) -> void
 	}
 }
 
-auto ::Name_Binder_::Bind_(::Semantic_Node_ const *const node_, ::Binding_Scope_ const *const scope_) -> void
+auto ::Name_Binder_::Bind_(::Semantic_Node_ const *const node_, ::Binding_Scope_ const *const scope_) const -> void
 {
 	if (node_->Type_->op_Equal(CompilationUnit_).Value)
 	{
@@ -986,7 +986,7 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ const *const node_, ::Binding_Scope_
 	}
 }
 
-::Package_::Package_(::System_::Collections_::List_<::Semantic_Node_ const *> const *const compilationUnits_, ::Primitive_Types_ const *const primitiveTypes_, ::Symbol_ const *const symbol_)
+::Package_::Package_(::System_::Collections_::List_<::Semantic_Node_ *> const *const compilationUnits_, ::Primitive_Types_ const *const primitiveTypes_, ::Symbol_ const *const symbol_)
 {
 	CompilationUnits_ = compilationUnits_;
 	Symbol_ = symbol_;
@@ -1049,7 +1049,7 @@ auto ::Semantic_Analyzer_::Analyze_(::Syntax_Node_ const *const packageSyntax_) 
 		ThrowException_(p_string("`Semantic_Analyzer.Analyze(...)` called with node of type ")->op_Add(packageSyntax_->Type_));
 	}
 
-	::System_::Collections_::List_<::Semantic_Node_ const *> const *const compilationUnits_ = (new ::Semantic_Node_(packageSyntax_))->Children_;
+	::System_::Collections_::List_<::Semantic_Node_ *> const *const compilationUnits_ = (new ::Semantic_Node_(packageSyntax_))->Children_;
 	::Primitive_Types_ const *const primitiveTypes_ = (new ::Primitive_Types_());
 	::Symbol_Builder_ const *const symbolBuilder_ = (new ::Symbol_Builder_());
 	::Symbol_ const *const packageSymbol_ = symbolBuilder_->BuildSymbols_(compilationUnits_);
@@ -1064,7 +1064,7 @@ auto ::Semantic_Analyzer_::Analyze_(::Syntax_Node_ const *const packageSyntax_) 
 	Source_ = syntax_->Source_;
 	Start_ = syntax_->Start_;
 	Length_ = syntax_->Length_;
-	::System_::Collections_::List_<::Semantic_Node_ const *> *const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *>());
+	::System_::Collections_::List_<::Semantic_Node_ *> *const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ *>());
 	for (::Syntax_Node_ const *const childSyntax_ : *(syntax_->Children_))
 	{
 		children_->Add_((new ::Semantic_Node_(childSyntax_)));
@@ -1078,6 +1078,7 @@ auto ::Semantic_Analyzer_::Analyze_(::Syntax_Node_ const *const packageSyntax_) 
 	}
 
 	Diagnostics_ = diagnostics_;
+	Symbol_ = ::None;
 }
 
 auto ::Semantic_Node_::GetText_() const -> p_string
@@ -1085,8 +1086,14 @@ auto ::Semantic_Node_::GetText_() const -> p_string
 	return Source_->Text_->Substring_(Start_, Length_);
 }
 
-auto ::Semantic_Node_::BindSymbol_(::Symbol_ const *const symbol_) const -> void
+auto ::Semantic_Node_::BindSymbol_(::Symbol_ const *const symbol_) -> void
 {
+	if (Symbol_->op_NotEqual(::None).Value)
+	{
+		ThrowException_(p_string("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol"));
+	}
+
+	Symbol_ = symbol_;
 }
 
 auto ::Semantic_Node_::FirstChildOfType_(p_int const type_) const -> ::Semantic_Node_ const *
@@ -1153,14 +1160,14 @@ auto ::Semantic_Node_::CollectDiagnostics_(::System_::Collections_::List_<::Diag
 	IsPrimitive_ = p_bool(true);
 }
 
-auto ::Symbol_Builder_::BuildSymbols_(::System_::Collections_::List_<::Semantic_Node_ const *> const *const compilationUnits_) -> ::Symbol_ const *
+auto ::Symbol_Builder_::BuildSymbols_(::System_::Collections_::List_<::Semantic_Node_ *> const *const compilationUnits_) const -> ::Symbol_ const *
 {
 	::Symbol_ *const packageSymbol_ = (new ::Symbol_(::None, p_string("")));
-	for (::Semantic_Node_ const *const compilationUnit_ : *(compilationUnits_))
+	for (::Semantic_Node_ *const compilationUnit_ : *(compilationUnits_))
 	{
 		if (compilationUnit_->Type_->op_NotEqual(CompilationUnit_).Value)
 		{
-			ThrowException_(p_string("`Symbol_Builder.BuildSymbols()` called with node of type ")->op_Add(compilationUnit_->Type_));
+			ThrowException_(p_string("`Symbol_Builder.BuildSymbols(...)` called with node of type ")->op_Add(compilationUnit_->Type_));
 		}
 
 		BuildSymbols_(packageSymbol_, compilationUnit_);
@@ -1169,11 +1176,11 @@ auto ::Symbol_Builder_::BuildSymbols_(::System_::Collections_::List_<::Semantic_
 	return packageSymbol_;
 }
 
-auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic_Node_ const *const node_) -> void
+auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic_Node_ *const node_) const -> void
 {
 	if (node_->Type_->op_Equal(CompilationUnit_).Value)
 	{
-		for (::Semantic_Node_ const *const declaration_ : *(node_->Children_))
+		for (::Semantic_Node_ *const declaration_ : *(node_->Children_))
 		{
 			BuildSymbols_(parent_, declaration_);
 		}
@@ -1184,13 +1191,14 @@ auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic
 		::Symbol_ const *const functionSymbol_ = (new ::Symbol_(parent_, name_));
 		functionSymbol_->Declarations_->Add_(node_);
 		parent_->Children_->Add_(functionSymbol_);
+		node_->BindSymbol_(functionSymbol_);
 	}
 	else if (node_->Type_->op_Equal(ClassDeclaration_).Value)
 	{
 		p_string const name_ = node_->FirstChildOfType_(Identifier_)->GetText_();
 		::Symbol_ const *const classSymbol_ = (new ::Symbol_(parent_, name_));
 		classSymbol_->Declarations_->Add_(node_);
-		for (::Semantic_Node_ const *const member_ : *(node_->Children_))
+		for (::Semantic_Node_ *const member_ : *(node_->Children_))
 		{
 			if (LogicalOr(LogicalOr(member_->Type_->op_Equal(ConstructorDeclaration_), [&] { return member_->Type_->op_Equal(FieldDeclaration_); }), [&] { return member_->Type_->op_Equal(MethodDeclaration_); }).Value)
 			{
@@ -1199,13 +1207,14 @@ auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic
 		}
 
 		parent_->Children_->Add_(classSymbol_);
+		node_->BindSymbol_(classSymbol_);
 	}
 	else if (node_->Type_->op_Equal(StructDeclaration_).Value)
 	{
 		p_string const name_ = node_->FirstChildOfType_(Identifier_)->GetText_();
 		::Symbol_ const *const structSymbol_ = (new ::Symbol_(parent_, name_));
 		structSymbol_->Declarations_->Add_(node_);
-		for (::Semantic_Node_ const *const member_ : *(node_->Children_))
+		for (::Semantic_Node_ *const member_ : *(node_->Children_))
 		{
 			if (LogicalOr(LogicalOr(member_->Type_->op_Equal(ConstructorDeclaration_), [&] { return member_->Type_->op_Equal(FieldDeclaration_); }), [&] { return member_->Type_->op_Equal(MethodDeclaration_); }).Value)
 			{
@@ -1214,12 +1223,14 @@ auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic
 		}
 
 		parent_->Children_->Add_(structSymbol_);
+		node_->BindSymbol_(structSymbol_);
 	}
 	else if (node_->Type_->op_Equal(ConstructorDeclaration_).Value)
 	{
 		::Symbol_ const *const constructorSymbol_ = (new ::Symbol_(::None, p_string("new")));
 		constructorSymbol_->Declarations_->Add_(node_);
 		parent_->Children_->Add_(constructorSymbol_);
+		node_->BindSymbol_(constructorSymbol_);
 	}
 	else if (node_->Type_->op_Equal(FieldDeclaration_).Value)
 	{
@@ -1227,6 +1238,7 @@ auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic
 		::Symbol_ const *const fieldSymbol_ = (new ::Symbol_(::None, name_));
 		fieldSymbol_->Declarations_->Add_(node_);
 		parent_->Children_->Add_(fieldSymbol_);
+		node_->BindSymbol_(fieldSymbol_);
 	}
 	else if (node_->Type_->op_Equal(MethodDeclaration_).Value)
 	{
@@ -1234,6 +1246,7 @@ auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic
 		::Symbol_ const *const methodSymbol_ = (new ::Symbol_(parent_, name_));
 		methodSymbol_->Declarations_->Add_(node_);
 		parent_->Children_->Add_(methodSymbol_);
+		node_->BindSymbol_(methodSymbol_);
 	}
 	else if (node_->Type_->op_Equal(EnumDeclaration_).Value)
 	{
@@ -1241,6 +1254,7 @@ auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic
 		::Symbol_ const *const enumSymbol_ = (new ::Symbol_(parent_, name_));
 		enumSymbol_->Declarations_->Add_(node_);
 		parent_->Children_->Add_(enumSymbol_);
+		node_->BindSymbol_(enumSymbol_);
 	}
 	else if (node_->Type_->op_Equal(GlobalDeclaration_).Value)
 	{
@@ -1248,6 +1262,7 @@ auto ::Symbol_Builder_::BuildSymbols_(::Symbol_ const *const parent_, ::Semantic
 		::Symbol_ const *const globalDeclarationSymbol_ = (new ::Symbol_(::None, name_));
 		globalDeclarationSymbol_->Declarations_->Add_(node_);
 		parent_->Children_->Add_(globalDeclarationSymbol_);
+		node_->BindSymbol_(globalDeclarationSymbol_);
 	}
 	else if (LogicalOr(LogicalOr(node_->Type_->op_Equal(LeftBrace_), [&] { return node_->Type_->op_Equal(RightBrace_); }), [&] { return node_->Type_->op_Equal(EndOfFileToken_); }).Value)
 	{
