@@ -13,6 +13,7 @@ public class Semantic_Node
 	public let Length: uint; // TODO is this ByteLength?
 	public let Children: System.Collections.List<Semantic_Node>;
 	public let Diagnostics: mut System.Collections.List<Diagnostic>;
+	public var Symbol: Symbol;
 
 	public new(syntax: Syntax_Node)
 	{
@@ -39,6 +40,11 @@ public class Semantic_Node
 	public GetText(self) -> string
 	{
 		return Source.Text.Substring(Start, Length);
+	}
+
+	public BindSymbol(self, symbol: Symbol) -> void
+	{
+
 	}
 
 	public FirstChildOfType(self, type: int) -> Semantic_Node?

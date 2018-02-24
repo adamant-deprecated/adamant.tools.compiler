@@ -1,0 +1,13 @@
+public class Semantic_Analyzer
+{
+	public Analyze(packageSyntax: Syntax_Node) -> Package
+	{
+		if packageSyntax.Type <> PackageNode { ThrowException("`Semantic_Analyzer.Analyze(...)` called with node of type " + packageSyntax.Type); }
+
+		let compilationUnits: System.Collections.List<Semantic_Node> = new Semantic_Node(packageSyntax).Children;
+		let primitiveTypes: Primitive_Types = new Primitive_Types();
+		let symbolBuilder: Symbol_Builder = new Symbol_Builder();
+		let packageSymbol: Symbol = symbolBuilder.BuildSymbols(compilationUnits);
+		return new Package(compilationUnits, primitiveTypes, packageSymbol);
+	}
+}

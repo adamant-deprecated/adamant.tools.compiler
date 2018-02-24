@@ -1,15 +1,15 @@
 public class Symbol_Builder // TODO change immutable class name to snake_case when supported
 {
 	// Takes a package and builds the symbols for it
-	public BuildSymbols(package: Syntax_Node) -> Symbol
+	public BuildSymbols(compilationUnits: System.Collections.List<Semantic_Node>) -> Symbol
 	{
-		if package.Type <> PackageNode
-			{ ThrowException("`Symbol_Builder.BuildSymbols()` called with node of type " + package.Type); }
-
 		// TODO eventually the package symbol should have a name so that we can look up names in front of the package qualifier
 		let packageSymbol: mut Symbol = new Symbol(none, "");
-		for let compilationUnit: Syntax_Node in package.Children
+		for let compilationUnit: Semantic_Node in compilationUnits
 		{
+			if compilationUnit.Type <> CompilationUnit
+				{ ThrowException("`Symbol_Builder.BuildSymbols()` called with node of type " + compilationUnit.Type); }
+
 			BuildSymbols(packageSymbol, compilationUnit);
 		}
 
@@ -18,11 +18,11 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 
 	// Because a single call could produce multiple symbols, we pass the symbol collection in and add symbols to it.
 	// Once we have generators, this would be a good place to use them.
-	private BuildSymbols(parent: Symbol, node: Syntax_Node) -> void
+	private BuildSymbols(parent: Symbol, node: Semantic_Node) -> void
 	{
 		if node.Type == CompilationUnit
 		{
-			for let declaration: Syntax_Node in node.Children
+			for let declaration: Semantic_Node in node.Children
 			{
 				BuildSymbols(parent, declaration);
 			}
@@ -43,7 +43,7 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			let name: string = node.FirstChildOfType(Identifier).GetText();
 			let classSymbol: Symbol = new Symbol(parent, name);
 			classSymbol.Declarations.Add(node);
-			for let member: Syntax_Node in node.Children
+			for let member: Semantic_Node in node.Children
 			{
 				// TODO fix this to a more reliable means of telling what should be visited
 				if member.Type == ConstructorDeclaration
@@ -61,7 +61,7 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			let name: string = node.FirstChildOfType(Identifier).GetText();
 			let structSymbol: Symbol = new Symbol(parent, name);
 			structSymbol.Declarations.Add(node);
-			for let member: Syntax_Node in node.Children
+			for let member: Semantic_Node in node.Children
 			{
 				// TODO fix this to a more reliable means of telling what should be visited
 				if member.Type == ConstructorDeclaration

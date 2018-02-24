@@ -2,7 +2,7 @@ public class Symbol // TODO change immutable class name to snake_case when suppo
 {
 	public let Parent: Symbol?;
 	public let Name: string;
-	public let Declarations: mut System.Collections.List<Syntax_Node>;
+	public let Declarations: mut System.Collections.List<Semantic_Node>;
 	public let Children: mut System.Collections.List<Symbol>;
 	public let IsPrimitive: bool;
 
@@ -10,7 +10,7 @@ public class Symbol // TODO change immutable class name to snake_case when suppo
 	{
 		Parent = parent;
 		Name = name;
-		Declarations = new System.Collections.List<Syntax_Node>();
+		Declarations = new System.Collections.List<Semantic_Node>();
 		Children = new System.Collections.List<Symbol>();
 		IsPrimitive = false;
 	}
@@ -19,7 +19,7 @@ public class Symbol // TODO change immutable class name to snake_case when suppo
 	{
 		Parent = none;
 		Name = name;
-		Declarations = new System.Collections.List<Syntax_Node>();
+		Declarations = new System.Collections.List<Semantic_Node>();
 		Children = new System.Collections.List<Symbol>();
 		IsPrimitive = true;
 	}

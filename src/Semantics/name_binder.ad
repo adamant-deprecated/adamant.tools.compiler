@@ -11,6 +11,28 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 
 	private Bind(node: Semantic_Node, scope: Binding_Scope) -> void
 	{
+		if node.Type == CompilationUnit
+		{
+			for let child: Semantic_Node in node.Children
+			{
+				Bind(child, scope);
+			}
+		}
+		else if node.Type == FunctionDeclaration
+		{
+			// let
+			// let name: string = node.FirstChildOfType(Identifier).GetText();
+			// let symbol: Symbol = scope.Lookup(name);
+			// node.
+			// let functionSymbol: Symbol = new Symbol(parent, name);
+			// functionSymbol.Declarations.Add(node);
+
+			// // TODO add parameter symbols
+			// // TODO figure out how to handle body
+
+			// parent.Children.Add(functionSymbol);
+		}
+
 		// ThrowException("`Name_Binder.Bind()` unimplemented node type " + node.Type);
 	}
 }

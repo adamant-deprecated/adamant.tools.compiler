@@ -2,11 +2,8 @@ public Compile(sources: System.Collections.List<Source_Text>) -> Package
 {
 	let parser: Parser = new Parser();
 	let packageSyntax: Syntax_Node = parser.ParsePackage(sources);
-	let symbolBuilder: Symbol_Builder = new Symbol_Builder();
-	let packageSymbol: Symbol = symbolBuilder.BuildSymbols(packageSyntax);
-	let package: Package = new Package(packageSyntax, packageSymbol);
-	let nameBinder: Name_Binder = new Name_Binder();
-	nameBinder.Bind(package);
+	let semanticAnalyzer: Semantic_Analyzer = new Semantic_Analyzer();
+	let package: Package = semanticAnalyzer.Analyze(packageSyntax);
 	return package;
 }
 
