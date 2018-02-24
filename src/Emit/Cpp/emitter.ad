@@ -562,7 +562,7 @@ public class Emitter // TODO change to snake_case when possible
 		}
 		else if member.Type == FieldDeclaration
 		{
-			let variableDeclaration: Semantic_Node = member.Children[1];
+			let variableDeclaration: Semantic_Node = member.FirstChildOfType(VariableDeclaration);
 			let fieldName: string = variableDeclaration.Children[1].GetText();
 			let fieldType: Semantic_Node = variableDeclaration.Children[3];
 			let cppType: string = ConvertType(true, fieldType); // because we need to assign them in constructors don't mark fields const

@@ -1,11 +1,11 @@
 // TODO this should be a const global object
 public class Primitive_Types
 {
-	public let Symbols: System.Collection.List<Symbol>;
+	public let Symbols: System.Collections.List<Symbol>;
 
 	public new()
 	{
-		let symbols: mut System.Collection.List<Symbol> = new System.Collection.List<Symbol>();
+		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
 		symbols.Add(new Symbol("bool"));
 		symbols.Add(new Symbol("code_point"));
@@ -42,7 +42,8 @@ public class Primitive_Types
 		Symbols = symbols;
 	}
 
-	private AddFixedPointTypes(symbols: mut System.Collection.List<Symbol>, bitLength: usize) -> void
+	// TODO implement `size` type
+	private AddFixedPointTypes(symbols: mut System.Collections.List<Symbol>, bitLength: int /*size*/) -> void
 	{
 		// TODO implement when language features make it easier
 		// for let i: usize in 1..usize-1

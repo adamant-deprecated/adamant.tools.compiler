@@ -1,6 +1,6 @@
 public class Binding_Scope
 {
-	let ContainingScope: Binding_Scope?;
+	public let ContainingScope: Binding_Scope?;
 
 	public new(containingScope: Binding_Scope?)
 	{

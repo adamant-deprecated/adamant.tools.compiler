@@ -17,7 +17,7 @@ public class Symbol // TODO change immutable class name to snake_case when suppo
 
 	public new(name: string)
 	{
-		Parent = parent;
+		Parent = none;
 		Name = name;
 		Declarations = new System.Collections.List<Syntax_Node>();
 		Children = new System.Collections.List<Symbol>();
