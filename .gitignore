@@ -6,7 +6,9 @@
 
 # VS Code Files
 .vscode/
-tools/Cake.Bakery/
+
+# Build Related Files
+tools/
 
 # OSX Files
 .DS_Store

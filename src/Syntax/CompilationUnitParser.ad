@@ -35,12 +35,12 @@ public class CompilationUnitParser
 	{
 		if token == none
 		{
-			return new new_Syntax_Node_Missing(tokenType,  tokenStream.Source, tokenStream.Source.ByteLength());
+			return new_Syntax_Node_Missing(tokenType,  tokenStream.Source, tokenStream.Source.ByteLength());
 		}
 
 		if token == none or token.Type <> tokenType
 		{
-			return new new_Syntax_Node_Missing(tokenType,  tokenStream.Source, token.Start);
+			return new_Syntax_Node_Missing(tokenType,  tokenStream.Source, token.Start);
 		}
 
 		let node: Syntax_Node? = token;
@@ -595,7 +595,7 @@ public class CompilationUnitParser
 		else
 		{
 			// Really we expect an access modifier
-			ExpectToken(PublicKeyword);
+			children.Add(ExpectToken(PublicKeyword));
 		}
 
 		if token.Type == NewKeyword
