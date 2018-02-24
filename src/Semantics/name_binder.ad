@@ -2,37 +2,125 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 {
 	public Bind(self, package: Package) -> void
 	{
-		let globalScope: Binding_Scope = new Binding_Scope(none, package.Symbol.Children);
-		for let compilationUnit: Semantic_Node in package.CompilationUnits
+		let globalScope: Binding_Scope = new Binding_Scope(none, package.Symbol.Children, package.PrimitiveTypes);
+		for let compilationUnit: mut Semantic_Node in package.CompilationUnits
 		{
 			Bind(compilationUnit, globalScope);
 		}
 	}
 
-	private Bind(self, node: Semantic_Node, scope: Binding_Scope) -> void
+	private Bind(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
 	{
 		if node.Type == CompilationUnit
 		{
-			for let child: Semantic_Node in node.Children
+			for let child: mut Semantic_Node in node.Children
 			{
 				Bind(child, scope);
 			}
 		}
 		else if node.Type == FunctionDeclaration
+			or node.Type == MethodDeclaration
 		{
-			// let
-			// let name: string = node.FirstChildOfType(Identifier).GetText();
-			// let symbol: Symbol = scope.Lookup(name);
-			// node.
-			// let functionSymbol: Symbol = new Symbol(parent, name);
-			// functionSymbol.Declarations.Add(node);
-
-			// // TODO add parameter symbols
-			// // TODO figure out how to handle body
-
-			// parent.Children.Add(functionSymbol);
+			let parameters: mut Semantic_Node = node.FirstChildOfType(ParameterList);
+			Bind(parameters, scope);
+			let returnType: mut Semantic_Node = node.Children[4];
+			Bind(returnType, scope);
+			let body: mut Semantic_Node = node.FirstChildOfType(Block);
+			// TODO create scope and start binding the body
 		}
+		else if node.Type == ParameterList
+		{
+			for let parameter: mut Semantic_Node in node.ChildrenOfType(Parameter)
+			{
+				Bind(parameter, scope);
+			}
+		}
+		else if node.Type == Parameter
+		{
+			let type: mut Semantic_Node = node.Children[|node.Children| - 1];
+			Bind(type, scope);
+		}
+		else if node.Type == ClassDeclaration
+			or node.Type == StructDeclaration
+		{
+			for let member: mut Semantic_Node in node.Members()
+			{
+				Bind(member, scope);
+			}
+		}
+		else if node.Type == FieldDeclaration
+			or node.Type == GlobalDeclaration
+		{
+			let variableDeclaration: mut Semantic_Node = node.FirstChildOfType(VariableDeclaration);
+			Bind(variableDeclaration, scope);
 
-		// ThrowException("`Name_Binder.Bind()` unimplemented node type " + node.Type);
+		}
+		else if node.Type == ConstructorDeclaration
+		{
+			let parameters: mut Semantic_Node = node.FirstChildOfType(ParameterList);
+			Bind(parameters, scope);
+			let body: mut Semantic_Node = node.FirstChildOfType(Block);
+			// TODO create scope and start binding the body
+		}
+		else if node.Type == VariableDeclaration
+		{
+			let type: mut Semantic_Node = node.Children[3];
+			Bind(type, scope);
+			if |node.Children| == 6
+			{
+				let initalizer: mut Semantic_Node = node.Children[5];
+				// TODO Bind(initalizer, scope);
+			}
+		}
+		else if node.Type == EnumDeclaration
+		{
+			// Haven't yet implemented anything in enums that requires name binding
+		}
+		else if node.Type == PredefinedType
+		{
+			let name: string = node.Children[0].GetText();
+			let symbol: Symbol = scope.GetPrimitive(name);
+			if symbol == none { ThrowException("`Name_Binder.Bind()` no symbol for primitive type " + name); }
+			node.BindSymbol(symbol);
+		}
+		else if node.Type == MutableType
+		{
+			let innerType: mut Semantic_Node = node.Children[1];
+			Bind(innerType, scope);
+		}
+		else if node.Type == OptionalType
+		{
+			let innerType: mut Semantic_Node = node.Children[0];
+			Bind(innerType, scope);
+		}
+		else if node.Type == QualifiedName
+		{
+			let qualifier: mut Semantic_Node = node.Children[0];
+			Bind(qualifier, scope);
+			let name: mut Semantic_Node = node.FirstChildOfType(Identifier);
+			// TODO lookup name in the symbol of the qualifier
+		}
+		else if node.Type == IdentifierName
+		{
+			let name: string = node.GetText();
+			let symbol: Symbol = scope.Lookup(name);
+			if symbol == none
+			{
+				node.Add(new Diagnostic(FatalCompilationError, Analysis, node.Source, node.GetTextSpan(), "Could not resolve name `" + name + "`"));
+			}
+			else
+			{
+				node.BindSymbol(symbol);
+			}
+		}
+		else if node.Type == NumericLiteralExpression
+			or node.Type == EndOfFileToken
+		{
+			// Ignore these nodes
+		}
+		else
+		{
+			ThrowException("`Name_Binder.Bind()` unimplemented node type " + node.Type);
+		}
 	}
 }

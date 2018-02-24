@@ -13,6 +13,8 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			BuildSymbols(packageSymbol, compilationUnit);
 		}
 
+		BuildRuntimeLibrarySymbols(packageSymbol);
+
 		return packageSymbol;
 	}
 
@@ -44,15 +46,9 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			let name: string = node.FirstChildOfType(Identifier).GetText();
 			let classSymbol: Symbol = new Symbol(parent, name);
 			classSymbol.Declarations.Add(node);
-			for let member: mut Semantic_Node in node.Children
+			for let member: mut Semantic_Node in node.Members()
 			{
-				// TODO fix this to a more reliable means of telling what should be visited
-				if member.Type == ConstructorDeclaration
-					or member.Type == FieldDeclaration
-					or member.Type == MethodDeclaration
-				{
-					BuildSymbols(classSymbol, member);
-				}
+				BuildSymbols(classSymbol, member);
 			}
 
 			parent.Children.Add(classSymbol);
@@ -63,15 +59,9 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			let name: string = node.FirstChildOfType(Identifier).GetText();
 			let structSymbol: Symbol = new Symbol(parent, name);
 			structSymbol.Declarations.Add(node);
-			for let member: mut Semantic_Node in node.Children
+			for let member: mut Semantic_Node in node.Members()
 			{
-				// TODO fix this to a more reliable means of telling what should be visited
-				if member.Type == ConstructorDeclaration
-					or member.Type == FieldDeclaration
-					or member.Type == MethodDeclaration
-				{
-					BuildSymbols(structSymbol, member);
-				}
+				BuildSymbols(structSymbol, member);
 			}
 
 			parent.Children.Add(structSymbol);
@@ -122,9 +112,7 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			parent.Children.Add(globalDeclarationSymbol);
 			node.BindSymbol(globalDeclarationSymbol);
 		}
-		else if node.Type == LeftBrace
-			or node.Type == RightBrace
-			or node.Type == EndOfFileToken
+		else if node.Type == EndOfFileToken
 		{
 			// Ignore these nodes
 		}
@@ -132,5 +120,35 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 		{
 			ThrowException("`Symbol_Builder.Build()` unimplemented node type " + node.Type);
 		}
+	}
+
+	/// This builds up a set of symbols that are actually in the Runtime Library
+	/// as if they were part of the current package.
+	///
+	/// TODO this should actually be a separate package
+	private BuildRuntimeLibrarySymbols(self, package: Symbol) -> void
+	{
+		package.Children.Add(new Symbol(package, "resource_manager"));
+
+		let system: Symbol = new Symbol(package, "System");
+		package.Children.Add(system);
+
+		let collections: Symbol = new Symbol(system, "Collections");
+		system.Children.Add(collections);
+		collections.Children.Add(new Symbol(collections, "List"));
+
+		let console: Symbol = new Symbol(system, "Console");
+		system.Children.Add(console);
+		console.Children.Add(new Symbol(console, "Console"));
+		console.Children.Add(new Symbol(console, "Arguments"));
+
+		let io: Symbol = new Symbol(system, "IO");
+		system.Children.Add(io);
+		io.Children.Add(new Symbol(system, "File_Reader"));
+		io.Children.Add(new Symbol(system, "File_Writer"));
+
+		let text: Symbol = new Symbol(system, "Text");
+		system.Children.Add(text);
+		text.Children.Add(new Symbol(text, "String_Builder"));
 	}
 }

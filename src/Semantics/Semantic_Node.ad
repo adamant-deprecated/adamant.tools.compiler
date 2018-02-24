@@ -38,6 +38,11 @@ public class Semantic_Node
 		Symbol = none;
 	}
 
+	public GetTextSpan(self) -> Text_Span
+	{
+		return new Text_Span(Start, Length);
+	}
+
 	public GetText(self) -> string
 	{
 		return Source.Text.Substring(Start, Length);
@@ -49,14 +54,44 @@ public class Semantic_Node
 		Symbol = symbol;
 	}
 
-	public FirstChildOfType(self, type: int) -> Semantic_Node?
+	public FirstChildOfType(self, type: int) -> mut Semantic_Node?
 	{
-		for let child: Semantic_Node in Children
+		for let child: mut Semantic_Node in Children
 		{
 			if child.Type == type
 				{ return child; }
 		}
 		return none;
+	}
+
+	public ChildrenOfType(self, type: int) -> System.Collections.List<mut Semantic_Node>
+	{
+		let members: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
+		for let child: mut Semantic_Node in Children
+		{
+			if child.Type == type
+			{
+				members.Add(child);
+			}
+		}
+		return members;
+	}
+
+	// TODO this should only be on things like class, struct that have members
+	public Members(self) -> System.Collections.List<mut Semantic_Node>
+	{
+		let members: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
+		for let child: mut Semantic_Node in Children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.Type == ConstructorDeclaration
+				or child.Type == FieldDeclaration
+				or child.Type == MethodDeclaration
+			{
+				members.Add(child);
+			}
+		}
+		return members;
 	}
 
 	public HasChildOfType(self, type: int) -> bool
@@ -67,6 +102,11 @@ public class Semantic_Node
 				{ return true; }
 		}
 		return false;
+	}
+
+	public Add(self, diagnostic: Diagnostic) -> void
+	{
+		Diagnostics.Add(diagnostic);
 	}
 
 	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>

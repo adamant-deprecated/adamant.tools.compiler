@@ -8,6 +8,9 @@ public class Semantic_Analyzer
 		let primitiveTypes: Primitive_Types = new Primitive_Types();
 		let symbolBuilder: Symbol_Builder = new Symbol_Builder();
 		let packageSymbol: Symbol = symbolBuilder.BuildSymbols(compilationUnits);
-		return new Package(compilationUnits, primitiveTypes, packageSymbol);
+		let package: mut Package = new Package(compilationUnits, primitiveTypes, packageSymbol);
+		let nameBinder: Name_Binder = new Name_Binder();
+		nameBinder.Bind(package);
+		return package;
 	}
 }

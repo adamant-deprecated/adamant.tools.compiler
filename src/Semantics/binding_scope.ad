@@ -1,11 +1,30 @@
 public class Binding_Scope
 {
-	public let ContainingScope: Binding_Scope?;
-	public let Symbols: System.Collections.List<Symbol>;
+	private let ContainingScope: Binding_Scope?;
+	private let Symbols: System.Collections.List<Symbol>;
+	private let Primitives: Primitive_Types;
 
-	public new(containingScope: Binding_Scope?, symbols: System.Collections.List<Symbol>)
+	public new(containingScope: Binding_Scope?, symbols: System.Collections.List<Symbol>, primitives: Primitive_Types)
 	{
 		ContainingScope = containingScope;
 		Symbols = symbols;
+		Primitives = primitives;
+	}
+
+	public GetPrimitive(self, name: string) -> Symbol?
+	{
+		return Primitives.Get(name);
+	}
+
+	public Lookup(self, name: string) -> Symbol?
+	{
+		for let symbol: Symbol in Symbols
+		{
+			if symbol.Name == name
+			{
+				return symbol;
+			}
+		}
+		return none;
 	}
 }

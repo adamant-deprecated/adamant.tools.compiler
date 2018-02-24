@@ -7,6 +7,9 @@ public class Primitive_Types
 	{
 		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
+		symbols.Add(new Symbol("void"));
+		symbols.Add(new Symbol("never"));
+
 		symbols.Add(new Symbol("bool"));
 		symbols.Add(new Symbol("code_point"));
 		symbols.Add(new Symbol("string"));
@@ -51,5 +54,19 @@ public class Primitive_Types
 		// 	symbols.Add(new Symbol("fixed"+i+"."+(bitLength-i)));
 		// 	symbols.Add(new Symbol("fixed"+i+"."+(bitLength-i)));
 		// }
+	}
+
+	// TODO make this operator []
+	public Get(self, name: string) -> Symbol?
+	{
+		for let symbol: Symbol in Symbols
+		{
+			if symbol.Name == name
+			{
+				return symbol;
+			}
+		}
+
+		return none;
 	}
 }
