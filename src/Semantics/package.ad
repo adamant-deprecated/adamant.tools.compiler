@@ -1,12 +1,12 @@
 // A compiled package with all of its syntax and semantics
 public class Package // TODO change immutable class name to snake_case when supported
 {
-	public let CompilationUnits: System.Collections.List<Semantic_Node>;
+	public let CompilationUnits: System.Collections.List<mut Semantic_Node>;
 	public let Symbol: Symbol;
 	public let PrimitiveTypes: Primitive_Types;
 
 	// TODO constructor not adequately encapsulated to enforce invariants
-	public new(compilationUnits: System.Collections.List<Semantic_Node>, primitiveTypes: Primitive_Types, symbol: Symbol)
+	public new(compilationUnits: System.Collections.List<mut Semantic_Node>, primitiveTypes: Primitive_Types, symbol: Symbol)
 	{
 		CompilationUnits = compilationUnits;
 		Symbol = symbol;

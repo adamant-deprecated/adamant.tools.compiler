@@ -1,6 +1,6 @@
 public class Name_Binder // TODO change immutable class name to snake_case when supported
 {
-	public Bind(package: Package) -> void
+	public Bind(self, package: Package) -> void
 	{
 		let globalScope: Binding_Scope = new Binding_Scope(none, package.Symbol.Children);
 		for let compilationUnit: Semantic_Node in package.CompilationUnits
@@ -9,7 +9,7 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 		}
 	}
 
-	private Bind(node: Semantic_Node, scope: Binding_Scope) -> void
+	private Bind(self, node: Semantic_Node, scope: Binding_Scope) -> void
 	{
 		if node.Type == CompilationUnit
 		{

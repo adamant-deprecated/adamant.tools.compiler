@@ -11,7 +11,7 @@ public class Semantic_Node
 	public let Source: Source_Text;
 	public let Start: uint;
 	public let Length: uint; // TODO is this ByteLength?
-	public let Children: System.Collections.List<Semantic_Node>;
+	public let Children: System.Collections.List<mut Semantic_Node>;
 	public let Diagnostics: mut System.Collections.List<Diagnostic>;
 	public var Symbol: Symbol;
 
@@ -23,7 +23,7 @@ public class Semantic_Node
 		Source = syntax.Source;
 		Start = syntax.Start;
 		Length = syntax.Length;
-		let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		let children: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
 		for let childSyntax: Syntax_Node in syntax.Children
 		{
 			children.Add(new Semantic_Node(childSyntax));
@@ -35,6 +35,7 @@ public class Semantic_Node
 			diagnostics.Add(diagnostic);
 		}
 		Diagnostics = diagnostics;
+		Symbol = none;
 	}
 
 	public GetText(self) -> string
@@ -42,9 +43,10 @@ public class Semantic_Node
 		return Source.Text.Substring(Start, Length);
 	}
 
-	public BindSymbol(self, symbol: Symbol) -> void
+	public BindSymbol(mut self, symbol: Symbol) -> void
 	{
-
+		if Symbol <> none { ThrowException("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol"); }
+		Symbol = symbol;
 	}
 
 	public FirstChildOfType(self, type: int) -> Semantic_Node?
