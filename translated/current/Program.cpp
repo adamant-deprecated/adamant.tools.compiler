@@ -130,7 +130,8 @@ public:
 	p_bool op_Equal(Binding_Scope_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Binding_Scope_ const * other) const { return this != other; }
 	::Binding_Scope_ const * ContainingScope_;
-	Binding_Scope_(::Binding_Scope_ const *const containingScope_);
+	::System_::Collections_::List_<::Symbol_ const *> const * Symbols_;
+	Binding_Scope_(::Binding_Scope_ const *const containingScope_, ::System_::Collections_::List_<::Symbol_ const *> const *const symbols_);
 };
 
 class Name_Binder_
@@ -139,6 +140,7 @@ public:
 	p_bool op_Equal(Name_Binder_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Name_Binder_ const * other) const { return this != other; }
 	static auto Bind_(::Package_ const *const package_) -> void;
+	static auto Bind_(::Semantic_Node_ const *const node_, ::Binding_Scope_ const *const scope_) -> void;
 };
 
 class Package_
@@ -146,10 +148,10 @@ class Package_
 public:
 	p_bool op_Equal(Package_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Package_ const * other) const { return this != other; }
-	::Semantic_Node_ const * Semantics_;
+	::System_::Collections_::List_<::Semantic_Node_ const *> const * CompilationUnits_;
 	::Symbol_ const * Symbol_;
 	::Primitive_Types_ const * PrimitiveTypes_;
-	Package_(::Semantic_Node_ const *const semantics_, ::Symbol_ const *const symbol_);
+	Package_(::Syntax_Node_ const *const syntax_, ::Symbol_ const *const symbol_);
 	auto AllDiagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *> const *;
 };
 
@@ -498,7 +500,7 @@ auto Compile_(::System_::Collections_::List_<::Source_Text_ const *> const *cons
 	::Syntax_Node_ const *const packageSyntax_ = parser_->ParsePackage_(sources_);
 	::Symbol_Builder_ const *const symbolBuilder_ = new ::Symbol_Builder_();
 	::Symbol_ const *const packageSymbol_ = symbolBuilder_->BuildSymbols_(packageSyntax_);
-	::Package_ const *const package_ = new ::Package_(new ::Semantic_Node_(packageSyntax_), packageSymbol_);
+	::Package_ const *const package_ = new ::Package_(packageSyntax_, packageSymbol_);
 	::Name_Binder_ const *const nameBinder_ = new ::Name_Binder_();
 	nameBinder_->Bind_(package_);
 	return package_;
@@ -947,25 +949,50 @@ auto ::Source_File_Builder_::ToString_() const -> p_string
 	return code_->ToString_();
 }
 
-::Binding_Scope_::Binding_Scope_(::Binding_Scope_ const *const containingScope_)
+::Binding_Scope_::Binding_Scope_(::Binding_Scope_ const *const containingScope_, ::System_::Collections_::List_<::Symbol_ const *> const *const symbols_)
 {
 	ContainingScope_ = containingScope_;
+	Symbols_ = symbols_;
 }
 
 auto ::Name_Binder_::Bind_(::Package_ const *const package_) -> void
 {
+	::Binding_Scope_ const *const globalScope_ = new ::Binding_Scope_(::None, package_->Symbol_->Children_);
+	for (::Semantic_Node_ const *const compilationUnit_ : *(package_->CompilationUnits_))
+	{
+		Bind_(compilationUnit_, globalScope_);
+	}
 }
 
-::Package_::Package_(::Semantic_Node_ const *const semantics_, ::Symbol_ const *const symbol_)
+auto ::Name_Binder_::Bind_(::Semantic_Node_ const *const node_, ::Binding_Scope_ const *const scope_) -> void
 {
-	Semantics_ = semantics_;
+}
+
+::Package_::Package_(::Syntax_Node_ const *const syntax_, ::Symbol_ const *const symbol_)
+{
+	if (syntax_->Type_->op_NotEqual(PackageNode_).Value)
+	{
+		ThrowException_(p_string("`new Package(...)` called with node of type ")->op_Add(syntax_->Type_));
+	}
+
+	::Semantic_Node_ const *const packageSemantics_ = new ::Semantic_Node_(syntax_);
+	CompilationUnits_ = packageSemantics_->Children_;
 	Symbol_ = symbol_;
 	PrimitiveTypes_ = new ::Primitive_Types_();
 }
 
 auto ::Package_::AllDiagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *> const *
 {
-	return Semantics_->AllDiagnostics_();
+	::System_::Collections_::List_<::Diagnostic_ const *> * diagnostics_ = new ::System_::Collections_::List_<::Diagnostic_ const *>();
+	for (::Semantic_Node_ const *const compilationUnit_ : *(CompilationUnits_))
+	{
+		for (::Diagnostic_ const *const diagnostic_ : *(compilationUnit_->AllDiagnostics_()))
+		{
+			diagnostics_->Add_(diagnostic_);
+		}
+	}
+
+	return diagnostics_;
 }
 
 ::Primitive_Types_::Primitive_Types_()
@@ -2507,7 +2534,7 @@ auto ::Emitter_::Emit_() -> p_string
 	MainFunctionAcceptsConsole_ = p_bool(false);
 	MainFunctionAcceptsArgs_ = p_bool(false);
 	EmitPreamble_();
-	for (::Semantic_Node_ const *const compilationUnit_ : *(package_->Semantics_->Children_))
+	for (::Semantic_Node_ const *const compilationUnit_ : *(package_->CompilationUnits_))
 	{
 		EmitCompilationUnit_(compilationUnit_);
 	}
@@ -2693,14 +2720,19 @@ auto ::Emitter_::ConvertExpression_(::Semantic_Node_ const *const syntax_, ::Sou
 	if (syntax_->Type_->op_Equal(NewExpression_).Value)
 	{
 		::Semantic_Node_ const *const type_ = syntax_->Children_->op_Element(p_int(1));
-		if (IsValueType_(type_)->op_Not().Value)
+		p_bool const isValueType_ = IsValueType_(type_);
+		if (isValueType_->op_Not().Value)
 		{
-			builder_->Write_(p_string("new "));
+			builder_->Write_(p_string("(new "));
 		}
 
 		builder_->Write_(ConvertType_(type_));
 		::Semantic_Node_ const *const argumentList_ = syntax_->Children_->op_Element(p_int(2));
 		ConvertExpression_(argumentList_, builder_);
+		if (isValueType_->op_Not().Value)
+		{
+			builder_->Write_(p_string(")"));
+		}
 	}
 	else if (syntax_->Type_->op_Equal(ArgumentList_).Value)
 	{
