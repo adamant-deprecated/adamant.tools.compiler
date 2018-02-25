@@ -146,6 +146,7 @@ public:
 	p_bool op_NotEqual(Name_Binder_ const * other) const { return this != other; }
 	auto Bind_(::Package_ const *const package_) const -> void;
 	auto Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const *const scope_) const -> void;
+	auto BindType_(::Semantic_Node_ *const node_, ::Binding_Scope_ const *const scope_) const -> void;
 };
 
 class Package_
@@ -222,6 +223,8 @@ public:
 	Symbol_(::Symbol_ const *const parent_, p_string const name_);
 	Symbol_(::Symbol_ const *const parent_, p_string const name_, p_int const type_);
 	Symbol_(p_string const name_);
+	auto Get_(p_string const name_, p_int const type_) const -> ::Symbol_ const *;
+	auto IsValueType_() const -> p_bool;
 };
 
 class Symbol_Builder_
@@ -1030,7 +1033,7 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 		::Semantic_Node_ *const parameters_ = node_->FirstChildOfType_(ParameterList_);
 		Bind_(parameters_, scope_);
 		::Semantic_Node_ *const returnType_ = node_->Children_->op_Element(p_int(4));
-		Bind_(returnType_, scope_);
+		BindType_(returnType_, scope_);
 		::Semantic_Node_ *const body_ = node_->FirstChildOfType_(Block_);
 		Bind_(body_, scope_);
 	}
@@ -1044,7 +1047,7 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 	else if (node_->Type_->op_Equal(Parameter_).Value)
 	{
 		::Semantic_Node_ *const type_ = node_->Children_->op_Element(node_->Children_->op_Magnitude()->op_Subtract(p_int(1)));
-		Bind_(type_, scope_);
+		BindType_(type_, scope_);
 	}
 	else if (LogicalOr(node_->Type_->op_Equal(ClassDeclaration_), [&] { return node_->Type_->op_Equal(StructDeclaration_); }).Value)
 	{
@@ -1068,54 +1071,15 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 	else if (node_->Type_->op_Equal(VariableDeclaration_).Value)
 	{
 		::Semantic_Node_ *const type_ = node_->Children_->op_Element(p_int(3));
-		Bind_(type_, scope_);
+		BindType_(type_, scope_);
 		if (node_->Children_->op_Magnitude()->op_Equal(p_int(6)).Value)
 		{
 			::Semantic_Node_ *const initalizer_ = node_->Children_->op_Element(p_int(5));
+			Bind_(initalizer_, scope_);
 		}
 	}
 	else if (node_->Type_->op_Equal(EnumDeclaration_).Value)
 	{
-	}
-	else if (node_->Type_->op_Equal(PredefinedType_).Value)
-	{
-		p_string const name_ = node_->Children_->op_Element(p_int(0))->GetText_();
-		::Symbol_ const *const symbol_ = scope_->GetPrimitive_(name_);
-		if (symbol_->op_Equal(::None).Value)
-		{
-			ThrowException_(p_string("`Name_Binder.Bind()` no symbol for primitive type ")->op_Add(name_));
-		}
-
-		node_->BindSymbol_(symbol_);
-	}
-	else if (node_->Type_->op_Equal(MutableType_).Value)
-	{
-		::Semantic_Node_ *const innerType_ = node_->Children_->op_Element(p_int(1));
-		Bind_(innerType_, scope_);
-	}
-	else if (node_->Type_->op_Equal(OptionalType_).Value)
-	{
-		::Semantic_Node_ *const innerType_ = node_->Children_->op_Element(p_int(0));
-		Bind_(innerType_, scope_);
-	}
-	else if (node_->Type_->op_Equal(QualifiedName_).Value)
-	{
-		::Semantic_Node_ *const qualifier_ = node_->Children_->op_Element(p_int(0));
-		Bind_(qualifier_, scope_);
-		::Semantic_Node_ *const name_ = node_->FirstChildOfType_(Identifier_);
-	}
-	else if (node_->Type_->op_Equal(IdentifierName_).Value)
-	{
-		p_string const name_ = node_->GetText_();
-		::Symbol_ const *const symbol_ = scope_->Lookup_(name_);
-		if (symbol_->op_Equal(::None).Value)
-		{
-			node_->Add_((new ::Diagnostic_(FatalCompilationError_, Analysis_, node_->Source_, node_->GetTextSpan_(), p_string("Could not resolve name `")->op_Add(name_)->op_Add(p_string("`")))));
-		}
-		else
-		{
-			node_->BindSymbol_(symbol_);
-		}
 	}
 	else if (node_->Type_->op_Equal(Block_).Value)
 	{
@@ -1124,9 +1088,19 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 			Bind_(statement_, scope_);
 		}
 	}
-	else if (LogicalOr(LogicalOr(node_->Type_->op_Equal(LoopStatement_), [&] { return node_->Type_->op_Equal(WhileStatement_); }), [&] { return node_->Type_->op_Equal(DoWhileStatement_); }).Value)
+	else if (node_->Type_->op_Equal(LoopStatement_).Value)
 	{
 		Bind_(node_->FirstChildOfType_(Block_), scope_);
+	}
+	else if (node_->Type_->op_Equal(WhileStatement_).Value)
+	{
+		Bind_(node_->Children_->op_Element(p_int(1)), scope_);
+		Bind_(node_->FirstChildOfType_(Block_), scope_);
+	}
+	else if (node_->Type_->op_Equal(DoWhileStatement_).Value)
+	{
+		Bind_(node_->FirstChildOfType_(Block_), scope_);
+		Bind_(node_->Children_->op_Element(p_int(3)), scope_);
 	}
 	else if (node_->Type_->op_Equal(ForStatement_).Value)
 	{
@@ -1139,6 +1113,7 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 	}
 	else if (node_->Type_->op_Equal(IfStatement_).Value)
 	{
+		Bind_(node_->Children_->op_Element(p_int(1)), scope_);
 		Bind_(node_->FirstChildOfType_(Block_), scope_);
 		::Semantic_Node_ *const elseClause_ = node_->FirstChildOfType_(ElseClause_);
 		if (elseClause_->op_NotEqual(::None).Value)
@@ -1158,12 +1133,142 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 			Bind_(node_->FirstChildOfType_(IfStatement_), scope_);
 		}
 	}
-	else if (LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(node_->Type_->op_Equal(NumericLiteralExpression_), [&] { return node_->Type_->op_Equal(ExpressionStatement_); }), [&] { return node_->Type_->op_Equal(ReturnStatement_); }), [&] { return node_->Type_->op_Equal(BreakStatement_); }), [&] { return node_->Type_->op_Equal(ContinueStatement_); }), [&] { return node_->Type_->op_Equal(EndOfFileToken_); }).Value)
+	else if (node_->Type_->op_Equal(ExpressionStatement_).Value)
+	{
+		Bind_(node_->Children_->op_Element(p_int(0)), scope_);
+	}
+	else if (node_->Type_->op_Equal(ReturnStatement_).Value)
+	{
+		::Semantic_Node_ *const child_ = node_->Children_->op_Element(p_int(1));
+		if (child_->Type_->op_NotEqual(Semicolon_).Value)
+		{
+			Bind_(child_, scope_);
+		}
+	}
+	else if (node_->Type_->op_Equal(NewExpression_).Value)
+	{
+		BindType_(node_->Children_->op_Element(p_int(1)), scope_);
+		Bind_(node_->Children_->op_Element(p_int(2)), scope_);
+	}
+	else if (LogicalOr(LogicalOr(LogicalOr(node_->Type_->op_Equal(NotExpression_), [&] { return node_->Type_->op_Equal(ParenthesizedExpression_); }), [&] { return node_->Type_->op_Equal(MagnitudeExpression_); }), [&] { return node_->Type_->op_Equal(NegateExpression_); }).Value)
+	{
+		Bind_(node_->Children_->op_Element(p_int(1)), scope_);
+	}
+	else if (LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(node_->Type_->op_Equal(AssignmentExpression_), [&] { return node_->Type_->op_Equal(AndExpression_); }), [&] { return node_->Type_->op_Equal(OrExpression_); }), [&] { return node_->Type_->op_Equal(EqualExpression_); }), [&] { return node_->Type_->op_Equal(NotEqualExpression_); }), [&] { return node_->Type_->op_Equal(ComparisonExpression_); }), [&] { return node_->Type_->op_Equal(AddExpression_); }), [&] { return node_->Type_->op_Equal(SubtractExpression_); }), [&] { return node_->Type_->op_Equal(ElementAccessExpression_); }), [&] { return node_->Type_->op_Equal(RemainderExpression_); }), [&] { return node_->Type_->op_Equal(MultiplyExpression_); }), [&] { return node_->Type_->op_Equal(DivideExpression_); }).Value)
+	{
+		Bind_(node_->Children_->op_Element(p_int(0)), scope_);
+		Bind_(node_->Children_->op_Element(p_int(2)), scope_);
+	}
+	else if (node_->Type_->op_Equal(MemberAccessExpression_).Value)
+	{
+		Bind_(node_->Children_->op_Element(p_int(0)), scope_);
+	}
+	else if (node_->Type_->op_Equal(InvocationExpression_).Value)
+	{
+		Bind_(node_->Children_->op_Element(p_int(0)), scope_);
+		Bind_(node_->Children_->op_Element(p_int(1)), scope_);
+	}
+	else if (node_->Type_->op_Equal(ArgumentList_).Value)
+	{
+		for (::Semantic_Node_ *const child_ : *(node_->Children_))
+		{
+			if (LogicalAnd(LogicalAnd(child_->Type_->op_NotEqual(LeftParen_), [&] { return child_->Type_->op_NotEqual(Comma_); }), [&] { return child_->Type_->op_NotEqual(RightParen_); }).Value)
+			{
+				Bind_(child_, scope_);
+			}
+		}
+	}
+	else if (LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(node_->Type_->op_Equal(NumericLiteralExpression_), [&] { return node_->Type_->op_Equal(BreakStatement_); }), [&] { return node_->Type_->op_Equal(ContinueStatement_); }), [&] { return node_->Type_->op_Equal(NoneLiteralExpression_); }), [&] { return node_->Type_->op_Equal(SelfExpression_); }), [&] { return node_->Type_->op_Equal(TrueLiteralExpression_); }), [&] { return node_->Type_->op_Equal(FalseLiteralExpression_); }), [&] { return node_->Type_->op_Equal(StringLiteralExpression_); }), [&] { return node_->Type_->op_Equal(CodePointLiteralExpression_); }), [&] { return node_->Type_->op_Equal(IdentifierName_); }), [&] { return node_->Type_->op_Equal(EndOfFileToken_); }).Value)
 	{
 	}
 	else
 	{
 		ThrowException_(p_string("`Name_Binder.Bind()` unimplemented node type ")->op_Add(node_->Type_));
+	}
+}
+
+auto ::Name_Binder_::BindType_(::Semantic_Node_ *const node_, ::Binding_Scope_ const *const scope_) const -> void
+{
+	if (node_->Type_->op_Equal(PredefinedType_).Value)
+	{
+		p_string const name_ = node_->Children_->op_Element(p_int(0))->GetText_();
+		::Symbol_ const *const symbol_ = scope_->GetPrimitive_(name_);
+		if (symbol_->op_Equal(::None).Value)
+		{
+			ThrowException_(p_string("`Name_Binder.BindType()` no symbol for primitive type ")->op_Add(name_));
+		}
+
+		node_->BindSymbol_(symbol_);
+	}
+	else if (node_->Type_->op_Equal(MutableType_).Value)
+	{
+		::Semantic_Node_ *const innerType_ = node_->Children_->op_Element(p_int(1));
+		BindType_(innerType_, scope_);
+	}
+	else if (node_->Type_->op_Equal(OptionalType_).Value)
+	{
+		::Semantic_Node_ *const innerType_ = node_->Children_->op_Element(p_int(0));
+		BindType_(innerType_, scope_);
+	}
+	else if (node_->Type_->op_Equal(QualifiedName_).Value)
+	{
+		::Semantic_Node_ *const qualifier_ = node_->Children_->op_Element(p_int(0));
+		BindType_(qualifier_, scope_);
+		if (qualifier_->Symbol_->op_Equal(::None).Value)
+		{
+			ThrowException_(p_string("`Name_Binder.BindType()` no symbol for qualifier ")->op_Add(qualifier_->GetText_()));
+		}
+
+		::Semantic_Node_ *const name_ = node_->Children_->op_Element(p_int(2));
+		if (name_->Type_->op_Equal(IdentifierName_).Value)
+		{
+			::Symbol_ const *const symbol_ = qualifier_->Symbol_->Get_(name_->GetText_(), IdentifierSymbol_);
+			name_->BindSymbol_(symbol_);
+			node_->BindSymbol_(symbol_);
+		}
+		else if (name_->Type_->op_Equal(GenericName_).Value)
+		{
+			::Semantic_Node_ *const identiferName_ = name_->FirstChildOfType_(IdentifierName_);
+			::Symbol_ const *const symbol_ = qualifier_->Symbol_->Get_(identiferName_->GetText_(), IdentifierSymbol_);
+			identiferName_->BindSymbol_(symbol_);
+			node_->BindSymbol_(symbol_);
+			p_bool typeArg_ = p_bool(false);
+			for (::Semantic_Node_ *const typeArgument_ : *(name_->Children_))
+			{
+				if (typeArg_.Value)
+				{
+					if (typeArgument_->Type_->op_NotEqual(GreaterThan_).Value)
+					{
+						BindType_(typeArgument_, scope_);
+					}
+				}
+				else if (typeArgument_->Type_->op_Equal(LessThan_).Value)
+				{
+					typeArg_ = p_bool(true);
+				}
+			}
+		}
+		else
+		{
+			ThrowException_(p_string("Unreachable: `Name_Binder.Bind(..)` name.Type = ")->op_Add(name_->Type_));
+		}
+	}
+	else if (node_->Type_->op_Equal(IdentifierName_).Value)
+	{
+		p_string const name_ = node_->GetText_();
+		::Symbol_ const *const symbol_ = scope_->Lookup_(name_);
+		if (symbol_->op_Equal(::None).Value)
+		{
+			node_->Add_((new ::Diagnostic_(FatalCompilationError_, Analysis_, node_->Source_, node_->GetTextSpan_(), p_string("Could not resolve name `")->op_Add(name_)->op_Add(p_string("`")))));
+		}
+		else
+		{
+			node_->BindSymbol_(symbol_);
+		}
+	}
+	else
+	{
+		ThrowException_(p_string("`Name_Binder.BindType()` unimplemented node type ")->op_Add(node_->Type_));
 	}
 }
 
@@ -1294,7 +1399,12 @@ auto ::Semantic_Node_::BindSymbol_(::Symbol_ const *const symbol_) -> void
 {
 	if (Symbol_->op_NotEqual(::None).Value)
 	{
-		ThrowException_(p_string("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol"));
+		ThrowException_(p_string("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol on `")->op_Add(GetText_())->op_Add(p_string("`")));
+	}
+
+	if (symbol_->op_Equal(::None).Value)
+	{
+		ThrowException_(p_string("`Semantic_Node.BindSymbol(..)` called without a symbol on `")->op_Add(GetText_())->op_Add(p_string("`")));
 	}
 
 	Symbol_ = symbol_;
@@ -1435,6 +1545,41 @@ auto ::Semantic_Node_::CollectDiagnostics_(::System_::Collections_::List_<::Diag
 	Declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *>());
 	Children_ = (new ::System_::Collections_::List_<::Symbol_ const *>());
 	IsPrimitive_ = p_bool(true);
+}
+
+auto ::Symbol_::Get_(p_string const name_, p_int const type_) const -> ::Symbol_ const *
+{
+	for (::Symbol_ const *const child_ : *(Children_))
+	{
+		if (LogicalAnd(child_->Name_->op_Equal(name_), [&] { return child_->Type_->op_Equal(type_); }).Value)
+		{
+			return child_;
+		}
+	}
+
+	return ::None;
+}
+
+auto ::Symbol_::IsValueType_() const -> p_bool
+{
+	if (Declarations_->op_Magnitude()->op_Equal(p_int(0)).Value)
+	{
+		ThrowException_(p_string("Could not determine if `")->op_Add(Name_)->op_Add(p_string("` was a value type. No declarations.")));
+	}
+
+	::Semantic_Node_ const *const declaration_ = Declarations_->op_Element(p_int(0));
+	if (declaration_->Type_->op_Equal(ClassDeclaration_).Value)
+	{
+		return p_bool(false);
+	}
+	else if (declaration_->Type_->op_Equal(StructDeclaration_).Value)
+	{
+		return p_bool(true);
+	}
+	else
+	{
+		ThrowException_(p_string("Could not determine if `")->op_Add(Name_)->op_Add(p_string("` was a value type. Declaration of type "))->op_Add(declaration_->Type_));
+	}
 }
 
 auto ::Symbol_Builder_::BuildSymbols_(::System_::Collections_::List_<::Semantic_Node_ *> const *const compilationUnits_) const -> ::Symbol_ const *
@@ -1600,23 +1745,36 @@ auto ::Symbol_Builder_::BuildFunctionSymbols_(::Symbol_ const *const parent_, ::
 
 auto ::Symbol_Builder_::BuildRuntimeLibrarySymbols_(::Symbol_ const *const package_) const -> void
 {
+	::Semantic_Node_ const *const fakeDeclaration_ = (new ::Semantic_Node_((new ::Syntax_Node_(ClassDeclaration_, p_bool(true), ::None, p_int(0), p_int(0)))));
 	package_->Children_->Add_((new ::Symbol_(package_, p_string("resource_manager"))));
 	::Symbol_ const *const system_ = (new ::Symbol_(package_, p_string("System")));
 	package_->Children_->Add_(system_);
 	::Symbol_ const *const collections_ = (new ::Symbol_(system_, p_string("Collections")));
 	system_->Children_->Add_(collections_);
-	collections_->Children_->Add_((new ::Symbol_(collections_, p_string("List"))));
+	::Symbol_ *const list_ = (new ::Symbol_(system_, p_string("List")));
+	list_->Declarations_->Add_(fakeDeclaration_);
+	collections_->Children_->Add_(list_);
 	::Symbol_ const *const console_ = (new ::Symbol_(system_, p_string("Console")));
 	system_->Children_->Add_(console_);
-	console_->Children_->Add_((new ::Symbol_(console_, p_string("Console"))));
-	console_->Children_->Add_((new ::Symbol_(console_, p_string("Arguments"))));
+	::Symbol_ *const consoleClass_ = (new ::Symbol_(system_, p_string("Console")));
+	consoleClass_->Declarations_->Add_(fakeDeclaration_);
+	console_->Children_->Add_(consoleClass_);
+	::Symbol_ *const arguments_ = (new ::Symbol_(system_, p_string("Arguments")));
+	arguments_->Declarations_->Add_(fakeDeclaration_);
+	console_->Children_->Add_(arguments_);
 	::Symbol_ const *const io_ = (new ::Symbol_(system_, p_string("IO")));
 	system_->Children_->Add_(io_);
-	io_->Children_->Add_((new ::Symbol_(system_, p_string("File_Reader"))));
-	io_->Children_->Add_((new ::Symbol_(system_, p_string("File_Writer"))));
+	::Symbol_ *const fileReader_ = (new ::Symbol_(system_, p_string("File_Reader")));
+	fileReader_->Declarations_->Add_(fakeDeclaration_);
+	io_->Children_->Add_(fileReader_);
+	::Symbol_ *const fileWriter_ = (new ::Symbol_(system_, p_string("File_Writer")));
+	fileWriter_->Declarations_->Add_(fakeDeclaration_);
+	io_->Children_->Add_(fileWriter_);
 	::Symbol_ const *const text_ = (new ::Symbol_(system_, p_string("Text")));
 	system_->Children_->Add_(text_);
-	text_->Children_->Add_((new ::Symbol_(text_, p_string("String_Builder"))));
+	::Symbol_ *const stringBuilder_ = (new ::Symbol_(text_, p_string("String_Builder")));
+	stringBuilder_->Declarations_->Add_(fakeDeclaration_);
+	text_->Children_->Add_(stringBuilder_);
 }
 
 ::CompilationUnitParser_::CompilationUnitParser_(::Token_Stream_ *const tokenStream_)
@@ -2948,19 +3106,22 @@ auto ::Emitter_::IsValueType_(::Semantic_Node_ const *const type_) -> p_bool
 
 	if (type_->Type_->op_Equal(QualifiedName_).Value)
 	{
-		return IsValueType_(type_->Children_->op_Element(type_->Children_->op_Magnitude()->op_Subtract(p_int(1))));
+		return IsValueType_(type_->Children_->op_Element(p_int(2)));
 	}
 
 	if (type_->Type_->op_Equal(GenericName_).Value)
 	{
-		p_code_point const firstChar_ = type_->FirstChildOfType_(IdentifierName_)->FirstChildOfType_(Identifier_)->GetText_()->op_Element(p_int(0));
-		return LogicalAnd(firstChar_->op_GreaterThanOrEqual(p_code_point('a')), [&] { return firstChar_->op_LessThanOrEqual(p_code_point('z')); });
+		return IsValueType_(type_->FirstChildOfType_(IdentifierName_));
 	}
 
 	if (type_->Type_->op_Equal(IdentifierName_).Value)
 	{
-		p_code_point const firstChar_ = type_->FirstChildOfType_(Identifier_)->GetText_()->op_Element(p_int(0));
-		return LogicalAnd(firstChar_->op_GreaterThanOrEqual(p_code_point('a')), [&] { return firstChar_->op_LessThanOrEqual(p_code_point('z')); });
+		if (type_->Symbol_->op_Equal(::None).Value)
+		{
+			ThrowException_(p_string("No symbol on identifier name `")->op_Add(type_->GetText_())->op_Add(p_string("`")));
+		}
+
+		return type_->Symbol_->IsValueType_();
 	}
 
 	if (type_->Type_->op_Equal(MutableType_).Value)
