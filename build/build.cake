@@ -237,6 +237,7 @@ Task("Commit-Translated")
 			Warning("Not committing translated code becuase this is a pull request build.");
 			return;
 		}
+
 		var deleteSettings = new DeleteDirectorySettings()
 			{
 				Recursive = true,
@@ -260,8 +261,9 @@ Task("Commit-Translated")
 		Command("git", "status --untracked-files=no").Run();
 
 		Information("Commiting changes");
+		var currentCommitMessage = GitLogLookup(".", currentCommit).Message;
 		// Allow empty commits so we can make a properly named commit to match each commit
-		var message = string.Format("Translated files for {0}", currentCommit);
+		var message = string.Format("Translated files for {0} '{1}'", currentCommit, currentCommitMessage);
 		Command("git", string.Format("commit -m \"{0}\" --allow-empty --untracked-files=no", message)).Run();
 
 		var tag = "translated/"+currentCommit;
