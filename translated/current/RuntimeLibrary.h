@@ -281,12 +281,14 @@ public:
 };
 
 // A placeholder function until we get proper exceptions implemented
-inline void ThrowException_(const p_string& value)
+inline void THROW_EXCEPTION_(const p_string& value)
 {
 	throw std::runtime_error(value.Buffer);
 }
 
-namespace System_
+inline const auto& ThrowException_ = THROW_EXCEPTION_;
+
+namespace system_
 {
 	namespace Collections_
 	{
@@ -411,3 +413,5 @@ namespace System_
 		};
 	}
 }
+
+namespace System_ = system_;

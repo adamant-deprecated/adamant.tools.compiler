@@ -136,7 +136,7 @@ void ResourceManager::AddResource(p_string name, p_string value)
 
 ResourceManager *const resource_manager_ = new ResourceManager();
 
-namespace System_
+namespace system_
 {
 	namespace Console_
 	{
