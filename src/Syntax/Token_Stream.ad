@@ -66,6 +66,14 @@ public class Token_Stream
 					return NewOperator(EqualsEquals, 2);
 				}
 
+				if position + 2 < Source.ByteLength()
+					and Source.Text[position + 1] == '/'
+					and Source.Text[position + 2] == '='
+				{
+					// it is `=/=`
+					return NewOperator(EqualsSlashEquals, 3);
+				}
+
 				// it is `=`
 				return NewOperator(Equals);
 			}

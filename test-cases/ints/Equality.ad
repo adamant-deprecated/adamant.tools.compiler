@@ -2,5 +2,5 @@ public Main() -> void
 {
 	var x: bool;
 	x = 1 == 2;
-	x = 1 <> 2;
+	x = 1 =/= 2;
 }

@@ -4,7 +4,7 @@ public Main(console: mut System.Console.Console) -> void
 	strings.Add("Hello");
 	strings.Add("World!");
 
-	if |strings| <> 2
+	if |strings| =/= 2
 	{
 		console.WriteLine("List length not 2!");
 	}

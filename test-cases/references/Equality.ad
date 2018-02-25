@@ -8,5 +8,5 @@ public Main() -> void
 	let b: Test = new Test();
 	var x: bool;
 	x = a == b;
-	x = a <> b;
+	x = a =/= b;
 }

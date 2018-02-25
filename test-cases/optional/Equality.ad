@@ -8,7 +8,7 @@ public Main() -> void
 	let n: Test? = none;
 	var x: bool;
 	x = v == n;
-	x = v <> n;
+	x = v =/= n;
 	x = n == v;
-	x = n <> v;
+	x = n =/= v;
 }

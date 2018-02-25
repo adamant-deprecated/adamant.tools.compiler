@@ -2,5 +2,5 @@ public Main() -> void
 {
 	var x: bool;
 	x = 'a' == 'b';
-	x = 'a' <> 'b';
+	x = 'a' =/= 'b';
 }

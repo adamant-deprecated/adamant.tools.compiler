@@ -286,6 +286,14 @@ public class CompilationUnitParser
 				children.Add(ExpectToken(LessThanGreaterThan));
 				expressionType = NotEqualExpression;
 			}
+			else if token.Type == EqualsSlashEquals and minPrecedence <= 4
+			{
+				// not equal
+				precedence = 4;
+				leftAssociative = true;
+				children.Add(ExpectToken(EqualsSlashEquals));
+				expressionType = NotEqualExpression;
+			}
 			else if (token.Type == LessThan or token.Type == LessThanEquals or token.Type == GreaterThan or token.Type == GreaterThanEquals) and minPrecedence <= 5
 			{
 				// relational operators
