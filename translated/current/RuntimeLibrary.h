@@ -115,7 +115,7 @@ inline p_int::p_int(p_uint value)
 struct p_code_point
 {
 private:
-	std::int32_t Value;
+	std::uint32_t Value;
 
 public:
 	// Runtime Use Members
