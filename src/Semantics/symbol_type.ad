@@ -1,0 +1,5 @@
+public let IdentifierSymbol: int = 0;
+public let PrimitiveSymbol: int = 1;
+public let ConstructorSymbol: int = 2;
+public let OperatorSymbol: int = 3;
+public let PackageSymbol: int = 4;

@@ -155,34 +155,31 @@ public class Emitter // TODO change to snake_case when possible
 		let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
 		builder.Append("(");
 		var firstParameter: bool = true;
-		for let parameter: Semantic_Node in parameterList.Children
+		for let parameter: Semantic_Node in parameterList.ChildrenOfType(Parameter)
 		{
-			if parameter.Type == Parameter
+			if not firstParameter
+				{ builder.Append(", "); }
+			else
+				{ firstParameter = false; }
+
+			let mutableBinding: bool = parameter.HasChildOfType(VarKeyword);
+			let type: Semantic_Node = parameter.Children[|parameter.Children| - 1];
+			builder.Append(ConvertType(mutableBinding, type));
+			builder.Append(" ");
+			builder.Append(parameter.FirstChildOfType(Identifier).GetText());
+			builder.Append("_");
+
+			if isMainFunction
 			{
-				if not firstParameter
-					{ builder.Append(", "); }
+				var typeString: string;
+				if type.Type == MutableType
+					{ typeString = type.Children[1].GetText(); }
 				else
-					{ firstParameter = false; }
-
-				let mutableBinding: bool = parameter.HasChildOfType(VarKeyword);
-				let type: Semantic_Node = parameter.Children[|parameter.Children| - 1];
-				builder.Append(ConvertType(mutableBinding, type));
-				builder.Append(" ");
-				builder.Append(parameter.FirstChildOfType(Identifier).GetText());
-				builder.Append("_");
-
-				if isMainFunction
-				{
-					var typeString: string;
-					if type.Type == MutableType
-						{ typeString = type.Children[1].GetText(); }
-					else
-						{ typeString = type.GetText(); }
-					if typeString == "System.Console.Console"
-						{ MainFunctionAcceptsConsole = true; }
-					if typeString == "System.Console.Arguments"
-						{ MainFunctionAcceptsArgs = true; }
-				}
+					{ typeString = type.GetText(); }
+				if typeString == "System.Console.Console"
+					{ MainFunctionAcceptsConsole = true; }
+				if typeString == "System.Console.Arguments"
+					{ MainFunctionAcceptsArgs = true; }
 			}
 		}
 		builder.Append(")");
@@ -451,12 +448,9 @@ public class Emitter // TODO change to snake_case when possible
 		else if statement.Type == Block
 		{
 			Definitions.BeginBlock();
-			for let blockStatement: Semantic_Node in statement.Children
+			for let blockStatement: Semantic_Node in statement.Statements()
 			{
-				if blockStatement.Type <> LeftBrace and blockStatement.Type <> RightBrace
-				{
-					EmitStatement(blockStatement);
-				}
+				EmitStatement(blockStatement);
 			}
 			Definitions.EndBlock();
 		}

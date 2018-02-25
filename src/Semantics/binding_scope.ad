@@ -18,9 +18,14 @@ public class Binding_Scope
 
 	public Lookup(self, name: string) -> Symbol?
 	{
+		return Lookup(name, IdentifierSymbol);
+	}
+	public Lookup(self, name: string, type: int) -> Symbol?
+
+	{
 		for let symbol: Symbol in Symbols
 		{
-			if symbol.Name == name
+			if symbol.Name == name and symbol.Type == type
 			{
 				return symbol;
 			}

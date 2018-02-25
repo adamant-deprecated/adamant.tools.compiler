@@ -94,6 +94,38 @@ public class Semantic_Node
 		return members;
 	}
 
+	// TODO this should only be on things like block
+	public Statements(self) -> System.Collections.List<mut Semantic_Node>
+	{
+		let statements: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
+		for let child: mut Semantic_Node in Children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.Type <> LeftBrace
+				and child.Type <> RightBrace
+			{
+				statements.Add(child);
+			}
+		}
+		return statements;
+	}
+
+	// TODO this should only be on things like parameter list and function
+	public Parameters(self) -> System.Collections.List<mut Semantic_Node>
+	{
+		let parameters: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
+		for let child: mut Semantic_Node in Children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.Type == Parameter
+				or child.Type == SelfParameter
+			{
+				parameters.Add(child);
+			}
+		}
+		return parameters;
+	}
+
 	public HasChildOfType(self, type: int) -> bool
 	{
 		for let child: Semantic_Node in Children

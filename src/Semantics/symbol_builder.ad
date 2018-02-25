@@ -4,7 +4,7 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 	public BuildSymbols(self, compilationUnits: System.Collections.List<mut Semantic_Node>) -> Symbol
 	{
 		// TODO eventually the package symbol should have a name so that we can look up names in front of the package qualifier
-		let packageSymbol: mut Symbol = new Symbol(none, "");
+		let packageSymbol: mut Symbol = new Symbol(none, "", PackageSymbol);
 		for let compilationUnit: mut Semantic_Node in compilationUnits
 		{
 			if compilationUnit.Type <> CompilationUnit
@@ -30,50 +30,32 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			}
 		}
 		else if node.Type == FunctionDeclaration
+			or node.Type == MethodDeclaration
 		{
 			let name: string = node.FirstChildOfType(Identifier).GetText();
-			let functionSymbol: Symbol = new Symbol(parent, name);
-			functionSymbol.Declarations.Add(node);
-
-			// TODO add parameter symbols
-			// TODO figure out how to handle body
-
-			parent.Children.Add(functionSymbol);
-			node.BindSymbol(functionSymbol);
+			let symbol: Symbol = new Symbol(parent, name);
+			BuildFunctionSymbols(parent, node, symbol);
 		}
 		else if node.Type == ClassDeclaration
+			or node.Type == StructDeclaration
 		{
 			let name: string = node.FirstChildOfType(Identifier).GetText();
-			let classSymbol: Symbol = new Symbol(parent, name);
-			classSymbol.Declarations.Add(node);
+			let symbol: Symbol = new Symbol(parent, name);
+			symbol.Declarations.Add(node);
 			for let member: mut Semantic_Node in node.Members()
 			{
-				BuildSymbols(classSymbol, member);
+				BuildSymbols(symbol, member);
 			}
 
-			parent.Children.Add(classSymbol);
-			node.BindSymbol(classSymbol);
-		}
-		else if node.Type == StructDeclaration
-		{
-			let name: string = node.FirstChildOfType(Identifier).GetText();
-			let structSymbol: Symbol = new Symbol(parent, name);
-			structSymbol.Declarations.Add(node);
-			for let member: mut Semantic_Node in node.Members()
-			{
-				BuildSymbols(structSymbol, member);
-			}
-
-			parent.Children.Add(structSymbol);
-			node.BindSymbol(structSymbol);
+			parent.Children.Add(symbol);
+			node.BindSymbol(symbol);
 		}
 		else if node.Type == ConstructorDeclaration
 		{
-			// TODO how do we distinguish this from a symbol someone could get to by using `new ?
-			let constructorSymbol: Symbol = new Symbol(none, "new");
+			let constructorSymbol: Symbol = new Symbol(none, "", ConstructorSymbol);
+			// TODO create a special self symbol
 			constructorSymbol.Declarations.Add(node);
-			parent.Children.Add(constructorSymbol);
-			node.BindSymbol(constructorSymbol);
+			BuildFunctionSymbols(parent, node, constructorSymbol);
 		}
 		else if node.Type == FieldDeclaration
 		{
@@ -82,18 +64,6 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			fieldSymbol.Declarations.Add(node);
 			parent.Children.Add(fieldSymbol);
 			node.BindSymbol(fieldSymbol);
-		}
-		else if node.Type == MethodDeclaration
-		{
-			let name: string = node.FirstChildOfType(Identifier).GetText();
-			let methodSymbol: Symbol = new Symbol(parent, name);
-			methodSymbol.Declarations.Add(node);
-
-			// TODO add parameter symbols
-			// TODO figure out how to handle body
-
-			parent.Children.Add(methodSymbol);
-			node.BindSymbol(methodSymbol);
 		}
 		else if node.Type == EnumDeclaration
 		{
@@ -112,7 +82,76 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 			parent.Children.Add(globalDeclarationSymbol);
 			node.BindSymbol(globalDeclarationSymbol);
 		}
-		else if node.Type == EndOfFileToken
+		else if node.Type == Block
+		{
+			for let statement: mut Semantic_Node in node.Statements()
+			{
+				BuildSymbols(parent, statement);
+			}
+		}
+		else if node.Type == LoopStatement
+			or node.Type == WhileStatement
+			or node.Type == DoWhileStatement
+		{
+			BuildSymbols(parent, node.FirstChildOfType(Block));
+		}
+		else if node.Type == ForStatement
+		{
+			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let forSymbol: Symbol = new Symbol(none, name);
+			forSymbol.Declarations.Add(node);
+			parent.Children.Add(forSymbol);
+			node.BindSymbol(forSymbol);
+			BuildSymbols(parent, node.FirstChildOfType(Block));
+		}
+		else if node.Type == LocalDeclarationStatement
+		{
+			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let symbol: Symbol = new Symbol(none, name);
+			symbol.Declarations.Add(node);
+			parent.Children.Add(symbol);
+		}
+		else if node.Type == IfStatement
+		{
+			BuildSymbols(parent, node.FirstChildOfType(Block));
+			let elseClause: mut Semantic_Node? = node.FirstChildOfType(ElseClause);
+			if elseClause <> none
+			{
+				BuildSymbols(parent, elseClause);
+			}
+		}
+		else if node.Type == ElseClause
+		{
+			// This might be a good place for some kind of coalesce operator
+			let block: mut Semantic_Node? = node.FirstChildOfType(Block);
+			if block <> none
+			{
+				BuildSymbols(parent, block);
+			}
+			else
+			{
+				BuildSymbols(parent, node.FirstChildOfType(IfStatement));
+			}
+		}
+		else if node.Type == Parameter
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let symbol: Symbol = new Symbol(none, name);
+			symbol.Declarations.Add(node);
+			parent.Children.Add(symbol);
+		}
+		else if node.Type == SelfParameter
+		{
+			let name: string = node.FirstChildOfType(SelfKeyword).GetText();
+			let symbol: Symbol = new Symbol(none, name, PrimitiveSymbol);
+			symbol.Declarations.Add(node);
+			parent.Children.Add(symbol);
+		}
+		else if node.Type == ExpressionStatement
+			or node.Type == ReturnStatement
+			or node.Type == BreakStatement
+			or node.Type == ContinueStatement
+			or node.Type == EndOfFileToken
 		{
 			// Ignore these nodes
 		}
@@ -120,6 +159,23 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 		{
 			ThrowException("`Symbol_Builder.Build()` unimplemented node type " + node.Type);
 		}
+	}
+
+	private BuildFunctionSymbols(self, parent: Symbol, node: mut Semantic_Node, symbol: Symbol) -> void
+	{
+		symbol.Declarations.Add(node);
+
+		let parameters: mut Semantic_Node = node.FirstChildOfType(ParameterList);
+		for let parameter: mut Semantic_Node in parameters.Parameters()
+		{
+			BuildSymbols(symbol, parameter);
+		}
+
+		let body: mut Semantic_Node = node.FirstChildOfType(Block);
+		BuildSymbols(symbol, body);
+
+		parent.Children.Add(symbol);
+		node.BindSymbol(symbol);
 	}
 
 	/// This builds up a set of symbols that are actually in the Runtime Library
