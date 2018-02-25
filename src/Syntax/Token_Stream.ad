@@ -108,7 +108,7 @@ public class Token_Stream
 				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '/'
 				{
 					// it is a line comment `//`
-					while position < Source.ByteLength() and Source.Text[position] <> '\r' and Source.Text[position] <> '\n'
+					while position < Source.ByteLength() and Source.Text[position] =/= '\r' and Source.Text[position] =/= '\n'
 					{
 						position += 1;
 					}
@@ -138,11 +138,6 @@ public class Token_Stream
 				{ return NewOperator(Percent); }
 			else if curChar == '<'
 			{
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '>'
-				{
-					// it is `<>`
-					return NewOperator(LessThanGreaterThan, 2);
-				}
 				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
 				{
 					// it is `<=`
@@ -165,7 +160,7 @@ public class Token_Stream
 			{
 				end = position + 1;
 				var escaped: bool = false;
-				while end < Source.ByteLength() and (Source.Text[end] <> '"' or escaped)
+				while end < Source.ByteLength() and (Source.Text[end] =/= '"' or escaped)
 				{
 					escaped = Source.Text[end] == '\\' and not escaped;
 					end += 1;
@@ -178,7 +173,7 @@ public class Token_Stream
 			{
 				end = position + 1;
 				var escaped: bool = false;
-				while end < Source.ByteLength() and (Source.Text[end] <> '\'' or escaped)
+				while end < Source.ByteLength() and (Source.Text[end] =/= '\'' or escaped)
 				{
 					escaped = Source.Text[end] == '\\' and not escaped;
 					end += 1;

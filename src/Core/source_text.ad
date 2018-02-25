@@ -13,11 +13,11 @@ public class Source_Text // TODO change immutable class name to snake_case when 
 		Path = path;
 		var name: string = path;
 		var index: int = name.LastIndexOf('/');
-		if index <> -1
+		if index =/= -1
 			{ name = name.Substring(index+1); }
 
 		index = name.LastIndexOf('\\');
-		if index <> -1
+		if index =/= -1
 			{ name = name.Substring(index+1); }
 
 		Name = name;

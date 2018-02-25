@@ -50,7 +50,7 @@ public class Semantic_Node
 
 	public BindSymbol(mut self, symbol: Symbol) -> void
 	{
-		if Symbol <> none { ThrowException("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol on `" + GetText() + "`"); }
+		if Symbol =/= none { ThrowException("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol on `" + GetText() + "`"); }
 		if symbol == none { ThrowException("`Semantic_Node.BindSymbol(..)` called without a symbol on `" + GetText() + "`"); }
 		Symbol = symbol;
 	}
@@ -102,8 +102,8 @@ public class Semantic_Node
 		for let child: mut Semantic_Node in Children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
-			if child.Type <> LeftBrace
-				and child.Type <> RightBrace
+			if child.Type =/= LeftBrace
+				and child.Type =/= RightBrace
 			{
 				statements.Add(child);
 			}

@@ -7,7 +7,7 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 		let packageSymbol: mut Symbol = new Symbol(none, "", PackageSymbol);
 		for let compilationUnit: mut Semantic_Node in compilationUnits
 		{
-			if compilationUnit.Type <> CompilationUnit
+			if compilationUnit.Type =/= CompilationUnit
 				{ ThrowException("`Symbol_Builder.BuildSymbols(...)` called with node of type " + compilationUnit.Type); }
 
 			BuildSymbols(packageSymbol, compilationUnit);
@@ -115,7 +115,7 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 		{
 			BuildSymbols(parent, node.FirstChildOfType(Block));
 			let elseClause: mut Semantic_Node? = node.FirstChildOfType(ElseClause);
-			if elseClause <> none
+			if elseClause =/= none
 			{
 				BuildSymbols(parent, elseClause);
 			}
@@ -124,7 +124,7 @@ public class Symbol_Builder // TODO change immutable class name to snake_case wh
 		{
 			// This might be a good place for some kind of coalesce operator
 			let block: mut Semantic_Node? = node.FirstChildOfType(Block);
-			if block <> none
+			if block =/= none
 			{
 				BuildSymbols(parent, block);
 			}

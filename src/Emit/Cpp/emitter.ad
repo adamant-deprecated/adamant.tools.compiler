@@ -210,9 +210,9 @@ public class Emitter // TODO change to snake_case when possible
 			var firstExpression: bool = true;
 			for let arg: Semantic_Node in syntax.Children
 			{
-				if arg.Type <> LeftParen
-					and arg.Type <> RightParen
-					and arg.Type <> Comma
+				if arg.Type =/= LeftParen
+					and arg.Type =/= RightParen
+					and arg.Type =/= Comma
 				{
 					if firstExpression
 						{ firstExpression = false; }
@@ -492,10 +492,10 @@ public class Emitter // TODO change to snake_case when possible
 				Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
 				EmitStatement(ifStatement.Children[2]); // Block Statement
 				let elseClause: Semantic_Node? = ifStatement.FirstChildOfType(ElseClause);
-				if elseClause <> none
+				if elseClause =/= none
 				{
 					ifStatement = elseClause.FirstChildOfType(IfStatement);
-					if ifStatement <> none
+					if ifStatement =/= none
 					{
 						Definitions.BeginLine("else ");
 					}
@@ -659,7 +659,7 @@ public class Emitter // TODO change to snake_case when possible
 					let memberName: string = member.Children[0].GetText();
 					ClassDeclarations.BeginLine(memberName + "_");
 					let memberValue: Semantic_Node? = member.FirstChildOfType(Number);
-					if memberValue <> none
+					if memberValue =/= none
 					{
 						ClassDeclarations.Write(" = ");
 						ClassDeclarations.Write(memberValue.GetText());
@@ -682,7 +682,7 @@ public class Emitter // TODO change to snake_case when possible
 			Definitions.WriteLine("auto " + name + "_" + parameters + " -> " + cppType);
 			if isMain
 			{
-				if MainFunctionReturnType <> ""
+				if MainFunctionReturnType =/= ""
 					{ Definitions.Error("Multiple declarations of main"); }
 				MainFunctionReturnType = cppType;
 			}

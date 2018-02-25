@@ -114,7 +114,7 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 			Bind(node.Children[1], scope); // condition expression
 			Bind(node.FirstChildOfType(Block), scope);
 			let elseClause: mut Semantic_Node? = node.FirstChildOfType(ElseClause);
-			if elseClause <> none
+			if elseClause =/= none
 			{
 				Bind(elseClause, scope);
 			}
@@ -123,7 +123,7 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 		{
 			// This might be a good place for some kind of coalesce operator
 			let block: mut Semantic_Node? = node.FirstChildOfType(Block);
-			if block <> none
+			if block =/= none
 			{
 				Bind(block, scope);
 			}
@@ -139,7 +139,7 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 		else if node.Type == ReturnStatement
 		{
 			let child: mut Semantic_Node = node.Children[1];
-			if child.Type <> Semicolon
+			if child.Type =/= Semicolon
 				{ Bind(child, scope); }
 		}
 		else if node.Type == NewExpression
@@ -184,9 +184,9 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 		{
 			for let child: mut Semantic_Node in node.Children
 			{
-				if child.Type <> LeftParen
-					and child.Type <> Comma
-					and child.Type <> RightParen
+				if child.Type =/= LeftParen
+					and child.Type =/= Comma
+					and child.Type =/= RightParen
 				{
 					Bind(child, scope);
 				}
@@ -257,7 +257,7 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 				{
 					if typeArg
 					{
-						if typeArgument.Type <> GreaterThan
+						if typeArgument.Type =/= GreaterThan
 						{
 							BindType(typeArgument, scope);
 						}

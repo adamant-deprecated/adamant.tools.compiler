@@ -20,7 +20,7 @@ public let Arrow: int = 16; // `->`
 public let MinusEquals: int = 17; // `-=`
 public let Minus: int = 18; // `-`
 public let Slash: int = 19; // `/`
-public let LessThanGreaterThan: int = 20; // `<>`
+public let EqualsSlashEquals: int = 20; // `=/=`
 public let LessThanEquals: int = 21; // `<=`
 public let LessThan: int = 22; // `<`
 public let GreaterThanEquals: int = 23; // `>=`
@@ -128,7 +128,6 @@ public let MultiplyExpression: int = 124; // `⧼Expression⧽ * ⧼Expression�
 public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`
 public let NoneKeyword: int = 126; // `none`
 public let StructDeclaration: int = 127;
-public let EqualsSlashEquals: int = 128; // `=/=`
 
 public class Syntax_Node
 {

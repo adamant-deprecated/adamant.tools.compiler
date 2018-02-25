@@ -154,10 +154,10 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	// Write RuntimeLibrary
 	var outputDirPath: string = outputFilePath;
 	var index: int = outputDirPath.LastIndexOf('/');
-	if index <> -1
+	if index =/= -1
 		{ outputDirPath = outputDirPath.Substring(0, index+1); }
 	index = outputDirPath.LastIndexOf('\\');
-	if index <> -1
+	if index =/= -1
 		{ outputDirPath = outputDirPath.Substring(0, index+1); }
 	if(verbose)
 	{
