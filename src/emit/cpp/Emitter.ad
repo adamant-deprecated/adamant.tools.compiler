@@ -48,7 +48,7 @@ public class Emitter
 	}
 
 	// TODO move this logic into Semantics namespace
-	private IsValueType(type: Semantic_Node) -> bool
+	private is_value_type(type: Semantic_Node) -> bool
 	{
 		if type.Type == PredefinedType
 		{
@@ -57,25 +57,25 @@ public class Emitter
 		if type.Type == OptionalType
 		{
 			// The first child is the basic type
-			return IsValueType(type.Children[0]); // The type that is optional
+			return is_value_type(type.Children[0]); // The type that is optional
 		}
 		if type.Type == QualifiedName
 		{
 			// The right hand side is the real type
-			return IsValueType(type.Children[2]);
+			return is_value_type(type.Children[2]);
 		}
 		if type.Type == GenericName
 		{
-			return IsValueType(type.FirstChildOfType(IdentifierName));
+			return is_value_type(type.FirstChildOfType(IdentifierName));
 		}
 		if type.Type == IdentifierName
 		{
 			if type.Symbol == none { ThrowException("No symbol on identifier name `" + type.GetText() + "`"); }
-			return type.Symbol.IsValueType();
+			return type.Symbol.is_value_type();
 		}
 		if type.Type == MutableType
 		{
-			return IsValueType(type.Children[1]); // The type that is mutable
+			return is_value_type(type.Children[1]); // The type that is mutable
 		}
 
 		// TODO this is not supposed to be reachable
@@ -127,7 +127,7 @@ public class Emitter
 			type = type.Children[1]; // Remove the mutable wrapper
 		}
 
-		let isValueType: bool = IsValueType(type);
+		let isValueType: bool = is_value_type(type);
 		var cppType: string = ConvertType(type);
 
 		if isValueType
@@ -195,7 +195,7 @@ public class Emitter
 		if syntax.Type == NewExpression
 		{
 			let type: Semantic_Node = syntax.Children[1];
-			let isValueType: bool = IsValueType(type);
+			let isValueType: bool = is_value_type(type);
 			if not isValueType // place value types on the stack in C++ by not using new
 				{ builder.Write("(new "); }
 			builder.Write(ConvertType(type));

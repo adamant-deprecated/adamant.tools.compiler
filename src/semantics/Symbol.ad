@@ -51,7 +51,7 @@ public class Symbol
 		return none;
 	}
 
-	public IsValueType(self) -> bool
+	public is_value_type(self) -> bool
 	{
 		if |Declarations| == 0  { ThrowException("Could not determine if `" + Name+ "` was a value type. No declarations."); }
 		let declaration: Semantic_Node = Declarations[0]; // TODO assuming there is only one for now

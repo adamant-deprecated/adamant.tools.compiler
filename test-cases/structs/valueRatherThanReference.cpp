@@ -1,28 +1,28 @@
 #include "RuntimeLibrary.h"
 
 // Type Declarations
-class reference_type_;
-struct value_type_;
+class Refernce_Type_;
+struct Value_Type_;
 
 // Function Declarations
 auto Main_() -> void;
 
 // Class Declarations
 
-class reference_type_
+class Refernce_Type_
 {
 public:
-	p_bool op_Equal(reference_type_ const * other) const { return this == other; }
-	p_bool op_NotEqual(reference_type_ const * other) const { return this != other; }
+	p_bool op_Equal(Refernce_Type_ const * other) const { return this == other; }
+	p_bool op_NotEqual(Refernce_Type_ const * other) const { return this != other; }
 };
 
-struct value_type_
+struct Value_Type_
 {
 public:
-	value_type_ * operator->() { return this; }
-	value_type_ const * operator->() const { return this; }
-	value_type_ & operator* () { return *this; }
-	value_type_ const & operator* () const { return *this; }
+	Value_Type_ * operator->() { return this; }
+	Value_Type_ const * operator->() const { return this; }
+	Value_Type_ & operator* () { return *this; }
+	Value_Type_ const & operator* () const { return *this; }
 };
 
 // Global Definitions
@@ -31,8 +31,8 @@ public:
 
 auto Main_() -> void
 {
-	::reference_type_ const *const r_ = (new ::reference_type_());
-	::value_type_ const v_ = ::value_type_();
+	::Refernce_Type_ const *const r_ = (new ::Refernce_Type_());
+	::Value_Type_ const v_ = ::Value_Type_();
 }
 
 // Entry Point Adapter
