@@ -517,6 +517,7 @@ p_int const MultiplyExpression_ = p_int(124);
 p_int const DivideExpression_ = p_int(125);
 p_int const NoneKeyword_ = p_int(126);
 p_int const StructDeclaration_ = p_int(127);
+p_int const EqualsSlashEquals_ = p_int(128);
 p_int const Lexing_ = p_int(1);
 p_int const Parsing_ = p_int(2);
 p_int const Analysis_ = p_int(3);
@@ -2038,6 +2039,13 @@ auto ::CompilationUnitParser_::ParseExpression_(p_int const minPrecedence_) -> :
 			children_->Add_(ExpectToken_(LessThanGreaterThan_));
 			expressionType_ = NotEqualExpression_;
 		}
+		else if (LogicalAnd(token_->Type_->op_Equal(EqualsSlashEquals_), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(4)); }).Value)
+		{
+			precedence_ = p_int(4);
+			leftAssociative_ = p_bool(true);
+			children_->Add_(ExpectToken_(EqualsSlashEquals_));
+			expressionType_ = NotEqualExpression_;
+		}
 		else if (LogicalAnd(LogicalOr(LogicalOr(LogicalOr(token_->Type_->op_Equal(LessThan_), [&] { return token_->Type_->op_Equal(LessThanEquals_); }), [&] { return token_->Type_->op_Equal(GreaterThan_); }), [&] { return token_->Type_->op_Equal(GreaterThanEquals_); }), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(5)); }).Value)
 		{
 			precedence_ = p_int(5);
@@ -2718,6 +2726,11 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
 				return NewOperator_(EqualsEquals_, p_int(2));
+			}
+
+			if (LogicalAnd(LogicalAnd(position_->op_Add(p_int(2))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('/')); }), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(2)))->op_Equal(p_code_point('=')); }).Value)
+			{
+				return NewOperator_(EqualsSlashEquals_, p_int(3));
 			}
 
 			return NewOperator_(Equals_);
