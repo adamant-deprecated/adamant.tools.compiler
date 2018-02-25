@@ -1,0 +1,5 @@
+65
+test-cases/globalVariables/missingAccessModifer.ad:1:1 Error:
+  Missing token of type 102
+test-cases/globalVariables/missingAccessModifer.ad:2:1 Error:
+  Missing token of type 102

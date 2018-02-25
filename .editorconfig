@@ -15,3 +15,6 @@ end_of_line = lf
 
 [*.{bat,cs,csproj,sln}]
 end_of_line = crlf
+
+[*.md]
+indent_style = space

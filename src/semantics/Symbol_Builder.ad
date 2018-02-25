@@ -1,0 +1,230 @@
+public class Symbol_Builder
+{
+	// Takes a package and builds the symbols for it
+	public BuildSymbols(self, compilationUnits: System.Collections.List<mut Semantic_Node>) -> Symbol
+	{
+		// TODO eventually the package symbol should have a name so that we can look up names in front of the package qualifier
+		let packageSymbol: mut Symbol = new Symbol(none, "", PackageSymbol);
+		for let compilationUnit: mut Semantic_Node in compilationUnits
+		{
+			if compilationUnit.Type =/= CompilationUnit
+				{ ThrowException("`Symbol_Builder.BuildSymbols(...)` called with node of type " + compilationUnit.Type); }
+
+			BuildSymbols(packageSymbol, compilationUnit);
+		}
+
+		BuildRuntimeLibrarySymbols(packageSymbol);
+
+		return packageSymbol;
+	}
+
+	// Because a single call could produce multiple symbols, we pass the symbol collection in and add symbols to it.
+	// Once we have generators, this would be a good place to use them.
+	private BuildSymbols(self, parent: Symbol, node: mut Semantic_Node) -> void
+	{
+		if node.Type == CompilationUnit
+		{
+			for let declaration: mut Semantic_Node in node.Children
+			{
+				BuildSymbols(parent, declaration);
+			}
+		}
+		else if node.Type == FunctionDeclaration
+			or node.Type == MethodDeclaration
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let symbol: Symbol = new Symbol(parent, name);
+			BuildFunctionSymbols(parent, node, symbol);
+		}
+		else if node.Type == ClassDeclaration
+			or node.Type == StructDeclaration
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let symbol: Symbol = new Symbol(parent, name);
+			symbol.Declarations.Add(node);
+			for let member: mut Semantic_Node in node.Members()
+			{
+				BuildSymbols(symbol, member);
+			}
+
+			parent.Children.Add(symbol);
+			node.BindSymbol(symbol);
+		}
+		else if node.Type == ConstructorDeclaration
+		{
+			let constructorSymbol: Symbol = new Symbol(none, "", ConstructorSymbol);
+			// TODO create a special self symbol
+			constructorSymbol.Declarations.Add(node);
+			BuildFunctionSymbols(parent, node, constructorSymbol);
+		}
+		else if node.Type == FieldDeclaration
+		{
+			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let fieldSymbol: Symbol = new Symbol(none, name);
+			fieldSymbol.Declarations.Add(node);
+			parent.Children.Add(fieldSymbol);
+			node.BindSymbol(fieldSymbol);
+		}
+		else if node.Type == EnumDeclaration
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let enumSymbol: Symbol = new Symbol(parent, name);
+			enumSymbol.Declarations.Add(node);
+			// TODO add enum member symbols
+			parent.Children.Add(enumSymbol);
+			node.BindSymbol(enumSymbol);
+		}
+		else if node.Type == GlobalDeclaration
+		{
+			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let globalDeclarationSymbol: Symbol = new Symbol(none, name);
+			globalDeclarationSymbol.Declarations.Add(node);
+			parent.Children.Add(globalDeclarationSymbol);
+			node.BindSymbol(globalDeclarationSymbol);
+		}
+		else if node.Type == Block
+		{
+			for let statement: mut Semantic_Node in node.Statements()
+			{
+				BuildSymbols(parent, statement);
+			}
+		}
+		else if node.Type == LoopStatement
+			or node.Type == WhileStatement
+			or node.Type == DoWhileStatement
+		{
+			BuildSymbols(parent, node.FirstChildOfType(Block));
+		}
+		else if node.Type == ForStatement
+		{
+			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let forSymbol: Symbol = new Symbol(none, name);
+			forSymbol.Declarations.Add(node);
+			parent.Children.Add(forSymbol);
+			node.BindSymbol(forSymbol);
+			BuildSymbols(parent, node.FirstChildOfType(Block));
+		}
+		else if node.Type == LocalDeclarationStatement
+		{
+			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let symbol: Symbol = new Symbol(none, name);
+			symbol.Declarations.Add(node);
+			parent.Children.Add(symbol);
+		}
+		else if node.Type == IfStatement
+		{
+			BuildSymbols(parent, node.FirstChildOfType(Block));
+			let elseClause: mut Semantic_Node? = node.FirstChildOfType(ElseClause);
+			if elseClause =/= none
+			{
+				BuildSymbols(parent, elseClause);
+			}
+		}
+		else if node.Type == ElseClause
+		{
+			// This might be a good place for some kind of coalesce operator
+			let block: mut Semantic_Node? = node.FirstChildOfType(Block);
+			if block =/= none
+			{
+				BuildSymbols(parent, block);
+			}
+			else
+			{
+				BuildSymbols(parent, node.FirstChildOfType(IfStatement));
+			}
+		}
+		else if node.Type == Parameter
+		{
+			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let symbol: Symbol = new Symbol(none, name);
+			symbol.Declarations.Add(node);
+			parent.Children.Add(symbol);
+		}
+		else if node.Type == SelfParameter
+		{
+			let name: string = node.FirstChildOfType(SelfKeyword).GetText();
+			let symbol: Symbol = new Symbol(none, name, PrimitiveSymbol);
+			symbol.Declarations.Add(node);
+			parent.Children.Add(symbol);
+		}
+		else if node.Type == ExpressionStatement
+			or node.Type == ReturnStatement
+			or node.Type == BreakStatement
+			or node.Type == ContinueStatement
+			or node.Type == EndOfFileToken
+		{
+			// Ignore these nodes
+		}
+		else
+		{
+			ThrowException("`Symbol_Builder.Build()` unimplemented node type " + node.Type);
+		}
+	}
+
+	private BuildFunctionSymbols(self, parent: Symbol, node: mut Semantic_Node, symbol: Symbol) -> void
+	{
+		symbol.Declarations.Add(node);
+
+		let parameters: mut Semantic_Node = node.FirstChildOfType(ParameterList);
+		for let parameter: mut Semantic_Node in parameters.Parameters()
+		{
+			BuildSymbols(symbol, parameter);
+		}
+
+		let body: mut Semantic_Node = node.FirstChildOfType(Block);
+		BuildSymbols(symbol, body);
+
+		parent.Children.Add(symbol);
+		node.BindSymbol(symbol);
+	}
+
+	/// This builds up a set of symbols that are actually in the Runtime Library
+	/// as if they were part of the current package.
+	///
+	/// TODO this should actually be a separate package
+	private BuildRuntimeLibrarySymbols(self, package: Symbol) -> void
+	{
+		let fakeDeclaration: Semantic_Node = new Semantic_Node(new Syntax_Node(ClassDeclaration, true, none, 0, 0));
+
+		package.Children.Add(new Symbol(package, "resource_manager"));
+
+		let system: Symbol = new Symbol(package, "System");
+		package.Children.Add(system);
+
+		let collections: Symbol = new Symbol(system, "Collections");
+		system.Children.Add(collections);
+
+		let list: mut Symbol = new Symbol(system, "List");
+		list.Declarations.Add(fakeDeclaration);
+		collections.Children.Add(list);
+
+		let console: Symbol = new Symbol(system, "Console");
+		system.Children.Add(console);
+
+		let consoleClass: mut Symbol = new Symbol(system, "Console");
+		consoleClass.Declarations.Add(fakeDeclaration);
+		console.Children.Add(consoleClass);
+
+		let arguments: mut Symbol = new Symbol(system, "Arguments");
+		arguments.Declarations.Add(fakeDeclaration);
+		console.Children.Add(arguments);
+
+		let io: Symbol = new Symbol(system, "IO");
+		system.Children.Add(io);
+
+		let fileReader: mut Symbol = new Symbol(system, "File_Reader");
+		fileReader.Declarations.Add(fakeDeclaration);
+		io.Children.Add(fileReader);
+
+		let fileWriter: mut Symbol = new Symbol(system, "File_Writer");
+		fileWriter.Declarations.Add(fakeDeclaration);
+		io.Children.Add(fileWriter);
+
+		let text: Symbol = new Symbol(system, "Text");
+		system.Children.Add(text);
+
+		let stringBuilder: mut Symbol = new Symbol(text, "String_Builder");
+		stringBuilder.Declarations.Add(fakeDeclaration);
+		text.Children.Add(stringBuilder);
+	}
+}

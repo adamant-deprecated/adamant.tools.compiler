@@ -1,0 +1,62 @@
+public class Symbol
+{
+	public let Parent: Symbol?;
+	public let Name: string;
+	public let Type: int;
+	public let Declarations: mut System.Collections.List<Semantic_Node>;
+	public let Children: mut System.Collections.List<Symbol>;
+	public let IsPrimitive: bool;
+
+	public new(parent: Symbol?, name: string)
+	{
+		Parent = parent;
+		Name = name;
+		Type = IdentifierSymbol;
+		Declarations = new System.Collections.List<Semantic_Node>();
+		Children = new System.Collections.List<Symbol>();
+		IsPrimitive = false;
+	}
+
+	public new(parent: Symbol?, name: string, type: int)
+	{
+		Parent = parent;
+		Name = name;
+		Type = type;
+		Declarations = new System.Collections.List<Semantic_Node>();
+		Children = new System.Collections.List<Symbol>();
+		IsPrimitive = false;
+	}
+
+	// TODO use a named constructor for this
+	public new(name: string)
+	{
+		Parent = none;
+		Name = name;
+		Type = PrimitiveSymbol;
+		Declarations = new System.Collections.List<Semantic_Node>();
+		Children = new System.Collections.List<Symbol>();
+		IsPrimitive = true;
+	}
+
+	// TODO change to operator []
+	public Get(self, name: string, type: int) -> Symbol?
+	{
+		for let child: Symbol in Children
+		{
+			if child.Name == name and child.Type == type
+			{
+				return child;
+			}
+		}
+		return none;
+	}
+
+	public IsValueType(self) -> bool
+	{
+		if |Declarations| == 0  { ThrowException("Could not determine if `" + Name+ "` was a value type. No declarations."); }
+		let declaration: Semantic_Node = Declarations[0]; // TODO assuming there is only one for now
+		if declaration.Type == ClassDeclaration { return false; }
+		else if declaration.Type == StructDeclaration { return true; }
+		else { ThrowException("Could not determine if `" + Name + "` was a value type. Declaration of type " + declaration.Type); }
+	}
+}

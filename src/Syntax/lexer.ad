@@ -1,7 +1,0 @@
-public class Lexer // TODO change immutable class name to snake_case when supported
-{
-	public Analyze(self, source: Source_Text) -> mut Token_Stream
-	{
-		return new Token_Stream(source);
-	}
-}

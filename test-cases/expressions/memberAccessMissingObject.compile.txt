@@ -1,0 +1,3 @@
+65
+test-cases/expressions/memberAccessMissingObject.ad:3:5 Error:
+  Missing token of type 27

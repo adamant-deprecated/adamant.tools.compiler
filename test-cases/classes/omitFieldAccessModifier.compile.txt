@@ -1,0 +1,3 @@
+65
+test-cases/classes/omitFieldAccessModifier.ad:3:5 Error:
+  Missing token of type 102

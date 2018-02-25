@@ -1,4 +1,4 @@
-public Compile(sources: System.Collections.List<Source_Text>) -> Package
+public compile(sources: System.Collections.List<Source_Text>) -> Package
 {
 	let parser: Parser = new Parser();
 	let packageSyntax: Syntax_Node = parser.ParsePackage(sources);
@@ -7,7 +7,7 @@ public Compile(sources: System.Collections.List<Source_Text>) -> Package
 	return package;
 }
 
-public Write(console: mut System.Console.Console, diagnostics: System.Collections.List<Diagnostic>) -> void
+public write(console: mut System.Console.Console, diagnostics: System.Collections.List<Diagnostic>) -> void
 {
 	for let diagnostic: Diagnostic in diagnostics
 	{
@@ -25,7 +25,7 @@ public Write(console: mut System.Console.Console, diagnostics: System.Collection
 	}
 }
 
-public HasErrors(diagnostics: System.Collections.List<Diagnostic>) -> bool
+public has_errors(diagnostics: System.Collections.List<Diagnostic>) -> bool
 {
 	for let diagnostic: Diagnostic in diagnostics
 	{
@@ -84,7 +84,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 		// else should be impossible
 	}
 
-	if(verbose)
+	if verbose
 	{
 		console.WriteLine("Adamant Compiler v0.1.0");
 	}
@@ -98,17 +98,17 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	let resources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
 	if |resourceFilePaths| > 0
 	{
-		if(verbose)
+		if verbose
 		{
 			console.WriteLine("Reading Resources:");
 		}
 		for let resourceFilePath: string in resourceFilePaths
 		{
-			if(verbose)
+			if verbose
 			{
 				console.WriteLine("  " + resourceFilePath);
 			}
-			resources.Add(ReadSource(resourceFilePath));
+			resources.Add(read_source(resourceFilePath));
 		}
 	}
 
@@ -124,15 +124,15 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 		{
 			console.WriteLine("  " + sourceFilePath);
 		}
-		sources.Add(ReadSource(sourceFilePath));
+		sources.Add(read_source(sourceFilePath));
 	}
 
-	let package: Package = Compile(sources);
+	let package: Package = compile(sources);
 
 	let diagnostics: System.Collections.List<Diagnostic> = package.AllDiagnostics();
-	Write(console, diagnostics);
+	write(console, diagnostics);
 
-	if HasErrors(diagnostics)
+	if has_errors(diagnostics)
 	{
 		return DataError;
 	}
@@ -141,7 +141,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	let translated: string = emitter.Emit();
 
 	// Write output
-	if(verbose)
+	if verbose
 	{
 		console.Write("Output: ");
 		console.WriteLine(outputFilePath);
@@ -159,7 +159,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	index = outputDirPath.LastIndexOf('\\');
 	if index =/= -1
 		{ outputDirPath = outputDirPath.Substring(0, index+1); }
-	if(verbose)
+	if verbose
 	{
 		console.Write("Outputting RuntimeLibrary to: ");
 		console.WriteLine(outputDirPath);
@@ -174,7 +174,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 	return Success;
 }
 
-public ReadSource(path: string) -> Source_Text
+public read_source(path: string) -> Source_Text
 {
 	// TODO should be `mut new` or `new mut`, whichever is decided to be the correct syntax
 	let file: mut System.IO.File_Reader = new System.IO.File_Reader(path);

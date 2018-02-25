@@ -1,0 +1,6 @@
+public Main(console: mut System.Console.Console) -> void
+{
+	// TODO resource_manager should be in a namespace
+	console.Write(resource_manager.GetString("hello.rsrc"));
+	console.Write(resource_manager.GetString("world.rsrc"));
+}

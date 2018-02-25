@@ -1,7 +1,0 @@
-65
-test-cases/functions/SemicolonAfterReturnType.ad:1:22 Error:
-  Missing token of type 1
-test-cases/functions/SemicolonAfterReturnType.ad:1:22 Error:
-  Missing token of type 27
-test-cases/functions/SemicolonAfterReturnType.ad:4:1 Error:
-  Missing token of type 2

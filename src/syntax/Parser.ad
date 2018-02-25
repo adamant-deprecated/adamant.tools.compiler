@@ -1,0 +1,19 @@
+public class Parser
+{
+	public new()
+	{
+	}
+
+	public ParsePackage(self, sources: System.Collections.List<Source_Text>) -> Syntax_Node
+	{
+		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+		let lexer: Lexer = new Lexer();
+		for let source: Source_Text in sources
+		{
+			let tokenStream: mut Token_Stream = lexer.Analyze(source);
+			let compilationUnitParser: mut Compilation_Unit_Parser = new Compilation_Unit_Parser(tokenStream);
+			children.Add(compilationUnitParser.Parse());
+		}
+		return new Syntax_Node(PackageNode, children);
+	}
+}
