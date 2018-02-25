@@ -409,7 +409,7 @@ p_int const Arrow_ = p_int(16);
 p_int const MinusEquals_ = p_int(17);
 p_int const Minus_ = p_int(18);
 p_int const Slash_ = p_int(19);
-p_int const LessThanGreaterThan_ = p_int(20);
+p_int const EqualsSlashEquals_ = p_int(20);
 p_int const LessThanEquals_ = p_int(21);
 p_int const LessThan_ = p_int(22);
 p_int const GreaterThanEquals_ = p_int(23);
@@ -517,7 +517,6 @@ p_int const MultiplyExpression_ = p_int(124);
 p_int const DivideExpression_ = p_int(125);
 p_int const NoneKeyword_ = p_int(126);
 p_int const StructDeclaration_ = p_int(127);
-p_int const EqualsSlashEquals_ = p_int(128);
 p_int const Lexing_ = p_int(1);
 p_int const Parsing_ = p_int(2);
 p_int const Analysis_ = p_int(3);
@@ -2032,13 +2031,6 @@ auto ::CompilationUnitParser_::ParseExpression_(p_int const minPrecedence_) -> :
 			children_->Add_(ExpectToken_(EqualsEquals_));
 			expressionType_ = EqualExpression_;
 		}
-		else if (LogicalAnd(token_->Type_->op_Equal(LessThanGreaterThan_), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(4)); }).Value)
-		{
-			precedence_ = p_int(4);
-			leftAssociative_ = p_bool(true);
-			children_->Add_(ExpectToken_(LessThanGreaterThan_));
-			expressionType_ = NotEqualExpression_;
-		}
 		else if (LogicalAnd(token_->Type_->op_Equal(EqualsSlashEquals_), [&] { return minPrecedence_->op_LessThanOrEqual(p_int(4)); }).Value)
 		{
 			precedence_ = p_int(4);
@@ -2792,11 +2784,6 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *
 		}
 		else if (curChar_->op_Equal(p_code_point('<')).Value)
 		{
-			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('>')); }).Value)
-			{
-				return NewOperator_(LessThanGreaterThan_, p_int(2));
-			}
-
 			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
 				return NewOperator_(LessThanEquals_, p_int(2));
