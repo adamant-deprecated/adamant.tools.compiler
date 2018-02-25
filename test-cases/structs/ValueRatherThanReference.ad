@@ -1,0 +1,14 @@
+// TODO add `mut` keyword
+public class reference_type
+{
+}
+
+public struct value_type
+{
+}
+
+public Main() -> void
+{
+	let r: reference_type = new reference_type();
+	let v: value_type = new value_type();
+}

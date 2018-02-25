@@ -47,9 +47,9 @@ public class Emitter // TODO change to snake_case when possible
 			+ Definitions.ToString();
 	}
 
+	// TODO move this logic into Semantics namespace
 	private IsValueType(type: Semantic_Node) -> bool
 	{
-		// Here we assume that they follow convention and value types start lowercase
 		if type.Type == PredefinedType
 		{
 			return true;
@@ -61,18 +61,17 @@ public class Emitter // TODO change to snake_case when possible
 		}
 		if type.Type == QualifiedName
 		{
-			// The last child is the real type
-			return IsValueType(type.Children[|type.Children| - 1]);
+			// The right hand side is the real type
+			return IsValueType(type.Children[2]);
 		}
 		if type.Type == GenericName
 		{
-			let firstChar: code_point = type.FirstChildOfType(IdentifierName).FirstChildOfType(Identifier).GetText()[0];
-			return firstChar >= 'a' and firstChar <= 'z';
+			return IsValueType(type.FirstChildOfType(IdentifierName));
 		}
 		if type.Type == IdentifierName
 		{
-			let firstChar: code_point = type.FirstChildOfType(Identifier).GetText()[0];
-			return firstChar >= 'a' and firstChar <= 'z';
+			if type.Symbol == none { ThrowException("No symbol on identifier name `" + type.GetText() + "`"); }
+			return type.Symbol.IsValueType();
 		}
 		if type.Type == MutableType
 		{
@@ -80,7 +79,7 @@ public class Emitter // TODO change to snake_case when possible
 		}
 
 		// TODO this is not supposed to be reachable
-		ThrowException("Unable to parse value type. Syntax node type "+type.Type);
+		ThrowException("Unable to parse value type. Syntax node type " + type.Type);
 		return true; // avoid compiler warning about possibly reaching end of function
 	}
 

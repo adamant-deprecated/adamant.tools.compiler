@@ -13,7 +13,7 @@ public class Semantic_Node
 	public let Length: uint; // TODO is this ByteLength?
 	public let Children: System.Collections.List<mut Semantic_Node>;
 	public let Diagnostics: mut System.Collections.List<Diagnostic>;
-	public var Symbol: Symbol;
+	public var Symbol: Symbol?;
 
 	public new(syntax: Syntax_Node)
 	{
@@ -50,7 +50,8 @@ public class Semantic_Node
 
 	public BindSymbol(mut self, symbol: Symbol) -> void
 	{
-		if Symbol <> none { ThrowException("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol"); }
+		if Symbol <> none { ThrowException("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol on `" + GetText() + "`"); }
+		if symbol == none { ThrowException("`Semantic_Node.BindSymbol(..)` called without a symbol on `" + GetText() + "`"); }
 		Symbol = symbol;
 	}
 

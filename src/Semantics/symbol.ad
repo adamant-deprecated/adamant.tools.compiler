@@ -37,4 +37,26 @@ public class Symbol // TODO change immutable class name to snake_case when suppo
 		Children = new System.Collections.List<Symbol>();
 		IsPrimitive = true;
 	}
+
+	// TODO change to operator []
+	public Get(self, name: string, type: int) -> Symbol?
+	{
+		for let child: Symbol in Children
+		{
+			if child.Name == name and child.Type == type
+			{
+				return child;
+			}
+		}
+		return none;
+	}
+
+	public IsValueType(self) -> bool
+	{
+		if |Declarations| == 0  { ThrowException("Could not determine if `" + Name+ "` was a value type. No declarations."); }
+		let declaration: Semantic_Node = Declarations[0]; // TODO assuming there is only one for now
+		if declaration.Type == ClassDeclaration { return false; }
+		else if declaration.Type == StructDeclaration { return true; }
+		else { ThrowException("Could not determine if `" + Name + "` was a value type. Declaration of type " + declaration.Type); }
+	}
 }
