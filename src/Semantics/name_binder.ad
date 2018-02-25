@@ -25,8 +25,9 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 			Bind(parameters, scope);
 			let returnType: mut Semantic_Node = node.Children[4];
 			Bind(returnType, scope);
+			// TODO make a new scope with the parameters in it
 			let body: mut Semantic_Node = node.FirstChildOfType(Block);
-			// TODO create scope and start binding the body
+			Bind(body, scope);
 		}
 		else if node.Type == ParameterList
 		{
@@ -59,8 +60,9 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 		{
 			let parameters: mut Semantic_Node = node.FirstChildOfType(ParameterList);
 			Bind(parameters, scope);
+			// TODO make a new scope with the parameters in it
 			let body: mut Semantic_Node = node.FirstChildOfType(Block);
-			// TODO create scope and start binding the body
+			Bind(body, scope);
 		}
 		else if node.Type == VariableDeclaration
 		{
@@ -113,7 +115,55 @@ public class Name_Binder // TODO change immutable class name to snake_case when 
 				node.BindSymbol(symbol);
 			}
 		}
+		else if node.Type == Block
+		{
+			for let statement: mut Semantic_Node in node.Statements()
+			{
+				Bind(statement, scope);
+			}
+		}
+		else if node.Type == LoopStatement
+			or node.Type == WhileStatement
+			or node.Type == DoWhileStatement
+		{
+			Bind(node.FirstChildOfType(Block), scope);
+		}
+		else if node.Type == ForStatement
+		{
+			Bind(node.FirstChildOfType(VariableDeclaration), scope);
+			Bind(node.FirstChildOfType(Block), scope);
+		}
+		else if node.Type == LocalDeclarationStatement
+		{
+			Bind(node.FirstChildOfType(VariableDeclaration), scope);
+		}
+		else if node.Type == IfStatement
+		{
+			Bind(node.FirstChildOfType(Block), scope);
+			let elseClause: mut Semantic_Node? = node.FirstChildOfType(ElseClause);
+			if elseClause <> none
+			{
+				Bind(elseClause, scope);
+			}
+		}
+		else if node.Type == ElseClause
+		{
+			// This might be a good place for some kind of coalesce operator
+			let block: mut Semantic_Node? = node.FirstChildOfType(Block);
+			if block <> none
+			{
+				Bind(block, scope);
+			}
+			else
+			{
+				Bind(node.FirstChildOfType(IfStatement), scope);
+			}
+		}
 		else if node.Type == NumericLiteralExpression
+			or node.Type == ExpressionStatement
+			or node.Type == ReturnStatement
+			or node.Type == BreakStatement
+			or node.Type == ContinueStatement
 			or node.Type == EndOfFileToken
 		{
 			// Ignore these nodes
