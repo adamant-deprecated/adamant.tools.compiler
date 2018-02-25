@@ -1032,6 +1032,7 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 		::Semantic_Node_ *const returnType_ = node_->Children_->op_Element(p_int(4));
 		Bind_(returnType_, scope_);
 		::Semantic_Node_ *const body_ = node_->FirstChildOfType_(Block_);
+		Bind_(body_, scope_);
 	}
 	else if (node_->Type_->op_Equal(ParameterList_).Value)
 	{
@@ -1062,6 +1063,7 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 		::Semantic_Node_ *const parameters_ = node_->FirstChildOfType_(ParameterList_);
 		Bind_(parameters_, scope_);
 		::Semantic_Node_ *const body_ = node_->FirstChildOfType_(Block_);
+		Bind_(body_, scope_);
 	}
 	else if (node_->Type_->op_Equal(VariableDeclaration_).Value)
 	{
@@ -1115,7 +1117,48 @@ auto ::Name_Binder_::Bind_(::Semantic_Node_ *const node_, ::Binding_Scope_ const
 			node_->BindSymbol_(symbol_);
 		}
 	}
-	else if (LogicalOr(node_->Type_->op_Equal(NumericLiteralExpression_), [&] { return node_->Type_->op_Equal(EndOfFileToken_); }).Value)
+	else if (node_->Type_->op_Equal(Block_).Value)
+	{
+		for (::Semantic_Node_ *const statement_ : *(node_->Statements_()))
+		{
+			Bind_(statement_, scope_);
+		}
+	}
+	else if (LogicalOr(LogicalOr(node_->Type_->op_Equal(LoopStatement_), [&] { return node_->Type_->op_Equal(WhileStatement_); }), [&] { return node_->Type_->op_Equal(DoWhileStatement_); }).Value)
+	{
+		Bind_(node_->FirstChildOfType_(Block_), scope_);
+	}
+	else if (node_->Type_->op_Equal(ForStatement_).Value)
+	{
+		Bind_(node_->FirstChildOfType_(VariableDeclaration_), scope_);
+		Bind_(node_->FirstChildOfType_(Block_), scope_);
+	}
+	else if (node_->Type_->op_Equal(LocalDeclarationStatement_).Value)
+	{
+		Bind_(node_->FirstChildOfType_(VariableDeclaration_), scope_);
+	}
+	else if (node_->Type_->op_Equal(IfStatement_).Value)
+	{
+		Bind_(node_->FirstChildOfType_(Block_), scope_);
+		::Semantic_Node_ *const elseClause_ = node_->FirstChildOfType_(ElseClause_);
+		if (elseClause_->op_NotEqual(::None).Value)
+		{
+			Bind_(elseClause_, scope_);
+		}
+	}
+	else if (node_->Type_->op_Equal(ElseClause_).Value)
+	{
+		::Semantic_Node_ *const block_ = node_->FirstChildOfType_(Block_);
+		if (block_->op_NotEqual(::None).Value)
+		{
+			Bind_(block_, scope_);
+		}
+		else
+		{
+			Bind_(node_->FirstChildOfType_(IfStatement_), scope_);
+		}
+	}
+	else if (LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(node_->Type_->op_Equal(NumericLiteralExpression_), [&] { return node_->Type_->op_Equal(ExpressionStatement_); }), [&] { return node_->Type_->op_Equal(ReturnStatement_); }), [&] { return node_->Type_->op_Equal(BreakStatement_); }), [&] { return node_->Type_->op_Equal(ContinueStatement_); }), [&] { return node_->Type_->op_Equal(EndOfFileToken_); }).Value)
 	{
 	}
 	else
