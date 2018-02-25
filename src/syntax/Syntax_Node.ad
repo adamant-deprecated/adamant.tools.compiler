@@ -142,6 +142,7 @@ public class Syntax_Node
 	public new(type: int, source: Source_Text, start: uint, length: uint)
 	{
 		Type = type;
+		IsMissing = false;
 		Source = source;
 		Start = start;
 		Length = length;
@@ -163,6 +164,7 @@ public class Syntax_Node
 	public new(type: int, child: Syntax_Node)
 	{
 		Type = type;
+		IsMissing = child.IsMissing;
 		Source = child.Source;
 		Start = child.Start;
 		Length = child.Length;
@@ -176,6 +178,7 @@ public class Syntax_Node
 	public new(type: int, children: System.Collections.List<Syntax_Node>)
 	{
 		Type = type;
+		IsMissing = false;
 		// TODO enforce that list is not empty, for now we rely on `children[0]` failing
 		Source = children[0].Source;
 		Start = children[0].Start;
@@ -237,7 +240,7 @@ public class Syntax_Node
 }
 
 // TODO make this a named constructor
-public new_Syntax_Node_Missing(type: int, source: Source_Text, start: uint) -> Syntax_Node
+public new_syntax_node_missing(type: int, source: Source_Text, start: uint) -> Syntax_Node
 {
 	let node: mut Syntax_Node = new Syntax_Node(type, true, source, start, 0);
 	let span: Text_Span = new Text_Span(start, 0);

@@ -286,8 +286,6 @@ inline void THROW_EXCEPTION_(const p_string& value)
 	throw std::runtime_error(value.Buffer);
 }
 
-inline const auto& ThrowException_ = THROW_EXCEPTION_;
-
 namespace system_
 {
 	namespace Collections_

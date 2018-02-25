@@ -35,12 +35,12 @@ public class Compilation_Unit_Parser
 	{
 		if token == none
 		{
-			return new_Syntax_Node_Missing(tokenType,  tokenStream.Source, tokenStream.Source.ByteLength());
+			return new_syntax_node_missing(tokenType, tokenStream.Source, tokenStream.Source.ByteLength());
 		}
 
 		if token == none or token.Type =/= tokenType
 		{
-			return new_Syntax_Node_Missing(tokenType,  tokenStream.Source, token.Start);
+			return new_syntax_node_missing(tokenType,  tokenStream.Source, token.Start);
 		}
 
 		let node: Syntax_Node? = token;

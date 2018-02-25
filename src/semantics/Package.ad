@@ -2,14 +2,14 @@
 public class Package
 {
 	public let CompilationUnits: System.Collections.List<mut Semantic_Node>;
-	public let Symbol: Symbol;
+	public let symbol: Symbol;
 	public let PrimitiveTypes: Primitive_Types;
 
 	// TODO constructor not adequately encapsulated to enforce invariants
 	public new(compilationUnits: System.Collections.List<mut Semantic_Node>, primitiveTypes: Primitive_Types, symbol: Symbol)
 	{
 		CompilationUnits = compilationUnits;
-		Symbol = symbol;
+		self.symbol = symbol;
 		PrimitiveTypes = primitiveTypes;
 	}
 

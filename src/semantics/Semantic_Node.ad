@@ -13,7 +13,7 @@ public class Semantic_Node
 	public let Length: uint; // TODO is this ByteLength?
 	public let Children: System.Collections.List<mut Semantic_Node>;
 	public let Diagnostics: mut System.Collections.List<Diagnostic>;
-	public var Symbol: Symbol?;
+	public var symbol: Symbol?;
 
 	public new(syntax: Syntax_Node)
 	{
@@ -35,10 +35,10 @@ public class Semantic_Node
 			diagnostics.Add(diagnostic);
 		}
 		Diagnostics = diagnostics;
-		Symbol = none;
+		symbol = none;
 	}
 
-	public GetTextSpan(self) -> Text_Span
+	public get_text_span(self) -> Text_Span
 	{
 		return new Text_Span(Start, Length);
 	}
@@ -50,9 +50,9 @@ public class Semantic_Node
 
 	public BindSymbol(mut self, symbol: Symbol) -> void
 	{
-		if Symbol =/= none { ThrowException("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol on `" + GetText() + "`"); }
-		if symbol == none { ThrowException("`Semantic_Node.BindSymbol(..)` called without a symbol on `" + GetText() + "`"); }
-		Symbol = symbol;
+		if self.symbol =/= none { THROW_EXCEPTION("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol on `" + GetText() + "`"); }
+		if symbol == none { THROW_EXCEPTION("`Semantic_Node.BindSymbol(..)` called without a symbol on `" + GetText() + "`"); }
+		self.symbol = symbol;
 	}
 
 	public FirstChildOfType(self, type: int) -> mut Semantic_Node?

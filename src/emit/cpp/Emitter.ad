@@ -70,8 +70,8 @@ public class Emitter
 		}
 		if type.Type == IdentifierName
 		{
-			if type.Symbol == none { ThrowException("No symbol on identifier name `" + type.GetText() + "`"); }
-			return type.Symbol.is_value_type();
+			if type.symbol == none { THROW_EXCEPTION("No symbol on identifier name `" + type.GetText() + "`"); }
+			return type.symbol.is_value_type();
 		}
 		if type.Type == MutableType
 		{
@@ -79,7 +79,7 @@ public class Emitter
 		}
 
 		// TODO this is not supposed to be reachable
-		ThrowException("Unable to parse value type. Syntax node type " + type.Type);
+		THROW_EXCEPTION("Unable to parse value type. Syntax node type " + type.Type);
 		return true; // avoid compiler warning about possibly reaching end of function
 	}
 

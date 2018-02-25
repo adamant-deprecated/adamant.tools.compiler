@@ -1,0 +1,3 @@
+65
+test-cases/localVariables/notDeclared.ad:3:12 Error:
+  Could not resolve name `result`

@@ -1,34 +1,47 @@
 public class Binding_Scope
 {
-	private let ContainingScope: Binding_Scope?;
-	private let Symbols: System.Collections.List<Symbol>;
-	private let Primitives: Primitive_Types;
+	private let containing_scope: Binding_Scope?;
+	private let symbols: System.Collections.List<Symbol>;
+	protected let primitives: Primitive_Types;
 
-	public new(containingScope: Binding_Scope?, symbols: System.Collections.List<Symbol>, primitives: Primitive_Types)
+	public new(symbols: System.Collections.List<Symbol>, primitives: Primitive_Types)
 	{
-		ContainingScope = containingScope;
-		Symbols = symbols;
-		Primitives = primitives;
+		self.containing_scope = none;
+		self.symbols = symbols;
+		self.primitives = primitives;
+	}
+
+	public new(containing_scope: Binding_Scope, symbols: System.Collections.List<Symbol>)
+	{
+		self.containing_scope = containing_scope;
+		self.symbols = symbols;
+		self.primitives = containing_scope.primitives;
 	}
 
 	public GetPrimitive(self, name: string) -> Symbol?
 	{
-		return Primitives.Get(name);
+		return primitives.Get(name);
 	}
 
 	public Lookup(self, name: string) -> Symbol?
 	{
 		return Lookup(name, IdentifierSymbol);
 	}
-	public Lookup(self, name: string, type: int) -> Symbol?
 
+	public Lookup(self, name: string, type: int) -> Symbol?
 	{
-		for let symbol: Symbol in Symbols
+		for let symbol: Symbol in symbols
 		{
 			if symbol.Name == name and symbol.Type == type
 			{
 				return symbol;
 			}
+		}
+
+		// TODO return containing_scope?.Lookup(name, type);
+		if containing_scope =/= none
+		{
+			return containing_scope.Lookup(name, type);
 		}
 		return none;
 	}

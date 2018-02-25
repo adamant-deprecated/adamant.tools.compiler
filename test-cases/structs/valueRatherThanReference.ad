@@ -1,4 +1,4 @@
-public class Refernce_Type
+public class Reference_Type
 {
 }
 
@@ -8,6 +8,6 @@ public struct Value_Type
 
 public Main() -> void
 {
-	let r: Refernce_Type = new Refernce_Type();
+	let r: Reference_Type = new Reference_Type();
 	let v: Value_Type = new Value_Type();
 }

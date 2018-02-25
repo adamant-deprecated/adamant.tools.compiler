@@ -1,77 +1,81 @@
 public class Name_Binder
 {
-	public Bind(self, package: Package) -> void
+	public bind(self, package: Package) -> void
 	{
-		let globalScope: Binding_Scope = new Binding_Scope(none, package.Symbol.Children, package.PrimitiveTypes);
-		for let compilationUnit: mut Semantic_Node in package.CompilationUnits
+		let global_scope: Binding_Scope = new Binding_Scope(package.symbol.Children, package.PrimitiveTypes);
+		for let compilation_unit: mut Semantic_Node in package.CompilationUnits
 		{
-			Bind(compilationUnit, globalScope);
+			bind(compilation_unit, global_scope);
 		}
 	}
 
-	private Bind(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
+	private bind(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
 	{
 		if node.Type == CompilationUnit
 		{
 			for let child: mut Semantic_Node in node.Children
 			{
-				Bind(child, scope);
+				bind(child, scope);
 			}
 		}
 		else if node.Type == FunctionDeclaration
 			or node.Type == MethodDeclaration
 		{
 			let parameters: mut Semantic_Node = node.FirstChildOfType(ParameterList);
-			Bind(parameters, scope);
-			let returnType: mut Semantic_Node = node.Children[4];
-			BindType(returnType, scope);
-			// TODO make a new scope with the parameters in it
+			bind(parameters, scope);
+
+			let return_type: mut Semantic_Node = node.Children[4];
+			bind_type(return_type, scope);
+
+			let function_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.Children);
 			let body: mut Semantic_Node = node.FirstChildOfType(Block);
-			Bind(body, scope);
+			bind(body, function_scope);
 		}
 		else if node.Type == ParameterList
 		{
 			for let parameter: mut Semantic_Node in node.ChildrenOfType(Parameter)
 			{
-				Bind(parameter, scope);
+				bind(parameter, scope);
 			}
 		}
 		else if node.Type == Parameter
 		{
 			let type: mut Semantic_Node = node.Children[|node.Children| - 1];
-			BindType(type, scope);
+			bind_type(type, scope);
 		}
 		else if node.Type == ClassDeclaration
 			or node.Type == StructDeclaration
 		{
+			let type_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.Children);
 			for let member: mut Semantic_Node in node.Members()
 			{
-				Bind(member, scope);
+				bind(member, type_scope);
 			}
 		}
 		else if node.Type == FieldDeclaration
 			or node.Type == GlobalDeclaration
 		{
-			let variableDeclaration: mut Semantic_Node = node.FirstChildOfType(VariableDeclaration);
-			Bind(variableDeclaration, scope);
+			let variable_declaration: mut Semantic_Node = node.FirstChildOfType(VariableDeclaration);
+			bind(variable_declaration, scope);
 
 		}
 		else if node.Type == ConstructorDeclaration
 		{
 			let parameters: mut Semantic_Node = node.FirstChildOfType(ParameterList);
-			Bind(parameters, scope);
-			// TODO make a new scope with the parameters in it
+			bind(parameters, scope);
+
+			let constructor_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.Children);
 			let body: mut Semantic_Node = node.FirstChildOfType(Block);
-			Bind(body, scope);
+			bind(body, constructor_scope);
 		}
 		else if node.Type == VariableDeclaration
 		{
 			let type: mut Semantic_Node = node.Children[3];
-			BindType(type, scope);
+			bind_type(type, scope);
 			if |node.Children| == 6
 			{
 				let initalizer: mut Semantic_Node = node.Children[5];
-				Bind(initalizer, scope);
+				bind(initalizer, scope);
 			}
 		}
 		else if node.Type == EnumDeclaration
@@ -83,40 +87,40 @@ public class Name_Binder
 		{
 			for let statement: mut Semantic_Node in node.Statements()
 			{
-				Bind(statement, scope);
+				bind(statement, scope);
 			}
 		}
 		else if node.Type == LoopStatement
 		{
-			Bind(node.FirstChildOfType(Block), scope);
+			bind(node.FirstChildOfType(Block), scope);
 		}
 		else if node.Type == WhileStatement
 		{
-			Bind(node.Children[1], scope); // condition expression
-			Bind(node.FirstChildOfType(Block), scope);
+			bind(node.Children[1], scope); // condition expression
+			bind(node.FirstChildOfType(Block), scope);
 		}
 		else if node.Type == DoWhileStatement
 		{
-			Bind(node.FirstChildOfType(Block), scope);
-			Bind(node.Children[3], scope); // condition expression
+			bind(node.FirstChildOfType(Block), scope);
+			bind(node.Children[3], scope); // condition expression
 		}
 		else if node.Type == ForStatement
 		{
-			Bind(node.FirstChildOfType(VariableDeclaration), scope);
-			Bind(node.FirstChildOfType(Block), scope);
+			bind(node.FirstChildOfType(VariableDeclaration), scope);
+			bind(node.FirstChildOfType(Block), scope);
 		}
 		else if node.Type == LocalDeclarationStatement
 		{
-			Bind(node.FirstChildOfType(VariableDeclaration), scope);
+			bind(node.FirstChildOfType(VariableDeclaration), scope);
 		}
 		else if node.Type == IfStatement
 		{
-			Bind(node.Children[1], scope); // condition expression
-			Bind(node.FirstChildOfType(Block), scope);
+			bind(node.Children[1], scope); // condition expression
+			bind(node.FirstChildOfType(Block), scope);
 			let elseClause: mut Semantic_Node? = node.FirstChildOfType(ElseClause);
 			if elseClause =/= none
 			{
-				Bind(elseClause, scope);
+				bind(elseClause, scope);
 			}
 		}
 		else if node.Type == ElseClause
@@ -125,34 +129,34 @@ public class Name_Binder
 			let block: mut Semantic_Node? = node.FirstChildOfType(Block);
 			if block =/= none
 			{
-				Bind(block, scope);
+				bind(block, scope);
 			}
 			else
 			{
-				Bind(node.FirstChildOfType(IfStatement), scope);
+				bind(node.FirstChildOfType(IfStatement), scope);
 			}
 		}
 		else if node.Type == ExpressionStatement
 		{
-			Bind(node.Children[0], scope);
+			bind(node.Children[0], scope);
 		}
 		else if node.Type == ReturnStatement
 		{
 			let child: mut Semantic_Node = node.Children[1];
 			if child.Type =/= Semicolon
-				{ Bind(child, scope); }
+				{ bind(child, scope); }
 		}
 		else if node.Type == NewExpression
 		{
-			BindType(node.Children[1], scope); // Type
-			Bind(node.Children[2], scope); // Call Arguments
+			bind_type(node.Children[1], scope); // Type
+			bind(node.Children[2], scope); // Call Arguments
 		}
 		else if node.Type == NotExpression
 			or node.Type == ParenthesizedExpression
 			or node.Type == MagnitudeExpression
 			or node.Type == NegateExpression
 		{
-			Bind(node.Children[1], scope);
+			bind(node.Children[1], scope);
 		}
 		else if node.Type == AssignmentExpression
 			or node.Type == AndExpression
@@ -167,18 +171,18 @@ public class Name_Binder
 			or node.Type == MultiplyExpression
 			or node.Type == DivideExpression
 		{
-			Bind(node.Children[0], scope); // lhs
-			Bind(node.Children[2], scope); // rhs
+			bind(node.Children[0], scope); // lhs
+			bind(node.Children[2], scope); // rhs
 		}
 		else if node.Type == MemberAccessExpression
 		{
-			Bind(node.Children[0], scope); // Before dot
+			bind(node.Children[0], scope); // Before dot
 			// TODO bind member, need type of expression to left
 		}
 		else if node.Type == InvocationExpression
 		{
-			Bind(node.Children[0], scope); // Thing Being Invoked
-			Bind(node.Children[1], scope); // Argument List
+			bind(node.Children[0], scope); // Thing Being Invoked
+			bind(node.Children[1], scope); // Argument List
 		}
 		else if node.Type == ArgumentList
 		{
@@ -188,8 +192,22 @@ public class Name_Binder
 					and child.Type =/= Comma
 					and child.Type =/= RightParen
 				{
-					Bind(child, scope);
+					bind(child, scope);
 				}
+			}
+		}
+		else if node.Type == IdentifierName
+		{
+			if node.IsMissing { return; }
+			let name: string = node.GetText();
+			let symbol: Symbol = scope.Lookup(name);
+			if symbol == none
+			{
+				add_resolution_error(node);
+			}
+			else
+			{
+				node.BindSymbol(symbol);
 			}
 		}
 		else if node.Type == NumericLiteralExpression
@@ -201,53 +219,52 @@ public class Name_Binder
 			or node.Type == FalseLiteralExpression
 			or node.Type == StringLiteralExpression
 			or node.Type == CodePointLiteralExpression
-			or node.Type == IdentifierName // For now, ignore variable references outside known types
 			or node.Type == EndOfFileToken
 		{
 			// Ignore these nodes
 		}
 		else
 		{
-			ThrowException("`Name_Binder.Bind()` unimplemented node type " + node.Type);
+			THROW_EXCEPTION("`Name_Binder.bind()` unimplemented node type " + node.Type);
 		}
 	}
 
-	private BindType(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
+	private bind_type(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
 	{
 		if node.Type == PredefinedType
 		{
 			let name: string = node.Children[0].GetText();
 			let symbol: Symbol = scope.GetPrimitive(name);
-			if symbol == none { ThrowException("`Name_Binder.BindType()` no symbol for primitive type " + name); }
+			if symbol == none { THROW_EXCEPTION("`Name_Binder.bind_type()` no symbol for primitive type " + name); }
 			node.BindSymbol(symbol);
 		}
 		else if node.Type == MutableType
 		{
 			let innerType: mut Semantic_Node = node.Children[1];
-			BindType(innerType, scope);
+			bind_type(innerType, scope);
 		}
 		else if node.Type == OptionalType
 		{
 			let innerType: mut Semantic_Node = node.Children[0];
-			BindType(innerType, scope);
+			bind_type(innerType, scope);
 		}
 		else if node.Type == QualifiedName
 		{
 			let qualifier: mut Semantic_Node = node.Children[0];
-			BindType(qualifier, scope);
+			bind_type(qualifier, scope);
 			// TODO rather than throwing an exception. We should say we can't resolve the subsequent identifiers
-			if qualifier.Symbol == none { ThrowException("`Name_Binder.BindType()` no symbol for qualifier " + qualifier.GetText()); }
+			if qualifier.symbol == none { THROW_EXCEPTION("`Name_Binder.bind_type()` no symbol for qualifier " + qualifier.GetText()); }
 			let name: mut Semantic_Node = node.Children[2];
 			if name.Type == IdentifierName
 			{
-				let symbol: Symbol = qualifier.Symbol.Get(name.GetText(), IdentifierSymbol);
+				let symbol: Symbol = qualifier.symbol.Get(name.GetText(), IdentifierSymbol);
 				name.BindSymbol(symbol);
 				node.BindSymbol(symbol); // Set it on the name as a whole, not just the identifier
 			}
 			else if name.Type == GenericName
 			{
 				let identiferName: mut Semantic_Node = name.FirstChildOfType(IdentifierName);
-				let symbol: Symbol = qualifier.Symbol.Get(identiferName.GetText(), IdentifierSymbol);
+				let symbol: Symbol = qualifier.symbol.Get(identiferName.GetText(), IdentifierSymbol);
 				identiferName.BindSymbol(symbol);
 				node.BindSymbol(symbol); // Set it on the name as a whole, not just the identifier
 
@@ -259,7 +276,7 @@ public class Name_Binder
 					{
 						if typeArgument.Type =/= GreaterThan
 						{
-							BindType(typeArgument, scope);
+							bind_type(typeArgument, scope);
 						}
 					}
 					else if typeArgument.Type == LessThan
@@ -270,16 +287,17 @@ public class Name_Binder
 			}
 			else
 			{
-				ThrowException("Unreachable: `Name_Binder.Bind(..)` name.Type = " + name.Type);
+				THROW_EXCEPTION("Unreachable: `Name_Binder.bind(..)` name.Type = " + name.Type);
 			}
 		}
 		else if node.Type == IdentifierName
 		{
+			if node.IsMissing { return; }
 			let name: string = node.GetText();
-			let symbol: Symbol = scope.Lookup(name);
+			let symbol: Symbol = scope.Lookup(name); // TODO this should be lookup type. Types are separate
 			if symbol == none
 			{
-				node.Add(new Diagnostic(FatalCompilationError, Analysis, node.Source, node.GetTextSpan(), "Could not resolve name `" + name + "`"));
+				add_resolution_error(node);
 			}
 			else
 			{
@@ -288,7 +306,12 @@ public class Name_Binder
 		}
 		else
 		{
-			ThrowException("`Name_Binder.BindType()` unimplemented node type " + node.Type);
+			THROW_EXCEPTION("`Name_Binder.bind_type()` unimplemented node type " + node.Type);
 		}
+	}
+
+	private add_resolution_error(node: Semantic_Node) -> void
+	{
+		node.Add(new Diagnostic(FatalCompilationError, Analysis, node.Source, node.get_text_span(), "Could not resolve name `" + node.GetText() + "`"));
 	}
 }
