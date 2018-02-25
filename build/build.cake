@@ -293,6 +293,33 @@ Task("CI")
 	.IsDependentOn("All")
 	.IsDependentOn("Commit-Translated");
 
+Task("Clean-Translated")
+	.Does(() =>
+	{
+		Warning("Run 'git fetch --tags' first");
+		var tags = GitTags(".")
+			.Select(t => t.FriendlyName)
+			.Where(t => t.StartsWith("translated/"))
+			.ToList();
+		Information("Found {0} translated tags", tags.Count);
+		var prefixLength = "translated/".Length;
+		var deleteTags = tags
+			.Where(t => Command("git", string.Format("cat-file -e {0}^{{commit}}", t.Substring(prefixLength))).Test().ExitCode != 0)
+			.ToList();
+		Information("Found {0} tags to delete:", deleteTags.Count);
+		foreach(var tag in deleteTags)
+		{
+			Information("    {0}", tag);
+		}
+		Information("Commands to delete and refetch 'translated/*'");
+		foreach(var tag in deleteTags)
+		{
+			Warning("git push --delete origin {0}", tag);
+		}
+		Warning("git tag -l 'translated/*' | xargs git tag -d");
+		Warning("git fetch -t");
+	});
+
 RunTarget(target);
 
 void Test(string version)
@@ -495,6 +522,7 @@ public class ConsoleCommand
 			{
 				Arguments = Arguments,
 				RedirectStandardOutput = true,
+
 			});
 		process.WaitForExit();
 		return new CommandResult(context, process.GetExitCode(), process.GetStandardOutput());
