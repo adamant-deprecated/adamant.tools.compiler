@@ -188,6 +188,7 @@ public class Symbol_Builder
 
 		package.Children.Add(new Symbol(package, "resource_manager"));
 		package.Children.Add(new Symbol(package, "THROW_EXCEPTION"));
+		package.Children.Add(new Symbol(package, "assert"));
 
 		let system: Symbol = new Symbol(package, "System");
 		package.Children.Add(system);

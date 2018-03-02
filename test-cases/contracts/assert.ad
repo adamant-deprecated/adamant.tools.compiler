@@ -1,0 +1,10 @@
+public Main() -> void
+{
+	let x: int = 5;
+	let y: int = 5;
+	let z: int = 6;
+
+	assert(x == y);
+
+	assert(y == z);
+}

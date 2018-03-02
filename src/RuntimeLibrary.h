@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <stdexcept>
+#include <cassert>
 
 template<typename T, typename F>
 T LogicalAnd(T const & lhs, F rhs)
@@ -17,6 +18,8 @@ T LogicalOr(T const & lhs, F rhs)
 {
 	return lhs.op_True().Value ? lhs : lhs.op_Or(rhs());
 }
+
+#define assert_(condition) assert((condition).Value)
 
 struct p_bool
 {
