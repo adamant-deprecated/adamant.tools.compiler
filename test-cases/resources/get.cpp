@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_(::System_::Console_::Console_ *const console_) -> void;
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Definitions
 
-auto Main_(::System_::Console_::Console_ *const console_) -> void
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	console_->Write_(resource_manager_->GetString_(p_string("hello.rsrc")));
 	console_->Write_(resource_manager_->GetString_(p_string("world.rsrc")));

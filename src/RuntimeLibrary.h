@@ -208,7 +208,7 @@ private:
 public:
 	p_optional(T const & value) : data(value), hasValue(true) {}
 	p_optional(::NoneType const & none) : hasValue(false) {}
-	T& operator->()
+	T & operator->()
 	{
 		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
 		return data;
@@ -216,67 +216,17 @@ public:
 	T const & operator->() const
 	{
 		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
-		return data;
-	}
-	T  & operator* ()
-	{
-		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
-		return data;
-	}
-	T const & operator* () const
-	{
-		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
-		return data;
-	}
-	bool operator==(T const & other) const
-	{
-		return hasValue && data == other;
-	}
-	bool operator!=(T const & other) const
-	{
-		return !hasValue || data != other;
-	}
-};
-
-template<typename T>
-struct p_optional<T*>
-{
-private:
-	T* data;
-
-public:
-	p_optional(T* value) : data(value)
-	{
-		if(value == 0) throw std::runtime_error("Constructing p_optional with null pointer");
-	}
-	p_optional(::NoneType const & none) : data(0) {}
-	T* operator->()
-	{
-		if(data == 0) throw std::runtime_error("Access to `none` Optional value");
-		return data;
-	}
-	T const & operator->() const
-	{
-		if(data == 0) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	T & operator* ()
 	{
-		if(data == 0) throw std::runtime_error("Access to `none` Optional value");
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
 	T const & operator* () const
 	{
-		if(data == 0) throw std::runtime_error("Access to `none` Optional value");
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
 		return data;
-	}
-	bool operator==(T* other) const
-	{
-		return data != 0 && data == other;
-	}
-	bool operator!=(T* other) const
-	{
-		return data == 0 || data != other;
 	}
 };
 

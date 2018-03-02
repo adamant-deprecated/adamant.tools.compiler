@@ -21,8 +21,8 @@ public:
 
 auto Main_() -> void
 {
-	::Test_ const *const a_ = (new ::Test_());
-	::Test_ const *const b_ = (new ::Test_());
+	::Test_ const *_Nonnull const a_ = (new ::Test_());
+	::Test_ const *_Nonnull const b_ = (new ::Test_());
 	p_bool x_;
 	x_ = a_->op_Equal(b_);
 	x_ = a_->op_NotEqual(b_);

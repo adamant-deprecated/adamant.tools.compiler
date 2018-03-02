@@ -29,8 +29,8 @@ public:
 
 auto Main_() -> void
 {
-	::Mutable_Object_ const *const m_ = (new ::Mutable_Object_());
-	::immutable_object_ const *const i_ = (new ::immutable_object_());
+	::Mutable_Object_ const *_Nonnull const m_ = (new ::Mutable_Object_());
+	::immutable_object_ const *_Nonnull const i_ = (new ::immutable_object_());
 }
 
 // Entry Point Adapter

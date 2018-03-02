@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void;
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::A
 
 // Definitions
 
-auto Main_(::System_::Console_::Console_ *const console_, ::System_::Console_::Arguments_ const *const args_) -> void
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> void
 {
 	for (p_string const arg_ : *(args_))
 	{

@@ -51,13 +51,9 @@ public class Emitter
 	private is_value_type(type: Semantic_Node) -> bool
 	{
 		if type.Type == PredefinedType
+			or type.Type == OptionalType
 		{
 			return true;
-		}
-		if type.Type == OptionalType
-		{
-			// The first child is the basic type
-			return is_value_type(type.Children[0]); // The type that is optional
 		}
 		if type.Type == QualifiedName
 		{
@@ -77,14 +73,18 @@ public class Emitter
 		{
 			return is_value_type(type.Children[1]); // The type that is mutable
 		}
+		if type.Type == ImmutableType
+		{
+			return is_value_type(type.Children[0]); // The type that is immutable
+		}
 
 		// TODO this is not supposed to be reachable
-		THROW_EXCEPTION("Unable to parse value type. Syntax node type " + type.Type);
+		THROW_EXCEPTION("is_value_type() unable to determine if value type. Syntax node type " + type.Type);
 		return true; // avoid compiler warning about possibly reaching end of function
 	}
 
 	// Converts a type to C++
-	private ConvertType(type: Semantic_Node) -> string
+	private convert_type_name(type: Semantic_Node) -> string
 	{
 		if type.Type == PredefinedType
 		{
@@ -102,51 +102,79 @@ public class Emitter
 		}
 		if type.Type == QualifiedName
 		{
-			return ConvertType(type.Children[0]) + ConvertType(type.Children[2]);
+			return convert_type_name(type.Children[0]) + convert_type_name(type.Children[2]);
 		}
 		if type.Type == GenericName
 		{
-			return ConvertType(type.Children[0]) + "<" + ConvertType(true, type.Children[2]) + ">";
+			return convert_type_name(type.Children[0]) + "<" + convert_type(true, type.Children[2]) + ">";
 		}
 
-		return format_error("Unexpected Token of type "+type.Type+" found in CovertType(), `"+type.GetText()+"`");
+		return format_error("Unexpected Token of type "+type.Type+" found in convert_type_name(), `"+type.GetText()+"`");
+	}
+
+	private convert_reference_type(mutable_binding: bool, var type: Semantic_Node, nullable: bool, mutable_value: bool) -> string
+	{
+		var cpp_type: string = convert_type_name(type);
+		if not mutable_value { cpp_type = cpp_type + " const"; }
+		cpp_type = cpp_type + " *";
+		if nullable
+			{ cpp_type = cpp_type + "_Nullable"; }
+		else
+			{ cpp_type = cpp_type + "_Nonnull"; }
+		if not mutable_binding { cpp_type = cpp_type + " const" ; }
+		return cpp_type;
 	}
 
 	// Converts a type to C++
-	private ConvertType(mutableBinding: bool, var type: Semantic_Node) -> string
+	private convert_type(mutable_binding: bool, var type: Semantic_Node, optional: bool) -> string
 	{
-		let optional: bool = type.Type == OptionalType;
-		if optional
-		{
-			type = type.Children[0]; // Remove the optional wrapper
-		}
-
-		let mutableValue: bool = type.Type == MutableType;
-		if mutableValue
+		let mutable_value: bool = type.Type == MutableType;
+		if mutable_value
 		{
 			type = type.Children[1]; // Remove the mutable wrapper
 		}
-
-		let isValueType: bool = is_value_type(type);
-		var cppType: string = ConvertType(type);
-
-		if isValueType
+		else if type.Type == ImmutableType
 		{
-			if optional
-				{ cppType = "p_optional<" + cppType + ">"; }
-			if not mutableBinding and not mutableValue
-				{ cppType = cppType + " const"; }
+			type = type.Children[0]; // Remove the immutable wrapper
 		}
 		else
 		{
-			if not mutableValue { cppType = cppType + " const"; }
-			cppType = cppType + " *";
-			//if optional
-			//	{ cppType = "p_optional<" + cppType + ">"; }
-			if not mutableBinding { cppType = cppType + "const" ; }
+			return format_error("Expected mutable or immutable type in convert_type(). Found token `"+type.GetText()+"` of type "+type.Type);
 		}
 
-		return cppType;
+		if type.Type == OptionalType
+		{
+			let optional_type: Semantic_Node = type.Children[0];
+			// optional_type should be either MutableType or ImmutableType
+			if is_value_type(optional_type)
+			{
+				// Optional<T> is a const struct
+				return "p_optional<" + convert_type(true, optional_type, true) + "> const";
+			}
+			else
+			{
+				return convert_type(mutable_binding, optional_type, true);
+			}
+		}
+		else
+		{
+			if is_value_type(type)
+			{
+				var cpp_type: string = convert_type_name(type);
+				if not mutable_binding and not mutable_value
+					{ cpp_type = cpp_type + " const"; }
+				return cpp_type;
+			}
+			else
+			{
+				return convert_reference_type(mutable_binding, type, optional, mutable_value);
+			}
+		}
+	}
+
+	private convert_type(mutable_binding: bool, type: Semantic_Node) -> string
+	{
+		return convert_type(mutable_binding, type, false); // not optional
 	}
 
 	private ConvertParameterList(mut self, parameterList: Semantic_Node, isMainFunction: bool) -> string
@@ -161,9 +189,9 @@ public class Emitter
 			else
 				{ firstParameter = false; }
 
-			let mutableBinding: bool = parameter.HasChildOfType(VarKeyword);
+			let mutable_binding: bool = parameter.HasChildOfType(VarKeyword);
 			let type: Semantic_Node = parameter.Children[|parameter.Children| - 1];
-			builder.Append(ConvertType(mutableBinding, type));
+			builder.Append(convert_type(mutable_binding, type));
 			builder.Append(" ");
 			builder.Append(parameter.FirstChildOfType(Identifier).GetText());
 			builder.Append("_");
@@ -198,7 +226,7 @@ public class Emitter
 			let isValueType: bool = is_value_type(type);
 			if not isValueType // place value types on the stack in C++ by not using new
 				{ builder.Write("(new "); }
-			builder.Write(ConvertType(type));
+			builder.Write(convert_type_name(type));
 			let argumentList: Semantic_Node = syntax.Children[2];
 			ConvertExpression(argumentList, builder);
 			if not isValueType
@@ -464,10 +492,10 @@ public class Emitter
 		{
 			Definitions.BeginLine("for (");
 			let variableDeclaration: Semantic_Node = statement.Children[1];
-			let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
+			let mutable_binding: bool = variableDeclaration.HasChildOfType(VarKeyword);
 			let name: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
 			let type: Semantic_Node = variableDeclaration.Children[3];
-			Definitions.Write(ConvertType(mutableBinding, type) + " " + name + "_");
+			Definitions.Write(convert_type(mutable_binding, type) + " " + name + "_");
 			Definitions.Write(" : *(");
 			ConvertExpression(statement.Children[3], Definitions); // expression
 			Definitions.EndLine("))");
@@ -523,8 +551,8 @@ public class Emitter
 			let variableDeclaration: Semantic_Node = statement.Children[0];
 			let variableName: string = variableDeclaration.FirstChildOfType(Identifier).GetText();
 			let variableType: Semantic_Node = variableDeclaration.Children[3];
-			let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
-			Definitions.BeginLine(ConvertType(mutableBinding, variableType));
+			let mutable_binding: bool = variableDeclaration.HasChildOfType(VarKeyword);
+			Definitions.BeginLine(convert_type(mutable_binding, variableType));
 			Definitions.Write(" " + variableName + "_");
 			if variableDeclaration.HasChildOfType(Equals)
 			{
@@ -561,7 +589,7 @@ public class Emitter
 			let variableDeclaration: Semantic_Node = member.FirstChildOfType(VariableDeclaration);
 			let fieldName: string = variableDeclaration.Children[1].GetText();
 			let fieldType: Semantic_Node = variableDeclaration.Children[3];
-			let cppType: string = ConvertType(true, fieldType); // because we need to assign them in constructors don't mark fields const
+			let cppType: string = convert_type(true, fieldType); // because we need to assign them in constructors don't mark fields const
 			ClassDeclarations.WriteLine(cppType + " " + fieldName + "_;");
 		}
 		else if member.Type == MethodDeclaration
@@ -573,7 +601,7 @@ public class Emitter
 			let isAssociatedFunction: bool = selfParameter == none;
 			let mutableSelf: bool = not isAssociatedFunction and selfParameter.HasChildOfType(MutableKeyword);
 			let returnType: Semantic_Node = member.Children[4];
-			let cppType: string = ConvertType(true, returnType);
+			let cppType: string = convert_type(true, returnType);
 			var staticModifier: string = "";
 			if isAssociatedFunction
 				{ staticModifier = "static "; }
@@ -599,8 +627,8 @@ public class Emitter
 			let variableDeclaration: Semantic_Node = declaration.Children[1];
 			let variableName: string = variableDeclaration.Children[1].GetText();
 			let variableType: Semantic_Node = variableDeclaration.Children[3];
-			let mutableBinding: bool = variableDeclaration.HasChildOfType(VarKeyword);
-			let cppType: string = ConvertType(mutableBinding, variableType);
+			let mutable_binding: bool = variableDeclaration.HasChildOfType(VarKeyword);
+			let cppType: string = convert_type(mutable_binding, variableType);
 			GlobalDefinitions.BeginLine(cppType);
 			GlobalDefinitions.Write(" " + variableName + "_ = ");
 			let expression: Semantic_Node = variableDeclaration.Children[5];
@@ -675,7 +703,7 @@ public class Emitter
 			let isMain: bool = name == "Main";
 			let parameters: string = ConvertParameterList(declaration.Children[2], isMain);
 			let returnType: Semantic_Node = declaration.Children[4];
-			let cppType: string = ConvertType(true, returnType);
+			let cppType: string = convert_type(true, returnType);
 			// Write out the function declaration for C++ so we can call functions defined after others
 			FunctionDeclarations.WriteLine("auto " + name + "_" + parameters + " -> " + cppType + ";");
 			Definitions.ElementSeparatorLine();

@@ -52,16 +52,8 @@ public class Compilation_Unit_Parser
 	// Parser
 	// ----------------------------------------------------------------------------
 
-	private ParseNonOptionalType(mut self) -> Syntax_Node
+	private ParseTypeName(mut self) -> Syntax_Node
 	{
-		if token.Type == MutableKeyword
-		{
-			let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-			children.Add(ExpectToken(MutableKeyword));
-			children.Add(ParseNonOptionalType());
-			return new Syntax_Node(MutableType, children);
-		}
-
 		if token.Type == CodePoint
 			or token.Type == String
 			or token.Type == Int
@@ -88,6 +80,7 @@ public class Compilation_Unit_Parser
 					genericNameChildren.Add(new Syntax_Node(IdentifierName, identifier));
 					genericNameChildren.Add(ExpectToken(LessThan));
 					genericNameChildren.Add(ParseType());
+					// TODO support multiple type arguments
 					genericNameChildren.Add(ExpectToken(GreaterThan));
 					children.Add(new Syntax_Node(GenericName, genericNameChildren));
 				}
@@ -103,6 +96,24 @@ public class Compilation_Unit_Parser
 		}
 	}
 
+	private ParseNonOptionalType(mut self) -> Syntax_Node
+	{
+		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+
+		if token.Type == MutableKeyword
+		{
+
+			children.Add(ExpectToken(MutableKeyword));
+			children.Add(ParseTypeName());
+			return new Syntax_Node(MutableType, children);
+		}
+		else
+		{
+			children.Add(ParseTypeName());
+			return new Syntax_Node(ImmutableType, children);
+		}
+	}
+
 	private ParseType(mut self) -> Syntax_Node
 	{
 		var type: Syntax_Node = ParseNonOptionalType();
@@ -112,7 +123,7 @@ public class Compilation_Unit_Parser
 			let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 			children.Add(type);
 			children.Add(ExpectToken(Question));
-			type = new Syntax_Node(OptionalType, children);
+			type = new Syntax_Node(ImmutableType, new Syntax_Node(OptionalType, children));
 		}
 
 		return type;
@@ -128,7 +139,7 @@ public class Compilation_Unit_Parser
 		{
 			// Constructor Call
 			children.Add(ExpectToken(NewKeyword));
-			children.Add(ParseType());
+			children.Add(ParseTypeName());
 			children.Add(ParseCallArguments());
 			return new Syntax_Node(NewExpression, children);
 		}

@@ -4,8 +4,8 @@
 class Test_;
 
 // Function Declarations
-auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int>;
-auto Main_(::System_::Console_::Console_ *const console_) -> void;
+auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int> const;
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -20,15 +20,17 @@ public:
 
 // Definitions
 
-auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int>
+auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int> const
 {
 	p_optional<p_int> const z_ = ::None;
-	::Test_ const *const t_ = ::None;
-	::System_::Text_::String_Builder_ *const sb_ = ::None;
+	::Test_ const *_Nullable const t_ = ::None;
+	::System_::Text_::String_Builder_ *_Nullable const sb_ = ::None;
+	::System_::Collections_::List_<p_optional<p_int> const> const *_Nonnull const l_ = (new ::System_::Collections_::List_<p_optional<p_int> const>());
+	::Test_ *_Nullable const m_ = ::None;
 	return ::None;
 }
 
-auto Main_(::System_::Console_::Console_ *const console_) -> void
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	Func_(::None, ::None);
 }

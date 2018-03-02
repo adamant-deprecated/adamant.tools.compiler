@@ -34,7 +34,7 @@ auto ::C_::Method_() const -> p_string
 
 auto Main_() -> void
 {
-	::C_ const *const c_ = (new ::C_(p_string("Bob")));
+	::C_ const *_Nonnull const c_ = (new ::C_(p_string("Bob")));
 	c_->Method_();
 }
 

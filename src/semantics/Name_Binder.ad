@@ -243,7 +243,8 @@ public class Name_Binder
 			let innerType: mut Semantic_Node = node.Children[1];
 			bind_type(innerType, scope);
 		}
-		else if node.Type == OptionalType
+		else if node.Type == ImmutableType
+			or node.Type == OptionalType
 		{
 			let innerType: mut Semantic_Node = node.Children[0];
 			bind_type(innerType, scope);

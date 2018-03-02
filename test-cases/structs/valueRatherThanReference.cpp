@@ -31,7 +31,7 @@ public:
 
 auto Main_() -> void
 {
-	::Reference_Type_ const *const r_ = (new ::Reference_Type_());
+	::Reference_Type_ const *_Nonnull const r_ = (new ::Reference_Type_());
 	::Value_Type_ const v_ = ::Value_Type_();
 }
 

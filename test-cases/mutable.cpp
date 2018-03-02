@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *;
-auto Main_(::System_::Console_::Console_ *const console_) -> void;
+auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *_Nonnull;
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -12,19 +12,19 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Definitions
 
-auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *
+auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *_Nonnull
 {
 	x_->op_AddAssign(p_int(1));
 	p_int const i_ = x_->op_Add(p_int(2));
 	p_int j_ = y_->op_Subtract(p_int(23));
 	j_ = i_;
-	::System_::Text_::String_Builder_ *const stringA_ = (new ::System_::Text_::String_Builder_(p_string("Hello")));
-	::System_::Text_::String_Builder_ const * stringB_;
+	::System_::Text_::String_Builder_ *_Nonnull const stringA_ = (new ::System_::Text_::String_Builder_(p_string("Hello")));
+	::System_::Text_::String_Builder_ const *_Nonnull stringB_;
 	stringB_ = stringA_;
 	return stringA_;
 }
 
-auto Main_(::System_::Console_::Console_ *const console_) -> void
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	console_->WriteLine_(Func_(p_int(1), p_int(2))->ToString_());
 }

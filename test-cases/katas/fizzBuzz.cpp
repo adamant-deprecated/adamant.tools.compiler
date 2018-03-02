@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_(::System_::Console_::Console_ *const console_) -> void;
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Definitions
 
-auto Main_(::System_::Console_::Console_ *const console_) -> void
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	p_int x_ = p_int(1);
 	for (;;)

@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_(::System_::Console_::Console_ *const console_) -> void;
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void;
 
 // Definitions
 
-auto Main_(::System_::Console_::Console_ *const console_) -> void
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
-	::System_::Collections_::List_<p_string> *const strings_ = (new ::System_::Collections_::List_<p_string>());
+	::System_::Collections_::List_<p_string> *_Nonnull const strings_ = (new ::System_::Collections_::List_<p_string>());
 	strings_->Add_(p_string("Hello"));
 	strings_->Add_(p_string("World!"));
 	if (strings_->op_Magnitude()->op_NotEqual(p_int(2)).Value)
@@ -29,15 +29,15 @@ auto Main_(::System_::Console_::Console_ *const console_) -> void
 
 	console_->WriteLine_();
 	strings_->Clear_();
-	::System_::Collections_::List_<::System_::Text_::String_Builder_ *> *const builders_ = (new ::System_::Collections_::List_<::System_::Text_::String_Builder_ *>());
+	::System_::Collections_::List_<::System_::Text_::String_Builder_ *_Nonnull> *_Nonnull const builders_ = (new ::System_::Collections_::List_<::System_::Text_::String_Builder_ *_Nonnull>());
 	builders_->Add_((new ::System_::Text_::String_Builder_(p_string("sb[0]: "))));
 	builders_->Add_((new ::System_::Text_::String_Builder_(p_string("sb[1]: "))));
-	for (::System_::Text_::String_Builder_ *const sb_ : *(builders_))
+	for (::System_::Text_::String_Builder_ *_Nonnull const sb_ : *(builders_))
 	{
 		sb_->Append_(p_string("value"));
 	}
 
-	for (::System_::Text_::String_Builder_ const *const sb_ : *(builders_))
+	for (::System_::Text_::String_Builder_ const *_Nonnull const sb_ : *(builders_))
 	{
 		console_->WriteLine_(sb_->ToString_());
 	}
