@@ -42,7 +42,8 @@ https://cakebuild.net
 [CmdletBinding()]
 Param(
     [string]$Script = "build\build.cake",
-    [string]$Target,
+	[string]$Target,
+	[string]$Test,
     [string]$Configuration,
     [ValidateSet("Quiet", "Minimal", "Normal", "Verbose", "Diagnostic")]
     [string]$Verbosity,
@@ -219,6 +220,7 @@ if (!(Test-Path $CAKE_EXE)) {
 # Build Cake arguments
 $cakeArguments = @("$Script");
 if ($Target) { $cakeArguments += "-target=$Target" }
+if ($Test) { $cakeArguments += "-test=$Test" }
 if ($Configuration) { $cakeArguments += "-configuration=$Configuration" }
 if ($Verbosity) { $cakeArguments += "-verbosity=$Verbosity" }
 if ($ShowDescription) { $cakeArguments += "-showdescription" }

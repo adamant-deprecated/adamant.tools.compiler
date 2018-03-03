@@ -1,0 +1,3 @@
+70
+Program exited due to error:
+Assertion failed: y_->op_Equal(z_), file test-cases/contracts/assert.cpp, line 20

@@ -5,6 +5,7 @@
 System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
 
 var target = Argument("target", "Default");
+var testName = Argument<string>("test", null);
 string currentCommit = null;
 string sourceCommit = null;
 
@@ -167,6 +168,9 @@ Task("Build-Expected")
 		Information("Found {0} Test Case Expected Outputs", testCases.Count);
 		foreach(var testCase in testCases)
 		{
+			if(testName != null && !testCase.GetFilename().ToString().Contains(testName))
+				continue;
+
 			var relativePath = wd.GetRelativePath(testCase);
 			var outputDir = Directory("target") + relativePath.GetDirectory();
 			EnsureDirectoryExists(outputDir);
@@ -331,6 +335,9 @@ void Test(string version)
 	var failed = 0;
 	foreach(var testCase in testCases)
 	{
+		if(testName != null && !testCase.GetFilename().ToString().Contains(testName))
+			continue;
+
 		var testCaseName = testCasesDir.GetRelativePath(testCase);
 		var output = outputDir + testCaseName.ChangeExtension("cpp");
 		EnsureDirectoryExists(output.Path.GetDirectory());
@@ -522,7 +529,6 @@ public class ConsoleCommand
 			{
 				Arguments = Arguments,
 				RedirectStandardOutput = true,
-
 			});
 		process.WaitForExit();
 		return new CommandResult(context, process.GetExitCode(), process.GetStandardOutput());
@@ -558,5 +564,11 @@ CommandResult DefaultResult()
 CommandResult ReadResultFile(FilePath file)
 {
 	var lines = FileReadLines(file);
-	return new CommandResult(Context, int.Parse(lines[0]), lines.Skip(1));
+	int exitCode = -1;
+	if(!int.TryParse(lines[0], out exitCode))
+	{
+		Error("First line of .run.txt file '{0}' should be expected exit code", lines[0]);
+		throw new Exception();
+	}
+	return new CommandResult(Context, exitCode, lines.Skip(1));
 }
