@@ -24,7 +24,7 @@ public class Symbol_Builder
 	{
 		if node.Type == CompilationUnit
 		{
-			for let declaration: mut Semantic_Node in node.Children
+			for let declaration: mut Semantic_Node in node.children
 			{
 				build_symbols(parent, declaration);
 			}
@@ -32,14 +32,14 @@ public class Symbol_Builder
 		else if node.Type == FunctionDeclaration
 			or node.Type == MethodDeclaration
 		{
-			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let name: string = node.first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(parent, name);
 			build_function_symbols(parent, node, symbol);
 		}
 		else if node.Type == ClassDeclaration
 			or node.Type == StructDeclaration
 		{
-			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let name: string = node.first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(parent, name);
 			symbol.Declarations.Add(node);
 			for let member: mut Semantic_Node in node.Members()
@@ -47,8 +47,8 @@ public class Symbol_Builder
 				build_symbols(symbol, member);
 			}
 
-			parent.Children.Add(symbol);
-			node.BindSymbol(symbol);
+			parent.children.Add(symbol);
+			node.bind_symbol(symbol);
 		}
 		else if node.Type == ConstructorDeclaration
 		{
@@ -59,28 +59,28 @@ public class Symbol_Builder
 		}
 		else if node.Type == FieldDeclaration
 		{
-			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let field_symbol: Symbol = new Symbol(none, name);
 			field_symbol.Declarations.Add(node);
-			parent.Children.Add(field_symbol);
-			node.BindSymbol(field_symbol);
+			parent.children.Add(field_symbol);
+			node.bind_symbol(field_symbol);
 		}
 		else if node.Type == EnumDeclaration
 		{
-			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let name: string = node.first_child(Identifier).get_text();
 			let enum_symbol: Symbol = new Symbol(parent, name);
 			enum_symbol.Declarations.Add(node);
 			// TODO add enum member symbols
-			parent.Children.Add(enum_symbol);
-			node.BindSymbol(enum_symbol);
+			parent.children.Add(enum_symbol);
+			node.bind_symbol(enum_symbol);
 		}
 		else if node.Type == GlobalDeclaration
 		{
-			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let globalDeclarationSymbol: Symbol = new Symbol(none, name);
 			globalDeclarationSymbol.Declarations.Add(node);
-			parent.Children.Add(globalDeclarationSymbol);
-			node.BindSymbol(globalDeclarationSymbol);
+			parent.children.Add(globalDeclarationSymbol);
+			node.bind_symbol(globalDeclarationSymbol);
 		}
 		else if node.Type == Block
 		{
@@ -93,28 +93,28 @@ public class Symbol_Builder
 			or node.Type == WhileStatement
 			or node.Type == DoWhileStatement
 		{
-			build_symbols(parent, node.FirstChildOfType(Block));
+			build_symbols(parent, node.first_child(Block));
 		}
 		else if node.Type == ForStatement
 		{
-			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let for_symbol: Symbol = new Symbol(none, name);
 			for_symbol.Declarations.Add(node);
-			parent.Children.Add(for_symbol);
-			node.BindSymbol(for_symbol);
-			build_symbols(parent, node.FirstChildOfType(Block));
+			parent.children.Add(for_symbol);
+			node.bind_symbol(for_symbol);
+			build_symbols(parent, node.first_child(Block));
 		}
 		else if node.Type == LocalDeclarationStatement
 		{
-			let name: string = node.FirstChildOfType(VariableDeclaration).FirstChildOfType(Identifier).GetText();
+			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(none, name);
 			symbol.Declarations.Add(node);
-			parent.Children.Add(symbol);
+			parent.children.Add(symbol);
 		}
 		else if node.Type == IfStatement
 		{
-			build_symbols(parent, node.FirstChildOfType(Block));
-			let elseClause: mut Semantic_Node? = node.FirstChildOfType(ElseClause);
+			build_symbols(parent, node.first_child(Block));
+			let elseClause: mut Semantic_Node? = node.first_child(ElseClause);
 			if elseClause =/= none
 			{
 				build_symbols(parent, elseClause);
@@ -123,29 +123,29 @@ public class Symbol_Builder
 		else if node.Type == ElseClause
 		{
 			// This might be a good place for some kind of coalesce operator
-			let block: mut Semantic_Node? = node.FirstChildOfType(Block);
+			let block: mut Semantic_Node? = node.first_child(Block);
 			if block =/= none
 			{
 				build_symbols(parent, block);
 			}
 			else
 			{
-				build_symbols(parent, node.FirstChildOfType(IfStatement));
+				build_symbols(parent, node.first_child(IfStatement));
 			}
 		}
 		else if node.Type == Parameter
 		{
-			let name: string = node.FirstChildOfType(Identifier).GetText();
+			let name: string = node.first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(none, name);
 			symbol.Declarations.Add(node);
-			parent.Children.Add(symbol);
+			parent.children.Add(symbol);
 		}
 		else if node.Type == SelfParameter
 		{
-			let name: string = node.FirstChildOfType(SelfKeyword).GetText();
+			let name: string = node.first_child(SelfKeyword).get_text();
 			let symbol: Symbol = new Symbol(none, name, PrimitiveSymbol);
 			symbol.Declarations.Add(node);
-			parent.Children.Add(symbol);
+			parent.children.Add(symbol);
 		}
 		else if node.Type == ExpressionStatement
 			or node.Type == ReturnStatement
@@ -165,17 +165,17 @@ public class Symbol_Builder
 	{
 		symbol.Declarations.Add(node);
 
-		let parameters: mut Semantic_Node = node.FirstChildOfType(ParameterList);
+		let parameters: mut Semantic_Node = node.first_child(ParameterList);
 		for let parameter: mut Semantic_Node in parameters.Parameters()
 		{
 			build_symbols(symbol, parameter);
 		}
 
-		let body: mut Semantic_Node = node.FirstChildOfType(Block);
+		let body: mut Semantic_Node = node.first_child(Block);
 		build_symbols(symbol, body);
 
-		parent.Children.Add(symbol);
-		node.BindSymbol(symbol);
+		parent.children.Add(symbol);
+		node.bind_symbol(symbol);
 	}
 
 	/// This builds up a set of symbols that are actually in the Runtime Library
@@ -186,47 +186,47 @@ public class Symbol_Builder
 	{
 		let fake_declaration: Semantic_Node = new Semantic_Node(new Syntax_Node(ClassDeclaration, true, none, 0, 0));
 
-		package.Children.Add(new Symbol(package, "resource_manager"));
-		package.Children.Add(new Symbol(package, "THROW_EXCEPTION"));
-		package.Children.Add(new Symbol(package, "assert"));
+		package.children.Add(new Symbol(package, "resource_manager"));
+		package.children.Add(new Symbol(package, "THROW_EXCEPTION"));
+		package.children.Add(new Symbol(package, "assert"));
 
 		let system: Symbol = new Symbol(package, "System");
-		package.Children.Add(system);
+		package.children.Add(system);
 
 		let collections: Symbol = new Symbol(system, "Collections");
-		system.Children.Add(collections);
+		system.children.Add(collections);
 
 		let list: mut Symbol = new Symbol(system, "List");
 		list.Declarations.Add(fake_declaration);
-		collections.Children.Add(list);
+		collections.children.Add(list);
 
 		let console: Symbol = new Symbol(system, "Console");
-		system.Children.Add(console);
+		system.children.Add(console);
 
 		let console_class: mut Symbol = new Symbol(system, "Console");
 		console_class.Declarations.Add(fake_declaration);
-		console.Children.Add(console_class);
+		console.children.Add(console_class);
 
 		let arguments: mut Symbol = new Symbol(system, "Arguments");
 		arguments.Declarations.Add(fake_declaration);
-		console.Children.Add(arguments);
+		console.children.Add(arguments);
 
 		let io: Symbol = new Symbol(system, "IO");
-		system.Children.Add(io);
+		system.children.Add(io);
 
 		let file_reader: mut Symbol = new Symbol(system, "File_Reader");
 		file_reader.Declarations.Add(fake_declaration);
-		io.Children.Add(file_reader);
+		io.children.Add(file_reader);
 
 		let file_writer: mut Symbol = new Symbol(system, "File_Writer");
 		file_writer.Declarations.Add(fake_declaration);
-		io.Children.Add(file_writer);
+		io.children.Add(file_writer);
 
 		let text: Symbol = new Symbol(system, "Text");
-		system.Children.Add(text);
+		system.children.Add(text);
 
 		let string_builder: mut Symbol = new Symbol(text, "String_Builder");
 		string_builder.Declarations.Add(fake_declaration);
-		text.Children.Add(string_builder);
+		text.children.Add(string_builder);
 	}
 }

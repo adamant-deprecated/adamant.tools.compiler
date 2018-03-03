@@ -137,8 +137,8 @@ public class Syntax_Node
 	public let Source: Source_Text;
 	public let Start: uint;
 	public let Length: uint; // TODO is this ByteLength?
-	public let Children: System.Collections.List<Syntax_Node>;
-	public let Diagnostics: mut System.Collections.List<Diagnostic>;
+	public let children: System.Collections.List<Syntax_Node>;
+	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 
 	public new(type: int, source: Source_Text, start: uint, length: uint)
 	{
@@ -147,8 +147,8 @@ public class Syntax_Node
 		Source = source;
 		Start = start;
 		Length = length;
-		Children = new System.Collections.List<Syntax_Node>();
-		Diagnostics = new System.Collections.List<Diagnostic>();
+		self.children = new System.Collections.List<Syntax_Node>();
+		node_diagnostics = new System.Collections.List<Diagnostic>();
 	}
 
 	public new(type: int, isMissing: bool, source: Source_Text, start: uint, length: uint)
@@ -158,8 +158,8 @@ public class Syntax_Node
 		Source = source;
 		Start = start;
 		Length = length;
-		Children = new System.Collections.List<Syntax_Node>();
-		Diagnostics = new System.Collections.List<Diagnostic>();
+		self.children = new System.Collections.List<Syntax_Node>();
+		node_diagnostics = new System.Collections.List<Diagnostic>();
 	}
 
 	public new(type: int, child: Syntax_Node)
@@ -171,8 +171,8 @@ public class Syntax_Node
 		Length = child.Length;
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(child);
-		Children = children;
-		Diagnostics = new System.Collections.List<Diagnostic>();
+		self.children = children;
+		node_diagnostics = new System.Collections.List<Diagnostic>();
 	}
 
 	// TODO we want to take ownership of the child list
@@ -185,18 +185,18 @@ public class Syntax_Node
 		Start = children[0].Start;
 		let lastChild: Syntax_Node = children[|children| - 1];
 		Length = lastChild.Start - Start + lastChild.Length;
-		Children = children;
-		Diagnostics = new System.Collections.List<Diagnostic>();
+		self.children = children;
+		node_diagnostics = new System.Collections.List<Diagnostic>();
 	}
 
-	public GetText(self) -> string
+	public get_text(self) -> string
 	{
 		return Source.Text.Substring(Start, Length);
 	}
 
-	public FirstChildOfType(self, type: int) -> Syntax_Node?
+	public first_child(self, type: int) -> Syntax_Node?
 	{
-		for let child: Syntax_Node in Children
+		for let child: Syntax_Node in children
 		{
 			if child.Type == type
 				{ return child; }
@@ -204,9 +204,9 @@ public class Syntax_Node
 		return none;
 	}
 
-	public HasChildOfType(self, type: int) -> bool
+	public has_child(self, type: int) -> bool
 	{
-		for let child: Syntax_Node in Children
+		for let child: Syntax_Node in children
 		{
 			if child.Type == type
 				{ return true; }
@@ -216,26 +216,26 @@ public class Syntax_Node
 
 	public Add(self, diagnostic: Diagnostic) -> void
 	{
-		Diagnostics.Add(diagnostic);
+		node_diagnostics.Add(diagnostic);
 	}
 
 	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
 	{
 		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
-		CollectDiagnostics(diagnostics);
+		collection_diagnostics(diagnostics);
 		return diagnostics;
 	}
 
-	protected CollectDiagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+	protected collection_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
 	{
-		for let diagnostic: Diagnostic in Diagnostics
+		for let diagnostic: Diagnostic in node_diagnostics
 		{
 			diagnostics.Add(diagnostic);
 		}
 
-		for let child: Syntax_Node in Children
+		for let child: Syntax_Node in children
 		{
-			child.CollectDiagnostics(diagnostics);
+			child.collection_diagnostics(diagnostics);
 		}
 	}
 }

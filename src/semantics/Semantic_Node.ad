@@ -9,8 +9,8 @@ public class Semantic_Node
 	public let Source: Source_Text;
 	public let Start: uint;
 	public let Length: uint; // TODO is this ByteLength?
-	public let Children: System.Collections.List<mut Semantic_Node>;
-	public let Diagnostics: mut System.Collections.List<Diagnostic>;
+	public let children: System.Collections.List<mut Semantic_Node>;
+	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 	public var symbol: Symbol?;
 
 	public new(syntax: Syntax_Node)
@@ -22,17 +22,17 @@ public class Semantic_Node
 		Start = syntax.Start;
 		Length = syntax.Length;
 		let children: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let childSyntax: Syntax_Node in syntax.Children
+		for let childSyntax: Syntax_Node in syntax.children
 		{
 			children.Add(new Semantic_Node(childSyntax));
 		}
-		Children = children;
+		self.children = children;
 		let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
-		for let diagnostic: Diagnostic in syntax.Diagnostics
+		for let diagnostic: Diagnostic in syntax.node_diagnostics
 		{
 			diagnostics.Add(diagnostic);
 		}
-		Diagnostics = diagnostics;
+		self.node_diagnostics = diagnostics;
 		symbol = none;
 	}
 
@@ -41,34 +41,34 @@ public class Semantic_Node
 		return new Text_Span(Start, Length);
 	}
 
-	public GetText(self) -> string
+	public get_text(self) -> string
 	{
 		return Source.Text.Substring(Start, Length);
 	}
 
-	public BindSymbol(mut self, symbol: Symbol) -> void
+	public bind_symbol(mut self, symbol: Symbol) -> void
 	{
-		if self.symbol =/= none { THROW_EXCEPTION("`Semantic_Node.BindSymbol(..)` called on node that already has a symbol on `" + GetText() + "`"); }
-		if symbol == none { THROW_EXCEPTION("`Semantic_Node.BindSymbol(..)` called without a symbol on `" + GetText() + "`"); }
+		if self.symbol =/= none { THROW_EXCEPTION("`Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `" + get_text() + "`"); }
+		if symbol == none { THROW_EXCEPTION("`Semantic_Node.bind_symbol(..)` called without a symbol on `" + get_text() + "`"); }
 		self.symbol = symbol;
 	}
 
-	public FirstChildOfType(self, type: int) -> mut Semantic_Node?
+	public first_child(self, kind: int) -> mut Semantic_Node?
 	{
-		for let child: mut Semantic_Node in Children
+		for let child: mut Semantic_Node in children
 		{
-			if child.Type == type
+			if child.Type == kind
 				{ return child; }
 		}
 		return none;
 	}
 
-	public ChildrenOfType(self, type: int) -> System.Collections.List<mut Semantic_Node>
+	public children_of_kind(self, kind: int) -> System.Collections.List<mut Semantic_Node>
 	{
 		let members: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in Children
+		for let child: mut Semantic_Node in children
 		{
-			if child.Type == type
+			if child.Type == kind
 			{
 				members.Add(child);
 			}
@@ -80,7 +80,7 @@ public class Semantic_Node
 	public Members(self) -> System.Collections.List<mut Semantic_Node>
 	{
 		let members: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in Children
+		for let child: mut Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
 			if child.Type == ConstructorDeclaration
@@ -97,7 +97,7 @@ public class Semantic_Node
 	public Statements(self) -> System.Collections.List<mut Semantic_Node>
 	{
 		let statements: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in Children
+		for let child: mut Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
 			if child.Type =/= LeftBrace
@@ -113,7 +113,7 @@ public class Semantic_Node
 	public Parameters(self) -> System.Collections.List<mut Semantic_Node>
 	{
 		let parameters: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in Children
+		for let child: mut Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
 			if child.Type == Parameter
@@ -125,11 +125,11 @@ public class Semantic_Node
 		return parameters;
 	}
 
-	public HasChildOfType(self, type: int) -> bool
+	public has_child(self, kind: int) -> bool
 	{
-		for let child: Semantic_Node in Children
+		for let child: Semantic_Node in children
 		{
-			if child.Type == type
+			if child.Type == kind
 				{ return true; }
 		}
 		return false;
@@ -137,26 +137,26 @@ public class Semantic_Node
 
 	public Add(self, diagnostic: Diagnostic) -> void
 	{
-		Diagnostics.Add(diagnostic);
+		node_diagnostics.Add(diagnostic);
 	}
 
 	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
 	{
 		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
-		CollectDiagnostics(diagnostics);
+		collection_diagnostics(diagnostics);
 		return diagnostics;
 	}
 
-	protected CollectDiagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+	protected collection_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
 	{
-		for let diagnostic: Diagnostic in Diagnostics
+		for let diagnostic: Diagnostic in node_diagnostics
 		{
 			diagnostics.Add(diagnostic);
 		}
 
-		for let child: Semantic_Node in Children
+		for let child: Semantic_Node in children
 		{
-			child.CollectDiagnostics(diagnostics);
+			child.collection_diagnostics(diagnostics);
 		}
 	}
 
@@ -171,24 +171,24 @@ public class Semantic_Node
 		if Type == QualifiedName
 		{
 			// The right hand side is the real type
-			return self.Children[2].is_value_type();
+			return self.children[2].is_value_type();
 		}
 		if Type == GenericName
 		{
-			return FirstChildOfType(IdentifierName).is_value_type();
+			return first_child(IdentifierName).is_value_type();
 		}
 		if Type == IdentifierName
 		{
-			if symbol == none { THROW_EXCEPTION("No symbol on identifier name `" + GetText() + "`"); }
+			if symbol == none { THROW_EXCEPTION("No symbol on identifier name `" + get_text() + "`"); }
 			return symbol.is_value_type();
 		}
 		if Type == MutableType
 		{
-			return Children[1].is_value_type(); // The type that is mutable
+			return children[1].is_value_type(); // The type that is mutable
 		}
 		if Type == ImmutableType
 		{
-			return Children[0].is_value_type(); // The type that is immutable
+			return children[0].is_value_type(); // The type that is immutable
 		}
 
 		// TODO this is not supposed to be reachable

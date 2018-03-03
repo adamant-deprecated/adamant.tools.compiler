@@ -4,7 +4,7 @@ public class Symbol
 	public let Name: string;
 	public let Type: int;
 	public let Declarations: mut System.Collections.List<Semantic_Node>;
-	public let Children: mut System.Collections.List<Symbol>;
+	public let children: mut System.Collections.List<Symbol>;
 	public let IsPrimitive: bool;
 
 	public new(parent: Symbol?, name: string)
@@ -13,7 +13,7 @@ public class Symbol
 		Name = name;
 		Type = IdentifierSymbol;
 		Declarations = new System.Collections.List<Semantic_Node>();
-		Children = new System.Collections.List<Symbol>();
+		children = new System.Collections.List<Symbol>();
 		IsPrimitive = false;
 	}
 
@@ -23,7 +23,7 @@ public class Symbol
 		Name = name;
 		Type = type;
 		Declarations = new System.Collections.List<Semantic_Node>();
-		Children = new System.Collections.List<Symbol>();
+		children = new System.Collections.List<Symbol>();
 		IsPrimitive = false;
 	}
 
@@ -34,14 +34,14 @@ public class Symbol
 		Name = name;
 		Type = PrimitiveSymbol;
 		Declarations = new System.Collections.List<Semantic_Node>();
-		Children = new System.Collections.List<Symbol>();
+		children = new System.Collections.List<Symbol>();
 		IsPrimitive = true;
 	}
 
 	// TODO change to operator []
 	public Get(self, name: string, type: int) -> Symbol?
 	{
-		for let child: Symbol in Children
+		for let child: Symbol in children
 		{
 			if child.Name == name and child.Type == type
 			{
