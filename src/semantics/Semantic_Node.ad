@@ -1,8 +1,6 @@
 // Long term, the idea is to have a tree that implements the interface of the
 // syntax tree, but adds additional methods and functionality
 
-// TODO implement a semantic node that wraps a Syntax_Node
-
 public class Semantic_Node
 {
 	public let Syntax: Syntax_Node;
@@ -160,5 +158,41 @@ public class Semantic_Node
 		{
 			child.CollectDiagnostics(diagnostics);
 		}
+	}
+
+	// TODO this should only be on type nodes
+	private is_value_type(self) -> bool
+	{
+		if Type == PredefinedType
+			or Type == OptionalType
+		{
+			return true;
+		}
+		if Type == QualifiedName
+		{
+			// The right hand side is the real type
+			return self.Children[2].is_value_type();
+		}
+		if Type == GenericName
+		{
+			return FirstChildOfType(IdentifierName).is_value_type();
+		}
+		if Type == IdentifierName
+		{
+			if symbol == none { THROW_EXCEPTION("No symbol on identifier name `" + GetText() + "`"); }
+			return symbol.is_value_type();
+		}
+		if Type == MutableType
+		{
+			return Children[1].is_value_type(); // The type that is mutable
+		}
+		if Type == ImmutableType
+		{
+			return Children[0].is_value_type(); // The type that is immutable
+		}
+
+		// TODO this is not supposed to be reachable
+		THROW_EXCEPTION("is_value_type() unable to determine if value type. Syntax node type " + Type);
+		return true; // avoid compiler warning about possibly reaching end of function
 	}
 }
