@@ -27,6 +27,7 @@ auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_opti
 	::System_::Text_::String_Builder_ *_Nullable const sb_ = ::None;
 	::System_::Collections_::List_<p_optional<p_int> const> const *_Nonnull const l_ = (new ::System_::Collections_::List_<p_optional<p_int> const>());
 	::Test_ *_Nullable const m_ = ::None;
+	p_optional<p_optional<p_int> const> const d_ = ::None;
 	return ::None;
 }
 

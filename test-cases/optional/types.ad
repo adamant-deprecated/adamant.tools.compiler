@@ -9,7 +9,7 @@ public Func(x: string?, y: uint?) -> int?
 	let sb: mut System.Text.String_Builder? = none;
 	let l: System.Collections.List<int?> = new System.Collections.List<int?>();
 	let m: mut Test? = none;
-	//let d: int?? = none;
+	let d: int?? = none;
 	return none;
 }
 
