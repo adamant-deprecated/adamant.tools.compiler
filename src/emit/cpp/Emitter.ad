@@ -145,7 +145,7 @@ public class Emitter
 		if type.Type == OptionalType
 		{
 			let optional_type: Semantic_Node = type.Children[0];
-			// optional_type should be either MutableType or ImmutableType
+			assert(optional_type.Type == MutableType or optional_type.Type == ImmutableType);
 			if is_value_type(optional_type)
 			{
 				// Optional<T> is a const struct
