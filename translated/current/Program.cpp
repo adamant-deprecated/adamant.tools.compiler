@@ -3271,6 +3271,7 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Semantic_Node_ c
 	if (type_->Type_->op_Equal(OptionalType_).Value)
 	{
 		::Semantic_Node_ const *_Nonnull const optional_type_ = type_->Children_->op_Element(p_int(0));
+		assert_(LogicalOr(optional_type_->Type_->op_Equal(MutableType_), [&] { return optional_type_->Type_->op_Equal(ImmutableType_); }));
 		if (is_value_type_(optional_type_).Value)
 		{
 			return p_string("p_optional<")->op_Add(convert_type_(p_bool(true), optional_type_, p_bool(true)))->op_Add(p_string("> const"));
