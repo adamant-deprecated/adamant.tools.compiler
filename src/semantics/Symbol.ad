@@ -17,11 +17,11 @@ public class Symbol
 		IsPrimitive = false;
 	}
 
-	public new(parent: Symbol?, name: string, type: int)
+	public new(parent: Symbol?, name: string, kind: int)
 	{
 		Parent = parent;
 		Name = name;
-		kind = type;
+		self.kind = kind;
 		Declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		IsPrimitive = false;
@@ -39,11 +39,11 @@ public class Symbol
 	}
 
 	// TODO change to operator []
-	public Get(self, name: string, type: int) -> Symbol?
+	public Get(self, name: string, kind: int) -> Symbol?
 	{
 		for let child: Symbol in children
 		{
-			if child.Name == name and child.kind == type
+			if child.Name == name and child.kind == kind
 			{
 				return child;
 			}

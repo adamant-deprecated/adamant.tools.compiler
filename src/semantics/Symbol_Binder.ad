@@ -1,4 +1,4 @@
-public class Name_Binder
+public class Symbol_Binder
 {
 	public bind(self, package: Package) -> void
 	{
@@ -25,7 +25,7 @@ public class Name_Binder
 			bind(parameters, scope);
 
 			let return_type: mut Semantic_Node = node.children[4];
-			bind_type(return_type, scope);
+			bind_type_name(return_type, scope);
 
 			let function_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.children);
 			let body: mut Semantic_Node = node.first_child(Block);
@@ -41,7 +41,7 @@ public class Name_Binder
 		else if node.kind == Parameter
 		{
 			let type: mut Semantic_Node = node.children[|node.children| - 1];
-			bind_type(type, scope);
+			bind_type_name(type, scope);
 		}
 		else if node.kind == ClassDeclaration
 			or node.kind == StructDeclaration
@@ -71,7 +71,7 @@ public class Name_Binder
 		else if node.kind == VariableDeclaration
 		{
 			let type: mut Semantic_Node = node.children[3];
-			bind_type(type, scope);
+			bind_type_name(type, scope);
 			if |node.children| == 6
 			{
 				let initalizer: mut Semantic_Node = node.children[5];
@@ -148,7 +148,7 @@ public class Name_Binder
 		}
 		else if node.kind == NewExpression
 		{
-			bind_type(node.children[1], scope); // Type
+			bind_type_name(node.children[1], scope); // Type
 			bind(node.children[2], scope); // Call Arguments
 		}
 		else if node.kind == NotExpression
@@ -225,36 +225,36 @@ public class Name_Binder
 		}
 		else
 		{
-			THROW_EXCEPTION("`Name_Binder.bind()` unimplemented node type " + node.kind);
+			THROW_EXCEPTION("`Symbol_Binder.bind()` unimplemented node type " + node.kind);
 		}
 	}
 
-	private bind_type(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
+	private bind_type_name(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
 	{
 		if node.kind == PredefinedType
 		{
 			let name: string = node.children[0].get_text();
 			let symbol: Symbol = scope.GetPrimitive(name);
-			if symbol == none { THROW_EXCEPTION("`Name_Binder.bind_type()` no symbol for primitive type " + name); }
+			if symbol == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no symbol for primitive type " + name); }
 			node.bind_symbol(symbol);
 		}
 		else if node.kind == MutableType
 		{
 			let innerType: mut Semantic_Node = node.children[1];
-			bind_type(innerType, scope);
+			bind_type_name(innerType, scope);
 		}
 		else if node.kind == ImmutableType
 			or node.kind == OptionalType
 		{
 			let innerType: mut Semantic_Node = node.children[0];
-			bind_type(innerType, scope);
+			bind_type_name(innerType, scope);
 		}
 		else if node.kind == QualifiedName
 		{
 			let qualifier: mut Semantic_Node = node.children[0];
-			bind_type(qualifier, scope);
+			bind_type_name(qualifier, scope);
 			// TODO rather than throwing an exception. We should say we can't resolve the subsequent identifiers
-			if qualifier.symbol == none { THROW_EXCEPTION("`Name_Binder.bind_type()` no symbol for qualifier " + qualifier.get_text()); }
+			if qualifier.symbol == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no symbol for qualifier " + qualifier.get_text()); }
 			let name: mut Semantic_Node = node.children[2];
 			if name.kind == IdentifierName
 			{
@@ -277,7 +277,7 @@ public class Name_Binder
 					{
 						if typeArgument.kind =/= GreaterThan
 						{
-							bind_type(typeArgument, scope);
+							bind_type_name(typeArgument, scope);
 						}
 					}
 					else if typeArgument.kind == LessThan
@@ -288,7 +288,7 @@ public class Name_Binder
 			}
 			else
 			{
-				THROW_EXCEPTION("Unreachable: `Name_Binder.bind(..)` name.kind = " + name.kind);
+				THROW_EXCEPTION("Unreachable: `Symbol_Binder.bind(..)` name.kind = " + name.kind);
 			}
 		}
 		else if node.kind == IdentifierName
@@ -307,7 +307,7 @@ public class Name_Binder
 		}
 		else
 		{
-			THROW_EXCEPTION("`Name_Binder.bind_type()` unimplemented node type " + node.kind);
+			THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` unimplemented node type " + node.kind);
 		}
 	}
 

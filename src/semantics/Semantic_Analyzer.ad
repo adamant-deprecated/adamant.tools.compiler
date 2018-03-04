@@ -9,7 +9,7 @@ public class Semantic_Analyzer
 		let symbol_builder: Symbol_Builder = new Symbol_Builder();
 		let package_symbol: Symbol = symbol_builder.build_symbols(compilation_units);
 		let package: mut Package = new Package(compilation_units, primitive_types, package_symbol);
-		let name_binder: Name_Binder = new Name_Binder();
+		let name_binder: Symbol_Binder = new Symbol_Binder();
 		name_binder.bind(package);
 		return package;
 	}

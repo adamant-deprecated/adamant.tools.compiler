@@ -12,6 +12,7 @@ public class Semantic_Node
 	public let children: System.Collections.List<mut Semantic_Node>;
 	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 	public var symbol: Symbol?;
+	public var type_symbol: Symbol?;
 
 	public new(syntax: Syntax_Node)
 	{
@@ -51,6 +52,13 @@ public class Semantic_Node
 		if self.symbol =/= none { THROW_EXCEPTION("`Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `" + get_text() + "`"); }
 		if symbol == none { THROW_EXCEPTION("`Semantic_Node.bind_symbol(..)` called without a symbol on `" + get_text() + "`"); }
 		self.symbol = symbol;
+	}
+
+	public bind_type_symbol(mut self, symbol: Symbol) -> void
+	{
+		if self.type_symbol =/= none { THROW_EXCEPTION("`Semantic_Node.bind_type_symbol(..)` called on node that already has a type_symbol on `" + get_text() + "`"); }
+		if type_symbol == none { THROW_EXCEPTION("`Semantic_Node.bind_type_symbol(..)` called without a type_symbol on `" + get_text() + "`"); }
+		self.type_symbol = type_symbol;
 	}
 
 	public first_child(self, kind: int) -> mut Semantic_Node?

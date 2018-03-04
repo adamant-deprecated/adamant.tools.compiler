@@ -106,9 +106,10 @@ public class Symbol_Builder
 		}
 		else if node.kind == LocalDeclarationStatement
 		{
-			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
-			let symbol: Symbol = new Symbol(none, name);
+			let identifier: mut Semantic_Node = node.first_child(VariableDeclaration).first_child(Identifier);
+			let symbol: Symbol = new Symbol(none, identifier.get_text());
 			symbol.Declarations.Add(node);
+			identifier.bind_symbol(symbol);
 			parent.children.Add(symbol);
 		}
 		else if node.kind == IfStatement
