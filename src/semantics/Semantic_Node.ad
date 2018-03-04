@@ -4,7 +4,7 @@
 public class Semantic_Node
 {
 	public let Syntax: Syntax_Node;
-	public let Type: int;
+	public let kind: int;
 	public let IsMissing: bool;
 	public let Source: Source_Text;
 	public let Start: uint;
@@ -16,7 +16,7 @@ public class Semantic_Node
 	public new(syntax: Syntax_Node)
 	{
 		Syntax = syntax;
-		Type = syntax.Type;
+		kind = syntax.kind;
 		IsMissing = syntax.IsMissing;
 		Source = syntax.Source;
 		Start = syntax.Start;
@@ -57,7 +57,7 @@ public class Semantic_Node
 	{
 		for let child: mut Semantic_Node in children
 		{
-			if child.Type == kind
+			if child.kind == kind
 				{ return child; }
 		}
 		return none;
@@ -68,7 +68,7 @@ public class Semantic_Node
 		let members: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
 		for let child: mut Semantic_Node in children
 		{
-			if child.Type == kind
+			if child.kind == kind
 			{
 				members.Add(child);
 			}
@@ -83,9 +83,9 @@ public class Semantic_Node
 		for let child: mut Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
-			if child.Type == ConstructorDeclaration
-				or child.Type == FieldDeclaration
-				or child.Type == MethodDeclaration
+			if child.kind == ConstructorDeclaration
+				or child.kind == FieldDeclaration
+				or child.kind == MethodDeclaration
 			{
 				members.Add(child);
 			}
@@ -100,8 +100,8 @@ public class Semantic_Node
 		for let child: mut Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
-			if child.Type =/= LeftBrace
-				and child.Type =/= RightBrace
+			if child.kind =/= LeftBrace
+				and child.kind =/= RightBrace
 			{
 				statements.Add(child);
 			}
@@ -116,8 +116,8 @@ public class Semantic_Node
 		for let child: mut Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
-			if child.Type == Parameter
-				or child.Type == SelfParameter
+			if child.kind == Parameter
+				or child.kind == SelfParameter
 			{
 				parameters.Add(child);
 			}
@@ -129,7 +129,7 @@ public class Semantic_Node
 	{
 		for let child: Semantic_Node in children
 		{
-			if child.Type == kind
+			if child.kind == kind
 				{ return true; }
 		}
 		return false;
@@ -163,36 +163,36 @@ public class Semantic_Node
 	// TODO this should only be on type nodes
 	public is_value_type(self) -> bool
 	{
-		if Type == PredefinedType
-			or Type == OptionalType
+		if kind == PredefinedType
+			or kind == OptionalType
 		{
 			return true;
 		}
-		if Type == QualifiedName
+		if kind == QualifiedName
 		{
 			// The right hand side is the real type
 			return self.children[2].is_value_type();
 		}
-		if Type == GenericName
+		if kind == GenericName
 		{
 			return first_child(IdentifierName).is_value_type();
 		}
-		if Type == IdentifierName
+		if kind == IdentifierName
 		{
 			if symbol == none { THROW_EXCEPTION("No symbol on identifier name `" + get_text() + "`"); }
 			return symbol.is_value_type();
 		}
-		if Type == MutableType
+		if kind == MutableType
 		{
 			return children[1].is_value_type(); // The type that is mutable
 		}
-		if Type == ImmutableType
+		if kind == ImmutableType
 		{
 			return children[0].is_value_type(); // The type that is immutable
 		}
 
 		// TODO this is not supposed to be reachable
-		THROW_EXCEPTION("is_value_type() unable to determine if value type. Syntax node type " + Type);
+		THROW_EXCEPTION("is_value_type() unable to determine if value type. Syntax node type " + kind);
 		return true; // avoid compiler warning about possibly reaching end of function
 	}
 }

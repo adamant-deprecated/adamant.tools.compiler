@@ -50,30 +50,30 @@ public class Emitter
 	// Converts a type to C++
 	private convert_type_name(type: Semantic_Node) -> string
 	{
-		if type.Type == PredefinedType
+		if type.kind == PredefinedType
 		{
 			let keyword: Semantic_Node = type.children[0];
 			// void we still use the C++ keyword
-			if keyword.Type == Void
+			if keyword.kind == Void
 				{ return keyword.get_text(); }
 			// `int`, `bool`, `string`, `code_point`, `uint``
 			return "p_" + keyword.get_text();
 		}
 
-		if type.Type == IdentifierName
+		if type.kind == IdentifierName
 		{
 			return "::" + type.get_text() + "_";
 		}
-		if type.Type == QualifiedName
+		if type.kind == QualifiedName
 		{
 			return convert_type_name(type.children[0]) + convert_type_name(type.children[2]);
 		}
-		if type.Type == GenericName
+		if type.kind == GenericName
 		{
 			return convert_type_name(type.children[0]) + "<" + convert_type(true, type.children[2]) + ">";
 		}
 
-		return format_error("Unexpected Token of type "+type.Type+" found in convert_type_name(), `"+type.get_text()+"`");
+		return format_error("Unexpected Token of type "+type.kind+" found in convert_type_name(), `"+type.get_text()+"`");
 	}
 
 	private convert_reference_type(mutable_binding: bool, var type: Semantic_Node, nullable: bool, mutable_value: bool) -> string
@@ -92,24 +92,24 @@ public class Emitter
 	// Converts a type to C++
 	private convert_type(mutable_binding: bool, var type: Semantic_Node, optional: bool) -> string
 	{
-		let mutable_value: bool = type.Type == MutableType;
+		let mutable_value: bool = type.kind == MutableType;
 		if mutable_value
 		{
 			type = type.children[1]; // Remove the mutable wrapper
 		}
-		else if type.Type == ImmutableType
+		else if type.kind == ImmutableType
 		{
 			type = type.children[0]; // Remove the immutable wrapper
 		}
 		else
 		{
-			return format_error("Expected mutable or immutable type in convert_type(). Found token `"+type.get_text()+"` of type "+type.Type);
+			return format_error("Expected mutable or immutable type in convert_type(). Found token `"+type.get_text()+"` of type "+type.kind);
 		}
 
-		if type.Type == OptionalType
+		if type.kind == OptionalType
 		{
 			let optional_type: Semantic_Node = type.children[0];
-			assert(optional_type.Type == MutableType or optional_type.Type == ImmutableType);
+			assert(optional_type.kind == MutableType or optional_type.kind == ImmutableType);
 			if optional_type.is_value_type()
 			{
 				// Optional<T> is a const struct
@@ -163,7 +163,7 @@ public class Emitter
 			if is_main_function
 			{
 				var type_string: string;
-				if type.Type == MutableType
+				if type.kind == MutableType
 					{ type_string = type.children[1].get_text(); }
 				else
 					{ type_string = type.get_text(); }
@@ -184,7 +184,7 @@ public class Emitter
 
 	private convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builder) -> void
 	{
-		if syntax.Type == NewExpression
+		if syntax.kind == NewExpression
 		{
 			let type: Semantic_Node = syntax.children[1];
 			let is_value_type: bool = type.is_value_type();
@@ -196,15 +196,15 @@ public class Emitter
 			if not is_value_type
 				{ builder.Write(")"); }
 		}
-		else if syntax.Type == ArgumentList
+		else if syntax.kind == ArgumentList
 		{
 			builder.Write("(");
 			var first_expression: bool = true;
 			for let arg: Semantic_Node in syntax.children
 			{
-				if arg.Type =/= LeftParen
-					and arg.Type =/= RightParen
-					and arg.Type =/= Comma
+				if arg.kind =/= LeftParen
+					and arg.kind =/= RightParen
+					and arg.kind =/= Comma
 				{
 					if first_expression
 						{ first_expression = false; }
@@ -215,57 +215,57 @@ public class Emitter
 			}
 			builder.Write(")");
 		}
-		else if syntax.Type == NotExpression
+		else if syntax.kind == NotExpression
 		{
 			convert_expression(syntax.children[1], builder);
 			builder.Write("->op_Not()");
 		}
-		else if syntax.Type == MagnitudeExpression
+		else if syntax.kind == MagnitudeExpression
 		{
 			convert_expression(syntax.children[1], builder);
 			builder.Write("->op_Magnitude()");
 		}
-		else if syntax.Type == ParenthesizedExpression
+		else if syntax.kind == ParenthesizedExpression
 		{
 			convert_expression(syntax.children[1], builder);
 		}
-		else if syntax.Type == NegateExpression
+		else if syntax.kind == NegateExpression
 		{
 			convert_expression(syntax.children[1], builder);
 			builder.Write("->op_Negate()");
 		}
-		else if syntax.Type == NoneLiteralExpression
+		else if syntax.kind == NoneLiteralExpression
 		{
 			builder.Write("::None");
 		}
-		else if syntax.Type == SelfExpression
+		else if syntax.kind == SelfExpression
 		{
 			builder.Write("this");
 		}
-		else if syntax.Type == NumericLiteralExpression
+		else if syntax.kind == NumericLiteralExpression
 		{
 			builder.Write("p_int(" + syntax.get_text() + ")");
 		}
-		else if syntax.Type == TrueLiteralExpression
-			or syntax.Type == FalseLiteralExpression
+		else if syntax.kind == TrueLiteralExpression
+			or syntax.kind == FalseLiteralExpression
 		{
 			builder.Write("p_bool(" + syntax.get_text() + ")");
 		}
-		else if syntax.Type == CodePointLiteralExpression
+		else if syntax.kind == CodePointLiteralExpression
 		{
 			builder.Write("p_code_point(" + syntax.get_text() + ")");
 		}
-		else if syntax.Type == IdentifierName
+		else if syntax.kind == IdentifierName
 		{
 			builder.Write(syntax.get_text() + "_");
 		}
-		else if syntax.Type == StringLiteralExpression
+		else if syntax.kind == StringLiteralExpression
 		{
 			builder.Write("p_string(" + syntax.get_text() + ")");
 		}
-		else if syntax.Type == AssignmentExpression
+		else if syntax.kind == AssignmentExpression
 		{
-			let operator: int = syntax.children[1].Type;
+			let operator: int = syntax.children[1].kind;
 			if operator == Equals
 			{
 				convert_expression(syntax.children[0], builder);
@@ -295,23 +295,23 @@ public class Emitter
 				builder.Write(")");
 			}
 		}
-		else if syntax.Type == EqualExpression
+		else if syntax.kind == EqualExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Equal(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
-		else if syntax.Type == NotEqualExpression
+		else if syntax.kind == NotEqualExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_NotEqual(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
-		else if syntax.Type == ComparisonExpression
+		else if syntax.kind == ComparisonExpression
 		{
-			let operator: int = syntax.children[1].Type;
+			let operator: int = syntax.children[1].kind;
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_");
 			if operator == LessThan
@@ -338,42 +338,42 @@ public class Emitter
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
-		else if syntax.Type == AddExpression
+		else if syntax.kind == AddExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Add(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
-		else if syntax.Type == SubtractExpression
+		else if syntax.kind == SubtractExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Subtract(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
-		else if syntax.Type == MultiplyExpression
+		else if syntax.kind == MultiplyExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Multiply(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
-		else if syntax.Type == DivideExpression
+		else if syntax.kind == DivideExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Divide(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
-		else if syntax.Type == RemainderExpression
+		else if syntax.kind == RemainderExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Remainder(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
-		else if syntax.Type == OrExpression
+		else if syntax.kind == OrExpression
 		{
 			// TODO based on types decide how to translate
 			builder.Write("LogicalOr(");
@@ -382,7 +382,7 @@ public class Emitter
 			convert_expression(syntax.children[2], builder);
 			builder.Write("; })");
 		}
-		else if syntax.Type == AndExpression
+		else if syntax.kind == AndExpression
 		{
 			// TODO based on types decide how to translate
 			builder.Write("LogicalAnd(");
@@ -391,18 +391,18 @@ public class Emitter
 			convert_expression(syntax.children[2], builder);
 			builder.Write("; })");
 		}
-		else if syntax.Type == InvocationExpression
+		else if syntax.kind == InvocationExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			convert_expression(syntax.children[1], builder);
 		}
-		else if syntax.Type == MemberAccessExpression
+		else if syntax.kind == MemberAccessExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->");
 			convert_expression(syntax.children[2], builder);
 		}
-		else if syntax.Type == ElementAccessExpression
+		else if syntax.kind == ElementAccessExpression
 		{
 			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Element(");
@@ -411,7 +411,7 @@ public class Emitter
 		}
 		else
 		{
-			builder.Error("Could not convert expression of type " + syntax.Type);
+			builder.Error("Could not convert expression of type " + syntax.kind);
 		}
 	}
 
@@ -419,7 +419,7 @@ public class Emitter
 	{
 		definitions.StatementSeparatorLine();
 
-		if statement.Type == ReturnStatement
+		if statement.kind == ReturnStatement
 		{
 
 			if |statement.children| == 2
@@ -431,12 +431,12 @@ public class Emitter
 				definitions.EndLine(";");
 			}
 		}
-		else if statement.Type == LoopStatement
+		else if statement.kind == LoopStatement
 		{
 			definitions.WriteLine("for (;;)");
 			emit_statement(statement.children[1]); // Block Statement
 		}
-		else if statement.Type == Block
+		else if statement.kind == Block
 		{
 			definitions.BeginBlock();
 			for let block_statement: Semantic_Node in statement.Statements()
@@ -445,14 +445,14 @@ public class Emitter
 			}
 			definitions.EndBlock();
 		}
-		else if statement.Type == WhileStatement
+		else if statement.kind == WhileStatement
 		{
 			definitions.BeginLine("while (");
 			convert_expression(statement.children[1], definitions);
 			definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
 			emit_statement(statement.children[2]); // Block Statement
 		}
-		else if statement.Type == ForStatement
+		else if statement.kind == ForStatement
 		{
 			definitions.BeginLine("for (");
 			let variable_declaration: Semantic_Node = statement.children[1];
@@ -465,7 +465,7 @@ public class Emitter
 			definitions.EndLine("))");
 			emit_statement(statement.children[4]); // Block Statement
 		}
-		else if statement.Type == DoWhileStatement
+		else if statement.kind == DoWhileStatement
 		{
 			definitions.WriteLine("do");
 			emit_statement(statement.children[1]); // Block Statement
@@ -473,7 +473,7 @@ public class Emitter
 			convert_expression(statement.children[3], definitions);
 			definitions.EndLine(".Value);"); // if the type isn't just bool, we need op_true() etc.
 		}
-		else if statement.Type == IfStatement
+		else if statement.kind == IfStatement
 		{
 			var if_statement: Semantic_Node? = statement;
 			definitions.BeginLine("");
@@ -502,15 +502,15 @@ public class Emitter
 					{ break; }
 			}
 		}
-		else if statement.Type == BreakStatement
+		else if statement.kind == BreakStatement
 		{
 			definitions.WriteLine("break;");
 		}
-		else if statement.Type == ContinueStatement
+		else if statement.kind == ContinueStatement
 		{
 			definitions.WriteLine("continue;");
 		}
-		else if statement.Type == LocalDeclarationStatement
+		else if statement.kind == LocalDeclarationStatement
 		{
 			let variable_declaration: Semantic_Node = statement.children[0];
 			let variable_name: string = variable_declaration.first_child(Identifier).get_text();
@@ -525,7 +525,7 @@ public class Emitter
 			}
 			definitions.EndLine(";");
 		}
-		else if statement.Type == ExpressionStatement
+		else if statement.kind == ExpressionStatement
 		{
 			definitions.BeginLine("");
 			convert_expression(statement.children[0], definitions);
@@ -533,13 +533,13 @@ public class Emitter
 		}
 		else
 		{
-			definitions.Error("Could not emit statement of type " + statement.Type);
+			definitions.Error("Could not emit statement of type " + statement.kind);
 		}
 	}
 
 	private emit_member_declaration(mut self, member: Semantic_Node, class_name: string, current_access_level: int) -> int
 	{
-		var access_modifer: int = member.children[0].Type;
+		var access_modifer: int = member.children[0].kind;
 		if access_modifer =/= current_access_level
 		{
 			// We avoid the indent by using end_line()
@@ -559,10 +559,10 @@ public class Emitter
 			}
 			else
 			{
-				THROW_EXCEPTION("Invalid access modifier in Emitter.emit_member_declaration(). Type is " + access_modifer);
+				THROW_EXCEPTION("Invalid access modifier in Emitter.emit_member_declaration(). kind is " + access_modifer);
 			}
 		}
-		if member.Type == ConstructorDeclaration
+		if member.kind == ConstructorDeclaration
 		{
 			let parameters: string = convert_parameter_list(member.children[2]);
 			// Write out the function declaration for C++ so we can call functions defined after others
@@ -571,7 +571,7 @@ public class Emitter
 			definitions.WriteLine("::" + class_name + "_::" + class_name + "_" + parameters + "");
 			emit_statement(member.children[3]);
 		}
-		else if member.Type == FieldDeclaration
+		else if member.kind == FieldDeclaration
 		{
 			let variable_declaration: Semantic_Node = member.first_child(VariableDeclaration);
 			let field_name: string = variable_declaration.children[1].get_text();
@@ -579,7 +579,7 @@ public class Emitter
 			let cpp_type: string = convert_type(true, field_type); // because we need to assign them in constructors don't mark fields const
 			class_declarations.WriteLine(cpp_type + " " + field_name + "_;");
 		}
-		else if member.Type == MethodDeclaration
+		else if member.kind == MethodDeclaration
 		{
 			let method_name: string = member.children[1].get_text();
 			let parameter_list: Semantic_Node = member.children[2];
@@ -603,7 +603,7 @@ public class Emitter
 		}
 		else
 		{
-			definitions.Error("Could not emit member of type " + member.Type);
+			definitions.Error("Could not emit member of type " + member.kind);
 		}
 
 		return access_modifer;
@@ -611,7 +611,7 @@ public class Emitter
 
 	private emit_declaration(mut self, declaration: Semantic_Node) -> void
 	{
-		if declaration.Type == GlobalDeclaration
+		if declaration.kind == GlobalDeclaration
 		{
 			let variable_declaration: Semantic_Node = declaration.children[1];
 			let variable_name: string = variable_declaration.children[1].get_text();
@@ -624,7 +624,7 @@ public class Emitter
 			convert_expression(expression, global_definitions);
 			global_definitions.EndLine(";");
 		}
-		else if declaration.Type == ClassDeclaration
+		else if declaration.kind == ClassDeclaration
 		{
 			let class_name: string = declaration.children[2].get_text();
 			type_declarations.WriteLine("class " + class_name + "_;");
@@ -642,7 +642,7 @@ public class Emitter
 			}
 			class_declarations.EndBlockWithSemicolon();
 		}
-		else if declaration.Type == StructDeclaration
+		else if declaration.kind == StructDeclaration
 		{
 			let struct_name: string = declaration.children[2].get_text();
 			type_declarations.WriteLine("struct " + struct_name + "_;");
@@ -663,7 +663,7 @@ public class Emitter
 			}
 			class_declarations.EndBlockWithSemicolon();
 		}
-		else if declaration.Type == EnumDeclaration
+		else if declaration.kind == EnumDeclaration
 		{
 			let enum_name: string = declaration.children[3].get_text();
 			type_declarations.WriteLine("enum class " + enum_name + "_;");
@@ -672,7 +672,7 @@ public class Emitter
 			class_declarations.BeginBlock();
 			for let member: Semantic_Node in declaration.children
 			{
-				if member.Type == EnumMemberDeclaration
+				if member.kind == EnumMemberDeclaration
 				{
 					let member_name: string = member.children[0].get_text();
 					class_declarations.BeginLine(member_name + "_");
@@ -687,7 +687,7 @@ public class Emitter
 			}
 			class_declarations.EndBlockWithSemicolon();
 		}
-		else if declaration.Type == FunctionDeclaration
+		else if declaration.kind == FunctionDeclaration
 		{
 			let name: string = declaration.children[1].get_text();
 			let is_main: bool = name == "Main";
@@ -706,13 +706,13 @@ public class Emitter
 			}
 			emit_statement(declaration.children[5]);
 		}
-		else if declaration.Type == EndOfFileToken
+		else if declaration.kind == EndOfFileToken
 		{
 			// Ignore the end of file
 		}
 		else
 		{
-			definitions.Error("Could not emit declaration of type " + declaration.Type);
+			definitions.Error("Could not emit declaration of type " + declaration.kind);
 		}
 	}
 

@@ -7,8 +7,8 @@ public class Symbol_Builder
 		let package_symbol: mut Symbol = new Symbol(none, "", PackageSymbol);
 		for let compilation_unit: mut Semantic_Node in compilation_units
 		{
-			if compilation_unit.Type =/= CompilationUnit
-				{ THROW_EXCEPTION("`Symbol_Builder.build_symbols(...)` called with node of type " + compilation_unit.Type); }
+			if compilation_unit.kind =/= CompilationUnit
+				{ THROW_EXCEPTION("`Symbol_Builder.build_symbols(...)` called with node of type " + compilation_unit.kind); }
 
 			build_symbols(package_symbol, compilation_unit);
 		}
@@ -22,22 +22,22 @@ public class Symbol_Builder
 	// Once we have generators, this would be a good place to use them.
 	private build_symbols(self, parent: Symbol, node: mut Semantic_Node) -> void
 	{
-		if node.Type == CompilationUnit
+		if node.kind == CompilationUnit
 		{
 			for let declaration: mut Semantic_Node in node.children
 			{
 				build_symbols(parent, declaration);
 			}
 		}
-		else if node.Type == FunctionDeclaration
-			or node.Type == MethodDeclaration
+		else if node.kind == FunctionDeclaration
+			or node.kind == MethodDeclaration
 		{
 			let name: string = node.first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(parent, name);
 			build_function_symbols(parent, node, symbol);
 		}
-		else if node.Type == ClassDeclaration
-			or node.Type == StructDeclaration
+		else if node.kind == ClassDeclaration
+			or node.kind == StructDeclaration
 		{
 			let name: string = node.first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(parent, name);
@@ -50,14 +50,14 @@ public class Symbol_Builder
 			parent.children.Add(symbol);
 			node.bind_symbol(symbol);
 		}
-		else if node.Type == ConstructorDeclaration
+		else if node.kind == ConstructorDeclaration
 		{
 			let constructor_symbol: Symbol = new Symbol(none, "", ConstructorSymbol);
 			// TODO create a special self symbol
 			constructor_symbol.Declarations.Add(node);
 			build_function_symbols(parent, node, constructor_symbol);
 		}
-		else if node.Type == FieldDeclaration
+		else if node.kind == FieldDeclaration
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let field_symbol: Symbol = new Symbol(none, name);
@@ -65,7 +65,7 @@ public class Symbol_Builder
 			parent.children.Add(field_symbol);
 			node.bind_symbol(field_symbol);
 		}
-		else if node.Type == EnumDeclaration
+		else if node.kind == EnumDeclaration
 		{
 			let name: string = node.first_child(Identifier).get_text();
 			let enum_symbol: Symbol = new Symbol(parent, name);
@@ -74,7 +74,7 @@ public class Symbol_Builder
 			parent.children.Add(enum_symbol);
 			node.bind_symbol(enum_symbol);
 		}
-		else if node.Type == GlobalDeclaration
+		else if node.kind == GlobalDeclaration
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let globalDeclarationSymbol: Symbol = new Symbol(none, name);
@@ -82,20 +82,20 @@ public class Symbol_Builder
 			parent.children.Add(globalDeclarationSymbol);
 			node.bind_symbol(globalDeclarationSymbol);
 		}
-		else if node.Type == Block
+		else if node.kind == Block
 		{
 			for let statement: mut Semantic_Node in node.Statements()
 			{
 				build_symbols(parent, statement);
 			}
 		}
-		else if node.Type == LoopStatement
-			or node.Type == WhileStatement
-			or node.Type == DoWhileStatement
+		else if node.kind == LoopStatement
+			or node.kind == WhileStatement
+			or node.kind == DoWhileStatement
 		{
 			build_symbols(parent, node.first_child(Block));
 		}
-		else if node.Type == ForStatement
+		else if node.kind == ForStatement
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let for_symbol: Symbol = new Symbol(none, name);
@@ -104,14 +104,14 @@ public class Symbol_Builder
 			node.bind_symbol(for_symbol);
 			build_symbols(parent, node.first_child(Block));
 		}
-		else if node.Type == LocalDeclarationStatement
+		else if node.kind == LocalDeclarationStatement
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(none, name);
 			symbol.Declarations.Add(node);
 			parent.children.Add(symbol);
 		}
-		else if node.Type == IfStatement
+		else if node.kind == IfStatement
 		{
 			build_symbols(parent, node.first_child(Block));
 			let elseClause: mut Semantic_Node? = node.first_child(ElseClause);
@@ -120,7 +120,7 @@ public class Symbol_Builder
 				build_symbols(parent, elseClause);
 			}
 		}
-		else if node.Type == ElseClause
+		else if node.kind == ElseClause
 		{
 			// This might be a good place for some kind of coalesce operator
 			let block: mut Semantic_Node? = node.first_child(Block);
@@ -133,31 +133,31 @@ public class Symbol_Builder
 				build_symbols(parent, node.first_child(IfStatement));
 			}
 		}
-		else if node.Type == Parameter
+		else if node.kind == Parameter
 		{
 			let name: string = node.first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(none, name);
 			symbol.Declarations.Add(node);
 			parent.children.Add(symbol);
 		}
-		else if node.Type == SelfParameter
+		else if node.kind == SelfParameter
 		{
 			let name: string = node.first_child(SelfKeyword).get_text();
 			let symbol: Symbol = new Symbol(none, name, PrimitiveSymbol);
 			symbol.Declarations.Add(node);
 			parent.children.Add(symbol);
 		}
-		else if node.Type == ExpressionStatement
-			or node.Type == ReturnStatement
-			or node.Type == BreakStatement
-			or node.Type == ContinueStatement
-			or node.Type == EndOfFileToken
+		else if node.kind == ExpressionStatement
+			or node.kind == ReturnStatement
+			or node.kind == BreakStatement
+			or node.kind == ContinueStatement
+			or node.kind == EndOfFileToken
 		{
 			// Ignore these nodes
 		}
 		else
 		{
-			THROW_EXCEPTION("`Symbol_Builder.Build()` unimplemented node type " + node.Type);
+			THROW_EXCEPTION("`Symbol_Builder.Build()` unimplemented node type " + node.kind);
 		}
 	}
 

@@ -11,15 +11,15 @@ public class Name_Binder
 
 	private bind(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
 	{
-		if node.Type == CompilationUnit
+		if node.kind == CompilationUnit
 		{
 			for let child: mut Semantic_Node in node.children
 			{
 				bind(child, scope);
 			}
 		}
-		else if node.Type == FunctionDeclaration
-			or node.Type == MethodDeclaration
+		else if node.kind == FunctionDeclaration
+			or node.kind == MethodDeclaration
 		{
 			let parameters: mut Semantic_Node = node.first_child(ParameterList);
 			bind(parameters, scope);
@@ -31,20 +31,20 @@ public class Name_Binder
 			let body: mut Semantic_Node = node.first_child(Block);
 			bind(body, function_scope);
 		}
-		else if node.Type == ParameterList
+		else if node.kind == ParameterList
 		{
 			for let parameter: mut Semantic_Node in node.children_of_kind(Parameter)
 			{
 				bind(parameter, scope);
 			}
 		}
-		else if node.Type == Parameter
+		else if node.kind == Parameter
 		{
 			let type: mut Semantic_Node = node.children[|node.children| - 1];
 			bind_type(type, scope);
 		}
-		else if node.Type == ClassDeclaration
-			or node.Type == StructDeclaration
+		else if node.kind == ClassDeclaration
+			or node.kind == StructDeclaration
 		{
 			let type_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.children);
 			for let member: mut Semantic_Node in node.Members()
@@ -52,14 +52,14 @@ public class Name_Binder
 				bind(member, type_scope);
 			}
 		}
-		else if node.Type == FieldDeclaration
-			or node.Type == GlobalDeclaration
+		else if node.kind == FieldDeclaration
+			or node.kind == GlobalDeclaration
 		{
 			let variable_declaration: mut Semantic_Node = node.first_child(VariableDeclaration);
 			bind(variable_declaration, scope);
 
 		}
-		else if node.Type == ConstructorDeclaration
+		else if node.kind == ConstructorDeclaration
 		{
 			let parameters: mut Semantic_Node = node.first_child(ParameterList);
 			bind(parameters, scope);
@@ -68,7 +68,7 @@ public class Name_Binder
 			let body: mut Semantic_Node = node.first_child(Block);
 			bind(body, constructor_scope);
 		}
-		else if node.Type == VariableDeclaration
+		else if node.kind == VariableDeclaration
 		{
 			let type: mut Semantic_Node = node.children[3];
 			bind_type(type, scope);
@@ -78,42 +78,42 @@ public class Name_Binder
 				bind(initalizer, scope);
 			}
 		}
-		else if node.Type == EnumDeclaration
+		else if node.kind == EnumDeclaration
 		{
 			// Haven't yet implemented anything in enums that requires name binding
 		}
 
-		else if node.Type == Block
+		else if node.kind == Block
 		{
 			for let statement: mut Semantic_Node in node.Statements()
 			{
 				bind(statement, scope);
 			}
 		}
-		else if node.Type == LoopStatement
+		else if node.kind == LoopStatement
 		{
 			bind(node.first_child(Block), scope);
 		}
-		else if node.Type == WhileStatement
+		else if node.kind == WhileStatement
 		{
 			bind(node.children[1], scope); // condition expression
 			bind(node.first_child(Block), scope);
 		}
-		else if node.Type == DoWhileStatement
+		else if node.kind == DoWhileStatement
 		{
 			bind(node.first_child(Block), scope);
 			bind(node.children[3], scope); // condition expression
 		}
-		else if node.Type == ForStatement
+		else if node.kind == ForStatement
 		{
 			bind(node.first_child(VariableDeclaration), scope);
 			bind(node.first_child(Block), scope);
 		}
-		else if node.Type == LocalDeclarationStatement
+		else if node.kind == LocalDeclarationStatement
 		{
 			bind(node.first_child(VariableDeclaration), scope);
 		}
-		else if node.Type == IfStatement
+		else if node.kind == IfStatement
 		{
 			bind(node.children[1], scope); // condition expression
 			bind(node.first_child(Block), scope);
@@ -123,7 +123,7 @@ public class Name_Binder
 				bind(elseClause, scope);
 			}
 		}
-		else if node.Type == ElseClause
+		else if node.kind == ElseClause
 		{
 			// This might be a good place for some kind of coalesce operator
 			let block: mut Semantic_Node? = node.first_child(Block);
@@ -136,67 +136,67 @@ public class Name_Binder
 				bind(node.first_child(IfStatement), scope);
 			}
 		}
-		else if node.Type == ExpressionStatement
+		else if node.kind == ExpressionStatement
 		{
 			bind(node.children[0], scope);
 		}
-		else if node.Type == ReturnStatement
+		else if node.kind == ReturnStatement
 		{
 			let child: mut Semantic_Node = node.children[1];
-			if child.Type =/= Semicolon
+			if child.kind =/= Semicolon
 				{ bind(child, scope); }
 		}
-		else if node.Type == NewExpression
+		else if node.kind == NewExpression
 		{
 			bind_type(node.children[1], scope); // Type
 			bind(node.children[2], scope); // Call Arguments
 		}
-		else if node.Type == NotExpression
-			or node.Type == ParenthesizedExpression
-			or node.Type == MagnitudeExpression
-			or node.Type == NegateExpression
+		else if node.kind == NotExpression
+			or node.kind == ParenthesizedExpression
+			or node.kind == MagnitudeExpression
+			or node.kind == NegateExpression
 		{
 			bind(node.children[1], scope);
 		}
-		else if node.Type == AssignmentExpression
-			or node.Type == AndExpression
-			or node.Type == OrExpression
-			or node.Type == EqualExpression
-			or node.Type == NotEqualExpression
-			or node.Type == ComparisonExpression
-			or node.Type == AddExpression
-			or node.Type == SubtractExpression
-			or node.Type == ElementAccessExpression
-			or node.Type == RemainderExpression
-			or node.Type == MultiplyExpression
-			or node.Type == DivideExpression
+		else if node.kind == AssignmentExpression
+			or node.kind == AndExpression
+			or node.kind == OrExpression
+			or node.kind == EqualExpression
+			or node.kind == NotEqualExpression
+			or node.kind == ComparisonExpression
+			or node.kind == AddExpression
+			or node.kind == SubtractExpression
+			or node.kind == ElementAccessExpression
+			or node.kind == RemainderExpression
+			or node.kind == MultiplyExpression
+			or node.kind == DivideExpression
 		{
 			bind(node.children[0], scope); // lhs
 			bind(node.children[2], scope); // rhs
 		}
-		else if node.Type == MemberAccessExpression
+		else if node.kind == MemberAccessExpression
 		{
 			bind(node.children[0], scope); // Before dot
 			// TODO bind member, need type of expression to left
 		}
-		else if node.Type == InvocationExpression
+		else if node.kind == InvocationExpression
 		{
 			bind(node.children[0], scope); // Thing Being Invoked
 			bind(node.children[1], scope); // Argument List
 		}
-		else if node.Type == ArgumentList
+		else if node.kind == ArgumentList
 		{
 			for let child: mut Semantic_Node in node.children
 			{
-				if child.Type =/= LeftParen
-					and child.Type =/= Comma
-					and child.Type =/= RightParen
+				if child.kind =/= LeftParen
+					and child.kind =/= Comma
+					and child.kind =/= RightParen
 				{
 					bind(child, scope);
 				}
 			}
 		}
-		else if node.Type == IdentifierName
+		else if node.kind == IdentifierName
 		{
 			if node.IsMissing { return; }
 			let name: string = node.get_text();
@@ -210,59 +210,59 @@ public class Name_Binder
 				node.bind_symbol(symbol);
 			}
 		}
-		else if node.Type == NumericLiteralExpression
-			or node.Type == BreakStatement
-			or node.Type == ContinueStatement
-			or node.Type == NoneLiteralExpression
-			or node.Type == SelfExpression
-			or node.Type == TrueLiteralExpression
-			or node.Type == FalseLiteralExpression
-			or node.Type == StringLiteralExpression
-			or node.Type == CodePointLiteralExpression
-			or node.Type == EndOfFileToken
+		else if node.kind == NumericLiteralExpression
+			or node.kind == BreakStatement
+			or node.kind == ContinueStatement
+			or node.kind == NoneLiteralExpression
+			or node.kind == SelfExpression
+			or node.kind == TrueLiteralExpression
+			or node.kind == FalseLiteralExpression
+			or node.kind == StringLiteralExpression
+			or node.kind == CodePointLiteralExpression
+			or node.kind == EndOfFileToken
 		{
 			// Ignore these nodes
 		}
 		else
 		{
-			THROW_EXCEPTION("`Name_Binder.bind()` unimplemented node type " + node.Type);
+			THROW_EXCEPTION("`Name_Binder.bind()` unimplemented node type " + node.kind);
 		}
 	}
 
 	private bind_type(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
 	{
-		if node.Type == PredefinedType
+		if node.kind == PredefinedType
 		{
 			let name: string = node.children[0].get_text();
 			let symbol: Symbol = scope.GetPrimitive(name);
 			if symbol == none { THROW_EXCEPTION("`Name_Binder.bind_type()` no symbol for primitive type " + name); }
 			node.bind_symbol(symbol);
 		}
-		else if node.Type == MutableType
+		else if node.kind == MutableType
 		{
 			let innerType: mut Semantic_Node = node.children[1];
 			bind_type(innerType, scope);
 		}
-		else if node.Type == ImmutableType
-			or node.Type == OptionalType
+		else if node.kind == ImmutableType
+			or node.kind == OptionalType
 		{
 			let innerType: mut Semantic_Node = node.children[0];
 			bind_type(innerType, scope);
 		}
-		else if node.Type == QualifiedName
+		else if node.kind == QualifiedName
 		{
 			let qualifier: mut Semantic_Node = node.children[0];
 			bind_type(qualifier, scope);
 			// TODO rather than throwing an exception. We should say we can't resolve the subsequent identifiers
 			if qualifier.symbol == none { THROW_EXCEPTION("`Name_Binder.bind_type()` no symbol for qualifier " + qualifier.get_text()); }
 			let name: mut Semantic_Node = node.children[2];
-			if name.Type == IdentifierName
+			if name.kind == IdentifierName
 			{
 				let symbol: Symbol = qualifier.symbol.Get(name.get_text(), IdentifierSymbol);
 				name.bind_symbol(symbol);
 				node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
 			}
-			else if name.Type == GenericName
+			else if name.kind == GenericName
 			{
 				let identiferName: mut Semantic_Node = name.first_child(IdentifierName);
 				let symbol: Symbol = qualifier.symbol.Get(identiferName.get_text(), IdentifierSymbol);
@@ -275,12 +275,12 @@ public class Name_Binder
 				{
 					if typeArg
 					{
-						if typeArgument.Type =/= GreaterThan
+						if typeArgument.kind =/= GreaterThan
 						{
 							bind_type(typeArgument, scope);
 						}
 					}
-					else if typeArgument.Type == LessThan
+					else if typeArgument.kind == LessThan
 					{
 						typeArg = true;
 					}
@@ -288,10 +288,10 @@ public class Name_Binder
 			}
 			else
 			{
-				THROW_EXCEPTION("Unreachable: `Name_Binder.bind(..)` name.Type = " + name.Type);
+				THROW_EXCEPTION("Unreachable: `Name_Binder.bind(..)` name.kind = " + name.kind);
 			}
 		}
-		else if node.Type == IdentifierName
+		else if node.kind == IdentifierName
 		{
 			if node.IsMissing { return; }
 			let name: string = node.get_text();
@@ -307,7 +307,7 @@ public class Name_Binder
 		}
 		else
 		{
-			THROW_EXCEPTION("`Name_Binder.bind_type()` unimplemented node type " + node.Type);
+			THROW_EXCEPTION("`Name_Binder.bind_type()` unimplemented node type " + node.kind);
 		}
 	}
 

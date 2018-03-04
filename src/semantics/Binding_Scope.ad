@@ -32,7 +32,7 @@ public class Binding_Scope
 	{
 		for let symbol: Symbol in symbols
 		{
-			if symbol.Name == name and symbol.Type == type
+			if symbol.Name == name and symbol.kind == type
 			{
 				return symbol;
 			}

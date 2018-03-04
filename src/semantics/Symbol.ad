@@ -2,7 +2,7 @@ public class Symbol
 {
 	public let Parent: Symbol?;
 	public let Name: string;
-	public let Type: int;
+	public let kind: int;
 	public let Declarations: mut System.Collections.List<Semantic_Node>;
 	public let children: mut System.Collections.List<Symbol>;
 	public let IsPrimitive: bool;
@@ -11,7 +11,7 @@ public class Symbol
 	{
 		Parent = parent;
 		Name = name;
-		Type = IdentifierSymbol;
+		kind = IdentifierSymbol;
 		Declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		IsPrimitive = false;
@@ -21,7 +21,7 @@ public class Symbol
 	{
 		Parent = parent;
 		Name = name;
-		Type = type;
+		kind = type;
 		Declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		IsPrimitive = false;
@@ -32,7 +32,7 @@ public class Symbol
 	{
 		Parent = none;
 		Name = name;
-		Type = PrimitiveSymbol;
+		kind = PrimitiveSymbol;
 		Declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		IsPrimitive = true;
@@ -43,7 +43,7 @@ public class Symbol
 	{
 		for let child: Symbol in children
 		{
-			if child.Name == name and child.Type == type
+			if child.Name == name and child.kind == type
 			{
 				return child;
 			}
@@ -55,8 +55,8 @@ public class Symbol
 	{
 		if |Declarations| == 0  { THROW_EXCEPTION("Could not determine if `" + Name+ "` was a value type. No declarations."); }
 		let declaration: Semantic_Node = Declarations[0]; // TODO assuming there is only one for now
-		if declaration.Type == ClassDeclaration { return false; }
-		else if declaration.Type == StructDeclaration { return true; }
-		else { THROW_EXCEPTION("Could not determine if `" + Name + "` was a value type. Declaration of type " + declaration.Type); }
+		if declaration.kind == ClassDeclaration { return false; }
+		else if declaration.kind == StructDeclaration { return true; }
+		else { THROW_EXCEPTION("Could not determine if `" + Name + "` was a value type. Declaration of type " + declaration.kind); }
 	}
 }

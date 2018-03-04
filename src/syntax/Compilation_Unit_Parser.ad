@@ -38,7 +38,7 @@ public class Compilation_Unit_Parser
 			return new_syntax_node_missing(tokenType, tokenStream.Source, tokenStream.Source.ByteLength());
 		}
 
-		if token == none or token.Type =/= tokenType
+		if token == none or token.kind =/= tokenType
 		{
 			return new_syntax_node_missing(tokenType,  tokenStream.Source, token.Start);
 		}
@@ -54,12 +54,12 @@ public class Compilation_Unit_Parser
 
 	private ParseTypeName(mut self) -> Syntax_Node
 	{
-		if token.Type == CodePoint
-			or token.Type == String
-			or token.Type == Int
-			or token.Type == Bool
-			or token.Type == Void
-			or token.Type == UnsignedInt
+		if token.kind == CodePoint
+			or token.kind == String
+			or token.kind == Int
+			or token.kind == Bool
+			or token.kind == Void
+			or token.kind == UnsignedInt
 		{
 			return new Syntax_Node(PredefinedType, AcceptToken());
 		}
@@ -67,13 +67,13 @@ public class Compilation_Unit_Parser
 		{
 			var type: Syntax_Node = new Syntax_Node(IdentifierName, ExpectToken(Identifier));
 
-			while token.Type == Dot
+			while token.kind == Dot
 			{
 				let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 				children.Add(type);
 				children.Add(ExpectToken(Dot));
 				let identifier: Syntax_Node = ExpectToken(Identifier);
-				if token.Type == LessThan
+				if token.kind == LessThan
 				{
 					// Generic Name
 					let genericNameChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
@@ -100,7 +100,7 @@ public class Compilation_Unit_Parser
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
-		if token.Type == MutableKeyword
+		if token.kind == MutableKeyword
 		{
 
 			children.Add(ExpectToken(MutableKeyword));
@@ -118,7 +118,7 @@ public class Compilation_Unit_Parser
 	{
 		var type: Syntax_Node = ParseNonOptionalType();
 
-		while token.Type == Question
+		while token.kind == Question
 		{
 			let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 			children.Add(type);
@@ -135,7 +135,7 @@ public class Compilation_Unit_Parser
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
 		// This should be a match on the token type
-		if token.Type == NewKeyword
+		if token.kind == NewKeyword
 		{
 			// Constructor Call
 			children.Add(ExpectToken(NewKeyword));
@@ -143,69 +143,69 @@ public class Compilation_Unit_Parser
 			children.Add(ParseCallArguments());
 			return new Syntax_Node(NewExpression, children);
 		}
-		if token.Type == NotOperator
+		if token.kind == NotOperator
 		{
 			children.Add(ExpectToken(NotOperator));
 			children.Add(ParseExpression(8));
 			return new Syntax_Node(NotExpression, children);
 		}
-		if token.Type == LeftParen
+		if token.kind == LeftParen
 		{
 			children.Add(ExpectToken(LeftParen));
 			children.Add(ParseExpression());
 			children.Add(ExpectToken(RightParen));
 			return new Syntax_Node(ParenthesizedExpression, children);
 		}
-		if token.Type == Pipe
+		if token.kind == Pipe
 		{
 			children.Add(ExpectToken(Pipe));
 			children.Add(ParseExpression());
 			children.Add(ExpectToken(Pipe));
 			return new Syntax_Node(MagnitudeExpression, children);
 		}
-		if token.Type == Minus
+		if token.kind == Minus
 		{
 			// Unary Minus
 			children.Add(ExpectToken(Minus));
 			children.Add(ParseExpression(8));
 			return new Syntax_Node(NegateExpression, children);
 		}
-		if token.Type == NoneKeyword
+		if token.kind == NoneKeyword
 		{
 			children.Add(ExpectToken(NoneKeyword));
 			return new Syntax_Node(NoneLiteralExpression, children);
 		}
-		if token.Type == SelfKeyword
+		if token.kind == SelfKeyword
 		{
 			children.Add(ExpectToken(SelfKeyword));
 			return new Syntax_Node(SelfExpression, children);
 		}
-		if token.Type == TrueKeyword
+		if token.kind == TrueKeyword
 		{
 			children.Add(ExpectToken(TrueKeyword));
 			return new Syntax_Node(TrueLiteralExpression, children);
 		}
-		if token.Type == FalseKeyword
+		if token.kind == FalseKeyword
 		{
 			children.Add(ExpectToken(FalseKeyword));
 			return new Syntax_Node(FalseLiteralExpression, children);
 		}
-		if token.Type == Number
+		if token.kind == Number
 		{
 			children.Add(ExpectToken(Number));
 			return new Syntax_Node(NumericLiteralExpression, children);
 		}
-		if token.Type == Identifier
+		if token.kind == Identifier
 		{
 			children.Add(ExpectToken(Identifier));
 			return new Syntax_Node(IdentifierName, children);
 		}
-		if token.Type == StringLiteral
+		if token.kind == StringLiteral
 		{
 			children.Add(ExpectToken(StringLiteral));
 			return new Syntax_Node(StringLiteralExpression, children);
 		}
-		if token.Type == CodePointLiteral
+		if token.kind == CodePointLiteral
 		{
 			children.Add(ExpectToken(CodePointLiteral));
 			return new Syntax_Node(CodePointLiteralExpression, children);
@@ -219,12 +219,12 @@ public class Compilation_Unit_Parser
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(ExpectToken(LeftParen));
-		if token.Type =/= RightParen
+		if token.kind =/= RightParen
 		{
 			loop
 			{
 				children.Add(ParseExpression());
-				if token.Type == Comma
+				if token.kind == Comma
 					{ children.Add(ExpectToken(Comma)); }
 				else
 					{ break; }
@@ -257,7 +257,7 @@ public class Compilation_Unit_Parser
 			var leftAssociative: bool;
 			var suffixOperator: bool = false;
 			var expressionType: int;
-			if (token.Type == Equals or token.Type == PlusEquals or token.Type == MinusEquals) and minPrecedence <= 1
+			if (token.kind == Equals or token.kind == PlusEquals or token.kind == MinusEquals) and minPrecedence <= 1
 			{
 				// Assignment
 				precedence = 1;
@@ -265,7 +265,7 @@ public class Compilation_Unit_Parser
 				children.Add(AcceptToken());
 				expressionType = AssignmentExpression;
 			}
-			else if token.Type == OrKeyword and minPrecedence <= 2
+			else if token.kind == OrKeyword and minPrecedence <= 2
 			{
 				// logical or
 				precedence = 2;
@@ -273,7 +273,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(OrKeyword));
 				expressionType = OrExpression;
 			}
-			else if token.Type == AndKeyword and minPrecedence <= 3
+			else if token.kind == AndKeyword and minPrecedence <= 3
 			{
 				// logical and
 				precedence = 3;
@@ -281,7 +281,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(AndKeyword));
 				expressionType = AndExpression;
 			}
-			else if token.Type == EqualsEquals and minPrecedence <= 4
+			else if token.kind == EqualsEquals and minPrecedence <= 4
 			{
 				// equal
 				precedence = 4;
@@ -289,7 +289,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(EqualsEquals));
 				expressionType = EqualExpression;
 			}
-			else if token.Type == EqualsSlashEquals and minPrecedence <= 4
+			else if token.kind == EqualsSlashEquals and minPrecedence <= 4
 			{
 				// not equal
 				precedence = 4;
@@ -297,7 +297,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(EqualsSlashEquals));
 				expressionType = NotEqualExpression;
 			}
-			else if (token.Type == LessThan or token.Type == LessThanEquals or token.Type == GreaterThan or token.Type == GreaterThanEquals) and minPrecedence <= 5
+			else if (token.kind == LessThan or token.kind == LessThanEquals or token.kind == GreaterThan or token.kind == GreaterThanEquals) and minPrecedence <= 5
 			{
 				// relational operators
 				precedence = 5;
@@ -305,7 +305,7 @@ public class Compilation_Unit_Parser
 				children.Add(AcceptToken());
 				expressionType = ComparisonExpression;
 			}
-			else if token.Type == Plus and minPrecedence <= 6
+			else if token.kind == Plus and minPrecedence <= 6
 			{
 				// Additive
 				precedence = 6;
@@ -313,7 +313,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(Plus));
 				expressionType = AddExpression;
 			}
-			else if token.Type == Minus and minPrecedence <= 6
+			else if token.kind == Minus and minPrecedence <= 6
 			{
 				// Additive
 				precedence = 6;
@@ -321,7 +321,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(Minus));
 				expressionType = SubtractExpression;
 			}
-			else if token.Type == Asterisk and minPrecedence <= 7
+			else if token.kind == Asterisk and minPrecedence <= 7
 			{
 				// Multiplicative
 				precedence = 7;
@@ -329,7 +329,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(Asterisk));
 				expressionType = MultiplyExpression;
 			}
-			else if token.Type == Slash and minPrecedence <= 7
+			else if token.kind == Slash and minPrecedence <= 7
 			{
 				// Multiplicative
 				precedence = 7;
@@ -337,7 +337,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(Slash));
 				expressionType = DivideExpression;
 			}
-			else if token.Type == Percent and minPrecedence <= 7
+			else if token.kind == Percent and minPrecedence <= 7
 			{
 				// Multiplicative
 				precedence = 7;
@@ -345,7 +345,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(Percent));
 				expressionType = RemainderExpression;
 			}
-			else if token.Type == LeftParen and minPrecedence <= 9
+			else if token.kind == LeftParen and minPrecedence <= 9
 			{
 				// Invocation Expression
 				precedence = 9;
@@ -355,7 +355,7 @@ public class Compilation_Unit_Parser
 				children.Add(ParseCallArguments());
 				expressionType = InvocationExpression;
 			}
-			else if token.Type == Dot and minPrecedence <= 9
+			else if token.kind == Dot and minPrecedence <= 9
 			{
 				// Member Access
 				precedence = 9;
@@ -363,7 +363,7 @@ public class Compilation_Unit_Parser
 				children.Add(ExpectToken(Dot));
 				expressionType = MemberAccessExpression;
 			}
-			else if token.Type == LeftBracket and minPrecedence <= 9
+			else if token.kind == LeftBracket and minPrecedence <= 9
 			{
 				// Element Access
 				precedence = 9;
@@ -403,30 +403,30 @@ public class Compilation_Unit_Parser
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
-		if token.Type == ReturnKeyword
+		if token.kind == ReturnKeyword
 		{
 			children.Add(ExpectToken(ReturnKeyword));
-			if token.Type =/= Semicolon
+			if token.kind =/= Semicolon
 			{
 				children.Add(ParseExpression());
 			}
 			children.Add(ExpectToken(Semicolon));
 			return new Syntax_Node(ReturnStatement, children);
 		}
-		if token.Type == LoopKeyword
+		if token.kind == LoopKeyword
 		{
 			children.Add(ExpectToken(LoopKeyword));
 			children.Add(ParseBlock());
 			return new Syntax_Node(LoopStatement, children);
 		}
-		if token.Type == WhileKeyword
+		if token.kind == WhileKeyword
 		{
 			children.Add(ExpectToken(WhileKeyword));
 			children.Add(ParseExpression());
 			children.Add(ParseBlock());
 			return new Syntax_Node(WhileStatement, children);
 		}
-		if token.Type == ForKeyword
+		if token.kind == ForKeyword
 		{
 			children.Add(ExpectToken(ForKeyword));
 			children.Add(ParseVariableDeclaration(false));
@@ -435,7 +435,7 @@ public class Compilation_Unit_Parser
 			children.Add(ParseBlock());
 			return new Syntax_Node(ForStatement, children);
 		}
-		if token.Type == DoKeyword
+		if token.kind == DoKeyword
 		{
 			children.Add(ExpectToken(DoKeyword));
 			children.Add(ParseBlock());
@@ -444,29 +444,29 @@ public class Compilation_Unit_Parser
 			children.Add(ExpectToken(Semicolon));
 			return new Syntax_Node(DoWhileStatement, children);
 		}
-		if token.Type == IfKeyword
+		if token.kind == IfKeyword
 		{
 			return ParseIfStatement();
 		}
-		if token.Type == BreakKeyword
+		if token.kind == BreakKeyword
 		{
 			children.Add(ExpectToken(BreakKeyword));
 			children.Add(ExpectToken(Semicolon));
 			return new Syntax_Node(BreakStatement, children);
 		}
-		if token.Type == ContinueKeyword
+		if token.kind == ContinueKeyword
 		{
 			children.Add(ExpectToken(ContinueKeyword));
 			children.Add(ExpectToken(Semicolon));
 			return new Syntax_Node(ContinueStatement, children);
 		}
-		if token.Type == VarKeyword or token.Type == LetKeyword
+		if token.kind == VarKeyword or token.kind == LetKeyword
 		{
 			children.Add(ParseVariableDeclaration(true));
 			children.Add(ExpectToken(Semicolon));
 			return new Syntax_Node(LocalDeclarationStatement, children);
 		}
-		if token.Type == LeftBrace
+		if token.kind == LeftBrace
 		{
 			return ParseBlock();
 		}
@@ -484,11 +484,11 @@ public class Compilation_Unit_Parser
 		children.Add(ExpectToken(IfKeyword));
 		children.Add(ParseExpression());
 		children.Add(ParseBlock());
-		if token.Type == ElseKeyword
+		if token.kind == ElseKeyword
 		{
 			let elseChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 			elseChildren.Add(ExpectToken(ElseKeyword));
-			if token.Type == IfKeyword
+			if token.kind == IfKeyword
 				{ elseChildren.Add(ParseIfStatement()); }
 			else
 				{ elseChildren.Add(ParseBlock());}
@@ -502,7 +502,7 @@ public class Compilation_Unit_Parser
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
-		if token.Type == LetKeyword and token.Type =/= VarKeyword
+		if token.kind == LetKeyword and token.kind =/= VarKeyword
 			{ children.Add(ExpectToken(LetKeyword)); }
 		else
 			{ children.Add(ExpectToken(VarKeyword)); }
@@ -511,7 +511,7 @@ public class Compilation_Unit_Parser
 		children.Add(ExpectToken(Colon));
 		children.Add(ParseType());
 
-		if allowInitializer and token.Type == Equals
+		if allowInitializer and token.kind == Equals
 		{
 			children.Add(ExpectToken(Equals));
 			children.Add(ParseExpression());
@@ -524,7 +524,7 @@ public class Compilation_Unit_Parser
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(ExpectToken(LeftBrace));
-		while token.Type =/= RightBrace and token.Type =/= EndOfFileToken
+		while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
 		{
 			let startToken: Syntax_Node = token;
 			children.Add(ParseStatement());
@@ -533,11 +533,11 @@ public class Compilation_Unit_Parser
 				// We have not advanced at all when trying to parse a statement.
 				// Better skip some tokens to get unstuck
 				let skipped: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-				while token.Type =/= LeftBrace
-					and token.Type =/= RightBrace
-					and token.Type =/= EndOfFileToken
+				while token.kind =/= LeftBrace
+					and token.kind =/= RightBrace
+					and token.kind =/= EndOfFileToken
 				{
-					let currentTokenType: int = token.Type;
+					let currentTokenType: int = token.kind;
 					skipped.Add(AcceptToken());
 					// If we hit a semicolon, assume that was the end of the statement
 					if currentTokenType == Semicolon
@@ -555,16 +555,16 @@ public class Compilation_Unit_Parser
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(ExpectToken(LeftParen));
 
-		if token.Type =/= RightParen
+		if token.kind =/= RightParen
 		{
 			loop
 			{
 				let parameterChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-				if token.Type == MutableKeyword
-					or token.Type == SelfKeyword
+				if token.kind == MutableKeyword
+					or token.kind == SelfKeyword
 				{
 					// SelfParameter
-					if token.Type == MutableKeyword
+					if token.kind == MutableKeyword
 						{ parameterChildren.Add(ExpectToken(MutableKeyword)); }
 
 					parameterChildren.Add(ExpectToken(SelfKeyword));
@@ -572,8 +572,8 @@ public class Compilation_Unit_Parser
 				}
 				else
 				{
-					let mutableBinding: bool = token.Type == VarKeyword;
-					if token.Type == VarKeyword
+					let mutableBinding: bool = token.kind == VarKeyword;
+					if token.kind == VarKeyword
 						{ parameterChildren.Add(ExpectToken(VarKeyword)); }
 					parameterChildren.Add(ExpectToken(Identifier));
 					parameterChildren.Add(ExpectToken(Colon));
@@ -582,7 +582,7 @@ public class Compilation_Unit_Parser
 					children.Add(new Syntax_Node(Parameter, parameterChildren));
 				}
 
-				if token.Type == Comma
+				if token.kind == Comma
 					{ children.Add(ExpectToken(Comma)); }
 				else
 					{ break; }
@@ -596,10 +596,10 @@ public class Compilation_Unit_Parser
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
-		if token.Type == PublicKeyword
-			or token.Type == ProtectedKeyword
-			or token.Type == InternalKeyword
-			or token.Type == PrivateKeyword
+		if token.kind == PublicKeyword
+			or token.kind == ProtectedKeyword
+			or token.kind == InternalKeyword
+			or token.kind == PrivateKeyword
 		{
 			children.Add(AcceptToken());
 		}
@@ -609,7 +609,7 @@ public class Compilation_Unit_Parser
 			children.Add(ExpectToken(PublicKeyword));
 		}
 
-		if token.Type == NewKeyword
+		if token.kind == NewKeyword
 		{
 			// Constructor
 			children.Add(ExpectToken(NewKeyword));
@@ -618,8 +618,8 @@ public class Compilation_Unit_Parser
 			return new Syntax_Node(ConstructorDeclaration, children);
 		}
 
-		if token.Type == VarKeyword
-			or token.Type == LetKeyword
+		if token.kind == VarKeyword
+			or token.kind == LetKeyword
 		{
 			children.Add(ParseVariableDeclaration(false));
 			children.Add(ExpectToken(Semicolon));
@@ -639,10 +639,10 @@ public class Compilation_Unit_Parser
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 
-		if token.Type == PublicKeyword
-			or token.Type == ProtectedKeyword
-			or token.Type == InternalKeyword
-			or token.Type == PrivateKeyword
+		if token.kind == PublicKeyword
+			or token.kind == ProtectedKeyword
+			or token.kind == InternalKeyword
+			or token.kind == PrivateKeyword
 		{
 			children.Add(AcceptToken());
 		}
@@ -652,20 +652,20 @@ public class Compilation_Unit_Parser
 			children.Add(ExpectToken(PublicKeyword));
 		}
 
-		if token.Type == VarKeyword
-			or token.Type == LetKeyword
+		if token.kind == VarKeyword
+			or token.kind == LetKeyword
 		{
 			children.Add(ParseVariableDeclaration(true));
 			children.Add(ExpectToken(Semicolon));
 			return new Syntax_Node(GlobalDeclaration, children);
 		}
 
-		if token.Type == ClassKeyword
+		if token.kind == ClassKeyword
 		{
 			children.Add(ExpectToken(ClassKeyword));
 			children.Add(ExpectToken(Identifier));
 			children.Add(ExpectToken(LeftBrace));
-			while token.Type =/= RightBrace and token.Type =/= EndOfFileToken
+			while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
 			{
 				let startToken: Syntax_Node = token;
 				children.Add(ParseMemberDeclaration());
@@ -680,12 +680,12 @@ public class Compilation_Unit_Parser
 			return new Syntax_Node(ClassDeclaration, children);
 		}
 
-		if token.Type == StructKeyword
+		if token.kind == StructKeyword
 		{
 			children.Add(ExpectToken(StructKeyword));
 			children.Add(ExpectToken(Identifier));
 			children.Add(ExpectToken(LeftBrace));
-			while token.Type =/= RightBrace and token.Type =/= EndOfFileToken
+			while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
 			{
 				let startToken: Syntax_Node = token;
 				children.Add(ParseMemberDeclaration());
@@ -700,23 +700,23 @@ public class Compilation_Unit_Parser
 			return new Syntax_Node(StructDeclaration, children);
 		}
 
-		if token.Type == EnumKeyword
+		if token.kind == EnumKeyword
 		{
 			children.Add(ExpectToken(EnumKeyword));
 			children.Add(ExpectToken(StructKeyword));
 			children.Add(ExpectToken(Identifier));
 			children.Add(ExpectToken(LeftBrace));
 
-			while token.Type =/= RightBrace and token.Type =/= EndOfFileToken
+			while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
 			{
 				let memberChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 				memberChildren.Add(ExpectToken(Identifier));
-				if token.Type == Equals
+				if token.kind == Equals
 				{
 					memberChildren.Add(ExpectToken(Equals));
 					memberChildren.Add(ExpectToken(Number));
 				}
-				if token.Type =/= RightBrace
+				if token.kind =/= RightBrace
 				{
 					memberChildren.Add(ExpectToken(Comma));
 				}
@@ -739,7 +739,7 @@ public class Compilation_Unit_Parser
 	private ParseCompilationUnit(mut self) -> Syntax_Node
 	{
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-		while token =/= none and token.Type =/= EndOfFileToken
+		while token =/= none and token.kind =/= EndOfFileToken
 		{
 			let startToken: Syntax_Node = token;
 			children.Add(ParseDeclaration());

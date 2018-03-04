@@ -132,7 +132,7 @@ public let ImmutableType: int = 128; // `⧼Type⧽` without `mut` before it
 
 public class Syntax_Node
 {
-	public let Type: int;
+	public let kind: int;
 	public let IsMissing: bool;
 	public let Source: Source_Text;
 	public let Start: uint;
@@ -142,7 +142,7 @@ public class Syntax_Node
 
 	public new(type: int, source: Source_Text, start: uint, length: uint)
 	{
-		Type = type;
+		kind = type;
 		IsMissing = false;
 		Source = source;
 		Start = start;
@@ -153,7 +153,7 @@ public class Syntax_Node
 
 	public new(type: int, isMissing: bool, source: Source_Text, start: uint, length: uint)
 	{
-		Type = type;
+		kind = type;
 		IsMissing = isMissing;
 		Source = source;
 		Start = start;
@@ -164,7 +164,7 @@ public class Syntax_Node
 
 	public new(type: int, child: Syntax_Node)
 	{
-		Type = type;
+		kind = type;
 		IsMissing = child.IsMissing;
 		Source = child.Source;
 		Start = child.Start;
@@ -178,7 +178,7 @@ public class Syntax_Node
 	// TODO we want to take ownership of the child list
 	public new(type: int, children: System.Collections.List<Syntax_Node>)
 	{
-		Type = type;
+		kind = type;
 		IsMissing = false;
 		// TODO enforce that list is not empty, for now we rely on `children[0]` failing
 		Source = children[0].Source;
@@ -198,7 +198,7 @@ public class Syntax_Node
 	{
 		for let child: Syntax_Node in children
 		{
-			if child.Type == type
+			if child.kind == type
 				{ return child; }
 		}
 		return none;
@@ -208,7 +208,7 @@ public class Syntax_Node
 	{
 		for let child: Syntax_Node in children
 		{
-			if child.Type == type
+			if child.kind == type
 				{ return true; }
 		}
 		return false;
@@ -254,7 +254,7 @@ public new_Syntax_Node_Skipped(skipped: Syntax_Node) -> Syntax_Node
 {
 	let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
 	let span: Text_Span = new Text_Span(skipped.Start, skipped.Length);
-	node.Add(new Diagnostic(CompilationError, Parsing, skipped.Source, span, "Skipped unexpected token of type " + skipped.Type));
+	node.Add(new Diagnostic(CompilationError, Parsing, skipped.Source, span, "Skipped unexpected token of type " + skipped.kind));
 	return node;
 }
 
