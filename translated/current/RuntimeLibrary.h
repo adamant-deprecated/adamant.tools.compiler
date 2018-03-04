@@ -202,8 +202,11 @@ template<typename T>
 struct p_optional
 {
 private:
-	T data;
 	bool hasValue;
+	union
+    {
+        T data;
+    };
 
 public:
 	p_optional(T const & value) : data(value), hasValue(true) {}
