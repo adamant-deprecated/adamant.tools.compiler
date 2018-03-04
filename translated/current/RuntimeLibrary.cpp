@@ -54,8 +54,9 @@ p_string::p_string(p_int other)
 	: Length(0), Buffer(0)
 {
 	char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
-	std::sprintf(buffer,"%d", other.Value);
-	Length = std::strlen(buffer);
+	int length = std::sprintf(buffer,"%d", other.Value);
+	if(length <= 0) throw std::runtime_error("Could not convert int to string");
+	Length = length;
 	Buffer = buffer;
 }
 

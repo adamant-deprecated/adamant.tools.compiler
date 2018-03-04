@@ -236,7 +236,7 @@ public:
 // A placeholder function until we get proper exceptions implemented
 inline void THROW_EXCEPTION_(const p_string& value)
 {
-	throw std::runtime_error(value.Buffer);
+	throw std::runtime_error(value.cstr());
 }
 
 inline void assert(const p_bool condition, const p_string code, const p_string file, const std::int32_t line)
@@ -244,7 +244,7 @@ inline void assert(const p_bool condition, const p_string code, const p_string f
 	if(!condition.Value)
 		throw std::runtime_error(
 			p_string("Assertion failed: ").op_Add(code)
-			.op_Add(p_string(", file ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).Buffer);
+			.op_Add(p_string(", file ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).cstr());
 }
 
 #define assert_(condition) assert(condition, #condition, __FILE__, __LINE__)
