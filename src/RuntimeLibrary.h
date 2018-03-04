@@ -170,6 +170,7 @@ public:
 	p_string Substring_(p_int start) const { return Substring_(start, Length-start.Value); }
 	p_string Replace_(p_string oldValue, p_string newValue) const;
 	p_int LastIndexOf_(p_code_point c) const;
+	p_int index_of_(p_code_point c) const;
 
 	p_code_point op_Element(p_int const index) const { return Buffer[index.Value]; }
 	p_string op_Add(p_string const & value) const;
@@ -234,7 +235,7 @@ public:
 };
 
 // A placeholder function until we get proper exceptions implemented
-inline void THROW_EXCEPTION_(const p_string& value)
+_Noreturn inline void THROW_EXCEPTION_(const p_string& value)
 {
 	throw std::runtime_error(value.cstr());
 }
@@ -249,6 +250,14 @@ inline void assert(const p_bool condition, const p_string code, const p_string f
 
 #define assert_(condition) assert(condition, #condition, __FILE__, __LINE__)
 
+_Noreturn inline void UNIMPLEMENTED(const p_string function, const p_string file, const std::int32_t line)
+{
+	throw std::runtime_error(
+		p_string("Function ").op_Add(function)
+		.op_Add(p_string(" not yet implemented, ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).cstr());
+}
+
+#define UNIMPLEMENTED_(condition) UNIMPLEMENTED(__func__, __FILE__, __LINE__)
 
 namespace system_
 {

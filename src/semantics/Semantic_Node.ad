@@ -54,7 +54,7 @@ public class Semantic_Node
 		self.symbol = symbol;
 	}
 
-	public bind_type_symbol(mut self, symbol: Symbol) -> void
+	public bind_type_symbol(mut self, type_symbol: Symbol) -> void
 	{
 		if self.type_symbol =/= none { THROW_EXCEPTION("`Semantic_Node.bind_type_symbol(..)` called on node that already has a type_symbol on `" + get_text() + "`"); }
 		if type_symbol == none { THROW_EXCEPTION("`Semantic_Node.bind_type_symbol(..)` called without a type_symbol on `" + get_text() + "`"); }

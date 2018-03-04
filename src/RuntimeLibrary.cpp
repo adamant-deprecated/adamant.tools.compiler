@@ -94,6 +94,15 @@ p_int p_string::LastIndexOf_(p_code_point c) const
 		if(Buffer[i] == c.CharValue())
 			return i;
 
+	return -1; // TODO should return none
+}
+
+p_int p_string::index_of_(p_code_point c) const
+{
+	for(int i = 0; i < Length; i++)
+		if(Buffer[i] == c.CharValue())
+			return i;
+
 	return -1;
 }
 

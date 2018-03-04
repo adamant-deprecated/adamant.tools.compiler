@@ -164,13 +164,12 @@ Task("Build-Expected")
 	.Does(() =>
 	{
 		var wd = MakeAbsolute(Directory("."));
-		var testCases = GetFiles("test-cases/**/*.cpp");
+		var testCases = GetFiles("test-cases/**/*.cpp").ToList();
+		if(testName != null)
+			testCases = testCases.Where(c => c.GetFilename().ToString().Contains(testName)).ToList();
 		Information("Found {0} Test Case Expected Outputs", testCases.Count);
 		foreach(var testCase in testCases)
 		{
-			if(testName != null && !testCase.GetFilename().ToString().Contains(testName))
-				continue;
-
 			var relativePath = wd.GetRelativePath(testCase);
 			var outputDir = Directory("target") + relativePath.GetDirectory();
 			EnsureDirectoryExists(outputDir);

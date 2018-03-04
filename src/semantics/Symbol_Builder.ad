@@ -189,6 +189,7 @@ public class Symbol_Builder
 
 		package.children.Add(new Symbol(package, "resource_manager"));
 		package.children.Add(new Symbol(package, "THROW_EXCEPTION"));
+		package.children.Add(new Symbol(package, "UNIMPLEMENTED"));
 		package.children.Add(new Symbol(package, "assert"));
 
 		let system: Symbol = new Symbol(package, "System");
