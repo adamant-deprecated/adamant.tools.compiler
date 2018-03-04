@@ -3,16 +3,16 @@ public class Emitter
 	private let package: Package;
 	private let resources: System.Collections.List<Source_Text>;
 	// TODO fix casing on these field names
-	private var TypeDeclarations: mut Source_File_Builder;
-	private var FunctionDeclarations: mut Source_File_Builder;
-	private var ClassDeclarations: mut Source_File_Builder;
-	private var GlobalDefinitions: mut Source_File_Builder;
-	private var Definitions: mut Source_File_Builder;
+	private var type_declarations: mut Source_File_Builder;
+	private var function_declarations: mut Source_File_Builder;
+	private var class_declarations: mut Source_File_Builder;
+	private var global_definitions: mut Source_File_Builder;
+	private var definitions: mut Source_File_Builder;
 
 	// TODO compute these in a semantic analysis phase
-	private var MainFunctionReturnType: string;
-	private var MainFunctionAcceptsConsole: bool;
-	private var MainFunctionAcceptsArgs: bool;
+	private var main_function_return_type: string;
+	private var main_function_accepts_console: bool;
+	private var main_function_accepts_args: bool;
 
 	public new(package: Package, resources: System.Collections.List<Source_Text>)
 	{
@@ -22,29 +22,29 @@ public class Emitter
 
 	public Emit(mut self) -> string
 	{
-		TypeDeclarations = new Source_File_Builder();
-		FunctionDeclarations = new Source_File_Builder();
-		ClassDeclarations = new Source_File_Builder();
-		GlobalDefinitions = new Source_File_Builder();
-		Definitions = new Source_File_Builder();
-		MainFunctionReturnType = "";
-		MainFunctionAcceptsConsole = false;
-		MainFunctionAcceptsArgs = false;
+		type_declarations = new Source_File_Builder();
+		function_declarations = new Source_File_Builder();
+		class_declarations = new Source_File_Builder();
+		global_definitions = new Source_File_Builder();
+		definitions = new Source_File_Builder();
+		main_function_return_type = "";
+		main_function_accepts_console = false;
+		main_function_accepts_args = false;
 
-		EmitPreamble();
+		emit_preamble();
 
-		for let compilationUnit: Semantic_Node in package.CompilationUnits
+		for let compilation_unit: Semantic_Node in package.CompilationUnits
 		{
-			EmitCompilationUnit(compilationUnit);
+			emit_compilation_unit(compilation_unit);
 		}
 
-		EmitEntryPointAdapter();
+		emit_entry_point_adapter();
 
-		return TypeDeclarations.ToString()
-			+ FunctionDeclarations.ToString()
-			+ ClassDeclarations.ToString()
-			+ GlobalDefinitions.ToString()
-			+ Definitions.ToString();
+		return type_declarations.ToString()
+			+ function_declarations.ToString()
+			+ class_declarations.ToString()
+			+ global_definitions.ToString()
+			+ definitions.ToString();
 	}
 
 	// Converts a type to C++
@@ -141,17 +141,17 @@ public class Emitter
 		return convert_type(mutable_binding, type, false); // not optional
 	}
 
-	private ConvertParameterList(mut self, parameterList: Semantic_Node, isMainFunction: bool) -> string
+	private convert_parameter_list(mut self, parameter_list: Semantic_Node, is_main_function: bool) -> string
 	{
 		let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
 		builder.Append("(");
-		var firstParameter: bool = true;
-		for let parameter: Semantic_Node in parameterList.children_of_kind(Parameter)
+		var first_parameter: bool = true;
+		for let parameter: Semantic_Node in parameter_list.children_of_kind(Parameter)
 		{
-			if not firstParameter
+			if not first_parameter
 				{ builder.Append(", "); }
 			else
-				{ firstParameter = false; }
+				{ first_parameter = false; }
 
 			let mutable_binding: bool = parameter.has_child(VarKeyword);
 			let type: Semantic_Node = parameter.children[|parameter.children| - 1];
@@ -160,78 +160,78 @@ public class Emitter
 			builder.Append(parameter.first_child(Identifier).get_text());
 			builder.Append("_");
 
-			if isMainFunction
+			if is_main_function
 			{
-				var typeString: string;
+				var type_string: string;
 				if type.Type == MutableType
-					{ typeString = type.children[1].get_text(); }
+					{ type_string = type.children[1].get_text(); }
 				else
-					{ typeString = type.get_text(); }
-				if typeString == "System.Console.Console"
-					{ MainFunctionAcceptsConsole = true; }
-				if typeString == "System.Console.Arguments"
-					{ MainFunctionAcceptsArgs = true; }
+					{ type_string = type.get_text(); }
+				if type_string == "System.Console.Console"
+					{ main_function_accepts_console = true; }
+				if type_string == "System.Console.Arguments"
+					{ main_function_accepts_args = true; }
 			}
 		}
 		builder.Append(")");
 		return builder.ToString();
 	}
 
-	private ConvertParameterList(mut self, parameterList: Semantic_Node) -> string
+	private convert_parameter_list(mut self, parameter_list: Semantic_Node) -> string
 	{
-		return ConvertParameterList(parameterList, false);
+		return convert_parameter_list(parameter_list, false);
 	}
 
-	private ConvertExpression(syntax: Semantic_Node, builder: mut Source_File_Builder) -> void
+	private convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builder) -> void
 	{
 		if syntax.Type == NewExpression
 		{
 			let type: Semantic_Node = syntax.children[1];
-			let isValueType: bool = type.is_value_type();
-			if not isValueType // place value types on the stack in C++ by not using new
+			let is_value_type: bool = type.is_value_type();
+			if not is_value_type // place value types on the stack in C++ by not using new
 				{ builder.Write("(new "); }
 			builder.Write(convert_type_name(type));
 			let argumentList: Semantic_Node = syntax.children[2];
-			ConvertExpression(argumentList, builder);
-			if not isValueType
+			convert_expression(argumentList, builder);
+			if not is_value_type
 				{ builder.Write(")"); }
 		}
 		else if syntax.Type == ArgumentList
 		{
 			builder.Write("(");
-			var firstExpression: bool = true;
+			var first_expression: bool = true;
 			for let arg: Semantic_Node in syntax.children
 			{
 				if arg.Type =/= LeftParen
 					and arg.Type =/= RightParen
 					and arg.Type =/= Comma
 				{
-					if firstExpression
-						{ firstExpression = false; }
+					if first_expression
+						{ first_expression = false; }
 					else
 						{ builder.Write(", "); }
-					ConvertExpression(arg, builder);
+					convert_expression(arg, builder);
 				}
 			}
 			builder.Write(")");
 		}
 		else if syntax.Type == NotExpression
 		{
-			ConvertExpression(syntax.children[1], builder);
+			convert_expression(syntax.children[1], builder);
 			builder.Write("->op_Not()");
 		}
 		else if syntax.Type == MagnitudeExpression
 		{
-			ConvertExpression(syntax.children[1], builder);
+			convert_expression(syntax.children[1], builder);
 			builder.Write("->op_Magnitude()");
 		}
 		else if syntax.Type == ParenthesizedExpression
 		{
-			ConvertExpression(syntax.children[1], builder);
+			convert_expression(syntax.children[1], builder);
 		}
 		else if syntax.Type == NegateExpression
 		{
-			ConvertExpression(syntax.children[1], builder);
+			convert_expression(syntax.children[1], builder);
 			builder.Write("->op_Negate()");
 		}
 		else if syntax.Type == NoneLiteralExpression
@@ -268,15 +268,15 @@ public class Emitter
 			let operator: int = syntax.children[1].Type;
 			if operator == Equals
 			{
-				ConvertExpression(syntax.children[0], builder);
+				convert_expression(syntax.children[0], builder);
 				builder.Write(" ");
 				builder.Write(syntax.children[1].get_text());
 				builder.Write(" ");
-				ConvertExpression(syntax.children[2], builder);
+				convert_expression(syntax.children[2], builder);
 			}
 			else
 			{
-				ConvertExpression(syntax.children[0], builder);
+				convert_expression(syntax.children[0], builder);
 				builder.Write("->op_");
 				if operator == PlusEquals
 				{
@@ -291,28 +291,28 @@ public class Emitter
 					builder.Error("Unsupported assignment operator " + operator);
 				}
 				builder.Write("(");
-				ConvertExpression(syntax.children[2], builder);
+				convert_expression(syntax.children[2], builder);
 				builder.Write(")");
 			}
 		}
 		else if syntax.Type == EqualExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Equal(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.Type == NotEqualExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_NotEqual(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.Type == ComparisonExpression
 		{
 			let operator: int = syntax.children[1].Type;
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_");
 			if operator == LessThan
 			{
@@ -335,78 +335,78 @@ public class Emitter
 				builder.Error("Unsupported comparison operator " + operator);
 			}
 			builder.Write("(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.Type == AddExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Add(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.Type == SubtractExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Subtract(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.Type == MultiplyExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Multiply(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.Type == DivideExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Divide(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.Type == RemainderExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Remainder(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.Type == OrExpression
 		{
 			// TODO based on types decide how to translate
 			builder.Write("LogicalOr(");
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write(", [&] { return ");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write("; })");
 		}
 		else if syntax.Type == AndExpression
 		{
 			// TODO based on types decide how to translate
 			builder.Write("LogicalAnd(");
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write(", [&] { return ");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write("; })");
 		}
 		else if syntax.Type == InvocationExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
-			ConvertExpression(syntax.children[1], builder);
+			convert_expression(syntax.children[0], builder);
+			convert_expression(syntax.children[1], builder);
 		}
 		else if syntax.Type == MemberAccessExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 		}
 		else if syntax.Type == ElementAccessExpression
 		{
-			ConvertExpression(syntax.children[0], builder);
+			convert_expression(syntax.children[0], builder);
 			builder.Write("->op_Element(");
-			ConvertExpression(syntax.children[2], builder);
+			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else
@@ -415,86 +415,86 @@ public class Emitter
 		}
 	}
 
-	private EmitStatement(mut self, statement: Semantic_Node) -> void
+	private emit_statement(mut self, statement: Semantic_Node) -> void
 	{
-		Definitions.StatementSeparatorLine();
+		definitions.StatementSeparatorLine();
 
 		if statement.Type == ReturnStatement
 		{
 
 			if |statement.children| == 2
-				{ Definitions.WriteLine("return;"); }
+				{ definitions.WriteLine("return;"); }
 			else
 			{
-				Definitions.BeginLine("return ");
-				ConvertExpression(statement.children[1], Definitions);
-				Definitions.EndLine(";");
+				definitions.BeginLine("return ");
+				convert_expression(statement.children[1], definitions);
+				definitions.EndLine(";");
 			}
 		}
 		else if statement.Type == LoopStatement
 		{
-			Definitions.WriteLine("for (;;)");
-			EmitStatement(statement.children[1]); // Block Statement
+			definitions.WriteLine("for (;;)");
+			emit_statement(statement.children[1]); // Block Statement
 		}
 		else if statement.Type == Block
 		{
-			Definitions.BeginBlock();
-			for let blockStatement: Semantic_Node in statement.Statements()
+			definitions.BeginBlock();
+			for let block_statement: Semantic_Node in statement.Statements()
 			{
-				EmitStatement(blockStatement);
+				emit_statement(block_statement);
 			}
-			Definitions.EndBlock();
+			definitions.EndBlock();
 		}
 		else if statement.Type == WhileStatement
 		{
-			Definitions.BeginLine("while (");
-			ConvertExpression(statement.children[1], Definitions);
-			Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
-			EmitStatement(statement.children[2]); // Block Statement
+			definitions.BeginLine("while (");
+			convert_expression(statement.children[1], definitions);
+			definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
+			emit_statement(statement.children[2]); // Block Statement
 		}
 		else if statement.Type == ForStatement
 		{
-			Definitions.BeginLine("for (");
-			let variableDeclaration: Semantic_Node = statement.children[1];
-			let mutable_binding: bool = variableDeclaration.has_child(VarKeyword);
-			let name: string = variableDeclaration.first_child(Identifier).get_text();
-			let type: Semantic_Node = variableDeclaration.children[3];
-			Definitions.Write(convert_type(mutable_binding, type) + " " + name + "_");
-			Definitions.Write(" : *(");
-			ConvertExpression(statement.children[3], Definitions); // expression
-			Definitions.EndLine("))");
-			EmitStatement(statement.children[4]); // Block Statement
+			definitions.BeginLine("for (");
+			let variable_declaration: Semantic_Node = statement.children[1];
+			let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
+			let name: string = variable_declaration.first_child(Identifier).get_text();
+			let type: Semantic_Node = variable_declaration.children[3];
+			definitions.Write(convert_type(mutable_binding, type) + " " + name + "_");
+			definitions.Write(" : *(");
+			convert_expression(statement.children[3], definitions); // expression
+			definitions.EndLine("))");
+			emit_statement(statement.children[4]); // Block Statement
 		}
 		else if statement.Type == DoWhileStatement
 		{
-			Definitions.WriteLine("do");
-			EmitStatement(statement.children[1]); // Block Statement
-			Definitions.BeginLine("while (");
-			ConvertExpression(statement.children[3], Definitions);
-			Definitions.EndLine(".Value);"); // if the type isn't just bool, we need op_true() etc.
+			definitions.WriteLine("do");
+			emit_statement(statement.children[1]); // Block Statement
+			definitions.BeginLine("while (");
+			convert_expression(statement.children[3], definitions);
+			definitions.EndLine(".Value);"); // if the type isn't just bool, we need op_true() etc.
 		}
 		else if statement.Type == IfStatement
 		{
-			var ifStatement: Semantic_Node? = statement;
-			Definitions.BeginLine("");
+			var if_statement: Semantic_Node? = statement;
+			definitions.BeginLine("");
 			loop
 			{
-				Definitions.Write("if (");
-				ConvertExpression(ifStatement.children[1], Definitions);
-				Definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
-				EmitStatement(ifStatement.children[2]); // Block Statement
-				let elseClause: Semantic_Node? = ifStatement.first_child(ElseClause);
+				definitions.Write("if (");
+				convert_expression(if_statement.children[1], definitions);
+				definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
+				emit_statement(if_statement.children[2]); // Block Statement
+				let elseClause: Semantic_Node? = if_statement.first_child(ElseClause);
 				if elseClause =/= none
 				{
-					ifStatement = elseClause.first_child(IfStatement);
-					if ifStatement =/= none
+					if_statement = elseClause.first_child(IfStatement);
+					if if_statement =/= none
 					{
-						Definitions.BeginLine("else ");
+						definitions.BeginLine("else ");
 					}
 					else
 					{
-						Definitions.WriteLine("else");
-						EmitStatement(elseClause.children[1]); // Block Statement
+						definitions.WriteLine("else");
+						emit_statement(elseClause.children[1]); // Block Statement
 						break;
 					}
 				}
@@ -504,181 +504,181 @@ public class Emitter
 		}
 		else if statement.Type == BreakStatement
 		{
-			Definitions.WriteLine("break;");
+			definitions.WriteLine("break;");
 		}
 		else if statement.Type == ContinueStatement
 		{
-			Definitions.WriteLine("continue;");
+			definitions.WriteLine("continue;");
 		}
 		else if statement.Type == LocalDeclarationStatement
 		{
-			let variableDeclaration: Semantic_Node = statement.children[0];
-			let variableName: string = variableDeclaration.first_child(Identifier).get_text();
-			let variableType: Semantic_Node = variableDeclaration.children[3];
-			let mutable_binding: bool = variableDeclaration.has_child(VarKeyword);
-			Definitions.BeginLine(convert_type(mutable_binding, variableType));
-			Definitions.Write(" " + variableName + "_");
-			if variableDeclaration.has_child(Equals)
+			let variable_declaration: Semantic_Node = statement.children[0];
+			let variable_name: string = variable_declaration.first_child(Identifier).get_text();
+			let variable_type: Semantic_Node = variable_declaration.children[3];
+			let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
+			definitions.BeginLine(convert_type(mutable_binding, variable_type));
+			definitions.Write(" " + variable_name + "_");
+			if variable_declaration.has_child(Equals)
 			{
-				Definitions.Write(" = ");
-				ConvertExpression(variableDeclaration.children[5], Definitions);
+				definitions.Write(" = ");
+				convert_expression(variable_declaration.children[5], definitions);
 			}
-			Definitions.EndLine(";");
+			definitions.EndLine(";");
 		}
 		else if statement.Type == ExpressionStatement
 		{
-			Definitions.BeginLine("");
-			ConvertExpression(statement.children[0], Definitions);
-			Definitions.EndLine(";");
+			definitions.BeginLine("");
+			convert_expression(statement.children[0], definitions);
+			definitions.EndLine(";");
 		}
 		else
 		{
-			Definitions.Error("Could not emit statement of type " + statement.Type);
+			definitions.Error("Could not emit statement of type " + statement.Type);
 		}
 	}
 
-	private EmitMemberDeclaration(mut self, member: Semantic_Node, className: string) -> void
+	private emit_member_declaration(mut self, member: Semantic_Node, class_name: string) -> void
 	{
 		if member.Type == ConstructorDeclaration
 		{
-			let parameters: string = ConvertParameterList(member.children[2]);
+			let parameters: string = convert_parameter_list(member.children[2]);
 			// Write out the function declaration for C++ so we can call functions defined after others
-			ClassDeclarations.WriteLine(className + "_" + parameters + ";");
-			Definitions.ElementSeparatorLine();
-			Definitions.WriteLine("::" + className + "_::" + className + "_" + parameters + "");
-			EmitStatement(member.children[3]);
+			class_declarations.WriteLine(class_name + "_" + parameters + ";");
+			definitions.ElementSeparatorLine();
+			definitions.WriteLine("::" + class_name + "_::" + class_name + "_" + parameters + "");
+			emit_statement(member.children[3]);
 		}
 		else if member.Type == FieldDeclaration
 		{
-			let variableDeclaration: Semantic_Node = member.first_child(VariableDeclaration);
-			let fieldName: string = variableDeclaration.children[1].get_text();
-			let fieldType: Semantic_Node = variableDeclaration.children[3];
-			let cppType: string = convert_type(true, fieldType); // because we need to assign them in constructors don't mark fields const
-			ClassDeclarations.WriteLine(cppType + " " + fieldName + "_;");
+			let variable_declaration: Semantic_Node = member.first_child(VariableDeclaration);
+			let field_name: string = variable_declaration.children[1].get_text();
+			let field_type: Semantic_Node = variable_declaration.children[3];
+			let cpp_type: string = convert_type(true, field_type); // because we need to assign them in constructors don't mark fields const
+			class_declarations.WriteLine(cpp_type + " " + field_name + "_;");
 		}
 		else if member.Type == MethodDeclaration
 		{
-			let methodName: string = member.children[1].get_text();
-			let parameterList: Semantic_Node = member.children[2];
-			let parameters: string = ConvertParameterList(parameterList);
-			let selfParameter: Semantic_Node? = parameterList.first_child(SelfParameter);
-			let isAssociatedFunction: bool = selfParameter == none;
-			let mutableSelf: bool = not isAssociatedFunction and selfParameter.has_child(MutableKeyword);
-			let returnType: Semantic_Node = member.children[4];
-			let cppType: string = convert_type(true, returnType);
-			var staticModifier: string = "";
-			if isAssociatedFunction
-				{ staticModifier = "static "; }
+			let method_name: string = member.children[1].get_text();
+			let parameter_list: Semantic_Node = member.children[2];
+			let parameters: string = convert_parameter_list(parameter_list);
+			let self_parameter: Semantic_Node? = parameter_list.first_child(SelfParameter);
+			let is_associated_function: bool = self_parameter == none;
+			let mutable_self: bool = not is_associated_function and self_parameter.has_child(MutableKeyword);
+			let return_type: Semantic_Node = member.children[4];
+			let cpp_type: string = convert_type(true, return_type);
+			var static_modifier: string = "";
+			if is_associated_function
+				{ static_modifier = "static "; }
 			var constModifier: string = "";
-			if not mutableSelf and not isAssociatedFunction
+			if not mutable_self and not is_associated_function
 				{ constModifier = "const "; }
-			ClassDeclarations.WriteLine(staticModifier + "auto " + methodName + "_" + parameters + " " + constModifier + "-> " + cppType + ";");
-			Definitions.ElementSeparatorLine();
-			Definitions.WriteLine("auto ::" + className + "_::" + methodName + "_" + parameters + " " + constModifier + "-> " + cppType);
+			class_declarations.WriteLine(static_modifier + "auto " + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type + ";");
+			definitions.ElementSeparatorLine();
+			definitions.WriteLine("auto ::" + class_name + "_::" + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type);
 			let block: Semantic_Node = member.children[5];
-			EmitStatement(block);
+			emit_statement(block);
 		}
 		else
 		{
-			Definitions.Error("Could not emit member of type " + member.Type);
+			definitions.Error("Could not emit member of type " + member.Type);
 		}
 	}
 
-	private EmitDeclaration(mut self, declaration: Semantic_Node) -> void
+	private emit_declaration(mut self, declaration: Semantic_Node) -> void
 	{
 		if declaration.Type == GlobalDeclaration
 		{
-			let variableDeclaration: Semantic_Node = declaration.children[1];
-			let variableName: string = variableDeclaration.children[1].get_text();
-			let variableType: Semantic_Node = variableDeclaration.children[3];
-			let mutable_binding: bool = variableDeclaration.has_child(VarKeyword);
-			let cppType: string = convert_type(mutable_binding, variableType);
-			GlobalDefinitions.BeginLine(cppType);
-			GlobalDefinitions.Write(" " + variableName + "_ = ");
-			let expression: Semantic_Node = variableDeclaration.children[5];
-			ConvertExpression(expression, GlobalDefinitions);
-			GlobalDefinitions.EndLine(";");
+			let variable_declaration: Semantic_Node = declaration.children[1];
+			let variable_name: string = variable_declaration.children[1].get_text();
+			let variable_type: Semantic_Node = variable_declaration.children[3];
+			let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
+			let cpp_type: string = convert_type(mutable_binding, variable_type);
+			global_definitions.BeginLine(cpp_type);
+			global_definitions.Write(" " + variable_name + "_ = ");
+			let expression: Semantic_Node = variable_declaration.children[5];
+			convert_expression(expression, global_definitions);
+			global_definitions.EndLine(";");
 		}
 		else if declaration.Type == ClassDeclaration
 		{
-			let className: string = declaration.children[2].get_text();
-			TypeDeclarations.WriteLine("class " + className + "_;");
-			ClassDeclarations.ElementSeparatorLine();
-			ClassDeclarations.WriteLine("class " + className + "_");
-			ClassDeclarations.BeginBlock();
-			ClassDeclarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
+			let class_name: string = declaration.children[2].get_text();
+			type_declarations.WriteLine("class " + class_name + "_;");
+			class_declarations.ElementSeparatorLine();
+			class_declarations.WriteLine("class " + class_name + "_");
+			class_declarations.BeginBlock();
+			class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
 			// Write out basic reference equality comparisons
-			ClassDeclarations.WriteLine("p_bool op_Equal(" + className + "_ const * other) const { return this == other; }");
-			ClassDeclarations.WriteLine("p_bool op_NotEqual(" + className + "_ const * other) const { return this != other; }");
+			class_declarations.WriteLine("p_bool op_Equal(" + class_name + "_ const * other) const { return this == other; }");
+			class_declarations.WriteLine("p_bool op_NotEqual(" + class_name + "_ const * other) const { return this != other; }");
 			for let member: Semantic_Node in declaration.Members()
 			{
-				EmitMemberDeclaration(member, className);
+				emit_member_declaration(member, class_name);
 			}
-			ClassDeclarations.EndBlockWithSemicolon();
+			class_declarations.EndBlockWithSemicolon();
 		}
 		else if declaration.Type == StructDeclaration
 		{
-			let structName: string = declaration.children[2].get_text();
-			TypeDeclarations.WriteLine("struct " + structName + "_;");
-			ClassDeclarations.ElementSeparatorLine();
-			ClassDeclarations.WriteLine("struct " + structName + "_");
-			ClassDeclarations.BeginBlock();
-			ClassDeclarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
+			let struct_name: string = declaration.children[2].get_text();
+			type_declarations.WriteLine("struct " + struct_name + "_;");
+			class_declarations.ElementSeparatorLine();
+			class_declarations.WriteLine("struct " + struct_name + "_");
+			class_declarations.BeginBlock();
+			class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
 			// Write out arrow and dereference operators for using value types like reference types
 			// TODO Emit correct code to use value types as value types rather than reference types and drop this code
-			ClassDeclarations.WriteLine(structName + "_ * operator->() { return this; }");
-			ClassDeclarations.WriteLine(structName + "_ const * operator->() const { return this; }");
-			ClassDeclarations.WriteLine(structName + "_ & operator* () { return *this; }");
-			ClassDeclarations.WriteLine(structName + "_ const & operator* () const { return *this; }");
+			class_declarations.WriteLine(struct_name + "_ * operator->() { return this; }");
+			class_declarations.WriteLine(struct_name + "_ const * operator->() const { return this; }");
+			class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
+			class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
 
 			for let member: Semantic_Node in declaration.Members()
 			{
-				EmitMemberDeclaration(member, structName);
+				emit_member_declaration(member, struct_name);
 			}
-			ClassDeclarations.EndBlockWithSemicolon();
+			class_declarations.EndBlockWithSemicolon();
 		}
 		else if declaration.Type == EnumDeclaration
 		{
-			let enumName: string = declaration.children[3].get_text();
-			TypeDeclarations.WriteLine("enum class " + enumName + "_;");
-			ClassDeclarations.ElementSeparatorLine();
-			ClassDeclarations.WriteLine("enum class " + enumName + "_");
-			ClassDeclarations.BeginBlock();
+			let enum_name: string = declaration.children[3].get_text();
+			type_declarations.WriteLine("enum class " + enum_name + "_;");
+			class_declarations.ElementSeparatorLine();
+			class_declarations.WriteLine("enum class " + enum_name + "_");
+			class_declarations.BeginBlock();
 			for let member: Semantic_Node in declaration.children
 			{
 				if member.Type == EnumMemberDeclaration
 				{
-					let memberName: string = member.children[0].get_text();
-					ClassDeclarations.BeginLine(memberName + "_");
-					let memberValue: Semantic_Node? = member.first_child(Number);
-					if memberValue =/= none
+					let member_name: string = member.children[0].get_text();
+					class_declarations.BeginLine(member_name + "_");
+					let member_value: Semantic_Node? = member.first_child(Number);
+					if member_value =/= none
 					{
-						ClassDeclarations.Write(" = ");
-						ClassDeclarations.Write(memberValue.get_text());
+						class_declarations.Write(" = ");
+						class_declarations.Write(member_value.get_text());
 					}
-					ClassDeclarations.EndLine(",");
+					class_declarations.EndLine(",");
 				}
 			}
-			ClassDeclarations.EndBlockWithSemicolon();
+			class_declarations.EndBlockWithSemicolon();
 		}
 		else if declaration.Type == FunctionDeclaration
 		{
 			let name: string = declaration.children[1].get_text();
-			let isMain: bool = name == "Main";
-			let parameters: string = ConvertParameterList(declaration.children[2], isMain);
-			let returnType: Semantic_Node = declaration.children[4];
-			let cppType: string = convert_type(true, returnType);
+			let is_main: bool = name == "Main";
+			let parameters: string = convert_parameter_list(declaration.children[2], is_main);
+			let return_type: Semantic_Node = declaration.children[4];
+			let cpp_type: string = convert_type(true, return_type);
 			// Write out the function declaration for C++ so we can call functions defined after others
-			FunctionDeclarations.WriteLine("auto " + name + "_" + parameters + " -> " + cppType + ";");
-			Definitions.ElementSeparatorLine();
-			Definitions.WriteLine("auto " + name + "_" + parameters + " -> " + cppType);
-			if isMain
+			function_declarations.WriteLine("auto " + name + "_" + parameters + " -> " + cpp_type + ";");
+			definitions.ElementSeparatorLine();
+			definitions.WriteLine("auto " + name + "_" + parameters + " -> " + cpp_type);
+			if is_main
 			{
-				if MainFunctionReturnType =/= ""
-					{ Definitions.Error("Multiple declarations of main"); }
-				MainFunctionReturnType = cppType;
+				if main_function_return_type =/= ""
+					{ definitions.Error("Multiple declarations of main"); }
+				main_function_return_type = cpp_type;
 			}
-			EmitStatement(declaration.children[5]);
+			emit_statement(declaration.children[5]);
 		}
 		else if declaration.Type == EndOfFileToken
 		{
@@ -686,90 +686,90 @@ public class Emitter
 		}
 		else
 		{
-			Definitions.Error("Could not emit declaration of type " + declaration.Type);
+			definitions.Error("Could not emit declaration of type " + declaration.Type);
 		}
 	}
 
-	private EmitCompilationUnit(mut self, unit: Semantic_Node) -> void
+	private emit_compilation_unit(mut self, unit: Semantic_Node) -> void
 	{
 		for let declaration: Semantic_Node in unit.children
 		{
-			EmitDeclaration(declaration);
+			emit_declaration(declaration);
 		}
 	}
 
-	private EmitPreamble(mut self) -> void
+	private emit_preamble(mut self) -> void
 	{
 		// Setup the beginning of each section
-		TypeDeclarations.WriteLine("#include \"RuntimeLibrary.h\"");
-		TypeDeclarations.BlankLine();
-		TypeDeclarations.WriteLine("// Type Declarations");
-		FunctionDeclarations.BlankLine();
-		FunctionDeclarations.WriteLine("// Function Declarations");
-		ClassDeclarations.BlankLine();
-		ClassDeclarations.WriteLine("// Class Declarations");
-		GlobalDefinitions.BlankLine();
-		GlobalDefinitions.WriteLine("// Global Definitions");
-		Definitions.BlankLine();
-		Definitions.WriteLine("// Definitions");
+		type_declarations.WriteLine("#include \"RuntimeLibrary.h\"");
+		type_declarations.BlankLine();
+		type_declarations.WriteLine("// Type Declarations");
+		function_declarations.BlankLine();
+		function_declarations.WriteLine("// Function Declarations");
+		class_declarations.BlankLine();
+		class_declarations.WriteLine("// Class Declarations");
+		global_definitions.BlankLine();
+		global_definitions.WriteLine("// Global Definitions");
+		definitions.BlankLine();
+		definitions.WriteLine("// Definitions");
 	}
 
-	private EmitEntryPointAdapter(mut self) -> void
+	private emit_entry_point_adapter(mut self) -> void
 	{
-		Definitions.ElementSeparatorLine();
-		Definitions.WriteLine("// Entry Point Adapter");
-		Definitions.WriteLine("std::int32_t main(int argc, char const *const * argv)");
-		Definitions.BeginBlock();
+		definitions.ElementSeparatorLine();
+		definitions.WriteLine("// Entry Point Adapter");
+		definitions.WriteLine("std::int32_t main(int argc, char const *const * argv)");
+		definitions.BeginBlock();
 
-		Definitions.WriteLine("try");
-		Definitions.BeginBlock();
+		definitions.WriteLine("try");
+		definitions.BeginBlock();
 
 		for let resource: Source_Text in resources
 		{
-			Definitions.BeginLine("resource_manager_->AddResource(p_string(\"");
-			Definitions.Write(resource.Name);
-			Definitions.Write("\"), p_string(\"");
-			Definitions.Write(resource.Text
+			definitions.BeginLine("resource_manager_->AddResource(p_string(\"");
+			definitions.Write(resource.Name);
+			definitions.Write("\"), p_string(\"");
+			definitions.Write(resource.Text
 									.Replace("\\", "\\\\")
 									.Replace("\n", "\\n")
 									.Replace("\r", "\\r")
 									.Replace("\"", "\\\""));
-			Definitions.EndLine("\"));");
+			definitions.EndLine("\"));");
 		}
 		if |resources| > 0
 		{
-			Definitions.EndLine(""); // Use EndLine to avoid having an indent on a blank line
+			definitions.EndLine(""); // Use EndLine to avoid having an indent on a blank line
 		}
 
 		// TODO should be `new mut`
 		let args: mut System.Text.String_Builder = new System.Text.String_Builder();
-		if MainFunctionAcceptsConsole
+		if main_function_accepts_console
 			{ args.Append("new ::System_::Console_::Console_()"); }
-		if MainFunctionAcceptsArgs
+		if main_function_accepts_args
 		{
-			if MainFunctionAcceptsConsole
+			if main_function_accepts_console
 				{ args.Append(", "); }
 			args.Append("new ::System_::Console_::Arguments_(argc, argv)");
 		}
 
-		if MainFunctionReturnType == "void"
+		if main_function_return_type == "void"
 		{
-			Definitions.WriteLine("Main_(" + args.ToString() + ");");
-			Definitions.WriteLine("return 0;");
+			definitions.WriteLine("Main_(" + args.ToString() + ");");
+			definitions.WriteLine("return 0;");
 		}
 		else
 		{
-			Definitions.WriteLine("return Main_(" + args.ToString() + ").Value;");
+			definitions.WriteLine("return Main_(" + args.ToString() + ").Value;");
 		}
 
-		Definitions.EndBlock(); // try
-		Definitions.WriteLine("catch(std::exception &ex)");
-		Definitions.BeginBlock();
-		Definitions.WriteLine("std::printf(\"Program exited due to error:\\n\");");
-		Definitions.WriteLine("std::printf(\"%s\", ex.what());");
-		Definitions.WriteLine("return 70;"); // Defined by sysexits.h as EX_SOFTWARE
-		Definitions.EndBlock();
+		definitions.EndBlock(); // try
+		definitions.WriteLine("catch(std::exception &ex)");
+		definitions.BeginBlock();
+		definitions.WriteLine("std::printf(\"Program exited due to error:\\n\");");
+		definitions.WriteLine("std::printf(\"%s\", ex.what());");
+		definitions.WriteLine("return 70;"); // Defined by sysexits.h as EX_SOFTWARE
+		definitions.EndBlock();
 
-		Definitions.EndBlock();
+		definitions.EndBlock();
 	}
 }
