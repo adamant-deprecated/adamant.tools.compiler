@@ -198,9 +198,9 @@ public class Symbol_Binder
 		}
 		else if node.kind == IdentifierName
 		{
-			if node.IsMissing { return; }
+			if node.is_missing { return; }
 			let name: string = node.get_text();
-			let symbol: Symbol = scope.Lookup(name);
+			let symbol: Symbol = scope.lookup(name);
 			if symbol == none
 			{
 				add_resolution_error(node);
@@ -234,7 +234,7 @@ public class Symbol_Binder
 		if node.kind == PredefinedType
 		{
 			let name: string = node.children[0].get_text();
-			let symbol: Symbol = scope.GetPrimitive(name);
+			let symbol: Symbol = scope.lookup_primitive(name);
 			if symbol == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no symbol for primitive type " + name); }
 			node.bind_symbol(symbol);
 		}
@@ -293,9 +293,9 @@ public class Symbol_Binder
 		}
 		else if node.kind == IdentifierName
 		{
-			if node.IsMissing { return; }
+			if node.is_missing { return; }
 			let name: string = node.get_text();
-			let symbol: Symbol = scope.Lookup(name); // TODO this should be lookup type. Types are separate
+			let symbol: Symbol = scope.lookup(name); // TODO this should be lookup type. Types are separate
 			if symbol == none
 			{
 				add_resolution_error(node);

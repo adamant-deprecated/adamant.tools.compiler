@@ -1,0 +1,37 @@
+public class Type
+{
+	public let kind: int;
+	public let symbol: Symbol;
+	public let is_value_type: bool;
+	public let immutable: bool;
+
+	public new(symbol: Symbol)
+	{
+		assert(symbol =/= none);
+		self.symbol = symbol;
+		is_value_type = symbol.is_value_type();
+		if is_value_type
+			{ kind = ValueType; }
+		else
+			{ kind = ReferenceType; }
+		immutable = true;
+	}
+
+	private new(kind: int, symbol: Symbol, is_value_type: bool, immutable: bool)
+	{
+		self.kind = kind;
+		self.symbol = symbol;
+		self.is_value_type = is_value_type;
+		self.immutable = immutable;
+	}
+
+	public make_mutable(self) -> Type
+	{
+		return new Type(kind, symbol, is_value_type, false);
+	}
+
+	public make_immutable(self) -> Type
+	{
+		return new Type(kind, symbol, is_value_type, true);
+	}
+}

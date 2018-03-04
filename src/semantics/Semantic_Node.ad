@@ -5,7 +5,7 @@ public class Semantic_Node
 {
 	public let Syntax: Syntax_Node;
 	public let kind: int;
-	public let IsMissing: bool;
+	public let is_missing: bool;
 	public let Source: Source_Text;
 	public let Start: uint;
 	public let Length: uint; // TODO is this ByteLength?
@@ -18,7 +18,7 @@ public class Semantic_Node
 	{
 		Syntax = syntax;
 		kind = syntax.kind;
-		IsMissing = syntax.IsMissing;
+		is_missing = syntax.is_missing;
 		Source = syntax.Source;
 		Start = syntax.Start;
 		Length = syntax.Length;

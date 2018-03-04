@@ -18,17 +18,17 @@ public class Binding_Scope
 		self.primitives = containing_scope.primitives;
 	}
 
-	public GetPrimitive(self, name: string) -> Symbol?
+	public lookup_primitive(self, name: string) -> Symbol?
 	{
 		return primitives.Get(name);
 	}
 
-	public Lookup(self, name: string) -> Symbol?
+	public lookup(self, name: string) -> Symbol?
 	{
-		return Lookup(name, IdentifierSymbol);
+		return lookup(name, IdentifierSymbol);
 	}
 
-	public Lookup(self, name: string, type: int) -> Symbol?
+	public lookup(self, name: string, type: int) -> Symbol?
 	{
 		for let symbol: Symbol in symbols
 		{
@@ -38,10 +38,10 @@ public class Binding_Scope
 			}
 		}
 
-		// TODO return containing_scope?.Lookup(name, type);
+		// TODO return containing_scope?.lookup(name, type);
 		if containing_scope =/= none
 		{
-			return containing_scope.Lookup(name, type);
+			return containing_scope.lookup(name, type);
 		}
 		return none;
 	}
