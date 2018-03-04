@@ -161,7 +161,7 @@ public class Semantic_Node
 	}
 
 	// TODO this should only be on type nodes
-	private is_value_type(self) -> bool
+	public is_value_type(self) -> bool
 	{
 		if Type == PredefinedType
 			or Type == OptionalType

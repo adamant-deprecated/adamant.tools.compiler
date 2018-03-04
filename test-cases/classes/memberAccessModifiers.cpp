@@ -16,6 +16,8 @@ public:
 	p_string name_;
 	C_(p_string const name_);
 	auto method_() const -> p_string;
+private:
+	auto double_name_() const -> p_string;
 };
 
 // Global Definitions
@@ -29,7 +31,12 @@ public:
 
 auto ::C_::method_() const -> p_string
 {
-	return name_;
+	return double_name_();
+}
+
+auto ::C_::double_name_() const -> p_string
+{
+	return name_->op_Add(name_);
 }
 
 auto Main_() -> void

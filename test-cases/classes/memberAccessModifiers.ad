@@ -9,7 +9,12 @@ public class C
 
 	public method(self) -> string
 	{
-		return name;
+		return double_name();
+	}
+
+	private double_name(self) -> string
+	{
+		return name + name;
 	}
 }
 

@@ -537,8 +537,31 @@ public class Emitter
 		}
 	}
 
-	private emit_member_declaration(mut self, member: Semantic_Node, class_name: string) -> void
+	private emit_member_declaration(mut self, member: Semantic_Node, class_name: string, current_access_level: int) -> int
 	{
+		var access_modifer: int = member.children[0].Type;
+		if access_modifer =/= current_access_level
+		{
+			// We avoid the indent by using end_line()
+			if access_modifer == PublicKeyword
+				or access_modifer == InternalKeyword
+			{
+				class_declarations.EndLine("public:");
+				access_modifer = PublicKeyword;
+			}
+			else if access_modifer == ProtectedKeyword
+			{
+				class_declarations.EndLine("public:");
+			}
+			else if access_modifer == PrivateKeyword
+			{
+				class_declarations.EndLine("private:");
+			}
+			else
+			{
+				THROW_EXCEPTION("Invalid access modifier in Emitter.emit_member_declaration(). Type is " + access_modifer);
+			}
+		}
 		if member.Type == ConstructorDeclaration
 		{
 			let parameters: string = convert_parameter_list(member.children[2]);
@@ -582,6 +605,8 @@ public class Emitter
 		{
 			definitions.Error("Could not emit member of type " + member.Type);
 		}
+
+		return access_modifer;
 	}
 
 	private emit_declaration(mut self, declaration: Semantic_Node) -> void
@@ -610,9 +635,10 @@ public class Emitter
 			// Write out basic reference equality comparisons
 			class_declarations.WriteLine("p_bool op_Equal(" + class_name + "_ const * other) const { return this == other; }");
 			class_declarations.WriteLine("p_bool op_NotEqual(" + class_name + "_ const * other) const { return this != other; }");
+			var current_access_level: int = PublicKeyword;
 			for let member: Semantic_Node in declaration.Members()
 			{
-				emit_member_declaration(member, class_name);
+				current_access_level = emit_member_declaration(member, class_name, current_access_level);
 			}
 			class_declarations.EndBlockWithSemicolon();
 		}
@@ -630,10 +656,10 @@ public class Emitter
 			class_declarations.WriteLine(struct_name + "_ const * operator->() const { return this; }");
 			class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
 			class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
-
+			var current_access_level: int = PublicKeyword;
 			for let member: Semantic_Node in declaration.Members()
 			{
-				emit_member_declaration(member, struct_name);
+				current_access_level = emit_member_declaration(member, struct_name, current_access_level);
 			}
 			class_declarations.EndBlockWithSemicolon();
 		}
