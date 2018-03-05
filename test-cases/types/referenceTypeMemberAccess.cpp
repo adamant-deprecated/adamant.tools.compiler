@@ -1,23 +1,35 @@
 #include "RuntimeLibrary.h"
 
 // Type Declarations
+class Test_;
 
 // Function Declarations
 auto Main_() -> p_int;
 
 // Class Declarations
 
+class Test_
+{
+public:
+	p_bool op_Equal(Test_ const * other) const { return this == other; }
+	p_bool op_NotEqual(Test_ const * other) const { return this != other; }
+	p_int value_;
+	Test_();
+};
+
 // Global Definitions
 
 // Definitions
 
+::Test_::Test_()
+{
+	value_ = p_int(0);
+}
+
 auto Main_() -> p_int
 {
-	p_int result_;
-	result_ = p_int(40);
-	result_.op_AddAssign(p_int(3));
-	result_.op_SubtractAssign(p_int(1));
-	return result_;
+	::Test_ const *_Nonnull const t_ = (new ::Test_());
+	return t_->value_;
 }
 
 // Entry Point Adapter

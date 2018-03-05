@@ -5,7 +5,7 @@ public class Symbol
 	public let kind: int;
 	public let Declarations: mut System.Collections.List<Semantic_Node>;
 	public let children: mut System.Collections.List<Symbol>;
-	public let IsPrimitive: bool;
+	public let is_primitive: bool;
 
 	public new(parent: Symbol?, name: string)
 	{
@@ -14,7 +14,7 @@ public class Symbol
 		kind = IdentifierSymbol;
 		Declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
-		IsPrimitive = false;
+		is_primitive = false;
 	}
 
 	public new(parent: Symbol?, name: string, kind: int)
@@ -24,7 +24,7 @@ public class Symbol
 		self.kind = kind;
 		Declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
-		IsPrimitive = false;
+		is_primitive = false;
 	}
 
 	// TODO use a named constructor for this
@@ -35,7 +35,7 @@ public class Symbol
 		kind = PrimitiveSymbol;
 		Declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
-		IsPrimitive = true;
+		is_primitive = true;
 	}
 
 	// TODO change to operator []
@@ -53,11 +53,35 @@ public class Symbol
 
 	public is_value_type(self) -> bool
 	{
-		if |Declarations| == 0  { THROW_EXCEPTION("Could not determine if `" + Name+ "` was a value type. No declarations."); }
-		let declaration: Semantic_Node = Declarations[0]; // TODO assuming there is only one for now
-		if declaration.kind == ClassDeclaration { return false; }
-		else if declaration.kind == StructDeclaration { return true; }
-		else if declaration.kind == NamespaceDeclaration { return false; }
-		else { THROW_EXCEPTION("Could not determine if `" + Name + "` was a value type. Declaration of type " + declaration.kind); }
+		if kind == IdentifierSymbol
+		{
+			if |Declarations| == 0  { THROW_EXCEPTION("Symbol.is_value_type() could not determine if IdentifierSymbol `" + Name + "` is a value type. No declarations."); }
+			let declaration: Semantic_Node = Declarations[0]; // TODO assuming there is only one for now
+			if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
+				{ return false; }
+			else if declaration.kind == StructDeclaration
+				{ return true; }
+			else { THROW_EXCEPTION("Could not determine if IdentifierSymbol `" + Name + "` is a value type. Declaration of type " + declaration.kind); }
+		}
+		else if kind == PrimitiveSymbol
+		{
+			return true;
+		}
+		else
+		{
+			THROW_EXCEPTION("Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
+		}
+	}
+
+	public get_type(self) -> Type?
+	{
+		if |Declarations| > 0 // TODO implement an `is_empty()` or `any()` method
+		{
+			let declaration: Semantic_Node = Declarations[0];
+			assert(declaration =/= none);
+			return declaration.type;
+		}
+
+		return none;
 	}
 }

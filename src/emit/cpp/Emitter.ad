@@ -92,6 +92,8 @@ public class Emitter
 	// Converts a type to C++
 	private convert_type(mutable_binding: bool, var type: Semantic_Node, optional: bool) -> string
 	{
+		assert(type =/= none);
+
 		let mutable_value: bool = type.kind == MutableType;
 		if mutable_value
 		{
@@ -218,12 +220,14 @@ public class Emitter
 		else if syntax.kind == NotExpression
 		{
 			convert_expression(syntax.children[1], builder);
-			builder.Write("->op_Not()");
+			convert_member_access(syntax.children[1], builder);
+			builder.Write("op_Not()");
 		}
 		else if syntax.kind == MagnitudeExpression
 		{
 			convert_expression(syntax.children[1], builder);
-			builder.Write("->op_Magnitude()");
+			convert_member_access(syntax.children[1], builder);
+			builder.Write("op_Magnitude()");
 		}
 		else if syntax.kind == ParenthesizedExpression
 		{
@@ -232,7 +236,8 @@ public class Emitter
 		else if syntax.kind == NegateExpression
 		{
 			convert_expression(syntax.children[1], builder);
-			builder.Write("->op_Negate()");
+			convert_member_access(syntax.children[1], builder);
+			builder.Write("op_Negate()");
 		}
 		else if syntax.kind == NoneLiteralExpression
 		{
@@ -277,7 +282,8 @@ public class Emitter
 			else
 			{
 				convert_expression(syntax.children[0], builder);
-				builder.Write("->op_");
+				convert_member_access(syntax.children[0], builder);
+				builder.Write("op_");
 				if operator == PlusEquals
 				{
 					builder.Write("AddAssign");
@@ -298,14 +304,16 @@ public class Emitter
 		else if syntax.kind == EqualExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_Equal(");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_Equal(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.kind == NotEqualExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_NotEqual(");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_NotEqual(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -313,7 +321,8 @@ public class Emitter
 		{
 			let operator: int = syntax.children[1].kind;
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_");
 			if operator == LessThan
 			{
 				builder.Write("LessThan");
@@ -341,35 +350,40 @@ public class Emitter
 		else if syntax.kind == AddExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_Add(");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_Add(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.kind == SubtractExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_Subtract(");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_Subtract(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.kind == MultiplyExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_Multiply(");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_Multiply(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.kind == DivideExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_Divide(");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_Divide(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
 		else if syntax.kind == RemainderExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_Remainder(");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_Remainder(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -399,13 +413,14 @@ public class Emitter
 		else if syntax.kind == MemberAccessExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->");
+			convert_member_access(syntax.children[0], builder);
 			convert_expression(syntax.children[2], builder);
 		}
 		else if syntax.kind == ElementAccessExpression
 		{
 			convert_expression(syntax.children[0], builder);
-			builder.Write("->op_Element(");
+			convert_member_access(syntax.children[0], builder);
+			builder.Write("op_Element(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -413,6 +428,16 @@ public class Emitter
 		{
 			builder.Error("Could not convert expression of type " + syntax.kind);
 		}
+	}
+
+	private convert_member_access(lhs: Semantic_Node, builder: mut Source_File_Builder) -> void
+	{
+		let type: Type? = lhs.type;
+		if type =/= none and type.is_value_type // TODO eventually, we shouldn't need to check if the type is null
+			{ builder.Write("."); }
+		else
+			{ builder.Write("->"); }
+		// builder.Write("->");
 	}
 
 	private emit_statement(mut self, statement: Semantic_Node) -> void

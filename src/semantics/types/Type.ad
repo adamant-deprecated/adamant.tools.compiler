@@ -1,6 +1,7 @@
 public class Type
 {
 	public let kind: int;
+	public let namespace: Symbol?;
 	public let symbol: Symbol;
 	public let is_value_type: bool;
 	public let immutable: bool;
@@ -15,6 +16,7 @@ public class Type
 		else
 			{ kind = ReferenceType; }
 		immutable = true;
+		namespace = none;
 	}
 
 	private new(kind: int, symbol: Symbol, is_value_type: bool, immutable: bool)

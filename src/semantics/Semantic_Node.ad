@@ -12,11 +12,11 @@ public class Semantic_Node
 	public let children: System.Collections.List<mut Semantic_Node>;
 	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 	public var symbol: Symbol?;
-	public var type_symbol: Symbol?;
 	public var type: Type?;
 
 	public new(syntax: Syntax_Node)
 	{
+		assert(syntax =/= none);
 		Syntax = syntax;
 		kind = syntax.kind;
 		is_missing = syntax.is_missing;
@@ -36,7 +36,6 @@ public class Semantic_Node
 		}
 		self.node_diagnostics = diagnostics;
 		symbol = none;
-		type_symbol = none;
 		type = none;
 	}
 
@@ -59,16 +58,9 @@ public class Semantic_Node
 
 	public bind_type(mut self, type: Type) -> void
 	{
-		if self.type =/= none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called on node that already has a type on `" + get_text() + "`"); }
-		if type == none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called without a type on `" + get_text() + "`"); }
+		if self.type =/= none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called on node that already has a type. Node: `" + get_text() + "` of kind "+kind); }
+		if type == none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called without a type. Node: `" + get_text() + "` of kind "+kind); }
 		self.type = type;
-	}
-
-	public bind_type_symbol(mut self, type_symbol: Symbol) -> void
-	{
-		if self.type_symbol =/= none { THROW_EXCEPTION("`Semantic_Node.bind_type_symbol(..)` called on node that already has a type_symbol on `" + get_text() + "`"); }
-		if type_symbol == none { THROW_EXCEPTION("`Semantic_Node.bind_type_symbol(..)` called without a type_symbol on `" + get_text() + "`"); }
-		self.type_symbol = type_symbol;
 	}
 
 	public first_child(self, kind: int) -> mut Semantic_Node?

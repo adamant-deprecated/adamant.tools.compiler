@@ -1,0 +1,5 @@
+public Main() -> int
+{
+	let s: string = "abc";
+	return s.index_of('c');
+}

@@ -37,7 +37,7 @@ auto ::test_::Method_() const -> p_string
 auto Main_() -> void
 {
 	::test_ const t_ = ::test_(p_string("Bob"));
-	t_->Method_();
+	t_.Method_();
 }
 
 // Entry Point Adapter

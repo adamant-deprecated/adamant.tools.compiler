@@ -1,0 +1,15 @@
+public class Test
+{
+	public let value: int;
+
+	public new()
+	{
+		value = 0;
+	}
+}
+
+public Main() -> int
+{
+	let t: Test = new Test();
+	return t.value;
+}

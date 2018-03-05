@@ -70,13 +70,17 @@ public class Symbol_Binder
 		}
 		else if node.kind == VariableDeclaration
 		{
-			let type: mut Semantic_Node = node.children[3];
-			bind_type_name(type, scope);
+			let identifier: mut Semantic_Node = node.first_child(Identifier);
+			assert(identifier =/= none);
+			let type_name: mut Semantic_Node = node.children[3];
+			bind_type_name(type_name, scope);
 			if |node.children| == 6
 			{
 				let initalizer: mut Semantic_Node = node.children[5];
 				bind(initalizer, scope);
 			}
+			identifier.bind_type(type_name.type);
+			node.bind_type(type_name.type);
 		}
 		else if node.kind == EnumDeclaration
 		{
@@ -111,7 +115,9 @@ public class Symbol_Binder
 		}
 		else if node.kind == LocalDeclarationStatement
 		{
-			bind(node.first_child(VariableDeclaration), scope);
+			let variable_declaration: mut Semantic_Node = node.first_child(VariableDeclaration);
+			bind(variable_declaration, scope);
+			node.bind_type(variable_declaration.type);
 		}
 		else if node.kind == IfStatement
 		{
@@ -208,6 +214,9 @@ public class Symbol_Binder
 			else
 			{
 				node.bind_symbol(symbol);
+				let type: Type? = symbol.get_type();
+				if type =/= none
+					{ node.bind_type(type); }
 			}
 		}
 		else if node.kind == NumericLiteralExpression
@@ -233,30 +242,44 @@ public class Symbol_Binder
 	{
 		if node.kind == PredefinedType
 		{
-			let name: string = node.children[0].get_text();
-			let symbol: Symbol = scope.lookup_primitive(name);
-			if symbol == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no symbol for primitive type " + name); }
+			let primitive_name: string = node.children[0].get_text();
+			let symbol: Symbol = scope.lookup_primitive(primitive_name);
+			if symbol == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
 			node.bind_symbol(symbol);
+			node.bind_type(new Type(symbol));
 		}
 		else if node.kind == MutableType
 		{
-			let innerType: mut Semantic_Node = node.children[1];
-			bind_type_name(innerType, scope);
+			let inner_type_node: mut Semantic_Node = node.children[1];
+			bind_type_name(inner_type_node, scope);
+			if inner_type_node.type == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no inner type for `"+node.get_text()+"` of kind `MutableType`"); }
+			node.bind_type(inner_type_node.type.make_mutable());
 		}
 		else if node.kind == ImmutableType
-			or node.kind == OptionalType
 		{
-			let innerType: mut Semantic_Node = node.children[0];
-			bind_type_name(innerType, scope);
+			let inner_type_node: mut Semantic_Node = node.children[0];
+			bind_type_name(inner_type_node, scope);
+			if inner_type_node.type == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no inner type for `"+node.get_text()+"` of kind `ImmutableType`"); }
+			node.bind_type(inner_type_node.type.make_immutable());
+		}
+		else if node.kind == OptionalType
+		{
+			let inner_type_node: mut Semantic_Node = node.children[0];
+			bind_type_name(inner_type_node, scope);
+			if inner_type_node.type == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` not inner type for `"+node.get_text()+"` of kind `OptionalType`"); }
+			node.bind_type(inner_type_node.type.make_immutable());
 		}
 		else if node.kind == QualifiedName
 		{
 			let qualifier: mut Semantic_Node = node.children[0];
 			bind_type_name(qualifier, scope);
-			// TODO rather than throwing an exception. We should say we can't resolve the subsequent identifiers
-			if qualifier.symbol == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no symbol for qualifier " + qualifier.get_text()); }
+
 			let name: mut Semantic_Node = node.children[2];
-			if name.kind == IdentifierName
+			if qualifier.symbol == none or qualifier.type == none
+			{
+				add_resolution_error(name);
+			}
+			else if name.kind == IdentifierName
 			{
 				let symbol: Symbol = qualifier.symbol.Get(name.get_text(), IdentifierSymbol);
 				if symbol == none
@@ -266,32 +289,45 @@ public class Symbol_Binder
 				else
 				{
 					name.bind_symbol(symbol);
+					name.bind_type(symbol.get_type());
+					node.bind_type(symbol.get_type());
+					// TODO transition away from using symbols at higher levels, use types instead
 					node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
 				}
 			}
 			else if name.kind == GenericName
 			{
-				let identiferName: mut Semantic_Node = name.first_child(IdentifierName);
-				let symbol: Symbol = qualifier.symbol.Get(identiferName.get_text(), IdentifierSymbol);
-				identiferName.bind_symbol(symbol);
+				let identifer_name: mut Semantic_Node = name.first_child(IdentifierName);
+				let symbol: Symbol = qualifier.symbol.Get(identifer_name.get_text(), IdentifierSymbol);
+				if symbol == none
+				{
+					add_resolution_error(name);
+					return;
+				}
+				identifer_name.bind_symbol(symbol);
+				identifer_name.bind_type(symbol.get_type());
+				// TODO transition away from using symbols at higher levels, use types instead
 				node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
 
-				// TODO need way to get the generic arguments
-				var typeArg: bool = false;
-				for let typeArgument: mut Semantic_Node in name.children
+				// TODO need way to get the generic type arguments
+				var type_arg: bool = false;
+				for let type_argument: mut Semantic_Node in name.children
 				{
-					if typeArg
+					if type_arg
 					{
-						if typeArgument.kind =/= GreaterThan
+						if type_argument.kind =/= GreaterThan
 						{
-							bind_type_name(typeArgument, scope);
+							bind_type_name(type_argument, scope);
 						}
 					}
-					else if typeArgument.kind == LessThan
+					else if type_argument.kind == LessThan
 					{
-						typeArg = true;
+						type_arg = true;
 					}
 				}
+
+				// TODO the type of the node should account for the generic type parameters
+				node.bind_type(symbol.get_type()); // Set it on the name as a whole, not just the identifier
 			}
 			else
 			{
@@ -310,6 +346,7 @@ public class Symbol_Binder
 			else
 			{
 				node.bind_symbol(symbol);
+				node.bind_type(new Type(symbol));
 			}
 		}
 		else
