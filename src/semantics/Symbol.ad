@@ -75,6 +75,9 @@ public class Symbol
 
 	public get_type(self) -> Type?
 	{
+		if kind == PrimitiveSymbol
+			{ return new Type(self); }
+
 		if |Declarations| > 0 // TODO implement an `is_empty()` or `any()` method
 		{
 			let declaration: Semantic_Node = Declarations[0];

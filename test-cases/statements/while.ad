@@ -4,4 +4,6 @@ public Main() -> int
 	{
 		return 0;
 	}
+
+	UNREACHABLE();
 }

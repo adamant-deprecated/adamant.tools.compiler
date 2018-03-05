@@ -22,7 +22,7 @@ auto Main_() -> void
 	p_bool x_;
 	x_ = LogicalAnd(p_bool(true), [&] { return p_bool(false); });
 	x_ = LogicalOr(p_bool(true), [&] { return p_bool(false); });
-	x_ = p_bool(true)->op_Not();
+	x_ = p_bool(true).op_Not();
 	x_ = LogicalOr(True_(), [&] { return True_(); });
 }
 

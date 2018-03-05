@@ -17,6 +17,8 @@ auto Main_() -> p_int
 	{
 		return p_int(0);
 	}
+
+	UNREACHABLE_();
 }
 
 // Entry Point Adapter

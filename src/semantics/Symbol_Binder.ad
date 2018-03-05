@@ -219,13 +219,16 @@ public class Symbol_Binder
 					{ node.bind_type(type); }
 			}
 		}
+		else if node.kind == TrueLiteralExpression
+			or node.kind == FalseLiteralExpression
+		{
+			node.bind_type(scope.lookup_primitive("bool").get_type());
+		}
 		else if node.kind == NumericLiteralExpression
 			or node.kind == BreakStatement
 			or node.kind == ContinueStatement
 			or node.kind == NoneLiteralExpression
 			or node.kind == SelfExpression
-			or node.kind == TrueLiteralExpression
-			or node.kind == FalseLiteralExpression
 			or node.kind == StringLiteralExpression
 			or node.kind == CodePointLiteralExpression
 			or node.kind == EndOfFileToken

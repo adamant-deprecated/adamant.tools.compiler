@@ -189,6 +189,7 @@ public class Symbol_Builder
 
 		build_function(package, "THROW_EXCEPTION");
 		build_function(package, "UNIMPLEMENTED");
+		build_function(package, "UNREACHABLE");
 		build_function(package, "assert");
 
 		let system: mut Symbol = build(package, "System", NamespaceDeclaration);
