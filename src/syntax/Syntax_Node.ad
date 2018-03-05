@@ -129,6 +129,7 @@ public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`
 public let NoneKeyword: int = 126; // `none`
 public let StructDeclaration: int = 127;
 public let ImmutableType: int = 128; // `⧼Type⧽` without `mut` before it
+public let NamespaceDeclaration: int = 129;
 
 public class Syntax_Node
 {

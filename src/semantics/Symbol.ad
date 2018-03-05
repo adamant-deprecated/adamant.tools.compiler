@@ -57,6 +57,7 @@ public class Symbol
 		let declaration: Semantic_Node = Declarations[0]; // TODO assuming there is only one for now
 		if declaration.kind == ClassDeclaration { return false; }
 		else if declaration.kind == StructDeclaration { return true; }
+		else if declaration.kind == NamespaceDeclaration { return false; }
 		else { THROW_EXCEPTION("Could not determine if `" + Name + "` was a value type. Declaration of type " + declaration.kind); }
 	}
 }

@@ -185,50 +185,57 @@ public class Symbol_Builder
 	/// TODO this should actually be a separate package
 	private build_runtime_library_symbols(self, package: Symbol) -> void
 	{
-		let fake_declaration: Semantic_Node = new Semantic_Node(new Syntax_Node(ClassDeclaration, true, none, 0, 0));
+		build_resource_manager(package);
 
-		package.children.Add(new Symbol(package, "resource_manager"));
-		package.children.Add(new Symbol(package, "THROW_EXCEPTION"));
-		package.children.Add(new Symbol(package, "UNIMPLEMENTED"));
-		package.children.Add(new Symbol(package, "assert"));
+		build_function(package, "THROW_EXCEPTION");
+		build_function(package, "UNIMPLEMENTED");
+		build_function(package, "assert");
 
-		let system: Symbol = new Symbol(package, "System");
-		package.children.Add(system);
+		let system: mut Symbol = build(package, "System", NamespaceDeclaration);
 
-		let collections: Symbol = new Symbol(system, "Collections");
-		system.children.Add(collections);
+		let collections: mut Symbol = build(system, "Collections", NamespaceDeclaration);
+		build(collections, "List", ClassDeclaration);
 
-		let list: mut Symbol = new Symbol(system, "List");
-		list.Declarations.Add(fake_declaration);
-		collections.children.Add(list);
+		let console: Symbol = build(system, "Console", NamespaceDeclaration);
+		build(console, "Console", ClassDeclaration);
+		build(console, "Arguments", ClassDeclaration);
 
-		let console: Symbol = new Symbol(system, "Console");
-		system.children.Add(console);
+		let io: Symbol = build(system, "IO", NamespaceDeclaration);
+		build(io, "File_Reader", ClassDeclaration);
+		build(io, "File_Writer", ClassDeclaration);
 
-		let console_class: mut Symbol = new Symbol(system, "Console");
-		console_class.Declarations.Add(fake_declaration);
-		console.children.Add(console_class);
+		let text: Symbol = build(system, "Text", NamespaceDeclaration);
+		build(text, "String_Builder", ClassDeclaration);
+	}
 
-		let arguments: mut Symbol = new Symbol(system, "Arguments");
-		arguments.Declarations.Add(fake_declaration);
-		console.children.Add(arguments);
+	private build_resource_manager(parent: Symbol) -> void
+	{
+		let class_symbol: Symbol = build(parent, "Resource_Manager", ClassDeclaration);
+		let fake_declaration: mut Semantic_Node = new Semantic_Node(new Syntax_Node(GlobalDeclaration, true, none, 0, 0));
+		let symbol: mut Symbol = new Symbol(parent, "resource_manager");
+		symbol.Declarations.Add(fake_declaration);
+		fake_declaration.bind_symbol(symbol);
+		fake_declaration.bind_type(new Type(class_symbol));
+		parent.children.Add(symbol);
+	}
 
-		let io: Symbol = new Symbol(system, "IO");
-		system.children.Add(io);
+	private build(parent: Symbol, name: string, declaration_kind: int) -> mut Symbol
+	{
+		let fake_declaration: mut Semantic_Node = new Semantic_Node(new Syntax_Node(declaration_kind, true, none, 0, 0));
+		let symbol: mut Symbol = new Symbol(parent, name);
+		symbol.Declarations.Add(fake_declaration);
+		fake_declaration.bind_symbol(symbol);
+		fake_declaration.bind_type(new Type(symbol));
+		parent.children.Add(symbol);
+		return symbol;
+	}
 
-		let file_reader: mut Symbol = new Symbol(system, "File_Reader");
-		file_reader.Declarations.Add(fake_declaration);
-		io.children.Add(file_reader);
-
-		let file_writer: mut Symbol = new Symbol(system, "File_Writer");
-		file_writer.Declarations.Add(fake_declaration);
-		io.children.Add(file_writer);
-
-		let text: Symbol = new Symbol(system, "Text");
-		system.children.Add(text);
-
-		let string_builder: mut Symbol = new Symbol(text, "String_Builder");
-		string_builder.Declarations.Add(fake_declaration);
-		text.children.Add(string_builder);
+	private build_function(parent: Symbol, name: string) -> void
+	{
+		let fake_declaration: mut Semantic_Node = new Semantic_Node(new Syntax_Node(FunctionDeclaration, true, none, 0, 0));
+		let symbol: mut Symbol = new Symbol(parent, name);
+		symbol.Declarations.Add(fake_declaration);
+		fake_declaration.bind_symbol(symbol);
+		parent.children.Add(symbol);
 	}
 }

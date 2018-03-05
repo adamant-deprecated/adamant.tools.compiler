@@ -13,6 +13,7 @@ public class Semantic_Node
 	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 	public var symbol: Symbol?;
 	public var type_symbol: Symbol?;
+	public var type: Type?;
 
 	public new(syntax: Syntax_Node)
 	{
@@ -35,6 +36,8 @@ public class Semantic_Node
 		}
 		self.node_diagnostics = diagnostics;
 		symbol = none;
+		type_symbol = none;
+		type = none;
 	}
 
 	public get_text_span(self) -> Text_Span
@@ -52,6 +55,13 @@ public class Semantic_Node
 		if self.symbol =/= none { THROW_EXCEPTION("`Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `" + get_text() + "`"); }
 		if symbol == none { THROW_EXCEPTION("`Semantic_Node.bind_symbol(..)` called without a symbol on `" + get_text() + "`"); }
 		self.symbol = symbol;
+	}
+
+	public bind_type(mut self, type: Type) -> void
+	{
+		if self.type =/= none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called on node that already has a type on `" + get_text() + "`"); }
+		if type == none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called without a type on `" + get_text() + "`"); }
+		self.type = type;
 	}
 
 	public bind_type_symbol(mut self, type_symbol: Symbol) -> void

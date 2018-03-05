@@ -259,8 +259,15 @@ public class Symbol_Binder
 			if name.kind == IdentifierName
 			{
 				let symbol: Symbol = qualifier.symbol.Get(name.get_text(), IdentifierSymbol);
-				name.bind_symbol(symbol);
-				node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
+				if symbol == none
+				{
+					add_resolution_error(name);
+				}
+				else
+				{
+					name.bind_symbol(symbol);
+					node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
+				}
 			}
 			else if name.kind == GenericName
 			{
