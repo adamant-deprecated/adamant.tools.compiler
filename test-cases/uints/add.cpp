@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_uint x_ = p_int(1)->AsUInt_()->op_Add(p_int(2)->AsUInt_());
+	p_uint x_ = p_int(1).AsUInt_()->op_Add(p_int(2).AsUInt_());
 }
 
 // Entry Point Adapter

@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_int x_ = p_int(2)->op_Divide(p_int(1));
+	p_int x_ = p_int(2).op_Divide(p_int(1));
 }
 
 // Entry Point Adapter

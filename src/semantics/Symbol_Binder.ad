@@ -224,13 +224,22 @@ public class Symbol_Binder
 		{
 			node.bind_type(scope.lookup_primitive("bool").get_type());
 		}
+		else if node.kind == StringLiteralExpression
+		{
+			node.bind_type(scope.lookup_primitive("string").get_type());
+		}
+		else if node.kind == CodePointLiteralExpression
+		{
+			node.bind_type(scope.lookup_primitive("code_point").get_type());
+		}
 		else if node.kind == NumericLiteralExpression
-			or node.kind == BreakStatement
+		{
+			node.bind_type(scope.lookup_primitive("int").get_type());
+		}
+		else if node.kind == BreakStatement
 			or node.kind == ContinueStatement
 			or node.kind == NoneLiteralExpression
 			or node.kind == SelfExpression
-			or node.kind == StringLiteralExpression
-			or node.kind == CodePointLiteralExpression
 			or node.kind == EndOfFileToken
 		{
 			// Ignore these nodes

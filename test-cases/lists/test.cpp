@@ -21,7 +21,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 		console_->WriteLine_(p_string("List length not 2!"));
 	}
 
-	console_->WriteLine_(p_string("strings[0]=")->op_Add(strings_->op_Element(p_int(0))));
+	console_->WriteLine_(p_string("strings[0]=").op_Add(strings_->op_Element(p_int(0))));
 	for (p_string const s_ : *(strings_))
 	{
 		console_->WriteLine_(s_);

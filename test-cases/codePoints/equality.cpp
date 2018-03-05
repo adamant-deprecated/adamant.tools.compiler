@@ -14,8 +14,8 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	p_bool x_;
-	x_ = p_code_point('a')->op_Equal(p_code_point('b'));
-	x_ = p_code_point('a')->op_NotEqual(p_code_point('b'));
+	x_ = p_code_point('a').op_Equal(p_code_point('b'));
+	x_ = p_code_point('a').op_NotEqual(p_code_point('b'));
 }
 
 // Entry Point Adapter
