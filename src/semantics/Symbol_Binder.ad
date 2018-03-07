@@ -222,19 +222,19 @@ public class Symbol_Binder
 		else if node.kind == TrueLiteralExpression
 			or node.kind == FalseLiteralExpression
 		{
-			node.bind_type(scope.lookup_primitive("bool").get_type());
+			node.bind_type(scope.lookup_special("bool").get_type());
 		}
 		else if node.kind == StringLiteralExpression
 		{
-			node.bind_type(scope.lookup_primitive("string").get_type());
+			node.bind_type(scope.lookup_special("string").get_type());
 		}
 		else if node.kind == CodePointLiteralExpression
 		{
-			node.bind_type(scope.lookup_primitive("code_point").get_type());
+			node.bind_type(scope.lookup_special("code_point").get_type());
 		}
 		else if node.kind == NumericLiteralExpression
 		{
-			node.bind_type(scope.lookup_primitive("int").get_type());
+			node.bind_type(scope.lookup_special("int").get_type());
 		}
 		else if node.kind == BreakStatement
 			or node.kind == ContinueStatement
@@ -255,7 +255,7 @@ public class Symbol_Binder
 		if node.kind == PredefinedType
 		{
 			let primitive_name: string = node.children[0].get_text();
-			let symbol: Symbol = scope.lookup_primitive(primitive_name);
+			let symbol: Symbol = scope.lookup_special(primitive_name);
 			if symbol == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
 			node.bind_symbol(symbol);
 			node.bind_type(new Type(symbol));

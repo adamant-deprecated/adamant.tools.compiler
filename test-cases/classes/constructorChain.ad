@@ -1,4 +1,4 @@
-public struct Test
+public class C
 {
 	public let name: string;
 
@@ -15,6 +15,5 @@ public struct Test
 
 public Main() -> void
 {
-	let t: Test = new Test("Bob");
-	t.method();
+	let c: C = new C("Bob").method();
 }

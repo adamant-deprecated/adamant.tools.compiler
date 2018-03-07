@@ -32,7 +32,7 @@ public class Symbol
 	{
 		Parent = none;
 		Name = name;
-		kind = PrimitiveSymbol;
+		kind = SpecialSymbol;
 		Declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		is_primitive = true;
@@ -63,7 +63,7 @@ public class Symbol
 				{ return true; }
 			else { THROW_EXCEPTION("Could not determine if IdentifierSymbol `" + Name + "` is a value type. Declaration of type " + declaration.kind); }
 		}
-		else if kind == PrimitiveSymbol
+		else if kind == SpecialSymbol
 		{
 			return true;
 		}
@@ -75,7 +75,7 @@ public class Symbol
 
 	public get_type(self) -> Type?
 	{
-		if kind == PrimitiveSymbol
+		if kind == SpecialSymbol
 			{ return new Type(self); }
 
 		if |Declarations| > 0 // TODO implement an `is_empty()` or `any()` method

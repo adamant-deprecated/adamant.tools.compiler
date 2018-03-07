@@ -52,7 +52,7 @@ public class Symbol_Builder
 		}
 		else if node.kind == ConstructorDeclaration
 		{
-			let constructor_symbol: Symbol = new Symbol(none, "", ConstructorSymbol);
+			let constructor_symbol: Symbol = new Symbol(none, "new", SpecialSymbol);
 			// TODO create a special self symbol
 			constructor_symbol.Declarations.Add(node);
 			build_function_symbols(parent, node, constructor_symbol);
@@ -60,7 +60,7 @@ public class Symbol_Builder
 		else if node.kind == FieldDeclaration
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
-			let field_symbol: Symbol = new Symbol(none, name);
+			let field_symbol: Symbol = new Symbol(parent, name);
 			field_symbol.Declarations.Add(node);
 			parent.children.Add(field_symbol);
 			node.bind_symbol(field_symbol);
@@ -137,14 +137,13 @@ public class Symbol_Builder
 		else if node.kind == Parameter
 		{
 			let name: string = node.first_child(Identifier).get_text();
-			let symbol: Symbol = new Symbol(none, name);
+			let symbol: Symbol = new Symbol(parent, name);
 			symbol.Declarations.Add(node);
 			parent.children.Add(symbol);
 		}
 		else if node.kind == SelfParameter
 		{
-			let name: string = node.first_child(SelfKeyword).get_text();
-			let symbol: Symbol = new Symbol(none, name, PrimitiveSymbol);
+			let symbol: Symbol = new Symbol(parent, "self", SpecialSymbol);
 			symbol.Declarations.Add(node);
 			parent.children.Add(symbol);
 		}
@@ -162,21 +161,21 @@ public class Symbol_Builder
 		}
 	}
 
-	private build_function_symbols(self, parent: Symbol, node: mut Semantic_Node, symbol: Symbol) -> void
+	private build_function_symbols(self, parent: Symbol, function: mut Semantic_Node, symbol: Symbol) -> void
 	{
-		symbol.Declarations.Add(node);
+		symbol.Declarations.Add(function);
 
-		let parameters: mut Semantic_Node = node.first_child(ParameterList);
+		let parameters: mut Semantic_Node = function.first_child(ParameterList);
 		for let parameter: mut Semantic_Node in parameters.Parameters()
 		{
 			build_symbols(symbol, parameter);
 		}
 
-		let body: mut Semantic_Node = node.first_child(Block);
+		let body: mut Semantic_Node = function.first_child(Block);
 		build_symbols(symbol, body);
 
 		parent.children.Add(symbol);
-		node.bind_symbol(symbol);
+		function.bind_symbol(symbol);
 	}
 
 	/// This builds up a set of symbols that are actually in the Runtime Library

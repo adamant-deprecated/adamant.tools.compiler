@@ -1,22 +1,20 @@
 #include "RuntimeLibrary.h"
 
 // Type Declarations
-struct Test_;
+class C_;
 
 // Function Declarations
 auto Main_() -> void;
 
 // Class Declarations
 
-struct Test_
+class C_
 {
 public:
-	Test_ * operator->() { return this; }
-	Test_ const * operator->() const { return this; }
-	Test_ & operator* () { return *this; }
-	Test_ const & operator* () const { return *this; }
+	p_bool op_Equal(C_ const * other) const { return this == other; }
+	p_bool op_NotEqual(C_ const * other) const { return this != other; }
 	p_string name_;
-	Test_(p_string const name_);
+	C_(p_string const name_);
 	auto method_() const -> p_string;
 };
 
@@ -24,20 +22,19 @@ public:
 
 // Definitions
 
-::Test_::Test_(p_string const name_)
+::C_::C_(p_string const name_)
 {
 	this->name_ = name_;
 }
 
-auto ::Test_::method_() const -> p_string
+auto ::C_::method_() const -> p_string
 {
 	return name_;
 }
 
 auto Main_() -> void
 {
-	::Test_ const t_ = ::Test_(p_string("Bob"));
-	t_.method_();
+	::C_ const *_Nonnull const c_ = (new ::C_(p_string("Bob")))->method_();
 }
 
 // Entry Point Adapter
