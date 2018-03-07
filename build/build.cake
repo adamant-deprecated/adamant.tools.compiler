@@ -166,7 +166,7 @@ Task("Build-Expected")
 		var wd = MakeAbsolute(Directory("."));
 		var testCases = GetFiles("test-cases/**/*.cpp").ToList();
 		if(testName != null)
-			testCases = testCases.Where(c => c.GetFilename().ToString().Contains(testName)).ToList();
+			testCases = testCases.Where(c => c.FullPath.Contains(testName)).ToList();
 		Information("Found {0} Test Case Expected Outputs", testCases.Count);
 		foreach(var testCase in testCases)
 		{
@@ -328,15 +328,14 @@ RunTarget(target);
 void Test(string version)
 {
 	var compiler = string.Format("target/{0}/Program", version);
-	var testCases = GetFiles("test-cases/**/*.ad");
+	var testCases = GetFiles("test-cases/**/*.ad").ToList();
+	if(testName != null)
+		testCases = testCases.Where(c => c.FullPath.Contains(testName)).ToList();
 	var testCasesDir = MakeAbsolute(Directory("test-cases"));
 	var outputDir = Directory(string.Format("translated/{0}-test-cases", version));
 	var failed = 0;
 	foreach(var testCase in testCases)
 	{
-		if(testName != null && !testCase.GetFilename().ToString().Contains(testName))
-			continue;
-
 		var testCaseName = testCasesDir.GetRelativePath(testCase);
 		var output = outputDir + testCaseName.ChangeExtension("cpp");
 		EnsureDirectoryExists(output.Path.GetDirectory());
