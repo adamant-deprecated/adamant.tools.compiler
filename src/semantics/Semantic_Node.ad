@@ -173,6 +173,7 @@ public class Semantic_Node
 	// TODO this should only be on type nodes
 	public is_value_type(self) -> bool
 	{
+		// TODO this should be based on type only correct?
 		if kind == PredefinedType
 			or kind == OptionalType
 		{

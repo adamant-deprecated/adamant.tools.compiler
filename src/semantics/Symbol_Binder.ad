@@ -236,10 +236,14 @@ public class Symbol_Binder
 		{
 			node.bind_type(scope.lookup_special("int").get_type());
 		}
+		else if node.kind == SelfExpression
+		{
+			// TODO include this
+			// node.bind_type(scope.lookup_special("self").get_type());
+		}
 		else if node.kind == BreakStatement
 			or node.kind == ContinueStatement
 			or node.kind == NoneLiteralExpression
-			or node.kind == SelfExpression
 			or node.kind == EndOfFileToken
 		{
 			// Ignore these nodes

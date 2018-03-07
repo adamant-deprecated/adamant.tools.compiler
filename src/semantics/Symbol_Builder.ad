@@ -52,9 +52,17 @@ public class Symbol_Builder
 		}
 		else if node.kind == ConstructorDeclaration
 		{
-			let constructor_symbol: Symbol = new Symbol(none, "new", SpecialSymbol);
-			// TODO create a special self symbol
+			let constructor_symbol: Symbol = new Symbol(parent, "new", SpecialSymbol);
 			constructor_symbol.Declarations.Add(node);
+			parent.children.Add(constructor_symbol);
+			// Implicit `self` parameter
+			let self_symbol: Symbol = new Symbol(constructor_symbol, "self", SpecialSymbol);
+			// let type: Type = parent.get_type();
+			// assert(type =/= none);
+			// let declaration: Semantic_Node = parent.Declarations[0];
+			// assert(declaration =/= none and (declaration.kind == ClassDeclaration or declaration.kind == StructDeclaration));
+			// self_symbol.Declarations.Add(declaration); // We reference our containing class/struct
+			constructor_symbol.children.Add(self_symbol);
 			build_function_symbols(parent, node, constructor_symbol);
 		}
 		else if node.kind == FieldDeclaration

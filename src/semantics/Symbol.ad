@@ -73,6 +73,7 @@ public class Symbol
 		}
 	}
 
+	// TODO don't construct a type on the fly from the symbol
 	public get_type(self) -> Type?
 	{
 		if kind == SpecialSymbol
