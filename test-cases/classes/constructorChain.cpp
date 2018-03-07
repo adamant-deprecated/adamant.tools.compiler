@@ -34,7 +34,7 @@ auto ::C_::method_() const -> p_string
 
 auto Main_() -> void
 {
-	::C_ const *_Nonnull const c_ = (new ::C_(p_string("Bob")))->method_();
+	p_string const s_ = (new ::C_(p_string("Bob")))->method_();
 }
 
 // Entry Point Adapter

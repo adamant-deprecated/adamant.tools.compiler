@@ -15,5 +15,5 @@ public class C
 
 public Main() -> void
 {
-	let c: C = new C("Bob").method();
+	let s: string = new C("Bob").method();
 }
