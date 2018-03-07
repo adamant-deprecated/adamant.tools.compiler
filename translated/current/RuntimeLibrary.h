@@ -259,6 +259,15 @@ _Noreturn inline void UNIMPLEMENTED(const p_string function, const p_string file
 
 #define UNIMPLEMENTED_(condition) UNIMPLEMENTED(__func__, __FILE__, __LINE__)
 
+_Noreturn inline void UNREACHABLE(const p_string function, const p_string file, const std::int32_t line)
+{
+	throw std::runtime_error(
+		p_string("Reached \"UNREACHABLE\" statement in function ").op_Add(function)
+		.op_Add(p_string(", ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).cstr());
+}
+
+#define UNREACHABLE_(condition) UNIMPLEMENTED(__func__, __FILE__, __LINE__)
+
 namespace system_
 {
 	namespace Collections_

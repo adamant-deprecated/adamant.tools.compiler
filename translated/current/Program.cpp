@@ -141,13 +141,12 @@ private:
 	::Binding_Scope_ const *_Nullable containing_scope_;
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull symbols_;
 public:
-	::Primitive_Types_ const *_Nonnull primitives_;
-public:
 	Binding_Scope_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::Primitive_Types_ const *_Nonnull const primitives_);
 	Binding_Scope_(::Binding_Scope_ const *_Nonnull const containing_scope_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_);
-	auto lookup_primitive_(p_string const name_) const -> ::Symbol_ const *_Nullable;
 	auto lookup_(p_string const name_) const -> ::Symbol_ const *_Nullable;
-	auto lookup_(p_string const name_, p_int const type_) const -> ::Symbol_ const *_Nullable;
+	auto lookup_special_(p_string const name_) const -> ::Symbol_ const *_Nullable;
+	auto lookup_package_(p_string const name_) const -> ::Symbol_ const *_Nullable;
+	auto lookup_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable;
 };
 
 class Package_
@@ -256,7 +255,7 @@ public:
 	auto build_symbols_(::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_) const -> ::Symbol_ const *_Nonnull;
 private:
 	auto build_symbols_(::Symbol_ const *_Nonnull const parent_, ::Semantic_Node_ *_Nonnull const node_) const -> void;
-	auto build_function_symbols_(::Symbol_ const *_Nonnull const parent_, ::Semantic_Node_ *_Nonnull const node_, ::Symbol_ const *_Nonnull const symbol_) const -> void;
+	auto build_function_symbols_(::Symbol_ const *_Nonnull const parent_, ::Semantic_Node_ *_Nonnull const function_, ::Symbol_ const *_Nonnull const symbol_) const -> void;
 	auto build_runtime_library_symbols_(::Symbol_ const *_Nonnull const package_) const -> void;
 	static auto build_resource_manager_(::Symbol_ const *_Nonnull const parent_) -> void;
 	static auto build_(::Symbol_ const *_Nonnull const parent_, p_string const name_, p_int const declaration_kind_) -> ::Symbol_ *_Nonnull;
@@ -433,6 +432,8 @@ private:
 public:
 	auto make_mutable_() const -> ::Type_ const *_Nonnull;
 	auto make_immutable_() const -> ::Type_ const *_Nonnull;
+private:
+	auto names_a_value_type_(::Symbol_ const *_Nonnull const symbol_) const -> p_bool;
 };
 
 // Global Definitions
@@ -440,11 +441,9 @@ p_int const Success_ = p_int(0);
 p_int const UsageError_ = p_int(64);
 p_int const DataError_ = p_int(65);
 p_int const IdentifierSymbol_ = p_int(0);
-p_int const PrimitiveSymbol_ = p_int(1);
-p_int const ConstructorSymbol_ = p_int(2);
-p_int const OperatorSymbol_ = p_int(3);
-p_int const PackageSymbol_ = p_int(4);
-p_int const SkippedTokens_ = p_int(1)->op_Negate();
+p_int const PackageSymbol_ = p_int(1);
+p_int const SpecialSymbol_ = p_int(2);
+p_int const SkippedTokens_ = p_int(1).op_Negate();
 p_int const EndOfFileToken_ = p_int(0);
 p_int const LeftBrace_ = p_int(1);
 p_int const RightBrace_ = p_int(2);
@@ -618,7 +617,7 @@ auto write_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::C
 		}
 
 		console_->WriteLine_(diagnostic_->Source_->Path_->op_Add(p_string(":"))->op_Add(position_->Line_)->op_Add(p_string(":"))->op_Add(position_->Column_)->op_Add(p_string(" "))->op_Add(severity_)->op_Add(p_string(":")));
-		console_->WriteLine_(p_string("  ")->op_Add(diagnostic_->Message_));
+		console_->WriteLine_(p_string("  ").op_Add(diagnostic_->Message_));
 	}
 }
 
@@ -644,7 +643,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 	p_int argType_ = p_int(0);
 	for (p_string const arg_ : *(args_))
 	{
-		if (argType_->op_Equal(p_int(0)).Value)
+		if (argType_.op_Equal(p_int(0)).Value)
 		{
 			if (arg_->op_Equal(p_string("-r")).Value)
 			{
@@ -663,12 +662,12 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 				sourceFilePaths_->Add_(arg_);
 			}
 		}
-		else if (argType_->op_Equal(p_int(1)).Value)
+		else if (argType_.op_Equal(p_int(1)).Value)
 		{
 			resourceFilePaths_->Add_(arg_);
 			argType_ = p_int(0);
 		}
-		else if (argType_->op_Equal(p_int(2)).Value)
+		else if (argType_.op_Equal(p_int(2)).Value)
 		{
 			outputFilePath_ = arg_;
 			argType_ = p_int(0);
@@ -680,7 +679,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		console_->WriteLine_(p_string("Adamant Compiler v0.1.0"));
 	}
 
-	if (LogicalOr(sourceFilePaths_->op_Magnitude()->op_Equal(p_int(0)), [&] { return outputFilePath_->op_Equal(p_string("")); }).Value)
+	if (LogicalOr(sourceFilePaths_->op_Magnitude()->op_Equal(p_int(0)), [&] { return outputFilePath_.op_Equal(p_string("")); }).Value)
 	{
 		console_->WriteLine_(p_string("Args: <Input File(s)> -o <OutputFile> -r <Resource File>"));
 		return UsageError_;
@@ -698,7 +697,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		{
 			if (verbose_.Value)
 			{
-				console_->WriteLine_(p_string("  ")->op_Add(resourceFilePath_));
+				console_->WriteLine_(p_string("  ").op_Add(resourceFilePath_));
 			}
 
 			resources_->Add_(read_source_(resourceFilePath_));
@@ -715,7 +714,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 	{
 		if (verbose_.Value)
 		{
-			console_->WriteLine_(p_string("  ")->op_Add(sourceFilePath_));
+			console_->WriteLine_(p_string("  ").op_Add(sourceFilePath_));
 		}
 
 		sources_->Add_(read_source_(sourceFilePath_));
@@ -741,16 +740,16 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 	outputFile_->Write_(translated_);
 	outputFile_->Close_();
 	p_string outputDirPath_ = outputFilePath_;
-	p_int index_ = outputDirPath_->LastIndexOf_(p_code_point('/'));
-	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
+	p_int index_ = outputDirPath_.LastIndexOf_(p_code_point('/'));
+	if (index_.op_NotEqual(p_int(1).op_Negate()).Value)
 	{
-		outputDirPath_ = outputDirPath_->Substring_(p_int(0), index_->op_Add(p_int(1)));
+		outputDirPath_ = outputDirPath_.Substring_(p_int(0), index_.op_Add(p_int(1)));
 	}
 
-	index_ = outputDirPath_->LastIndexOf_(p_code_point('\\'));
-	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
+	index_ = outputDirPath_.LastIndexOf_(p_code_point('\\'));
+	if (index_.op_NotEqual(p_int(1).op_Negate()).Value)
 	{
-		outputDirPath_ = outputDirPath_->Substring_(p_int(0), index_->op_Add(p_int(1)));
+		outputDirPath_ = outputDirPath_.Substring_(p_int(0), index_.op_Add(p_int(1)));
 	}
 
 	if (verbose_.Value)
@@ -759,10 +758,10 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		console_->WriteLine_(outputDirPath_);
 	}
 
-	::System_::IO_::File_Writer_ *_Nonnull resourceFile_ = (new ::System_::IO_::File_Writer_(outputDirPath_->op_Add(p_string("RuntimeLibrary.h"))));
+	::System_::IO_::File_Writer_ *_Nonnull resourceFile_ = (new ::System_::IO_::File_Writer_(outputDirPath_.op_Add(p_string("RuntimeLibrary.h"))));
 	resourceFile_->Write_(resource_manager_->GetString_(p_string("RuntimeLibrary.h")));
 	resourceFile_->Close_();
-	resourceFile_ = (new ::System_::IO_::File_Writer_(outputDirPath_->op_Add(p_string("RuntimeLibrary.cpp"))));
+	resourceFile_ = (new ::System_::IO_::File_Writer_(outputDirPath_.op_Add(p_string("RuntimeLibrary.cpp"))));
 	resourceFile_->Write_(resource_manager_->GetString_(p_string("RuntimeLibrary.cpp")));
 	resourceFile_->Close_();
 	return Success_;
@@ -791,12 +790,12 @@ auto ::Line_Info_::Get_(p_int const lineNumber_) const -> ::Text_Line_ const *_N
 {
 	p_int const index_ = lineNumber_->op_Subtract(p_int(1));
 	p_int const start_ = lineStarts_->op_Element(index_);
-	if (index_->op_Equal(lineStarts_->op_Magnitude()->op_Subtract(p_int(1))).Value)
+	if (index_.op_Equal(lineStarts_->op_Magnitude()->op_Subtract(p_int(1))).Value)
 	{
 		return TextLineFromTo_(source_, start_, source_->ByteLength_());
 	}
 
-	p_int const end_ = lineStarts_->op_Element(index_->op_Add(p_int(1)));
+	p_int const end_ = lineStarts_->op_Element(index_.op_Add(p_int(1)));
 	return TextLineFromTo_(source_, start_, end_);
 }
 
@@ -804,21 +803,21 @@ auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 {
 	p_int left_ = p_int(0);
 	p_int right_ = lineStarts_->op_Magnitude()->op_Subtract(p_int(1));
-	while (left_->op_LessThanOrEqual(right_).Value)
+	while (left_.op_LessThanOrEqual(right_).Value)
 	{
-		p_int const mid_ = left_->op_Add(right_->op_Subtract(left_)->op_Divide(p_int(2)));
+		p_int const mid_ = left_.op_Add(right_.op_Subtract(left_)->op_Divide(p_int(2)));
 		p_int const midLineStart_ = lineStarts_->op_Element(mid_);
-		if (midLineStart_->op_LessThan(offset_).Value)
+		if (midLineStart_.op_LessThan(offset_).Value)
 		{
-			left_ = mid_->op_Add(p_int(1));
+			left_ = mid_.op_Add(p_int(1));
 		}
-		else if (midLineStart_->op_GreaterThan(offset_).Value)
+		else if (midLineStart_.op_GreaterThan(offset_).Value)
 		{
-			right_ = mid_->op_Subtract(p_int(1));
+			right_ = mid_.op_Subtract(p_int(1));
 		}
 		else
 		{
-			return mid_->op_Add(p_int(1));
+			return mid_.op_Add(p_int(1));
 		}
 	}
 
@@ -830,16 +829,16 @@ auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 	Package_ = package_;
 	Path_ = path_;
 	p_string name_ = path_;
-	p_int index_ = name_->LastIndexOf_(p_code_point('/'));
-	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
+	p_int index_ = name_.LastIndexOf_(p_code_point('/'));
+	if (index_.op_NotEqual(p_int(1).op_Negate()).Value)
 	{
-		name_ = name_->Substring_(index_->op_Add(p_int(1)));
+		name_ = name_.Substring_(index_.op_Add(p_int(1)));
 	}
 
-	index_ = name_->LastIndexOf_(p_code_point('\\'));
-	if (index_->op_NotEqual(p_int(1)->op_Negate()).Value)
+	index_ = name_.LastIndexOf_(p_code_point('\\'));
+	if (index_.op_NotEqual(p_int(1).op_Negate()).Value)
 	{
-		name_ = name_->Substring_(index_->op_Add(p_int(1)));
+		name_ = name_.Substring_(index_.op_Add(p_int(1)));
 	}
 
 	Name_ = name_;
@@ -853,23 +852,23 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 	::System_::Collections_::List_<p_int> *_Nonnull const lineStarts_ = (new ::System_::Collections_::List_<p_int>());
 	lineStarts_->Add_(p_int(0));
 	p_int position_ = p_int(0);
-	while (position_->op_LessThan(length_).Value)
+	while (position_.op_LessThan(length_).Value)
 	{
 		p_code_point const c_ = Text_->op_Element(position_);
-		position_->op_AddAssign(p_int(1));
-		if (LogicalAnd(c_->op_GreaterThan(p_code_point('\r')), [&] { return c_->op_LessThanOrEqual(p_code_point('\x7F')); }).Value)
+		position_.op_AddAssign(p_int(1));
+		if (LogicalAnd(c_.op_GreaterThan(p_code_point('\r')), [&] { return c_.op_LessThanOrEqual(p_code_point('\x7F')); }).Value)
 		{
 			continue;
 		}
 
-		if (c_->op_Equal(p_code_point('\r')).Value)
+		if (c_.op_Equal(p_code_point('\r')).Value)
 		{
-			if (LogicalAnd(position_->op_LessThan(length_), [&] { return Text_->op_Element(position_)->op_Equal(p_code_point('\n')); }).Value)
+			if (LogicalAnd(position_.op_LessThan(length_), [&] { return Text_->op_Element(position_)->op_Equal(p_code_point('\n')); }).Value)
 			{
-				position_->op_AddAssign(p_int(1));
+				position_.op_AddAssign(p_int(1));
 			}
 		}
-		else if (LogicalOr(LogicalOr(LogicalOr(c_->op_Equal(p_code_point('\n')), [&] { return c_->op_Equal(p_code_point('\x0B')); }), [&] { return c_->op_Equal(p_code_point('\f')); }), [&] { return c_->op_Equal(p_code_point('\x85')); }).Value)
+		else if (LogicalOr(LogicalOr(LogicalOr(c_.op_Equal(p_code_point('\n')), [&] { return c_.op_Equal(p_code_point('\x0B')); }), [&] { return c_.op_Equal(p_code_point('\f')); }), [&] { return c_.op_Equal(p_code_point('\x85')); }).Value)
 		{
 		}
 		else
@@ -893,16 +892,16 @@ auto ::Source_Text_::PositionOfStart_(::Text_Span_ const *_Nonnull const span_) 
 	p_int const offset_ = span_->Start_;
 	p_int const lineNumber_ = Lines_->LineNumber_(offset_);
 	p_int const lineStart_ = Lines_->Get_(lineNumber_)->Start_;
-	p_int column_ = offset_->op_Subtract(lineStart_)->op_Add(p_int(1));
+	p_int column_ = offset_.op_Subtract(lineStart_)->op_Add(p_int(1));
 	p_int i_ = lineStart_;
-	while (i_->op_LessThan(offset_).Value)
+	while (i_.op_LessThan(offset_).Value)
 	{
 		if (Text_->op_Element(i_)->op_Equal(p_code_point('\t')).Value)
 		{
-			column_->op_AddAssign(p_int(3));
+			column_.op_AddAssign(p_int(3));
 		}
 
-		i_->op_AddAssign(p_int(1));
+		i_.op_AddAssign(p_int(1));
 	}
 
 	return (new ::Text_Position_(offset_, lineNumber_, column_));
@@ -945,7 +944,7 @@ auto ::Text_Span_::End_() const -> p_int
 
 auto format_error_(p_string const message_) -> p_string
 {
-	return p_string("<$ ")->op_Add(message_)->op_Add(p_string(" $>"));
+	return p_string("<$ ").op_Add(message_)->op_Add(p_string(" $>"));
 }
 
 ::Source_File_Builder_::Source_File_Builder_()
@@ -1044,20 +1043,24 @@ auto ::Source_File_Builder_::ToString_() const -> p_string
 ::Binding_Scope_::Binding_Scope_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::Primitive_Types_ const *_Nonnull const primitives_)
 {
 	this->containing_scope_ = ::None;
-	this->symbols_ = symbols_;
-	this->primitives_ = primitives_;
+	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const scope_symbols_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
+	for (::Symbol_ const *_Nonnull const s_ : *(symbols_))
+	{
+		scope_symbols_->Add_(s_);
+	}
+
+	for (::Symbol_ const *_Nonnull const s_ : *(primitives_->Symbols_))
+	{
+		scope_symbols_->Add_(s_);
+	}
+
+	this->symbols_ = scope_symbols_;
 }
 
 ::Binding_Scope_::Binding_Scope_(::Binding_Scope_ const *_Nonnull const containing_scope_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_)
 {
 	this->containing_scope_ = containing_scope_;
 	this->symbols_ = symbols_;
-	this->primitives_ = containing_scope_->primitives_;
-}
-
-auto ::Binding_Scope_::lookup_primitive_(p_string const name_) const -> ::Symbol_ const *_Nullable
-{
-	return primitives_->Get_(name_);
 }
 
 auto ::Binding_Scope_::lookup_(p_string const name_) const -> ::Symbol_ const *_Nullable
@@ -1065,11 +1068,21 @@ auto ::Binding_Scope_::lookup_(p_string const name_) const -> ::Symbol_ const *_
 	return lookup_(name_, IdentifierSymbol_);
 }
 
-auto ::Binding_Scope_::lookup_(p_string const name_, p_int const type_) const -> ::Symbol_ const *_Nullable
+auto ::Binding_Scope_::lookup_special_(p_string const name_) const -> ::Symbol_ const *_Nullable
+{
+	return lookup_(name_, SpecialSymbol_);
+}
+
+auto ::Binding_Scope_::lookup_package_(p_string const name_) const -> ::Symbol_ const *_Nullable
+{
+	return lookup_(name_, PackageSymbol_);
+}
+
+auto ::Binding_Scope_::lookup_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable
 {
 	for (::Symbol_ const *_Nonnull const symbol_ : *(symbols_))
 	{
-		if (LogicalAnd(symbol_->Name_->op_Equal(name_), [&] { return symbol_->kind_->op_Equal(type_); }).Value)
+		if (LogicalAnd(symbol_->Name_->op_Equal(name_), [&] { return symbol_->kind_->op_Equal(kind_); }).Value)
 		{
 			return symbol_;
 		}
@@ -1077,7 +1090,7 @@ auto ::Binding_Scope_::lookup_(p_string const name_, p_int const type_) const ->
 
 	if (containing_scope_->op_NotEqual(::None).Value)
 	{
-		return containing_scope_->lookup_(name_, type_);
+		return containing_scope_->lookup_(name_, kind_);
 	}
 
 	return ::None;
@@ -1158,7 +1171,7 @@ auto ::Semantic_Analyzer_::Analyze_(::Syntax_Node_ const *_Nonnull const package
 {
 	if (package_syntax_->kind_->op_NotEqual(PackageNode_).Value)
 	{
-		THROW_EXCEPTION_(p_string("`Semantic_Analyzer.Analyze(...)` called with node of type ")->op_Add(package_syntax_->kind_));
+		THROW_EXCEPTION_(p_string("`Semantic_Analyzer.Analyze(...)` called with node of type ").op_Add(package_syntax_->kind_));
 	}
 
 	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_ = (new ::Semantic_Node_(package_syntax_))->children_;
@@ -1212,12 +1225,12 @@ auto ::Semantic_Node_::bind_symbol_(::Symbol_ const *_Nonnull const symbol_) -> 
 {
 	if (this->symbol_->op_NotEqual(::None).Value)
 	{
-		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `")->op_Add(get_text_())->op_Add(p_string("`")));
+		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `").op_Add(get_text_())->op_Add(p_string("`")));
 	}
 
 	if (symbol_->op_Equal(::None).Value)
 	{
-		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_symbol(..)` called without a symbol on `")->op_Add(get_text_())->op_Add(p_string("`")));
+		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_symbol(..)` called without a symbol on `").op_Add(get_text_())->op_Add(p_string("`")));
 	}
 
 	this->symbol_ = symbol_;
@@ -1227,12 +1240,12 @@ auto ::Semantic_Node_::bind_type_(::Type_ const *_Nonnull const type_) -> void
 {
 	if (this->type_->op_NotEqual(::None).Value)
 	{
-		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_type(..)` called on node that already has a type. Node: `")->op_Add(get_text_())->op_Add(p_string("` of kind "))->op_Add(kind_));
+		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_type(..)` called on node that already has a type. Node: `").op_Add(get_text_())->op_Add(p_string("` of kind "))->op_Add(kind_));
 	}
 
 	if (type_->op_Equal(::None).Value)
 	{
-		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_type(..)` called without a type. Node: `")->op_Add(get_text_())->op_Add(p_string("` of kind "))->op_Add(kind_));
+		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_type(..)` called without a type. Node: `").op_Add(get_text_())->op_Add(p_string("` of kind "))->op_Add(kind_));
 	}
 
 	this->type_ = type_;
@@ -1366,7 +1379,7 @@ auto ::Semantic_Node_::is_value_type_() const -> p_bool
 	{
 		if (symbol_->op_Equal(::None).Value)
 		{
-			THROW_EXCEPTION_(p_string("No symbol on identifier name `")->op_Add(get_text_())->op_Add(p_string("`")));
+			THROW_EXCEPTION_(p_string("No symbol on identifier name `").op_Add(get_text_())->op_Add(p_string("`")));
 		}
 
 		return symbol_->is_value_type_();
@@ -1382,7 +1395,7 @@ auto ::Semantic_Node_::is_value_type_() const -> p_bool
 		return children_->op_Element(p_int(0))->is_value_type_();
 	}
 
-	THROW_EXCEPTION_(p_string("is_value_type() unable to determine if value type. Syntax node type ")->op_Add(kind_));
+	THROW_EXCEPTION_(p_string("is_value_type() unable to determine if value type. Syntax node type ").op_Add(kind_));
 	return p_bool(true);
 }
 
@@ -1410,7 +1423,7 @@ auto ::Semantic_Node_::is_value_type_() const -> p_bool
 {
 	Parent_ = ::None;
 	Name_ = name_;
-	kind_ = PrimitiveSymbol_;
+	kind_ = SpecialSymbol_;
 	Declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>());
 	children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
 	is_primitive_ = p_bool(true);
@@ -1435,7 +1448,7 @@ auto ::Symbol_::is_value_type_() const -> p_bool
 	{
 		if (Declarations_->op_Magnitude()->op_Equal(p_int(0)).Value)
 		{
-			THROW_EXCEPTION_(p_string("Symbol.is_value_type() could not determine if IdentifierSymbol `")->op_Add(Name_)->op_Add(p_string("` is a value type. No declarations.")));
+			THROW_EXCEPTION_(p_string("Symbol.is_value_type() could not determine if IdentifierSymbol `").op_Add(Name_)->op_Add(p_string("` is a value type. No declarations.")));
 		}
 
 		::Semantic_Node_ const *_Nonnull const declaration_ = Declarations_->op_Element(p_int(0));
@@ -1449,22 +1462,22 @@ auto ::Symbol_::is_value_type_() const -> p_bool
 		}
 		else
 		{
-			THROW_EXCEPTION_(p_string("Could not determine if IdentifierSymbol `")->op_Add(Name_)->op_Add(p_string("` is a value type. Declaration of type "))->op_Add(declaration_->kind_));
+			THROW_EXCEPTION_(p_string("Could not determine if IdentifierSymbol `").op_Add(Name_)->op_Add(p_string("` is a value type. Declaration of type "))->op_Add(declaration_->kind_));
 		}
 	}
-	else if (kind_->op_Equal(PrimitiveSymbol_).Value)
+	else if (kind_->op_Equal(SpecialSymbol_).Value)
 	{
 		return p_bool(true);
 	}
 	else
 	{
-		THROW_EXCEPTION_(p_string("Symbol.is_value_type() is not defined for Symbol_Kind ")->op_Add(kind_));
+		THROW_EXCEPTION_(p_string("Symbol.is_value_type() is not defined for Symbol_Kind ").op_Add(kind_));
 	}
 }
 
 auto ::Symbol_::get_type_() const -> ::Type_ const *_Nullable
 {
-	if (kind_->op_Equal(PrimitiveSymbol_).Value)
+	if (kind_->op_Equal(SpecialSymbol_).Value)
 	{
 		return (new ::Type_(this));
 	}
@@ -1682,26 +1695,29 @@ auto ::Symbol_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding_S
 	}
 	else if (LogicalOr(node_->kind_->op_Equal(TrueLiteralExpression_), [&] { return node_->kind_->op_Equal(FalseLiteralExpression_); }).Value)
 	{
-		node_->bind_type_(scope_->lookup_primitive_(p_string("bool"))->get_type_());
+		node_->bind_type_(scope_->lookup_special_(p_string("bool"))->get_type_());
 	}
 	else if (node_->kind_->op_Equal(StringLiteralExpression_).Value)
 	{
-		node_->bind_type_(scope_->lookup_primitive_(p_string("string"))->get_type_());
+		node_->bind_type_(scope_->lookup_special_(p_string("string"))->get_type_());
 	}
 	else if (node_->kind_->op_Equal(CodePointLiteralExpression_).Value)
 	{
-		node_->bind_type_(scope_->lookup_primitive_(p_string("code_point"))->get_type_());
+		node_->bind_type_(scope_->lookup_special_(p_string("code_point"))->get_type_());
 	}
 	else if (node_->kind_->op_Equal(NumericLiteralExpression_).Value)
 	{
-		node_->bind_type_(scope_->lookup_primitive_(p_string("int"))->get_type_());
+		node_->bind_type_(scope_->lookup_special_(p_string("int"))->get_type_());
 	}
-	else if (LogicalOr(LogicalOr(LogicalOr(LogicalOr(node_->kind_->op_Equal(BreakStatement_), [&] { return node_->kind_->op_Equal(ContinueStatement_); }), [&] { return node_->kind_->op_Equal(NoneLiteralExpression_); }), [&] { return node_->kind_->op_Equal(SelfExpression_); }), [&] { return node_->kind_->op_Equal(EndOfFileToken_); }).Value)
+	else if (node_->kind_->op_Equal(SelfExpression_).Value)
+	{
+	}
+	else if (LogicalOr(LogicalOr(LogicalOr(node_->kind_->op_Equal(BreakStatement_), [&] { return node_->kind_->op_Equal(ContinueStatement_); }), [&] { return node_->kind_->op_Equal(NoneLiteralExpression_); }), [&] { return node_->kind_->op_Equal(EndOfFileToken_); }).Value)
 	{
 	}
 	else
 	{
-		THROW_EXCEPTION_(p_string("`Symbol_Binder.bind()` unimplemented node type ")->op_Add(node_->kind_));
+		THROW_EXCEPTION_(p_string("`Symbol_Binder.bind()` unimplemented node type ").op_Add(node_->kind_));
 	}
 }
 
@@ -1710,10 +1726,10 @@ auto ::Symbol_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_, :
 	if (node_->kind_->op_Equal(PredefinedType_).Value)
 	{
 		p_string const primitive_name_ = node_->children_->op_Element(p_int(0))->get_text_();
-		::Symbol_ const *_Nonnull const symbol_ = scope_->lookup_primitive_(primitive_name_);
+		::Symbol_ const *_Nonnull const symbol_ = scope_->lookup_special_(primitive_name_);
 		if (symbol_->op_Equal(::None).Value)
 		{
-			THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` no symbol for primitive type ")->op_Add(primitive_name_));
+			THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` no symbol for primitive type ").op_Add(primitive_name_));
 		}
 
 		node_->bind_symbol_(symbol_);
@@ -1725,7 +1741,7 @@ auto ::Symbol_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_, :
 		bind_type_name_(inner_type_node_, scope_);
 		if (inner_type_node_->type_->op_Equal(::None).Value)
 		{
-			THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` no inner type for `")->op_Add(node_->get_text_())->op_Add(p_string("` of kind `MutableType`")));
+			THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` no inner type for `").op_Add(node_->get_text_())->op_Add(p_string("` of kind `MutableType`")));
 		}
 
 		node_->bind_type_(inner_type_node_->type_->make_mutable_());
@@ -1736,7 +1752,7 @@ auto ::Symbol_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_, :
 		bind_type_name_(inner_type_node_, scope_);
 		if (inner_type_node_->type_->op_Equal(::None).Value)
 		{
-			THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` no inner type for `")->op_Add(node_->get_text_())->op_Add(p_string("` of kind `ImmutableType`")));
+			THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` no inner type for `").op_Add(node_->get_text_())->op_Add(p_string("` of kind `ImmutableType`")));
 		}
 
 		node_->bind_type_(inner_type_node_->type_->make_immutable_());
@@ -1747,7 +1763,7 @@ auto ::Symbol_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_, :
 		bind_type_name_(inner_type_node_, scope_);
 		if (inner_type_node_->type_->op_Equal(::None).Value)
 		{
-			THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` not inner type for `")->op_Add(node_->get_text_())->op_Add(p_string("` of kind `OptionalType`")));
+			THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` not inner type for `").op_Add(node_->get_text_())->op_Add(p_string("` of kind `OptionalType`")));
 		}
 
 		node_->bind_type_(inner_type_node_->type_->make_immutable_());
@@ -1809,7 +1825,7 @@ auto ::Symbol_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_, :
 		}
 		else
 		{
-			THROW_EXCEPTION_(p_string("Unreachable: `Symbol_Binder.bind(..)` name.kind = ")->op_Add(name_->kind_));
+			THROW_EXCEPTION_(p_string("Unreachable: `Symbol_Binder.bind(..)` name.kind = ").op_Add(name_->kind_));
 		}
 	}
 	else if (node_->kind_->op_Equal(IdentifierName_).Value)
@@ -1833,13 +1849,13 @@ auto ::Symbol_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_, :
 	}
 	else
 	{
-		THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` unimplemented node type ")->op_Add(node_->kind_));
+		THROW_EXCEPTION_(p_string("`Symbol_Binder.bind_type_name()` unimplemented node type ").op_Add(node_->kind_));
 	}
 }
 
 auto ::Symbol_Binder_::add_resolution_error_(::Semantic_Node_ const *_Nonnull const node_) -> void
 {
-	node_->Add_((new ::Diagnostic_(FatalCompilationError_, Analysis_, node_->Source_, node_->get_text_span_(), p_string("Could not resolve name `")->op_Add(node_->get_text_())->op_Add(p_string("`")))));
+	node_->Add_((new ::Diagnostic_(FatalCompilationError_, Analysis_, node_->Source_, node_->get_text_span_(), p_string("Could not resolve name `").op_Add(node_->get_text_())->op_Add(p_string("`")))));
 }
 
 auto ::Symbol_Builder_::build_symbols_(::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_) const -> ::Symbol_ const *_Nonnull
@@ -1849,7 +1865,7 @@ auto ::Symbol_Builder_::build_symbols_(::System_::Collections_::List_<::Semantic
 	{
 		if (compilation_unit_->kind_->op_NotEqual(CompilationUnit_).Value)
 		{
-			THROW_EXCEPTION_(p_string("`Symbol_Builder.build_symbols(...)` called with node of type ")->op_Add(compilation_unit_->kind_));
+			THROW_EXCEPTION_(p_string("`Symbol_Builder.build_symbols(...)` called with node of type ").op_Add(compilation_unit_->kind_));
 		}
 
 		build_symbols_(package_symbol_, compilation_unit_);
@@ -1889,14 +1905,17 @@ auto ::Symbol_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_, 
 	}
 	else if (node_->kind_->op_Equal(ConstructorDeclaration_).Value)
 	{
-		::Symbol_ const *_Nonnull const constructor_symbol_ = (new ::Symbol_(::None, p_string(""), ConstructorSymbol_));
+		::Symbol_ const *_Nonnull const constructor_symbol_ = (new ::Symbol_(parent_, p_string("new"), SpecialSymbol_));
 		constructor_symbol_->Declarations_->Add_(node_);
+		parent_->children_->Add_(constructor_symbol_);
+		::Symbol_ const *_Nonnull const self_symbol_ = (new ::Symbol_(constructor_symbol_, p_string("self"), SpecialSymbol_));
+		constructor_symbol_->children_->Add_(self_symbol_);
 		build_function_symbols_(parent_, node_, constructor_symbol_);
 	}
 	else if (node_->kind_->op_Equal(FieldDeclaration_).Value)
 	{
 		p_string const name_ = node_->first_child_(VariableDeclaration_)->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const field_symbol_ = (new ::Symbol_(::None, name_));
+		::Symbol_ const *_Nonnull const field_symbol_ = (new ::Symbol_(parent_, name_));
 		field_symbol_->Declarations_->Add_(node_);
 		parent_->children_->Add_(field_symbol_);
 		node_->bind_symbol_(field_symbol_);
@@ -1969,14 +1988,13 @@ auto ::Symbol_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_, 
 	else if (node_->kind_->op_Equal(Parameter_).Value)
 	{
 		p_string const name_ = node_->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(::None, name_));
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(parent_, name_));
 		symbol_->Declarations_->Add_(node_);
 		parent_->children_->Add_(symbol_);
 	}
 	else if (node_->kind_->op_Equal(SelfParameter_).Value)
 	{
-		p_string const name_ = node_->first_child_(SelfKeyword_)->get_text_();
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(::None, name_, PrimitiveSymbol_));
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(parent_, p_string("self"), SpecialSymbol_));
 		symbol_->Declarations_->Add_(node_);
 		parent_->children_->Add_(symbol_);
 	}
@@ -1985,23 +2003,23 @@ auto ::Symbol_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_, 
 	}
 	else
 	{
-		THROW_EXCEPTION_(p_string("`Symbol_Builder.Build()` unimplemented node type ")->op_Add(node_->kind_));
+		THROW_EXCEPTION_(p_string("`Symbol_Builder.Build()` unimplemented node type ").op_Add(node_->kind_));
 	}
 }
 
-auto ::Symbol_Builder_::build_function_symbols_(::Symbol_ const *_Nonnull const parent_, ::Semantic_Node_ *_Nonnull const node_, ::Symbol_ const *_Nonnull const symbol_) const -> void
+auto ::Symbol_Builder_::build_function_symbols_(::Symbol_ const *_Nonnull const parent_, ::Semantic_Node_ *_Nonnull const function_, ::Symbol_ const *_Nonnull const symbol_) const -> void
 {
-	symbol_->Declarations_->Add_(node_);
-	::Semantic_Node_ *_Nonnull const parameters_ = node_->first_child_(ParameterList_);
+	symbol_->Declarations_->Add_(function_);
+	::Semantic_Node_ *_Nonnull const parameters_ = function_->first_child_(ParameterList_);
 	for (::Semantic_Node_ *_Nonnull const parameter_ : *(parameters_->Parameters_()))
 	{
 		build_symbols_(symbol_, parameter_);
 	}
 
-	::Semantic_Node_ *_Nonnull const body_ = node_->first_child_(Block_);
+	::Semantic_Node_ *_Nonnull const body_ = function_->first_child_(Block_);
 	build_symbols_(symbol_, body_);
 	parent_->children_->Add_(symbol_);
-	node_->bind_symbol_(symbol_);
+	function_->bind_symbol_(symbol_);
 }
 
 auto ::Symbol_Builder_::build_runtime_library_symbols_(::Symbol_ const *_Nonnull const package_) const -> void
@@ -2396,11 +2414,11 @@ auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) ->
 			return expression_;
 		}
 
-		if (suffixOperator_->op_Not().Value)
+		if (suffixOperator_.op_Not().Value)
 		{
 			if (leftAssociative_.Value)
 			{
-				precedence_->op_AddAssign(p_int(1));
+				precedence_.op_AddAssign(p_int(1));
 			}
 
 			children_->Add_(ParseExpression_(precedence_));
@@ -2568,7 +2586,7 @@ auto ::Compilation_Unit_Parser_::ParseBlock_() -> ::Syntax_Node_ const *_Nonnull
 			{
 				p_int const currentTokenType_ = token_->kind_;
 				skipped_->Add_(AcceptToken_());
-				if (currentTokenType_->op_Equal(Semicolon_).Value)
+				if (currentTokenType_.op_Equal(Semicolon_).Value)
 				{
 					break;
 				}
@@ -2906,7 +2924,7 @@ auto new_syntax_node_missing_(p_int const type_, ::Source_Text_ const *_Nonnull 
 {
 	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_(type_, p_bool(true), source_, start_, p_int(0)));
 	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_(start_, p_int(0)));
-	node_->Add_((new ::Diagnostic_(CompilationError_, Parsing_, source_, span_, p_string("Missing token of type ")->op_Add(type_))));
+	node_->Add_((new ::Diagnostic_(CompilationError_, Parsing_, source_, span_, p_string("Missing token of type ").op_Add(type_))));
 	return node_;
 }
 
@@ -2914,7 +2932,7 @@ auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *_Nonnull const skipped_) -> 
 {
 	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_(SkippedTokens_, skipped_));
 	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_(skipped_->Start_, skipped_->Length_));
-	node_->Add_((new ::Diagnostic_(CompilationError_, Parsing_, skipped_->Source_, span_, p_string("Skipped unexpected token of type ")->op_Add(skipped_->kind_))));
+	node_->Add_((new ::Diagnostic_(CompilationError_, Parsing_, skipped_->Source_, span_, p_string("Skipped unexpected token of type ").op_Add(skipped_->kind_))));
 	return node_;
 }
 
@@ -2922,7 +2940,7 @@ auto new_Syntax_Node_Skipped_(::System_::Collections_::List_<::Syntax_Node_ cons
 {
 	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_(SkippedTokens_, skipped_));
 	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_(node_->Start_, node_->Length_));
-	node_->Add_((new ::Diagnostic_(CompilationError_, Parsing_, node_->Source_, span_, p_string("Skipped ")->op_Add(skipped_->op_Magnitude())->op_Add(p_string(" unexpected token(s)")))));
+	node_->Add_((new ::Diagnostic_(CompilationError_, Parsing_, node_->Source_, span_, p_string("Skipped ").op_Add(skipped_->op_Magnitude())->op_Add(p_string(" unexpected token(s)")))));
 	return node_;
 }
 
@@ -2941,68 +2959,68 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		return EndOfFile_();
 	}
 
-	p_uint end_ = p_int(1)->op_Negate();
+	p_uint end_ = p_int(1).op_Negate();
 	while (position_->op_LessThan(Source_->ByteLength_()).Value)
 	{
 		p_code_point const curChar_ = Source_->Text_->op_Element(position_);
-		if (LogicalOr(LogicalOr(LogicalOr(curChar_->op_Equal(p_code_point(' ')), [&] { return curChar_->op_Equal(p_code_point('\t')); }), [&] { return curChar_->op_Equal(p_code_point('\n')); }), [&] { return curChar_->op_Equal(p_code_point('\r')); }).Value)
+		if (LogicalOr(LogicalOr(LogicalOr(curChar_.op_Equal(p_code_point(' ')), [&] { return curChar_.op_Equal(p_code_point('\t')); }), [&] { return curChar_.op_Equal(p_code_point('\n')); }), [&] { return curChar_.op_Equal(p_code_point('\r')); }).Value)
 		{
 			position_->op_AddAssign(p_int(1));
 			continue;
 		}
-		else if (curChar_->op_Equal(p_code_point('{')).Value)
+		else if (curChar_.op_Equal(p_code_point('{')).Value)
 		{
 			return NewOperator_(LeftBrace_);
 		}
-		else if (curChar_->op_Equal(p_code_point('}')).Value)
+		else if (curChar_.op_Equal(p_code_point('}')).Value)
 		{
 			return NewOperator_(RightBrace_);
 		}
-		else if (curChar_->op_Equal(p_code_point('(')).Value)
+		else if (curChar_.op_Equal(p_code_point('(')).Value)
 		{
 			return NewOperator_(LeftParen_);
 		}
-		else if (curChar_->op_Equal(p_code_point(')')).Value)
+		else if (curChar_.op_Equal(p_code_point(')')).Value)
 		{
 			return NewOperator_(RightParen_);
 		}
-		else if (curChar_->op_Equal(p_code_point(';')).Value)
+		else if (curChar_.op_Equal(p_code_point(';')).Value)
 		{
 			return NewOperator_(Semicolon_);
 		}
-		else if (curChar_->op_Equal(p_code_point(',')).Value)
+		else if (curChar_.op_Equal(p_code_point(',')).Value)
 		{
 			return NewOperator_(Comma_);
 		}
-		else if (curChar_->op_Equal(p_code_point('.')).Value)
+		else if (curChar_.op_Equal(p_code_point('.')).Value)
 		{
 			return NewOperator_(Dot_);
 		}
-		else if (curChar_->op_Equal(p_code_point(':')).Value)
+		else if (curChar_.op_Equal(p_code_point(':')).Value)
 		{
 			return NewOperator_(Colon_);
 		}
-		else if (curChar_->op_Equal(p_code_point('[')).Value)
+		else if (curChar_.op_Equal(p_code_point('[')).Value)
 		{
 			return NewOperator_(LeftBracket_);
 		}
-		else if (curChar_->op_Equal(p_code_point(']')).Value)
+		else if (curChar_.op_Equal(p_code_point(']')).Value)
 		{
 			return NewOperator_(RightBracket_);
 		}
-		else if (curChar_->op_Equal(p_code_point('?')).Value)
+		else if (curChar_.op_Equal(p_code_point('?')).Value)
 		{
 			return NewOperator_(Question_);
 		}
-		else if (curChar_->op_Equal(p_code_point('|')).Value)
+		else if (curChar_.op_Equal(p_code_point('|')).Value)
 		{
 			return NewOperator_(Pipe_);
 		}
-		else if (curChar_->op_Equal(p_code_point('*')).Value)
+		else if (curChar_.op_Equal(p_code_point('*')).Value)
 		{
 			return NewOperator_(Asterisk_);
 		}
-		else if (curChar_->op_Equal(p_code_point('=')).Value)
+		else if (curChar_.op_Equal(p_code_point('=')).Value)
 		{
 			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
@@ -3016,7 +3034,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 			return NewOperator_(Equals_);
 		}
-		else if (curChar_->op_Equal(p_code_point('+')).Value)
+		else if (curChar_.op_Equal(p_code_point('+')).Value)
 		{
 			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
@@ -3025,7 +3043,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 			return NewOperator_(Plus_);
 		}
-		else if (curChar_->op_Equal(p_code_point('-')).Value)
+		else if (curChar_.op_Equal(p_code_point('-')).Value)
 		{
 			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('>')); }).Value)
 			{
@@ -3039,7 +3057,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 			return NewOperator_(Minus_);
 		}
-		else if (curChar_->op_Equal(p_code_point('/')).Value)
+		else if (curChar_.op_Equal(p_code_point('/')).Value)
 		{
 			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('/')); }).Value)
 			{
@@ -3067,11 +3085,11 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 			return NewOperator_(Slash_);
 		}
-		else if (curChar_->op_Equal(p_code_point('%')).Value)
+		else if (curChar_.op_Equal(p_code_point('%')).Value)
 		{
 			return NewOperator_(Percent_);
 		}
-		else if (curChar_->op_Equal(p_code_point('<')).Value)
+		else if (curChar_.op_Equal(p_code_point('<')).Value)
 		{
 			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
@@ -3080,7 +3098,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 			return NewOperator_(LessThan_);
 		}
-		else if (curChar_->op_Equal(p_code_point('>')).Value)
+		else if (curChar_.op_Equal(p_code_point('>')).Value)
 		{
 			if (LogicalAnd(position_->op_Add(p_int(1))->op_LessThan(Source_->ByteLength_()), [&] { return Source_->Text_->op_Element(position_->op_Add(p_int(1)))->op_Equal(p_code_point('=')); }).Value)
 			{
@@ -3089,30 +3107,30 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 			return NewOperator_(GreaterThan_);
 		}
-		else if (curChar_->op_Equal(p_code_point('"')).Value)
+		else if (curChar_.op_Equal(p_code_point('"')).Value)
 		{
 			end_ = position_->op_Add(p_int(1));
 			p_bool escaped_ = p_bool(false);
-			while (LogicalAnd(end_->op_LessThan(Source_->ByteLength_()), [&] { return LogicalOr(Source_->Text_->op_Element(end_)->op_NotEqual(p_code_point('"')), [&] { return escaped_; }); }).Value)
+			while (LogicalAnd(end_.op_LessThan(Source_->ByteLength_()), [&] { return LogicalOr(Source_->Text_->op_Element(end_)->op_NotEqual(p_code_point('"')), [&] { return escaped_; }); }).Value)
 			{
-				escaped_ = LogicalAnd(Source_->Text_->op_Element(end_)->op_Equal(p_code_point('\\')), [&] { return escaped_->op_Not(); });
-				end_->op_AddAssign(p_int(1));
+				escaped_ = LogicalAnd(Source_->Text_->op_Element(end_)->op_Equal(p_code_point('\\')), [&] { return escaped_.op_Not(); });
+				end_.op_AddAssign(p_int(1));
 			}
 
-			end_->op_AddAssign(p_int(1));
+			end_.op_AddAssign(p_int(1));
 			return NewToken_(StringLiteral_, end_);
 		}
-		else if (curChar_->op_Equal(p_code_point('\'')).Value)
+		else if (curChar_.op_Equal(p_code_point('\'')).Value)
 		{
 			end_ = position_->op_Add(p_int(1));
 			p_bool escaped_ = p_bool(false);
-			while (LogicalAnd(end_->op_LessThan(Source_->ByteLength_()), [&] { return LogicalOr(Source_->Text_->op_Element(end_)->op_NotEqual(p_code_point('\'')), [&] { return escaped_; }); }).Value)
+			while (LogicalAnd(end_.op_LessThan(Source_->ByteLength_()), [&] { return LogicalOr(Source_->Text_->op_Element(end_)->op_NotEqual(p_code_point('\'')), [&] { return escaped_; }); }).Value)
 			{
-				escaped_ = LogicalAnd(Source_->Text_->op_Element(end_)->op_Equal(p_code_point('\\')), [&] { return escaped_->op_Not(); });
-				end_->op_AddAssign(p_int(1));
+				escaped_ = LogicalAnd(Source_->Text_->op_Element(end_)->op_Equal(p_code_point('\\')), [&] { return escaped_.op_Not(); });
+				end_.op_AddAssign(p_int(1));
 			}
 
-			end_->op_AddAssign(p_int(1));
+			end_.op_AddAssign(p_int(1));
 			return NewToken_(CodePointLiteral_, end_);
 		}
 		else
@@ -3122,7 +3140,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 				end_ = position_->op_Add(p_int(1));
 				while (IsIdentifierChar_(Source_->Text_->op_Element(end_)).Value)
 				{
-					end_->op_AddAssign(p_int(1));
+					end_.op_AddAssign(p_int(1));
 				}
 
 				return NewIdentifierOrKeyword_(end_);
@@ -3133,14 +3151,14 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 				end_ = position_->op_Add(p_int(1));
 				while (IsNumberChar_(Source_->Text_->op_Element(end_)).Value)
 				{
-					end_->op_AddAssign(p_int(1));
+					end_.op_AddAssign(p_int(1));
 				}
 
 				return NewToken_(Number_, end_);
 			}
 
 			::Text_Span_ const *_Nonnull diagnosticSpan_ = (new ::Text_Span_(position_, p_int(1)));
-			diagnostics_->Add_((new ::Diagnostic_(CompilationError_, Lexing_, Source_, diagnosticSpan_, p_string("Invalid character `")->op_Add(curChar_)->op_Add(p_string("`")))));
+			diagnostics_->Add_((new ::Diagnostic_(CompilationError_, Lexing_, Source_, diagnosticSpan_, p_string("Invalid character `").op_Add(curChar_)->op_Add(p_string("`")))));
 			position_ = end_;
 		}
 	}
@@ -3164,143 +3182,143 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Nod
 	p_uint const length_ = end_->op_Subtract(position_);
 	p_string const value_ = Source_->Text_->Substring_(position_, length_);
 	p_int type_;
-	if (value_->op_Equal(p_string("new")).Value)
+	if (value_.op_Equal(p_string("new")).Value)
 	{
 		type_ = NewKeyword_;
 	}
-	else if (value_->op_Equal(p_string("not")).Value)
+	else if (value_.op_Equal(p_string("not")).Value)
 	{
 		type_ = NotOperator_;
 	}
-	else if (value_->op_Equal(p_string("null")).Value)
+	else if (value_.op_Equal(p_string("null")).Value)
 	{
 		type_ = NullReservedWord_;
 	}
-	else if (value_->op_Equal(p_string("self")).Value)
+	else if (value_.op_Equal(p_string("self")).Value)
 	{
 		type_ = SelfKeyword_;
 	}
-	else if (value_->op_Equal(p_string("true")).Value)
+	else if (value_.op_Equal(p_string("true")).Value)
 	{
 		type_ = TrueKeyword_;
 	}
-	else if (value_->op_Equal(p_string("false")).Value)
+	else if (value_.op_Equal(p_string("false")).Value)
 	{
 		type_ = FalseKeyword_;
 	}
-	else if (value_->op_Equal(p_string("mut")).Value)
+	else if (value_.op_Equal(p_string("mut")).Value)
 	{
 		type_ = MutableKeyword_;
 	}
-	else if (value_->op_Equal(p_string("code_point")).Value)
+	else if (value_.op_Equal(p_string("code_point")).Value)
 	{
 		type_ = CodePoint_;
 	}
-	else if (value_->op_Equal(p_string("string")).Value)
+	else if (value_.op_Equal(p_string("string")).Value)
 	{
 		type_ = String_;
 	}
-	else if (value_->op_Equal(p_string("int")).Value)
+	else if (value_.op_Equal(p_string("int")).Value)
 	{
 		type_ = Int_;
 	}
-	else if (value_->op_Equal(p_string("bool")).Value)
+	else if (value_.op_Equal(p_string("bool")).Value)
 	{
 		type_ = Bool_;
 	}
-	else if (value_->op_Equal(p_string("void")).Value)
+	else if (value_.op_Equal(p_string("void")).Value)
 	{
 		type_ = Void_;
 	}
-	else if (value_->op_Equal(p_string("uint")).Value)
+	else if (value_.op_Equal(p_string("uint")).Value)
 	{
 		type_ = UnsignedInt_;
 	}
-	else if (value_->op_Equal(p_string("var")).Value)
+	else if (value_.op_Equal(p_string("var")).Value)
 	{
 		type_ = VarKeyword_;
 	}
-	else if (value_->op_Equal(p_string("and")).Value)
+	else if (value_.op_Equal(p_string("and")).Value)
 	{
 		type_ = AndKeyword_;
 	}
-	else if (value_->op_Equal(p_string("or")).Value)
+	else if (value_.op_Equal(p_string("or")).Value)
 	{
 		type_ = OrKeyword_;
 	}
-	else if (value_->op_Equal(p_string("return")).Value)
+	else if (value_.op_Equal(p_string("return")).Value)
 	{
 		type_ = ReturnKeyword_;
 	}
-	else if (value_->op_Equal(p_string("loop")).Value)
+	else if (value_.op_Equal(p_string("loop")).Value)
 	{
 		type_ = LoopKeyword_;
 	}
-	else if (value_->op_Equal(p_string("while")).Value)
+	else if (value_.op_Equal(p_string("while")).Value)
 	{
 		type_ = WhileKeyword_;
 	}
-	else if (value_->op_Equal(p_string("for")).Value)
+	else if (value_.op_Equal(p_string("for")).Value)
 	{
 		type_ = ForKeyword_;
 	}
-	else if (value_->op_Equal(p_string("let")).Value)
+	else if (value_.op_Equal(p_string("let")).Value)
 	{
 		type_ = LetKeyword_;
 	}
-	else if (value_->op_Equal(p_string("in")).Value)
+	else if (value_.op_Equal(p_string("in")).Value)
 	{
 		type_ = InKeyword_;
 	}
-	else if (value_->op_Equal(p_string("do")).Value)
+	else if (value_.op_Equal(p_string("do")).Value)
 	{
 		type_ = DoKeyword_;
 	}
-	else if (value_->op_Equal(p_string("if")).Value)
+	else if (value_.op_Equal(p_string("if")).Value)
 	{
 		type_ = IfKeyword_;
 	}
-	else if (value_->op_Equal(p_string("else")).Value)
+	else if (value_.op_Equal(p_string("else")).Value)
 	{
 		type_ = ElseKeyword_;
 	}
-	else if (value_->op_Equal(p_string("break")).Value)
+	else if (value_.op_Equal(p_string("break")).Value)
 	{
 		type_ = BreakKeyword_;
 	}
-	else if (value_->op_Equal(p_string("continue")).Value)
+	else if (value_.op_Equal(p_string("continue")).Value)
 	{
 		type_ = ContinueKeyword_;
 	}
-	else if (value_->op_Equal(p_string("private")).Value)
+	else if (value_.op_Equal(p_string("private")).Value)
 	{
 		type_ = PrivateKeyword_;
 	}
-	else if (value_->op_Equal(p_string("protected")).Value)
+	else if (value_.op_Equal(p_string("protected")).Value)
 	{
 		type_ = ProtectedKeyword_;
 	}
-	else if (value_->op_Equal(p_string("public")).Value)
+	else if (value_.op_Equal(p_string("public")).Value)
 	{
 		type_ = PublicKeyword_;
 	}
-	else if (value_->op_Equal(p_string("internal")).Value)
+	else if (value_.op_Equal(p_string("internal")).Value)
 	{
 		type_ = InternalKeyword_;
 	}
-	else if (value_->op_Equal(p_string("class")).Value)
+	else if (value_.op_Equal(p_string("class")).Value)
 	{
 		type_ = ClassKeyword_;
 	}
-	else if (value_->op_Equal(p_string("enum")).Value)
+	else if (value_.op_Equal(p_string("enum")).Value)
 	{
 		type_ = EnumKeyword_;
 	}
-	else if (value_->op_Equal(p_string("struct")).Value)
+	else if (value_.op_Equal(p_string("struct")).Value)
 	{
 		type_ = StructKeyword_;
 	}
-	else if (value_->op_Equal(p_string("none")).Value)
+	else if (value_.op_Equal(p_string("none")).Value)
 	{
 		type_ = NoneKeyword_;
 	}
@@ -3391,12 +3409,12 @@ auto ::Emitter_::convert_type_name_(::Semantic_Node_ const *_Nonnull const type_
 			return keyword_->get_text_();
 		}
 
-		return p_string("p_")->op_Add(keyword_->get_text_());
+		return p_string("p_").op_Add(keyword_->get_text_());
 	}
 
 	if (type_->kind_->op_Equal(IdentifierName_).Value)
 	{
-		return p_string("::")->op_Add(type_->get_text_())->op_Add(p_string("_"));
+		return p_string("::").op_Add(type_->get_text_())->op_Add(p_string("_"));
 	}
 
 	if (type_->kind_->op_Equal(QualifiedName_).Value)
@@ -3409,7 +3427,7 @@ auto ::Emitter_::convert_type_name_(::Semantic_Node_ const *_Nonnull const type_
 		return convert_type_name_(type_->children_->op_Element(p_int(0)))->op_Add(p_string("<"))->op_Add(convert_type_(p_bool(true), type_->children_->op_Element(p_int(2))))->op_Add(p_string(">"));
 	}
 
-	return format_error_(p_string("Unexpected Token of type ")->op_Add(type_->kind_)->op_Add(p_string(" found in convert_type_name(), `"))->op_Add(type_->get_text_())->op_Add(p_string("`")));
+	return format_error_(p_string("Unexpected Token of type ").op_Add(type_->kind_)->op_Add(p_string(" found in convert_type_name(), `"))->op_Add(type_->get_text_())->op_Add(p_string("`")));
 }
 
 auto ::Emitter_::convert_reference_type_(p_bool const mutable_binding_, ::Semantic_Node_ const *_Nonnull type_, p_bool const nullable_, p_bool const mutable_value_) -> p_string
@@ -3417,22 +3435,22 @@ auto ::Emitter_::convert_reference_type_(p_bool const mutable_binding_, ::Semant
 	p_string cpp_type_ = convert_type_name_(type_);
 	if (mutable_value_->op_Not().Value)
 	{
-		cpp_type_ = cpp_type_->op_Add(p_string(" const"));
+		cpp_type_ = cpp_type_.op_Add(p_string(" const"));
 	}
 
-	cpp_type_ = cpp_type_->op_Add(p_string(" *"));
+	cpp_type_ = cpp_type_.op_Add(p_string(" *"));
 	if (nullable_.Value)
 	{
-		cpp_type_ = cpp_type_->op_Add(p_string("_Nullable"));
+		cpp_type_ = cpp_type_.op_Add(p_string("_Nullable"));
 	}
 	else
 	{
-		cpp_type_ = cpp_type_->op_Add(p_string("_Nonnull"));
+		cpp_type_ = cpp_type_.op_Add(p_string("_Nonnull"));
 	}
 
 	if (mutable_binding_->op_Not().Value)
 	{
-		cpp_type_ = cpp_type_->op_Add(p_string(" const"));
+		cpp_type_ = cpp_type_.op_Add(p_string(" const"));
 	}
 
 	return cpp_type_;
@@ -3452,7 +3470,7 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Semantic_Node_ c
 	}
 	else
 	{
-		return format_error_(p_string("Expected mutable or immutable type in convert_type(). Found token `")->op_Add(type_->get_text_())->op_Add(p_string("` of type "))->op_Add(type_->kind_));
+		return format_error_(p_string("Expected mutable or immutable type in convert_type(). Found token `").op_Add(type_->get_text_())->op_Add(p_string("` of type "))->op_Add(type_->kind_));
 	}
 
 	if (type_->kind_->op_Equal(OptionalType_).Value)
@@ -3461,7 +3479,7 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Semantic_Node_ c
 		assert_(LogicalOr(optional_type_->kind_->op_Equal(MutableType_), [&] { return optional_type_->kind_->op_Equal(ImmutableType_); }));
 		if (optional_type_->is_value_type_().Value)
 		{
-			return p_string("p_optional<")->op_Add(convert_type_(p_bool(true), optional_type_, p_bool(true)))->op_Add(p_string("> const"));
+			return p_string("p_optional<").op_Add(convert_type_(p_bool(true), optional_type_, p_bool(true)))->op_Add(p_string("> const"));
 		}
 		else
 		{
@@ -3473,9 +3491,9 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Semantic_Node_ c
 		if (type_->is_value_type_().Value)
 		{
 			p_string cpp_type_ = convert_type_name_(type_);
-			if (LogicalAnd(mutable_binding_->op_Not(), [&] { return mutable_value_->op_Not(); }).Value)
+			if (LogicalAnd(mutable_binding_->op_Not(), [&] { return mutable_value_.op_Not(); }).Value)
 			{
-				cpp_type_ = cpp_type_->op_Add(p_string(" const"));
+				cpp_type_ = cpp_type_.op_Add(p_string(" const"));
 			}
 
 			return cpp_type_;
@@ -3499,7 +3517,7 @@ auto ::Emitter_::convert_parameter_list_(::Semantic_Node_ const *_Nonnull const 
 	p_bool first_parameter_ = p_bool(true);
 	for (::Semantic_Node_ const *_Nonnull const parameter_ : *(parameter_list_->children_of_kind_(Parameter_)))
 	{
-		if (first_parameter_->op_Not().Value)
+		if (first_parameter_.op_Not().Value)
 		{
 			builder_->Append_(p_string(", "));
 		}
@@ -3526,12 +3544,12 @@ auto ::Emitter_::convert_parameter_list_(::Semantic_Node_ const *_Nonnull const 
 				type_string_ = type_->get_text_();
 			}
 
-			if (type_string_->op_Equal(p_string("System.Console.Console")).Value)
+			if (type_string_.op_Equal(p_string("System.Console.Console")).Value)
 			{
 				main_function_accepts_console_ = p_bool(true);
 			}
 
-			if (type_string_->op_Equal(p_string("System.Console.Arguments")).Value)
+			if (type_string_.op_Equal(p_string("System.Console.Arguments")).Value)
 			{
 				main_function_accepts_args_ = p_bool(true);
 			}
@@ -3553,7 +3571,7 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	{
 		::Semantic_Node_ const *_Nonnull const type_ = syntax_->children_->op_Element(p_int(1));
 		p_bool const is_value_type_ = type_->is_value_type_();
-		if (is_value_type_->op_Not().Value)
+		if (is_value_type_.op_Not().Value)
 		{
 			builder_->Write_(p_string("(new "));
 		}
@@ -3561,7 +3579,7 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 		builder_->Write_(convert_type_name_(type_));
 		::Semantic_Node_ const *_Nonnull const argumentList_ = syntax_->children_->op_Element(p_int(2));
 		convert_expression_(argumentList_, builder_);
-		if (is_value_type_->op_Not().Value)
+		if (is_value_type_.op_Not().Value)
 		{
 			builder_->Write_(p_string(")"));
 		}
@@ -3621,15 +3639,15 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	}
 	else if (syntax_->kind_->op_Equal(NumericLiteralExpression_).Value)
 	{
-		builder_->Write_(p_string("p_int(")->op_Add(syntax_->get_text_())->op_Add(p_string(")")));
+		builder_->Write_(p_string("p_int(").op_Add(syntax_->get_text_())->op_Add(p_string(")")));
 	}
 	else if (LogicalOr(syntax_->kind_->op_Equal(TrueLiteralExpression_), [&] { return syntax_->kind_->op_Equal(FalseLiteralExpression_); }).Value)
 	{
-		builder_->Write_(p_string("p_bool(")->op_Add(syntax_->get_text_())->op_Add(p_string(")")));
+		builder_->Write_(p_string("p_bool(").op_Add(syntax_->get_text_())->op_Add(p_string(")")));
 	}
 	else if (syntax_->kind_->op_Equal(CodePointLiteralExpression_).Value)
 	{
-		builder_->Write_(p_string("p_code_point(")->op_Add(syntax_->get_text_())->op_Add(p_string(")")));
+		builder_->Write_(p_string("p_code_point(").op_Add(syntax_->get_text_())->op_Add(p_string(")")));
 	}
 	else if (syntax_->kind_->op_Equal(IdentifierName_).Value)
 	{
@@ -3637,12 +3655,12 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	}
 	else if (syntax_->kind_->op_Equal(StringLiteralExpression_).Value)
 	{
-		builder_->Write_(p_string("p_string(")->op_Add(syntax_->get_text_())->op_Add(p_string(")")));
+		builder_->Write_(p_string("p_string(").op_Add(syntax_->get_text_())->op_Add(p_string(")")));
 	}
 	else if (syntax_->kind_->op_Equal(AssignmentExpression_).Value)
 	{
 		p_int const operator_ = syntax_->children_->op_Element(p_int(1))->kind_;
-		if (operator_->op_Equal(Equals_).Value)
+		if (operator_.op_Equal(Equals_).Value)
 		{
 			convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
 			builder_->Write_(p_string(" "));
@@ -3655,17 +3673,17 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 			convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
 			convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
 			builder_->Write_(p_string("op_"));
-			if (operator_->op_Equal(PlusEquals_).Value)
+			if (operator_.op_Equal(PlusEquals_).Value)
 			{
 				builder_->Write_(p_string("AddAssign"));
 			}
-			else if (operator_->op_Equal(MinusEquals_).Value)
+			else if (operator_.op_Equal(MinusEquals_).Value)
 			{
 				builder_->Write_(p_string("SubtractAssign"));
 			}
 			else
 			{
-				builder_->Error_(p_string("Unsupported assignment operator ")->op_Add(operator_));
+				builder_->Error_(p_string("Unsupported assignment operator ").op_Add(operator_));
 			}
 
 			builder_->Write_(p_string("("));
@@ -3695,25 +3713,25 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
 		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
 		builder_->Write_(p_string("op_"));
-		if (operator_->op_Equal(LessThan_).Value)
+		if (operator_.op_Equal(LessThan_).Value)
 		{
 			builder_->Write_(p_string("LessThan"));
 		}
-		else if (operator_->op_Equal(LessThanEquals_).Value)
+		else if (operator_.op_Equal(LessThanEquals_).Value)
 		{
 			builder_->Write_(p_string("LessThanOrEqual"));
 		}
-		else if (operator_->op_Equal(GreaterThan_).Value)
+		else if (operator_.op_Equal(GreaterThan_).Value)
 		{
 			builder_->Write_(p_string("GreaterThan"));
 		}
-		else if (operator_->op_Equal(GreaterThanEquals_).Value)
+		else if (operator_.op_Equal(GreaterThanEquals_).Value)
 		{
 			builder_->Write_(p_string("GreaterThanOrEqual"));
 		}
 		else
 		{
-			builder_->Error_(p_string("Unsupported comparison operator ")->op_Add(operator_));
+			builder_->Error_(p_string("Unsupported comparison operator ").op_Add(operator_));
 		}
 
 		builder_->Write_(p_string("("));
@@ -3797,7 +3815,7 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	}
 	else
 	{
-		builder_->Error_(p_string("Could not convert expression of type ")->op_Add(syntax_->kind_));
+		builder_->Error_(p_string("Could not convert expression of type ").op_Add(syntax_->kind_));
 	}
 }
 
@@ -3919,7 +3937,7 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 		::Semantic_Node_ const *_Nonnull const variable_type_ = variable_declaration_->children_->op_Element(p_int(3));
 		p_bool const mutable_binding_ = variable_declaration_->has_child_(VarKeyword_);
 		definitions_->BeginLine_(convert_type_(mutable_binding_, variable_type_));
-		definitions_->Write_(p_string(" ")->op_Add(variable_name_)->op_Add(p_string("_")));
+		definitions_->Write_(p_string(" ").op_Add(variable_name_)->op_Add(p_string("_")));
 		if (variable_declaration_->has_child_(Equals_).Value)
 		{
 			definitions_->Write_(p_string(" = "));
@@ -3936,31 +3954,31 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 	}
 	else
 	{
-		definitions_->Error_(p_string("Could not emit statement of type ")->op_Add(statement_->kind_));
+		definitions_->Error_(p_string("Could not emit statement of type ").op_Add(statement_->kind_));
 	}
 }
 
 auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, p_int const current_access_level_) -> p_int
 {
 	p_int access_modifer_ = member_->children_->op_Element(p_int(0))->kind_;
-	if (access_modifer_->op_NotEqual(current_access_level_).Value)
+	if (access_modifer_.op_NotEqual(current_access_level_).Value)
 	{
-		if (LogicalOr(access_modifer_->op_Equal(PublicKeyword_), [&] { return access_modifer_->op_Equal(InternalKeyword_); }).Value)
+		if (LogicalOr(access_modifer_.op_Equal(PublicKeyword_), [&] { return access_modifer_.op_Equal(InternalKeyword_); }).Value)
 		{
 			class_declarations_->EndLine_(p_string("public:"));
 			access_modifer_ = PublicKeyword_;
 		}
-		else if (access_modifer_->op_Equal(ProtectedKeyword_).Value)
+		else if (access_modifer_.op_Equal(ProtectedKeyword_).Value)
 		{
 			class_declarations_->EndLine_(p_string("public:"));
 		}
-		else if (access_modifer_->op_Equal(PrivateKeyword_).Value)
+		else if (access_modifer_.op_Equal(PrivateKeyword_).Value)
 		{
 			class_declarations_->EndLine_(p_string("private:"));
 		}
 		else
 		{
-			THROW_EXCEPTION_(p_string("Invalid access modifier in Emitter.emit_member_declaration(). kind is ")->op_Add(access_modifer_));
+			THROW_EXCEPTION_(p_string("Invalid access modifier in Emitter.emit_member_declaration(). kind is ").op_Add(access_modifer_));
 		}
 	}
 
@@ -3969,7 +3987,7 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 		p_string const parameters_ = convert_parameter_list_(member_->children_->op_Element(p_int(2)));
 		class_declarations_->WriteLine_(class_name_->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(";")));
 		definitions_->ElementSeparatorLine_();
-		definitions_->WriteLine_(p_string("::")->op_Add(class_name_)->op_Add(p_string("_::"))->op_Add(class_name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string("")));
+		definitions_->WriteLine_(p_string("::").op_Add(class_name_)->op_Add(p_string("_::"))->op_Add(class_name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string("")));
 		emit_statement_(member_->children_->op_Element(p_int(3)));
 	}
 	else if (member_->kind_->op_Equal(FieldDeclaration_).Value)
@@ -3978,7 +3996,7 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 		p_string const field_name_ = variable_declaration_->children_->op_Element(p_int(1))->get_text_();
 		::Semantic_Node_ const *_Nonnull const field_type_ = variable_declaration_->children_->op_Element(p_int(3));
 		p_string const cpp_type_ = convert_type_(p_bool(true), field_type_);
-		class_declarations_->WriteLine_(cpp_type_->op_Add(p_string(" "))->op_Add(field_name_)->op_Add(p_string("_;")));
+		class_declarations_->WriteLine_(cpp_type_.op_Add(p_string(" "))->op_Add(field_name_)->op_Add(p_string("_;")));
 	}
 	else if (member_->kind_->op_Equal(MethodDeclaration_).Value)
 	{
@@ -3987,7 +4005,7 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 		p_string const parameters_ = convert_parameter_list_(parameter_list_);
 		::Semantic_Node_ const *_Nullable const self_parameter_ = parameter_list_->first_child_(SelfParameter_);
 		p_bool const is_associated_function_ = self_parameter_->op_Equal(::None);
-		p_bool const mutable_self_ = LogicalAnd(is_associated_function_->op_Not(), [&] { return self_parameter_->has_child_(MutableKeyword_); });
+		p_bool const mutable_self_ = LogicalAnd(is_associated_function_.op_Not(), [&] { return self_parameter_->has_child_(MutableKeyword_); });
 		::Semantic_Node_ const *_Nonnull const return_type_ = member_->children_->op_Element(p_int(4));
 		p_string const cpp_type_ = convert_type_(p_bool(true), return_type_);
 		p_string static_modifier_ = p_string("");
@@ -3997,20 +4015,20 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 		}
 
 		p_string constModifier_ = p_string("");
-		if (LogicalAnd(mutable_self_->op_Not(), [&] { return is_associated_function_->op_Not(); }).Value)
+		if (LogicalAnd(mutable_self_.op_Not(), [&] { return is_associated_function_.op_Not(); }).Value)
 		{
 			constModifier_ = p_string("const ");
 		}
 
-		class_declarations_->WriteLine_(static_modifier_->op_Add(p_string("auto "))->op_Add(method_name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" "))->op_Add(constModifier_)->op_Add(p_string("-> "))->op_Add(cpp_type_)->op_Add(p_string(";")));
+		class_declarations_->WriteLine_(static_modifier_.op_Add(p_string("auto "))->op_Add(method_name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" "))->op_Add(constModifier_)->op_Add(p_string("-> "))->op_Add(cpp_type_)->op_Add(p_string(";")));
 		definitions_->ElementSeparatorLine_();
-		definitions_->WriteLine_(p_string("auto ::")->op_Add(class_name_)->op_Add(p_string("_::"))->op_Add(method_name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" "))->op_Add(constModifier_)->op_Add(p_string("-> "))->op_Add(cpp_type_));
+		definitions_->WriteLine_(p_string("auto ::").op_Add(class_name_)->op_Add(p_string("_::"))->op_Add(method_name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" "))->op_Add(constModifier_)->op_Add(p_string("-> "))->op_Add(cpp_type_));
 		::Semantic_Node_ const *_Nonnull const block_ = member_->children_->op_Element(p_int(5));
 		emit_statement_(block_);
 	}
 	else
 	{
-		definitions_->Error_(p_string("Could not emit member of type ")->op_Add(member_->kind_));
+		definitions_->Error_(p_string("Could not emit member of type ").op_Add(member_->kind_));
 	}
 
 	return access_modifer_;
@@ -4026,7 +4044,7 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		p_bool const mutable_binding_ = variable_declaration_->has_child_(VarKeyword_);
 		p_string const cpp_type_ = convert_type_(mutable_binding_, variable_type_);
 		global_definitions_->BeginLine_(cpp_type_);
-		global_definitions_->Write_(p_string(" ")->op_Add(variable_name_)->op_Add(p_string("_ = ")));
+		global_definitions_->Write_(p_string(" ").op_Add(variable_name_)->op_Add(p_string("_ = ")));
 		::Semantic_Node_ const *_Nonnull const expression_ = variable_declaration_->children_->op_Element(p_int(5));
 		convert_expression_(expression_, global_definitions_);
 		global_definitions_->EndLine_(p_string(";"));
@@ -4034,13 +4052,13 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 	else if (declaration_->kind_->op_Equal(ClassDeclaration_).Value)
 	{
 		p_string const class_name_ = declaration_->children_->op_Element(p_int(2))->get_text_();
-		type_declarations_->WriteLine_(p_string("class ")->op_Add(class_name_)->op_Add(p_string("_;")));
+		type_declarations_->WriteLine_(p_string("class ").op_Add(class_name_)->op_Add(p_string("_;")));
 		class_declarations_->ElementSeparatorLine_();
-		class_declarations_->WriteLine_(p_string("class ")->op_Add(class_name_)->op_Add(p_string("_")));
+		class_declarations_->WriteLine_(p_string("class ").op_Add(class_name_)->op_Add(p_string("_")));
 		class_declarations_->BeginBlock_();
 		class_declarations_->EndLine_(p_string("public:"));
-		class_declarations_->WriteLine_(p_string("p_bool op_Equal(")->op_Add(class_name_)->op_Add(p_string("_ const * other) const { return this == other; }")));
-		class_declarations_->WriteLine_(p_string("p_bool op_NotEqual(")->op_Add(class_name_)->op_Add(p_string("_ const * other) const { return this != other; }")));
+		class_declarations_->WriteLine_(p_string("p_bool op_Equal(").op_Add(class_name_)->op_Add(p_string("_ const * other) const { return this == other; }")));
+		class_declarations_->WriteLine_(p_string("p_bool op_NotEqual(").op_Add(class_name_)->op_Add(p_string("_ const * other) const { return this != other; }")));
 		p_int current_access_level_ = PublicKeyword_;
 		for (::Semantic_Node_ const *_Nonnull const member_ : *(declaration_->Members_()))
 		{
@@ -4052,15 +4070,15 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 	else if (declaration_->kind_->op_Equal(StructDeclaration_).Value)
 	{
 		p_string const struct_name_ = declaration_->children_->op_Element(p_int(2))->get_text_();
-		type_declarations_->WriteLine_(p_string("struct ")->op_Add(struct_name_)->op_Add(p_string("_;")));
+		type_declarations_->WriteLine_(p_string("struct ").op_Add(struct_name_)->op_Add(p_string("_;")));
 		class_declarations_->ElementSeparatorLine_();
-		class_declarations_->WriteLine_(p_string("struct ")->op_Add(struct_name_)->op_Add(p_string("_")));
+		class_declarations_->WriteLine_(p_string("struct ").op_Add(struct_name_)->op_Add(p_string("_")));
 		class_declarations_->BeginBlock_();
 		class_declarations_->EndLine_(p_string("public:"));
-		class_declarations_->WriteLine_(struct_name_->op_Add(p_string("_ * operator->() { return this; }")));
-		class_declarations_->WriteLine_(struct_name_->op_Add(p_string("_ const * operator->() const { return this; }")));
-		class_declarations_->WriteLine_(struct_name_->op_Add(p_string("_ & operator* () { return *this; }")));
-		class_declarations_->WriteLine_(struct_name_->op_Add(p_string("_ const & operator* () const { return *this; }")));
+		class_declarations_->WriteLine_(struct_name_.op_Add(p_string("_ * operator->() { return this; }")));
+		class_declarations_->WriteLine_(struct_name_.op_Add(p_string("_ const * operator->() const { return this; }")));
+		class_declarations_->WriteLine_(struct_name_.op_Add(p_string("_ & operator* () { return *this; }")));
+		class_declarations_->WriteLine_(struct_name_.op_Add(p_string("_ const & operator* () const { return *this; }")));
 		p_int current_access_level_ = PublicKeyword_;
 		for (::Semantic_Node_ const *_Nonnull const member_ : *(declaration_->Members_()))
 		{
@@ -4072,16 +4090,16 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 	else if (declaration_->kind_->op_Equal(EnumDeclaration_).Value)
 	{
 		p_string const enum_name_ = declaration_->children_->op_Element(p_int(3))->get_text_();
-		type_declarations_->WriteLine_(p_string("enum class ")->op_Add(enum_name_)->op_Add(p_string("_;")));
+		type_declarations_->WriteLine_(p_string("enum class ").op_Add(enum_name_)->op_Add(p_string("_;")));
 		class_declarations_->ElementSeparatorLine_();
-		class_declarations_->WriteLine_(p_string("enum class ")->op_Add(enum_name_)->op_Add(p_string("_")));
+		class_declarations_->WriteLine_(p_string("enum class ").op_Add(enum_name_)->op_Add(p_string("_")));
 		class_declarations_->BeginBlock_();
 		for (::Semantic_Node_ const *_Nonnull const member_ : *(declaration_->children_))
 		{
 			if (member_->kind_->op_Equal(EnumMemberDeclaration_).Value)
 			{
 				p_string const member_name_ = member_->children_->op_Element(p_int(0))->get_text_();
-				class_declarations_->BeginLine_(member_name_->op_Add(p_string("_")));
+				class_declarations_->BeginLine_(member_name_.op_Add(p_string("_")));
 				::Semantic_Node_ const *_Nullable const member_value_ = member_->first_child_(Number_);
 				if (member_value_->op_NotEqual(::None).Value)
 				{
@@ -4098,13 +4116,13 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 	else if (declaration_->kind_->op_Equal(FunctionDeclaration_).Value)
 	{
 		p_string const name_ = declaration_->children_->op_Element(p_int(1))->get_text_();
-		p_bool const is_main_ = name_->op_Equal(p_string("Main"));
+		p_bool const is_main_ = name_.op_Equal(p_string("Main"));
 		p_string const parameters_ = convert_parameter_list_(declaration_->children_->op_Element(p_int(2)), is_main_);
 		::Semantic_Node_ const *_Nonnull const return_type_ = declaration_->children_->op_Element(p_int(4));
 		p_string const cpp_type_ = convert_type_(p_bool(true), return_type_);
-		function_declarations_->WriteLine_(p_string("auto ")->op_Add(name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" -> "))->op_Add(cpp_type_)->op_Add(p_string(";")));
+		function_declarations_->WriteLine_(p_string("auto ").op_Add(name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" -> "))->op_Add(cpp_type_)->op_Add(p_string(";")));
 		definitions_->ElementSeparatorLine_();
-		definitions_->WriteLine_(p_string("auto ")->op_Add(name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" -> "))->op_Add(cpp_type_));
+		definitions_->WriteLine_(p_string("auto ").op_Add(name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" -> "))->op_Add(cpp_type_));
 		if (is_main_.Value)
 		{
 			if (main_function_return_type_->op_NotEqual(p_string("")).Value)
@@ -4122,7 +4140,7 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 	}
 	else
 	{
-		definitions_->Error_(p_string("Could not emit declaration of type ")->op_Add(declaration_->kind_));
+		definitions_->Error_(p_string("Could not emit declaration of type ").op_Add(declaration_->kind_));
 	}
 }
 
@@ -4189,12 +4207,12 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 
 	if (main_function_return_type_->op_Equal(p_string("void")).Value)
 	{
-		definitions_->WriteLine_(p_string("Main_(")->op_Add(args_->ToString_())->op_Add(p_string(");")));
+		definitions_->WriteLine_(p_string("Main_(").op_Add(args_->ToString_())->op_Add(p_string(");")));
 		definitions_->WriteLine_(p_string("return 0;"));
 	}
 	else
 	{
-		definitions_->WriteLine_(p_string("return Main_(")->op_Add(args_->ToString_())->op_Add(p_string(").Value;")));
+		definitions_->WriteLine_(p_string("return Main_(").op_Add(args_->ToString_())->op_Add(p_string(").Value;")));
 	}
 
 	definitions_->EndBlock_();
@@ -4241,6 +4259,50 @@ auto ::Type_::make_mutable_() const -> ::Type_ const *_Nonnull
 auto ::Type_::make_immutable_() const -> ::Type_ const *_Nonnull
 {
 	return (new ::Type_(kind_, symbol_, is_value_type_, p_bool(true)));
+}
+
+auto ::Type_::names_a_value_type_(::Symbol_ const *_Nonnull const symbol_) const -> p_bool
+{
+	::Symbol_ const *_Nonnull class_or_struct_;
+	if (kind_->op_Equal(IdentifierSymbol_).Value)
+	{
+		class_or_struct_ = symbol_;
+	}
+	else if (kind_->op_Equal(SpecialSymbol_).Value)
+	{
+		if (symbol_->Name_->op_Equal(p_string("self")).Value)
+		{
+			::Symbol_ const *_Nonnull const constructor_ = symbol_->Parent_;
+			class_or_struct_ = constructor_->Parent_;
+		}
+		else
+		{
+			return p_bool(true);
+		}
+	}
+	else
+	{
+		THROW_EXCEPTION_(p_string("Symbol.is_value_type() is not defined for Symbol_Kind ").op_Add(kind_));
+	}
+
+	if (class_or_struct_->Declarations_->op_Magnitude()->op_Equal(p_int(0)).Value)
+	{
+		THROW_EXCEPTION_(p_string("Type.name_a_value_type() could not determine if Symbol `").op_Add(symbol_->Name_)->op_Add(p_string("` is a value type. No declarations.")));
+	}
+
+	::Semantic_Node_ const *_Nonnull const declaration_ = class_or_struct_->Declarations_->op_Element(p_int(0));
+	if (LogicalOr(declaration_->kind_->op_Equal(ClassDeclaration_), [&] { return declaration_->kind_->op_Equal(NamespaceDeclaration_); }).Value)
+	{
+		return p_bool(false);
+	}
+	else if (declaration_->kind_->op_Equal(StructDeclaration_).Value)
+	{
+		return p_bool(true);
+	}
+	else
+	{
+		THROW_EXCEPTION_(p_string("Could not determine if Symbol `").op_Add(symbol_->Name_)->op_Add(p_string("` is a value type. Declaration of type "))->op_Add(declaration_->kind_));
+	}
 }
 
 // Entry Point Adapter
