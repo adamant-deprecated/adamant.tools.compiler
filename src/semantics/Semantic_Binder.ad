@@ -1,4 +1,5 @@
-public class Symbol_Binder
+/// Binds semantic nodes to their referenced symbols and types
+public class Semantic_Binder
 {
 	public bind(self, package: Package) -> void
 	{
@@ -250,7 +251,7 @@ public class Symbol_Binder
 		}
 		else
 		{
-			THROW_EXCEPTION("`Symbol_Binder.bind()` unimplemented node type " + node.kind);
+			THROW_EXCEPTION("`Semantic_Binder.bind()` unimplemented node type " + node.kind);
 		}
 	}
 
@@ -260,7 +261,7 @@ public class Symbol_Binder
 		{
 			let primitive_name: string = node.children[0].get_text();
 			let symbol: Symbol = scope.lookup_special(primitive_name);
-			if symbol == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
+			if symbol == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
 			node.bind_symbol(symbol);
 			node.bind_type(new Type(symbol));
 		}
@@ -268,21 +269,21 @@ public class Symbol_Binder
 		{
 			let inner_type_node: mut Semantic_Node = node.children[1];
 			bind_type_name(inner_type_node, scope);
-			if inner_type_node.type == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no inner type for `"+node.get_text()+"` of kind `MutableType`"); }
+			if inner_type_node.type == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no inner type for `"+node.get_text()+"` of kind `MutableType`"); }
 			node.bind_type(inner_type_node.type.make_mutable());
 		}
 		else if node.kind == ImmutableType
 		{
 			let inner_type_node: mut Semantic_Node = node.children[0];
 			bind_type_name(inner_type_node, scope);
-			if inner_type_node.type == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` no inner type for `"+node.get_text()+"` of kind `ImmutableType`"); }
+			if inner_type_node.type == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no inner type for `"+node.get_text()+"` of kind `ImmutableType`"); }
 			node.bind_type(inner_type_node.type.make_immutable());
 		}
 		else if node.kind == OptionalType
 		{
 			let inner_type_node: mut Semantic_Node = node.children[0];
 			bind_type_name(inner_type_node, scope);
-			if inner_type_node.type == none { THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` not inner type for `"+node.get_text()+"` of kind `OptionalType`"); }
+			if inner_type_node.type == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` not inner type for `"+node.get_text()+"` of kind `OptionalType`"); }
 			node.bind_type(inner_type_node.type.make_immutable());
 		}
 		else if node.kind == QualifiedName
@@ -347,7 +348,7 @@ public class Symbol_Binder
 			}
 			else
 			{
-				THROW_EXCEPTION("Unreachable: `Symbol_Binder.bind(..)` name.kind = " + name.kind);
+				THROW_EXCEPTION("Unreachable: `Semantic_Binder.bind(..)` name.kind = " + name.kind);
 			}
 		}
 		else if node.kind == IdentifierName
@@ -367,7 +368,7 @@ public class Symbol_Binder
 		}
 		else
 		{
-			THROW_EXCEPTION("`Symbol_Binder.bind_type_name()` unimplemented node type " + node.kind);
+			THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` unimplemented node type " + node.kind);
 		}
 	}
 

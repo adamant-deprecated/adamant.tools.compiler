@@ -1,4 +1,5 @@
-public class Symbol_Builder
+/// Builds the semantic tree (`Semantic_Node`s) including creating `Symbol`s and declared `Type`s
+public class Semantic_Builder
 {
 	// Takes a package and builds the symbols for it
 	public build_symbols(self, compilation_units: System.Collections.List<mut Semantic_Node>) -> Symbol
@@ -8,7 +9,7 @@ public class Symbol_Builder
 		for let compilation_unit: mut Semantic_Node in compilation_units
 		{
 			if compilation_unit.kind =/= CompilationUnit
-				{ THROW_EXCEPTION("`Symbol_Builder.build_symbols(...)` called with node of type " + compilation_unit.kind); }
+				{ THROW_EXCEPTION("`Semantic_Builder.build_symbols(...)` called with node of type " + compilation_unit.kind); }
 
 			build_symbols(package_symbol, compilation_unit);
 		}
@@ -165,7 +166,7 @@ public class Symbol_Builder
 		}
 		else
 		{
-			THROW_EXCEPTION("`Symbol_Builder.Build()` unimplemented node type " + node.kind);
+			THROW_EXCEPTION("`Semantic_Builder.Build()` unimplemented node type " + node.kind);
 		}
 	}
 

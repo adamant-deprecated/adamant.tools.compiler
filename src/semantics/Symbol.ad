@@ -51,7 +51,7 @@ public class Symbol
 		return none;
 	}
 
-	public is_value_type(self) -> bool
+	public declares_value_type(self) -> bool
 	{
 		if kind == IdentifierSymbol
 		{

@@ -12,7 +12,15 @@ public class Semantic_Node
 	public let children: System.Collections.List<mut Semantic_Node>;
 	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 	public var symbol: Symbol?;
+	// TODO split symbol into:
+	// * declares_symbol - for declarations, the symbol being declared
+	// * referenced_symbol - for names (outside where they are declared), the symbol they reference
 	public var type: Type?;
+	// TODO split type into:
+	// * type - the type of an expression before any implicit conversions
+	// * converted_type - the type of an expression after any implicit conversions
+	// * declares_type - for declarations, the type that is being declared (created)
+	// * referenced_type - for type names, the type that is being referenced
 
 	public new(syntax: Syntax_Node)
 	{
@@ -191,7 +199,7 @@ public class Semantic_Node
 		if kind == IdentifierName
 		{
 			if symbol == none { THROW_EXCEPTION("No symbol on identifier name `" + get_text() + "`"); }
-			return symbol.is_value_type();
+			return symbol.declares_value_type();
 		}
 		if kind == MutableType
 		{
