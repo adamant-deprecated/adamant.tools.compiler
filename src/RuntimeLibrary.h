@@ -288,14 +288,16 @@ namespace system_
 
 			// Adamant Members
 			List_() : values(0), length(0), capacity(0) { }
-			void Add_(T value);
-			void Clear_() { length = 0; }
+			void Add_(T value) { add_(value); }
+			void Clear_() { clear_(); }
+			void add_(T value);
+			void clear_() { length = 0; }
 			p_int op_Magnitude() const { return length; }
 			T const & op_Element(p_int const index) const;
 		};
 
 		template<typename T>
-		void List_<T>::Add_(T value)
+		void List_<T>::add_(T value)
 		{
 			if(length >= capacity)
 			{

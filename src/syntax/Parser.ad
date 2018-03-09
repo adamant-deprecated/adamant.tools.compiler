@@ -10,7 +10,7 @@ public class Parser
 		let lexer: Lexer = new Lexer();
 		for let source: Source_Text in sources
 		{
-			let tokenStream: mut Token_Stream = lexer.Analyze(source);
+			let tokenStream: mut Token_Stream = lexer.analyze(source);
 			let compilationUnitParser: mut Compilation_Unit_Parser = new Compilation_Unit_Parser(tokenStream);
 			children.Add(compilationUnitParser.Parse());
 		}

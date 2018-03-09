@@ -1,13 +1,13 @@
 public class Token_Stream
 {
-	public let Source: Source_Text;
+	public let source: Source_Text;
 	private var position: uint;
 	private let diagnostics: mut System.Collections.List<Diagnostic>;
 	private var endOfFile: bool;
 
 	public new(source: Source_Text)
 	{
-		Source = source;
+		self.source = source;
 		position = 0; // TODO have to assign this zero for now because we don't have default values working
 		diagnostics = new System.Collections.List<Diagnostic>();
 		endOfFile = false; // TODO implement auto initialize so this doesn't have to be initialized
@@ -15,15 +15,15 @@ public class Token_Stream
 
 	public GetNextToken(mut self) -> Syntax_Node?
 	{
-		if position >= Source.ByteLength()
+		if position >= source.ByteLength()
 		{
 			return EndOfFile();
 		}
 
 		var end: uint = -1;
-		while position < Source.ByteLength()
+		while position < source.ByteLength()
 		{
-			let curChar: code_point = Source.Text[position];
+			let curChar: code_point = source.Text[position];
 			if curChar == ' '
 				or curChar == '\t'
 				or curChar == '\n'
@@ -60,15 +60,15 @@ public class Token_Stream
 				{ return NewOperator(Asterisk); }
 			else if curChar == '='
 			{
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < source.ByteLength() and source.Text[position + 1] == '='
 				{
 					// it is `==`
 					return NewOperator(EqualsEquals, 2);
 				}
 
-				if position + 2 < Source.ByteLength()
-					and Source.Text[position + 1] == '/'
-					and Source.Text[position + 2] == '='
+				if position + 2 < source.ByteLength()
+					and source.Text[position + 1] == '/'
+					and source.Text[position + 2] == '='
 				{
 					// it is `=/=`
 					return NewOperator(EqualsSlashEquals, 3);
@@ -79,7 +79,7 @@ public class Token_Stream
 			}
 			else if curChar == '+'
 			{
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < source.ByteLength() and source.Text[position + 1] == '='
 				{
 					// it is `+=`
 					return NewOperator(PlusEquals, 2);
@@ -90,12 +90,12 @@ public class Token_Stream
 			}
 			else if curChar == '-'
 			{
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '>'
+				if position + 1 < source.ByteLength() and source.Text[position + 1] == '>'
 				{
 					// it is `->`
 					return NewOperator(Arrow, 2);
 				}
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < source.ByteLength() and source.Text[position + 1] == '='
 				{
 					// it is `-=`
 					return NewOperator(MinusEquals, 2);
@@ -105,10 +105,10 @@ public class Token_Stream
 			}
 			else if curChar == '/'
 			{
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '/'
+				if position + 1 < source.ByteLength() and source.Text[position + 1] == '/'
 				{
 					// it is a line comment `//`
-					while position < Source.ByteLength() and Source.Text[position] =/= '\r' and Source.Text[position] =/= '\n'
+					while position < source.ByteLength() and source.Text[position] =/= '\r' and source.Text[position] =/= '\n'
 					{
 						position += 1;
 					}
@@ -116,14 +116,14 @@ public class Token_Stream
 					continue;
 				}
 
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '*'
+				if position + 1 < source.ByteLength() and source.Text[position + 1] == '*'
 				{
 					// it is a block comment `/*`
 					position += 2; // move past the start
 					var lastCharStar: bool = false;
-					while position < Source.ByteLength() and not (lastCharStar and Source.Text[position] == '/')
+					while position < source.ByteLength() and not (lastCharStar and source.Text[position] == '/')
 					{
-						lastCharStar = Source.Text[position] == '*';
+						lastCharStar = source.Text[position] == '*';
 						position += 1;
 					}
 
@@ -138,7 +138,7 @@ public class Token_Stream
 				{ return NewOperator(Percent); }
 			else if curChar == '<'
 			{
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < source.ByteLength() and source.Text[position + 1] == '='
 				{
 					// it is `<=`
 					return NewOperator(LessThanEquals, 2);
@@ -148,7 +148,7 @@ public class Token_Stream
 			}
 			else if curChar == '>'
 			{
-				if position + 1 < Source.ByteLength() and Source.Text[position + 1] == '='
+				if position + 1 < source.ByteLength() and source.Text[position + 1] == '='
 				{
 					// it is `>=`
 					return NewOperator(GreaterThanEquals, 2);
@@ -160,9 +160,9 @@ public class Token_Stream
 			{
 				end = position + 1;
 				var escaped: bool = false;
-				while end < Source.ByteLength() and (Source.Text[end] =/= '"' or escaped)
+				while end < source.ByteLength() and (source.Text[end] =/= '"' or escaped)
 				{
-					escaped = Source.Text[end] == '\\' and not escaped;
+					escaped = source.Text[end] == '\\' and not escaped;
 					end += 1;
 				}
 
@@ -173,9 +173,9 @@ public class Token_Stream
 			{
 				end = position + 1;
 				var escaped: bool = false;
-				while end < Source.ByteLength() and (Source.Text[end] =/= '\'' or escaped)
+				while end < source.ByteLength() and (source.Text[end] =/= '\'' or escaped)
 				{
-					escaped = Source.Text[end] == '\\' and not escaped;
+					escaped = source.Text[end] == '\\' and not escaped;
 					end += 1;
 				}
 
@@ -187,7 +187,7 @@ public class Token_Stream
 				if IsIdentifierChar(curChar)
 				{
 					end = position + 1;
-					while IsIdentifierChar(Source.Text[end])
+					while IsIdentifierChar(source.Text[end])
 					{
 						end += 1;
 					}
@@ -196,7 +196,7 @@ public class Token_Stream
 				if IsNumberChar(curChar)
 				{
 					end = position + 1;
-					while IsNumberChar(Source.Text[end])
+					while IsNumberChar(source.Text[end])
 					{
 						end += 1;
 					}
@@ -205,7 +205,7 @@ public class Token_Stream
 
 				// Add an error to the next token
 				var diagnosticSpan: Text_Span = new Text_Span(position, 1);
-				diagnostics.Add(new Diagnostic(CompilationError, Lexing, Source, diagnosticSpan, "Invalid character `" + curChar + "`"));
+				diagnostics.Add(new Diagnostic(CompilationError, Lexing, source, diagnosticSpan, "Invalid character `" + curChar + "`"));
 				// Skip past the character and continue lexing
 				position = end;
 			}
@@ -228,7 +228,7 @@ public class Token_Stream
 	private NewIdentifierOrKeyword(mut self, end: uint) -> Syntax_Node
 	{
 		let length: uint = end-position;
-		let value: string = Source.Text.Substring(position, length);
+		let value: string = source.Text.Substring(position, length);
 		var type: int;
 		if value == "new"
 			{ type = NewKeyword; }
@@ -318,11 +318,11 @@ public class Token_Stream
 
 	private NewToken(mut self, type: int, end: uint) -> Syntax_Node
 	{
-		let token: mut Syntax_Node = new Syntax_Node(type, Source, position, end - position);
+		let token: mut Syntax_Node = new Syntax_Node(type, source, position, end - position);
 
 		for let diagnostic: Diagnostic in diagnostics
 		{
-			token.Add(diagnostic);
+			token.add(diagnostic);
 		}
 		diagnostics.Clear();
 

@@ -3,8 +3,8 @@ public class Semantic_Binder
 {
 	public bind(self, package: Package) -> void
 	{
-		let global_scope: Binding_Scope = new Binding_Scope(package.symbol.children, package.PrimitiveTypes);
-		for let compilation_unit: mut Semantic_Node in package.CompilationUnits
+		let global_scope: Binding_Scope = new Binding_Scope(package.symbol.children, package.primitive_types);
+		for let compilation_unit: mut Semantic_Node in package.compilation_units
 		{
 			bind(compilation_unit, global_scope);
 		}
@@ -48,7 +48,7 @@ public class Semantic_Binder
 			or node.kind == StructDeclaration
 		{
 			let type_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.children);
-			for let member: mut Semantic_Node in node.Members()
+			for let member: mut Semantic_Node in node.members()
 			{
 				bind(member, type_scope);
 			}
@@ -58,7 +58,6 @@ public class Semantic_Binder
 		{
 			let variable_declaration: mut Semantic_Node = node.first_child(VariableDeclaration);
 			bind(variable_declaration, scope);
-
 		}
 		else if node.kind == ConstructorDeclaration
 		{
@@ -87,10 +86,9 @@ public class Semantic_Binder
 		{
 			// Haven't yet implemented anything in enums that requires name binding
 		}
-
 		else if node.kind == Block
 		{
-			for let statement: mut Semantic_Node in node.Statements()
+			for let statement: mut Semantic_Node in node.statements()
 			{
 				bind(statement, scope);
 			}
@@ -124,10 +122,10 @@ public class Semantic_Binder
 		{
 			bind(node.children[1], scope); // condition expression
 			bind(node.first_child(Block), scope);
-			let elseClause: mut Semantic_Node? = node.first_child(ElseClause);
-			if elseClause =/= none
+			let else_clause: mut Semantic_Node? = node.first_child(ElseClause);
+			if else_clause =/= none
 			{
-				bind(elseClause, scope);
+				bind(else_clause, scope);
 			}
 		}
 		else if node.kind == ElseClause
@@ -298,7 +296,7 @@ public class Semantic_Binder
 			}
 			else if name.kind == IdentifierName
 			{
-				let symbol: Symbol = qualifier.symbol.Get(name.get_text(), IdentifierSymbol);
+				let symbol: Symbol = qualifier.symbol.get(name.get_text(), IdentifierSymbol);
 				if symbol == none
 				{
 					add_resolution_error(name);
@@ -315,7 +313,7 @@ public class Semantic_Binder
 			else if name.kind == GenericName
 			{
 				let identifer_name: mut Semantic_Node = name.first_child(IdentifierName);
-				let symbol: Symbol = qualifier.symbol.Get(identifer_name.get_text(), IdentifierSymbol);
+				let symbol: Symbol = qualifier.symbol.get(identifer_name.get_text(), IdentifierSymbol);
 				if symbol == none
 				{
 					add_resolution_error(name);
@@ -374,6 +372,6 @@ public class Semantic_Binder
 
 	private add_resolution_error(node: Semantic_Node) -> void
 	{
-		node.Add(new Diagnostic(FatalCompilationError, Analysis, node.Source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
+		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
 	}
 }

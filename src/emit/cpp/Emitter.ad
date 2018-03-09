@@ -33,7 +33,7 @@ public class Emitter
 
 		emit_preamble();
 
-		for let compilation_unit: Semantic_Node in package.CompilationUnits
+		for let compilation_unit: Semantic_Node in package.compilation_units
 		{
 			emit_compilation_unit(compilation_unit);
 		}
@@ -464,7 +464,7 @@ public class Emitter
 		else if statement.kind == Block
 		{
 			definitions.BeginBlock();
-			for let block_statement: Semantic_Node in statement.Statements()
+			for let block_statement: Semantic_Node in statement.statements()
 			{
 				emit_statement(block_statement);
 			}
@@ -661,7 +661,7 @@ public class Emitter
 			class_declarations.WriteLine("p_bool op_Equal(" + class_name + "_ const * other) const { return this == other; }");
 			class_declarations.WriteLine("p_bool op_NotEqual(" + class_name + "_ const * other) const { return this != other; }");
 			var current_access_level: int = PublicKeyword;
-			for let member: Semantic_Node in declaration.Members()
+			for let member: Semantic_Node in declaration.members()
 			{
 				current_access_level = emit_member_declaration(member, class_name, current_access_level);
 			}
@@ -682,7 +682,7 @@ public class Emitter
 			class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
 			class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
 			var current_access_level: int = PublicKeyword;
-			for let member: Semantic_Node in declaration.Members()
+			for let member: Semantic_Node in declaration.members()
 			{
 				current_access_level = emit_member_declaration(member, struct_name, current_access_level);
 			}
@@ -778,7 +778,7 @@ public class Emitter
 		for let resource: Source_Text in resources
 		{
 			definitions.BeginLine("resource_manager_->AddResource(p_string(\"");
-			definitions.Write(resource.Name);
+			definitions.Write(resource.name);
 			definitions.Write("\"), p_string(\"");
 			definitions.Write(resource.Text
 									.Replace("\\", "\\\\")

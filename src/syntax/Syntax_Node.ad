@@ -135,9 +135,9 @@ public class Syntax_Node
 {
 	public let kind: int;
 	public let is_missing: bool;
-	public let Source: Source_Text;
-	public let Start: uint;
-	public let Length: uint; // TODO is this ByteLength?
+	public let source: Source_Text;
+	public let start: uint;
+	public let byte_length: uint; // TODO is this ByteLength?
 	public let children: System.Collections.List<Syntax_Node>;
 	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 
@@ -145,9 +145,9 @@ public class Syntax_Node
 	{
 		kind = type;
 		is_missing = false;
-		Source = source;
-		Start = start;
-		Length = length;
+		self.source = source;
+		self.start = start;
+		byte_length = length;
 		self.children = new System.Collections.List<Syntax_Node>();
 		node_diagnostics = new System.Collections.List<Diagnostic>();
 	}
@@ -156,9 +156,9 @@ public class Syntax_Node
 	{
 		kind = type;
 		is_missing = isMissing;
-		Source = source;
-		Start = start;
-		Length = length;
+		self.source = source;
+		self.start = start;
+		byte_length = length;
 		self.children = new System.Collections.List<Syntax_Node>();
 		node_diagnostics = new System.Collections.List<Diagnostic>();
 	}
@@ -167,9 +167,9 @@ public class Syntax_Node
 	{
 		kind = type;
 		is_missing = child.is_missing;
-		Source = child.Source;
-		Start = child.Start;
-		Length = child.Length;
+		source = child.source;
+		start = child.start;
+		byte_length = child.byte_length;
 		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
 		children.Add(child);
 		self.children = children;
@@ -182,17 +182,17 @@ public class Syntax_Node
 		kind = type;
 		is_missing = false;
 		// TODO enforce that list is not empty, for now we rely on `children[0]` failing
-		Source = children[0].Source;
-		Start = children[0].Start;
+		source = children[0].source;
+		start = children[0].start;
 		let lastChild: Syntax_Node = children[|children| - 1];
-		Length = lastChild.Start - Start + lastChild.Length;
+		byte_length = lastChild.start - start + lastChild.byte_length;
 		self.children = children;
 		node_diagnostics = new System.Collections.List<Diagnostic>();
 	}
 
 	public get_text(self) -> string
 	{
-		return Source.Text.Substring(Start, Length);
+		return source.Text.Substring(start, byte_length);
 	}
 
 	public first_child(self, type: int) -> Syntax_Node?
@@ -215,12 +215,12 @@ public class Syntax_Node
 		return false;
 	}
 
-	public Add(self, diagnostic: Diagnostic) -> void
+	public add(self, diagnostic: Diagnostic) -> void
 	{
 		node_diagnostics.Add(diagnostic);
 	}
 
-	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
+	public all_diagnostics(self) -> System.Collections.List<Diagnostic>
 	{
 		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
 		collection_diagnostics(diagnostics);
@@ -246,7 +246,7 @@ public new_syntax_node_missing(type: int, source: Source_Text, start: uint) -> S
 {
 	let node: mut Syntax_Node = new Syntax_Node(type, true, source, start, 0);
 	let span: Text_Span = new Text_Span(start, 0);
-	node.Add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
+	node.add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
 	return node;
 }
 
@@ -254,8 +254,8 @@ public new_syntax_node_missing(type: int, source: Source_Text, start: uint) -> S
 public new_Syntax_Node_Skipped(skipped: Syntax_Node) -> Syntax_Node
 {
 	let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
-	let span: Text_Span = new Text_Span(skipped.Start, skipped.Length);
-	node.Add(new Diagnostic(CompilationError, Parsing, skipped.Source, span, "Skipped unexpected token of type " + skipped.kind));
+	let span: Text_Span = new Text_Span(skipped.start, skipped.byte_length);
+	node.add(new Diagnostic(CompilationError, Parsing, skipped.source, span, "Skipped unexpected token of type " + skipped.kind));
 	return node;
 }
 
@@ -263,7 +263,7 @@ public new_Syntax_Node_Skipped(skipped: Syntax_Node) -> Syntax_Node
 public new_Syntax_Node_Skipped(skipped: System.Collections.List<Syntax_Node>) -> Syntax_Node
 {
 	let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
-	let span: Text_Span = new Text_Span(node.Start, node.Length);
-	node.Add(new Diagnostic(CompilationError, Parsing, node.Source, span, "Skipped " + |skipped| + " unexpected token(s)"));
+	let span: Text_Span = new Text_Span(node.start, node.byte_length);
+	node.add(new Diagnostic(CompilationError, Parsing, node.source, span, "Skipped " + |skipped| + " unexpected token(s)"));
 	return node;
 }

@@ -1,7 +1,7 @@
 // TODO this should be a const global object
 public class Primitive_Types
 {
-	public let Symbols: System.Collections.List<Symbol>;
+	public let symbols: System.Collections.List<Symbol>;
 
 	public new()
 	{
@@ -42,7 +42,7 @@ public class Primitive_Types
 		symbols.Add(new Symbol("size"));
 		symbols.Add(new Symbol("offset"));
 
-		Symbols = symbols;
+		self.symbols = symbols;
 	}
 
 	// TODO implement `size` type
@@ -57,11 +57,11 @@ public class Primitive_Types
 	}
 
 	// TODO make this operator []
-	public Get(self, name: string) -> Symbol?
+	public get(self, name: string) -> Symbol?
 	{
-		for let symbol: Symbol in Symbols
+		for let symbol: Symbol in symbols
 		{
-			if symbol.Name == name
+			if symbol.name == name
 			{
 				return symbol;
 			}

@@ -3,12 +3,12 @@
 
 public class Semantic_Node
 {
-	public let Syntax: Syntax_Node;
+	public let syntax: Syntax_Node;
 	public let kind: int;
 	public let is_missing: bool;
-	public let Source: Source_Text;
-	public let Start: uint;
-	public let Length: uint; // TODO is this ByteLength?
+	public let source: Source_Text;
+	public let start: uint;
+	public let byte_length: uint; // TODO is this ByteLength?
 	public let children: System.Collections.List<mut Semantic_Node>;
 	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 	public var symbol: Symbol?;
@@ -25,16 +25,16 @@ public class Semantic_Node
 	public new(syntax: Syntax_Node)
 	{
 		assert(syntax =/= none);
-		Syntax = syntax;
+		self.syntax = syntax;
 		kind = syntax.kind;
 		is_missing = syntax.is_missing;
-		Source = syntax.Source;
-		Start = syntax.Start;
-		Length = syntax.Length;
+		source = syntax.source;
+		self.start = syntax.start;
+		byte_length = syntax.byte_length;
 		let children: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let childSyntax: Syntax_Node in syntax.children
+		for let child_syntax: Syntax_Node in syntax.children
 		{
-			children.Add(new Semantic_Node(childSyntax));
+			children.Add(new Semantic_Node(child_syntax));
 		}
 		self.children = children;
 		let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
@@ -49,12 +49,12 @@ public class Semantic_Node
 
 	public get_text_span(self) -> Text_Span
 	{
-		return new Text_Span(Start, Length);
+		return new Text_Span(start, byte_length);
 	}
 
 	public get_text(self) -> string
 	{
-		return Source.Text.Substring(Start, Length);
+		return source.Text.Substring(start, byte_length);
 	}
 
 	public bind_symbol(mut self, symbol: Symbol) -> void
@@ -83,19 +83,19 @@ public class Semantic_Node
 
 	public children_of_kind(self, kind: int) -> System.Collections.List<mut Semantic_Node>
 	{
-		let members: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in children
+		let children: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
+		for let child: mut Semantic_Node in self.children
 		{
 			if child.kind == kind
 			{
-				members.Add(child);
+				children.Add(child);
 			}
 		}
-		return members;
+		return children;
 	}
 
 	// TODO this should only be on things like class, struct that have members
-	public Members(self) -> System.Collections.List<mut Semantic_Node>
+	public members(self) -> System.Collections.List<mut Semantic_Node>
 	{
 		let members: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
 		for let child: mut Semantic_Node in children
@@ -112,7 +112,7 @@ public class Semantic_Node
 	}
 
 	// TODO this should only be on things like block
-	public Statements(self) -> System.Collections.List<mut Semantic_Node>
+	public statements(self) -> System.Collections.List<mut Semantic_Node>
 	{
 		let statements: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
 		for let child: mut Semantic_Node in children
@@ -128,7 +128,7 @@ public class Semantic_Node
 	}
 
 	// TODO this should only be on things like parameter list and function
-	public Parameters(self) -> System.Collections.List<mut Semantic_Node>
+	public parameters(self) -> System.Collections.List<mut Semantic_Node>
 	{
 		let parameters: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
 		for let child: mut Semantic_Node in children
@@ -153,12 +153,12 @@ public class Semantic_Node
 		return false;
 	}
 
-	public Add(self, diagnostic: Diagnostic) -> void
+	public add(self, diagnostic: Diagnostic) -> void
 	{
 		node_diagnostics.Add(diagnostic);
 	}
 
-	public AllDiagnostics(self) -> System.Collections.List<Diagnostic>
+	public all_diagnostics(self) -> System.Collections.List<Diagnostic>
 	{
 		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
 		collection_diagnostics(diagnostics);

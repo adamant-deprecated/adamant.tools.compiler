@@ -1,13 +1,13 @@
 public class Semantic_Analyzer
 {
-	public Analyze(package_syntax: Syntax_Node) -> Package
+	public analyze(package_syntax: Syntax_Node) -> Package
 	{
-		if package_syntax.kind =/= PackageNode { THROW_EXCEPTION("`Semantic_Analyzer.Analyze(...)` called with node of type " + package_syntax.kind); }
+		if package_syntax.kind =/= PackageNode { THROW_EXCEPTION("`Semantic_Analyzer.analyze(...)` called with node of type " + package_syntax.kind); }
 
 		let compilation_units: System.Collections.List<mut Semantic_Node> = new Semantic_Node(package_syntax).children;
 		let primitive_types: Primitive_Types = new Primitive_Types();
-		let symbol_builder: Semantic_Builder = new Semantic_Builder();
-		let package_symbol: Symbol = symbol_builder.build_symbols(compilation_units);
+		let semantic_builder: Semantic_Builder = new Semantic_Builder();
+		let package_symbol: Symbol = semantic_builder.build_symbols(compilation_units);
 		let package: mut Package = new Package(compilation_units, primitive_types, package_symbol);
 		let name_binder: Semantic_Binder = new Semantic_Binder();
 		name_binder.bind(package);

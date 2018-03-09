@@ -42,8 +42,8 @@ public class Semantic_Builder
 		{
 			let name: string = node.first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(parent, name);
-			symbol.Declarations.Add(node);
-			for let member: mut Semantic_Node in node.Members()
+			symbol.declarations.Add(node);
+			for let member: mut Semantic_Node in node.members()
 			{
 				build_symbols(symbol, member);
 			}
@@ -54,15 +54,15 @@ public class Semantic_Builder
 		else if node.kind == ConstructorDeclaration
 		{
 			let constructor_symbol: Symbol = new Symbol(parent, "new", SpecialSymbol);
-			constructor_symbol.Declarations.Add(node);
+			constructor_symbol.declarations.Add(node);
 			parent.children.Add(constructor_symbol);
 			// Implicit `self` parameter
 			let self_symbol: Symbol = new Symbol(constructor_symbol, "self", SpecialSymbol);
 			// let type: Type = parent.get_type();
 			// assert(type =/= none);
-			// let declaration: Semantic_Node = parent.Declarations[0];
+			// let declaration: Semantic_Node = parent.declarations[0];
 			// assert(declaration =/= none and (declaration.kind == ClassDeclaration or declaration.kind == StructDeclaration));
-			// self_symbol.Declarations.Add(declaration); // We reference our containing class/struct
+			// self_symbol.declarations.Add(declaration); // We reference our containing class/struct
 			constructor_symbol.children.Add(self_symbol);
 			build_function_symbols(parent, node, constructor_symbol);
 		}
@@ -70,7 +70,7 @@ public class Semantic_Builder
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let field_symbol: Symbol = new Symbol(parent, name);
-			field_symbol.Declarations.Add(node);
+			field_symbol.declarations.Add(node);
 			parent.children.Add(field_symbol);
 			node.bind_symbol(field_symbol);
 		}
@@ -78,22 +78,22 @@ public class Semantic_Builder
 		{
 			let name: string = node.first_child(Identifier).get_text();
 			let enum_symbol: Symbol = new Symbol(parent, name);
-			enum_symbol.Declarations.Add(node);
-			// TODO add enum member symbols
+			enum_symbol.declarations.Add(node);
+			// TODO Add enum member symbols
 			parent.children.Add(enum_symbol);
 			node.bind_symbol(enum_symbol);
 		}
 		else if node.kind == GlobalDeclaration
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
-			let globalDeclarationSymbol: Symbol = new Symbol(none, name);
-			globalDeclarationSymbol.Declarations.Add(node);
-			parent.children.Add(globalDeclarationSymbol);
-			node.bind_symbol(globalDeclarationSymbol);
+			let global_declaration_symbol: Symbol = new Symbol(none, name);
+			global_declaration_symbol.declarations.Add(node);
+			parent.children.Add(global_declaration_symbol);
+			node.bind_symbol(global_declaration_symbol);
 		}
 		else if node.kind == Block
 		{
-			for let statement: mut Semantic_Node in node.Statements()
+			for let statement: mut Semantic_Node in node.statements()
 			{
 				build_symbols(parent, statement);
 			}
@@ -108,7 +108,7 @@ public class Semantic_Builder
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
 			let for_symbol: Symbol = new Symbol(none, name);
-			for_symbol.Declarations.Add(node);
+			for_symbol.declarations.Add(node);
 			parent.children.Add(for_symbol);
 			node.bind_symbol(for_symbol);
 			build_symbols(parent, node.first_child(Block));
@@ -117,17 +117,17 @@ public class Semantic_Builder
 		{
 			let identifier: mut Semantic_Node = node.first_child(VariableDeclaration).first_child(Identifier);
 			let symbol: Symbol = new Symbol(none, identifier.get_text());
-			symbol.Declarations.Add(node);
+			symbol.declarations.Add(node);
 			identifier.bind_symbol(symbol);
 			parent.children.Add(symbol);
 		}
 		else if node.kind == IfStatement
 		{
 			build_symbols(parent, node.first_child(Block));
-			let elseClause: mut Semantic_Node? = node.first_child(ElseClause);
-			if elseClause =/= none
+			let else_clause: mut Semantic_Node? = node.first_child(ElseClause);
+			if else_clause =/= none
 			{
-				build_symbols(parent, elseClause);
+				build_symbols(parent, else_clause);
 			}
 		}
 		else if node.kind == ElseClause
@@ -147,13 +147,13 @@ public class Semantic_Builder
 		{
 			let name: string = node.first_child(Identifier).get_text();
 			let symbol: Symbol = new Symbol(parent, name);
-			symbol.Declarations.Add(node);
+			symbol.declarations.Add(node);
 			parent.children.Add(symbol);
 		}
 		else if node.kind == SelfParameter
 		{
 			let symbol: Symbol = new Symbol(parent, "self", SpecialSymbol);
-			symbol.Declarations.Add(node);
+			symbol.declarations.Add(node);
 			parent.children.Add(symbol);
 		}
 		else if node.kind == ExpressionStatement
@@ -172,10 +172,10 @@ public class Semantic_Builder
 
 	private build_function_symbols(self, parent: Symbol, function: mut Semantic_Node, symbol: Symbol) -> void
 	{
-		symbol.Declarations.Add(function);
+		symbol.declarations.Add(function);
 
 		let parameters: mut Semantic_Node = function.first_child(ParameterList);
-		for let parameter: mut Semantic_Node in parameters.Parameters()
+		for let parameter: mut Semantic_Node in parameters.parameters()
 		{
 			build_symbols(symbol, parameter);
 		}
@@ -222,7 +222,7 @@ public class Semantic_Builder
 		let class_symbol: Symbol = build(parent, "Resource_Manager", ClassDeclaration);
 		let fake_declaration: mut Semantic_Node = new Semantic_Node(new Syntax_Node(GlobalDeclaration, true, none, 0, 0));
 		let symbol: mut Symbol = new Symbol(parent, "resource_manager");
-		symbol.Declarations.Add(fake_declaration);
+		symbol.declarations.Add(fake_declaration);
 		fake_declaration.bind_symbol(symbol);
 		fake_declaration.bind_type(new Type(class_symbol));
 		parent.children.Add(symbol);
@@ -232,7 +232,7 @@ public class Semantic_Builder
 	{
 		let fake_declaration: mut Semantic_Node = new Semantic_Node(new Syntax_Node(declaration_kind, true, none, 0, 0));
 		let symbol: mut Symbol = new Symbol(parent, name);
-		symbol.Declarations.Add(fake_declaration);
+		symbol.declarations.Add(fake_declaration);
 		fake_declaration.bind_symbol(symbol);
 		fake_declaration.bind_type(new Type(symbol));
 		parent.children.Add(symbol);
@@ -243,7 +243,7 @@ public class Semantic_Builder
 	{
 		let fake_declaration: mut Semantic_Node = new Semantic_Node(new Syntax_Node(FunctionDeclaration, true, none, 0, 0));
 		let symbol: mut Symbol = new Symbol(parent, name);
-		symbol.Declarations.Add(fake_declaration);
+		symbol.declarations.Add(fake_declaration);
 		fake_declaration.bind_symbol(symbol);
 		parent.children.Add(symbol);
 	}

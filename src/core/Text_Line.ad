@@ -1,20 +1,20 @@
 public class Text_Line
 {
-	public let Source: Source_Text;
-	public let Start: int;
-	public let Length: int;
+	public let source: Source_Text;
+	public let start: int;
+	public let byte_length: int;
 
 	public new(source: Source_Text, start: int, length: int)
 	{
-		Source = source;
-		Start = start;
-		Length = length;
+		self.source = source;
+		self.start = start;
+		byte_length = length;
 	}
 
 	// TODO get Property
 	public End(self) -> int
 	{
-		return Start + Length;
+		return start + byte_length;
 	}
 }
 

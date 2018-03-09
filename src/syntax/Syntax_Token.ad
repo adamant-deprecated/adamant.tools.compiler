@@ -3,16 +3,16 @@
 /*public class Syntax_Token
 {
 	public let TokenType: Token_Type;
-	public let Source: Source_Text;
-	public let Start: uint;
-	public let Length: uint; // TODO Is this byte length?
+	public let source: Source_Text;
+	public let start: uint;
+	public let byte_length: uint; // TODO Is this byte length?
 	//public Text: string;
 
 	public new(tokenType: Token_Type, source: Source_Text, start: uint, length: uint)
 	{
 		TokenType = tokenType;
-		Source = source;
-		Start = start;
-		Length = length;
+		self.source = source;
+		self.start = start;
+		byte_length = length;
 	}
 }*/

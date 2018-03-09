@@ -16,7 +16,7 @@ public class Line_Info
 	}
 
 	// TODO use element access operator
-	public Get(self, lineNumber: int) -> Text_Line
+	public get(self, lineNumber: int) -> Text_Line
 	{
 		let index: int = lineNumber - 1; // lineNumber is one based
 		let start: int = lineStarts[index];

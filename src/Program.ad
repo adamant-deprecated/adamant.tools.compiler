@@ -3,7 +3,7 @@ public compile(sources: System.Collections.List<Source_Text>) -> Package
 	let parser: Parser = new Parser();
 	let packageSyntax: Syntax_Node = parser.ParsePackage(sources);
 	let semanticAnalyzer: Semantic_Analyzer = new Semantic_Analyzer();
-	let package: Package = semanticAnalyzer.Analyze(packageSyntax);
+	let package: Package = semanticAnalyzer.analyze(packageSyntax);
 	return package;
 }
 
@@ -20,7 +20,7 @@ public write(console: mut System.Console.Console, diagnostics: System.Collection
 		else
 			{ severity = "Error"; }
 
-		console.WriteLine(diagnostic.Source.Path+":"+position.Line+":"+position.Column+" "+severity+":");
+		console.WriteLine(diagnostic.source.Path+":"+position.Line+":"+position.Column+" "+severity+":");
 		console.WriteLine("  "+diagnostic.Message);
 	}
 }
@@ -129,7 +129,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 
 	let package: Package = compile(sources);
 
-	let diagnostics: System.Collections.List<Diagnostic> = package.AllDiagnostics();
+	let diagnostics: System.Collections.List<Diagnostic> = package.all_diagnostics();
 	write(console, diagnostics);
 
 	if has_errors(diagnostics)

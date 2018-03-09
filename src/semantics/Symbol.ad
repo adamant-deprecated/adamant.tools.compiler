@@ -1,28 +1,30 @@
 public class Symbol
 {
-	public let Parent: Symbol?;
-	public let Name: string;
+	public let parent: Symbol?;
+	public let name: string;
 	public let kind: int;
-	public let Declarations: mut System.Collections.List<Semantic_Node>;
+	public let declarations: mut System.Collections.List<Semantic_Node>;
 	public let children: mut System.Collections.List<Symbol>;
 	public let is_primitive: bool;
+	public let type: Type; // for variables and parameters, the type of the value they represent
+	public let declares_type: Type; // for class/struct/enum symbols, the type being declared
 
 	public new(parent: Symbol?, name: string)
 	{
-		Parent = parent;
-		Name = name;
+		self.parent = parent;
+		self.name = name;
 		kind = IdentifierSymbol;
-		Declarations = new System.Collections.List<Semantic_Node>();
+		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		is_primitive = false;
 	}
 
 	public new(parent: Symbol?, name: string, kind: int)
 	{
-		Parent = parent;
-		Name = name;
+		self.parent = parent;
+		self.name = name;
 		self.kind = kind;
-		Declarations = new System.Collections.List<Semantic_Node>();
+		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		is_primitive = false;
 	}
@@ -30,20 +32,20 @@ public class Symbol
 	// TODO use a named constructor for this
 	public new(name: string)
 	{
-		Parent = none;
-		Name = name;
+		parent = none;
+		self.name = name;
 		kind = SpecialSymbol;
-		Declarations = new System.Collections.List<Semantic_Node>();
+		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		is_primitive = true;
 	}
 
 	// TODO change to operator []
-	public Get(self, name: string, kind: int) -> Symbol?
+	public get(self, name: string, kind: int) -> Symbol?
 	{
 		for let child: Symbol in children
 		{
-			if child.Name == name and child.kind == kind
+			if child.name == name and child.kind == kind
 			{
 				return child;
 			}
@@ -55,13 +57,13 @@ public class Symbol
 	{
 		if kind == IdentifierSymbol
 		{
-			if |Declarations| == 0  { THROW_EXCEPTION("Symbol.is_value_type() could not determine if IdentifierSymbol `" + Name + "` is a value type. No declarations."); }
-			let declaration: Semantic_Node = Declarations[0]; // TODO assuming there is only one for now
+			if |declarations| == 0  { THROW_EXCEPTION("Symbol.is_value_type() could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations."); }
+			let declaration: Semantic_Node = declarations[0]; // TODO assuming there is only one for now
 			if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
 				{ return false; }
 			else if declaration.kind == StructDeclaration
 				{ return true; }
-			else { THROW_EXCEPTION("Could not determine if IdentifierSymbol `" + Name + "` is a value type. Declaration of type " + declaration.kind); }
+			else { THROW_EXCEPTION("Could not determine if IdentifierSymbol `" + name + "` is a value type. Declaration of type " + declaration.kind); }
 		}
 		else if kind == SpecialSymbol
 		{
@@ -79,9 +81,9 @@ public class Symbol
 		if kind == SpecialSymbol
 			{ return new Type(self); }
 
-		if |Declarations| > 0 // TODO implement an `is_empty()` or `any()` method
+		if |declarations| > 0 // TODO implement an `is_empty()` or `any()` method
 		{
-			let declaration: Semantic_Node = Declarations[0];
+			let declaration: Semantic_Node = declarations[0];
 			assert(declaration =/= none);
 			return declaration.type;
 		}

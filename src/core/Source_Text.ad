@@ -2,7 +2,7 @@ public class Source_Text
 {
 	public let Package: string;
 	public let Path: string; // TODO use a path object?
-	public let Name: string;
+	public let name: string;
 	public let Text: string;
 	public let Lines: Line_Info;
 
@@ -20,7 +20,7 @@ public class Source_Text
 		if index =/= -1
 			{ name = name.Substring(index+1); }
 
-		Name = name;
+		self.name = name;
 		Text = text;
 		Lines = new Line_Info(self, LineStarts());
 	}
@@ -74,11 +74,11 @@ public class Source_Text
 
 	public PositionOfStart(self, span: Text_Span) -> Text_Position
 	{
-		let offset: int = span.Start;
+		let offset: int = span.start;
 		let lineNumber: int = Lines.LineNumber(offset);
-		let lineStart: int = Lines.Get(lineNumber).Start;
+		let lineStart: int = Lines.get(lineNumber).start;
 
-		// TODO handle unicode
+		// TODO handle Unicode
 		var column: int = offset - lineStart + 1; // column is one based
 		// Account for tabs being multiple columns
 		// TODO switch to a for loop when we have range expressions

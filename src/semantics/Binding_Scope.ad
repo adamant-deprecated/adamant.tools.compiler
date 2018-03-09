@@ -9,7 +9,7 @@ public class Binding_Scope
 		let scope_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 		for let s: Symbol in symbols
 			{ scope_symbols.Add(s); }
-		for let s: Symbol in primitives.Symbols
+		for let s: Symbol in primitives.symbols
 			{ scope_symbols.Add(s); }
 		self.symbols = scope_symbols;
 	}
@@ -39,7 +39,7 @@ public class Binding_Scope
 	{
 		for let symbol: Symbol in symbols
 		{
-			if symbol.Name == name and symbol.kind == kind
+			if symbol.name == name and symbol.kind == kind
 			{
 				return symbol;
 			}
