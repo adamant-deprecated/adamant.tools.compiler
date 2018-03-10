@@ -38,34 +38,34 @@ public class Type
 	}
 
 	// TODO use or remove this
-	private names_a_value_type(self, symbol: Symbol) -> bool
-	{
-		var class_or_struct: Symbol;
-		if kind == IdentifierSymbol
-		{
-			class_or_struct = symbol;
-		}
-		else if kind == SpecialSymbol
-		{
-			if symbol.name == "self"
-			{
-				let constructor: Symbol = symbol.parent;
-				class_or_struct = constructor.parent;
-			}
-			else
-				{ return true; }
-		}
-		else
-		{
-			THROW_EXCEPTION("Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
-		}
+	// private names_a_value_type(self, symbol: Symbol) -> bool
+	// {
+	// 	var class_or_struct: Symbol;
+	// 	if kind == IdentifierSymbol
+	// 	{
+	// 		class_or_struct = symbol;
+	// 	}
+	// 	else if kind == SpecialSymbol
+	// 	{
+	// 		if symbol.name == "self"
+	// 		{
+	// 			let constructor: Symbol = symbol.parent;
+	// 			class_or_struct = constructor.parent;
+	// 		}
+	// 		else
+	// 			{ return true; }
+	// 	}
+	// 	else
+	// 	{
+	// 		THROW_EXCEPTION("Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
+	// 	}
 
-		if |class_or_struct.declarations| == 0 { THROW_EXCEPTION("Type.name_a_value_type() could not determine if Symbol `" + symbol.name + "` is a value type. No declarations."); }
-		let declaration: Semantic_Node = class_or_struct.declarations[0]; // TODO assuming there is only one for now
-		if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
-			{ return false; }
-		else if declaration.kind == StructDeclaration
-			{ return true; }
-		else { THROW_EXCEPTION("Could not determine if Symbol `" + symbol.name + "` is a value type. Declaration of type " + declaration.kind); }
-	}
+	// 	if |class_or_struct.declarations| == 0 { THROW_EXCEPTION("Type.name_a_value_type() could not determine if Symbol `" + symbol.name + "` is a value type. No declarations."); }
+	// 	let declaration: Semantic_Node = class_or_struct.declarations[0]; // TODO assuming there is only one for now
+	// 	if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
+	// 		{ return false; }
+	// 	else if declaration.kind == StructDeclaration
+	// 		{ return true; }
+	// 	else { THROW_EXCEPTION("Could not determine if Symbol `" + symbol.name + "` is a value type. Declaration of type " + declaration.kind); }
+	// }
 }

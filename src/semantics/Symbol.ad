@@ -1,6 +1,5 @@
 public class Symbol
 {
-	public let parent: Symbol?;
 	public let name: string;
 	public let kind: int;
 	public let declarations: mut System.Collections.List<Semantic_Node>;
@@ -9,9 +8,8 @@ public class Symbol
 	public let type: Type; // for variables and parameters, the type of the value they represent
 	public let declares_type: Type; // for class/struct/enum symbols, the type being declared
 
-	public new(parent: Symbol?, name: string)
+	public new(name: string)
 	{
-		self.parent = parent;
 		self.name = name;
 		kind = IdentifierSymbol;
 		declarations = new System.Collections.List<Semantic_Node>();
@@ -19,9 +17,8 @@ public class Symbol
 		is_primitive = false;
 	}
 
-	public new(parent: Symbol?, name: string, kind: int)
+	public new(name: string, kind: int)
 	{
-		self.parent = parent;
 		self.name = name;
 		self.kind = kind;
 		declarations = new System.Collections.List<Semantic_Node>();
@@ -29,15 +26,14 @@ public class Symbol
 		is_primitive = false;
 	}
 
-	// TODO use a named constructor for this
-	public new(name: string)
+	// TODO only for use by new_Symbol_primitive
+	public new(name: string, kind: int, is_primitive: bool)
 	{
-		parent = none;
 		self.name = name;
-		kind = SpecialSymbol;
+		self.kind = kind;
 		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
-		is_primitive = true;
+		self.is_primitive = is_primitive;
 	}
 
 	// TODO change to operator []
@@ -90,4 +86,11 @@ public class Symbol
 
 		return none;
 	}
+}
+
+// TODO use a named constructor
+// TODO got strange error from leaving off the return type from this function
+public new_Symbol_primitive(name: string) -> Symbol
+{
+	return new Symbol(name, SpecialSymbol, true);
 }
