@@ -3,16 +3,18 @@ public class Type
 	public let kind: int;
 	public let package: Package_Name?; // primitive types don't have a package
 	public let namespace: Namespace_Name?; // primitive types don't have a namespace
-	public let symbol: Symbol;
+	public let name: string;
+	public let is_primitive: bool;
 	public let is_value_type: bool;
-	public let immutable: bool;
+	public let immutable: bool; // TODO need to distinguish if the type is inherently immutable
 
 	public new(symbol: Symbol)
 	{
 		assert(symbol =/= none, "");
 		package = none;
 		namespace = none;
-		self.symbol = symbol;
+		name = symbol.name;
+		is_primitive = symbol.is_primitive;
 		is_value_type = symbol.declares_value_type();
 		if is_value_type
 			{ kind = ValueType; }
@@ -21,24 +23,25 @@ public class Type
 		immutable = true;
 	}
 
-	private new(kind: int, symbol: Symbol, is_value_type: bool, immutable: bool)
+	private new(kind: int, name: string, is_primitive: bool, is_value_type: bool, immutable: bool)
 	{
 		package = none;
 		namespace = none;
 		self.kind = kind;
-		self.symbol = symbol;
+		self.name = name;
+		self.is_primitive = is_primitive;
 		self.is_value_type = is_value_type;
 		self.immutable = immutable;
 	}
 
 	public make_mutable(self) -> Type
 	{
-		return new Type(kind, symbol, is_value_type, false);
+		return new Type(kind, name, is_primitive, is_value_type, false);
 	}
 
 	public make_immutable(self) -> Type
 	{
-		return new Type(kind, symbol, is_value_type, true);
+		return new Type(kind, name, is_primitive, is_value_type, true);
 	}
 
 	// TODO use or remove this
