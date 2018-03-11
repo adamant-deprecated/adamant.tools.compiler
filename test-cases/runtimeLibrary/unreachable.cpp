@@ -13,7 +13,7 @@ auto main_() -> p_int;
 
 auto main_() -> p_int
 {
-	NOT_IMPLEMENTED_(p_string("[Test Message]"));
+	UNREACHABLE_();
 }
 
 // Entry Point Adapter
