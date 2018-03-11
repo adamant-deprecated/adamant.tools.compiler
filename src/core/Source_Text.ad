@@ -1,5 +1,7 @@
 public class Source_Text
 {
+	// TODO move Package, Path and Name out of here, this should represent just
+	// the source, so that we build changed sources out of old sources
 	public let Package: string;
 	public let Path: string; // TODO use a path object?
 	public let name: string;

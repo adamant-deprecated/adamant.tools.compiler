@@ -1,16 +1,31 @@
 /// A compiled package with all of its syntax and semantics
 public class Package
 {
+	public let name: Package_Name;
+	public let references: System.Collections.List<Package_Reference>;
+	// TODO Semantic_Node shouldn't be mutable here
 	public let compilation_units: System.Collections.List<mut Semantic_Node>;
 	public let symbol: Symbol;
-	public let primitive_symbols: Primitive_Symbols;
+
+	// TODO Remove
+	public let primitive_symbols: Primitive_Symbols?;
 
 	// TODO constructor not adequately encapsulated to enforce invariants
-	public new(compilation_units: System.Collections.List<mut Semantic_Node>, primitive_symbols: Primitive_Symbols, symbol: Symbol)
+	public new(compilation_units: System.Collections.List<mut Semantic_Node>, primitive_symbols: Primitive_Symbols?, symbol: Symbol)
 	{
 		self.compilation_units = compilation_units;
+		self.name = new Package_Name(symbol.name);
 		self.symbol = symbol;
 		self.primitive_symbols = primitive_symbols;
+	}
+
+	public new(name: Package_Name, references: System.Collections.List<Package_Reference>, compilation_units: System.Collections.List<Compilation_Unit>, symbol: Symbol)
+	{
+		self.name = name;
+		self.references = references;
+		// self.compilation_units = compilation_units;
+		self.symbol = symbol;
+		self.primitive_symbols = none;
 	}
 
 	public all_diagnostics(self) -> System.Collections.List<Diagnostic>

@@ -23,7 +23,7 @@ public class Type
 		immutable = true;
 	}
 
-	private new(kind: int, name: string, is_primitive: bool, is_value_type: bool, immutable: bool)
+	public new(kind: int, name: string, is_primitive: bool, is_value_type: bool, immutable: bool)
 	{
 		package = none;
 		namespace = none;

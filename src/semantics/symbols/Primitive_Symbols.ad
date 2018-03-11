@@ -1,4 +1,4 @@
-// TODO this should be a const global object
+// TODO remove, use Primitives_Package instead
 public class Primitive_Symbols
 {
 	public let symbols: System.Collections.List<Symbol>;

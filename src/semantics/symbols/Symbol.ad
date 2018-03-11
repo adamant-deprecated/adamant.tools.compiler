@@ -2,11 +2,12 @@ public class Symbol
 {
 	public let name: string;
 	public let kind: int;
-	public let declarations: mut System.Collections.List<Semantic_Node>;
-	public let children: mut System.Collections.List<Symbol>;
 	public let is_primitive: bool;
+	// TODO rename has_type
 	public let type: Type; // for variables and parameters, the type of the value they represent
 	public let declares_type: Type; // for class/struct/enum symbols, the type being declared
+	public let declarations: mut System.Collections.List<Semantic_Node>;
+	public let children: mut System.Collections.List<Symbol>;
 
 	public new(name: string)
 	{
@@ -34,6 +35,22 @@ public class Symbol
 		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
 		self.is_primitive = is_primitive;
+	}
+
+	// TODO name this new Symbol.Primitive()
+	// Note: no declarations and node children implies primitive
+	public new(name: string, declares_type: Type)
+	{
+		assert(name.ByteLength() > 0, "");
+		assert(declares_type =/= none, "name="+name);
+		assert(declares_type.is_primitive, "name="+name);
+		self.name = name;
+		self.kind = SpecialSymbol;
+		self.is_primitive = true;
+		self.type = none;
+		self.declares_type = declares_type;
+		self.declarations = new System.Collections.List<Semantic_Node>();
+		self.children = new System.Collections.List<Symbol>();
 	}
 
 	// TODO change to operator []

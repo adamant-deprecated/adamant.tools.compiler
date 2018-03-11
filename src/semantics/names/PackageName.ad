@@ -3,10 +3,10 @@
 // always the full name of the package.
 public class Package_Name
 {
-	public let name: string;
+	public let text: string;
 
-	public new(name: string)
+	public new(text: string)
 	{
-		self.name = name;
+		self.text = text;
 	}
 }

@@ -4,6 +4,7 @@ public class Semantic_Analyzer
 	{
 		if package_syntax.kind =/= PackageNode { THROW_EXCEPTION("`Semantic_Analyzer.analyze(...)` called with node of type " + package_syntax.kind); }
 
+		let primitives_package: Package = new Primitives_Package_Builder().build();
 		let compilation_units: System.Collections.List<mut Semantic_Node> = new Semantic_Node(package_syntax).children;
 		let primitive_symbols: Primitive_Symbols = new Primitive_Symbols();
 		let semantic_builder: Semantic_Builder = new Semantic_Builder();
