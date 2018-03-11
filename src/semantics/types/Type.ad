@@ -8,7 +8,7 @@ public class Type
 
 	public new(symbol: Symbol)
 	{
-		assert(symbol =/= none);
+		assert_msg(symbol =/= none, "");
 		self.symbol = symbol;
 		is_value_type = symbol.declares_value_type();
 		if is_value_type

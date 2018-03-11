@@ -71,7 +71,7 @@ public class Semantic_Binder
 		else if node.kind == VariableDeclaration
 		{
 			let identifier: mut Semantic_Node = node.first_child(Identifier);
-			assert(identifier =/= none);
+			assert_msg(identifier =/= none, "for '"+node.get_text()+"'");
 			let type_name: mut Semantic_Node = node.children[3];
 			bind_type_name(type_name, scope);
 			if |node.children| == 6

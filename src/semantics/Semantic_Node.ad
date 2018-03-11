@@ -24,7 +24,7 @@ public class Semantic_Node
 
 	public new(syntax: Syntax_Node)
 	{
-		assert(syntax =/= none);
+		assert_msg(syntax =/= none, "");
 		self.syntax = syntax;
 		kind = syntax.kind;
 		is_missing = syntax.is_missing;

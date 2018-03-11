@@ -93,7 +93,7 @@ public class Emitter
 	// Converts a type to C++
 	private convert_type(mutable_binding: bool, var type: Semantic_Node, optional: bool) -> string
 	{
-		assert(type =/= none);
+		assert_msg(type =/= none, "");
 
 		let mutable_value: bool = type.kind == MutableType;
 		if mutable_value
@@ -112,7 +112,7 @@ public class Emitter
 		if type.kind == OptionalType
 		{
 			let optional_type: Semantic_Node = type.children[0];
-			assert(optional_type.kind == MutableType or optional_type.kind == ImmutableType);
+			assert_msg(optional_type.kind == MutableType or optional_type.kind == ImmutableType, "optional_type.kind="+optional_type.kind);
 			if optional_type.is_value_type()
 			{
 				// Optional<T> is a const struct
