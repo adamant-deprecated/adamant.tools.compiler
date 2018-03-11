@@ -27,7 +27,6 @@ class Diagnostic_;
 class Emitter_;
 class Namespace_Name_;
 class Package_Name_;
-class Primitive_Symbols_;
 class Symbol_;
 class Type_;
 
@@ -148,7 +147,7 @@ private:
 	::Binding_Scope_ const *_Nullable containing_scope_;
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull symbols_;
 public:
-	Binding_Scope_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::Primitive_Symbols_ const *_Nonnull const primitives_);
+	Binding_Scope_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitives_);
 	Binding_Scope_(::Binding_Scope_ const *_Nonnull const containing_scope_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_);
 	auto lookup_(p_string const name_) const -> ::Symbol_ const *_Nullable;
 	auto lookup_special_(p_string const name_) const -> ::Symbol_ const *_Nullable;
@@ -172,8 +171,7 @@ public:
 	::System_::Collections_::List_<::Package_Reference_> const *_Nonnull references_;
 	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull compilation_units_;
 	::Symbol_ const *_Nonnull symbol_;
-	::Primitive_Symbols_ const *_Nullable primitive_symbols_;
-	Package_(::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_, ::Primitive_Symbols_ const *_Nullable const primitive_symbols_, ::Symbol_ const *_Nonnull const symbol_);
+	Package_(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_);
 	Package_(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_);
 	auto all_diagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull;
 };
@@ -198,7 +196,7 @@ public:
 	p_bool op_NotEqual(Primitives_Package_Builder_ const * other) const { return this != other; }
 	auto build_() const -> ::Package_ const *_Nonnull;
 private:
-	auto build_primitive_symbols_() const -> ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull;
+	auto build_primitive_symbols_() const -> ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull;
 	static auto build_primitive_(p_string const name_) -> ::Symbol_ const *_Nonnull;
 	static auto build_fixed_point_primitives_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, p_int const bits_) -> void;
 };
@@ -456,19 +454,6 @@ public:
 	Package_Name_(p_string const text_);
 };
 
-class Primitive_Symbols_
-{
-public:
-	p_bool op_Equal(Primitive_Symbols_ const * other) const { return this == other; }
-	p_bool op_NotEqual(Primitive_Symbols_ const * other) const { return this != other; }
-	::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull symbols_;
-	Primitive_Symbols_();
-private:
-	static auto AddFixedPointTypes_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, p_int const bitLength_) -> void;
-public:
-	auto get_(p_string const name_) const -> ::Symbol_ const *_Nullable;
-};
-
 class Symbol_
 {
 public:
@@ -483,6 +468,7 @@ public:
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull children_;
 	Symbol_(p_string const name_);
 	Symbol_(p_string const name_, p_int const kind_);
+	Symbol_(p_string const name_, p_int const kind_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_);
 	Symbol_(p_string const name_, p_int const kind_, p_bool const is_primitive_);
 	Symbol_(p_string const name_, ::Type_ const *_Nonnull const declares_type_);
 	auto get_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable;
@@ -1112,7 +1098,7 @@ auto ::Source_File_Builder_::ToString_() const -> p_string
 	return code_->ToString_();
 }
 
-::Binding_Scope_::Binding_Scope_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::Primitive_Symbols_ const *_Nonnull const primitives_)
+::Binding_Scope_::Binding_Scope_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitives_)
 {
 	this->containing_scope_ = ::None;
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const scope_symbols_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
@@ -1121,7 +1107,7 @@ auto ::Source_File_Builder_::ToString_() const -> p_string
 		scope_symbols_->Add_(s_);
 	}
 
-	for (::Symbol_ const *_Nonnull const s_ : *(primitives_->symbols_))
+	for (::Symbol_ const *_Nonnull const s_ : *(primitives_))
 	{
 		scope_symbols_->Add_(s_);
 	}
@@ -1168,20 +1154,20 @@ auto ::Binding_Scope_::lookup_(p_string const name_, p_int const kind_) const ->
 	return ::None;
 }
 
-::Package_::Package_(::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_, ::Primitive_Symbols_ const *_Nullable const primitive_symbols_, ::Symbol_ const *_Nonnull const symbol_)
+::Package_::Package_(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_)
 {
+	this->name_ = name_;
+	this->references_ = references_;
 	this->compilation_units_ = compilation_units_;
-	this->name_ = (new ::Package_Name_(symbol_->name_));
 	this->symbol_ = symbol_;
-	this->primitive_symbols_ = primitive_symbols_;
 }
 
 ::Package_::Package_(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_)
 {
 	this->name_ = name_;
 	this->references_ = references_;
+	this->compilation_units_ = ::None;
 	this->symbol_ = symbol_;
-	this->primitive_symbols_ = ::None;
 }
 
 auto ::Package_::all_diagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull
@@ -1215,12 +1201,14 @@ auto ::Primitives_Package_Builder_::build_() const -> ::Package_ const *_Nonnull
 	::Package_Name_ const *_Nonnull const name_ = (new ::Package_Name_(p_string("\\primitives")));
 	::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>());
 	::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_ = (new ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull>());
-	::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitive_symbols_ = build_primitive_symbols_();
+	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const primitive_symbols_ = build_primitive_symbols_();
+	assert_(primitive_symbols_->op_Magnitude()->op_GreaterThan(p_int(0)), p_string("|primitive_symbols=").op_Add(primitive_symbols_->op_Magnitude()));
 	::Symbol_ const *_Nonnull const package_symbol_ = (new ::Symbol_(name_->text_, PackageSymbol_, primitive_symbols_));
+	assert_(package_symbol_->children_->op_Magnitude()->op_GreaterThan(p_int(0)), p_string("|package_symbol.children|=").op_Add(package_symbol_->children_->op_Magnitude()));
 	return (new ::Package_(name_, references_, compilation_units_, package_symbol_));
 }
 
-auto ::Primitives_Package_Builder_::build_primitive_symbols_() const -> ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull
+auto ::Primitives_Package_Builder_::build_primitive_symbols_() const -> ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull
 {
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
 	symbols_->Add_(build_primitive_(p_string("void")));
@@ -1270,20 +1258,27 @@ auto ::Semantic_Analyzer_::analyze_(::Syntax_Node_ const *_Nonnull const package
 		THROW_EXCEPTION_(p_string("`Semantic_Analyzer.analyze(...)` called with node of type ").op_Add(package_syntax_->kind_));
 	}
 
+	::Package_Name_ const *_Nonnull const name_ = (new ::Package_Name_(p_string("default")));
 	::Package_ const *_Nonnull const primitives_package_ = (new ::Primitives_Package_Builder_())->build_();
+	::System_::Collections_::List_<::Package_Reference_> *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>());
+	references_->add_(::Package_Reference_(primitives_package_));
 	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_ = (new ::Semantic_Node_(package_syntax_))->children_;
-	::Primitive_Symbols_ const *_Nonnull const primitive_symbols_ = (new ::Primitive_Symbols_());
 	::Semantic_Builder_ const *_Nonnull const semantic_builder_ = (new ::Semantic_Builder_());
 	::Symbol_ const *_Nonnull const package_symbol_ = semantic_builder_->build_symbols_(compilation_units_);
-	::Package_ *_Nonnull const package_ = (new ::Package_(compilation_units_, primitive_symbols_, package_symbol_));
-	::Semantic_Binder_ const *_Nonnull const name_binder_ = (new ::Semantic_Binder_());
-	name_binder_->bind_(package_);
+	::Package_ *_Nonnull const package_ = (new ::Package_(name_, references_, compilation_units_, package_symbol_));
+	::Semantic_Binder_ const *_Nonnull const semantic_binder_ = (new ::Semantic_Binder_());
+	semantic_binder_->bind_(package_);
 	return package_;
 }
 
 auto ::Semantic_Binder_::bind_(::Package_ const *_Nonnull const package_) const -> void
 {
-	::Binding_Scope_ const *_Nonnull const global_scope_ = (new ::Binding_Scope_(package_->symbol_->children_, package_->primitive_symbols_));
+	assert_(package_->references_->op_Magnitude()->op_GreaterThan(p_int(0)), p_string("package=").op_Add(package_->name_->text_));
+	::Package_ const *_Nonnull const primitive_package_ = package_->references_->op_Element(p_int(0))->package_;
+	assert_(primitive_package_->name_->text_->op_Equal(p_string("\\primitives")), p_string("package name='").op_Add(primitive_package_->name_->text_)->op_Add(p_string("'")));
+	::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitives_ = primitive_package_->symbol_->children_;
+	assert_(primitives_->op_Magnitude()->op_GreaterThan(p_int(0)), p_string("|primitives|=").op_Add(primitives_->op_Magnitude()));
+	::Binding_Scope_ const *_Nonnull const global_scope_ = (new ::Binding_Scope_(package_->symbol_->children_, primitives_));
 	for (::Semantic_Node_ *_Nonnull const compilation_unit_ : *(package_->compilation_units_))
 	{
 		bind_(compilation_unit_, global_scope_);
@@ -4251,56 +4246,6 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 	this->text_ = text_;
 }
 
-::Primitive_Symbols_::Primitive_Symbols_()
-{
-	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
-	symbols_->Add_(new_Symbol_primitive_(p_string("void")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("never")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("bool")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("code_point")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("string")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("int8")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("int16")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("int")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("int64")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("int128")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("byte")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("uint16")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("uint")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("uint64")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("uint128")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("float32")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("float")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("float128")));
-	AddFixedPointTypes_(symbols_, p_int(8));
-	AddFixedPointTypes_(symbols_, p_int(16));
-	AddFixedPointTypes_(symbols_, p_int(32));
-	AddFixedPointTypes_(symbols_, p_int(64));
-	symbols_->Add_(new_Symbol_primitive_(p_string("decimal32")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("decimal")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("decimal128")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("size")));
-	symbols_->Add_(new_Symbol_primitive_(p_string("offset")));
-	this->symbols_ = symbols_;
-}
-
-auto ::Primitive_Symbols_::AddFixedPointTypes_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, p_int const bitLength_) -> void
-{
-}
-
-auto ::Primitive_Symbols_::get_(p_string const name_) const -> ::Symbol_ const *_Nullable
-{
-	for (::Symbol_ const *_Nonnull const symbol_ : *(symbols_))
-	{
-		if (symbol_->name_->op_Equal(name_).Value)
-		{
-			return symbol_;
-		}
-	}
-
-	return ::None;
-}
-
 ::Symbol_::Symbol_(p_string const name_)
 {
 	this->name_ = name_;
@@ -4316,6 +4261,15 @@ auto ::Primitive_Symbols_::get_(p_string const name_) const -> ::Symbol_ const *
 	this->kind_ = kind_;
 	declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>());
 	children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
+	is_primitive_ = p_bool(false);
+}
+
+::Symbol_::Symbol_(p_string const name_, p_int const kind_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_)
+{
+	this->name_ = name_;
+	this->kind_ = kind_;
+	declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>());
+	this->children_ = children_;
 	is_primitive_ = p_bool(false);
 }
 
