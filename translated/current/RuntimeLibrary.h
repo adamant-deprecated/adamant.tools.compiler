@@ -240,17 +240,7 @@ _Noreturn inline void THROW_EXCEPTION_(const p_string& value)
 	throw std::runtime_error(value.cstr());
 }
 
-inline void assert(const p_bool condition, const p_string code, const p_string file, const std::int32_t line)
-{
-	if(!condition.Value)
-		throw std::runtime_error(
-			p_string("Assertion failed: ").op_Add(code)
-			.op_Add(p_string(", file ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).cstr());
-}
-
-#define assert_(condition) assert(condition, #condition, __FILE__, __LINE__)
-
-inline void assert_msg(const p_bool condition, const p_string code, const p_string message, const p_string file, const std::int32_t line)
+inline void assert(const p_bool condition, const p_string code, const p_string message, const p_string file, const std::int32_t line)
 {
 	if(!condition.Value)
 		throw std::runtime_error(
@@ -258,7 +248,8 @@ inline void assert_msg(const p_bool condition, const p_string code, const p_stri
 			.op_Add(", file ").op_Add(file).op_Add(", line ").op_Add(p_int(line)).cstr());
 }
 
-#define assert_msg_(condition, message) assert_msg(condition, #condition, message, __FILE__, __LINE__)
+#define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
+#define assert_msg_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
 
 _Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string function, const p_string file, const std::int32_t line)
 {
