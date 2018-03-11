@@ -1,3 +1,0 @@
-70
-Program exited due to error:
-Function Main_ not yet implemented, test-cases/runtimeLibrary/unimplemented.cpp, line 16

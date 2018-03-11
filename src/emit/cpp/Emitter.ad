@@ -10,6 +10,7 @@ public class Emitter
 	private var definitions: mut Source_File_Builder;
 
 	// TODO compute these in a semantic analysis phase
+	private var main_function_name: string;
 	private var main_function_return_type: string;
 	private var main_function_accepts_console: bool;
 	private var main_function_accepts_args: bool;
@@ -715,7 +716,8 @@ public class Emitter
 		else if declaration.kind == FunctionDeclaration
 		{
 			let name: string = declaration.children[1].get_text();
-			let is_main: bool = name == "Main";
+			let is_main: bool = name == "Main" or name == "main";
+			if is_main { main_function_name = name; }
 			let parameters: string = convert_parameter_list(declaration.children[2], is_main);
 			let return_type: Semantic_Node = declaration.children[4];
 			let cpp_type: string = convert_type(true, return_type);
@@ -805,12 +807,12 @@ public class Emitter
 
 		if main_function_return_type == "void"
 		{
-			definitions.WriteLine("Main_(" + args.ToString() + ");");
+			definitions.WriteLine(main_function_name + "_(" + args.ToString() + ");");
 			definitions.WriteLine("return 0;");
 		}
 		else
 		{
-			definitions.WriteLine("return Main_(" + args.ToString() + ").Value;");
+			definitions.WriteLine("return " + main_function_name + "_(" + args.ToString() + ").Value;");
 		}
 
 		definitions.EndBlock(); // try

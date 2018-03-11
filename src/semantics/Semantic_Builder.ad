@@ -196,7 +196,7 @@ public class Semantic_Builder
 		build_resource_manager(package);
 
 		build_function(package, "THROW_EXCEPTION");
-		build_function(package, "UNIMPLEMENTED");
+		build_function(package, "NOT_IMPLEMENTED");
 		build_function(package, "UNREACHABLE");
 		build_function(package, "assert");
 

@@ -250,14 +250,32 @@ inline void assert(const p_bool condition, const p_string code, const p_string f
 
 #define assert_(condition) assert(condition, #condition, __FILE__, __LINE__)
 
-_Noreturn inline void UNIMPLEMENTED(const p_string function, const p_string file, const std::int32_t line)
+inline void assert_msg(const p_bool condition, const p_string code, const p_string message, const p_string file, const std::int32_t line)
+{
+	if(!condition.Value)
+		throw std::runtime_error(
+			p_string("Assertion failed: ").op_Add(code).op_Add(", ").op_Add(message)
+			.op_Add(", file ").op_Add(file).op_Add(", line ").op_Add(p_int(line)).cstr());
+}
+
+#define assert_msg_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
+
+_Noreturn inline void NOT_IMPLEMENTED(const p_string function, const p_string file, const std::int32_t line)
 {
 	throw std::runtime_error(
 		p_string("Function ").op_Add(function)
 		.op_Add(p_string(" not yet implemented, ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).cstr());
 }
 
-#define UNIMPLEMENTED_(condition) UNIMPLEMENTED(__func__, __FILE__, __LINE__)
+_Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string function, const p_string file, const std::int32_t line)
+{
+	throw std::runtime_error(
+		p_string("Function ").op_Add(function)
+		.op_Add(p_string(" not yet implemented, ")).op_Add(message).op_Add(p_string(", ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).cstr());
+}
+
+#define NOT_IMPLEMENTED_(...) NOT_IMPLEMENTED( __VA_ARGS__ __VA_OPT__(,) _func__, __FILE__, __LINE__)
+
 
 _Noreturn inline void UNREACHABLE(const p_string function, const p_string file, const std::int32_t line)
 {
