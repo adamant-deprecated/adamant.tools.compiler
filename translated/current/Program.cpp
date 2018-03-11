@@ -1249,7 +1249,7 @@ auto ::Semantic_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding
 	else if (node_->kind_->op_Equal(VariableDeclaration_).Value)
 	{
 		::Semantic_Node_ *_Nonnull const identifier_ = node_->first_child_(Identifier_);
-		assert_(identifier_->op_NotEqual(::None));
+		assert_msg_(identifier_->op_NotEqual(::None), p_string("for '").op_Add(node_->get_text_())->op_Add(p_string("'")));
 		::Semantic_Node_ *_Nonnull const type_name_ = node_->children_->op_Element(p_int(3));
 		bind_type_name_(type_name_, scope_);
 		if (node_->children_->op_Magnitude()->op_Equal(p_int(6)).Value)
@@ -1769,7 +1769,7 @@ auto ::Semantic_Builder_::build_function_(::Symbol_ const *_Nonnull const parent
 
 ::Semantic_Node_::Semantic_Node_(::Syntax_Node_ const *_Nonnull const syntax_)
 {
-	assert_(syntax_->op_NotEqual(::None));
+	assert_msg_(syntax_->op_NotEqual(::None), p_string(""));
 	this->syntax_ = syntax_;
 	kind_ = syntax_->kind_;
 	is_missing_ = syntax_->is_missing_;
@@ -2065,7 +2065,7 @@ auto ::Symbol_::get_type_() const -> ::Type_ const *_Nullable
 	if (declarations_->op_Magnitude()->op_GreaterThan(p_int(0)).Value)
 	{
 		::Semantic_Node_ const *_Nonnull const declaration_ = declarations_->op_Element(p_int(0));
-		assert_(declaration_->op_NotEqual(::None));
+		assert_msg_(declaration_->op_NotEqual(::None), p_string("for '").op_Add(name_)->op_Add(p_string("'")));
 		return declaration_->type_;
 	}
 
@@ -3462,7 +3462,7 @@ auto ::Emitter_::convert_reference_type_(p_bool const mutable_binding_, ::Semant
 
 auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Semantic_Node_ const *_Nonnull type_, p_bool const optional_) -> p_string
 {
-	assert_(type_->op_NotEqual(::None));
+	assert_msg_(type_->op_NotEqual(::None), p_string(""));
 	p_bool const mutable_value_ = type_->kind_->op_Equal(MutableType_);
 	if (mutable_value_.Value)
 	{
@@ -3480,7 +3480,7 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Semantic_Node_ c
 	if (type_->kind_->op_Equal(OptionalType_).Value)
 	{
 		::Semantic_Node_ const *_Nonnull const optional_type_ = type_->children_->op_Element(p_int(0));
-		assert_(LogicalOr(optional_type_->kind_->op_Equal(MutableType_), [&] { return optional_type_->kind_->op_Equal(ImmutableType_); }));
+		assert_msg_(LogicalOr(optional_type_->kind_->op_Equal(MutableType_), [&] { return optional_type_->kind_->op_Equal(ImmutableType_); }), p_string("optional_type.kind=").op_Add(optional_type_->kind_));
 		if (optional_type_->is_value_type_().Value)
 		{
 			return p_string("p_optional<").op_Add(convert_type_(p_bool(true), optional_type_, p_bool(true)))->op_Add(p_string("> const"));
@@ -4236,7 +4236,7 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 
 ::Type_::Type_(::Symbol_ const *_Nonnull const symbol_)
 {
-	assert_(symbol_->op_NotEqual(::None));
+	assert_msg_(symbol_->op_NotEqual(::None), p_string(""));
 	this->symbol_ = symbol_;
 	is_value_type_ = symbol_->declares_value_type_();
 	if (is_value_type_.Value)
