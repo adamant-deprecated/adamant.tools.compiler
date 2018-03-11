@@ -249,7 +249,6 @@ inline void assert(const p_bool condition, const p_string code, const p_string m
 }
 
 #define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
-#define assert_msg_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
 
 _Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string function, const p_string file, const std::int32_t line)
 {
