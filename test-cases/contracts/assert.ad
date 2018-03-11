@@ -4,7 +4,7 @@ public Main() -> void
 	let y: int = 5;
 	let z: int = 6;
 
-	assert(x == y);
+	assert_msg(x == y, "x="+x+" y="+y);
 
-	assert(y == z);
+	assert_msg(y == z, "y="+y+" z="+z);
 }

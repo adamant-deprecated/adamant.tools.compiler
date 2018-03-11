@@ -16,8 +16,8 @@ auto Main_() -> void
 	p_int const x_ = p_int(5);
 	p_int const y_ = p_int(5);
 	p_int const z_ = p_int(6);
-	assert_(x_.op_Equal(y_));
-	assert_(y_.op_Equal(z_));
+	assert_msg_(x_.op_Equal(y_), p_string("x=").op_Add(x_)->op_Add(p_string(" y="))->op_Add(y_));
+	assert_msg_(y_.op_Equal(z_), p_string("y=").op_Add(y_)->op_Add(p_string(" z="))->op_Add(z_));
 }
 
 // Entry Point Adapter
