@@ -3,7 +3,7 @@ public class Binding_Scope
 	private let containing_scope: Binding_Scope?;
 	private let symbols: System.Collections.List<Symbol>;
 
-	public new(symbols: System.Collections.List<Symbol>, primitives: Primitive_Types)
+	public new(symbols: System.Collections.List<Symbol>, primitives: Primitive_Symbols)
 	{
 		self.containing_scope = none;
 		let scope_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();

@@ -3,14 +3,14 @@ public class Package
 {
 	public let compilation_units: System.Collections.List<mut Semantic_Node>;
 	public let symbol: Symbol;
-	public let primitive_types: Primitive_Types;
+	public let primitive_symbols: Primitive_Symbols;
 
 	// TODO constructor not adequately encapsulated to enforce invariants
-	public new(compilation_units: System.Collections.List<mut Semantic_Node>, primitive_types: Primitive_Types, symbol: Symbol)
+	public new(compilation_units: System.Collections.List<mut Semantic_Node>, primitive_symbols: Primitive_Symbols, symbol: Symbol)
 	{
 		self.compilation_units = compilation_units;
 		self.symbol = symbol;
-		self.primitive_types = primitive_types;
+		self.primitive_symbols = primitive_symbols;
 	}
 
 	public all_diagnostics(self) -> System.Collections.List<Diagnostic>

@@ -1,5 +1,5 @@
 // TODO this should be a const global object
-public class Primitive_Types
+public class Primitive_Symbols
 {
 	public let symbols: System.Collections.List<Symbol>;
 

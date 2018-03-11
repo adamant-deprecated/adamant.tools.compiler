@@ -3,7 +3,7 @@ public class Semantic_Binder
 {
 	public bind(self, package: Package) -> void
 	{
-		let global_scope: Binding_Scope = new Binding_Scope(package.symbol.children, package.primitive_types);
+		let global_scope: Binding_Scope = new Binding_Scope(package.symbol.children, package.primitive_symbols);
 		for let compilation_unit: mut Semantic_Node in package.compilation_units
 		{
 			bind(compilation_unit, global_scope);
