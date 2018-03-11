@@ -199,7 +199,6 @@ public class Semantic_Builder
 		build_function(package, "NOT_IMPLEMENTED");
 		build_function(package, "UNREACHABLE");
 		build_function(package, "assert");
-		build_function(package, "assert_msg");
 
 		let system: mut Symbol = build(package, "System", NamespaceDeclaration);
 

@@ -80,7 +80,7 @@ public class Symbol
 		if |declarations| > 0 // TODO implement an `is_empty()` or `any()` method
 		{
 			let declaration: Semantic_Node = declarations[0];
-			assert_msg(declaration =/= none, "for '"+name+"'");
+			assert(declaration =/= none, "for '"+name+"'");
 			return declaration.type;
 		}
 
