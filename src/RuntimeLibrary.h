@@ -303,7 +303,9 @@ namespace system_
 			if(length >= capacity)
 			{
 				int newCapacity = capacity == 0 ? 16 : capacity * 2;
-				T* newValues = new T[newCapacity];
+				// Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+				// Needed if T is a value type to avoid needing a default constructor
+				T* newValues = (T*)new char[newCapacity * sizeof(T)];
 				std::memcpy(newValues, values, length * sizeof(T));
 				values = newValues;
 				capacity = newCapacity;
