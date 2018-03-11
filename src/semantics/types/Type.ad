@@ -1,7 +1,8 @@
 public class Type
 {
 	public let kind: int;
-	public let namespace: Symbol?;
+	public let package: Package_Name?; // primitive types don't have a package
+	public let namespace: Namespace_Name?; // primitive types don't have a namespace
 	public let symbol: Symbol;
 	public let is_value_type: bool;
 	public let immutable: bool;
@@ -9,6 +10,8 @@ public class Type
 	public new(symbol: Symbol)
 	{
 		assert(symbol =/= none, "");
+		package = none;
+		namespace = none;
 		self.symbol = symbol;
 		is_value_type = symbol.declares_value_type();
 		if is_value_type
@@ -16,11 +19,12 @@ public class Type
 		else
 			{ kind = ReferenceType; }
 		immutable = true;
-		namespace = none;
 	}
 
 	private new(kind: int, symbol: Symbol, is_value_type: bool, immutable: bool)
 	{
+		package = none;
+		namespace = none;
 		self.kind = kind;
 		self.symbol = symbol;
 		self.is_value_type = is_value_type;
