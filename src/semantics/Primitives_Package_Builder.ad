@@ -15,14 +15,16 @@ public class Primitives_Package_Builder
 		// The primitives package has no compilation units because it has no source
 		let compilation_units: System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
 
-		let primitive_symbols: System.Collections.List<Symbol> = build_primitive_symbols();
+		let primitive_symbols: mut System.Collections.List<Symbol> = build_primitive_symbols();
+		assert(|primitive_symbols| > 0, "|primitive_symbols=" + |primitive_symbols|);
 
 		let package_symbol: Symbol = new Symbol(name.text, PackageSymbol, primitive_symbols);
+		assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
 
 		return new Package(name, references, compilation_units, package_symbol);
 	}
 
-	private build_primitive_symbols(self) -> System.Collections.List<Symbol>
+	private build_primitive_symbols(self) -> mut System.Collections.List<Symbol>
 	{
 		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 

@@ -6,7 +6,9 @@ public class Symbol
 	// TODO rename has_type
 	public let type: Type; // for variables and parameters, the type of the value they represent
 	public let declares_type: Type; // for class/struct/enum symbols, the type being declared
+	// TODO declarations should be immutable
 	public let declarations: mut System.Collections.List<Semantic_Node>;
+	// TODO children should be immutable
 	public let children: mut System.Collections.List<Symbol>;
 
 	public new(name: string)
@@ -24,6 +26,15 @@ public class Symbol
 		self.kind = kind;
 		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
+		is_primitive = false;
+	}
+
+	public new(name: string, kind: int, children: mut System.Collections.List<Symbol>)
+	{
+		self.name = name;
+		self.kind = kind;
+		declarations = new System.Collections.List<Semantic_Node>();
+		self.children = children;
 		is_primitive = false;
 	}
 
