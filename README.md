@@ -9,7 +9,7 @@ The compiler is under active development. It is in a very early stage, and there
 Platform | Status
 ---|---
 Windows | [![Build status](https://ci.appveyor.com/api/projects/status/uy8j809tc3u3cil3/branch/master?svg=true)](https://ci.appveyor.com/project/WalkerCodeRanger/adamant-compiler/branch/master)
-Linux | [![Build Status](https://travis-ci.org/adamant/Adamant.Compiler.svg?branch=master)](https://travis-ci.org/adamant/Adamant.Compiler)
+Linux | [![Build Status](https://travis-ci.org/adamant/adamant.tools.compiler.svg?branch=master)](https://travis-ci.org/adamant/adamant.tools.compiler)
 
 ## Implementation Notes
 

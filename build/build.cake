@@ -4,11 +4,12 @@
 // Fix up the working directory to be the root of the project even though we are in build\
 System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
 
-var target = Argument("target", "Default");
+var target = Argument("target", "Build");
 var testName = Argument<string>("test", null);
 string currentCommit = null;
 string sourceCommit = null;
 
+// Clean is used only by the rebuild steps, otherwise each thing cleans itself
 Task("Clean")
 	.Does(() =>
 	{
@@ -16,8 +17,7 @@ Task("Clean")
 		CleanDirectory("target");
 	});
 
-Task("Build-Previous")
-	.IsDependentOn("Clean")
+Task("Source-Commit")
 	.Does(() =>
 	{
 		var hasUncommitedChanges = Command("git", "status --porcelain=v2").Read().Any();
@@ -61,6 +61,26 @@ Task("Build-Previous")
 				throw new Exception("Couldn't find source to use for Build-Previous of the compiler");
 			}
 		}
+	});
+
+Task("Build-Previous")
+	.IsDependentOn("Source-Commit")
+	.WithCriteria(() => IsOutOfDate("target/previous/Program", sourceCommit))
+	.Does(() =>
+	{
+		// Delete this directory becuase we are going to move to it
+		if(DirectoryExists("translated/previous"))
+			DeleteDirectory("translated/previous", new DeleteDirectorySettings()
+			{
+				Recursive = true,
+				Force = true,
+			});
+		CleanDirectory("target/previous");
+
+		// When we pull the C++ source from the other branch, it is in these
+		// directories so we have to clean them out.
+		CleanDirectory("translated/current");
+		CleanDirectory("target/current");
 
 		Information("Getting source for previous");
 		Verbose("Checking out translated from previous source branch"); // Git commands don't have verbose output
@@ -73,13 +93,16 @@ Task("Build-Previous")
 		Information("Compiling previous C++");
 		EnsureDirectoryExists("target/previous");
 		CompileCpp("translated/previous/*.cpp", "target/previous/Program").Run();
+		SaveVersionInfo("target/previous/Program", sourceCommit);
 	});
 
 Task("Build-Current")
-	.IsDependentOn("Clean")
 	.IsDependentOn("Build-Previous")
 	.Does(() =>
 	{
+		CleanDirectory("translated/current");
+		CleanDirectory("target/current");
+
 		Information("Compiling Adamant to C++");
 		EnsureDirectoryExists("translated/current");
 		CompileAdamant("previous", "current").Run();
@@ -90,7 +113,6 @@ Task("Build-Current")
 	});
 
 Task("Test-Current")
-	.IsDependentOn("Clean")
 	.IsDependentOn("Build-Current")
 	.Does(() =>
 	{
@@ -98,10 +120,12 @@ Task("Test-Current")
 	});
 
 Task("Build-Bootstrapped")
-	.IsDependentOn("Clean")
 	.IsDependentOn("Build-Current")
 	.Does(() =>
 	{
+		CleanDirectory("translated/bootstrapped");
+		CleanDirectory("target/bootstrapped");
+
 		Information("Compiling Adamant to C++");
 		EnsureDirectoryExists("translated/bootstrapped");
 		CompileAdamant("current", "bootstrapped").Run();
@@ -112,7 +136,6 @@ Task("Build-Bootstrapped")
 	});
 
 Task("Test-Bootstrapped")
-	.IsDependentOn("Clean")
 	.IsDependentOn("Build-Bootstrapped")
 	.Does(() =>
 	{
@@ -120,10 +143,12 @@ Task("Test-Bootstrapped")
 	});
 
 Task("Build-Double-Bootstrapped")
-	.IsDependentOn("Clean")
 	.IsDependentOn("Build-Bootstrapped")
 	.Does(() =>
 	{
+		CleanDirectory("translated/double-bootstrapped");
+		CleanDirectory("target/double-bootstrapped");
+
 		Information("Compiling Adamant to C++");
 		EnsureDirectoryExists("translated/double-bootstrapped");
 		CompileAdamant("bootstrapped", "double-bootstrapped").Run();
@@ -151,7 +176,6 @@ Task("Build-Double-Bootstrapped")
 	});
 
 Task("Test-Double-Bootstrapped")
-	.IsDependentOn("Clean")
 	.IsDependentOn("Build-Double-Bootstrapped")
 	.Does(() =>
 	{
@@ -160,9 +184,10 @@ Task("Test-Double-Bootstrapped")
 
 // Builds all the expected values of the test cases
 Task("Build-Expected")
-	.IsDependentOn("Clean")
 	.Does(() =>
 	{
+		CleanDirectory("target/test-cases");
+
 		var wd = MakeAbsolute(Directory("."));
 		var testCases = GetFiles("test-cases/**/*.cpp").ToList();
 		if(testName != null)
@@ -179,8 +204,8 @@ Task("Build-Expected")
 		Information("Compiled {0} Test Case Expected Outputs", testCases.Count);
 	});
 
-// Runs all the expected values of the test cases
-Task("Run-Expected")
+// Runs all the expected values of the test cases and checks the output
+Task("Test-Expected")
 	.IsDependentOn("Build-Expected")
 	.Does(() =>
 	{
@@ -211,17 +236,27 @@ Task("Run-Expected")
 			throw new Exception("Run-Expected Failed");
 	});
 
-Task("Default")
+// This is the default task
+Task("Build")
 	.IsDependentOn("Build-Current")
 	.IsDependentOn("Test-Current")
 	.IsDependentOn("Build-Bootstrapped")
 	.IsDependentOn("Test-Bootstrapped");
 
+// Force clean and build
+Task("Rebuild")
+	.IsDependentOn("Clean")
+	.IsDependentOn("Build");
+
 Task("All")
 	.IsDependentOn("Test-Current")
-	.IsDependentOn("Run-Expected")
+	.IsDependentOn("Test-Expected")
 	.IsDependentOn("Test-Bootstrapped")
 	.IsDependentOn("Test-Double-Bootstrapped");
+
+Task("Rebuild-All")
+	.IsDependentOn("Clean")
+	.IsDependentOn("All");
 
 Task("Commit-Translated")
 	// technically, this is all that is needed,
@@ -293,9 +328,10 @@ Task("Commit-Translated")
 	});
 
 Task("CI")
-	.IsDependentOn("All")
+	.IsDependentOn("Rebuild-All") // Be certian we are starting fresh
 	.IsDependentOn("Commit-Translated");
 
+/// This task provides commands to clean up translated/* tags that aren't needed
 Task("Clean-Translated")
 	.Does(() =>
 	{
@@ -327,12 +363,14 @@ RunTarget(target);
 
 void Test(string version)
 {
+	var outputDir = Directory(string.Format("translated/{0}-test-cases", version));
+	CleanDirectory(outputDir);
+
 	var compiler = string.Format("target/{0}/Program", version);
 	var testCases = GetFiles("test-cases/**/*.ad").ToList();
 	if(testName != null)
 		testCases = testCases.Where(c => c.FullPath.Contains(testName)).ToList();
 	var testCasesDir = MakeAbsolute(Directory("test-cases"));
-	var outputDir = Directory(string.Format("translated/{0}-test-cases", version));
 	var failed = 0;
 	foreach(var testCase in testCases)
 	{
@@ -446,6 +484,58 @@ ConsoleCommand CompileCpp(string[] sourceGlobs, FilePath output, FilePath includ
 	var sources = string.Join(" ", sourceGlobs.SelectMany(glob => GetFiles(glob)).Select(file => wd.GetRelativePath(file)));
 
 	return Command("clang++", sources + " -o " + output + options);
+}
+
+bool IsOutOfDate(FilePath file, string commit)
+{
+	if(IsRunningOnWindows())
+	{
+		file = file.AppendExtension("exe");
+	}
+
+	Verbose("Checking if {0} matches commit {1}", file, commit);
+
+	// No file, it is out of date
+	if(!FileExists(file)) return true;
+	Verbose(" File exists {0}", file);
+
+	var versionFile = file.AppendExtension("version");
+
+	// No info on the current version, assume out of date
+	if(!FileExists(versionFile)) return true;
+	Verbose(" Version file exists {0}", versionFile);
+
+	// Read version info
+	var lines = FileReadLines(versionFile);
+	var versionHash = lines[0];
+	var versionCommit = lines[1];
+
+	// Version is for different commit, out of date
+	if(versionCommit != commit) return true;
+	Verbose(" Commits match {0}", commit);
+
+	// If file hash doesn't match, its been modified, out of date
+	var hash = CalculateFileHash(file, HashAlgorithm.MD5);
+	if(versionHash != hash.ToHex()) return true;
+	Verbose(" Hashes match {0}", versionHash);
+
+	// The file is up to date and doesn't need rebuilt
+	return false;
+}
+
+void SaveVersionInfo(FilePath file, string commit)
+{
+	if(IsRunningOnWindows())
+	{
+		file = file.AppendExtension("exe");
+	}
+
+	Verbose("Saving version info of {0}, commit {1}", file, commit);
+
+	var versionFile = file.AppendExtension("version");
+	var hash = CalculateFileHash(file, HashAlgorithm.MD5);
+	var lines = new[] {hash.ToHex(), commit};
+	FileWriteLines(versionFile, lines);
 }
 
 bool GitTagExists(string tag)
