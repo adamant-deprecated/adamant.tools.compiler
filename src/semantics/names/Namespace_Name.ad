@@ -10,3 +10,9 @@ public class Namespace_Name
 		self.segments = segments;
 	}
 }
+
+// TODO make this an associated function
+public global_namespace() -> Namespace_Name
+{
+	return new Namespace_Name(new System.Collections.List<string>());
+}

@@ -1,5 +1,6 @@
 /// Builds a package which represents the primitives
 // TODO this could probably be better done with nested functions.
+// Note: Primitives are special symbols that are effectively in the global namespace
 public class Primitives_Package_Builder
 {
 	public build(self) -> Package
@@ -15,7 +16,7 @@ public class Primitives_Package_Builder
 		// The primitives package has no compilation units because it has no source
 		let compilation_units: System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
 
-		let primitive_symbols: mut System.Collections.List<Symbol> = build_primitive_symbols();
+		let primitive_symbols: mut System.Collections.List<Symbol> = build_primitive_symbols(name);
 		assert(|primitive_symbols| > 0, "|primitive_symbols=" + |primitive_symbols|);
 
 		let package_symbol: Symbol = new Symbol(name.text, PackageSymbol, primitive_symbols);
@@ -24,55 +25,61 @@ public class Primitives_Package_Builder
 		return new Package(name, references, compilation_units, package_symbol);
 	}
 
-	private build_primitive_symbols(self) -> mut System.Collections.List<Symbol>
+	private build_primitive_symbols(self, package: Package_Name) -> mut System.Collections.List<Symbol>
 	{
+		let global: Namespace_Name = global_namespace();
 		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
-		symbols.Add(build_primitive("void"));
-		symbols.Add(build_primitive("never"));
+		symbols.Add(build_primitive("void", package, global));
+		symbols.Add(build_primitive("never", package, global));
 
-		symbols.Add(build_primitive("bool"));
-		symbols.Add(build_primitive("code_point"));
-		symbols.Add(build_primitive("string"));
+		symbols.Add(build_primitive("bool", package, global));
+		symbols.Add(build_primitive("code_point", package, global));
+		symbols.Add(build_primitive("string", package, global));
 
-		symbols.Add(build_primitive("int8"));
-		symbols.Add(build_primitive("int16"));
-		symbols.Add(build_primitive("int"));
-		symbols.Add(build_primitive("int64"));
-		symbols.Add(build_primitive("int128"));
+		symbols.Add(build_primitive("int8", package, global));
+		symbols.Add(build_primitive("int16", package, global));
+		symbols.Add(build_primitive("int", package, global));
+		symbols.Add(build_primitive("int64", package, global));
+		symbols.Add(build_primitive("int128", package, global));
 
-		symbols.Add(build_primitive("byte"));
-		symbols.Add(build_primitive("uint16"));
-		symbols.Add(build_primitive("uint"));
-		symbols.Add(build_primitive("uint64"));
-		symbols.Add(build_primitive("uint128"));
+		symbols.Add(build_primitive("byte", package, global));
+		symbols.Add(build_primitive("uint16", package, global));
+		symbols.Add(build_primitive("uint", package, global));
+		symbols.Add(build_primitive("uint64", package, global));
+		symbols.Add(build_primitive("uint128", package, global));
 
-		symbols.Add(build_primitive("float32"));
-		symbols.Add(build_primitive("float"));
-		symbols.Add(build_primitive("float128"));
+		symbols.Add(build_primitive("float32", package, global));
+		symbols.Add(build_primitive("float", package, global));
+		symbols.Add(build_primitive("float128", package, global));
 
-		build_fixed_point_primitives(symbols, 8);
-		build_fixed_point_primitives(symbols, 16);
-		build_fixed_point_primitives(symbols, 32);
-		build_fixed_point_primitives(symbols, 64);
+		build_fixed_point_primitives(symbols, 8, package, global);
+		build_fixed_point_primitives(symbols, 16, package, global);
+		build_fixed_point_primitives(symbols, 32, package, global);
+		build_fixed_point_primitives(symbols, 64, package, global);
 
-		symbols.Add(build_primitive("decimal32"));
-		symbols.Add(build_primitive("decimal"));
-		symbols.Add(build_primitive("decimal128"));
+		symbols.Add(build_primitive("decimal32", package, global));
+		symbols.Add(build_primitive("decimal", package, global));
+		symbols.Add(build_primitive("decimal128", package, global));
 
-		symbols.Add(build_primitive("size"));
-		symbols.Add(build_primitive("offset"));
+		symbols.Add(build_primitive("size", package, global));
+		symbols.Add(build_primitive("offset", package, global));
 
 		return symbols;
 	}
 
-	private build_primitive(name: string) -> Symbol
+	private build_primitive(name: string, package: Package_Name, namespace: Namespace_Name) -> Symbol
 	{
-		let type: Type = new Type(ValueType, name, true, true, true);
+		let type: Type = new Type(package, namespace, ValueType, name, true, true, true);
 		return new Symbol(name, type);
 	}
 
-	private build_fixed_point_primitives(symbols: mut System.Collections.List<Symbol>, bits: int /*size*/) -> void
+	private build_fixed_point_primitives(
+		symbols: mut System.Collections.List<Symbol>,
+		bits: int /*size*/,
+		package: Package_Name,
+		namespace: Namespace_Name)
+		-> void
 	{
 		// TODO implement when language features make it easier
 		// for let i: usize in 1..usize-1

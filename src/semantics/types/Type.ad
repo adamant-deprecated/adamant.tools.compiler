@@ -1,8 +1,8 @@
 public class Type
 {
 	public let kind: int;
-	public let package: Package_Name?; // primitive types don't have a package
-	public let namespace: Namespace_Name?; // primitive types don't have a namespace
+	public let package: Package_Name;
+	public let namespace: Namespace_Name;
 	public let name: string;
 	public let is_primitive: bool;
 	public let is_value_type: bool;
@@ -23,10 +23,10 @@ public class Type
 		immutable = true;
 	}
 
-	public new(kind: int, name: string, is_primitive: bool, is_value_type: bool, immutable: bool)
+	public new(package: Package_Name, namespace: Namespace_Name, kind: int, name: string, is_primitive: bool, is_value_type: bool, immutable: bool)
 	{
-		package = none;
-		namespace = none;
+		self.package = package;
+		self.namespace = namespace;
 		self.kind = kind;
 		self.name = name;
 		self.is_primitive = is_primitive;
@@ -36,12 +36,13 @@ public class Type
 
 	public make_mutable(self) -> Type
 	{
-		return new Type(kind, name, is_primitive, is_value_type, false);
+		return new Type(package, namespace, kind, name, is_primitive, is_value_type, false);
 	}
 
 	public make_immutable(self) -> Type
 	{
-		return new Type(kind, name, is_primitive, is_value_type, true);
+		return new Type(package, namespace,
+		kind, name, is_primitive, is_value_type, true);
 	}
 
 	// TODO use or remove this
