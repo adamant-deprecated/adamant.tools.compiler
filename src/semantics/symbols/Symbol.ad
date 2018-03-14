@@ -38,15 +38,14 @@ public class Symbol
 		is_primitive = false;
 	}
 
-	// TODO only for use by new_Symbol_primitive
-	public new(name: string, kind: int, is_primitive: bool)
-	{
-		self.name = name;
-		self.kind = kind;
-		declarations = new System.Collections.List<Semantic_Node>();
-		children = new System.Collections.List<Symbol>();
-		self.is_primitive = is_primitive;
-	}
+	// public new(name: string, kind: int, is_primitive: bool)
+	// {
+	// 	self.name = name;
+	// 	self.kind = kind;
+	// 	declarations = new System.Collections.List<Semantic_Node>();
+	// 	children = new System.Collections.List<Symbol>();
+	// 	self.is_primitive = is_primitive;
+	// }
 
 	// TODO name this new Symbol.Primitive()
 	// Note: no declarations and node children implies primitive
@@ -114,11 +113,4 @@ public class Symbol
 
 		return none;
 	}
-}
-
-// TODO use a named constructor
-// TODO got strange error from leaving off the return type from this function
-public new_Symbol_primitive(name: string) -> Symbol
-{
-	return new Symbol(name, SpecialSymbol, true);
 }

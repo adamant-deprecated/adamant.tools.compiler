@@ -8,6 +8,7 @@ public class Type
 	public let is_value_type: bool;
 	public let immutable: bool; // TODO need to distinguish if the type is inherently immutable
 
+	// TODO remove this constructor
 	public new(symbol: Symbol)
 	{
 		assert(symbol =/= none, "");
