@@ -71,7 +71,7 @@ public class Primitives_Package_Builder
 	private build_primitive(name: string, package: Package_Name, namespace: Namespace_Name) -> Symbol
 	{
 		let type: Type = new Type(package, namespace, ValueType, name, true, true, true);
-		return new Symbol(name, type);
+		return new Symbol.primitive(name, type);
 	}
 
 	private build_fixed_point_primitives(

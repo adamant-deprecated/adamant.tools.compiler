@@ -5,7 +5,7 @@ public class Semantic_Builder
 	public build_symbols(self, compilation_units: System.Collections.List<mut Semantic_Node>) -> Symbol
 	{
 		// TODO eventually the package symbol should have a name so that we can look up names in front of the package qualifier
-		let package_symbol: mut Symbol = new Symbol("", PackageSymbol);
+		let package_symbol: mut Symbol = new Symbol("default", PackageSymbol);
 		for let compilation_unit: mut Semantic_Node in compilation_units
 		{
 			if compilation_unit.kind =/= CompilationUnit

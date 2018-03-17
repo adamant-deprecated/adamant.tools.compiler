@@ -21,10 +21,10 @@ public class Line_Info
 		let index: int = lineNumber - 1; // lineNumber is one based
 		let start: int = lineStarts[index];
 		if index == |lineStarts| - 1 // last line
-			{ return TextLineFromTo(source, start, source.ByteLength()); }
+			{ return new Text_Line.spanning(source, start, source.ByteLength()); }
 
 		let end: int = lineStarts[index + 1];
-		return TextLineFromTo(source, start, end);
+		return new Text_Line.spanning(source, start, end);
 	}
 
 	public LineNumber(self, offset: int) -> int

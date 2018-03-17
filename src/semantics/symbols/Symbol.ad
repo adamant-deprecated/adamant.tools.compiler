@@ -38,18 +38,7 @@ public class Symbol
 		is_primitive = false;
 	}
 
-	// public new(name: string, kind: int, is_primitive: bool)
-	// {
-	// 	self.name = name;
-	// 	self.kind = kind;
-	// 	declarations = new System.Collections.List<Semantic_Node>();
-	// 	children = new System.Collections.List<Symbol>();
-	// 	self.is_primitive = is_primitive;
-	// }
-
-	// TODO name this new Symbol.Primitive()
-	// Note: no declarations and node children implies primitive
-	public new(name: string, declares_type: Type)
+	public new primitive(name: string, declares_type: Type)
 	{
 		assert(name.ByteLength() > 0, "");
 		assert(declares_type =/= none, "name="+name);

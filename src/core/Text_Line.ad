@@ -11,16 +11,16 @@ public class Text_Line
 		byte_length = length;
 	}
 
+	public new spanning(source: Source_Text, start: int, end: int)
+	{
+		self.source = source;
+		self.start = start;
+		self.byte_length = end - start;
+	}
+
 	// TODO get Property
 	public End(self) -> int
 	{
 		return start + byte_length;
 	}
-}
-
-// TODO Make this a named constructor
-// end is the character after the last character on the line
-public TextLineFromTo(source: Source_Text, start: int, end: int) -> Text_Line
-{
-	return new Text_Line(source, start, end - start);
 }
