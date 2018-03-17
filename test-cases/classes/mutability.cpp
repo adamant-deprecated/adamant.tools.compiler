@@ -14,6 +14,7 @@ class Mutable_Object_
 public:
 	p_bool op_Equal(Mutable_Object_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Mutable_Object_ const * other) const { return this != other; }
+	auto construct() -> ::Mutable_Object_* { return this; }
 };
 
 class immutable_object_
@@ -21,6 +22,7 @@ class immutable_object_
 public:
 	p_bool op_Equal(immutable_object_ const * other) const { return this == other; }
 	p_bool op_NotEqual(immutable_object_ const * other) const { return this != other; }
+	auto construct() -> ::immutable_object_* { return this; }
 };
 
 // Global Definitions
@@ -29,8 +31,8 @@ public:
 
 auto Main_() -> void
 {
-	::Mutable_Object_ const *_Nonnull const m_ = (new ::Mutable_Object_());
-	::immutable_object_ const *_Nonnull const i_ = (new ::immutable_object_());
+	::Mutable_Object_ const *_Nonnull const m_ = (new ::Mutable_Object_())->construct();
+	::immutable_object_ const *_Nonnull const i_ = (new ::immutable_object_())->construct();
 }
 
 // Entry Point Adapter

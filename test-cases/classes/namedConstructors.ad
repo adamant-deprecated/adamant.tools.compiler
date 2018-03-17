@@ -1,0 +1,30 @@
+public class C
+{
+	public let name: string;
+	public let kind: int;
+
+	public new(name: string)
+	{
+		self.name = name;
+		self.kind = 0;
+	}
+
+	public new one(name: string)
+	{
+		self.name = name;
+		self.kind = 1;
+	}
+
+	public new two(name: string)
+	{
+		self.name = name;
+		self.kind = 2;
+	}
+}
+
+public Main() -> void
+{
+	new C("0");
+	new C.one("1");
+	new C.two("2");
+}

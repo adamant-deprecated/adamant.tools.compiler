@@ -8,7 +8,7 @@ auto Main_() -> void;
 
 // Class Declarations
 
-struct Test_
+struct Test_ final
 {
 public:
 	Test_ * operator->() { return this; }
@@ -16,7 +16,7 @@ public:
 	Test_ & operator* () { return *this; }
 	Test_ const & operator* () const { return *this; }
 	p_string name_;
-	Test_(p_string const name_);
+	static auto construct(p_string const name_) -> ::Test_;
 	auto method_() const -> p_string;
 };
 
@@ -24,19 +24,22 @@ public:
 
 // Definitions
 
-::Test_::Test_(p_string const name_)
+auto ::Test_::construct(p_string const name_) -> ::Test_
 {
-	this->name_ = name_;
+	::Test_ self;
+	self->name_ = name_;
+	return self;
 }
 
 auto ::Test_::method_() const -> p_string
 {
+	auto self = this;
 	return name_;
 }
 
 auto Main_() -> void
 {
-	::Test_ const t_ = ::Test_(p_string("Bob"));
+	::Test_ const t_ = ::Test_::construct(p_string("Bob"));
 	t_.method_();
 }
 

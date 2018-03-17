@@ -18,7 +18,7 @@ auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *_Nonn
 	p_int const i_ = x_->op_Add(p_int(2));
 	p_int j_ = y_->op_Subtract(p_int(23));
 	j_ = i_;
-	::System_::Text_::String_Builder_ *_Nonnull const stringA_ = (new ::System_::Text_::String_Builder_(p_string("Hello")));
+	::System_::Text_::String_Builder_ *_Nonnull const stringA_ = (new ::System_::Text_::String_Builder_())->construct(p_string("Hello"));
 	::System_::Text_::String_Builder_ const *_Nonnull stringB_;
 	stringB_ = stringA_;
 	return stringA_;

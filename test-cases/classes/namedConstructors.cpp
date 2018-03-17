@@ -14,10 +14,10 @@ public:
 	p_bool op_Equal(C_ const * other) const { return this == other; }
 	p_bool op_NotEqual(C_ const * other) const { return this != other; }
 	p_string name_;
+	p_int kind_;
 	auto construct(p_string const name_) -> ::C_*;
-	auto method_() const -> p_string;
-private:
-	auto double_name_() const -> p_string;
+	auto construct_one(p_string const name_) -> ::C_*;
+	auto construct_two(p_string const name_) -> ::C_*;
 };
 
 // Global Definitions
@@ -28,25 +28,31 @@ auto ::C_::construct(p_string const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
+	self->kind_ = p_int(0);
 	return self;
 }
 
-auto ::C_::method_() const -> p_string
+auto ::C_::construct_one(p_string const name_) -> ::C_*
 {
-	auto self = this;
-	return double_name_();
+	::C_* self = this;
+	self->name_ = name_;
+	self->kind_ = p_int(1);
+	return self;
 }
 
-auto ::C_::double_name_() const -> p_string
+auto ::C_::construct_two(p_string const name_) -> ::C_*
 {
-	auto self = this;
-	return name_->op_Add(name_);
+	::C_* self = this;
+	self->name_ = name_;
+	self->kind_ = p_int(2);
+	return self;
 }
 
 auto Main_() -> void
 {
-	::C_ const *_Nonnull const c_ = (new ::C_())->construct(p_string("Bob"));
-	c_->method_();
+	(new ::C_())->construct(p_string("0"));
+	(new ::C_())->construct_one(p_string("1"));
+	(new ::C_())->construct_two(p_string("2"));
 }
 
 // Entry Point Adapter

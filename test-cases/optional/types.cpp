@@ -14,6 +14,7 @@ class Test_
 public:
 	p_bool op_Equal(Test_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Test_ const * other) const { return this != other; }
+	auto construct() -> ::Test_* { return this; }
 };
 
 // Global Definitions
@@ -25,7 +26,7 @@ auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_opti
 	p_optional<p_int> const z_ = ::None;
 	::Test_ const *_Nullable const t_ = ::None;
 	::System_::Text_::String_Builder_ *_Nullable const sb_ = ::None;
-	::System_::Collections_::List_<p_optional<p_int> const> const *_Nonnull const l_ = (new ::System_::Collections_::List_<p_optional<p_int> const>());
+	::System_::Collections_::List_<p_optional<p_int> const> const *_Nonnull const l_ = (new ::System_::Collections_::List_<p_optional<p_int> const>())->construct();
 	::Test_ *_Nullable const m_ = ::None;
 	p_optional<p_optional<p_int> const> const d_ = ::None;
 	return ::None;

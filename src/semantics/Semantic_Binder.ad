@@ -160,7 +160,7 @@ public class Semantic_Binder
 		}
 		else if node.kind == NewExpression
 		{
-			bind_type_name(node.children[1], scope); // Type
+			bind_constructor_name(node.children[1], scope); // Type
 			bind(node.children[2], scope); // Call Arguments
 		}
 		else if node.kind == NotExpression
@@ -375,6 +375,45 @@ public class Semantic_Binder
 		{
 			THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` unimplemented node type " + node.kind);
 		}
+	}
+
+
+	private bind_constructor_name(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
+	{
+		if node.kind == QualifiedName
+			and node.children[2].kind == IdentifierName
+		{
+			// It could be a named constructor call
+			bind_type_name(node.children[0], scope);
+			let qualifier: mut Semantic_Node = node.children[0];
+			let name: mut Semantic_Node = node.children[2];
+			let constructor_name: string = "new_" + name.get_text();
+			let constructor_symbol: Symbol? = qualifier.symbol.get(constructor_name, SpecialSymbol);
+			if constructor_symbol =/= none
+			{
+				name.bind_symbol(constructor_symbol);
+				// TODO it doesn't have a type does it?
+			}
+			else
+			{
+				// TODO this is duplicated from bind_type_name
+				let symbol: Symbol = qualifier.symbol.get(name.get_text(), IdentifierSymbol);
+				if symbol == none
+				{
+					add_resolution_error(name);
+				}
+				else
+				{
+					name.bind_symbol(symbol);
+					name.bind_type(symbol.get_type());
+					node.bind_type(symbol.get_type());
+					// TODO transition away from using symbols at higher levels, use types instead
+					node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
+				}
+			}
+		}
+		else
+			{ bind_type_name(node, scope); }
 	}
 
 	private add_resolution_error(node: Semantic_Node) -> void

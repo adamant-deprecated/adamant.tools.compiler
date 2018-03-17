@@ -14,7 +14,7 @@ public:
 	p_bool op_Equal(C_ const * other) const { return this == other; }
 	p_bool op_NotEqual(C_ const * other) const { return this != other; }
 	p_string name_;
-	C_(p_string const name_);
+	auto construct(p_string const name_) -> ::C_*;
 	auto method_() const -> p_string;
 };
 
@@ -22,19 +22,22 @@ public:
 
 // Definitions
 
-::C_::C_(p_string const name_)
+auto ::C_::construct(p_string const name_) -> ::C_*
 {
-	this->name_ = name_;
+	::C_* self = this;
+	self->name_ = name_;
+	return self;
 }
 
 auto ::C_::method_() const -> p_string
 {
+	auto self = this;
 	return name_;
 }
 
 auto Main_() -> void
 {
-	p_string const s_ = (new ::C_(p_string("Bob")))->method_();
+	p_string const s_ = (new ::C_())->construct(p_string("Bob"))->method_();
 }
 
 // Entry Point Adapter

@@ -146,6 +146,7 @@ public class Emitter
 
 	private convert_parameter_list(mut self, parameter_list: Semantic_Node, is_main_function: bool) -> string
 	{
+		assert(parameter_list.kind == ParameterList, "parameter_list.kind=" + parameter_list.kind);
 		let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
 		builder.Append("(");
 		var first_parameter: bool = true;
@@ -189,15 +190,38 @@ public class Emitter
 	{
 		if syntax.kind == NewExpression
 		{
-			let type: Semantic_Node = syntax.children[1];
-			let is_value_type: bool = type.is_value_type();
-			if not is_value_type // place value types on the stack in C++ by not using new
-				{ builder.Write("(new "); }
-			builder.Write(convert_type_name(type));
+			var constructor_name: string = "construct";
+			var type: Semantic_Node = syntax.children[1];
+			if type.kind == QualifiedName
+			{
+				let name: Semantic_Node = type.children[2];
+
+				if name.kind == IdentifierName
+					and name.symbol.kind == SpecialSymbol
+					and not name.symbol.is_primitive
+				{
+					// Named constructor
+					constructor_name = "construct_" + name.get_text();
+					type = type.children[0];
+				}
+			}
+
+			if type.is_value_type()
+			{
+				// place value types on the stack in C++ by not using new
+				builder.Write(convert_type_name(type));
+				builder.Write("::");
+				builder.Write(constructor_name);
+			}
+			else
+			{
+				builder.Write("(new ");
+				builder.Write(convert_type_name(type));
+				builder.Write("())->");
+				builder.Write(constructor_name);
+			}
 			let argumentList: Semantic_Node = syntax.children[2];
 			convert_expression(argumentList, builder);
-			if not is_value_type
-				{ builder.Write(")"); }
 		}
 		else if syntax.kind == ArgumentList
 		{
@@ -246,7 +270,7 @@ public class Emitter
 		}
 		else if syntax.kind == SelfExpression
 		{
-			builder.Write("this");
+			builder.Write("self");
 		}
 		else if syntax.kind == NumericLiteralExpression
 		{
@@ -559,13 +583,46 @@ public class Emitter
 		}
 		else
 		{
-			definitions.Error("Could not emit statement of type " + statement.kind);
+			NOT_IMPLEMENTED("statement.kind=" + statement.kind);
 		}
 	}
 
-	private emit_member_declaration(mut self, member: Semantic_Node, class_name: string, current_access_level: int) -> int
+	private emit_method_body(mut self, block: Semantic_Node, is_associated_function: bool) -> void
 	{
-		var access_modifer: int = member.children[0].kind;
+		definitions.BeginBlock();
+		if not is_associated_function
+		{
+			definitions.WriteLine("auto self = this;");
+		}
+		for let statement: Semantic_Node in block.statements()
+		{
+			emit_statement(statement);
+		}
+		definitions.EndBlock();
+	}
+
+	private emit_constructor_body(mut self, block: Semantic_Node, self_type: string, is_value_type: bool) -> void
+	{
+		// TODO this doesn't support explicit return from constructors
+		definitions.BeginBlock();
+		if is_value_type
+		{
+			definitions.WriteLine(self_type + " self;");
+		}
+		else
+		{
+			definitions.WriteLine(self_type + " self = this;");
+		}
+		for let statement: Semantic_Node in block.statements()
+		{
+			emit_statement(statement);
+		}
+		definitions.WriteLine("return self;");
+		definitions.EndBlock();
+	}
+
+	private emit_access_modifer(mut self, current_access_level: int, access_modifer: int) -> int
+	{
 		if access_modifer =/= current_access_level
 		{
 			// We avoid the indent by using end_line()
@@ -573,7 +630,7 @@ public class Emitter
 				or access_modifer == InternalKeyword
 			{
 				class_declarations.EndLine("public:");
-				access_modifer = PublicKeyword;
+				return PublicKeyword;
 			}
 			else if access_modifer == ProtectedKeyword
 			{
@@ -588,14 +645,30 @@ public class Emitter
 				THROW_EXCEPTION("Invalid access modifier in Emitter.emit_member_declaration(). kind is " + access_modifer);
 			}
 		}
+		return access_modifer;
+	}
+
+	private emit_member_declaration(mut self, member: Semantic_Node, class_name: string, is_value_type: bool, current_access_level: int) -> int
+	{
+		var access_modifer: int = member.children[0].kind;
+		access_modifer = emit_access_modifer(current_access_level, access_modifer);
 		if member.kind == ConstructorDeclaration
 		{
-			let parameters: string = convert_parameter_list(member.children[2]);
-			// Write out the function declaration for C++ so we can call functions defined after others
-			class_declarations.WriteLine(class_name + "_" + parameters + ";");
+			let parameters: string = convert_parameter_list(member.first_child(ParameterList));
+			var full_name: string = "construct";
+			let constructor_name: Semantic_Node? = member.first_child(Identifier);
+			if constructor_name =/= none
+				{ full_name = "construct_" + constructor_name.get_text(); }
+			var return_type: string = "::" + class_name + "_";
+			if not is_value_type
+				{ return_type = return_type + "*"; }
+			// Write out the declaration for C++ so we can call functions defined after others
+			class_declarations.BeginLine("");
+			if is_value_type { class_declarations.Write("static "); }
+			class_declarations.EndLine("auto " + full_name + parameters + " -> " + return_type + ";");
 			definitions.ElementSeparatorLine();
-			definitions.WriteLine("::" + class_name + "_::" + class_name + "_" + parameters + "");
-			emit_statement(member.children[3]);
+			definitions.WriteLine("auto ::" + class_name + "_::" + full_name + parameters + " -> " + return_type);
+			emit_constructor_body(member.first_child(Block), return_type, is_value_type);
 		}
 		else if member.kind == FieldDeclaration
 		{
@@ -625,7 +698,7 @@ public class Emitter
 			definitions.ElementSeparatorLine();
 			definitions.WriteLine("auto ::" + class_name + "_::" + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type);
 			let block: Semantic_Node = member.children[5];
-			emit_statement(block);
+			emit_method_body(block, is_associated_function);
 		}
 		else
 		{
@@ -633,6 +706,23 @@ public class Emitter
 		}
 
 		return access_modifer;
+	}
+
+	private emit_default_constructor(mut self, type_name: string, is_value_type: bool, current_access_level: int) -> void
+	{
+		emit_access_modifer(current_access_level, PublicKeyword);
+
+		var return_type: string = "::" + type_name + "_";
+		if not is_value_type
+			{ return_type = return_type + "*"; }
+		// Write out the declaration for C++ so we can call functions defined after others
+		class_declarations.BeginLine("");
+		if is_value_type { class_declarations.Write("static "); }
+		class_declarations.Write("auto construct() -> " + return_type);
+		if is_value_type
+			{ class_declarations.EndLine(" { return " + type_name + "_(); }"); }
+		else
+			{ class_declarations.EndLine(" { return this; }"); }
 	}
 
 	private emit_declaration(mut self, declaration: Semantic_Node) -> void
@@ -662,9 +752,15 @@ public class Emitter
 			class_declarations.WriteLine("p_bool op_Equal(" + class_name + "_ const * other) const { return this == other; }");
 			class_declarations.WriteLine("p_bool op_NotEqual(" + class_name + "_ const * other) const { return this != other; }");
 			var current_access_level: int = PublicKeyword;
+			var has_constructors: bool = false;
 			for let member: Semantic_Node in declaration.members()
 			{
-				current_access_level = emit_member_declaration(member, class_name, current_access_level);
+				has_constructors = has_constructors or member.kind == ConstructorDeclaration;
+				current_access_level = emit_member_declaration(member, class_name, false, current_access_level);
+			}
+			if not has_constructors
+			{
+				emit_default_constructor(class_name, false, current_access_level);
 			}
 			class_declarations.EndBlockWithSemicolon();
 		}
@@ -673,7 +769,7 @@ public class Emitter
 			let struct_name: string = declaration.children[2].get_text();
 			type_declarations.WriteLine("struct " + struct_name + "_;");
 			class_declarations.ElementSeparatorLine();
-			class_declarations.WriteLine("struct " + struct_name + "_");
+			class_declarations.WriteLine("struct " + struct_name + "_ final");
 			class_declarations.BeginBlock();
 			class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
 			// Write out arrow and dereference operators for using value types like reference types
@@ -683,9 +779,15 @@ public class Emitter
 			class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
 			class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
 			var current_access_level: int = PublicKeyword;
+			var has_constructors: bool = false;
 			for let member: Semantic_Node in declaration.members()
 			{
-				current_access_level = emit_member_declaration(member, struct_name, current_access_level);
+				has_constructors = has_constructors or member.kind == ConstructorDeclaration;
+				current_access_level = emit_member_declaration(member, struct_name, true, current_access_level);
+			}
+			if not has_constructors
+			{
+				emit_default_constructor(struct_name, true, current_access_level);
 			}
 			class_declarations.EndBlockWithSemicolon();
 		}

@@ -17,19 +17,16 @@ char p_code_point::CharValue() const
 	return this->Value;
 }
 
-p_string::p_string()
-	: Length(0), Buffer(0)
+p_string p_string::construct(p_code_point c, p_int repeat)
 {
-}
-
-p_string::p_string(p_code_point c, p_int repeat)
-	: Length(repeat.Value)
-{
+	p_string self;
+	self.Length = repeat.Value;
 	char* buffer = new char[repeat.Value];
 	for (int i = 0; i < repeat.Value; i++)
 		buffer[i] = c.CharValue();
 
-	Buffer = buffer;
+	self.Buffer = buffer;
+	return self;
 }
 
 p_string::p_string(const char* s)
@@ -176,12 +173,13 @@ namespace system_
 
 	namespace IO_
 	{
-		File_Reader_::File_Reader_(const p_string& fileName)
+		File_Reader_* File_Reader_::construct(const p_string& fileName)
 		{
 			std::FILE* foo;
 			auto fname = fileName.cstr();
 			file = std::fopen(fname, "rb");
 			delete[] fname;
+			return this;
 		}
 
 		p_string File_Reader_::ReadToEndSync_()
@@ -199,11 +197,12 @@ namespace system_
 			std::fclose(file);
 		}
 
-		File_Writer_::File_Writer_(const p_string& fileName)
+		File_Writer_* File_Writer_::construct(const p_string& fileName)
 		{
 			auto fname = fileName.cstr();
 			file = std::fopen(fname, "wb"); // TODO check error
 			delete[] fname;
+			return this;
 		}
 
 		void File_Writer_::Write_(const p_string& value)
@@ -219,14 +218,10 @@ namespace system_
 
 	namespace Text_
 	{
-		String_Builder_::String_Builder_(p_string const & value)
-			: buffer(value)
+		String_Builder_* String_Builder_::construct(p_string const & value)
 		{
-		}
-
-		String_Builder_::String_Builder_()
-			: buffer("")
-		{
+			buffer = value;
+			return this;
 		}
 
 		void String_Builder_::Append_(p_string const & value)

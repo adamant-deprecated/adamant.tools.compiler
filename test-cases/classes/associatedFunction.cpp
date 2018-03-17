@@ -13,39 +13,29 @@ class C_
 public:
 	p_bool op_Equal(C_ const * other) const { return this == other; }
 	p_bool op_NotEqual(C_ const * other) const { return this != other; }
-	p_string name_;
-	auto construct(p_string const name_) -> ::C_*;
 	auto method_() const -> p_string;
-private:
-	auto double_name_() const -> p_string;
+	static auto function_() -> p_string;
+	auto construct() -> ::C_* { return this; }
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::C_::construct(p_string const name_) -> ::C_*
-{
-	::C_* self = this;
-	self->name_ = name_;
-	return self;
-}
-
 auto ::C_::method_() const -> p_string
 {
 	auto self = this;
-	return double_name_();
+	return function_();
 }
 
-auto ::C_::double_name_() const -> p_string
+auto ::C_::function_() -> p_string
 {
-	auto self = this;
-	return name_->op_Add(name_);
+	return p_string("hello");
 }
 
 auto Main_() -> void
 {
-	::C_ const *_Nonnull const c_ = (new ::C_())->construct(p_string("Bob"));
+	::C_ const *_Nonnull const c_ = (new ::C_())->construct();
 	c_->method_();
 }
 

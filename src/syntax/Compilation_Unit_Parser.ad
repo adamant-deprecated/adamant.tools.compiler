@@ -613,6 +613,8 @@ public class Compilation_Unit_Parser
 		{
 			// Constructor
 			children.Add(ExpectToken(NewKeyword));
+			if token.kind == Identifier
+				{ children.Add(ExpectToken(Identifier)); }
 			children.Add(ParseParameterList());
 			children.Add(ParseBlock());
 			return new Syntax_Node(ConstructorDeclaration, children);

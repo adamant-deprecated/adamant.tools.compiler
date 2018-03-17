@@ -14,21 +14,23 @@ public:
 	p_bool op_Equal(Test_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Test_ const * other) const { return this != other; }
 	p_int value_;
-	Test_();
+	auto construct() -> ::Test_*;
 };
 
 // Global Definitions
 
 // Definitions
 
-::Test_::Test_()
+auto ::Test_::construct() -> ::Test_*
 {
+	::Test_* self = this;
 	value_ = p_int(0);
+	return self;
 }
 
 auto Main_() -> p_int
 {
-	::Test_ const *_Nonnull const t_ = (new ::Test_());
+	::Test_ const *_Nonnull const t_ = (new ::Test_())->construct();
 	return t_->value_;
 }
 

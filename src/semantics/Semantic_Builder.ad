@@ -53,7 +53,11 @@ public class Semantic_Builder
 		}
 		else if node.kind == ConstructorDeclaration
 		{
-			let constructor_symbol: Symbol = new Symbol("new", SpecialSymbol);
+			var full_name: string = "new";
+			let constructor_name: Semantic_Node? = node.first_child(Identifier);
+			if constructor_name =/= none
+				{ full_name = "new_" + constructor_name.get_text(); }
+			let constructor_symbol: Symbol = new Symbol(full_name, SpecialSymbol);
 			constructor_symbol.declarations.Add(node);
 			parent.children.Add(constructor_symbol);
 			// Implicit `self` parameter

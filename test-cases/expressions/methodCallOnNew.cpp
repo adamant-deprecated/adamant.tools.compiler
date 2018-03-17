@@ -14,21 +14,23 @@ public:
 	p_bool op_Equal(Test_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Test_ const * other) const { return this != other; }
 	p_bool Value_;
-	Test_();
+	auto construct() -> ::Test_*;
 };
 
 // Global Definitions
 
 // Definitions
 
-::Test_::Test_()
+auto ::Test_::construct() -> ::Test_*
 {
+	::Test_* self = this;
 	Value_ = p_bool(true);
+	return self;
 }
 
 auto Main_() -> void
 {
-	p_bool const value_ = (new ::Test_())->Value_;
+	p_bool const value_ = (new ::Test_())->construct()->Value_;
 }
 
 // Entry Point Adapter

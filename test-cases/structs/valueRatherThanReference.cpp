@@ -14,15 +14,17 @@ class Reference_Type_
 public:
 	p_bool op_Equal(Reference_Type_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Reference_Type_ const * other) const { return this != other; }
+	auto construct() -> ::Reference_Type_* { return this; }
 };
 
-struct Value_Type_
+struct Value_Type_ final
 {
 public:
 	Value_Type_ * operator->() { return this; }
 	Value_Type_ const * operator->() const { return this; }
 	Value_Type_ & operator* () { return *this; }
 	Value_Type_ const & operator* () const { return *this; }
+	static auto construct() -> ::Value_Type_ { return Value_Type_(); }
 };
 
 // Global Definitions
@@ -31,8 +33,8 @@ public:
 
 auto Main_() -> void
 {
-	::Reference_Type_ const *_Nonnull const r_ = (new ::Reference_Type_());
-	::Value_Type_ const v_ = ::Value_Type_();
+	::Reference_Type_ const *_Nonnull const r_ = (new ::Reference_Type_())->construct();
+	::Value_Type_ const v_ = ::Value_Type_::construct();
 }
 
 // Entry Point Adapter

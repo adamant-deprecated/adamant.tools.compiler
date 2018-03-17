@@ -24,14 +24,16 @@ public:
 	// Runtime Use Members
 	bool Value;
 
-	p_bool(): Value(false) {}
+	p_bool() = default;
 	p_bool(bool value): Value(value) {}
+
 	p_bool * operator->() { return this; }
 	p_bool const * operator->() const { return this; }
 	p_bool & operator* () { return *this; }
 	p_bool const & operator* () const { return *this; }
 
 	// Adamant Members
+	static auto construct() -> p_bool { return p_bool(false); }
 	p_bool op_Not() const { return !this->Value; }
 	p_bool op_True() const { return this->Value; }
 	p_bool op_False() const { return !this->Value; }
@@ -47,7 +49,9 @@ public:
 	// Runtime Use Members
 	std::int32_t Value;
 
+	p_int() = default;
 	p_int(std::int32_t value): Value(value) {}
+
 	p_int * operator->() { return this; }
 	p_int const * operator->() const { return this; }
 	p_int & operator* () { return *this; }
@@ -57,7 +61,7 @@ public:
 	p_int(p_uint value);
 
 	// Adamant Members
-	p_int(): Value(0) {}
+	static auto construct() -> p_int { return 0; }
 	void op_AddAssign(p_int other) { this->Value += other.Value; }
 	void op_SubtractAssign(p_int other) { this->Value -= other.Value; }
 	p_bool op_Equal(p_int other) const { return this->Value == other.Value; }
@@ -84,7 +88,9 @@ public:
 	// Runtime Use Members
 	std::uint32_t Value;
 
+	p_uint() = default;
 	p_uint(std::uint32_t value): Value(value) {}
+
 	p_uint * operator->() { return this; }
 	p_uint const * operator->() const { return this; }
 	p_uint & operator* () { return *this; }
@@ -94,7 +100,7 @@ public:
 	p_uint(p_int value): Value(value.Value) {}
 
 	// Adamant Members
-	p_uint(): Value(0) {}
+	static auto construct() -> p_uint { return 0; }
 	void op_AddAssign(p_uint other) { this->Value += other.Value; }
 	void op_SubtractAssign(p_uint other) { this->Value -= other.Value; }
 	p_bool op_Equal(p_uint other) const { return this->Value == other.Value; }
@@ -119,15 +125,17 @@ private:
 
 public:
 	// Runtime Use Members
-	p_code_point(): Value(0) {}
+	p_code_point() = default;
 	p_code_point(char value): Value(value) {}
+	char CharValue() const;
+
 	p_code_point * operator->() { return this; }
 	p_code_point const * operator->() const { return this; }
 	p_code_point & operator* () { return *this; }
 	p_code_point const & operator* () const { return *this; }
-	char CharValue() const;
 
 	// Adamant Members
+	static auto construct() -> p_code_point { return '\0'; }
 	p_bool op_Equal(p_code_point const & other) const { return this->Value == other.Value; }
 	p_bool op_NotEqual(p_code_point const & other) const { return this->Value != other.Value; }
 	// TODO: Not sure code_point should support these operations
@@ -145,7 +153,7 @@ public:
 	char const * Buffer;
 	int Length;
 
-	p_string();
+	p_string() = default;
 	p_string(char const * s);
 	p_string(int length, char const * s);
 	char const * cstr() const;
@@ -161,10 +169,11 @@ public:
 	p_string(p_code_point other);
 
 	// Adamant Members
+	static auto construct() -> p_string { p_string self; self.Length = 0; self.Buffer = 0; return self; }
+	static auto construct(p_string value) -> p_string { return value; }
+	static auto construct(p_code_point c, p_int repeat) -> p_string;
 	// TODO ByteLength should be a property
 	p_int ByteLength_() const { return this->Length; }
-
-	p_string(p_code_point c, p_int repeat);
 
 	p_string Substring_(p_int start, p_int length) const;
 	p_string Substring_(p_int start) const { return Substring_(start, Length-start.Value); }
@@ -288,7 +297,7 @@ namespace system_
 			const_iterator end() const { return &values[length]; }
 
 			// Adamant Members
-			List_() : values(0), length(0), capacity(0) { }
+			List_* construct() { values = 0; length = 0; capacity = 0; return this; }
 			void Add_(T value) { add_(value); }
 			void Clear_() { clear_(); }
 			void add_(T value);
@@ -362,7 +371,7 @@ namespace system_
 			std::FILE* file;
 
 		public:
-			File_Reader_(const p_string& fileName);
+			File_Reader_* construct(const p_string& fileName);
 			p_string ReadToEndSync_();
 			void Close_();
 		};
@@ -373,7 +382,7 @@ namespace system_
 			std::FILE* file;
 
 		public:
-			File_Writer_(const p_string& fileName);
+			File_Writer_* construct(const p_string& fileName);
 			void Write_(const p_string& value);
 			void Close_();
 		};
@@ -386,8 +395,12 @@ namespace system_
 		private:
 			p_string buffer;
 		public:
-			String_Builder_();
-			String_Builder_(p_string const & value);
+			// Runtime Use Members
+			String_Builder_() = default;
+
+			// Adamant Members
+			String_Builder_* construct() { buffer = p_string(""); return this; }
+			String_Builder_* construct(p_string const & value);
 			void Append_(p_string const & value);
 			void Append_(String_Builder_ const * value);
 			void AppendLine_(p_string const& value);

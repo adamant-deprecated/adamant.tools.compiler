@@ -13,6 +13,7 @@ class Test_
 public:
 	p_bool op_Equal(Test_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Test_ const * other) const { return this != other; }
+	auto construct() -> ::Test_* { return this; }
 };
 
 // Global Definitions
@@ -21,7 +22,7 @@ public:
 
 auto Main_() -> void
 {
-	::Test_ const *_Nonnull const v_ = (new ::Test_());
+	::Test_ const *_Nonnull const v_ = (new ::Test_())->construct();
 	::Test_ const *_Nullable const n_ = ::None;
 	p_bool x_;
 	x_ = v_->op_Equal(n_);

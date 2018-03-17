@@ -1,0 +1,18 @@
+public class C
+{
+	public method(self) -> string
+	{
+		return function();
+	}
+
+	public function() -> string
+	{
+		return "hello";
+	}
+}
+
+public Main() -> void
+{
+	let c: C = new C();
+	c.method();
+}

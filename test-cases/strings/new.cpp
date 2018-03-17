@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_string(p_string("foo"));
+	p_string::construct(p_string("foo"));
 }
 
 // Entry Point Adapter
