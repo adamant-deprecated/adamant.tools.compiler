@@ -36,7 +36,6 @@ auto write_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::C
 auto has_errors_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull const diagnostics_) -> p_bool;
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> p_int;
 auto read_source_(p_string const path_) -> ::Source_Text_ const *_Nonnull;
-auto TextLineFromTo_(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const end_) -> ::Text_Line_ const *_Nonnull;
 auto format_error_(p_string const message_) -> p_string;
 auto new_syntax_node_missing_(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_) -> ::Syntax_Node_ const *_Nonnull;
 auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *_Nonnull const skipped_) -> ::Syntax_Node_ const *_Nonnull;
@@ -54,7 +53,7 @@ private:
 	::Source_Text_ const *_Nonnull source_;
 	::System_::Collections_::List_<p_int> const *_Nonnull lineStarts_;
 public:
-	Line_Info_(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<p_int> const *_Nonnull const lineStarts_);
+	auto construct(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<p_int> const *_Nonnull const lineStarts_) -> ::Line_Info_*;
 	auto Count_() const -> p_int;
 	auto get_(p_int const lineNumber_) const -> ::Text_Line_ const *_Nonnull;
 	auto LineNumber_(p_int const offset_) const -> p_int;
@@ -70,7 +69,7 @@ public:
 	p_string name_;
 	p_string Text_;
 	::Line_Info_ const *_Nonnull Lines_;
-	Source_Text_(p_string const package_, p_string const path_, p_string const text_);
+	auto construct(p_string const package_, p_string const path_, p_string const text_) -> ::Source_Text_*;
 private:
 	auto LineStarts_() const -> ::System_::Collections_::List_<p_int> const *_Nonnull;
 public:
@@ -86,7 +85,8 @@ public:
 	::Source_Text_ const *_Nonnull source_;
 	p_int start_;
 	p_int byte_length_;
-	Text_Line_(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const length_);
+	auto construct(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const length_) -> ::Text_Line_*;
+	auto construct_spanning(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const end_) -> ::Text_Line_*;
 	auto End_() const -> p_int;
 };
 
@@ -98,7 +98,7 @@ public:
 	p_int Offset_;
 	p_int Line_;
 	p_int Column_;
-	Text_Position_(p_int const offset_, p_int const line_, p_int const column_);
+	auto construct(p_int const offset_, p_int const line_, p_int const column_) -> ::Text_Position_*;
 };
 
 class Text_Span_
@@ -108,7 +108,7 @@ public:
 	p_bool op_NotEqual(Text_Span_ const * other) const { return this != other; }
 	p_int start_;
 	p_int byte_length_;
-	Text_Span_(p_int const start_, p_int const length_);
+	auto construct(p_int const start_, p_int const length_) -> ::Text_Span_*;
 	auto End_() const -> p_int;
 };
 
@@ -123,7 +123,7 @@ private:
 	p_bool firstElement_;
 	p_bool afterBlock_;
 public:
-	Source_File_Builder_();
+	auto construct() -> ::Source_File_Builder_*;
 	auto Error_(p_string const message_) -> void;
 	auto BeginLine_(p_string const value_) -> void;
 	auto Write_(p_string const value_) -> void;
@@ -147,8 +147,8 @@ private:
 	::Binding_Scope_ const *_Nullable containing_scope_;
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull symbols_;
 public:
-	Binding_Scope_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitives_);
-	Binding_Scope_(::Binding_Scope_ const *_Nonnull const containing_scope_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_);
+	auto construct(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitives_) -> ::Binding_Scope_*;
+	auto construct(::Binding_Scope_ const *_Nonnull const containing_scope_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_) -> ::Binding_Scope_*;
 	auto lookup_(p_string const name_) const -> ::Symbol_ const *_Nullable;
 	auto lookup_special_(p_string const name_) const -> ::Symbol_ const *_Nullable;
 	auto lookup_package_(p_string const name_) const -> ::Symbol_ const *_Nullable;
@@ -160,6 +160,7 @@ class Compilation_Unit_
 public:
 	p_bool op_Equal(Compilation_Unit_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Compilation_Unit_ const * other) const { return this != other; }
+	auto construct() -> ::Compilation_Unit_* { return this; }
 };
 
 class Package_
@@ -171,12 +172,12 @@ public:
 	::System_::Collections_::List_<::Package_Reference_> const *_Nonnull references_;
 	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull compilation_units_;
 	::Symbol_ const *_Nonnull symbol_;
-	Package_(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_);
-	Package_(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_);
+	auto construct(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_) -> ::Package_*;
+	auto construct(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_) -> ::Package_*;
 	auto all_diagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull;
 };
 
-struct Package_Reference_
+struct Package_Reference_ final
 {
 public:
 	Package_Reference_ * operator->() { return this; }
@@ -185,8 +186,8 @@ public:
 	Package_Reference_ const & operator* () const { return *this; }
 	p_string name_;
 	::Package_ const *_Nonnull package_;
-	Package_Reference_(::Package_ const *_Nonnull const package_);
-	Package_Reference_(p_string const name_, ::Package_ const *_Nonnull const package_);
+	static auto construct(::Package_ const *_Nonnull const package_) -> ::Package_Reference_;
+	static auto construct(p_string const name_, ::Package_ const *_Nonnull const package_) -> ::Package_Reference_;
 };
 
 class Primitives_Package_Builder_
@@ -199,6 +200,8 @@ private:
 	auto build_primitive_symbols_(::Package_Name_ const *_Nonnull const package_) const -> ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull;
 	static auto build_primitive_(p_string const name_, ::Package_Name_ const *_Nonnull const package_, ::Namespace_Name_ const *_Nonnull const namespace_) -> ::Symbol_ const *_Nonnull;
 	static auto build_fixed_point_primitives_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, p_int const bits_, ::Package_Name_ const *_Nonnull const package_, ::Namespace_Name_ const *_Nonnull const namespace_) -> void;
+public:
+	auto construct() -> ::Primitives_Package_Builder_* { return this; }
 };
 
 class Semantic_Analyzer_
@@ -207,6 +210,7 @@ public:
 	p_bool op_Equal(Semantic_Analyzer_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Semantic_Analyzer_ const * other) const { return this != other; }
 	static auto analyze_(::Syntax_Node_ const *_Nonnull const package_syntax_) -> ::Package_ const *_Nonnull;
+	auto construct() -> ::Semantic_Analyzer_* { return this; }
 };
 
 class Semantic_Binder_
@@ -220,6 +224,8 @@ private:
 	auto bind_type_name_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void;
 	auto bind_constructor_name_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void;
 	static auto add_resolution_error_(::Semantic_Node_ const *_Nonnull const node_) -> void;
+public:
+	auto construct() -> ::Semantic_Binder_* { return this; }
 };
 
 class Semantic_Builder_
@@ -235,6 +241,8 @@ private:
 	static auto build_resource_manager_(::Symbol_ const *_Nonnull const parent_) -> void;
 	static auto build_(::Symbol_ const *_Nonnull const parent_, p_string const name_, p_int const declaration_kind_) -> ::Symbol_ *_Nonnull;
 	static auto build_function_(::Symbol_ const *_Nonnull const parent_, p_string const name_) -> void;
+public:
+	auto construct() -> ::Semantic_Builder_* { return this; }
 };
 
 class Semantic_Node_
@@ -252,7 +260,7 @@ public:
 	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull node_diagnostics_;
 	::Symbol_ const *_Nullable symbol_;
 	::Type_ const *_Nullable type_;
-	Semantic_Node_(::Syntax_Node_ const *_Nonnull const syntax_);
+	auto construct(::Syntax_Node_ const *_Nonnull const syntax_) -> ::Semantic_Node_*;
 	auto get_text_span_() const -> ::Text_Span_ const *_Nonnull;
 	auto get_text_() const -> p_string;
 	auto bind_symbol_(::Symbol_ const *_Nonnull const symbol_) -> void;
@@ -281,7 +289,7 @@ private:
 	::Syntax_Node_ const *_Nullable token_;
 	::Syntax_Node_ const *_Nullable compilationUnit_;
 public:
-	Compilation_Unit_Parser_(::Token_Stream_ *_Nonnull const tokenStream_);
+	auto construct(::Token_Stream_ *_Nonnull const tokenStream_) -> ::Compilation_Unit_Parser_*;
 	auto Parse_() -> ::Syntax_Node_ const *_Nonnull;
 private:
 	auto AcceptToken_() -> ::Syntax_Node_ const *_Nullable;
@@ -309,6 +317,7 @@ public:
 	p_bool op_Equal(Lexer_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Lexer_ const * other) const { return this != other; }
 	auto analyze_(::Source_Text_ const *_Nonnull const source_) const -> ::Token_Stream_ *_Nonnull;
+	auto construct() -> ::Lexer_* { return this; }
 };
 
 class Parser_
@@ -316,7 +325,7 @@ class Parser_
 public:
 	p_bool op_Equal(Parser_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Parser_ const * other) const { return this != other; }
-	Parser_();
+	auto construct() -> ::Parser_*;
 	auto ParsePackage_(::System_::Collections_::List_<::Source_Text_ const *_Nonnull> const *_Nonnull const sources_) const -> ::Syntax_Node_ const *_Nonnull;
 };
 
@@ -332,10 +341,10 @@ public:
 	p_uint byte_length_;
 	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull children_;
 	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull node_diagnostics_;
-	Syntax_Node_(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_);
-	Syntax_Node_(p_int const type_, p_bool const isMissing_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_);
-	Syntax_Node_(p_int const type_, ::Syntax_Node_ const *_Nonnull const child_);
-	Syntax_Node_(p_int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const children_);
+	auto construct(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_) -> ::Syntax_Node_*;
+	auto construct(p_int const type_, p_bool const isMissing_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_) -> ::Syntax_Node_*;
+	auto construct(p_int const type_, ::Syntax_Node_ const *_Nonnull const child_) -> ::Syntax_Node_*;
+	auto construct(p_int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Syntax_Node_*;
 	auto get_text_() const -> p_string;
 	auto first_child_(p_int const type_) const -> ::Syntax_Node_ const *_Nullable;
 	auto has_child_(p_int const type_) const -> p_bool;
@@ -353,7 +362,7 @@ public:
 	p_string path_;
 	::Source_Text_ const *_Nonnull source_;
 	::Syntax_Node_ const *_Nonnull root_;
-	Syntax_Tree_(p_string const path_, ::Source_Text_ const *_Nonnull const source_, ::Syntax_Node_ const *_Nonnull const root_);
+	auto construct(p_string const path_, ::Source_Text_ const *_Nonnull const source_, ::Syntax_Node_ const *_Nonnull const root_) -> ::Syntax_Tree_*;
 };
 
 class Token_Stream_
@@ -367,7 +376,7 @@ private:
 	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull diagnostics_;
 	p_bool endOfFile_;
 public:
-	Token_Stream_(::Source_Text_ const *_Nonnull const source_);
+	auto construct(::Source_Text_ const *_Nonnull const source_) -> ::Token_Stream_*;
 	auto GetNextToken_() -> ::Syntax_Node_ const *_Nullable;
 private:
 	auto EndOfFile_() -> ::Syntax_Node_ const *_Nullable;
@@ -384,6 +393,7 @@ class Token_Type_
 public:
 	p_bool op_Equal(Token_Type_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Token_Type_ const * other) const { return this != other; }
+	auto construct() -> ::Token_Type_* { return this; }
 };
 
 class Diagnostic_
@@ -397,7 +407,7 @@ public:
 	::Text_Span_ const *_Nonnull Span_;
 	::Text_Position_ const *_Nonnull Position_;
 	p_string Message_;
-	Diagnostic_(p_int const level_, p_int const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_);
+	auto construct(p_int const level_, p_int const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_) -> ::Diagnostic_*;
 };
 
 class Emitter_
@@ -418,7 +428,7 @@ private:
 	p_bool main_function_accepts_console_;
 	p_bool main_function_accepts_args_;
 public:
-	Emitter_(::Package_ const *_Nonnull const package_, ::System_::Collections_::List_<::Source_Text_ const *_Nonnull> const *_Nonnull const resources_);
+	auto construct(::Package_ const *_Nonnull const package_, ::System_::Collections_::List_<::Source_Text_ const *_Nonnull> const *_Nonnull const resources_) -> ::Emitter_*;
 	auto Emit_() -> p_string;
 private:
 	static auto convert_type_name_(::Semantic_Node_ const *_Nonnull const type_) -> p_string;
@@ -447,7 +457,7 @@ public:
 	p_bool op_Equal(Namespace_Name_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Namespace_Name_ const * other) const { return this != other; }
 	::System_::Collections_::List_<p_string> const *_Nonnull segments_;
-	Namespace_Name_(::System_::Collections_::List_<p_string> const *_Nonnull const segments_);
+	auto construct(::System_::Collections_::List_<p_string> const *_Nonnull const segments_) -> ::Namespace_Name_*;
 };
 
 class Package_Name_
@@ -456,7 +466,7 @@ public:
 	p_bool op_Equal(Package_Name_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Package_Name_ const * other) const { return this != other; }
 	p_string text_;
-	Package_Name_(p_string const text_);
+	auto construct(p_string const text_) -> ::Package_Name_*;
 };
 
 class Symbol_
@@ -471,10 +481,10 @@ public:
 	::Type_ const *_Nonnull declares_type_;
 	::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull declarations_;
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull children_;
-	Symbol_(p_string const name_);
-	Symbol_(p_string const name_, p_int const kind_);
-	Symbol_(p_string const name_, p_int const kind_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_);
-	Symbol_(p_string const name_, ::Type_ const *_Nonnull const declares_type_);
+	auto construct(p_string const name_) -> ::Symbol_*;
+	auto construct(p_string const name_, p_int const kind_) -> ::Symbol_*;
+	auto construct(p_string const name_, p_int const kind_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_) -> ::Symbol_*;
+	auto construct_primitive(p_string const name_, ::Type_ const *_Nonnull const declares_type_) -> ::Symbol_*;
 	auto get_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable;
 	auto declares_value_type_() const -> p_bool;
 	auto get_type_() const -> ::Type_ const *_Nullable;
@@ -492,8 +502,8 @@ public:
 	p_bool is_primitive_;
 	p_bool is_value_type_;
 	p_bool immutable_;
-	Type_(::Symbol_ const *_Nonnull const symbol_);
-	Type_(::Package_Name_ const *_Nonnull const package_, ::Namespace_Name_ const *_Nonnull const namespace_, p_int const kind_, p_string const name_, p_bool const is_primitive_, p_bool const is_value_type_, p_bool const immutable_);
+	auto construct(::Symbol_ const *_Nonnull const symbol_) -> ::Type_*;
+	auto construct(::Package_Name_ const *_Nonnull const package_, ::Namespace_Name_ const *_Nonnull const namespace_, p_int const kind_, p_string const name_, p_bool const is_primitive_, p_bool const is_value_type_, p_bool const immutable_) -> ::Type_*;
 	auto make_mutable_() const -> ::Type_ const *_Nonnull;
 	auto make_immutable_() const -> ::Type_ const *_Nonnull;
 };
@@ -652,9 +662,9 @@ p_int const NamespaceType_ = p_int(3);
 
 auto compile_(::System_::Collections_::List_<::Source_Text_ const *_Nonnull> const *_Nonnull const sources_) -> ::Package_ const *_Nonnull
 {
-	::Parser_ const *_Nonnull const parser_ = (new ::Parser_());
+	::Parser_ const *_Nonnull const parser_ = (new ::Parser_())->construct();
 	::Syntax_Node_ const *_Nonnull const packageSyntax_ = parser_->ParsePackage_(sources_);
-	::Semantic_Analyzer_ const *_Nonnull const semanticAnalyzer_ = (new ::Semantic_Analyzer_());
+	::Semantic_Analyzer_ const *_Nonnull const semanticAnalyzer_ = (new ::Semantic_Analyzer_())->construct();
 	::Package_ const *_Nonnull const package_ = semanticAnalyzer_->analyze_(packageSyntax_);
 	return package_;
 }
@@ -698,8 +708,8 @@ auto has_errors_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> c
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> p_int
 {
-	::System_::Collections_::List_<p_string> *_Nonnull const sourceFilePaths_ = (new ::System_::Collections_::List_<p_string>());
-	::System_::Collections_::List_<p_string> *_Nonnull const resourceFilePaths_ = (new ::System_::Collections_::List_<p_string>());
+	::System_::Collections_::List_<p_string> *_Nonnull const sourceFilePaths_ = (new ::System_::Collections_::List_<p_string>())->construct();
+	::System_::Collections_::List_<p_string> *_Nonnull const resourceFilePaths_ = (new ::System_::Collections_::List_<p_string>())->construct();
 	p_string outputFilePath_ = p_string("");
 	p_bool verbose_ = p_bool(false);
 	p_int argType_ = p_int(0);
@@ -747,7 +757,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		return UsageError_;
 	}
 
-	::System_::Collections_::List_<::Source_Text_ const *_Nonnull> *_Nonnull const resources_ = (new ::System_::Collections_::List_<::Source_Text_ const *_Nonnull>());
+	::System_::Collections_::List_<::Source_Text_ const *_Nonnull> *_Nonnull const resources_ = (new ::System_::Collections_::List_<::Source_Text_ const *_Nonnull>())->construct();
 	if (resourceFilePaths_->op_Magnitude()->op_GreaterThan(p_int(0)).Value)
 	{
 		if (verbose_.Value)
@@ -771,7 +781,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		console_->WriteLine_(p_string("Compiling:"));
 	}
 
-	::System_::Collections_::List_<::Source_Text_ const *_Nonnull> *_Nonnull const sources_ = (new ::System_::Collections_::List_<::Source_Text_ const *_Nonnull>());
+	::System_::Collections_::List_<::Source_Text_ const *_Nonnull> *_Nonnull const sources_ = (new ::System_::Collections_::List_<::Source_Text_ const *_Nonnull>())->construct();
 	for (p_string const sourceFilePath_ : *(sourceFilePaths_))
 	{
 		if (verbose_.Value)
@@ -790,7 +800,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		return DataError_;
 	}
 
-	::Emitter_ *_Nonnull emitter_ = (new ::Emitter_(package_, resources_));
+	::Emitter_ *_Nonnull emitter_ = (new ::Emitter_())->construct(package_, resources_);
 	p_string const translated_ = emitter_->Emit_();
 	if (verbose_.Value)
 	{
@@ -798,7 +808,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		console_->WriteLine_(outputFilePath_);
 	}
 
-	::System_::IO_::File_Writer_ *_Nonnull const outputFile_ = (new ::System_::IO_::File_Writer_(outputFilePath_));
+	::System_::IO_::File_Writer_ *_Nonnull const outputFile_ = (new ::System_::IO_::File_Writer_())->construct(outputFilePath_);
 	outputFile_->Write_(translated_);
 	outputFile_->Close_();
 	p_string outputDirPath_ = outputFilePath_;
@@ -820,10 +830,10 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		console_->WriteLine_(outputDirPath_);
 	}
 
-	::System_::IO_::File_Writer_ *_Nonnull resourceFile_ = (new ::System_::IO_::File_Writer_(outputDirPath_.op_Add(p_string("RuntimeLibrary.h"))));
+	::System_::IO_::File_Writer_ *_Nonnull resourceFile_ = (new ::System_::IO_::File_Writer_())->construct(outputDirPath_.op_Add(p_string("RuntimeLibrary.h")));
 	resourceFile_->Write_(resource_manager_->GetString_(p_string("RuntimeLibrary.h")));
 	resourceFile_->Close_();
-	resourceFile_ = (new ::System_::IO_::File_Writer_(outputDirPath_.op_Add(p_string("RuntimeLibrary.cpp"))));
+	resourceFile_ = (new ::System_::IO_::File_Writer_())->construct(outputDirPath_.op_Add(p_string("RuntimeLibrary.cpp")));
 	resourceFile_->Write_(resource_manager_->GetString_(p_string("RuntimeLibrary.cpp")));
 	resourceFile_->Close_();
 	return Success_;
@@ -831,38 +841,43 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 
 auto read_source_(p_string const path_) -> ::Source_Text_ const *_Nonnull
 {
-	::System_::IO_::File_Reader_ *_Nonnull const file_ = (new ::System_::IO_::File_Reader_(path_));
+	::System_::IO_::File_Reader_ *_Nonnull const file_ = (new ::System_::IO_::File_Reader_())->construct(path_);
 	p_string const contents_ = file_->ReadToEndSync_();
 	file_->Close_();
-	return (new ::Source_Text_(p_string("<default>"), path_, contents_));
+	return (new ::Source_Text_())->construct(p_string("<default>"), path_, contents_);
 }
 
-::Line_Info_::Line_Info_(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<p_int> const *_Nonnull const lineStarts_)
+auto ::Line_Info_::construct(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<p_int> const *_Nonnull const lineStarts_) -> ::Line_Info_*
 {
-	this->source_ = source_;
-	this->lineStarts_ = lineStarts_;
+	::Line_Info_* self = this;
+	self->source_ = source_;
+	self->lineStarts_ = lineStarts_;
+	return self;
 }
 
 auto ::Line_Info_::Count_() const -> p_int
 {
+	auto self = this;
 	return lineStarts_->op_Magnitude();
 }
 
 auto ::Line_Info_::get_(p_int const lineNumber_) const -> ::Text_Line_ const *_Nonnull
 {
+	auto self = this;
 	p_int const index_ = lineNumber_->op_Subtract(p_int(1));
 	p_int const start_ = lineStarts_->op_Element(index_);
 	if (index_.op_Equal(lineStarts_->op_Magnitude()->op_Subtract(p_int(1))).Value)
 	{
-		return TextLineFromTo_(source_, start_, source_->ByteLength_());
+		return (new ::Text_Line_())->construct_spanning(source_, start_, source_->ByteLength_());
 	}
 
 	p_int const end_ = lineStarts_->op_Element(index_.op_Add(p_int(1)));
-	return TextLineFromTo_(source_, start_, end_);
+	return (new ::Text_Line_())->construct_spanning(source_, start_, end_);
 }
 
 auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 {
+	auto self = this;
 	p_int left_ = p_int(0);
 	p_int right_ = lineStarts_->op_Magnitude()->op_Subtract(p_int(1));
 	while (left_.op_LessThanOrEqual(right_).Value)
@@ -886,8 +901,9 @@ auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 	return left_;
 }
 
-::Source_Text_::Source_Text_(p_string const package_, p_string const path_, p_string const text_)
+auto ::Source_Text_::construct(p_string const package_, p_string const path_, p_string const text_) -> ::Source_Text_*
 {
+	::Source_Text_* self = this;
 	Package_ = package_;
 	Path_ = path_;
 	p_string name_ = path_;
@@ -903,15 +919,17 @@ auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
 		name_ = name_.Substring_(index_.op_Add(p_int(1)));
 	}
 
-	this->name_ = name_;
+	self->name_ = name_;
 	Text_ = text_;
-	Lines_ = (new ::Line_Info_(this, LineStarts_()));
+	Lines_ = (new ::Line_Info_())->construct(self, LineStarts_());
+	return self;
 }
 
 auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int> const *_Nonnull
 {
+	auto self = this;
 	p_int const length_ = ByteLength_();
-	::System_::Collections_::List_<p_int> *_Nonnull const lineStarts_ = (new ::System_::Collections_::List_<p_int>());
+	::System_::Collections_::List_<p_int> *_Nonnull const lineStarts_ = (new ::System_::Collections_::List_<p_int>())->construct();
 	lineStarts_->Add_(p_int(0));
 	p_int position_ = p_int(0);
 	while (position_.op_LessThan(length_).Value)
@@ -946,11 +964,13 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 
 auto ::Source_Text_::ByteLength_() const -> p_int
 {
+	auto self = this;
 	return Text_->ByteLength_();
 }
 
 auto ::Source_Text_::PositionOfStart_(::Text_Span_ const *_Nonnull const span_) const -> ::Text_Position_ const *_Nonnull
 {
+	auto self = this;
 	p_int const offset_ = span_->start_;
 	p_int const lineNumber_ = Lines_->LineNumber_(offset_);
 	p_int const lineStart_ = Lines_->get_(lineNumber_)->start_;
@@ -966,41 +986,53 @@ auto ::Source_Text_::PositionOfStart_(::Text_Span_ const *_Nonnull const span_) 
 		i_.op_AddAssign(p_int(1));
 	}
 
-	return (new ::Text_Position_(offset_, lineNumber_, column_));
+	return (new ::Text_Position_())->construct(offset_, lineNumber_, column_);
 }
 
-::Text_Line_::Text_Line_(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const length_)
+auto ::Text_Line_::construct(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const length_) -> ::Text_Line_*
 {
-	this->source_ = source_;
-	this->start_ = start_;
+	::Text_Line_* self = this;
+	self->source_ = source_;
+	self->start_ = start_;
 	byte_length_ = length_;
+	return self;
+}
+
+auto ::Text_Line_::construct_spanning(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const end_) -> ::Text_Line_*
+{
+	::Text_Line_* self = this;
+	self->source_ = source_;
+	self->start_ = start_;
+	self->byte_length_ = end_->op_Subtract(start_);
+	return self;
 }
 
 auto ::Text_Line_::End_() const -> p_int
 {
+	auto self = this;
 	return start_->op_Add(byte_length_);
 }
 
-auto TextLineFromTo_(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const end_) -> ::Text_Line_ const *_Nonnull
+auto ::Text_Position_::construct(p_int const offset_, p_int const line_, p_int const column_) -> ::Text_Position_*
 {
-	return (new ::Text_Line_(source_, start_, end_->op_Subtract(start_)));
-}
-
-::Text_Position_::Text_Position_(p_int const offset_, p_int const line_, p_int const column_)
-{
+	::Text_Position_* self = this;
 	Offset_ = offset_;
 	Line_ = line_;
 	Column_ = column_;
+	return self;
 }
 
-::Text_Span_::Text_Span_(p_int const start_, p_int const length_)
+auto ::Text_Span_::construct(p_int const start_, p_int const length_) -> ::Text_Span_*
 {
-	this->start_ = start_;
+	::Text_Span_* self = this;
+	self->start_ = start_;
 	byte_length_ = length_;
+	return self;
 }
 
 auto ::Text_Span_::End_() const -> p_int
 {
+	auto self = this;
 	return start_->op_Add(byte_length_);
 }
 
@@ -1009,21 +1041,25 @@ auto format_error_(p_string const message_) -> p_string
 	return p_string("<$ ").op_Add(message_)->op_Add(p_string(" $>"));
 }
 
-::Source_File_Builder_::Source_File_Builder_()
+auto ::Source_File_Builder_::construct() -> ::Source_File_Builder_*
 {
-	code_ = (new ::System_::Text_::String_Builder_());
-	indent_ = (new ::System_::Text_::String_Builder_());
+	::Source_File_Builder_* self = this;
+	code_ = (new ::System_::Text_::String_Builder_())->construct();
+	indent_ = (new ::System_::Text_::String_Builder_())->construct();
 	firstElement_ = p_bool(true);
 	afterBlock_ = p_bool(true);
+	return self;
 }
 
 auto ::Source_File_Builder_::Error_(p_string const message_) -> void
 {
+	auto self = this;
 	code_->Append_(format_error_(message_));
 }
 
 auto ::Source_File_Builder_::BeginLine_(p_string const value_) -> void
 {
+	auto self = this;
 	code_->Append_(indent_);
 	code_->Append_(value_);
 	firstElement_ = afterBlock_ = p_bool(false);
@@ -1031,12 +1067,14 @@ auto ::Source_File_Builder_::BeginLine_(p_string const value_) -> void
 
 auto ::Source_File_Builder_::Write_(p_string const value_) -> void
 {
+	auto self = this;
 	code_->Append_(value_);
 	firstElement_ = afterBlock_ = p_bool(false);
 }
 
 auto ::Source_File_Builder_::EndLine_(p_string const value_) -> void
 {
+	auto self = this;
 	code_->Append_(value_);
 	code_->AppendLine_();
 	firstElement_ = afterBlock_ = p_bool(false);
@@ -1044,6 +1082,7 @@ auto ::Source_File_Builder_::EndLine_(p_string const value_) -> void
 
 auto ::Source_File_Builder_::WriteLine_(p_string const value_) -> void
 {
+	auto self = this;
 	code_->Append_(indent_);
 	code_->Append_(value_);
 	code_->AppendLine_();
@@ -1052,6 +1091,7 @@ auto ::Source_File_Builder_::WriteLine_(p_string const value_) -> void
 
 auto ::Source_File_Builder_::BlankLine_() -> void
 {
+	auto self = this;
 	code_->AppendLine_();
 	firstElement_ = p_bool(true);
 	afterBlock_ = p_bool(false);
@@ -1059,6 +1099,7 @@ auto ::Source_File_Builder_::BlankLine_() -> void
 
 auto ::Source_File_Builder_::ElementSeparatorLine_() -> void
 {
+	auto self = this;
 	if (firstElement_->op_Not().Value)
 	{
 		code_->AppendLine_();
@@ -1069,6 +1110,7 @@ auto ::Source_File_Builder_::ElementSeparatorLine_() -> void
 
 auto ::Source_File_Builder_::StatementSeparatorLine_() -> void
 {
+	auto self = this;
 	if (afterBlock_.Value)
 	{
 		code_->AppendLine_();
@@ -1079,6 +1121,7 @@ auto ::Source_File_Builder_::StatementSeparatorLine_() -> void
 
 auto ::Source_File_Builder_::BeginBlock_() -> void
 {
+	auto self = this;
 	WriteLine_(p_string("{"));
 	indent_->Append_(p_string("\t"));
 	firstElement_ = afterBlock_ = p_bool(false);
@@ -1086,6 +1129,7 @@ auto ::Source_File_Builder_::BeginBlock_() -> void
 
 auto ::Source_File_Builder_::EndBlock_() -> void
 {
+	auto self = this;
 	indent_->Remove_(p_int(0), p_int(1));
 	WriteLine_(p_string("}"));
 	afterBlock_ = p_bool(true);
@@ -1093,19 +1137,22 @@ auto ::Source_File_Builder_::EndBlock_() -> void
 
 auto ::Source_File_Builder_::EndBlockWithSemicolon_() -> void
 {
+	auto self = this;
 	indent_->Remove_(p_int(0), p_int(1));
 	WriteLine_(p_string("};"));
 }
 
 auto ::Source_File_Builder_::ToString_() const -> p_string
 {
+	auto self = this;
 	return code_->ToString_();
 }
 
-::Binding_Scope_::Binding_Scope_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitives_)
+auto ::Binding_Scope_::construct(::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitives_) -> ::Binding_Scope_*
 {
-	this->containing_scope_ = ::None;
-	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const scope_symbols_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
+	::Binding_Scope_* self = this;
+	self->containing_scope_ = ::None;
+	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const scope_symbols_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
 	for (::Symbol_ const *_Nonnull const s_ : *(symbols_))
 	{
 		scope_symbols_->Add_(s_);
@@ -1116,32 +1163,39 @@ auto ::Source_File_Builder_::ToString_() const -> p_string
 		scope_symbols_->Add_(s_);
 	}
 
-	this->symbols_ = scope_symbols_;
+	self->symbols_ = scope_symbols_;
+	return self;
 }
 
-::Binding_Scope_::Binding_Scope_(::Binding_Scope_ const *_Nonnull const containing_scope_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_)
+auto ::Binding_Scope_::construct(::Binding_Scope_ const *_Nonnull const containing_scope_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const symbols_) -> ::Binding_Scope_*
 {
-	this->containing_scope_ = containing_scope_;
-	this->symbols_ = symbols_;
+	::Binding_Scope_* self = this;
+	self->containing_scope_ = containing_scope_;
+	self->symbols_ = symbols_;
+	return self;
 }
 
 auto ::Binding_Scope_::lookup_(p_string const name_) const -> ::Symbol_ const *_Nullable
 {
+	auto self = this;
 	return lookup_(name_, IdentifierSymbol_);
 }
 
 auto ::Binding_Scope_::lookup_special_(p_string const name_) const -> ::Symbol_ const *_Nullable
 {
+	auto self = this;
 	return lookup_(name_, SpecialSymbol_);
 }
 
 auto ::Binding_Scope_::lookup_package_(p_string const name_) const -> ::Symbol_ const *_Nullable
 {
+	auto self = this;
 	return lookup_(name_, PackageSymbol_);
 }
 
 auto ::Binding_Scope_::lookup_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable
 {
+	auto self = this;
 	for (::Symbol_ const *_Nonnull const symbol_ : *(symbols_))
 	{
 		if (LogicalAnd(symbol_->name_->op_Equal(name_), [&] { return symbol_->kind_->op_Equal(kind_); }).Value)
@@ -1158,25 +1212,30 @@ auto ::Binding_Scope_::lookup_(p_string const name_, p_int const kind_) const ->
 	return ::None;
 }
 
-::Package_::Package_(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_)
+auto ::Package_::construct(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_) -> ::Package_*
 {
-	this->name_ = name_;
-	this->references_ = references_;
-	this->compilation_units_ = compilation_units_;
-	this->symbol_ = symbol_;
+	::Package_* self = this;
+	self->name_ = name_;
+	self->references_ = references_;
+	self->compilation_units_ = compilation_units_;
+	self->symbol_ = symbol_;
+	return self;
 }
 
-::Package_::Package_(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_)
+auto ::Package_::construct(::Package_Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_, ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_, ::Symbol_ const *_Nonnull const symbol_) -> ::Package_*
 {
-	this->name_ = name_;
-	this->references_ = references_;
-	this->compilation_units_ = ::None;
-	this->symbol_ = symbol_;
+	::Package_* self = this;
+	self->name_ = name_;
+	self->references_ = references_;
+	self->compilation_units_ = ::None;
+	self->symbol_ = symbol_;
+	return self;
 }
 
 auto ::Package_::all_diagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull
 {
-	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
 	for (::Semantic_Node_ const *_Nonnull const compilation_unit_ : *(compilation_units_))
 	{
 		for (::Diagnostic_ const *_Nonnull const diagnostic_ : *(compilation_unit_->all_diagnostics_()))
@@ -1188,34 +1247,40 @@ auto ::Package_::all_diagnostics_() const -> ::System_::Collections_::List_<::Di
 	return diagnostics_;
 }
 
-::Package_Reference_::Package_Reference_(::Package_ const *_Nonnull const package_)
+auto ::Package_Reference_::construct(::Package_ const *_Nonnull const package_) -> ::Package_Reference_
 {
-	this->name_ = package_->name_->text_;
-	this->package_ = package_;
+	::Package_Reference_ self;
+	self->name_ = package_->name_->text_;
+	self->package_ = package_;
+	return self;
 }
 
-::Package_Reference_::Package_Reference_(p_string const name_, ::Package_ const *_Nonnull const package_)
+auto ::Package_Reference_::construct(p_string const name_, ::Package_ const *_Nonnull const package_) -> ::Package_Reference_
 {
-	this->name_ = name_;
-	this->package_ = package_;
+	::Package_Reference_ self;
+	self->name_ = name_;
+	self->package_ = package_;
+	return self;
 }
 
 auto ::Primitives_Package_Builder_::build_() const -> ::Package_ const *_Nonnull
 {
-	::Package_Name_ const *_Nonnull const name_ = (new ::Package_Name_(p_string("\\primitives")));
-	::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>());
-	::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_ = (new ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull>());
+	auto self = this;
+	::Package_Name_ const *_Nonnull const name_ = (new ::Package_Name_())->construct(p_string("\\primitives"));
+	::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>())->construct();
+	::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_ = (new ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull>())->construct();
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const primitive_symbols_ = build_primitive_symbols_(name_);
 	assert_(primitive_symbols_->op_Magnitude()->op_GreaterThan(p_int(0)), p_string("|primitive_symbols=").op_Add(primitive_symbols_->op_Magnitude()));
-	::Symbol_ const *_Nonnull const package_symbol_ = (new ::Symbol_(name_->text_, PackageSymbol_, primitive_symbols_));
+	::Symbol_ const *_Nonnull const package_symbol_ = (new ::Symbol_())->construct(name_->text_, PackageSymbol_, primitive_symbols_);
 	assert_(package_symbol_->children_->op_Magnitude()->op_GreaterThan(p_int(0)), p_string("|package_symbol.children|=").op_Add(package_symbol_->children_->op_Magnitude()));
-	return (new ::Package_(name_, references_, compilation_units_, package_symbol_));
+	return (new ::Package_())->construct(name_, references_, compilation_units_, package_symbol_);
 }
 
 auto ::Primitives_Package_Builder_::build_primitive_symbols_(::Package_Name_ const *_Nonnull const package_) const -> ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull
 {
+	auto self = this;
 	::Namespace_Name_ const *_Nonnull const global_ = global_namespace_();
-	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
+	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
 	symbols_->Add_(build_primitive_(p_string("void"), package_, global_));
 	symbols_->Add_(build_primitive_(p_string("never"), package_, global_));
 	symbols_->Add_(build_primitive_(p_string("bool"), package_, global_));
@@ -1248,8 +1313,8 @@ auto ::Primitives_Package_Builder_::build_primitive_symbols_(::Package_Name_ con
 
 auto ::Primitives_Package_Builder_::build_primitive_(p_string const name_, ::Package_Name_ const *_Nonnull const package_, ::Namespace_Name_ const *_Nonnull const namespace_) -> ::Symbol_ const *_Nonnull
 {
-	::Type_ const *_Nonnull const type_ = (new ::Type_(package_, namespace_, ValueType_, name_, p_bool(true), p_bool(true), p_bool(true)));
-	return (new ::Symbol_(name_, type_));
+	::Type_ const *_Nonnull const type_ = (new ::Type_())->construct(package_, namespace_, ValueType_, name_, p_bool(true), p_bool(true), p_bool(true));
+	return (new ::Symbol_())->construct_primitive(name_, type_);
 }
 
 auto ::Primitives_Package_Builder_::build_fixed_point_primitives_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, p_int const bits_, ::Package_Name_ const *_Nonnull const package_, ::Namespace_Name_ const *_Nonnull const namespace_) -> void
@@ -1263,27 +1328,28 @@ auto ::Semantic_Analyzer_::analyze_(::Syntax_Node_ const *_Nonnull const package
 		THROW_EXCEPTION_(p_string("`Semantic_Analyzer.analyze(...)` called with node of type ").op_Add(package_syntax_->kind_));
 	}
 
-	::Package_Name_ const *_Nonnull const name_ = (new ::Package_Name_(p_string("default")));
-	::Package_ const *_Nonnull const primitives_package_ = (new ::Primitives_Package_Builder_())->build_();
-	::System_::Collections_::List_<::Package_Reference_> *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>());
-	references_->add_(::Package_Reference_(primitives_package_));
-	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_ = (new ::Semantic_Node_(package_syntax_))->children_;
-	::Semantic_Builder_ const *_Nonnull const semantic_builder_ = (new ::Semantic_Builder_());
+	::Package_Name_ const *_Nonnull const name_ = (new ::Package_Name_())->construct(p_string("default"));
+	::Package_ const *_Nonnull const primitives_package_ = (new ::Primitives_Package_Builder_())->construct()->build_();
+	::System_::Collections_::List_<::Package_Reference_> *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>())->construct();
+	references_->add_(::Package_Reference_::construct(primitives_package_));
+	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_ = (new ::Semantic_Node_())->construct(package_syntax_)->children_;
+	::Semantic_Builder_ const *_Nonnull const semantic_builder_ = (new ::Semantic_Builder_())->construct();
 	::Symbol_ const *_Nonnull const package_symbol_ = semantic_builder_->build_symbols_(compilation_units_);
-	::Package_ *_Nonnull const package_ = (new ::Package_(name_, references_, compilation_units_, package_symbol_));
-	::Semantic_Binder_ const *_Nonnull const semantic_binder_ = (new ::Semantic_Binder_());
+	::Package_ *_Nonnull const package_ = (new ::Package_())->construct(name_, references_, compilation_units_, package_symbol_);
+	::Semantic_Binder_ const *_Nonnull const semantic_binder_ = (new ::Semantic_Binder_())->construct();
 	semantic_binder_->bind_(package_);
 	return package_;
 }
 
 auto ::Semantic_Binder_::bind_(::Package_ const *_Nonnull const package_) const -> void
 {
+	auto self = this;
 	assert_(package_->references_->op_Magnitude()->op_GreaterThan(p_int(0)), p_string("package=").op_Add(package_->name_->text_));
 	::Package_ const *_Nonnull const primitive_package_ = package_->references_->op_Element(p_int(0))->package_;
 	assert_(primitive_package_->name_->text_->op_Equal(p_string("\\primitives")), p_string("package name='").op_Add(primitive_package_->name_->text_)->op_Add(p_string("'")));
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const primitives_ = primitive_package_->symbol_->children_;
 	assert_(primitives_->op_Magnitude()->op_GreaterThan(p_int(0)), p_string("|primitives|=").op_Add(primitives_->op_Magnitude()));
-	::Binding_Scope_ const *_Nonnull const global_scope_ = (new ::Binding_Scope_(package_->symbol_->children_, primitives_));
+	::Binding_Scope_ const *_Nonnull const global_scope_ = (new ::Binding_Scope_())->construct(package_->symbol_->children_, primitives_);
 	for (::Semantic_Node_ *_Nonnull const compilation_unit_ : *(package_->compilation_units_))
 	{
 		bind_(compilation_unit_, global_scope_);
@@ -1292,6 +1358,7 @@ auto ::Semantic_Binder_::bind_(::Package_ const *_Nonnull const package_) const 
 
 auto ::Semantic_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void
 {
+	auto self = this;
 	if (node_->kind_->op_Equal(CompilationUnit_).Value)
 	{
 		for (::Semantic_Node_ *_Nonnull const child_ : *(node_->children_))
@@ -1305,7 +1372,7 @@ auto ::Semantic_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding
 		bind_(parameters_, scope_);
 		::Semantic_Node_ *_Nonnull const return_type_ = node_->children_->op_Element(p_int(4));
 		bind_type_name_(return_type_, scope_);
-		::Binding_Scope_ const *_Nonnull const function_scope_ = (new ::Binding_Scope_(scope_, node_->symbol_->children_));
+		::Binding_Scope_ const *_Nonnull const function_scope_ = (new ::Binding_Scope_())->construct(scope_, node_->symbol_->children_);
 		::Semantic_Node_ *_Nonnull const body_ = node_->first_child_(Block_);
 		bind_(body_, function_scope_);
 	}
@@ -1323,7 +1390,7 @@ auto ::Semantic_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding
 	}
 	else if (LogicalOr(node_->kind_->op_Equal(ClassDeclaration_), [&] { return node_->kind_->op_Equal(StructDeclaration_); }).Value)
 	{
-		::Binding_Scope_ const *_Nonnull const type_scope_ = (new ::Binding_Scope_(scope_, node_->symbol_->children_));
+		::Binding_Scope_ const *_Nonnull const type_scope_ = (new ::Binding_Scope_())->construct(scope_, node_->symbol_->children_);
 		for (::Semantic_Node_ *_Nonnull const member_ : *(node_->members_()))
 		{
 			bind_(member_, type_scope_);
@@ -1338,7 +1405,7 @@ auto ::Semantic_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding
 	{
 		::Semantic_Node_ *_Nonnull const parameters_ = node_->first_child_(ParameterList_);
 		bind_(parameters_, scope_);
-		::Binding_Scope_ const *_Nonnull const constructor_scope_ = (new ::Binding_Scope_(scope_, node_->symbol_->children_));
+		::Binding_Scope_ const *_Nonnull const constructor_scope_ = (new ::Binding_Scope_())->construct(scope_, node_->symbol_->children_);
 		::Semantic_Node_ *_Nonnull const body_ = node_->first_child_(Block_);
 		bind_(body_, constructor_scope_);
 	}
@@ -1512,6 +1579,7 @@ auto ::Semantic_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding
 
 auto ::Semantic_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void
 {
+	auto self = this;
 	if (node_->kind_->op_Equal(PredefinedType_).Value)
 	{
 		p_string const primitive_name_ = node_->children_->op_Element(p_int(0))->get_text_();
@@ -1522,7 +1590,7 @@ auto ::Semantic_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_,
 		}
 
 		node_->bind_symbol_(symbol_);
-		node_->bind_type_((new ::Type_(symbol_)));
+		node_->bind_type_((new ::Type_())->construct(symbol_));
 	}
 	else if (node_->kind_->op_Equal(MutableType_).Value)
 	{
@@ -1633,7 +1701,7 @@ auto ::Semantic_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_,
 		else
 		{
 			node_->bind_symbol_(symbol_);
-			node_->bind_type_((new ::Type_(symbol_)));
+			node_->bind_type_((new ::Type_())->construct(symbol_));
 		}
 	}
 	else
@@ -1644,6 +1712,7 @@ auto ::Semantic_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_,
 
 auto ::Semantic_Binder_::bind_constructor_name_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void
 {
+	auto self = this;
 	if (LogicalAnd(node_->kind_->op_Equal(QualifiedName_), [&] { return node_->children_->op_Element(p_int(2))->kind_->op_Equal(IdentifierName_); }).Value)
 	{
 		bind_type_name_(node_->children_->op_Element(p_int(0)), scope_);
@@ -1679,12 +1748,13 @@ auto ::Semantic_Binder_::bind_constructor_name_(::Semantic_Node_ *_Nonnull const
 
 auto ::Semantic_Binder_::add_resolution_error_(::Semantic_Node_ const *_Nonnull const node_) -> void
 {
-	node_->add_((new ::Diagnostic_(FatalCompilationError_, Analysis_, node_->source_, node_->get_text_span_(), p_string("Could not resolve name `").op_Add(node_->get_text_())->op_Add(p_string("`")))));
+	node_->add_((new ::Diagnostic_())->construct(FatalCompilationError_, Analysis_, node_->source_, node_->get_text_span_(), p_string("Could not resolve name `").op_Add(node_->get_text_())->op_Add(p_string("`"))));
 }
 
 auto ::Semantic_Builder_::build_symbols_(::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull const compilation_units_) const -> ::Symbol_ const *_Nonnull
 {
-	::Symbol_ *_Nonnull const package_symbol_ = (new ::Symbol_(p_string(""), PackageSymbol_));
+	auto self = this;
+	::Symbol_ *_Nonnull const package_symbol_ = (new ::Symbol_())->construct(p_string("default"), PackageSymbol_);
 	for (::Semantic_Node_ *_Nonnull const compilation_unit_ : *(compilation_units_))
 	{
 		if (compilation_unit_->kind_->op_NotEqual(CompilationUnit_).Value)
@@ -1701,6 +1771,7 @@ auto ::Semantic_Builder_::build_symbols_(::System_::Collections_::List_<::Semant
 
 auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_, ::Semantic_Node_ *_Nonnull const node_) const -> void
 {
+	auto self = this;
 	if (node_->kind_->op_Equal(CompilationUnit_).Value)
 	{
 		for (::Semantic_Node_ *_Nonnull const declaration_ : *(node_->children_))
@@ -1711,13 +1782,13 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	else if (LogicalOr(node_->kind_->op_Equal(FunctionDeclaration_), [&] { return node_->kind_->op_Equal(MethodDeclaration_); }).Value)
 	{
 		p_string const name_ = node_->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(name_));
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct(name_);
 		build_function_symbols_(parent_, node_, symbol_);
 	}
 	else if (LogicalOr(node_->kind_->op_Equal(ClassDeclaration_), [&] { return node_->kind_->op_Equal(StructDeclaration_); }).Value)
 	{
 		p_string const name_ = node_->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(name_));
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct(name_);
 		symbol_->declarations_->Add_(node_);
 		for (::Semantic_Node_ *_Nonnull const member_ : *(node_->members_()))
 		{
@@ -1736,17 +1807,17 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 			full_name_ = p_string("new_").op_Add(constructor_name_->get_text_());
 		}
 
-		::Symbol_ const *_Nonnull const constructor_symbol_ = (new ::Symbol_(full_name_, SpecialSymbol_));
+		::Symbol_ const *_Nonnull const constructor_symbol_ = (new ::Symbol_())->construct(full_name_, SpecialSymbol_);
 		constructor_symbol_->declarations_->Add_(node_);
 		parent_->children_->Add_(constructor_symbol_);
-		::Symbol_ const *_Nonnull const self_symbol_ = (new ::Symbol_(p_string("self"), SpecialSymbol_));
+		::Symbol_ const *_Nonnull const self_symbol_ = (new ::Symbol_())->construct(p_string("self"), SpecialSymbol_);
 		constructor_symbol_->children_->Add_(self_symbol_);
 		build_function_symbols_(parent_, node_, constructor_symbol_);
 	}
 	else if (node_->kind_->op_Equal(FieldDeclaration_).Value)
 	{
 		p_string const name_ = node_->first_child_(VariableDeclaration_)->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const field_symbol_ = (new ::Symbol_(name_));
+		::Symbol_ const *_Nonnull const field_symbol_ = (new ::Symbol_())->construct(name_);
 		field_symbol_->declarations_->Add_(node_);
 		parent_->children_->Add_(field_symbol_);
 		node_->bind_symbol_(field_symbol_);
@@ -1754,7 +1825,7 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	else if (node_->kind_->op_Equal(EnumDeclaration_).Value)
 	{
 		p_string const name_ = node_->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const enum_symbol_ = (new ::Symbol_(name_));
+		::Symbol_ const *_Nonnull const enum_symbol_ = (new ::Symbol_())->construct(name_);
 		enum_symbol_->declarations_->Add_(node_);
 		parent_->children_->Add_(enum_symbol_);
 		node_->bind_symbol_(enum_symbol_);
@@ -1762,7 +1833,7 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	else if (node_->kind_->op_Equal(GlobalDeclaration_).Value)
 	{
 		p_string const name_ = node_->first_child_(VariableDeclaration_)->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const global_declaration_symbol_ = (new ::Symbol_(name_));
+		::Symbol_ const *_Nonnull const global_declaration_symbol_ = (new ::Symbol_())->construct(name_);
 		global_declaration_symbol_->declarations_->Add_(node_);
 		parent_->children_->Add_(global_declaration_symbol_);
 		node_->bind_symbol_(global_declaration_symbol_);
@@ -1781,7 +1852,7 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	else if (node_->kind_->op_Equal(ForStatement_).Value)
 	{
 		p_string const name_ = node_->first_child_(VariableDeclaration_)->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const for_symbol_ = (new ::Symbol_(name_));
+		::Symbol_ const *_Nonnull const for_symbol_ = (new ::Symbol_())->construct(name_);
 		for_symbol_->declarations_->Add_(node_);
 		parent_->children_->Add_(for_symbol_);
 		node_->bind_symbol_(for_symbol_);
@@ -1790,7 +1861,7 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	else if (node_->kind_->op_Equal(LocalDeclarationStatement_).Value)
 	{
 		::Semantic_Node_ *_Nonnull const identifier_ = node_->first_child_(VariableDeclaration_)->first_child_(Identifier_);
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(identifier_->get_text_()));
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct(identifier_->get_text_());
 		symbol_->declarations_->Add_(node_);
 		identifier_->bind_symbol_(symbol_);
 		parent_->children_->Add_(symbol_);
@@ -1819,13 +1890,13 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	else if (node_->kind_->op_Equal(Parameter_).Value)
 	{
 		p_string const name_ = node_->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(name_));
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct(name_);
 		symbol_->declarations_->Add_(node_);
 		parent_->children_->Add_(symbol_);
 	}
 	else if (node_->kind_->op_Equal(SelfParameter_).Value)
 	{
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_(p_string("self"), SpecialSymbol_));
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct(p_string("self"), SpecialSymbol_);
 		symbol_->declarations_->Add_(node_);
 		parent_->children_->Add_(symbol_);
 	}
@@ -1840,6 +1911,7 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 
 auto ::Semantic_Builder_::build_function_symbols_(::Symbol_ const *_Nonnull const parent_, ::Semantic_Node_ *_Nonnull const function_, ::Symbol_ const *_Nonnull const symbol_) const -> void
 {
+	auto self = this;
 	symbol_->declarations_->Add_(function_);
 	::Semantic_Node_ *_Nonnull const parameters_ = function_->first_child_(ParameterList_);
 	for (::Semantic_Node_ *_Nonnull const parameter_ : *(parameters_->parameters_()))
@@ -1855,6 +1927,7 @@ auto ::Semantic_Builder_::build_function_symbols_(::Symbol_ const *_Nonnull cons
 
 auto ::Semantic_Builder_::build_runtime_library_symbols_(::Symbol_ const *_Nonnull const package_) const -> void
 {
+	auto self = this;
 	build_resource_manager_(package_);
 	build_function_(package_, p_string("THROW_EXCEPTION"));
 	build_function_(package_, p_string("NOT_IMPLEMENTED"));
@@ -1876,74 +1949,79 @@ auto ::Semantic_Builder_::build_runtime_library_symbols_(::Symbol_ const *_Nonnu
 auto ::Semantic_Builder_::build_resource_manager_(::Symbol_ const *_Nonnull const parent_) -> void
 {
 	::Symbol_ const *_Nonnull const class_symbol_ = build_(parent_, p_string("Resource_Manager"), ClassDeclaration_);
-	::Semantic_Node_ *_Nonnull const fake_declaration_ = (new ::Semantic_Node_((new ::Syntax_Node_(GlobalDeclaration_, p_bool(true), ::None, p_int(0), p_int(0)))));
-	::Symbol_ *_Nonnull const symbol_ = (new ::Symbol_(p_string("resource_manager")));
+	::Semantic_Node_ *_Nonnull const fake_declaration_ = (new ::Semantic_Node_())->construct((new ::Syntax_Node_())->construct(GlobalDeclaration_, p_bool(true), ::None, p_int(0), p_int(0)));
+	::Symbol_ *_Nonnull const symbol_ = (new ::Symbol_())->construct(p_string("resource_manager"));
 	symbol_->declarations_->Add_(fake_declaration_);
 	fake_declaration_->bind_symbol_(symbol_);
-	fake_declaration_->bind_type_((new ::Type_(class_symbol_)));
+	fake_declaration_->bind_type_((new ::Type_())->construct(class_symbol_));
 	parent_->children_->Add_(symbol_);
 }
 
 auto ::Semantic_Builder_::build_(::Symbol_ const *_Nonnull const parent_, p_string const name_, p_int const declaration_kind_) -> ::Symbol_ *_Nonnull
 {
-	::Semantic_Node_ *_Nonnull const fake_declaration_ = (new ::Semantic_Node_((new ::Syntax_Node_(declaration_kind_, p_bool(true), ::None, p_int(0), p_int(0)))));
-	::Symbol_ *_Nonnull const symbol_ = (new ::Symbol_(name_));
+	::Semantic_Node_ *_Nonnull const fake_declaration_ = (new ::Semantic_Node_())->construct((new ::Syntax_Node_())->construct(declaration_kind_, p_bool(true), ::None, p_int(0), p_int(0)));
+	::Symbol_ *_Nonnull const symbol_ = (new ::Symbol_())->construct(name_);
 	symbol_->declarations_->Add_(fake_declaration_);
 	fake_declaration_->bind_symbol_(symbol_);
-	fake_declaration_->bind_type_((new ::Type_(symbol_)));
+	fake_declaration_->bind_type_((new ::Type_())->construct(symbol_));
 	parent_->children_->Add_(symbol_);
 	return symbol_;
 }
 
 auto ::Semantic_Builder_::build_function_(::Symbol_ const *_Nonnull const parent_, p_string const name_) -> void
 {
-	::Semantic_Node_ *_Nonnull const fake_declaration_ = (new ::Semantic_Node_((new ::Syntax_Node_(FunctionDeclaration_, p_bool(true), ::None, p_int(0), p_int(0)))));
-	::Symbol_ *_Nonnull const symbol_ = (new ::Symbol_(name_));
+	::Semantic_Node_ *_Nonnull const fake_declaration_ = (new ::Semantic_Node_())->construct((new ::Syntax_Node_())->construct(FunctionDeclaration_, p_bool(true), ::None, p_int(0), p_int(0)));
+	::Symbol_ *_Nonnull const symbol_ = (new ::Symbol_())->construct(name_);
 	symbol_->declarations_->Add_(fake_declaration_);
 	fake_declaration_->bind_symbol_(symbol_);
 	parent_->children_->Add_(symbol_);
 }
 
-::Semantic_Node_::Semantic_Node_(::Syntax_Node_ const *_Nonnull const syntax_)
+auto ::Semantic_Node_::construct(::Syntax_Node_ const *_Nonnull const syntax_) -> ::Semantic_Node_*
 {
+	::Semantic_Node_* self = this;
 	assert_(syntax_->op_NotEqual(::None), p_string(""));
-	this->syntax_ = syntax_;
+	self->syntax_ = syntax_;
 	kind_ = syntax_->kind_;
 	is_missing_ = syntax_->is_missing_;
 	source_ = syntax_->source_;
-	this->start_ = syntax_->start_;
+	self->start_ = syntax_->start_;
 	byte_length_ = syntax_->byte_length_;
-	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>());
+	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>())->construct();
 	for (::Syntax_Node_ const *_Nonnull const child_syntax_ : *(syntax_->children_))
 	{
-		children_->Add_((new ::Semantic_Node_(child_syntax_)));
+		children_->Add_((new ::Semantic_Node_())->construct(child_syntax_));
 	}
 
-	this->children_ = children_;
-	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull const diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	self->children_ = children_;
+	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull const diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
 	for (::Diagnostic_ const *_Nonnull const diagnostic_ : *(syntax_->node_diagnostics_))
 	{
 		diagnostics_->Add_(diagnostic_);
 	}
 
-	this->node_diagnostics_ = diagnostics_;
+	self->node_diagnostics_ = diagnostics_;
 	symbol_ = ::None;
 	type_ = ::None;
+	return self;
 }
 
 auto ::Semantic_Node_::get_text_span_() const -> ::Text_Span_ const *_Nonnull
 {
-	return (new ::Text_Span_(start_, byte_length_));
+	auto self = this;
+	return (new ::Text_Span_())->construct(start_, byte_length_);
 }
 
 auto ::Semantic_Node_::get_text_() const -> p_string
 {
+	auto self = this;
 	return source_->Text_->Substring_(start_, byte_length_);
 }
 
 auto ::Semantic_Node_::bind_symbol_(::Symbol_ const *_Nonnull const symbol_) -> void
 {
-	if (this->symbol_->op_NotEqual(::None).Value)
+	auto self = this;
+	if (self->symbol_->op_NotEqual(::None).Value)
 	{
 		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `").op_Add(get_text_())->op_Add(p_string("`")));
 	}
@@ -1953,12 +2031,13 @@ auto ::Semantic_Node_::bind_symbol_(::Symbol_ const *_Nonnull const symbol_) -> 
 		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_symbol(..)` called without a symbol on `").op_Add(get_text_())->op_Add(p_string("`")));
 	}
 
-	this->symbol_ = symbol_;
+	self->symbol_ = symbol_;
 }
 
 auto ::Semantic_Node_::bind_type_(::Type_ const *_Nonnull const type_) -> void
 {
-	if (this->type_->op_NotEqual(::None).Value)
+	auto self = this;
+	if (self->type_->op_NotEqual(::None).Value)
 	{
 		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_type(..)` called on node that already has a type. Node: `").op_Add(get_text_())->op_Add(p_string("` of kind "))->op_Add(kind_));
 	}
@@ -1968,11 +2047,12 @@ auto ::Semantic_Node_::bind_type_(::Type_ const *_Nonnull const type_) -> void
 		THROW_EXCEPTION_(p_string("`Semantic_Node.bind_type(..)` called without a type. Node: `").op_Add(get_text_())->op_Add(p_string("` of kind "))->op_Add(kind_));
 	}
 
-	this->type_ = type_;
+	self->type_ = type_;
 }
 
 auto ::Semantic_Node_::first_child_(p_int const kind_) const -> ::Semantic_Node_ *_Nullable
 {
+	auto self = this;
 	for (::Semantic_Node_ *_Nonnull const child_ : *(children_))
 	{
 		if (child_->kind_->op_Equal(kind_).Value)
@@ -1986,8 +2066,9 @@ auto ::Semantic_Node_::first_child_(p_int const kind_) const -> ::Semantic_Node_
 
 auto ::Semantic_Node_::children_of_kind_(p_int const kind_) const -> ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull
 {
-	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>());
-	for (::Semantic_Node_ *_Nonnull const child_ : *(this->children_))
+	auto self = this;
+	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>())->construct();
+	for (::Semantic_Node_ *_Nonnull const child_ : *(self->children_))
 	{
 		if (child_->kind_->op_Equal(kind_).Value)
 		{
@@ -2000,7 +2081,8 @@ auto ::Semantic_Node_::children_of_kind_(p_int const kind_) const -> ::System_::
 
 auto ::Semantic_Node_::members_() const -> ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull
 {
-	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const members_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const members_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>())->construct();
 	for (::Semantic_Node_ *_Nonnull const child_ : *(children_))
 	{
 		if (LogicalOr(LogicalOr(child_->kind_->op_Equal(ConstructorDeclaration_), [&] { return child_->kind_->op_Equal(FieldDeclaration_); }), [&] { return child_->kind_->op_Equal(MethodDeclaration_); }).Value)
@@ -2014,7 +2096,8 @@ auto ::Semantic_Node_::members_() const -> ::System_::Collections_::List_<::Sema
 
 auto ::Semantic_Node_::statements_() const -> ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull
 {
-	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const statements_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const statements_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>())->construct();
 	for (::Semantic_Node_ *_Nonnull const child_ : *(children_))
 	{
 		if (LogicalAnd(child_->kind_->op_NotEqual(LeftBrace_), [&] { return child_->kind_->op_NotEqual(RightBrace_); }).Value)
@@ -2028,7 +2111,8 @@ auto ::Semantic_Node_::statements_() const -> ::System_::Collections_::List_<::S
 
 auto ::Semantic_Node_::parameters_() const -> ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> const *_Nonnull
 {
-	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const parameters_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Semantic_Node_ *_Nonnull> *_Nonnull const parameters_ = (new ::System_::Collections_::List_<::Semantic_Node_ *_Nonnull>())->construct();
 	for (::Semantic_Node_ *_Nonnull const child_ : *(children_))
 	{
 		if (LogicalOr(child_->kind_->op_Equal(Parameter_), [&] { return child_->kind_->op_Equal(SelfParameter_); }).Value)
@@ -2042,6 +2126,7 @@ auto ::Semantic_Node_::parameters_() const -> ::System_::Collections_::List_<::S
 
 auto ::Semantic_Node_::has_child_(p_int const kind_) const -> p_bool
 {
+	auto self = this;
 	for (::Semantic_Node_ const *_Nonnull const child_ : *(children_))
 	{
 		if (child_->kind_->op_Equal(kind_).Value)
@@ -2055,18 +2140,21 @@ auto ::Semantic_Node_::has_child_(p_int const kind_) const -> p_bool
 
 auto ::Semantic_Node_::add_(::Diagnostic_ const *_Nonnull const diagnostic_) const -> void
 {
+	auto self = this;
 	node_diagnostics_->Add_(diagnostic_);
 }
 
 auto ::Semantic_Node_::all_diagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull
 {
-	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
 	collection_diagnostics_(diagnostics_);
 	return diagnostics_;
 }
 
 auto ::Semantic_Node_::collection_diagnostics_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull const diagnostics_) const -> void
 {
+	auto self = this;
 	for (::Diagnostic_ const *_Nonnull const diagnostic_ : *(node_diagnostics_))
 	{
 		diagnostics_->Add_(diagnostic_);
@@ -2080,6 +2168,7 @@ auto ::Semantic_Node_::collection_diagnostics_(::System_::Collections_::List_<::
 
 auto ::Semantic_Node_::is_value_type_() const -> p_bool
 {
+	auto self = this;
 	if (LogicalOr(kind_->op_Equal(PredefinedType_), [&] { return kind_->op_Equal(OptionalType_); }).Value)
 	{
 		return p_bool(true);
@@ -2087,7 +2176,7 @@ auto ::Semantic_Node_::is_value_type_() const -> p_bool
 
 	if (kind_->op_Equal(QualifiedName_).Value)
 	{
-		return this->children_->op_Element(p_int(2))->is_value_type_();
+		return self->children_->op_Element(p_int(2))->is_value_type_();
 	}
 
 	if (kind_->op_Equal(GenericName_).Value)
@@ -2119,14 +2208,17 @@ auto ::Semantic_Node_::is_value_type_() const -> p_bool
 	return p_bool(true);
 }
 
-::Compilation_Unit_Parser_::Compilation_Unit_Parser_(::Token_Stream_ *_Nonnull const tokenStream_)
+auto ::Compilation_Unit_Parser_::construct(::Token_Stream_ *_Nonnull const tokenStream_) -> ::Compilation_Unit_Parser_*
 {
-	this->tokenStream_ = tokenStream_;
-	this->compilationUnit_ = ::None;
+	::Compilation_Unit_Parser_* self = this;
+	self->tokenStream_ = tokenStream_;
+	self->compilationUnit_ = ::None;
+	return self;
 }
 
 auto ::Compilation_Unit_Parser_::Parse_() -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	if (compilationUnit_->op_Equal(::None).Value)
 	{
 		token_ = tokenStream_->GetNextToken_();
@@ -2138,6 +2230,7 @@ auto ::Compilation_Unit_Parser_::Parse_() -> ::Syntax_Node_ const *_Nonnull
 
 auto ::Compilation_Unit_Parser_::AcceptToken_() -> ::Syntax_Node_ const *_Nullable
 {
+	auto self = this;
 	::Syntax_Node_ const *_Nullable const node_ = token_;
 	token_ = tokenStream_->GetNextToken_();
 	return node_;
@@ -2145,6 +2238,7 @@ auto ::Compilation_Unit_Parser_::AcceptToken_() -> ::Syntax_Node_ const *_Nullab
 
 auto ::Compilation_Unit_Parser_::ExpectToken_(p_int const tokenType_) -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	if (token_->op_Equal(::None).Value)
 	{
 		return new_syntax_node_missing_(tokenType_, tokenStream_->source_, tokenStream_->source_->ByteLength_());
@@ -2162,34 +2256,35 @@ auto ::Compilation_Unit_Parser_::ExpectToken_(p_int const tokenType_) -> ::Synta
 
 auto ::Compilation_Unit_Parser_::ParseTypeName_() -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	if (LogicalOr(LogicalOr(LogicalOr(LogicalOr(LogicalOr(token_->kind_->op_Equal(CodePoint_), [&] { return token_->kind_->op_Equal(String_); }), [&] { return token_->kind_->op_Equal(Int_); }), [&] { return token_->kind_->op_Equal(Bool_); }), [&] { return token_->kind_->op_Equal(Void_); }), [&] { return token_->kind_->op_Equal(UnsignedInt_); }).Value)
 	{
-		return (new ::Syntax_Node_(PredefinedType_, AcceptToken_()));
+		return (new ::Syntax_Node_())->construct(PredefinedType_, AcceptToken_());
 	}
 	else
 	{
-		::Syntax_Node_ const *_Nonnull type_ = (new ::Syntax_Node_(IdentifierName_, ExpectToken_(Identifier_)));
+		::Syntax_Node_ const *_Nonnull type_ = (new ::Syntax_Node_())->construct(IdentifierName_, ExpectToken_(Identifier_));
 		while (token_->kind_->op_Equal(Dot_).Value)
 		{
-			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 			children_->Add_(type_);
 			children_->Add_(ExpectToken_(Dot_));
 			::Syntax_Node_ const *_Nonnull const identifier_ = ExpectToken_(Identifier_);
 			if (token_->kind_->op_Equal(LessThan_).Value)
 			{
-				::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const genericNameChildren_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
-				genericNameChildren_->Add_((new ::Syntax_Node_(IdentifierName_, identifier_)));
+				::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const genericNameChildren_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
+				genericNameChildren_->Add_((new ::Syntax_Node_())->construct(IdentifierName_, identifier_));
 				genericNameChildren_->Add_(ExpectToken_(LessThan_));
 				genericNameChildren_->Add_(ParseType_());
 				genericNameChildren_->Add_(ExpectToken_(GreaterThan_));
-				children_->Add_((new ::Syntax_Node_(GenericName_, genericNameChildren_)));
+				children_->Add_((new ::Syntax_Node_())->construct(GenericName_, genericNameChildren_));
 			}
 			else
 			{
-				children_->Add_((new ::Syntax_Node_(IdentifierName_, identifier_)));
+				children_->Add_((new ::Syntax_Node_())->construct(IdentifierName_, identifier_));
 			}
 
-			type_ = (new ::Syntax_Node_(QualifiedName_, children_));
+			type_ = (new ::Syntax_Node_())->construct(QualifiedName_, children_);
 		}
 
 		return type_;
@@ -2198,29 +2293,31 @@ auto ::Compilation_Unit_Parser_::ParseTypeName_() -> ::Syntax_Node_ const *_Nonn
 
 auto ::Compilation_Unit_Parser_::ParseNonOptionalType_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	if (token_->kind_->op_Equal(MutableKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(MutableKeyword_));
 		children_->Add_(ParseTypeName_());
-		return (new ::Syntax_Node_(MutableType_, children_));
+		return (new ::Syntax_Node_())->construct(MutableType_, children_);
 	}
 	else
 	{
 		children_->Add_(ParseTypeName_());
-		return (new ::Syntax_Node_(ImmutableType_, children_));
+		return (new ::Syntax_Node_())->construct(ImmutableType_, children_);
 	}
 }
 
 auto ::Compilation_Unit_Parser_::ParseType_() -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	::Syntax_Node_ const *_Nonnull type_ = ParseNonOptionalType_();
 	while (token_->kind_->op_Equal(Question_).Value)
 	{
-		::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+		::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 		children_->Add_(type_);
 		children_->Add_(ExpectToken_(Question_));
-		type_ = (new ::Syntax_Node_(ImmutableType_, (new ::Syntax_Node_(OptionalType_, children_))));
+		type_ = (new ::Syntax_Node_())->construct(ImmutableType_, (new ::Syntax_Node_())->construct(OptionalType_, children_));
 	}
 
 	return type_;
@@ -2228,20 +2325,21 @@ auto ::Compilation_Unit_Parser_::ParseType_() -> ::Syntax_Node_ const *_Nonnull
 
 auto ::Compilation_Unit_Parser_::ParseAtom_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	if (token_->kind_->op_Equal(NewKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(NewKeyword_));
 		children_->Add_(ParseTypeName_());
 		children_->Add_(ParseCallArguments_());
-		return (new ::Syntax_Node_(NewExpression_, children_));
+		return (new ::Syntax_Node_())->construct(NewExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(NotOperator_).Value)
 	{
 		children_->Add_(ExpectToken_(NotOperator_));
 		children_->Add_(ParseExpression_(p_int(8)));
-		return (new ::Syntax_Node_(NotExpression_, children_));
+		return (new ::Syntax_Node_())->construct(NotExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(LeftParen_).Value)
@@ -2249,7 +2347,7 @@ auto ::Compilation_Unit_Parser_::ParseAtom_() -> ::Syntax_Node_ const *_Nonnull
 		children_->Add_(ExpectToken_(LeftParen_));
 		children_->Add_(ParseExpression_());
 		children_->Add_(ExpectToken_(RightParen_));
-		return (new ::Syntax_Node_(ParenthesizedExpression_, children_));
+		return (new ::Syntax_Node_())->construct(ParenthesizedExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(Pipe_).Value)
@@ -2257,70 +2355,71 @@ auto ::Compilation_Unit_Parser_::ParseAtom_() -> ::Syntax_Node_ const *_Nonnull
 		children_->Add_(ExpectToken_(Pipe_));
 		children_->Add_(ParseExpression_());
 		children_->Add_(ExpectToken_(Pipe_));
-		return (new ::Syntax_Node_(MagnitudeExpression_, children_));
+		return (new ::Syntax_Node_())->construct(MagnitudeExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(Minus_).Value)
 	{
 		children_->Add_(ExpectToken_(Minus_));
 		children_->Add_(ParseExpression_(p_int(8)));
-		return (new ::Syntax_Node_(NegateExpression_, children_));
+		return (new ::Syntax_Node_())->construct(NegateExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(NoneKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(NoneKeyword_));
-		return (new ::Syntax_Node_(NoneLiteralExpression_, children_));
+		return (new ::Syntax_Node_())->construct(NoneLiteralExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(SelfKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(SelfKeyword_));
-		return (new ::Syntax_Node_(SelfExpression_, children_));
+		return (new ::Syntax_Node_())->construct(SelfExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(TrueKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(TrueKeyword_));
-		return (new ::Syntax_Node_(TrueLiteralExpression_, children_));
+		return (new ::Syntax_Node_())->construct(TrueLiteralExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(FalseKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(FalseKeyword_));
-		return (new ::Syntax_Node_(FalseLiteralExpression_, children_));
+		return (new ::Syntax_Node_())->construct(FalseLiteralExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(Number_).Value)
 	{
 		children_->Add_(ExpectToken_(Number_));
-		return (new ::Syntax_Node_(NumericLiteralExpression_, children_));
+		return (new ::Syntax_Node_())->construct(NumericLiteralExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(Identifier_).Value)
 	{
 		children_->Add_(ExpectToken_(Identifier_));
-		return (new ::Syntax_Node_(IdentifierName_, children_));
+		return (new ::Syntax_Node_())->construct(IdentifierName_, children_);
 	}
 
 	if (token_->kind_->op_Equal(StringLiteral_).Value)
 	{
 		children_->Add_(ExpectToken_(StringLiteral_));
-		return (new ::Syntax_Node_(StringLiteralExpression_, children_));
+		return (new ::Syntax_Node_())->construct(StringLiteralExpression_, children_);
 	}
 
 	if (token_->kind_->op_Equal(CodePointLiteral_).Value)
 	{
 		children_->Add_(ExpectToken_(CodePointLiteral_));
-		return (new ::Syntax_Node_(CodePointLiteralExpression_, children_));
+		return (new ::Syntax_Node_())->construct(CodePointLiteralExpression_, children_);
 	}
 
-	return (new ::Syntax_Node_(IdentifierName_, ExpectToken_(Identifier_)));
+	return (new ::Syntax_Node_())->construct(IdentifierName_, ExpectToken_(Identifier_));
 }
 
 auto ::Compilation_Unit_Parser_::ParseCallArguments_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	children_->Add_(ExpectToken_(LeftParen_));
 	if (token_->kind_->op_NotEqual(RightParen_).Value)
 	{
@@ -2339,15 +2438,16 @@ auto ::Compilation_Unit_Parser_::ParseCallArguments_() -> ::Syntax_Node_ const *
 	}
 
 	children_->Add_(ExpectToken_(RightParen_));
-	return (new ::Syntax_Node_(ArgumentList_, children_));
+	return (new ::Syntax_Node_())->construct(ArgumentList_, children_);
 }
 
 auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	::Syntax_Node_ const *_Nonnull expression_ = ParseAtom_();
 	for (;;)
 	{
-		::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+		::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 		children_->Add_(expression_);
 		p_int precedence_;
 		p_bool leftAssociative_;
@@ -2468,23 +2568,25 @@ auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) ->
 			}
 
 			children_->Add_(ParseExpression_(precedence_));
-			expression_ = (new ::Syntax_Node_(expressionType_, children_));
+			expression_ = (new ::Syntax_Node_())->construct(expressionType_, children_);
 		}
 		else
 		{
-			expression_ = (new ::Syntax_Node_(expressionType_, children_));
+			expression_ = (new ::Syntax_Node_())->construct(expressionType_, children_);
 		}
 	}
 }
 
 auto ::Compilation_Unit_Parser_::ParseExpression_() -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	return ParseExpression_(p_int(1));
 }
 
 auto ::Compilation_Unit_Parser_::ParseStatement_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	if (token_->kind_->op_Equal(ReturnKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(ReturnKeyword_));
@@ -2494,14 +2596,14 @@ auto ::Compilation_Unit_Parser_::ParseStatement_() -> ::Syntax_Node_ const *_Non
 		}
 
 		children_->Add_(ExpectToken_(Semicolon_));
-		return (new ::Syntax_Node_(ReturnStatement_, children_));
+		return (new ::Syntax_Node_())->construct(ReturnStatement_, children_);
 	}
 
 	if (token_->kind_->op_Equal(LoopKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(LoopKeyword_));
 		children_->Add_(ParseBlock_());
-		return (new ::Syntax_Node_(LoopStatement_, children_));
+		return (new ::Syntax_Node_())->construct(LoopStatement_, children_);
 	}
 
 	if (token_->kind_->op_Equal(WhileKeyword_).Value)
@@ -2509,7 +2611,7 @@ auto ::Compilation_Unit_Parser_::ParseStatement_() -> ::Syntax_Node_ const *_Non
 		children_->Add_(ExpectToken_(WhileKeyword_));
 		children_->Add_(ParseExpression_());
 		children_->Add_(ParseBlock_());
-		return (new ::Syntax_Node_(WhileStatement_, children_));
+		return (new ::Syntax_Node_())->construct(WhileStatement_, children_);
 	}
 
 	if (token_->kind_->op_Equal(ForKeyword_).Value)
@@ -2519,7 +2621,7 @@ auto ::Compilation_Unit_Parser_::ParseStatement_() -> ::Syntax_Node_ const *_Non
 		children_->Add_(ExpectToken_(InKeyword_));
 		children_->Add_(ParseExpression_());
 		children_->Add_(ParseBlock_());
-		return (new ::Syntax_Node_(ForStatement_, children_));
+		return (new ::Syntax_Node_())->construct(ForStatement_, children_);
 	}
 
 	if (token_->kind_->op_Equal(DoKeyword_).Value)
@@ -2529,7 +2631,7 @@ auto ::Compilation_Unit_Parser_::ParseStatement_() -> ::Syntax_Node_ const *_Non
 		children_->Add_(ExpectToken_(WhileKeyword_));
 		children_->Add_(ParseExpression_());
 		children_->Add_(ExpectToken_(Semicolon_));
-		return (new ::Syntax_Node_(DoWhileStatement_, children_));
+		return (new ::Syntax_Node_())->construct(DoWhileStatement_, children_);
 	}
 
 	if (token_->kind_->op_Equal(IfKeyword_).Value)
@@ -2541,21 +2643,21 @@ auto ::Compilation_Unit_Parser_::ParseStatement_() -> ::Syntax_Node_ const *_Non
 	{
 		children_->Add_(ExpectToken_(BreakKeyword_));
 		children_->Add_(ExpectToken_(Semicolon_));
-		return (new ::Syntax_Node_(BreakStatement_, children_));
+		return (new ::Syntax_Node_())->construct(BreakStatement_, children_);
 	}
 
 	if (token_->kind_->op_Equal(ContinueKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(ContinueKeyword_));
 		children_->Add_(ExpectToken_(Semicolon_));
-		return (new ::Syntax_Node_(ContinueStatement_, children_));
+		return (new ::Syntax_Node_())->construct(ContinueStatement_, children_);
 	}
 
 	if (LogicalOr(token_->kind_->op_Equal(VarKeyword_), [&] { return token_->kind_->op_Equal(LetKeyword_); }).Value)
 	{
 		children_->Add_(ParseVariableDeclaration_(p_bool(true)));
 		children_->Add_(ExpectToken_(Semicolon_));
-		return (new ::Syntax_Node_(LocalDeclarationStatement_, children_));
+		return (new ::Syntax_Node_())->construct(LocalDeclarationStatement_, children_);
 	}
 
 	if (token_->kind_->op_Equal(LeftBrace_).Value)
@@ -2565,18 +2667,19 @@ auto ::Compilation_Unit_Parser_::ParseStatement_() -> ::Syntax_Node_ const *_Non
 
 	children_->Add_(ParseExpression_());
 	children_->Add_(ExpectToken_(Semicolon_));
-	return (new ::Syntax_Node_(ExpressionStatement_, children_));
+	return (new ::Syntax_Node_())->construct(ExpressionStatement_, children_);
 }
 
 auto ::Compilation_Unit_Parser_::ParseIfStatement_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	children_->Add_(ExpectToken_(IfKeyword_));
 	children_->Add_(ParseExpression_());
 	children_->Add_(ParseBlock_());
 	if (token_->kind_->op_Equal(ElseKeyword_).Value)
 	{
-		::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const elseChildren_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+		::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const elseChildren_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 		elseChildren_->Add_(ExpectToken_(ElseKeyword_));
 		if (token_->kind_->op_Equal(IfKeyword_).Value)
 		{
@@ -2587,15 +2690,16 @@ auto ::Compilation_Unit_Parser_::ParseIfStatement_() -> ::Syntax_Node_ const *_N
 			elseChildren_->Add_(ParseBlock_());
 		}
 
-		children_->Add_((new ::Syntax_Node_(ElseClause_, elseChildren_)));
+		children_->Add_((new ::Syntax_Node_())->construct(ElseClause_, elseChildren_));
 	}
 
-	return (new ::Syntax_Node_(IfStatement_, children_));
+	return (new ::Syntax_Node_())->construct(IfStatement_, children_);
 }
 
 auto ::Compilation_Unit_Parser_::ParseVariableDeclaration_(p_bool const allowInitializer_) -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	if (LogicalAnd(token_->kind_->op_Equal(LetKeyword_), [&] { return token_->kind_->op_NotEqual(VarKeyword_); }).Value)
 	{
 		children_->Add_(ExpectToken_(LetKeyword_));
@@ -2614,12 +2718,13 @@ auto ::Compilation_Unit_Parser_::ParseVariableDeclaration_(p_bool const allowIni
 		children_->Add_(ParseExpression_());
 	}
 
-	return (new ::Syntax_Node_(VariableDeclaration_, children_));
+	return (new ::Syntax_Node_())->construct(VariableDeclaration_, children_);
 }
 
 auto ::Compilation_Unit_Parser_::ParseBlock_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	children_->Add_(ExpectToken_(LeftBrace_));
 	while (LogicalAnd(token_->kind_->op_NotEqual(RightBrace_), [&] { return token_->kind_->op_NotEqual(EndOfFileToken_); }).Value)
 	{
@@ -2627,7 +2732,7 @@ auto ::Compilation_Unit_Parser_::ParseBlock_() -> ::Syntax_Node_ const *_Nonnull
 		children_->Add_(ParseStatement_());
 		if (token_->op_Equal(startToken_).Value)
 		{
-			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const skipped_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const skipped_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 			while (LogicalAnd(LogicalAnd(token_->kind_->op_NotEqual(LeftBrace_), [&] { return token_->kind_->op_NotEqual(RightBrace_); }), [&] { return token_->kind_->op_NotEqual(EndOfFileToken_); }).Value)
 			{
 				p_int const currentTokenType_ = token_->kind_;
@@ -2643,18 +2748,19 @@ auto ::Compilation_Unit_Parser_::ParseBlock_() -> ::Syntax_Node_ const *_Nonnull
 	}
 
 	children_->Add_(ExpectToken_(RightBrace_));
-	return (new ::Syntax_Node_(Block_, children_));
+	return (new ::Syntax_Node_())->construct(Block_, children_);
 }
 
 auto ::Compilation_Unit_Parser_::ParseParameterList_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	children_->Add_(ExpectToken_(LeftParen_));
 	if (token_->kind_->op_NotEqual(RightParen_).Value)
 	{
 		for (;;)
 		{
-			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const parameterChildren_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const parameterChildren_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 			if (LogicalOr(token_->kind_->op_Equal(MutableKeyword_), [&] { return token_->kind_->op_Equal(SelfKeyword_); }).Value)
 			{
 				if (token_->kind_->op_Equal(MutableKeyword_).Value)
@@ -2663,7 +2769,7 @@ auto ::Compilation_Unit_Parser_::ParseParameterList_() -> ::Syntax_Node_ const *
 				}
 
 				parameterChildren_->Add_(ExpectToken_(SelfKeyword_));
-				children_->Add_((new ::Syntax_Node_(SelfParameter_, parameterChildren_)));
+				children_->Add_((new ::Syntax_Node_())->construct(SelfParameter_, parameterChildren_));
 			}
 			else
 			{
@@ -2677,7 +2783,7 @@ auto ::Compilation_Unit_Parser_::ParseParameterList_() -> ::Syntax_Node_ const *
 				parameterChildren_->Add_(ExpectToken_(Colon_));
 				::Syntax_Node_ const *_Nonnull const type_ = ParseType_();
 				parameterChildren_->Add_(type_);
-				children_->Add_((new ::Syntax_Node_(Parameter_, parameterChildren_)));
+				children_->Add_((new ::Syntax_Node_())->construct(Parameter_, parameterChildren_));
 			}
 
 			if (token_->kind_->op_Equal(Comma_).Value)
@@ -2692,12 +2798,13 @@ auto ::Compilation_Unit_Parser_::ParseParameterList_() -> ::Syntax_Node_ const *
 	}
 
 	children_->Add_(ExpectToken_(RightParen_));
-	return (new ::Syntax_Node_(ParameterList_, children_));
+	return (new ::Syntax_Node_())->construct(ParameterList_, children_);
 }
 
 auto ::Compilation_Unit_Parser_::ParseMemberDeclaration_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	if (LogicalOr(LogicalOr(LogicalOr(token_->kind_->op_Equal(PublicKeyword_), [&] { return token_->kind_->op_Equal(ProtectedKeyword_); }), [&] { return token_->kind_->op_Equal(InternalKeyword_); }), [&] { return token_->kind_->op_Equal(PrivateKeyword_); }).Value)
 	{
 		children_->Add_(AcceptToken_());
@@ -2717,14 +2824,14 @@ auto ::Compilation_Unit_Parser_::ParseMemberDeclaration_() -> ::Syntax_Node_ con
 
 		children_->Add_(ParseParameterList_());
 		children_->Add_(ParseBlock_());
-		return (new ::Syntax_Node_(ConstructorDeclaration_, children_));
+		return (new ::Syntax_Node_())->construct(ConstructorDeclaration_, children_);
 	}
 
 	if (LogicalOr(token_->kind_->op_Equal(VarKeyword_), [&] { return token_->kind_->op_Equal(LetKeyword_); }).Value)
 	{
 		children_->Add_(ParseVariableDeclaration_(p_bool(false)));
 		children_->Add_(ExpectToken_(Semicolon_));
-		return (new ::Syntax_Node_(FieldDeclaration_, children_));
+		return (new ::Syntax_Node_())->construct(FieldDeclaration_, children_);
 	}
 
 	children_->Add_(ExpectToken_(Identifier_));
@@ -2732,12 +2839,13 @@ auto ::Compilation_Unit_Parser_::ParseMemberDeclaration_() -> ::Syntax_Node_ con
 	children_->Add_(ExpectToken_(Arrow_));
 	children_->Add_(ParseType_());
 	children_->Add_(ParseBlock_());
-	return (new ::Syntax_Node_(MethodDeclaration_, children_));
+	return (new ::Syntax_Node_())->construct(MethodDeclaration_, children_);
 }
 
 auto ::Compilation_Unit_Parser_::ParseDeclaration_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	if (LogicalOr(LogicalOr(LogicalOr(token_->kind_->op_Equal(PublicKeyword_), [&] { return token_->kind_->op_Equal(ProtectedKeyword_); }), [&] { return token_->kind_->op_Equal(InternalKeyword_); }), [&] { return token_->kind_->op_Equal(PrivateKeyword_); }).Value)
 	{
 		children_->Add_(AcceptToken_());
@@ -2751,7 +2859,7 @@ auto ::Compilation_Unit_Parser_::ParseDeclaration_() -> ::Syntax_Node_ const *_N
 	{
 		children_->Add_(ParseVariableDeclaration_(p_bool(true)));
 		children_->Add_(ExpectToken_(Semicolon_));
-		return (new ::Syntax_Node_(GlobalDeclaration_, children_));
+		return (new ::Syntax_Node_())->construct(GlobalDeclaration_, children_);
 	}
 
 	if (token_->kind_->op_Equal(ClassKeyword_).Value)
@@ -2770,7 +2878,7 @@ auto ::Compilation_Unit_Parser_::ParseDeclaration_() -> ::Syntax_Node_ const *_N
 		}
 
 		children_->Add_(ExpectToken_(RightBrace_));
-		return (new ::Syntax_Node_(ClassDeclaration_, children_));
+		return (new ::Syntax_Node_())->construct(ClassDeclaration_, children_);
 	}
 
 	if (token_->kind_->op_Equal(StructKeyword_).Value)
@@ -2789,7 +2897,7 @@ auto ::Compilation_Unit_Parser_::ParseDeclaration_() -> ::Syntax_Node_ const *_N
 		}
 
 		children_->Add_(ExpectToken_(RightBrace_));
-		return (new ::Syntax_Node_(StructDeclaration_, children_));
+		return (new ::Syntax_Node_())->construct(StructDeclaration_, children_);
 	}
 
 	if (token_->kind_->op_Equal(EnumKeyword_).Value)
@@ -2800,7 +2908,7 @@ auto ::Compilation_Unit_Parser_::ParseDeclaration_() -> ::Syntax_Node_ const *_N
 		children_->Add_(ExpectToken_(LeftBrace_));
 		while (LogicalAnd(token_->kind_->op_NotEqual(RightBrace_), [&] { return token_->kind_->op_NotEqual(EndOfFileToken_); }).Value)
 		{
-			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const memberChildren_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const memberChildren_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 			memberChildren_->Add_(ExpectToken_(Identifier_));
 			if (token_->kind_->op_Equal(Equals_).Value)
 			{
@@ -2813,11 +2921,11 @@ auto ::Compilation_Unit_Parser_::ParseDeclaration_() -> ::Syntax_Node_ const *_N
 				memberChildren_->Add_(ExpectToken_(Comma_));
 			}
 
-			children_->Add_((new ::Syntax_Node_(EnumMemberDeclaration_, memberChildren_)));
+			children_->Add_((new ::Syntax_Node_())->construct(EnumMemberDeclaration_, memberChildren_));
 		}
 
 		children_->Add_(ExpectToken_(RightBrace_));
-		return (new ::Syntax_Node_(EnumDeclaration_, children_));
+		return (new ::Syntax_Node_())->construct(EnumDeclaration_, children_);
 	}
 
 	children_->Add_(ExpectToken_(Identifier_));
@@ -2825,12 +2933,13 @@ auto ::Compilation_Unit_Parser_::ParseDeclaration_() -> ::Syntax_Node_ const *_N
 	children_->Add_(ExpectToken_(Arrow_));
 	children_->Add_(ParseType_());
 	children_->Add_(ParseBlock_());
-	return (new ::Syntax_Node_(FunctionDeclaration_, children_));
+	return (new ::Syntax_Node_())->construct(FunctionDeclaration_, children_);
 }
 
 auto ::Compilation_Unit_Parser_::ParseCompilationUnit_() -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	while (LogicalAnd(token_->op_NotEqual(::None), [&] { return token_->kind_->op_NotEqual(EndOfFileToken_); }).Value)
 	{
 		::Syntax_Node_ const *_Nonnull const startToken_ = token_;
@@ -2842,86 +2951,100 @@ auto ::Compilation_Unit_Parser_::ParseCompilationUnit_() -> ::Syntax_Node_ const
 	}
 
 	children_->Add_(ExpectToken_(EndOfFileToken_));
-	return (new ::Syntax_Node_(CompilationUnit_, children_));
+	return (new ::Syntax_Node_())->construct(CompilationUnit_, children_);
 }
 
 auto ::Lexer_::analyze_(::Source_Text_ const *_Nonnull const source_) const -> ::Token_Stream_ *_Nonnull
 {
-	return (new ::Token_Stream_(source_));
+	auto self = this;
+	return (new ::Token_Stream_())->construct(source_);
 }
 
-::Parser_::Parser_()
+auto ::Parser_::construct() -> ::Parser_*
 {
+	::Parser_* self = this;
+	return self;
 }
 
 auto ::Parser_::ParsePackage_(::System_::Collections_::List_<::Source_Text_ const *_Nonnull> const *_Nonnull const sources_) const -> ::Syntax_Node_ const *_Nonnull
 {
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
-	::Lexer_ const *_Nonnull const lexer_ = (new ::Lexer_());
+	auto self = this;
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
+	::Lexer_ const *_Nonnull const lexer_ = (new ::Lexer_())->construct();
 	for (::Source_Text_ const *_Nonnull const source_ : *(sources_))
 	{
 		::Token_Stream_ *_Nonnull const tokenStream_ = lexer_->analyze_(source_);
-		::Compilation_Unit_Parser_ *_Nonnull const compilationUnitParser_ = (new ::Compilation_Unit_Parser_(tokenStream_));
+		::Compilation_Unit_Parser_ *_Nonnull const compilationUnitParser_ = (new ::Compilation_Unit_Parser_())->construct(tokenStream_);
 		children_->Add_(compilationUnitParser_->Parse_());
 	}
 
-	return (new ::Syntax_Node_(PackageNode_, children_));
+	return (new ::Syntax_Node_())->construct(PackageNode_, children_);
 }
 
-::Syntax_Node_::Syntax_Node_(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_)
+auto ::Syntax_Node_::construct(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_) -> ::Syntax_Node_*
 {
+	::Syntax_Node_* self = this;
 	kind_ = type_;
 	is_missing_ = p_bool(false);
-	this->source_ = source_;
-	this->start_ = start_;
+	self->source_ = source_;
+	self->start_ = start_;
 	byte_length_ = length_;
-	this->children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
-	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	self->children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
+	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
+	return self;
 }
 
-::Syntax_Node_::Syntax_Node_(p_int const type_, p_bool const isMissing_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_)
+auto ::Syntax_Node_::construct(p_int const type_, p_bool const isMissing_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_) -> ::Syntax_Node_*
 {
+	::Syntax_Node_* self = this;
 	kind_ = type_;
 	is_missing_ = isMissing_;
-	this->source_ = source_;
-	this->start_ = start_;
+	self->source_ = source_;
+	self->start_ = start_;
 	byte_length_ = length_;
-	this->children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
-	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	self->children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
+	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
+	return self;
 }
 
-::Syntax_Node_::Syntax_Node_(p_int const type_, ::Syntax_Node_ const *_Nonnull const child_)
+auto ::Syntax_Node_::construct(p_int const type_, ::Syntax_Node_ const *_Nonnull const child_) -> ::Syntax_Node_*
 {
+	::Syntax_Node_* self = this;
 	kind_ = type_;
 	is_missing_ = child_->is_missing_;
 	source_ = child_->source_;
 	start_ = child_->start_;
 	byte_length_ = child_->byte_length_;
-	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>());
+	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 	children_->Add_(child_);
-	this->children_ = children_;
-	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	self->children_ = children_;
+	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
+	return self;
 }
 
-::Syntax_Node_::Syntax_Node_(p_int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const children_)
+auto ::Syntax_Node_::construct(p_int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Syntax_Node_*
 {
+	::Syntax_Node_* self = this;
 	kind_ = type_;
 	is_missing_ = p_bool(false);
 	source_ = children_->op_Element(p_int(0))->source_;
 	start_ = children_->op_Element(p_int(0))->start_;
 	::Syntax_Node_ const *_Nonnull const lastChild_ = children_->op_Element(children_->op_Magnitude()->op_Subtract(p_int(1)));
 	byte_length_ = lastChild_->start_->op_Subtract(start_)->op_Add(lastChild_->byte_length_);
-	this->children_ = children_;
-	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	self->children_ = children_;
+	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
+	return self;
 }
 
 auto ::Syntax_Node_::get_text_() const -> p_string
 {
+	auto self = this;
 	return source_->Text_->Substring_(start_, byte_length_);
 }
 
 auto ::Syntax_Node_::first_child_(p_int const type_) const -> ::Syntax_Node_ const *_Nullable
 {
+	auto self = this;
 	for (::Syntax_Node_ const *_Nonnull const child_ : *(children_))
 	{
 		if (child_->kind_->op_Equal(type_).Value)
@@ -2935,6 +3058,7 @@ auto ::Syntax_Node_::first_child_(p_int const type_) const -> ::Syntax_Node_ con
 
 auto ::Syntax_Node_::has_child_(p_int const type_) const -> p_bool
 {
+	auto self = this;
 	for (::Syntax_Node_ const *_Nonnull const child_ : *(children_))
 	{
 		if (child_->kind_->op_Equal(type_).Value)
@@ -2948,18 +3072,21 @@ auto ::Syntax_Node_::has_child_(p_int const type_) const -> p_bool
 
 auto ::Syntax_Node_::add_(::Diagnostic_ const *_Nonnull const diagnostic_) const -> void
 {
+	auto self = this;
 	node_diagnostics_->Add_(diagnostic_);
 }
 
 auto ::Syntax_Node_::all_diagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull
 {
-	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	auto self = this;
+	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
 	collection_diagnostics_(diagnostics_);
 	return diagnostics_;
 }
 
 auto ::Syntax_Node_::collection_diagnostics_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull const diagnostics_) const -> void
 {
+	auto self = this;
 	for (::Diagnostic_ const *_Nonnull const diagnostic_ : *(node_diagnostics_))
 	{
 		diagnostics_->Add_(diagnostic_);
@@ -2973,45 +3100,50 @@ auto ::Syntax_Node_::collection_diagnostics_(::System_::Collections_::List_<::Di
 
 auto new_syntax_node_missing_(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_) -> ::Syntax_Node_ const *_Nonnull
 {
-	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_(type_, p_bool(true), source_, start_, p_int(0)));
-	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_(start_, p_int(0)));
-	node_->add_((new ::Diagnostic_(CompilationError_, Parsing_, source_, span_, p_string("Missing token of type ").op_Add(type_))));
+	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_())->construct(type_, p_bool(true), source_, start_, p_int(0));
+	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_())->construct(start_, p_int(0));
+	node_->add_((new ::Diagnostic_())->construct(CompilationError_, Parsing_, source_, span_, p_string("Missing token of type ").op_Add(type_)));
 	return node_;
 }
 
 auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *_Nonnull const skipped_) -> ::Syntax_Node_ const *_Nonnull
 {
-	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_(SkippedTokens_, skipped_));
-	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_(skipped_->start_, skipped_->byte_length_));
-	node_->add_((new ::Diagnostic_(CompilationError_, Parsing_, skipped_->source_, span_, p_string("Skipped unexpected token of type ").op_Add(skipped_->kind_))));
+	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_())->construct(SkippedTokens_, skipped_);
+	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_())->construct(skipped_->start_, skipped_->byte_length_);
+	node_->add_((new ::Diagnostic_())->construct(CompilationError_, Parsing_, skipped_->source_, span_, p_string("Skipped unexpected token of type ").op_Add(skipped_->kind_)));
 	return node_;
 }
 
 auto new_Syntax_Node_Skipped_(::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const skipped_) -> ::Syntax_Node_ const *_Nonnull
 {
-	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_(SkippedTokens_, skipped_));
-	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_(node_->start_, node_->byte_length_));
-	node_->add_((new ::Diagnostic_(CompilationError_, Parsing_, node_->source_, span_, p_string("Skipped ").op_Add(skipped_->op_Magnitude())->op_Add(p_string(" unexpected token(s)")))));
+	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_())->construct(SkippedTokens_, skipped_);
+	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_())->construct(node_->start_, node_->byte_length_);
+	node_->add_((new ::Diagnostic_())->construct(CompilationError_, Parsing_, node_->source_, span_, p_string("Skipped ").op_Add(skipped_->op_Magnitude())->op_Add(p_string(" unexpected token(s)"))));
 	return node_;
 }
 
-::Syntax_Tree_::Syntax_Tree_(p_string const path_, ::Source_Text_ const *_Nonnull const source_, ::Syntax_Node_ const *_Nonnull const root_)
+auto ::Syntax_Tree_::construct(p_string const path_, ::Source_Text_ const *_Nonnull const source_, ::Syntax_Node_ const *_Nonnull const root_) -> ::Syntax_Tree_*
 {
-	this->path_ = path_;
-	this->source_ = source_;
-	this->root_ = root_;
+	::Syntax_Tree_* self = this;
+	self->path_ = path_;
+	self->source_ = source_;
+	self->root_ = root_;
+	return self;
 }
 
-::Token_Stream_::Token_Stream_(::Source_Text_ const *_Nonnull const source_)
+auto ::Token_Stream_::construct(::Source_Text_ const *_Nonnull const source_) -> ::Token_Stream_*
 {
-	this->source_ = source_;
+	::Token_Stream_* self = this;
+	self->source_ = source_;
 	position_ = p_int(0);
-	diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>());
+	diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
 	endOfFile_ = p_bool(false);
+	return self;
 }
 
 auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 {
+	auto self = this;
 	if (position_->op_GreaterThanOrEqual(source_->ByteLength_()).Value)
 	{
 		return EndOfFile_();
@@ -3215,8 +3347,8 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 				return NewToken_(Number_, end_);
 			}
 
-			::Text_Span_ const *_Nonnull diagnosticSpan_ = (new ::Text_Span_(position_, p_int(1)));
-			diagnostics_->Add_((new ::Diagnostic_(CompilationError_, Lexing_, source_, diagnosticSpan_, p_string("Invalid character `").op_Add(curChar_)->op_Add(p_string("`")))));
+			::Text_Span_ const *_Nonnull diagnosticSpan_ = (new ::Text_Span_())->construct(position_, p_int(1));
+			diagnostics_->Add_((new ::Diagnostic_())->construct(CompilationError_, Lexing_, source_, diagnosticSpan_, p_string("Invalid character `").op_Add(curChar_)->op_Add(p_string("`"))));
 			position_ = end_;
 		}
 	}
@@ -3226,6 +3358,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 auto ::Token_Stream_::EndOfFile_() -> ::Syntax_Node_ const *_Nullable
 {
+	auto self = this;
 	if (endOfFile_.Value)
 	{
 		return ::None;
@@ -3237,6 +3370,7 @@ auto ::Token_Stream_::EndOfFile_() -> ::Syntax_Node_ const *_Nullable
 
 auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	p_uint const length_ = end_->op_Subtract(position_);
 	p_string const value_ = source_->Text_->Substring_(position_, length_);
 	p_int type_;
@@ -3390,17 +3524,20 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Nod
 
 auto ::Token_Stream_::NewOperator_(p_int const type_) -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	return NewToken_(type_, position_->op_Add(p_int(1)));
 }
 
 auto ::Token_Stream_::NewOperator_(p_int const type_, p_uint const length_) -> ::Syntax_Node_ const *_Nonnull
 {
+	auto self = this;
 	return NewToken_(type_, position_->op_Add(length_));
 }
 
 auto ::Token_Stream_::NewToken_(p_int const type_, p_uint const end_) -> ::Syntax_Node_ const *_Nonnull
 {
-	::Syntax_Node_ *_Nonnull const token_ = (new ::Syntax_Node_(type_, source_, position_, end_->op_Subtract(position_)));
+	auto self = this;
+	::Syntax_Node_ *_Nonnull const token_ = (new ::Syntax_Node_())->construct(type_, source_, position_, end_->op_Subtract(position_));
 	for (::Diagnostic_ const *_Nonnull const diagnostic_ : *(diagnostics_))
 	{
 		token_->add_(diagnostic_);
@@ -3421,29 +3558,34 @@ auto ::Token_Stream_::IsNumberChar_(p_code_point const c_) -> p_bool
 	return LogicalAnd(c_->op_GreaterThanOrEqual(p_code_point('0')), [&] { return c_->op_LessThanOrEqual(p_code_point('9')); });
 }
 
-::Diagnostic_::Diagnostic_(p_int const level_, p_int const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_)
+auto ::Diagnostic_::construct(p_int const level_, p_int const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_) -> ::Diagnostic_*
 {
+	::Diagnostic_* self = this;
 	Level_ = level_;
 	Phase_ = phase_;
-	this->source_ = source_;
+	self->source_ = source_;
 	Span_ = span_;
 	Position_ = source_->PositionOfStart_(span_);
 	Message_ = message_;
+	return self;
 }
 
-::Emitter_::Emitter_(::Package_ const *_Nonnull const package_, ::System_::Collections_::List_<::Source_Text_ const *_Nonnull> const *_Nonnull const resources_)
+auto ::Emitter_::construct(::Package_ const *_Nonnull const package_, ::System_::Collections_::List_<::Source_Text_ const *_Nonnull> const *_Nonnull const resources_) -> ::Emitter_*
 {
-	this->package_ = package_;
-	this->resources_ = resources_;
+	::Emitter_* self = this;
+	self->package_ = package_;
+	self->resources_ = resources_;
+	return self;
 }
 
 auto ::Emitter_::Emit_() -> p_string
 {
-	type_declarations_ = (new ::Source_File_Builder_());
-	function_declarations_ = (new ::Source_File_Builder_());
-	class_declarations_ = (new ::Source_File_Builder_());
-	global_definitions_ = (new ::Source_File_Builder_());
-	definitions_ = (new ::Source_File_Builder_());
+	auto self = this;
+	type_declarations_ = (new ::Source_File_Builder_())->construct();
+	function_declarations_ = (new ::Source_File_Builder_())->construct();
+	class_declarations_ = (new ::Source_File_Builder_())->construct();
+	global_definitions_ = (new ::Source_File_Builder_())->construct();
+	definitions_ = (new ::Source_File_Builder_())->construct();
 	main_function_return_type_ = p_string("");
 	main_function_accepts_console_ = p_bool(false);
 	main_function_accepts_args_ = p_bool(false);
@@ -3570,8 +3712,9 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Semantic_Node_ c
 
 auto ::Emitter_::convert_parameter_list_(::Semantic_Node_ const *_Nonnull const parameter_list_, p_bool const is_main_function_) -> p_string
 {
+	auto self = this;
 	assert_(parameter_list_->kind_->op_Equal(ParameterList_), p_string("parameter_list.kind=").op_Add(parameter_list_->kind_));
-	::System_::Text_::String_Builder_ *_Nonnull const builder_ = (new ::System_::Text_::String_Builder_());
+	::System_::Text_::String_Builder_ *_Nonnull const builder_ = (new ::System_::Text_::String_Builder_())->construct();
 	builder_->Append_(p_string("("));
 	p_bool first_parameter_ = p_bool(true);
 	for (::Semantic_Node_ const *_Nonnull const parameter_ : *(parameter_list_->children_of_kind_(Parameter_)))
@@ -3621,6 +3764,7 @@ auto ::Emitter_::convert_parameter_list_(::Semantic_Node_ const *_Nonnull const 
 
 auto ::Emitter_::convert_parameter_list_(::Semantic_Node_ const *_Nonnull const parameter_list_) -> p_string
 {
+	auto self = this;
 	return convert_parameter_list_(parameter_list_, p_bool(false));
 }
 
@@ -3907,6 +4051,7 @@ auto ::Emitter_::convert_member_access_(::Semantic_Node_ const *_Nonnull const l
 
 auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statement_) -> void
 {
+	auto self = this;
 	definitions_->StatementSeparatorLine_();
 	if (statement_->kind_->op_Equal(ReturnStatement_).Value)
 	{
@@ -4033,6 +4178,7 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 
 auto ::Emitter_::emit_method_body_(::Semantic_Node_ const *_Nonnull const block_, p_bool const is_associated_function_) -> void
 {
+	auto self = this;
 	definitions_->BeginBlock_();
 	if (is_associated_function_->op_Not().Value)
 	{
@@ -4049,6 +4195,7 @@ auto ::Emitter_::emit_method_body_(::Semantic_Node_ const *_Nonnull const block_
 
 auto ::Emitter_::emit_constructor_body_(::Semantic_Node_ const *_Nonnull const block_, p_string const self_type_, p_bool const is_value_type_) -> void
 {
+	auto self = this;
 	definitions_->BeginBlock_();
 	if (is_value_type_.Value)
 	{
@@ -4070,6 +4217,7 @@ auto ::Emitter_::emit_constructor_body_(::Semantic_Node_ const *_Nonnull const b
 
 auto ::Emitter_::emit_access_modifer_(p_int const current_access_level_, p_int const access_modifer_) -> p_int
 {
+	auto self = this;
 	if (access_modifer_->op_NotEqual(current_access_level_).Value)
 	{
 		if (LogicalOr(access_modifer_->op_Equal(PublicKeyword_), [&] { return access_modifer_->op_Equal(InternalKeyword_); }).Value)
@@ -4096,6 +4244,7 @@ auto ::Emitter_::emit_access_modifer_(p_int const current_access_level_, p_int c
 
 auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, p_bool const is_value_type_, p_int const current_access_level_) -> p_int
 {
+	auto self = this;
 	p_int access_modifer_ = member_->children_->op_Element(p_int(0))->kind_;
 	access_modifer_ = emit_access_modifer_(current_access_level_, access_modifer_);
 	if (member_->kind_->op_Equal(ConstructorDeclaration_).Value)
@@ -4171,6 +4320,7 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 
 auto ::Emitter_::emit_default_constructor_(p_string const type_name_, p_bool const is_value_type_, p_int const current_access_level_) -> void
 {
+	auto self = this;
 	emit_access_modifer_(current_access_level_, PublicKeyword_);
 	p_string return_type_ = p_string("::").op_Add(type_name_)->op_Add(p_string("_"));
 	if (is_value_type_->op_Not().Value)
@@ -4197,6 +4347,7 @@ auto ::Emitter_::emit_default_constructor_(p_string const type_name_, p_bool con
 
 auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declaration_) -> void
 {
+	auto self = this;
 	if (declaration_->kind_->op_Equal(GlobalDeclaration_).Value)
 	{
 		::Semantic_Node_ const *_Nonnull const variable_declaration_ = declaration_->children_->op_Element(p_int(1));
@@ -4326,6 +4477,7 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 
 auto ::Emitter_::emit_compilation_unit_(::Semantic_Node_ const *_Nonnull const unit_) -> void
 {
+	auto self = this;
 	for (::Semantic_Node_ const *_Nonnull const declaration_ : *(unit_->children_))
 	{
 		emit_declaration_(declaration_);
@@ -4334,6 +4486,7 @@ auto ::Emitter_::emit_compilation_unit_(::Semantic_Node_ const *_Nonnull const u
 
 auto ::Emitter_::emit_preamble_() -> void
 {
+	auto self = this;
 	type_declarations_->WriteLine_(p_string("#include \"RuntimeLibrary.h\""));
 	type_declarations_->BlankLine_();
 	type_declarations_->WriteLine_(p_string("// Type Declarations"));
@@ -4349,6 +4502,7 @@ auto ::Emitter_::emit_preamble_() -> void
 
 auto ::Emitter_::emit_entry_point_adapter_() -> void
 {
+	auto self = this;
 	definitions_->ElementSeparatorLine_();
 	definitions_->WriteLine_(p_string("// Entry Point Adapter"));
 	definitions_->WriteLine_(p_string("std::int32_t main(int argc, char const *const * argv)"));
@@ -4369,7 +4523,7 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 		definitions_->EndLine_(p_string(""));
 	}
 
-	::System_::Text_::String_Builder_ *_Nonnull const args_ = (new ::System_::Text_::String_Builder_());
+	::System_::Text_::String_Builder_ *_Nonnull const args_ = (new ::System_::Text_::String_Builder_())->construct();
 	if (main_function_accepts_console_.Value)
 	{
 		args_->Append_(p_string("new ::System_::Console_::Console_()"));
@@ -4405,64 +4559,77 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 	definitions_->EndBlock_();
 }
 
-::Namespace_Name_::Namespace_Name_(::System_::Collections_::List_<p_string> const *_Nonnull const segments_)
+auto ::Namespace_Name_::construct(::System_::Collections_::List_<p_string> const *_Nonnull const segments_) -> ::Namespace_Name_*
 {
-	this->segments_ = segments_;
+	::Namespace_Name_* self = this;
+	self->segments_ = segments_;
+	return self;
 }
 
 auto global_namespace_() -> ::Namespace_Name_ const *_Nonnull
 {
-	return (new ::Namespace_Name_((new ::System_::Collections_::List_<p_string>())));
+	return (new ::Namespace_Name_())->construct((new ::System_::Collections_::List_<p_string>())->construct());
 }
 
-::Package_Name_::Package_Name_(p_string const text_)
+auto ::Package_Name_::construct(p_string const text_) -> ::Package_Name_*
 {
-	this->text_ = text_;
+	::Package_Name_* self = this;
+	self->text_ = text_;
+	return self;
 }
 
-::Symbol_::Symbol_(p_string const name_)
+auto ::Symbol_::construct(p_string const name_) -> ::Symbol_*
 {
-	this->name_ = name_;
+	::Symbol_* self = this;
+	self->name_ = name_;
 	kind_ = IdentifierSymbol_;
-	declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>());
-	children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
+	declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
+	children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
 	is_primitive_ = p_bool(false);
+	return self;
 }
 
-::Symbol_::Symbol_(p_string const name_, p_int const kind_)
+auto ::Symbol_::construct(p_string const name_, p_int const kind_) -> ::Symbol_*
 {
-	this->name_ = name_;
-	this->kind_ = kind_;
-	declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>());
-	children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
+	::Symbol_* self = this;
+	self->name_ = name_;
+	self->kind_ = kind_;
+	declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
+	children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
 	is_primitive_ = p_bool(false);
+	return self;
 }
 
-::Symbol_::Symbol_(p_string const name_, p_int const kind_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_)
+auto ::Symbol_::construct(p_string const name_, p_int const kind_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_) -> ::Symbol_*
 {
-	this->name_ = name_;
-	this->kind_ = kind_;
-	declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>());
-	this->children_ = children_;
+	::Symbol_* self = this;
+	self->name_ = name_;
+	self->kind_ = kind_;
+	declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
+	self->children_ = children_;
 	is_primitive_ = p_bool(false);
+	return self;
 }
 
-::Symbol_::Symbol_(p_string const name_, ::Type_ const *_Nonnull const declares_type_)
+auto ::Symbol_::construct_primitive(p_string const name_, ::Type_ const *_Nonnull const declares_type_) -> ::Symbol_*
 {
+	::Symbol_* self = this;
 	assert_(name_->ByteLength_()->op_GreaterThan(p_int(0)), p_string(""));
 	assert_(declares_type_->op_NotEqual(::None), p_string("name=").op_Add(name_));
 	assert_(declares_type_->is_primitive_, p_string("name=").op_Add(name_));
-	this->name_ = name_;
-	this->kind_ = SpecialSymbol_;
-	this->is_primitive_ = p_bool(true);
-	this->type_ = ::None;
-	this->declares_type_ = declares_type_;
-	this->declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>());
-	this->children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>());
+	self->name_ = name_;
+	self->kind_ = SpecialSymbol_;
+	self->is_primitive_ = p_bool(true);
+	self->type_ = ::None;
+	self->declares_type_ = declares_type_;
+	self->declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
+	self->children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
+	return self;
 }
 
 auto ::Symbol_::get_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable
 {
+	auto self = this;
 	for (::Symbol_ const *_Nonnull const child_ : *(children_))
 	{
 		if (LogicalAnd(child_->name_->op_Equal(name_), [&] { return child_->kind_->op_Equal(kind_); }).Value)
@@ -4476,6 +4643,7 @@ auto ::Symbol_::get_(p_string const name_, p_int const kind_) const -> ::Symbol_
 
 auto ::Symbol_::declares_value_type_() const -> p_bool
 {
+	auto self = this;
 	if (kind_->op_Equal(IdentifierSymbol_).Value)
 	{
 		if (declarations_->op_Magnitude()->op_Equal(p_int(0)).Value)
@@ -4509,9 +4677,10 @@ auto ::Symbol_::declares_value_type_() const -> p_bool
 
 auto ::Symbol_::get_type_() const -> ::Type_ const *_Nullable
 {
+	auto self = this;
 	if (kind_->op_Equal(SpecialSymbol_).Value)
 	{
-		return (new ::Type_(this));
+		return (new ::Type_())->construct(self);
 	}
 
 	if (declarations_->op_Magnitude()->op_GreaterThan(p_int(0)).Value)
@@ -4524,8 +4693,9 @@ auto ::Symbol_::get_type_() const -> ::Type_ const *_Nullable
 	return ::None;
 }
 
-::Type_::Type_(::Symbol_ const *_Nonnull const symbol_)
+auto ::Type_::construct(::Symbol_ const *_Nonnull const symbol_) -> ::Type_*
 {
+	::Type_* self = this;
 	assert_(symbol_->op_NotEqual(::None), p_string(""));
 	package_ = ::None;
 	namespace_ = ::None;
@@ -4542,27 +4712,32 @@ auto ::Symbol_::get_type_() const -> ::Type_ const *_Nullable
 	}
 
 	immutable_ = p_bool(true);
+	return self;
 }
 
-::Type_::Type_(::Package_Name_ const *_Nonnull const package_, ::Namespace_Name_ const *_Nonnull const namespace_, p_int const kind_, p_string const name_, p_bool const is_primitive_, p_bool const is_value_type_, p_bool const immutable_)
+auto ::Type_::construct(::Package_Name_ const *_Nonnull const package_, ::Namespace_Name_ const *_Nonnull const namespace_, p_int const kind_, p_string const name_, p_bool const is_primitive_, p_bool const is_value_type_, p_bool const immutable_) -> ::Type_*
 {
-	this->package_ = package_;
-	this->namespace_ = namespace_;
-	this->kind_ = kind_;
-	this->name_ = name_;
-	this->is_primitive_ = is_primitive_;
-	this->is_value_type_ = is_value_type_;
-	this->immutable_ = immutable_;
+	::Type_* self = this;
+	self->package_ = package_;
+	self->namespace_ = namespace_;
+	self->kind_ = kind_;
+	self->name_ = name_;
+	self->is_primitive_ = is_primitive_;
+	self->is_value_type_ = is_value_type_;
+	self->immutable_ = immutable_;
+	return self;
 }
 
 auto ::Type_::make_mutable_() const -> ::Type_ const *_Nonnull
 {
-	return (new ::Type_(package_, namespace_, kind_, name_, is_primitive_, is_value_type_, p_bool(false)));
+	auto self = this;
+	return (new ::Type_())->construct(package_, namespace_, kind_, name_, is_primitive_, is_value_type_, p_bool(false));
 }
 
 auto ::Type_::make_immutable_() const -> ::Type_ const *_Nonnull
 {
-	return (new ::Type_(package_, namespace_, kind_, name_, is_primitive_, is_value_type_, p_bool(true)));
+	auto self = this;
+	return (new ::Type_())->construct(package_, namespace_, kind_, name_, is_primitive_, is_value_type_, p_bool(true));
 }
 
 // Entry Point Adapter
