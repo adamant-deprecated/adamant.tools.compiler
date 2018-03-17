@@ -1,0 +1,24 @@
+public class Test
+{
+	public let value: int;
+
+	public new()
+	{
+		value = 0;
+	}
+}
+
+public Main() -> int
+{
+	// Here we have two variables `t` one is a value type, the other a reference type
+	if true
+	{
+		let t: int = 0;
+		return t;
+	}
+	else
+	{
+		let t: Test = new Test();
+		return t.value;
+	}
+}
