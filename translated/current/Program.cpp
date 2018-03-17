@@ -218,6 +218,7 @@ public:
 private:
 	auto bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void;
 	auto bind_type_name_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void;
+	auto bind_constructor_name_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void;
 	static auto add_resolution_error_(::Semantic_Node_ const *_Nonnull const node_) -> void;
 };
 
@@ -429,7 +430,11 @@ private:
 	static auto convert_expression_(::Semantic_Node_ const *_Nonnull const syntax_, ::Source_File_Builder_ *_Nonnull const builder_) -> void;
 	static auto convert_member_access_(::Semantic_Node_ const *_Nonnull const lhs_, ::Source_File_Builder_ *_Nonnull const builder_) -> void;
 	auto emit_statement_(::Semantic_Node_ const *_Nonnull const statement_) -> void;
-	auto emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, p_int const current_access_level_) -> p_int;
+	auto emit_method_body_(::Semantic_Node_ const *_Nonnull const block_, p_bool const is_associated_function_) -> void;
+	auto emit_constructor_body_(::Semantic_Node_ const *_Nonnull const block_, p_string const self_type_, p_bool const is_value_type_) -> void;
+	auto emit_access_modifer_(p_int const current_access_level_, p_int const access_modifer_) -> p_int;
+	auto emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, p_bool const is_value_type_, p_int const current_access_level_) -> p_int;
+	auto emit_default_constructor_(p_string const type_name_, p_bool const is_value_type_, p_int const current_access_level_) -> void;
 	auto emit_declaration_(::Semantic_Node_ const *_Nonnull const declaration_) -> void;
 	auto emit_compilation_unit_(::Semantic_Node_ const *_Nonnull const unit_) -> void;
 	auto emit_preamble_() -> void;
@@ -1423,7 +1428,7 @@ auto ::Semantic_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding
 	}
 	else if (node_->kind_->op_Equal(NewExpression_).Value)
 	{
-		bind_type_name_(node_->children_->op_Element(p_int(1)), scope_);
+		bind_constructor_name_(node_->children_->op_Element(p_int(1)), scope_);
 		bind_(node_->children_->op_Element(p_int(2)), scope_);
 	}
 	else if (LogicalOr(LogicalOr(LogicalOr(node_->kind_->op_Equal(NotExpression_), [&] { return node_->kind_->op_Equal(ParenthesizedExpression_); }), [&] { return node_->kind_->op_Equal(MagnitudeExpression_); }), [&] { return node_->kind_->op_Equal(NegateExpression_); }).Value)
@@ -1637,6 +1642,41 @@ auto ::Semantic_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_,
 	}
 }
 
+auto ::Semantic_Binder_::bind_constructor_name_(::Semantic_Node_ *_Nonnull const node_, ::Binding_Scope_ const *_Nonnull const scope_) const -> void
+{
+	if (LogicalAnd(node_->kind_->op_Equal(QualifiedName_), [&] { return node_->children_->op_Element(p_int(2))->kind_->op_Equal(IdentifierName_); }).Value)
+	{
+		bind_type_name_(node_->children_->op_Element(p_int(0)), scope_);
+		::Semantic_Node_ *_Nonnull const qualifier_ = node_->children_->op_Element(p_int(0));
+		::Semantic_Node_ *_Nonnull const name_ = node_->children_->op_Element(p_int(2));
+		p_string const constructor_name_ = p_string("new_").op_Add(name_->get_text_());
+		::Symbol_ const *_Nullable const constructor_symbol_ = qualifier_->symbol_->get_(constructor_name_, SpecialSymbol_);
+		if (constructor_symbol_->op_NotEqual(::None).Value)
+		{
+			name_->bind_symbol_(constructor_symbol_);
+		}
+		else
+		{
+			::Symbol_ const *_Nonnull const symbol_ = qualifier_->symbol_->get_(name_->get_text_(), IdentifierSymbol_);
+			if (symbol_->op_Equal(::None).Value)
+			{
+				add_resolution_error_(name_);
+			}
+			else
+			{
+				name_->bind_symbol_(symbol_);
+				name_->bind_type_(symbol_->get_type_());
+				node_->bind_type_(symbol_->get_type_());
+				node_->bind_symbol_(symbol_);
+			}
+		}
+	}
+	else
+	{
+		bind_type_name_(node_, scope_);
+	}
+}
+
 auto ::Semantic_Binder_::add_resolution_error_(::Semantic_Node_ const *_Nonnull const node_) -> void
 {
 	node_->add_((new ::Diagnostic_(FatalCompilationError_, Analysis_, node_->source_, node_->get_text_span_(), p_string("Could not resolve name `").op_Add(node_->get_text_())->op_Add(p_string("`")))));
@@ -1689,7 +1729,14 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	}
 	else if (node_->kind_->op_Equal(ConstructorDeclaration_).Value)
 	{
-		::Symbol_ const *_Nonnull const constructor_symbol_ = (new ::Symbol_(p_string("new"), SpecialSymbol_));
+		p_string full_name_ = p_string("new");
+		::Semantic_Node_ const *_Nullable const constructor_name_ = node_->first_child_(Identifier_);
+		if (constructor_name_->op_NotEqual(::None).Value)
+		{
+			full_name_ = p_string("new_").op_Add(constructor_name_->get_text_());
+		}
+
+		::Symbol_ const *_Nonnull const constructor_symbol_ = (new ::Symbol_(full_name_, SpecialSymbol_));
 		constructor_symbol_->declarations_->Add_(node_);
 		parent_->children_->Add_(constructor_symbol_);
 		::Symbol_ const *_Nonnull const self_symbol_ = (new ::Symbol_(p_string("self"), SpecialSymbol_));
@@ -2663,6 +2710,11 @@ auto ::Compilation_Unit_Parser_::ParseMemberDeclaration_() -> ::Syntax_Node_ con
 	if (token_->kind_->op_Equal(NewKeyword_).Value)
 	{
 		children_->Add_(ExpectToken_(NewKeyword_));
+		if (token_->kind_->op_Equal(Identifier_).Value)
+		{
+			children_->Add_(ExpectToken_(Identifier_));
+		}
+
 		children_->Add_(ParseParameterList_());
 		children_->Add_(ParseBlock_());
 		return (new ::Syntax_Node_(ConstructorDeclaration_, children_));
@@ -3518,6 +3570,7 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Semantic_Node_ c
 
 auto ::Emitter_::convert_parameter_list_(::Semantic_Node_ const *_Nonnull const parameter_list_, p_bool const is_main_function_) -> p_string
 {
+	assert_(parameter_list_->kind_->op_Equal(ParameterList_), p_string("parameter_list.kind=").op_Add(parameter_list_->kind_));
 	::System_::Text_::String_Builder_ *_Nonnull const builder_ = (new ::System_::Text_::String_Builder_());
 	builder_->Append_(p_string("("));
 	p_bool first_parameter_ = p_bool(true);
@@ -3575,20 +3628,34 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 {
 	if (syntax_->kind_->op_Equal(NewExpression_).Value)
 	{
-		::Semantic_Node_ const *_Nonnull const type_ = syntax_->children_->op_Element(p_int(1));
-		p_bool const is_value_type_ = type_->is_value_type_();
-		if (is_value_type_.op_Not().Value)
+		p_string constructor_name_ = p_string("construct");
+		::Semantic_Node_ const *_Nonnull type_ = syntax_->children_->op_Element(p_int(1));
+		if (type_->kind_->op_Equal(QualifiedName_).Value)
 		{
-			builder_->Write_(p_string("(new "));
+			::Semantic_Node_ const *_Nonnull const name_ = type_->children_->op_Element(p_int(2));
+			if (LogicalAnd(LogicalAnd(name_->kind_->op_Equal(IdentifierName_), [&] { return name_->symbol_->kind_->op_Equal(SpecialSymbol_); }), [&] { return name_->symbol_->is_primitive_->op_Not(); }).Value)
+			{
+				constructor_name_ = p_string("construct_").op_Add(name_->get_text_());
+				type_ = type_->children_->op_Element(p_int(0));
+			}
 		}
 
-		builder_->Write_(convert_type_name_(type_));
+		if (type_->is_value_type_().Value)
+		{
+			builder_->Write_(convert_type_name_(type_));
+			builder_->Write_(p_string("::"));
+			builder_->Write_(constructor_name_);
+		}
+		else
+		{
+			builder_->Write_(p_string("(new "));
+			builder_->Write_(convert_type_name_(type_));
+			builder_->Write_(p_string("())->"));
+			builder_->Write_(constructor_name_);
+		}
+
 		::Semantic_Node_ const *_Nonnull const argumentList_ = syntax_->children_->op_Element(p_int(2));
 		convert_expression_(argumentList_, builder_);
-		if (is_value_type_.op_Not().Value)
-		{
-			builder_->Write_(p_string(")"));
-		}
 	}
 	else if (syntax_->kind_->op_Equal(ArgumentList_).Value)
 	{
@@ -3641,7 +3708,7 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	}
 	else if (syntax_->kind_->op_Equal(SelfExpression_).Value)
 	{
-		builder_->Write_(p_string("this"));
+		builder_->Write_(p_string("self"));
 	}
 	else if (syntax_->kind_->op_Equal(NumericLiteralExpression_).Value)
 	{
@@ -3960,25 +4027,61 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 	}
 	else
 	{
-		definitions_->Error_(p_string("Could not emit statement of type ").op_Add(statement_->kind_));
+		NOT_IMPLEMENTED_(p_string("statement.kind=").op_Add(statement_->kind_));
 	}
 }
 
-auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, p_int const current_access_level_) -> p_int
+auto ::Emitter_::emit_method_body_(::Semantic_Node_ const *_Nonnull const block_, p_bool const is_associated_function_) -> void
 {
-	p_int access_modifer_ = member_->children_->op_Element(p_int(0))->kind_;
-	if (access_modifer_.op_NotEqual(current_access_level_).Value)
+	definitions_->BeginBlock_();
+	if (is_associated_function_->op_Not().Value)
 	{
-		if (LogicalOr(access_modifer_.op_Equal(PublicKeyword_), [&] { return access_modifer_.op_Equal(InternalKeyword_); }).Value)
+		definitions_->WriteLine_(p_string("auto self = this;"));
+	}
+
+	for (::Semantic_Node_ const *_Nonnull const statement_ : *(block_->statements_()))
+	{
+		emit_statement_(statement_);
+	}
+
+	definitions_->EndBlock_();
+}
+
+auto ::Emitter_::emit_constructor_body_(::Semantic_Node_ const *_Nonnull const block_, p_string const self_type_, p_bool const is_value_type_) -> void
+{
+	definitions_->BeginBlock_();
+	if (is_value_type_.Value)
+	{
+		definitions_->WriteLine_(self_type_->op_Add(p_string(" self;")));
+	}
+	else
+	{
+		definitions_->WriteLine_(self_type_->op_Add(p_string(" self = this;")));
+	}
+
+	for (::Semantic_Node_ const *_Nonnull const statement_ : *(block_->statements_()))
+	{
+		emit_statement_(statement_);
+	}
+
+	definitions_->WriteLine_(p_string("return self;"));
+	definitions_->EndBlock_();
+}
+
+auto ::Emitter_::emit_access_modifer_(p_int const current_access_level_, p_int const access_modifer_) -> p_int
+{
+	if (access_modifer_->op_NotEqual(current_access_level_).Value)
+	{
+		if (LogicalOr(access_modifer_->op_Equal(PublicKeyword_), [&] { return access_modifer_->op_Equal(InternalKeyword_); }).Value)
 		{
 			class_declarations_->EndLine_(p_string("public:"));
-			access_modifer_ = PublicKeyword_;
+			return PublicKeyword_;
 		}
-		else if (access_modifer_.op_Equal(ProtectedKeyword_).Value)
+		else if (access_modifer_->op_Equal(ProtectedKeyword_).Value)
 		{
 			class_declarations_->EndLine_(p_string("public:"));
 		}
-		else if (access_modifer_.op_Equal(PrivateKeyword_).Value)
+		else if (access_modifer_->op_Equal(PrivateKeyword_).Value)
 		{
 			class_declarations_->EndLine_(p_string("private:"));
 		}
@@ -3988,13 +4091,39 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 		}
 	}
 
+	return access_modifer_;
+}
+
+auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, p_bool const is_value_type_, p_int const current_access_level_) -> p_int
+{
+	p_int access_modifer_ = member_->children_->op_Element(p_int(0))->kind_;
+	access_modifer_ = emit_access_modifer_(current_access_level_, access_modifer_);
 	if (member_->kind_->op_Equal(ConstructorDeclaration_).Value)
 	{
-		p_string const parameters_ = convert_parameter_list_(member_->children_->op_Element(p_int(2)));
-		class_declarations_->WriteLine_(class_name_->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(";")));
+		p_string const parameters_ = convert_parameter_list_(member_->first_child_(ParameterList_));
+		p_string full_name_ = p_string("construct");
+		::Semantic_Node_ const *_Nullable const constructor_name_ = member_->first_child_(Identifier_);
+		if (constructor_name_->op_NotEqual(::None).Value)
+		{
+			full_name_ = p_string("construct_").op_Add(constructor_name_->get_text_());
+		}
+
+		p_string return_type_ = p_string("::").op_Add(class_name_)->op_Add(p_string("_"));
+		if (is_value_type_->op_Not().Value)
+		{
+			return_type_ = return_type_.op_Add(p_string("*"));
+		}
+
+		class_declarations_->BeginLine_(p_string(""));
+		if (is_value_type_.Value)
+		{
+			class_declarations_->Write_(p_string("static "));
+		}
+
+		class_declarations_->EndLine_(p_string("auto ").op_Add(full_name_)->op_Add(parameters_)->op_Add(p_string(" -> "))->op_Add(return_type_)->op_Add(p_string(";")));
 		definitions_->ElementSeparatorLine_();
-		definitions_->WriteLine_(p_string("::").op_Add(class_name_)->op_Add(p_string("_::"))->op_Add(class_name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string("")));
-		emit_statement_(member_->children_->op_Element(p_int(3)));
+		definitions_->WriteLine_(p_string("auto ::").op_Add(class_name_)->op_Add(p_string("_::"))->op_Add(full_name_)->op_Add(parameters_)->op_Add(p_string(" -> "))->op_Add(return_type_));
+		emit_constructor_body_(member_->first_child_(Block_), return_type_, is_value_type_);
 	}
 	else if (member_->kind_->op_Equal(FieldDeclaration_).Value)
 	{
@@ -4030,7 +4159,7 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 		definitions_->ElementSeparatorLine_();
 		definitions_->WriteLine_(p_string("auto ::").op_Add(class_name_)->op_Add(p_string("_::"))->op_Add(method_name_)->op_Add(p_string("_"))->op_Add(parameters_)->op_Add(p_string(" "))->op_Add(constModifier_)->op_Add(p_string("-> "))->op_Add(cpp_type_));
 		::Semantic_Node_ const *_Nonnull const block_ = member_->children_->op_Element(p_int(5));
-		emit_statement_(block_);
+		emit_method_body_(block_, is_associated_function_);
 	}
 	else
 	{
@@ -4038,6 +4167,32 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 	}
 
 	return access_modifer_;
+}
+
+auto ::Emitter_::emit_default_constructor_(p_string const type_name_, p_bool const is_value_type_, p_int const current_access_level_) -> void
+{
+	emit_access_modifer_(current_access_level_, PublicKeyword_);
+	p_string return_type_ = p_string("::").op_Add(type_name_)->op_Add(p_string("_"));
+	if (is_value_type_->op_Not().Value)
+	{
+		return_type_ = return_type_.op_Add(p_string("*"));
+	}
+
+	class_declarations_->BeginLine_(p_string(""));
+	if (is_value_type_.Value)
+	{
+		class_declarations_->Write_(p_string("static "));
+	}
+
+	class_declarations_->Write_(p_string("auto construct() -> ").op_Add(return_type_));
+	if (is_value_type_.Value)
+	{
+		class_declarations_->EndLine_(p_string(" { return ").op_Add(type_name_)->op_Add(p_string("_(); }")));
+	}
+	else
+	{
+		class_declarations_->EndLine_(p_string(" { return this; }"));
+	}
 }
 
 auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declaration_) -> void
@@ -4066,9 +4221,16 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		class_declarations_->WriteLine_(p_string("p_bool op_Equal(").op_Add(class_name_)->op_Add(p_string("_ const * other) const { return this == other; }")));
 		class_declarations_->WriteLine_(p_string("p_bool op_NotEqual(").op_Add(class_name_)->op_Add(p_string("_ const * other) const { return this != other; }")));
 		p_int current_access_level_ = PublicKeyword_;
+		p_bool has_constructors_ = p_bool(false);
 		for (::Semantic_Node_ const *_Nonnull const member_ : *(declaration_->members_()))
 		{
-			current_access_level_ = emit_member_declaration_(member_, class_name_, current_access_level_);
+			has_constructors_ = LogicalOr(has_constructors_, [&] { return member_->kind_->op_Equal(ConstructorDeclaration_); });
+			current_access_level_ = emit_member_declaration_(member_, class_name_, p_bool(false), current_access_level_);
+		}
+
+		if (has_constructors_.op_Not().Value)
+		{
+			emit_default_constructor_(class_name_, p_bool(false), current_access_level_);
 		}
 
 		class_declarations_->EndBlockWithSemicolon_();
@@ -4078,7 +4240,7 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		p_string const struct_name_ = declaration_->children_->op_Element(p_int(2))->get_text_();
 		type_declarations_->WriteLine_(p_string("struct ").op_Add(struct_name_)->op_Add(p_string("_;")));
 		class_declarations_->ElementSeparatorLine_();
-		class_declarations_->WriteLine_(p_string("struct ").op_Add(struct_name_)->op_Add(p_string("_")));
+		class_declarations_->WriteLine_(p_string("struct ").op_Add(struct_name_)->op_Add(p_string("_ final")));
 		class_declarations_->BeginBlock_();
 		class_declarations_->EndLine_(p_string("public:"));
 		class_declarations_->WriteLine_(struct_name_.op_Add(p_string("_ * operator->() { return this; }")));
@@ -4086,9 +4248,16 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		class_declarations_->WriteLine_(struct_name_.op_Add(p_string("_ & operator* () { return *this; }")));
 		class_declarations_->WriteLine_(struct_name_.op_Add(p_string("_ const & operator* () const { return *this; }")));
 		p_int current_access_level_ = PublicKeyword_;
+		p_bool has_constructors_ = p_bool(false);
 		for (::Semantic_Node_ const *_Nonnull const member_ : *(declaration_->members_()))
 		{
-			current_access_level_ = emit_member_declaration_(member_, struct_name_, current_access_level_);
+			has_constructors_ = LogicalOr(has_constructors_, [&] { return member_->kind_->op_Equal(ConstructorDeclaration_); });
+			current_access_level_ = emit_member_declaration_(member_, struct_name_, p_bool(true), current_access_level_);
+		}
+
+		if (has_constructors_.op_Not().Value)
+		{
+			emit_default_constructor_(struct_name_, p_bool(true), current_access_level_);
 		}
 
 		class_declarations_->EndBlockWithSemicolon_();
@@ -4401,8 +4570,8 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		resource_manager_->AddResource(p_string("RuntimeLibrary.cpp"), p_string("#include \"RuntimeLibrary.h\"\n#include <map>\n\np_uint p_int::AsUInt_() const\n{\n	if(this->Value < 0)\n		throw std::range_error(\"Can't convert negative number to unsigned\");\n\n	return this->Value;\n}\n\nchar p_code_point::CharValue() const\n{\n	if(this->Value > 0xFF)\n		throw std::range_error(\"Unicode char values not yet supported\");\n\n	return this->Value;\n}\n\np_string::p_string()\n	: Length(0), Buffer(0)\n{\n}\n\np_string::p_string(p_code_point c, p_int repeat)\n	: Length(repeat.Value)\n{\n	char* buffer = new char[repeat.Value];\n	for (int i = 0; i < repeat.Value; i++)\n		buffer[i] = c.CharValue();\n\n	Buffer = buffer;\n}\n\np_string::p_string(const char* s)\n	: Length(std::strlen(s)), Buffer(s)\n{\n}\n\np_string::p_string(int length, const char* s)\n	: Length(length), Buffer(s)\n{\n}\n\nchar const * p_string::cstr() const\n{\n	auto buffer = new char[Length + 1];\n	std::memcpy(buffer, Buffer, Length);\n	buffer[Length] = 0;\n	return buffer;\n}\n\np_string::p_string(p_int other)\n	: Length(0), Buffer(0)\n{\n	char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator\n	int length = std::sprintf(buffer,\"%d\", other.Value);\n	if(length <= 0) throw std::runtime_error(\"Could not convert int to string\");\n	Length = length;\n	Buffer = buffer;\n}\n\np_string::p_string(p_code_point other)\n	: Length(1), Buffer(new char[1] { other.CharValue() })\n{\n}\n\np_string p_string::Substring_(p_int start, p_int length) const\n{\n	return p_string(length.Value, Buffer + start.Value);\n}\n\np_string p_string::Replace_(p_string oldValue, p_string newValue) const\n{\n	p_string buffer = \"\";\n	int limit = Length - oldValue.Length + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length).op_Equal(oldValue).Value)\n		{\n			buffer = buffer.op_Add(Substring_(lastIndex, i-lastIndex)).op_Add(newValue);\n			i += oldValue.Length; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer.op_Add(Substring_(lastIndex, Length - lastIndex));\n	return buffer;\n}\n\np_int p_string::LastIndexOf_(p_code_point c) const\n{\n	for(int i = Length - 1; i >= 0; i--)\n		if(Buffer[i] == c.CharValue())\n			return i;\n\n	return -1; // TODO should return none\n}\n\np_int p_string::index_of_(p_code_point c) const\n{\n	for(int i = 0; i < Length; i++)\n		if(Buffer[i] == c.CharValue())\n			return i;\n\n	return -1;\n}\n\np_string p_string::op_Add(p_string const & value) const\n{\n	int newLength = Length + value.Length;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char) * Length;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length);\n	return p_string(newLength, chars);\n}\n\np_bool p_string::op_Equal(p_string const & other) const\n{\n	if (Length != other.Length)\n		return false;\n\n	for (int i = 0; i < Length; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (p_string const & lhs, p_string const & rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<p_string, p_string> resourceValues;\n\np_string const & ResourceManager::GetString_(p_string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(p_string name, p_string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace system_\n{\n	namespace Console_\n	{\n		void Console_::Write_(p_string value)\n		{\n			std::printf(\"%.*s\", value.Length, value.Buffer);\n		}\n\n		void Console_::WriteLine_(p_string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count(argc-1)\n		{\n			args = new p_string[Count];\n			for (int i = 0; i < Count; i++)\n				args[i] = p_string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		File_Reader_::File_Reader_(const p_string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n		}\n\n		p_string File_Reader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return p_string(length, buffer);\n		}\n\n		void File_Reader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		File_Writer_::File_Writer_(const p_string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n		}\n\n		void File_Writer_::Write_(const p_string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length, file);\n		}\n\n		void File_Writer_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		String_Builder_::String_Builder_(p_string const & value)\n			: buffer(value)\n		{\n		}\n\n		String_Builder_::String_Builder_()\n			: buffer(\"\")\n		{\n		}\n\n		void String_Builder_::Append_(p_string const & value)\n		{\n			buffer = buffer.op_Add(value);\n		}\n\n		void String_Builder_::Append_(String_Builder_ const * value)\n		{\n			buffer = buffer.op_Add(value->buffer);\n		}\n\n		void String_Builder_::AppendLine_(p_string const & value)\n		{\n			buffer = buffer.op_Add(value).op_Add(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::AppendLine_()\n		{\n			buffer = buffer.op_Add(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::Remove_(p_int start, p_int length)\n		{\n			buffer = buffer.Substring_(0, start).op_Add(buffer.Substring_(start.Value+length.Value));\n		}\n\n		void String_Builder_::Remove_(p_int start)\n		{\n			String_Builder_::Remove_(start, buffer.Length-start.Value);\n		}\n	}\n}\n"));
-		resource_manager_->AddResource(p_string("RuntimeLibrary.h"), p_string("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n#include <stdexcept>\n\ntemplate<typename T, typename F>\nT LogicalAnd(T const & lhs, F rhs)\n{\n	return lhs.op_False().Value ? lhs : lhs.op_And(rhs());\n}\n\ntemplate<typename T, typename F>\nT LogicalOr(T const & lhs, F rhs)\n{\n	return lhs.op_True().Value ? lhs : lhs.op_Or(rhs());\n}\n\nstruct p_bool\n{\npublic:\n	// Runtime Use Members\n	bool Value;\n\n	p_bool(): Value(false) {}\n	p_bool(bool value): Value(value) {}\n	p_bool * operator->() { return this; }\n	p_bool const * operator->() const { return this; }\n	p_bool & operator* () { return *this; }\n	p_bool const & operator* () const { return *this; }\n\n	// Adamant Members\n	p_bool op_Not() const { return !this->Value; }\n	p_bool op_True() const { return this->Value; }\n	p_bool op_False() const { return !this->Value; }\n	p_bool op_And(p_bool other) const { return this->Value & other.Value; }\n	p_bool op_Or(p_bool other) const { return this->Value | other.Value; }\n};\n\nstruct p_uint;\n\nstruct p_int\n{\npublic:\n	// Runtime Use Members\n	std::int32_t Value;\n\n	p_int(std::int32_t value): Value(value) {}\n	p_int * operator->() { return this; }\n	p_int const * operator->() const { return this; }\n	p_int & operator* () { return *this; }\n	p_int const & operator* () const { return *this; }\n\n	// Hack to support conversion of uint to int for now\n	p_int(p_uint value);\n\n	// Adamant Members\n	p_int(): Value(0) {}\n	void op_AddAssign(p_int other) { this->Value += other.Value; }\n	void op_SubtractAssign(p_int other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_int other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_int other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_int other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_int other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_int other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_int other) const { return this->Value >= other.Value; }\n	p_int op_Add(p_int other) const { return this->Value + other.Value; }\n	p_int op_Subtract(p_int other) const { return this->Value - other.Value; }\n	p_int op_Negate() const { return -this->Value; }\n	p_int op_Multiply(p_int other) const { return this->Value * other.Value; }\n	p_int op_Divide(p_int other) const { return this->Value / other.Value; }\n	p_int op_Remainder(p_int other) const { return this->Value % other.Value; }\n	p_int op_Magnitude() const { if(this->Value==INT32_MIN) throw std::overflow_error(\"Can't take |int.Min|\"); return this->Value < 0 ? -this->Value : this->Value; }\n\n	// Hack because we don't support as correctly yet\n	p_uint AsUInt_() const;\n};\n\nstruct p_uint\n{\npublic:\n	// Runtime Use Members\n	std::uint32_t Value;\n\n	p_uint(std::uint32_t value): Value(value) {}\n	p_uint * operator->() { return this; }\n	p_uint const * operator->() const { return this; }\n	p_uint & operator* () { return *this; }\n	p_uint const & operator* () const { return *this; }\n\n	// Hack to support conversion of int to uint for now\n	p_uint(p_int value): Value(value.Value) {}\n\n	// Adamant Members\n	p_uint(): Value(0) {}\n	void op_AddAssign(p_uint other) { this->Value += other.Value; }\n	void op_SubtractAssign(p_uint other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_uint other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_uint other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_uint other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_uint other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_uint other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_uint other) const { return this->Value >= other.Value; }\n	p_uint op_Add(p_uint other) const { return this->Value + other.Value; }\n	p_uint op_Subtract(p_uint other) const { return this->Value - other.Value; }\n};\n\ninline p_int::p_int(p_uint value)\n	: Value(value.Value)\n{\n}\n\nstruct p_code_point\n{\nprivate:\n	std::uint32_t Value;\n\npublic:\n	// Runtime Use Members\n	p_code_point(): Value(0) {}\n	p_code_point(char value): Value(value) {}\n	p_code_point * operator->() { return this; }\n	p_code_point const * operator->() const { return this; }\n	p_code_point & operator* () { return *this; }\n	p_code_point const & operator* () const { return *this; }\n	char CharValue() const;\n\n	// Adamant Members\n	p_bool op_Equal(p_code_point const & other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_code_point const & other) const { return this->Value != other.Value; }\n	// TODO: Not sure code_point should support these operations\n	p_bool op_LessThan(p_code_point other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_code_point other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_code_point other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_code_point other) const { return this->Value >= other.Value; }\n\n};\n\nstruct p_string\n{\npublic:\n	// Runtime Use Members\n	char const * Buffer;\n	int Length;\n\n	p_string();\n	p_string(char const * s);\n	p_string(int length, char const * s);\n	char const * cstr() const;\n	p_string const * operator->() const { return this; }\n	p_string const & operator* () const { return *this; }\n\n	typedef char const * const_iterator;\n	const_iterator begin() const { return &Buffer[0]; }\n	const_iterator end() const { return &Buffer[Length]; }\n\n	// Hack to support conversion of int and code_point to strings for now\n	p_string(p_int other);\n	p_string(p_code_point other);\n\n	// Adamant Members\n	// TODO ByteLength should be a property\n	p_int ByteLength_() const { return this->Length; }\n\n	p_string(p_code_point c, p_int repeat);\n\n	p_string Substring_(p_int start, p_int length) const;\n	p_string Substring_(p_int start) const { return Substring_(start, Length-start.Value); }\n	p_string Replace_(p_string oldValue, p_string newValue) const;\n	p_int LastIndexOf_(p_code_point c) const;\n	p_int index_of_(p_code_point c) const;\n\n	p_code_point op_Element(p_int const index) const { return Buffer[index.Value]; }\n	p_string op_Add(p_string const & value) const;\n	p_bool op_Equal(p_string const & other) const;\n	p_bool op_NotEqual(p_string const & other) const { return !this->op_Equal(other).Value; }\n	p_bool op_LessThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }\n	p_bool op_LessThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }\n	p_bool op_GreaterThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }\n	p_bool op_GreaterThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }\n};\n\nclass ResourceManager\n{\npublic:\n	p_string const & GetString_(p_string resourceName);\n	void AddResource(p_string name, p_string value);\n};\n\nextern ResourceManager *const resource_manager_;\n\nclass NoneType\n{\npublic:\n	template<class T>\n	operator T*() const { return static_cast<T*>(0); }\n};\nstatic const NoneType None = NoneType();\n\ntemplate<typename T>\nstruct p_optional\n{\nprivate:\n	bool hasValue;\n	union\n    {\n        T data;\n    };\n\npublic:\n	p_optional(T const & value) : data(value), hasValue(true) {}\n	p_optional(::NoneType const & none) : hasValue(false) {}\n	T & operator->()\n	{\n		if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n		return data;\n	}\n	T const & operator->() const\n	{\n		if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n		return data;\n	}\n	T & operator* ()\n	{\n		if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n		return data;\n	}\n	T const & operator* () const\n	{\n		if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n		return data;\n	}\n};\n\n// A placeholder function until we get proper exceptions implemented\n_Noreturn inline void THROW_EXCEPTION_(const p_string& value)\n{\n	throw std::runtime_error(value.cstr());\n}\n\ninline void assert(const p_bool condition, const p_string code, const p_string message, const p_string file, const std::int32_t line)\n{\n	if(!condition.Value)\n		throw std::runtime_error(\n			p_string(\"Assertion failed: \").op_Add(code).op_Add(\", \").op_Add(message)\n			.op_Add(\", file \").op_Add(file).op_Add(\", line \").op_Add(p_int(line)).cstr());\n}\n\n#define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)\n\n_Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string function, const p_string file, const std::int32_t line)\n{\n	throw std::runtime_error(\n		p_string(\"Function \").op_Add(function)\n		.op_Add(p_string(\" not yet implemented, \")).op_Add(message).op_Add(p_string(\", \")).op_Add(file).op_Add(p_string(\", line \")).op_Add(p_int(line)).cstr());\n}\n\n#define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)\n\n\n_Noreturn inline void UNREACHABLE(const p_string function, const p_string file, const std::int32_t line)\n{\n	throw std::runtime_error(\n		p_string(\"Reached \\\"UNREACHABLE\\\" statement in function \").op_Add(function)\n		.op_Add(p_string(\", \")).op_Add(file).op_Add(p_string(\", line \")).op_Add(p_int(line)).cstr());\n}\n\n#define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)\n\nnamespace system_\n{\n	namespace Collections_\n	{\n		template<typename T>\n		class List_\n		{\n		private:\n			T* values;\n			int length;\n			int capacity;\n\n		public:\n			// Runtime Use Members\n			typedef T const * const_iterator;\n			const_iterator begin() const { return values; }\n			const_iterator end() const { return &values[length]; }\n\n			// Adamant Members\n			List_() : values(0), length(0), capacity(0) { }\n			void Add_(T value) { add_(value); }\n			void Clear_() { clear_(); }\n			void add_(T value);\n			void clear_() { length = 0; }\n			p_int op_Magnitude() const { return length; }\n			T const & op_Element(p_int const index) const;\n		};\n\n		template<typename T>\n		void List_<T>::add_(T value)\n		{\n			if(length >= capacity)\n			{\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\n				// Allocate uninitalized buffer (note `sizeof(char) == 1` always)\n				// Needed if T is a value type to avoid needing a default constructor\n				T* newValues = (T*)new char[newCapacity * sizeof(T)];\n				std::memcpy(newValues, values, length * sizeof(T));\n				values = newValues;\n				capacity = newCapacity;\n			}\n			values[length] = value;\n			length++;\n		}\n\n		template<typename T>\n		T const & List_<T>::op_Element(p_int const index) const\n		{\n			if(index.Value < 0 || index.Value >= length)\n				throw std::out_of_range(\"List index out of bounds\");\n			return values[index.Value];\n		}\n	}\n\n	namespace Console_\n	{\n		class Console_\n		{\n		public:\n			void Write_(p_string value);\n			void WriteLine_(p_string value);\n			void WriteLine_();\n		};\n\n		class Arguments_\n		{\n		private:\n			p_string* args;\n		public:\n			// Runtime Use Members\n			typedef p_string const * const_iterator;\n\n			Arguments_(int argc, char const *const * argv);\n			const_iterator begin() const { return &args[0]; }\n			const_iterator end() const { return &args[Count]; }\n\n			const int Count;\n\n			// Adamant Members\n\n			p_int op_Magnitude() const { return Count; }\n			p_string const & Get_(int const index) const { return args[index]; }\n		};\n	}\n\n	namespace IO_\n	{\n		class File_Reader_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Reader_(const p_string& fileName);\n			p_string ReadToEndSync_();\n			void Close_();\n		};\n\n		class File_Writer_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Writer_(const p_string& fileName);\n			void Write_(const p_string& value);\n			void Close_();\n		};\n	}\n\n	namespace Text_\n	{\n		class String_Builder_\n		{\n		private:\n			p_string buffer;\n		public:\n			String_Builder_();\n			String_Builder_(p_string const & value);\n			void Append_(p_string const & value);\n			void Append_(String_Builder_ const * value);\n			void AppendLine_(p_string const& value);\n			void AppendLine_();\n			void Remove_(p_int start, p_int length);\n			void Remove_(p_int start);\n			p_string ToString_() const { return buffer; }\n		};\n	}\n}\n\nnamespace System_ = system_;\n"));
+		resource_manager_->AddResource(p_string("RuntimeLibrary.cpp"), p_string("#include \"RuntimeLibrary.h\"\n#include <map>\n\np_uint p_int::AsUInt_() const\n{\n	if(this->Value < 0)\n		throw std::range_error(\"Can't convert negative number to unsigned\");\n\n	return this->Value;\n}\n\nchar p_code_point::CharValue() const\n{\n	if(this->Value > 0xFF)\n		throw std::range_error(\"Unicode char values not yet supported\");\n\n	return this->Value;\n}\n\np_string p_string::construct(p_code_point c, p_int repeat)\n{\n	p_string self;\n	self.Length = repeat.Value;\n	char* buffer = new char[repeat.Value];\n	for (int i = 0; i < repeat.Value; i++)\n		buffer[i] = c.CharValue();\n\n	self.Buffer = buffer;\n	return self;\n}\n\np_string::p_string(const char* s)\n	: Length(std::strlen(s)), Buffer(s)\n{\n}\n\np_string::p_string(int length, const char* s)\n	: Length(length), Buffer(s)\n{\n}\n\nchar const * p_string::cstr() const\n{\n	auto buffer = new char[Length + 1];\n	std::memcpy(buffer, Buffer, Length);\n	buffer[Length] = 0;\n	return buffer;\n}\n\np_string::p_string(p_int other)\n	: Length(0), Buffer(0)\n{\n	char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator\n	int length = std::sprintf(buffer,\"%d\", other.Value);\n	if(length <= 0) throw std::runtime_error(\"Could not convert int to string\");\n	Length = length;\n	Buffer = buffer;\n}\n\np_string::p_string(p_code_point other)\n	: Length(1), Buffer(new char[1] { other.CharValue() })\n{\n}\n\np_string p_string::Substring_(p_int start, p_int length) const\n{\n	return p_string(length.Value, Buffer + start.Value);\n}\n\np_string p_string::Replace_(p_string oldValue, p_string newValue) const\n{\n	p_string buffer = \"\";\n	int limit = Length - oldValue.Length + 1;\n	int lastIndex = 0;\n	for(int i=0; i < limit; i++)\n		if (Substring_(i, oldValue.Length).op_Equal(oldValue).Value)\n		{\n			buffer = buffer.op_Add(Substring_(lastIndex, i-lastIndex)).op_Add(newValue);\n			i += oldValue.Length; // skip over the value we just matched\n			lastIndex = i;\n			i--; // we need i-- to offset the i++ that is about to happen\n		}\n\n	buffer = buffer.op_Add(Substring_(lastIndex, Length - lastIndex));\n	return buffer;\n}\n\np_int p_string::LastIndexOf_(p_code_point c) const\n{\n	for(int i = Length - 1; i >= 0; i--)\n		if(Buffer[i] == c.CharValue())\n			return i;\n\n	return -1; // TODO should return none\n}\n\np_int p_string::index_of_(p_code_point c) const\n{\n	for(int i = 0; i < Length; i++)\n		if(Buffer[i] == c.CharValue())\n			return i;\n\n	return -1;\n}\n\np_string p_string::op_Add(p_string const & value) const\n{\n	int newLength = Length + value.Length;\n	char* chars = new char[newLength];\n	size_t offset = sizeof(char) * Length;\n	std::memcpy(chars, Buffer, offset);\n	std::memcpy(chars + offset, value.Buffer, value.Length);\n	return p_string(newLength, chars);\n}\n\np_bool p_string::op_Equal(p_string const & other) const\n{\n	if (Length != other.Length)\n		return false;\n\n	for (int i = 0; i < Length; i++)\n		if (Buffer[i] != other.Buffer[i])\n			return false;\n\n	return true;\n}\n\nbool operator < (p_string const & lhs, p_string const & rhs)\n{\n    return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;\n}\n\nstd::map<p_string, p_string> resourceValues;\n\np_string const & ResourceManager::GetString_(p_string resourceName)\n{\n	return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(p_string name, p_string value)\n{\n	resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nnamespace system_\n{\n	namespace Console_\n	{\n		void Console_::Write_(p_string value)\n		{\n			std::printf(\"%.*s\", value.Length, value.Buffer);\n		}\n\n		void Console_::WriteLine_(p_string value)\n		{\n			std::printf(\"%.*s\\n\", value.Length, value.Buffer);\n		}\n\n		void Console_::WriteLine_()\n		{\n			std::printf(\"\\n\");\n		}\n\n		Arguments_::Arguments_(int argc, char const *const * argv)\n			: Count(argc-1)\n		{\n			args = new p_string[Count];\n			for (int i = 0; i < Count; i++)\n				args[i] = p_string(argv[i+1]);\n		}\n	}\n\n	namespace IO_\n	{\n		File_Reader_* File_Reader_::construct(const p_string& fileName)\n		{\n			std::FILE* foo;\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"rb\");\n			delete[] fname;\n			return this;\n		}\n\n		p_string File_Reader_::ReadToEndSync_()\n		{\n			std::fseek(file, 0, SEEK_END);\n			auto length = std::ftell(file);\n			std::fseek(file, 0, SEEK_SET);\n			auto buffer = new char[length];\n			length = std::fread(buffer, sizeof(char), length, file);\n			return p_string(length, buffer);\n		}\n\n		void File_Reader_::Close_()\n		{\n			std::fclose(file);\n		}\n\n		File_Writer_* File_Writer_::construct(const p_string& fileName)\n		{\n			auto fname = fileName.cstr();\n			file = std::fopen(fname, \"wb\"); // TODO check error\n			delete[] fname;\n			return this;\n		}\n\n		void File_Writer_::Write_(const p_string& value)\n		{\n			std::fwrite(value.Buffer, sizeof(char), value.Length, file);\n		}\n\n		void File_Writer_::Close_()\n		{\n			std::fclose(file);\n		}\n	}\n\n	namespace Text_\n	{\n		String_Builder_* String_Builder_::construct(p_string const & value)\n		{\n			buffer = value;\n			return this;\n		}\n\n		void String_Builder_::Append_(p_string const & value)\n		{\n			buffer = buffer.op_Add(value);\n		}\n\n		void String_Builder_::Append_(String_Builder_ const * value)\n		{\n			buffer = buffer.op_Add(value->buffer);\n		}\n\n		void String_Builder_::AppendLine_(p_string const & value)\n		{\n			buffer = buffer.op_Add(value).op_Add(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::AppendLine_()\n		{\n			buffer = buffer.op_Add(p_string(\"\\n\"));\n		}\n\n		void String_Builder_::Remove_(p_int start, p_int length)\n		{\n			buffer = buffer.Substring_(0, start).op_Add(buffer.Substring_(start.Value+length.Value));\n		}\n\n		void String_Builder_::Remove_(p_int start)\n		{\n			String_Builder_::Remove_(start, buffer.Length-start.Value);\n		}\n	}\n}\n"));
+		resource_manager_->AddResource(p_string("RuntimeLibrary.h"), p_string("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n#include <stdexcept>\n\ntemplate<typename T, typename F>\nT LogicalAnd(T const & lhs, F rhs)\n{\n	return lhs.op_False().Value ? lhs : lhs.op_And(rhs());\n}\n\ntemplate<typename T, typename F>\nT LogicalOr(T const & lhs, F rhs)\n{\n	return lhs.op_True().Value ? lhs : lhs.op_Or(rhs());\n}\n\nstruct p_bool\n{\npublic:\n	// Runtime Use Members\n	bool Value;\n\n	p_bool() = default;\n	p_bool(bool value): Value(value) {}\n\n	p_bool * operator->() { return this; }\n	p_bool const * operator->() const { return this; }\n	p_bool & operator* () { return *this; }\n	p_bool const & operator* () const { return *this; }\n\n	// Adamant Members\n	static auto construct() -> p_bool { return p_bool(false); }\n	p_bool op_Not() const { return !this->Value; }\n	p_bool op_True() const { return this->Value; }\n	p_bool op_False() const { return !this->Value; }\n	p_bool op_And(p_bool other) const { return this->Value & other.Value; }\n	p_bool op_Or(p_bool other) const { return this->Value | other.Value; }\n};\n\nstruct p_uint;\n\nstruct p_int\n{\npublic:\n	// Runtime Use Members\n	std::int32_t Value;\n\n	p_int() = default;\n	p_int(std::int32_t value): Value(value) {}\n\n	p_int * operator->() { return this; }\n	p_int const * operator->() const { return this; }\n	p_int & operator* () { return *this; }\n	p_int const & operator* () const { return *this; }\n\n	// Hack to support conversion of uint to int for now\n	p_int(p_uint value);\n\n	// Adamant Members\n	static auto construct() -> p_int { return 0; }\n	void op_AddAssign(p_int other) { this->Value += other.Value; }\n	void op_SubtractAssign(p_int other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_int other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_int other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_int other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_int other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_int other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_int other) const { return this->Value >= other.Value; }\n	p_int op_Add(p_int other) const { return this->Value + other.Value; }\n	p_int op_Subtract(p_int other) const { return this->Value - other.Value; }\n	p_int op_Negate() const { return -this->Value; }\n	p_int op_Multiply(p_int other) const { return this->Value * other.Value; }\n	p_int op_Divide(p_int other) const { return this->Value / other.Value; }\n	p_int op_Remainder(p_int other) const { return this->Value % other.Value; }\n	p_int op_Magnitude() const { if(this->Value==INT32_MIN) throw std::overflow_error(\"Can't take |int.Min|\"); return this->Value < 0 ? -this->Value : this->Value; }\n\n	// Hack because we don't support as correctly yet\n	p_uint AsUInt_() const;\n};\n\nstruct p_uint\n{\npublic:\n	// Runtime Use Members\n	std::uint32_t Value;\n\n	p_uint() = default;\n	p_uint(std::uint32_t value): Value(value) {}\n\n	p_uint * operator->() { return this; }\n	p_uint const * operator->() const { return this; }\n	p_uint & operator* () { return *this; }\n	p_uint const & operator* () const { return *this; }\n\n	// Hack to support conversion of int to uint for now\n	p_uint(p_int value): Value(value.Value) {}\n\n	// Adamant Members\n	static auto construct() -> p_uint { return 0; }\n	void op_AddAssign(p_uint other) { this->Value += other.Value; }\n	void op_SubtractAssign(p_uint other) { this->Value -= other.Value; }\n	p_bool op_Equal(p_uint other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_uint other) const { return this->Value != other.Value; }\n	p_bool op_LessThan(p_uint other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_uint other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_uint other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_uint other) const { return this->Value >= other.Value; }\n	p_uint op_Add(p_uint other) const { return this->Value + other.Value; }\n	p_uint op_Subtract(p_uint other) const { return this->Value - other.Value; }\n};\n\ninline p_int::p_int(p_uint value)\n	: Value(value.Value)\n{\n}\n\nstruct p_code_point\n{\nprivate:\n	std::uint32_t Value;\n\npublic:\n	// Runtime Use Members\n	p_code_point() = default;\n	p_code_point(char value): Value(value) {}\n	char CharValue() const;\n\n	p_code_point * operator->() { return this; }\n	p_code_point const * operator->() const { return this; }\n	p_code_point & operator* () { return *this; }\n	p_code_point const & operator* () const { return *this; }\n\n	// Adamant Members\n	static auto construct() -> p_code_point { return '\\0'; }\n	p_bool op_Equal(p_code_point const & other) const { return this->Value == other.Value; }\n	p_bool op_NotEqual(p_code_point const & other) const { return this->Value != other.Value; }\n	// TODO: Not sure code_point should support these operations\n	p_bool op_LessThan(p_code_point other) const { return this->Value < other.Value; }\n	p_bool op_LessThanOrEqual(p_code_point other) const { return this->Value <= other.Value; }\n	p_bool op_GreaterThan(p_code_point other) const { return this->Value > other.Value; }\n	p_bool op_GreaterThanOrEqual(p_code_point other) const { return this->Value >= other.Value; }\n\n};\n\nstruct p_string\n{\npublic:\n	// Runtime Use Members\n	char const * Buffer;\n	int Length;\n\n	p_string() = default;\n	p_string(char const * s);\n	p_string(int length, char const * s);\n	char const * cstr() const;\n	p_string const * operator->() const { return this; }\n	p_string const & operator* () const { return *this; }\n\n	typedef char const * const_iterator;\n	const_iterator begin() const { return &Buffer[0]; }\n	const_iterator end() const { return &Buffer[Length]; }\n\n	// Hack to support conversion of int and code_point to strings for now\n	p_string(p_int other);\n	p_string(p_code_point other);\n\n	// Adamant Members\n	static auto construct() -> p_string { p_string self; self.Length = 0; self.Buffer = 0; return self; }\n	static auto construct(p_string value) -> p_string { return value; }\n	static auto construct(p_code_point c, p_int repeat) -> p_string;\n	// TODO ByteLength should be a property\n	p_int ByteLength_() const { return this->Length; }\n\n	p_string Substring_(p_int start, p_int length) const;\n	p_string Substring_(p_int start) const { return Substring_(start, Length-start.Value); }\n	p_string Replace_(p_string oldValue, p_string newValue) const;\n	p_int LastIndexOf_(p_code_point c) const;\n	p_int index_of_(p_code_point c) const;\n\n	p_code_point op_Element(p_int const index) const { return Buffer[index.Value]; }\n	p_string op_Add(p_string const & value) const;\n	p_bool op_Equal(p_string const & other) const;\n	p_bool op_NotEqual(p_string const & other) const { return !this->op_Equal(other).Value; }\n	p_bool op_LessThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }\n	p_bool op_LessThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }\n	p_bool op_GreaterThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }\n	p_bool op_GreaterThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }\n};\n\nclass ResourceManager\n{\npublic:\n	p_string const & GetString_(p_string resourceName);\n	void AddResource(p_string name, p_string value);\n};\n\nextern ResourceManager *const resource_manager_;\n\nclass NoneType\n{\npublic:\n	template<class T>\n	operator T*() const { return static_cast<T*>(0); }\n};\nstatic const NoneType None = NoneType();\n\ntemplate<typename T>\nstruct p_optional\n{\nprivate:\n	bool hasValue;\n	union\n    {\n        T data;\n    };\n\npublic:\n	p_optional(T const & value) : data(value), hasValue(true) {}\n	p_optional(::NoneType const & none) : hasValue(false) {}\n	T & operator->()\n	{\n		if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n		return data;\n	}\n	T const & operator->() const\n	{\n		if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n		return data;\n	}\n	T & operator* ()\n	{\n		if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n		return data;\n	}\n	T const & operator* () const\n	{\n		if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n		return data;\n	}\n};\n\n// A placeholder function until we get proper exceptions implemented\n_Noreturn inline void THROW_EXCEPTION_(const p_string& value)\n{\n	throw std::runtime_error(value.cstr());\n}\n\ninline void assert(const p_bool condition, const p_string code, const p_string message, const p_string file, const std::int32_t line)\n{\n	if(!condition.Value)\n		throw std::runtime_error(\n			p_string(\"Assertion failed: \").op_Add(code).op_Add(\", \").op_Add(message)\n			.op_Add(\", file \").op_Add(file).op_Add(\", line \").op_Add(p_int(line)).cstr());\n}\n\n#define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)\n\n_Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string function, const p_string file, const std::int32_t line)\n{\n	throw std::runtime_error(\n		p_string(\"Function \").op_Add(function)\n		.op_Add(p_string(\" not yet implemented, \")).op_Add(message).op_Add(p_string(\", \")).op_Add(file).op_Add(p_string(\", line \")).op_Add(p_int(line)).cstr());\n}\n\n#define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)\n\n\n_Noreturn inline void UNREACHABLE(const p_string function, const p_string file, const std::int32_t line)\n{\n	throw std::runtime_error(\n		p_string(\"Reached \\\"UNREACHABLE\\\" statement in function \").op_Add(function)\n		.op_Add(p_string(\", \")).op_Add(file).op_Add(p_string(\", line \")).op_Add(p_int(line)).cstr());\n}\n\n#define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)\n\nnamespace system_\n{\n	namespace Collections_\n	{\n		template<typename T>\n		class List_\n		{\n		private:\n			T* values;\n			int length;\n			int capacity;\n\n		public:\n			// Runtime Use Members\n			typedef T const * const_iterator;\n			const_iterator begin() const { return values; }\n			const_iterator end() const { return &values[length]; }\n\n			// Adamant Members\n			List_* construct() { values = 0; length = 0; capacity = 0; return this; }\n			void Add_(T value) { add_(value); }\n			void Clear_() { clear_(); }\n			void add_(T value);\n			void clear_() { length = 0; }\n			p_int op_Magnitude() const { return length; }\n			T const & op_Element(p_int const index) const;\n		};\n\n		template<typename T>\n		void List_<T>::add_(T value)\n		{\n			if(length >= capacity)\n			{\n				int newCapacity = capacity == 0 ? 16 : capacity * 2;\n				// Allocate uninitalized buffer (note `sizeof(char) == 1` always)\n				// Needed if T is a value type to avoid needing a default constructor\n				T* newValues = (T*)new char[newCapacity * sizeof(T)];\n				std::memcpy(newValues, values, length * sizeof(T));\n				values = newValues;\n				capacity = newCapacity;\n			}\n			values[length] = value;\n			length++;\n		}\n\n		template<typename T>\n		T const & List_<T>::op_Element(p_int const index) const\n		{\n			if(index.Value < 0 || index.Value >= length)\n				throw std::out_of_range(\"List index out of bounds\");\n			return values[index.Value];\n		}\n	}\n\n	namespace Console_\n	{\n		class Console_\n		{\n		public:\n			void Write_(p_string value);\n			void WriteLine_(p_string value);\n			void WriteLine_();\n		};\n\n		class Arguments_\n		{\n		private:\n			p_string* args;\n		public:\n			// Runtime Use Members\n			typedef p_string const * const_iterator;\n\n			Arguments_(int argc, char const *const * argv);\n			const_iterator begin() const { return &args[0]; }\n			const_iterator end() const { return &args[Count]; }\n\n			const int Count;\n\n			// Adamant Members\n\n			p_int op_Magnitude() const { return Count; }\n			p_string const & Get_(int const index) const { return args[index]; }\n		};\n	}\n\n	namespace IO_\n	{\n		class File_Reader_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Reader_* construct(const p_string& fileName);\n			p_string ReadToEndSync_();\n			void Close_();\n		};\n\n		class File_Writer_\n		{\n		private:\n			std::FILE* file;\n\n		public:\n			File_Writer_* construct(const p_string& fileName);\n			void Write_(const p_string& value);\n			void Close_();\n		};\n	}\n\n	namespace Text_\n	{\n		class String_Builder_\n		{\n		private:\n			p_string buffer;\n		public:\n			// Runtime Use Members\n			String_Builder_() = default;\n\n			// Adamant Members\n			String_Builder_* construct() { buffer = p_string(\"\"); return this; }\n			String_Builder_* construct(p_string const & value);\n			void Append_(p_string const & value);\n			void Append_(String_Builder_ const * value);\n			void AppendLine_(p_string const& value);\n			void AppendLine_();\n			void Remove_(p_int start, p_int length);\n			void Remove_(p_int start);\n			p_string ToString_() const { return buffer; }\n		};\n	}\n}\n\nnamespace System_ = system_;\n"));
 
 		return Main_(new ::System_::Console_::Console_(), new ::System_::Console_::Arguments_(argc, argv)).Value;
 	}
