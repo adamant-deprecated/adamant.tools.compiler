@@ -5,10 +5,9 @@ public class Primitives_Package_Builder
 {
 	public build(self) -> Package
 	{
-		// The primitives package has the special name `\primitives` to distinguish
-		// it from all normal packages since backslash is invalid in a package name.
-		// TODO use verbatim string
-		let name: Package_Name = new Package_Name("\\primitives");
+		// The primitives package has the special name `$primitives` to distinguish
+		// it from all normal packages since dollar is invalid in a package name.
+		let name: Package_Name = new Package_Name("$primitives");
 
 		// No referenced packages
 		let references: System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();

@@ -5,7 +5,7 @@ public class Semantic_Binder
 	{
 		assert(|package.references| > 0, "package=" + package.name.text);
 		let primitive_package: Package = package.references[0].package;
-		assert(primitive_package.name.text == "\\primitives", "package name='" + primitive_package.name.text + "'");
+		assert(primitive_package.name.text == "$primitives", "package name='" + primitive_package.name.text + "'");
 
 		// TODO we are assuming there is only one reference and it is the primitives package
 		let primitives: System.Collections.List<Symbol> = primitive_package.symbol.children;
