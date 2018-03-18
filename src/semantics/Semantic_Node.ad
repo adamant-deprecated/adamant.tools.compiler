@@ -54,6 +54,7 @@ public class Semantic_Node
 
 	public get_text(self) -> string
 	{
+		if source == none { return "$No Source$"; }
 		return source.Text.Substring(start, byte_length);
 	}
 
@@ -67,7 +68,7 @@ public class Semantic_Node
 	public bind_type(mut self, type: Type) -> void
 	{
 		if self.type =/= none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called on node that already has a type. Node: `" + get_text() + "` of kind "+kind); }
-		if type == none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called without a type. Node: `" + get_text() + "` of kind "+kind); }
+		assert(type =/= none, "Node: `" + get_text() + "` of kind " + kind);
 		self.type = type;
 	}
 
