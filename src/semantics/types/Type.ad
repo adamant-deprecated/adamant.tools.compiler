@@ -1,9 +1,8 @@
+// TODO maybe type should inherit from name
 public class Type
 {
 	public let kind: int;
-	public let package: Package_Name;
-	public let namespace: Namespace_Name;
-	public let name: string;
+	public let name: Name;
 	public let is_primitive: bool;
 	public let is_value_type: bool;
 	public let immutable: bool; // TODO need to distinguish if the type is inherently immutable
@@ -12,9 +11,7 @@ public class Type
 	public new(symbol: Symbol)
 	{
 		assert(symbol =/= none, "");
-		package = none;
-		namespace = none;
-		name = symbol.name;
+		name = new Name(new Name.global_namespace(new Package_Name("default")), symbol.name);
 		is_primitive = symbol.is_primitive;
 		is_value_type = symbol.declares_value_type();
 		if is_value_type
@@ -24,26 +21,51 @@ public class Type
 		immutable = true;
 	}
 
-	public new(package: Package_Name, namespace: Namespace_Name, kind: int, name: string, is_primitive: bool, is_value_type: bool, immutable: bool)
+	public new(kind: int, name: Name, immutable: bool)
 	{
-		self.package = package;
-		self.namespace = namespace;
+		self.kind = kind;
+		self.name = name;
+		self.is_primitive = false;
+		self.is_value_type = kind == ValueType;
+		self.immutable = immutable;
+	}
+
+	public new primitive(name: Name)
+	{
+		self.kind = ValueType;
+		self.name = name;
+		self.is_primitive = true;
+		self.is_value_type = true;
+		self.immutable = true;
+	}
+
+	public new namespace(name: Name)
+	{
+		self.kind = NamespaceType;
+		self.name = name;
+		self.is_primitive = false;
+		// TODO these don't make sense for namespaces
+		self.is_value_type = true;
+		self.immutable = true;
+	}
+
+	private new(kind: int, name: Name, is_primitive: bool, immutable: bool)
+	{
 		self.kind = kind;
 		self.name = name;
 		self.is_primitive = is_primitive;
-		self.is_value_type = is_value_type;
+		self.is_value_type = kind == ValueType;
 		self.immutable = immutable;
 	}
 
 	public make_mutable(self) -> Type
 	{
-		return new Type(package, namespace, kind, name, is_primitive, is_value_type, false);
+		return new Type(kind, name, is_primitive, false);
 	}
 
 	public make_immutable(self) -> Type
 	{
-		return new Type(package, namespace,
-		kind, name, is_primitive, is_value_type, true);
+		return new Type(kind, name, is_primitive, true);
 	}
 
 	// TODO use or remove this

@@ -1,0 +1,74 @@
+// TODO split this into various more specific kinds of names
+public class Name
+{
+	public let package: Package_Name;
+	public let segments: System.Collections.List<string>;
+	public let is_special: bool;
+
+	public new(package: Package_Name, segments: System.Collections.List<string>)
+	{
+		assert(package =/= none, "");
+		assert(segments =/= none, "");
+		self.package = package;
+		self.segments = segments;
+		self.is_special = false;
+	}
+
+	public new(parent: Name, name: string)
+	{
+		assert(parent =/= none, "");
+		assert(name.ByteLength() > 0, "");
+		self.package = parent.package;
+		let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
+		for let segment: string in parent.segments
+		{
+			segments.Add(segment);
+		}
+		segments.Add(name);
+		self.segments = segments;
+		self.is_special = false;
+	}
+
+	public new special(package: Package_Name, segments: System.Collections.List<string>)
+	{
+		assert(package =/= none, "");
+		assert(segments =/= none, "");
+		self.package = package;
+		self.segments = segments;
+		self.is_special = true;
+	}
+
+	public new special(parent: Name, name: string)
+	{
+		assert(parent =/= none, "");
+		assert(name.ByteLength() > 0, "");
+		self.package = parent.package;
+		let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
+		for let segment: string in parent.segments
+		{
+			segments.Add(segment);
+		}
+		segments.Add(name);
+		self.segments = segments;
+		self.is_special = true;
+	}
+
+	public new global_namespace(package: Package_Name)
+	{
+		assert(package =/= none, "");
+		self.package = package;
+		self.segments = new System.Collections.List<string>();
+		self.is_special = false;
+	}
+
+	public unqualified_name(self) -> string
+	{
+		if |segments|==0 { return ""; }
+		return segments[|segments| - 1];
+	}
+
+	public full_name(self) -> string
+	{
+		NOT_IMPLEMENTED("");
+	}
+}

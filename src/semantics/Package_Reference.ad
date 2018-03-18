@@ -1,3 +1,4 @@
+// TODO inherit from Package_Name?
 public struct Package_Reference
 {
 	/// The name the package will be referred to by within the current package.
@@ -8,7 +9,7 @@ public struct Package_Reference
 
 	public new(package: Package)
 	{
-		self.name = package.name.text;
+		self.name = package.name.unqualified_name;
 		self.package = package;
 	}
 	public new(name: string, package: Package)

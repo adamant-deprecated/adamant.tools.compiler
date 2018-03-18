@@ -15,40 +15,65 @@ public class Symbol
 	{
 		self.name = name;
 		kind = IdentifierSymbol;
+		is_primitive = false;
+		type = none;
+		declares_type = none;
 		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
-		is_primitive = false;
 	}
 
+	// TODO replace with named constructors
 	public new(name: string, kind: int)
 	{
 		self.name = name;
 		self.kind = kind;
+		is_primitive = false;
+		type = none;
+		declares_type = none;
 		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
-		is_primitive = false;
 	}
 
-	public new(name: string, kind: int, children: mut System.Collections.List<Symbol>)
+	public new(name: string, declarations: mut System.Collections.List<Semantic_Node>)
 	{
+		assert(name.ByteLength() > 0, "");
+		assert(declarations =/= none, "name="+name);
 		self.name = name;
-		self.kind = kind;
+		self.kind = IdentifierSymbol;
+		self.is_primitive = declares_type.is_primitive;
+		self.type = none;
+		self.declares_type = none;
+		self.declarations = declarations;
+		self.children = new System.Collections.List<Symbol>();
+	}
+
+	public new package(name: string, children: mut System.Collections.List<Symbol>)
+	{
+		assert(name.ByteLength() > 0, "");
+		assert(children =/= none, "name="+name);
+		self.name = name;
+		self.kind = PackageSymbol;
+		is_primitive = false;
+		self.type = none;
+		self.declares_type = none;
 		declarations = new System.Collections.List<Semantic_Node>();
 		self.children = children;
-		is_primitive = false;
 	}
 
-	public new primitive(name: string, declares_type: Type)
+	public new declaring(
+		name: string,
+		declares_type: Type,
+		declarations: mut System.Collections.List<Semantic_Node>)
 	{
 		assert(name.ByteLength() > 0, "");
 		assert(declares_type =/= none, "name="+name);
-		assert(declares_type.is_primitive, "name="+name);
-		self.name = name;
+		assert(declarations =/= none, "name="+name);
+		self.name = declares_type.name.unqualified_name();
 		self.kind = SpecialSymbol;
-		self.is_primitive = true;
+		self.is_primitive = declares_type.is_primitive;
 		self.type = none;
 		self.declares_type = declares_type;
-		self.declarations = new System.Collections.List<Semantic_Node>();
+		self.declarations = declarations;
 		self.children = new System.Collections.List<Symbol>();
 	}
 
