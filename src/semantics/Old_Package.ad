@@ -1,13 +1,13 @@
 /// A compiled package with all of its syntax and semantics
-public class Package
+public class Old_Package
 {
 	public let name: Package_Name;
 	public let references: System.Collections.List<Package_Reference>;
-	public let compilation_units: System.Collections.List<Compilation_Unit>;
+	public let compilation_units: System.Collections.List<mut Semantic_Node>;
 	public let symbol: Symbol;
 
 	// TODO constructor not adequately encapsulated to enforce invariants
-	public new(name: Package_Name, references: System.Collections.List<Package_Reference>, compilation_units: System.Collections.List<Compilation_Unit>, symbol: Symbol)
+	public new(name: Package_Name, references: System.Collections.List<Package_Reference>, compilation_units: System.Collections.List<mut Semantic_Node>, symbol: Symbol)
 	{
 		self.name = name;
 		self.references = references;
@@ -18,9 +18,12 @@ public class Package
 	public all_diagnostics(self) -> System.Collections.List<Diagnostic>
 	{
 		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
-		for let compilation_unit: Compilation_Unit in compilation_units
+		for let compilation_unit: Semantic_Node in compilation_units
 		{
-			compilation_unit.collect_diagnostics(diagnostics);
+			for let diagnostic: Diagnostic in compilation_unit.all_diagnostics()
+			{
+				diagnostics.Add(diagnostic);
+			}
 		}
 		return diagnostics;
 	}

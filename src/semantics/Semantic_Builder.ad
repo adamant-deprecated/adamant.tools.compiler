@@ -1,0 +1,16 @@
+/// Builds up the tree of `Semantic_Node`s for all the compilation units
+public class Semantic_Builder
+{
+	public build(
+		package_name: Package_Name,
+		package_syntax: Syntax_Node,
+		references: System.Collections.List<Package_Reference>)
+		-> System.Collections.List<Compilation_Unit>
+	{
+		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+
+		let compilation_units: mut System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
+
+		return compilation_units;
+	}
+}

@@ -159,14 +159,15 @@ public class Semantic_Node
 		node_diagnostics.Add(diagnostic);
 	}
 
+	// TODO remove with old code flow
 	public all_diagnostics(self) -> System.Collections.List<Diagnostic>
 	{
 		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
-		collection_diagnostics(diagnostics);
+		collect_diagnostics(diagnostics);
 		return diagnostics;
 	}
 
-	protected collection_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+	public collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
 	{
 		for let diagnostic: Diagnostic in node_diagnostics
 		{
@@ -175,7 +176,7 @@ public class Semantic_Node
 
 		for let child: Semantic_Node in children
 		{
-			child.collection_diagnostics(diagnostics);
+			child.collect_diagnostics(diagnostics);
 		}
 	}
 

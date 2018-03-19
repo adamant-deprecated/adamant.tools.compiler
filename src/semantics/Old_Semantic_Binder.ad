@@ -1,7 +1,7 @@
 /// Binds semantic nodes to their referenced symbols and types
 public class Old_Semantic_Binder
 {
-	public bind(self, package: Package) -> void
+	public bind(self, package: Old_Package) -> void
 	{
 		// TODO we are assuming there is only the package references we are expecting
 		assert(|package.references| == 2, "package=" + package.name.unqualified_name);

@@ -1,9 +1,9 @@
-public compile(sources: System.Collections.List<Source_Text>) -> Package
+public compile(sources: System.Collections.List<Source_Text>) -> Old_Package
 {
 	let parser: Parser = new Parser();
 	let packageSyntax: Syntax_Node = parser.ParsePackage(sources);
 	let semanticAnalyzer: Semantic_Analyzer = new Semantic_Analyzer();
-	let package: Package = semanticAnalyzer.analyze(packageSyntax);
+	let package: Old_Package = semanticAnalyzer.analyze(packageSyntax);
 	return package;
 }
 
@@ -127,7 +127,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 		sources.Add(read_source(sourceFilePath));
 	}
 
-	let package: Package = compile(sources);
+	let package: Old_Package = compile(sources);
 
 	let diagnostics: System.Collections.List<Diagnostic> = package.all_diagnostics();
 	write(console, diagnostics);
