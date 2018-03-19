@@ -7,20 +7,6 @@ public class Type
 	public let is_value_type: bool;
 	public let immutable: bool; // TODO need to distinguish if the type is inherently immutable
 
-	// TODO remove this constructor
-	public new(symbol: Symbol)
-	{
-		assert(symbol =/= none, "");
-		name = new Name(new Name.global_namespace(new Package_Name("default")), symbol.name);
-		is_primitive = symbol.is_primitive;
-		is_value_type = symbol.declares_value_type();
-		if is_value_type
-			{ kind = ValueType; }
-		else
-			{ kind = ReferenceType; }
-		immutable = true;
-	}
-
 	public new(kind: int, name: Name, immutable: bool)
 	{
 		self.kind = kind;
@@ -67,36 +53,4 @@ public class Type
 	{
 		return new Type(kind, name, is_primitive, true);
 	}
-
-	// TODO use or remove this
-	// private names_a_value_type(self, symbol: Symbol) -> bool
-	// {
-	// 	var class_or_struct: Symbol;
-	// 	if kind == IdentifierSymbol
-	// 	{
-	// 		class_or_struct = symbol;
-	// 	}
-	// 	else if kind == SpecialSymbol
-	// 	{
-	// 		if symbol.name == "self"
-	// 		{
-	// 			let constructor: Symbol = symbol.parent;
-	// 			class_or_struct = constructor.parent;
-	// 		}
-	// 		else
-	// 			{ return true; }
-	// 	}
-	// 	else
-	// 	{
-	// 		THROW_EXCEPTION("Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
-	// 	}
-
-	// 	if |class_or_struct.declarations| == 0 { THROW_EXCEPTION("Type.name_a_value_type() could not determine if Symbol `" + symbol.name + "` is a value type. No declarations."); }
-	// 	let declaration: Semantic_Node = class_or_struct.declarations[0]; // TODO assuming there is only one for now
-	// 	if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
-	// 		{ return false; }
-	// 	else if declaration.kind == StructDeclaration
-	// 		{ return true; }
-	// 	else { THROW_EXCEPTION("Could not determine if Symbol `" + symbol.name + "` is a value type. Declaration of type " + declaration.kind); }
-	// }
 }

@@ -40,8 +40,17 @@ public class Semantic_Builder
 			or node.kind == StructDeclaration
 		{
 			let name: string = node.first_child(Identifier).get_text();
-			let symbol: Symbol = new Symbol(name);
-			symbol.declarations.Add(node);
+			var type_kind: int;
+			if node.kind == ClassDeclaration
+				{ type_kind = ReferenceType; }
+			else
+				{ type_kind = ValueType; }
+			let type: Type = new Type(type_kind, new Name(new Name.global_namespace(new Package_Name("default")), name), false);
+			let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+			declarations.add(node);
+			let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+			let symbol: Symbol = new Symbol.declaring(type, declarations, children);
+
 			for let member: mut Semantic_Node in node.members()
 			{
 				build_symbols(symbol, member);
@@ -119,8 +128,9 @@ public class Semantic_Builder
 		else if node.kind == LocalDeclarationStatement
 		{
 			let identifier: mut Semantic_Node = node.first_child(VariableDeclaration).first_child(Identifier);
-			let symbol: Symbol = new Symbol(identifier.get_text());
-			symbol.declarations.Add(node);
+			let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+			declarations.add(node);
+			let symbol: Symbol = new Symbol(identifier.get_text(), declarations);
 			identifier.bind_symbol(symbol);
 			parent.children.Add(symbol);
 		}

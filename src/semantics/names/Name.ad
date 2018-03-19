@@ -5,12 +5,11 @@ public class Name
 	public let segments: System.Collections.List<string>;
 	public let is_special: bool;
 
-	public new(package: Package_Name, segments: System.Collections.List<string>)
+	public new global_namespace(package: Package_Name)
 	{
 		assert(package =/= none, "");
-		assert(segments =/= none, "");
 		self.package = package;
-		self.segments = segments;
+		self.segments = new System.Collections.List<string>();
 		self.is_special = false;
 	}
 
@@ -29,15 +28,6 @@ public class Name
 		self.is_special = false;
 	}
 
-	public new special(package: Package_Name, segments: System.Collections.List<string>)
-	{
-		assert(package =/= none, "");
-		assert(segments =/= none, "");
-		self.package = package;
-		self.segments = segments;
-		self.is_special = true;
-	}
-
 	public new special(parent: Name, name: string)
 	{
 		assert(parent =/= none, "");
@@ -51,14 +41,6 @@ public class Name
 		segments.Add(name);
 		self.segments = segments;
 		self.is_special = true;
-	}
-
-	public new global_namespace(package: Package_Name)
-	{
-		assert(package =/= none, "");
-		self.package = package;
-		self.segments = new System.Collections.List<string>();
-		self.is_special = false;
 	}
 
 	public unqualified_name(self) -> string

@@ -241,9 +241,19 @@ public class Semantic_Binder
 			else
 			{
 				node.bind_symbol(symbol);
-				let type: Type? = symbol.get_type();
+				var type: Type? = symbol.declares_type;
 				if type =/= none
 					{ node.bind_type(type); }
+				type = symbol.type;
+				// TODO save this as a different kind of type on the name
+				if type =/= none
+					{ node.bind_type(type); }
+				if |symbol.declarations| > 0
+				{
+					type = symbol.declarations[0].type;
+					if type =/= none
+						{ node.bind_type(type); }
+				}
 			}
 		}
 		else if node.kind == TrueLiteralExpression
@@ -266,7 +276,7 @@ public class Semantic_Binder
 		else if node.kind == SelfExpression
 		{
 			// TODO include this
-			// node.bind_type(scope.lookup_special("self").get_type());
+			// node.bind_type(scope.lookup_special("self").declares_type);
 		}
 		else if node.kind == BreakStatement
 			or node.kind == ContinueStatement
@@ -353,7 +363,7 @@ public class Semantic_Binder
 					// TODO transition away from using symbols at higher levels, use types instead
 					node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
 
-					let type: Type = symbol.get_type();
+					let type: Type = symbol.declares_type;
 					assert(type =/= none, "symbol.name="+symbol.name);
 					name.bind_type(type);
 					node.bind_type(type);
@@ -390,7 +400,7 @@ public class Semantic_Binder
 					}
 				}
 
-				let type: Type = symbol.get_type();
+				let type: Type = symbol.declares_type;
 				assert(type =/= none, "symbol.name="+symbol.name);
 				identifer_name.bind_type(type);
 				// TODO the type of the node should account for the generic type parameters
@@ -413,10 +423,8 @@ public class Semantic_Binder
 			else
 			{
 				node.bind_symbol(symbol);
-				if symbol.declares_type =/= none
-					{ node.bind_type(symbol.declares_type); }
-				else
-					{ node.bind_type(new Type(symbol)); }
+				assert(symbol.declares_type =/= none, "symbol.name="+symbol.name);
+				node.bind_type(symbol.declares_type);
 			}
 		}
 		else
@@ -453,8 +461,8 @@ public class Semantic_Binder
 				else
 				{
 					name.bind_symbol(symbol);
-					name.bind_type(symbol.get_type());
-					node.bind_type(symbol.get_type());
+					name.bind_type(symbol.declares_type);
+					node.bind_type(symbol.declares_type);
 					// TODO transition away from using symbols at higher levels, use types instead
 					node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
 				}
