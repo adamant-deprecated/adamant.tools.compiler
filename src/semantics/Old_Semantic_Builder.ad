@@ -1,5 +1,5 @@
 /// Builds the semantic tree (`Semantic_Node`s) including creating `Symbol`s and declared `Type`s
-public class Semantic_Builder
+public class Old_Semantic_Builder
 {
 	// Takes a package and builds the symbols for it
 	public build_symbols(self, package_name: Package_Name, compilation_units: System.Collections.List<mut Semantic_Node>) -> Symbol

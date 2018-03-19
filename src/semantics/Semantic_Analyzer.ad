@@ -11,12 +11,15 @@ public class Semantic_Analyzer
 		let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
 		references.add(new Package_Reference(primitives_package));
 		references.add(new Package_Reference(runtime_package));
-		let compilation_units: System.Collections.List<mut Semantic_Node> = new Semantic_Node(package_syntax).children;
-		let semantic_builder: Semantic_Builder = new Semantic_Builder();
-		let package_symbol: Symbol = semantic_builder.build_symbols(name, compilation_units);
-		let package: mut Package = new Package(name, references, compilation_units, package_symbol);
-		let semantic_binder: Semantic_Binder = new Semantic_Binder();
-		semantic_binder.bind(package);
-		return package;
+
+		// Old code path
+		let old_compilation_units: System.Collections.List<mut Semantic_Node> = new Semantic_Node(package_syntax).children;
+		let old_semantic_builder: Old_Semantic_Builder = new Old_Semantic_Builder();
+		let old_package_symbol: Symbol = old_semantic_builder.build_symbols(name, old_compilation_units);
+		let old_package: mut Package = new Package(name, references, old_compilation_units, old_package_symbol);
+		let old_semantic_binder: Old_Semantic_Binder = new Old_Semantic_Binder();
+		old_semantic_binder.bind(old_package);
+
+		return old_package;
 	}
 }

@@ -1,5 +1,5 @@
 /// Binds semantic nodes to their referenced symbols and types
-public class Semantic_Binder
+public class Old_Semantic_Binder
 {
 	public bind(self, package: Package) -> void
 	{
