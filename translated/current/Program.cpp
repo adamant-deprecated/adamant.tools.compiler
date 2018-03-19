@@ -471,11 +471,9 @@ public:
 	::Package_Name_ const *_Nonnull package_;
 	::System_::Collections_::List_<p_string> const *_Nonnull segments_;
 	p_bool is_special_;
-	auto construct(::Package_Name_ const *_Nonnull const package_, ::System_::Collections_::List_<p_string> const *_Nonnull const segments_) -> ::Name_*;
-	auto construct(::Name_ const *_Nonnull const parent_, p_string const name_) -> ::Name_*;
-	auto construct_special(::Package_Name_ const *_Nonnull const package_, ::System_::Collections_::List_<p_string> const *_Nonnull const segments_) -> ::Name_*;
-	auto construct_special(::Name_ const *_Nonnull const parent_, p_string const name_) -> ::Name_*;
 	auto construct_global_namespace(::Package_Name_ const *_Nonnull const package_) -> ::Name_*;
+	auto construct(::Name_ const *_Nonnull const parent_, p_string const name_) -> ::Name_*;
+	auto construct_special(::Name_ const *_Nonnull const parent_, p_string const name_) -> ::Name_*;
 	auto unqualified_name_() const -> p_string;
 	auto full_name_() const -> p_string;
 };
@@ -509,7 +507,6 @@ public:
 	auto construct_declaring(::Type_ const *_Nonnull const declares_type_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull const declarations_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_) -> ::Symbol_*;
 	auto get_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable;
 	auto declares_value_type_() const -> p_bool;
-	auto get_type_() const -> ::Type_ const *_Nullable;
 };
 
 class Type_
@@ -522,7 +519,6 @@ public:
 	p_bool is_primitive_;
 	p_bool is_value_type_;
 	p_bool immutable_;
-	auto construct(::Symbol_ const *_Nonnull const symbol_) -> ::Type_*;
 	auto construct(p_int const kind_, ::Name_ const *_Nonnull const name_, p_bool const immutable_) -> ::Type_*;
 	auto construct_primitive(::Name_ const *_Nonnull const name_) -> ::Type_*;
 	auto construct_namespace(::Name_ const *_Nonnull const name_) -> ::Type_*;
@@ -1655,10 +1651,25 @@ auto ::Semantic_Binder_::bind_(::Semantic_Node_ *_Nonnull const node_, ::Binding
 		else
 		{
 			node_->bind_symbol_(symbol_);
-			::Type_ const *_Nullable const type_ = symbol_->get_type_();
+			::Type_ const *_Nullable type_ = symbol_->declares_type_;
 			if (type_->op_NotEqual(::None).Value)
 			{
 				node_->bind_type_(type_);
+			}
+
+			type_ = symbol_->type_;
+			if (type_->op_NotEqual(::None).Value)
+			{
+				node_->bind_type_(type_);
+			}
+
+			if (symbol_->declarations_->op_Magnitude()->op_GreaterThan(p_int(0)).Value)
+			{
+				type_ = symbol_->declarations_->op_Element(p_int(0))->type_;
+				if (type_->op_NotEqual(::None).Value)
+				{
+					node_->bind_type_(type_);
+				}
 			}
 		}
 	}
@@ -1763,7 +1774,7 @@ auto ::Semantic_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_,
 			{
 				name_->bind_symbol_(symbol_);
 				node_->bind_symbol_(symbol_);
-				::Type_ const *_Nonnull const type_ = symbol_->get_type_();
+				::Type_ const *_Nonnull const type_ = symbol_->declares_type_;
 				assert_(type_->op_NotEqual(::None), p_string("symbol.name=").op_Add(symbol_->name_));
 				name_->bind_type_(type_);
 				node_->bind_type_(type_);
@@ -1797,7 +1808,7 @@ auto ::Semantic_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_,
 				}
 			}
 
-			::Type_ const *_Nonnull const type_ = symbol_->get_type_();
+			::Type_ const *_Nonnull const type_ = symbol_->declares_type_;
 			assert_(type_->op_NotEqual(::None), p_string("symbol.name=").op_Add(symbol_->name_));
 			identifer_name_->bind_type_(type_);
 			node_->bind_type_(type_);
@@ -1823,14 +1834,8 @@ auto ::Semantic_Binder_::bind_type_name_(::Semantic_Node_ *_Nonnull const node_,
 		else
 		{
 			node_->bind_symbol_(symbol_);
-			if (symbol_->declares_type_->op_NotEqual(::None).Value)
-			{
-				node_->bind_type_(symbol_->declares_type_);
-			}
-			else
-			{
-				node_->bind_type_((new ::Type_())->construct(symbol_));
-			}
+			assert_(symbol_->declares_type_->op_NotEqual(::None), p_string("symbol.name=").op_Add(symbol_->name_));
+			node_->bind_type_(symbol_->declares_type_);
 		}
 	}
 	else
@@ -1863,8 +1868,8 @@ auto ::Semantic_Binder_::bind_constructor_name_(::Semantic_Node_ *_Nonnull const
 			else
 			{
 				name_->bind_symbol_(symbol_);
-				name_->bind_type_(symbol_->get_type_());
-				node_->bind_type_(symbol_->get_type_());
+				name_->bind_type_(symbol_->declares_type_);
+				node_->bind_type_(symbol_->declares_type_);
 				node_->bind_symbol_(symbol_);
 			}
 		}
@@ -1922,8 +1927,21 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	else if (LogicalOr(node_->kind_->op_Equal(ClassDeclaration_), [&] { return node_->kind_->op_Equal(StructDeclaration_); }).Value)
 	{
 		p_string const name_ = node_->first_child_(Identifier_)->get_text_();
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct(name_);
-		symbol_->declarations_->Add_(node_);
+		p_int type_kind_;
+		if (node_->kind_->op_Equal(ClassDeclaration_).Value)
+		{
+			type_kind_ = ReferenceType_;
+		}
+		else
+		{
+			type_kind_ = ValueType_;
+		}
+
+		::Type_ const *_Nonnull const type_ = (new ::Type_())->construct(type_kind_, (new ::Name_())->construct((new ::Name_())->construct_global_namespace((new ::Package_Name_())->construct(p_string("default"))), name_), p_bool(false));
+		::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull const declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
+		declarations_->add_(node_);
+		::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct_declaring(type_, declarations_, children_);
 		for (::Semantic_Node_ *_Nonnull const member_ : *(node_->members_()))
 		{
 			build_symbols_(symbol_, member_);
@@ -1995,8 +2013,9 @@ auto ::Semantic_Builder_::build_symbols_(::Symbol_ const *_Nonnull const parent_
 	else if (node_->kind_->op_Equal(LocalDeclarationStatement_).Value)
 	{
 		::Semantic_Node_ *_Nonnull const identifier_ = node_->first_child_(VariableDeclaration_)->first_child_(Identifier_);
-		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct(identifier_->get_text_());
-		symbol_->declarations_->Add_(node_);
+		::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull const declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
+		declarations_->add_(node_);
+		::Symbol_ const *_Nonnull const symbol_ = (new ::Symbol_())->construct(identifier_->get_text_(), declarations_);
 		identifier_->bind_symbol_(symbol_);
 		parent_->children_->Add_(symbol_);
 	}
@@ -4642,13 +4661,12 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 	definitions_->EndBlock_();
 }
 
-auto ::Name_::construct(::Package_Name_ const *_Nonnull const package_, ::System_::Collections_::List_<p_string> const *_Nonnull const segments_) -> ::Name_*
+auto ::Name_::construct_global_namespace(::Package_Name_ const *_Nonnull const package_) -> ::Name_*
 {
 	::Name_* self = this;
 	assert_(package_->op_NotEqual(::None), p_string(""));
-	assert_(segments_->op_NotEqual(::None), p_string(""));
 	self->package_ = package_;
-	self->segments_ = segments_;
+	self->segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
 	self->is_special_ = p_bool(false);
 	return self;
 }
@@ -4671,17 +4689,6 @@ auto ::Name_::construct(::Name_ const *_Nonnull const parent_, p_string const na
 	return self;
 }
 
-auto ::Name_::construct_special(::Package_Name_ const *_Nonnull const package_, ::System_::Collections_::List_<p_string> const *_Nonnull const segments_) -> ::Name_*
-{
-	::Name_* self = this;
-	assert_(package_->op_NotEqual(::None), p_string(""));
-	assert_(segments_->op_NotEqual(::None), p_string(""));
-	self->package_ = package_;
-	self->segments_ = segments_;
-	self->is_special_ = p_bool(true);
-	return self;
-}
-
 auto ::Name_::construct_special(::Name_ const *_Nonnull const parent_, p_string const name_) -> ::Name_*
 {
 	::Name_* self = this;
@@ -4697,16 +4704,6 @@ auto ::Name_::construct_special(::Name_ const *_Nonnull const parent_, p_string 
 	segments_->Add_(name_);
 	self->segments_ = segments_;
 	self->is_special_ = p_bool(true);
-	return self;
-}
-
-auto ::Name_::construct_global_namespace(::Package_Name_ const *_Nonnull const package_) -> ::Name_*
-{
-	::Name_* self = this;
-	assert_(package_->op_NotEqual(::None), p_string(""));
-	self->package_ = package_;
-	self->segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
-	self->is_special_ = p_bool(false);
 	return self;
 }
 
@@ -4867,49 +4864,6 @@ auto ::Symbol_::declares_value_type_() const -> p_bool
 	{
 		THROW_EXCEPTION_(p_string("Symbol.is_value_type() is not defined for Symbol_Kind ").op_Add(kind_));
 	}
-}
-
-auto ::Symbol_::get_type_() const -> ::Type_ const *_Nullable
-{
-	auto self = this;
-	if (declares_type_->op_NotEqual(::None).Value)
-	{
-		return declares_type_;
-	}
-
-	if (kind_->op_Equal(SpecialSymbol_).Value)
-	{
-		return (new ::Type_())->construct(self);
-	}
-
-	if (declarations_->op_Magnitude()->op_GreaterThan(p_int(0)).Value)
-	{
-		::Semantic_Node_ const *_Nonnull const declaration_ = declarations_->op_Element(p_int(0));
-		assert_(declaration_->op_NotEqual(::None), p_string("for '").op_Add(name_)->op_Add(p_string("'")));
-		return declaration_->type_;
-	}
-
-	return ::None;
-}
-
-auto ::Type_::construct(::Symbol_ const *_Nonnull const symbol_) -> ::Type_*
-{
-	::Type_* self = this;
-	assert_(symbol_->op_NotEqual(::None), p_string(""));
-	name_ = (new ::Name_())->construct((new ::Name_())->construct_global_namespace((new ::Package_Name_())->construct(p_string("default"))), symbol_->name_);
-	is_primitive_ = symbol_->is_primitive_;
-	is_value_type_ = symbol_->declares_value_type_();
-	if (is_value_type_.Value)
-	{
-		kind_ = ValueType_;
-	}
-	else
-	{
-		kind_ = ReferenceType_;
-	}
-
-	immutable_ = p_bool(true);
-	return self;
 }
 
 auto ::Type_::construct(p_int const kind_, ::Name_ const *_Nonnull const name_, p_bool const immutable_) -> ::Type_*
