@@ -19,8 +19,8 @@ public class Old_Semantic_Binder
 		assert(|runtime_symbols| > 0, "|runtime_symbols|=" + |runtime_symbols|);
 
 		// TODO this is a hacky way to get both the primitives and runtime lib symbols in scope
-		var global_scope: Binding_Scope = new Binding_Scope(package.symbol.children, primitives);
-		global_scope = new Binding_Scope(global_scope, runtime_symbols);
+		var global_scope: Old_Binding_Scope = new Old_Binding_Scope(package.symbol.children, primitives);
+		global_scope = new Old_Binding_Scope(global_scope, runtime_symbols);
 
 		for let compilation_unit: mut Semantic_Node in package.compilation_units
 		{
@@ -28,7 +28,7 @@ public class Old_Semantic_Binder
 		}
 	}
 
-	private bind(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
+	private bind(self, node: mut Semantic_Node, scope: Old_Binding_Scope) -> void
 	{
 		if node.kind == CompilationUnit
 		{
@@ -46,7 +46,7 @@ public class Old_Semantic_Binder
 			let return_type: mut Semantic_Node = node.children[4];
 			bind_type_name(return_type, scope);
 
-			let function_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.children);
+			let function_scope: Old_Binding_Scope = new Old_Binding_Scope(scope, node.symbol.children);
 			let body: mut Semantic_Node = node.first_child(Block);
 			bind(body, function_scope);
 		}
@@ -65,7 +65,7 @@ public class Old_Semantic_Binder
 		else if node.kind == ClassDeclaration
 			or node.kind == StructDeclaration
 		{
-			let type_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.children);
+			let type_scope: Old_Binding_Scope = new Old_Binding_Scope(scope, node.symbol.children);
 			for let member: mut Semantic_Node in node.members()
 			{
 				bind(member, type_scope);
@@ -82,7 +82,7 @@ public class Old_Semantic_Binder
 			let parameters: mut Semantic_Node = node.first_child(ParameterList);
 			bind(parameters, scope);
 
-			let constructor_scope: Binding_Scope = new Binding_Scope(scope, node.symbol.children);
+			let constructor_scope: Old_Binding_Scope = new Old_Binding_Scope(scope, node.symbol.children);
 			let body: mut Semantic_Node = node.first_child(Block);
 			bind(body, constructor_scope);
 		}
@@ -291,7 +291,7 @@ public class Old_Semantic_Binder
 		}
 	}
 
-	private bind_type_name(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
+	private bind_type_name(self, node: mut Semantic_Node, scope: Old_Binding_Scope) -> void
 	{
 		if node.kind == PredefinedType
 		{
@@ -434,7 +434,7 @@ public class Old_Semantic_Binder
 	}
 
 
-	private bind_constructor_name(self, node: mut Semantic_Node, scope: Binding_Scope) -> void
+	private bind_constructor_name(self, node: mut Semantic_Node, scope: Old_Binding_Scope) -> void
 	{
 		if node.kind == QualifiedName
 			and node.children[2].kind == IdentifierName

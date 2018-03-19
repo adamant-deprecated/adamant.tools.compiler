@@ -1,6 +1,6 @@
-public class Binding_Scope
+public class Old_Binding_Scope
 {
-	private let containing_scope: Binding_Scope?;
+	private let containing_scope: Old_Binding_Scope?;
 	private let symbols: System.Collections.List<Symbol>;
 
 	public new(symbols: System.Collections.List<Symbol>, primitives: System.Collections.List<Symbol>)
@@ -14,7 +14,7 @@ public class Binding_Scope
 		self.symbols = scope_symbols;
 	}
 
-	public new(containing_scope: Binding_Scope, symbols: System.Collections.List<Symbol>)
+	public new(containing_scope: Old_Binding_Scope, symbols: System.Collections.List<Symbol>)
 	{
 		self.containing_scope = containing_scope;
 		self.symbols = symbols;
