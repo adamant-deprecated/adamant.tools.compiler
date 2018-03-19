@@ -1,0 +1,9 @@
+public class Binding_Scope
+{
+	public let name: Name;
+
+	public new(name: Name)
+	{
+		self.name = name;
+	}
+}

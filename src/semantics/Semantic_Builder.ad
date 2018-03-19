@@ -10,7 +10,21 @@ public class Semantic_Builder
 		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
 
 		let compilation_units: mut System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
+		let global_binding_scope: Binding_Scope = new Binding_Scope(new Name.global_namespace(package_name));
 
+		for let compilation_unit_syntax: Syntax_Node in package_syntax.children
+		{
+			compilation_units.add(build_compilation_unit(compilation_unit_syntax, global_binding_scope));
+		}
 		return compilation_units;
+	}
+
+	private build_compilation_unit(
+		compilation_unit_syntax: Syntax_Node,
+		global_binding_scope: Binding_Scope)
+		-> Compilation_Unit
+	{
+		assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + compilation_unit_syntax.kind);
+		return new Compilation_Unit();
 	}
 }
