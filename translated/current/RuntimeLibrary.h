@@ -297,6 +297,9 @@ namespace system_
 			const_iterator end() const { return &values[length]; }
 
 			// Adamant Members
+			p_bool op_Equal(List_<T> const * other) const { return this == other; }
+			p_bool op_NotEqual(List_<T> const * other) const { return this != other; }
+
 			List_* construct() { values = 0; length = 0; capacity = 0; return this; }
 			void Add_(T value) { add_(value); }
 			void Clear_() { clear_(); }
@@ -399,6 +402,9 @@ namespace system_
 			String_Builder_() = default;
 
 			// Adamant Members
+			p_bool op_Equal(String_Builder_ const * other) const { return this == other; }
+			p_bool op_NotEqual(String_Builder_ const * other) const { return this != other; }
+
 			String_Builder_* construct() { buffer = p_string(""); return this; }
 			String_Builder_* construct(p_string const & value);
 			void Append_(p_string const & value);
