@@ -71,7 +71,8 @@ public class Primitives_Package_Builder
 	{
 		let type: Type = new Type.primitive(new Name(namespace, name));
 		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-		return new Symbol.declaring(name, type, declarations);
+		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+		return new Symbol.declaring(type, declarations, children);
 	}
 
 	private build_fixed_point_primitives(

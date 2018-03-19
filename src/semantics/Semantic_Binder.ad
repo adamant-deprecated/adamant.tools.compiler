@@ -3,14 +3,25 @@ public class Semantic_Binder
 {
 	public bind(self, package: Package) -> void
 	{
-		assert(|package.references| > 0, "package=" + package.name.unqualified_name);
+		// TODO we are assuming there is only the package references we are expecting
+		assert(|package.references| == 2, "package=" + package.name.unqualified_name);
+
 		let primitive_package: Package = package.references[0].package;
 		assert(primitive_package.name.unqualified_name == "$primitives", "package name='" + primitive_package.name.unqualified_name + "'");
 
-		// TODO we are assuming there is only one reference and it is the primitives package
+		let runtime_package: Package = package.references[1].package;
+		assert(runtime_package.name.unqualified_name == "$runtime", "package name='" + runtime_package.name.unqualified_name + "'");
+
 		let primitives: System.Collections.List<Symbol> = primitive_package.symbol.children;
 		assert(|primitives| > 0, "|primitives|=" + |primitives|);
-		let global_scope: Binding_Scope = new Binding_Scope(package.symbol.children, primitives);
+
+		let runtime_symbols: System.Collections.List<Symbol> = runtime_package.symbol.children;
+		assert(|runtime_symbols| > 0, "|runtime_symbols|=" + |runtime_symbols|);
+
+		// TODO this is a hacky way to get both the primitives and runtime lib symbols in scope
+		var global_scope: Binding_Scope = new Binding_Scope(package.symbol.children, primitives);
+		global_scope = new Binding_Scope(global_scope, runtime_symbols);
+
 		for let compilation_unit: mut Semantic_Node in package.compilation_units
 		{
 			bind(compilation_unit, global_scope);
@@ -86,6 +97,11 @@ public class Semantic_Binder
 				let initalizer: mut Semantic_Node = node.children[5];
 				bind(initalizer, scope);
 			}
+			if type_name.type == none
+			{
+				add_could_not_determine_type_error(type_name);
+				return;
+			}
 			identifier.bind_type(type_name.type);
 			node.bind_type(type_name.type);
 		}
@@ -123,6 +139,11 @@ public class Semantic_Binder
 		{
 			let variable_declaration: mut Semantic_Node = node.first_child(VariableDeclaration);
 			bind(variable_declaration, scope);
+			if variable_declaration.type == none
+			{
+				add_could_not_determine_type_error(variable_declaration);
+				return;
+			}
 			node.bind_type(variable_declaration.type);
 		}
 		else if node.kind == IfStatement
@@ -228,19 +249,19 @@ public class Semantic_Binder
 		else if node.kind == TrueLiteralExpression
 			or node.kind == FalseLiteralExpression
 		{
-			node.bind_type(scope.lookup_special("bool").get_type());
+			node.bind_type(scope.lookup_special("bool").declares_type);
 		}
 		else if node.kind == StringLiteralExpression
 		{
-			node.bind_type(scope.lookup_special("string").get_type());
+			node.bind_type(scope.lookup_special("string").declares_type);
 		}
 		else if node.kind == CodePointLiteralExpression
 		{
-			node.bind_type(scope.lookup_special("code_point").get_type());
+			node.bind_type(scope.lookup_special("code_point").declares_type);
 		}
 		else if node.kind == NumericLiteralExpression
 		{
-			node.bind_type(scope.lookup_special("int").get_type());
+			node.bind_type(scope.lookup_special("int").declares_type);
 		}
 		else if node.kind == SelfExpression
 		{
@@ -268,27 +289,39 @@ public class Semantic_Binder
 			let symbol: Symbol = scope.lookup_special(primitive_name);
 			if symbol == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
 			node.bind_symbol(symbol);
-			node.bind_type(new Type(symbol));
+			node.bind_type(symbol.declares_type);
 		}
 		else if node.kind == MutableType
 		{
 			let inner_type_node: mut Semantic_Node = node.children[1];
 			bind_type_name(inner_type_node, scope);
-			if inner_type_node.type == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no inner type for `"+node.get_text()+"` of kind `MutableType`"); }
+			if inner_type_node.type == none
+			{
+				add_could_not_determine_type_error(inner_type_node);
+				return;
+			}
 			node.bind_type(inner_type_node.type.make_mutable());
 		}
 		else if node.kind == ImmutableType
 		{
 			let inner_type_node: mut Semantic_Node = node.children[0];
 			bind_type_name(inner_type_node, scope);
-			if inner_type_node.type == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no inner type for `"+node.get_text()+"` of kind `ImmutableType`"); }
+			if inner_type_node.type == none
+			{
+				add_could_not_determine_type_error(inner_type_node);
+				return;
+			}
 			node.bind_type(inner_type_node.type.make_immutable());
 		}
 		else if node.kind == OptionalType
 		{
 			let inner_type_node: mut Semantic_Node = node.children[0];
 			bind_type_name(inner_type_node, scope);
-			if inner_type_node.type == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` not inner type for `"+node.get_text()+"` of kind `OptionalType`"); }
+			if inner_type_node.type == none
+			{
+				add_could_not_determine_type_error(inner_type_node);
+				return;
+			}
 			node.bind_type(inner_type_node.type.make_immutable());
 		}
 		else if node.kind == QualifiedName
@@ -297,9 +330,15 @@ public class Semantic_Binder
 			bind_type_name(qualifier, scope);
 
 			let name: mut Semantic_Node = node.children[2];
-			if qualifier.symbol == none or qualifier.type == none
+			if qualifier.type == none
 			{
-				add_resolution_error(name);
+				// Skip because this means we aren't sure about the qualifier (i.e. type unknown)
+				//add_could_not_determine_type_error(qualifier);
+			}
+			else if qualifier.symbol == none
+			{
+				// Skip because this means we aren't sure about the qualifier (i.e. type unknown)
+				//add_resolution_error(name);
 			}
 			else if name.kind == IdentifierName
 			{
@@ -311,10 +350,13 @@ public class Semantic_Binder
 				else
 				{
 					name.bind_symbol(symbol);
-					name.bind_type(symbol.get_type());
-					node.bind_type(symbol.get_type());
 					// TODO transition away from using symbols at higher levels, use types instead
 					node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
+
+					let type: Type = symbol.get_type();
+					assert(type =/= none, "symbol.name="+symbol.name);
+					name.bind_type(type);
+					node.bind_type(type);
 				}
 			}
 			else if name.kind == GenericName
@@ -327,7 +369,7 @@ public class Semantic_Binder
 					return;
 				}
 				identifer_name.bind_symbol(symbol);
-				identifer_name.bind_type(symbol.get_type());
+
 				// TODO transition away from using symbols at higher levels, use types instead
 				node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
 
@@ -348,8 +390,11 @@ public class Semantic_Binder
 					}
 				}
 
+				let type: Type = symbol.get_type();
+				assert(type =/= none, "symbol.name="+symbol.name);
+				identifer_name.bind_type(type);
 				// TODO the type of the node should account for the generic type parameters
-				node.bind_type(symbol.get_type()); // Set it on the name as a whole, not just the identifier
+				node.bind_type(type); // Set it on the name as a whole, not just the identifier
 			}
 			else
 			{
@@ -368,7 +413,10 @@ public class Semantic_Binder
 			else
 			{
 				node.bind_symbol(symbol);
-				node.bind_type(new Type(symbol));
+				if symbol.declares_type =/= none
+					{ node.bind_type(symbol.declares_type); }
+				else
+					{ node.bind_type(new Type(symbol)); }
 			}
 		}
 		else
@@ -419,5 +467,10 @@ public class Semantic_Binder
 	private add_resolution_error(node: Semantic_Node) -> void
 	{
 		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
+	}
+
+	private add_could_not_determine_type_error(node: Semantic_Node) -> void
+	{
+		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not determine type for `" + node.get_text() + "`"));
 	}
 }

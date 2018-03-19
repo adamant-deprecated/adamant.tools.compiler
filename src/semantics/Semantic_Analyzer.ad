@@ -7,11 +7,13 @@ public class Semantic_Analyzer
 		// Hard code a stand-in package-name for now
 		let name: Package_Name = new Package_Name("default");
 		let primitives_package: Package = new Primitives_Package_Builder().build();
+		let runtime_package: Package = new Runtime_Library_Package_Builder().build();
 		let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
 		references.add(new Package_Reference(primitives_package));
+		references.add(new Package_Reference(runtime_package));
 		let compilation_units: System.Collections.List<mut Semantic_Node> = new Semantic_Node(package_syntax).children;
 		let semantic_builder: Semantic_Builder = new Semantic_Builder();
-		let package_symbol: Symbol = semantic_builder.build_symbols(compilation_units);
+		let package_symbol: Symbol = semantic_builder.build_symbols(name, compilation_units);
 		let package: mut Package = new Package(name, references, compilation_units, package_symbol);
 		let semantic_binder: Semantic_Binder = new Semantic_Binder();
 		semantic_binder.bind(package);
