@@ -4,7 +4,7 @@ public class Semantic_Tree_Builder
 {
 	public build(self,
 		package_syntax: Syntax_Node,
-		global_binding_scope: Binding_Scope)
+		package_binding_scope: Package_Binding_Scope)
 		-> System.Collections.List<Compilation_Unit>
 	{
 		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
@@ -13,19 +13,19 @@ public class Semantic_Tree_Builder
 
 		for let compilation_unit_syntax: Syntax_Node in package_syntax.children
 		{
-			compilation_units.add(build_compilation_unit(compilation_unit_syntax, global_binding_scope));
+			compilation_units.add(build_compilation_unit(compilation_unit_syntax, package_binding_scope));
 		}
 		return compilation_units;
 	}
 
 	private build_compilation_unit(
 		compilation_unit_syntax: Syntax_Node,
-		global_binding_scope: Binding_Scope)
+		package_binding_scope: Package_Binding_Scope)
 		-> Compilation_Unit
 	{
 		assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + compilation_unit_syntax.kind);
 
-		let binding_scope: Binding_Scope = global_binding_scope; // TODO this isn't right, we need to load the correct one
+		let binding_scope: Binding_Scope = none; //package_binding_scope; // TODO this isn't right, we need to load the correct one
 		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 		for let declaration_syntax: Syntax_Node in compilation_unit_syntax.children
 		{

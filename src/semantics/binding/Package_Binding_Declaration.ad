@@ -1,0 +1,13 @@
+public class Package_Binding_Declaration
+{
+	public let package_name: Package_Name;
+	private let global_scope: Binding_Scope;
+
+	public new(package_scope: Package_Binding_Scope, package_name: Package_Name)
+	{
+		self.package_name = package_name;
+		// self not fully initialized, maybe an `init` modifier that allows this?
+		// But init is like a special kind of lifetime saying that it will become a value later
+		self.global_scope = new Binding_Scope.global(package_scope, package_name);
+	}
+}

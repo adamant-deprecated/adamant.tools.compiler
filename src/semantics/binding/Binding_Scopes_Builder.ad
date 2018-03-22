@@ -5,8 +5,9 @@ public class Binding_Scopes_Builder
 		package_name: Package_Name,
 		package_syntax: Syntax_Node,
 		references: System.Collections.List<Package_Reference>)
-		-> Binding_Scope
+		-> Package_Binding_Scope
 	{
+		let global_scope: mut Package_Binding_Scope = new Package_Binding_Scope();
 		// TODO load references into `global_binding_scope`
 		// TODO load package declarations into `global_binding_scope`
 		NOT_IMPLEMENTED("");
