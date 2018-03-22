@@ -1,3 +1,5 @@
+/// A compiler diagnostic (i.e. warning, error etc.) with information about its location.
+/// TODO implement in terms of `Diagnostic_Info`
 public class Diagnostic
 {
 	public let Level: int;

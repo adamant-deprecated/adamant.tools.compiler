@@ -1,0 +1,7 @@
+/// A compiler diagnostic (i.e. warning, error etc.) without information about its location.
+/// Should be used by syntax and semantics nodes to describe diagnostics in an
+/// invariant manner.
+public class Diagnostic_Info
+{
+
+}

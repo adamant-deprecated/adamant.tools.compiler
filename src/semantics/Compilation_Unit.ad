@@ -1,6 +1,16 @@
 // TODO implement Semantic Node
 public class Compilation_Unit
 {
+	// TODO Package_Location
+	public let source: Source_Text;
+	public let declarations: System.Collections.List<Semantic_Node>;
+
+	public new(source: Source_Text, declarations: mut System.Collections.List<Semantic_Node>)
+	{
+		self.source = source;
+		self.declarations = declarations;
+	}
+
 	public collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
 	{
 		// for let diagnostic: Diagnostic in node_diagnostics
