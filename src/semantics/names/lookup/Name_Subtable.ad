@@ -3,29 +3,44 @@ public /*mut*/ class Name_Subtable
 	public let name_table: Name_Table;
 	public let parent: Name_Subtable?; // TODO this should point at the package binding scope?
 	public let name: Name;
-	private let subtables: mut System.Collections.List<Name_Subtable>;
+	private let subtables: mut System.Collections.List<mut Name_Subtable>;
 
-	public new(name_table: Name_Table, name: Name)
+	public new global_namespace(name_table: Name_Table, package_name: Package_Name)
 	{
 		// assert name package should be in the Name_Table
 		self.name_table = name_table;
 		self.parent = none;
-		self.name = name;
-		subtables = new System.Collections.List<Name_Subtable>();
+		self.name = new Name.global_namespace(package_name);
+		subtables = new System.Collections.List<mut Name_Subtable>();
 	}
 
-	public new(parent: Name_Subtable, name: Name)
+	private new(parent: Name_Subtable, name: Name)
 	{
 		// assert(parent.name.package == name.package);
 		// assert parent name contains us
 		self.name_table = parent.name_table;
 		self.parent = parent;
 		self.name = name;
-		subtables = new System.Collections.List<Name_Subtable>();
+		subtables = new System.Collections.List<mut Name_Subtable>();
 	}
 
-	public add(self, subtable: Name_Subtable) -> void
+	public add(mut self, name: Name) -> void
 	{
-		subtables.add(subtable);
+		assert(name.is_descendant_of(self.name), "\""+name.full()+"\" is not a child of \""+self.name.full()+"\"");
+		if name.is_child_of(self.name)
+		{
+			subtables.add(new Name_Subtable(self, name));
+			return;
+		}
+
+		for let subtable: mut Name_Subtable in subtables
+		{
+			if name.is_descendant_of(subtable.name)
+			{
+				subtable.add(name);
+				return;
+			}
+		}
+		assert(|name.segments| == |self.name.segments| + 1, "Can't add \""+name.full()+"\" to \""+self.name.full()+"\"");
 	}
 }

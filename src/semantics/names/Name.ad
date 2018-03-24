@@ -53,4 +53,27 @@ public class Name
 	{
 		NOT_IMPLEMENTED("");
 	}
+
+	public is_descendant_of(self, ancestor: Name) -> bool
+	{
+		if package =/= ancestor.package
+			or |segments| <= |ancestor.segments|
+			{ return false; }
+
+		var i: int = 0;
+		for let segment: string in segments
+		{
+			if segment =/= ancestor.segments[i]
+				{ return false;}
+
+			i += 1;
+		}
+		return true;
+	}
+
+	public is_child_of(self, parent: Name) -> bool
+	{
+		return |parent.segments|+1 == |segments|
+			and is_descendant_of(parent);
+	}
 }

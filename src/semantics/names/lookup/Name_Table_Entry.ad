@@ -3,21 +3,27 @@ public class Name_Table_Entry
 {
 	public let package_name: Package_Name;
 	public let is_any: bool;
-	private let name_subtables: mut System.Collections.List<Name_Subtable>;
+	public let global_namespace: mut Name_Subtable;
 
 	/// Create one for the any scope used when no package qualifier is used
-	public new any_package()
+	public new any_package(name_table: Name_Table)
 	{
 		// The combined global namespace goes by the special package name `$any`
 		self.package_name = new Package_Name("$any");
 		self.is_any = true;
-		name_subtables = new System.Collections.List<Name_Subtable>();
+		self.global_namespace = new Name_Subtable.global_namespace(name_table, self.package_name);
 	}
 
-	public new(package_name: Package_Name)
+	public new(name_table: Name_Table, package_name: Package_Name)
 	{
 		self.package_name = package_name;
 		self.is_any = false;
-		name_subtables = new System.Collections.List<Name_Subtable>();
+		self.global_namespace = new Name_Subtable.global_namespace(name_table, self.package_name);
+	}
+
+	public add(mut self, name: Name) -> void
+	{
+		assert(name.package == package_name, "name.package="+name.package.full());
+		global_namespace.add(name);
 	}
 }

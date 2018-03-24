@@ -8,14 +8,12 @@ public class Name_Table_Builder
 		-> Name_Table
 	{
 		let name_table: mut Name_Table = new Name_Table();
-
-		build_referenced(name_table, references);
-
-		// TODO load package declarations into `global_binding_scope`
-		NOT_IMPLEMENTED("");
+		add_referenced(name_table, references);
+		add_package(name_table, package_name, package_syntax);
+		return name_table;
 	}
 
-	private build_referenced(
+	private add_referenced(
 		name_table: mut Name_Table,
 		references: System.Collections.List<Package_Reference>)
 		-> void
@@ -24,16 +22,30 @@ public class Name_Table_Builder
 		{
 			let reference_name: Package_Name = new Package_Name(reference.name);
 			name_table.add(reference_name);
+			let global_namespace: Name = new Name.global_namespace(reference_name);
 			// We already added the package symbol as a reference name, now add the children
 			for let symbol: Symbol in reference.package.symbol.children
 			{
-				add_symbol(/*mut*/ name_table, new Name.global_namespace(reference_name), symbol);
+				add_symbol(/*mut*/ name_table, global_namespace, symbol);
 			}
 		}
 	}
 
 	private add_symbol(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> void
 	{
-		name_table.add(parent, symbol);
+		let name: Name = name_table.add(parent, symbol);
+		for let child: Symbol in symbol.children
+		{
+			add_symbol(/*mut*/ name_table, name, symbol);
+		}
+	}
+
+	private add_package(
+		name_table: mut Name_Table,
+		package_name: Package_Name,
+		package_syntax: Syntax_Node)
+		-> void
+	{
+		NOT_IMPLEMENTED("");
 	}
 }
