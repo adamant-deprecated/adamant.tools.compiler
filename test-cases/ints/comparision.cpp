@@ -14,10 +14,10 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	p_bool x_;
-	x_ = p_int(1).op_LessThan(p_int(2));
-	x_ = p_int(1).op_LessThanOrEqual(p_int(2));
-	x_ = p_int(1).op_GreaterThan(p_int(2));
-	x_ = p_int(1).op_GreaterThanOrEqual(p_int(2));
+	x_ = p_int(1).op_less_than(p_int(2));
+	x_ = p_int(1).op_less_than_or_equal(p_int(2));
+	x_ = p_int(1).op_greater_than(p_int(2));
+	x_ = p_int(1).op_greater_than_or_equal(p_int(2));
 }
 
 // Entry Point Adapter

@@ -12,8 +12,8 @@ auto Main_() -> void;
 class Reference_Type_
 {
 public:
-	p_bool op_Equal(Reference_Type_ const * other) const { return this == other; }
-	p_bool op_NotEqual(Reference_Type_ const * other) const { return this != other; }
+	p_bool op_equal(Reference_Type_ const * other) const { return this == other; }
+	p_bool op_not_equal(Reference_Type_ const * other) const { return this != other; }
 	auto construct() -> ::Reference_Type_* { return this; }
 };
 

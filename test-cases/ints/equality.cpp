@@ -14,8 +14,8 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	p_bool x_;
-	x_ = p_int(1).op_Equal(p_int(2));
-	x_ = p_int(1).op_NotEqual(p_int(2));
+	x_ = p_int(1).op_equal(p_int(2));
+	x_ = p_int(1).op_not_equal(p_int(2));
 }
 
 // Entry Point Adapter

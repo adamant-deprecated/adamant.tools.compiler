@@ -11,8 +11,8 @@ auto Main_() -> void;
 class Test_
 {
 public:
-	p_bool op_Equal(Test_ const * other) const { return this == other; }
-	p_bool op_NotEqual(Test_ const * other) const { return this != other; }
+	p_bool op_equal(Test_ const * other) const { return this == other; }
+	p_bool op_not_equal(Test_ const * other) const { return this != other; }
 	auto construct() -> ::Test_* { return this; }
 };
 
@@ -25,10 +25,10 @@ auto Main_() -> void
 	::Test_ const *_Nonnull const v_ = (new ::Test_())->construct();
 	::Test_ const *_Nullable const n_ = p_none;
 	p_bool x_;
-	x_ = v_->op_Equal(n_);
-	x_ = v_->op_NotEqual(n_);
-	x_ = n_->op_Equal(v_);
-	x_ = n_->op_NotEqual(v_);
+	x_ = v_->op_equal(n_);
+	x_ = v_->op_not_equal(n_);
+	x_ = n_->op_equal(v_);
+	x_ = n_->op_not_equal(v_);
 }
 
 // Entry Point Adapter

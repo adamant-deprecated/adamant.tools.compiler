@@ -73,15 +73,15 @@ p_string p_string::Replace_(p_string oldValue, p_string newValue) const
 	int limit = Length - oldValue.Length + 1;
 	int lastIndex = 0;
 	for(int i=0; i < limit; i++)
-		if (Substring_(i, oldValue.Length).op_Equal(oldValue).value)
+		if (Substring_(i, oldValue.Length).op_equal(oldValue).value)
 		{
-			buffer = buffer.op_Add(Substring_(lastIndex, i-lastIndex)).op_Add(newValue);
+			buffer = buffer.op_add(Substring_(lastIndex, i-lastIndex)).op_add(newValue);
 			i += oldValue.Length; // skip over the value we just matched
 			lastIndex = i;
 			i--; // we need i-- to offset the i++ that is about to happen
 		}
 
-	buffer = buffer.op_Add(Substring_(lastIndex, Length - lastIndex));
+	buffer = buffer.op_add(Substring_(lastIndex, Length - lastIndex));
 	return buffer;
 }
 
@@ -103,7 +103,7 @@ p_int p_string::index_of_(p_code_point c) const
 	return -1;
 }
 
-p_string p_string::op_Add(p_string const & value) const
+p_string p_string::op_add(p_string const & value) const
 {
 	int newLength = Length + value.Length;
 	char* chars = new char[newLength];
@@ -113,7 +113,7 @@ p_string p_string::op_Add(p_string const & value) const
 	return p_string(newLength, chars);
 }
 
-p_bool p_string::op_Equal(p_string const & other) const
+p_bool p_string::op_equal(p_string const & other) const
 {
 	if (Length != other.Length)
 		return false;
@@ -226,27 +226,27 @@ namespace system_
 
 		void String_Builder_::Append_(p_string const & value)
 		{
-			buffer = buffer.op_Add(value);
+			buffer = buffer.op_add(value);
 		}
 
 		void String_Builder_::Append_(String_Builder_ const * value)
 		{
-			buffer = buffer.op_Add(value->buffer);
+			buffer = buffer.op_add(value->buffer);
 		}
 
 		void String_Builder_::AppendLine_(p_string const & value)
 		{
-			buffer = buffer.op_Add(value).op_Add(p_string("\n"));
+			buffer = buffer.op_add(value).op_add(p_string("\n"));
 		}
 
 		void String_Builder_::AppendLine_()
 		{
-			buffer = buffer.op_Add(p_string("\n"));
+			buffer = buffer.op_add(p_string("\n"));
 		}
 
 		void String_Builder_::Remove_(p_int start, p_int length)
 		{
-			buffer = buffer.Substring_(0, start).op_Add(buffer.Substring_(start.value+length.value));
+			buffer = buffer.Substring_(0, start).op_add(buffer.Substring_(start.value+length.value));
 		}
 
 		void String_Builder_::Remove_(p_int start)

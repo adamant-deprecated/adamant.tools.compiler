@@ -15,8 +15,8 @@ auto Main_() -> p_int
 {
 	p_int result_;
 	result_ = p_int(40);
-	result_.op_AddAssign(p_int(3));
-	result_.op_SubtractAssign(p_int(1));
+	result_.op_add_assign(p_int(3));
+	result_.op_subtract_assign(p_int(1));
 	return result_;
 }
 

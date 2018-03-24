@@ -11,8 +11,8 @@ auto Main_() -> void;
 class C_
 {
 public:
-	p_bool op_Equal(C_ const * other) const { return this == other; }
-	p_bool op_NotEqual(C_ const * other) const { return this != other; }
+	p_bool op_equal(C_ const * other) const { return this == other; }
+	p_bool op_not_equal(C_ const * other) const { return this != other; }
 	p_string name_;
 	auto construct(p_string const name_) -> ::C_*;
 	auto method_() const -> p_string;
@@ -40,7 +40,7 @@ auto ::C_::method_() const -> p_string
 auto ::C_::double_name_() const -> p_string
 {
 	auto self = this;
-	return name_->op_Add(name_);
+	return name_->op_add(name_);
 }
 
 auto Main_() -> void

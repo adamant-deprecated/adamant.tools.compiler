@@ -14,10 +14,10 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	p_bool x_;
-	x_ = p_string("a").op_LessThan(p_string("b"));
-	x_ = p_string("a").op_LessThanOrEqual(p_string("b"));
-	x_ = p_string("a").op_GreaterThan(p_string("b"));
-	x_ = p_string("a").op_GreaterThanOrEqual(p_string("b"));
+	x_ = p_string("a").op_less_than(p_string("b"));
+	x_ = p_string("a").op_less_than_or_equal(p_string("b"));
+	x_ = p_string("a").op_greater_than(p_string("b"));
+	x_ = p_string("a").op_greater_than_or_equal(p_string("b"));
 }
 
 // Entry Point Adapter

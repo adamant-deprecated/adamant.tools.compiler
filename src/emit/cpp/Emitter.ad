@@ -252,7 +252,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[1], builder);
 			convert_member_access(syntax.children[1], builder);
-			builder.Write("op_Magnitude()");
+			builder.Write("op_magnitude()");
 		}
 		else if syntax.kind == ParenthesizedExpression
 		{
@@ -262,7 +262,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[1], builder);
 			convert_member_access(syntax.children[1], builder);
-			builder.Write("op_Negate()");
+			builder.Write("op_negate()");
 		}
 		else if syntax.kind == NoneLiteralExpression
 		{
@@ -311,11 +311,11 @@ public class Emitter
 				builder.Write("op_");
 				if operator == PlusEquals
 				{
-					builder.Write("AddAssign");
+					builder.Write("add_assign");
 				}
 				else if operator == MinusEquals
 				{
-					builder.Write("SubtractAssign");
+					builder.Write("subtract_assign");
 				}
 				else
 				{
@@ -330,7 +330,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[0], builder);
 			convert_member_access(syntax.children[0], builder);
-			builder.Write("op_Equal(");
+			builder.Write("op_equal(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -338,7 +338,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[0], builder);
 			convert_member_access(syntax.children[0], builder);
-			builder.Write("op_NotEqual(");
+			builder.Write("op_not_equal(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -350,19 +350,19 @@ public class Emitter
 			builder.Write("op_");
 			if operator == LessThan
 			{
-				builder.Write("LessThan");
+				builder.Write("less_than");
 			}
 			else if operator == LessThanEquals
 			{
-				builder.Write("LessThanOrEqual");
+				builder.Write("less_than_or_equal");
 			}
 			else if operator == GreaterThan
 			{
-				builder.Write("GreaterThan");
+				builder.Write("greater_than");
 			}
 			else if operator == GreaterThanEquals
 			{
-				builder.Write("GreaterThanOrEqual");
+				builder.Write("greater_than_or_equal");
 			}
 			else
 			{
@@ -376,7 +376,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[0], builder);
 			convert_member_access(syntax.children[0], builder);
-			builder.Write("op_Add(");
+			builder.Write("op_add(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -384,7 +384,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[0], builder);
 			convert_member_access(syntax.children[0], builder);
-			builder.Write("op_Subtract(");
+			builder.Write("op_subtract(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -392,7 +392,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[0], builder);
 			convert_member_access(syntax.children[0], builder);
-			builder.Write("op_Multiply(");
+			builder.Write("op_multiply(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -400,7 +400,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[0], builder);
 			convert_member_access(syntax.children[0], builder);
-			builder.Write("op_Divide(");
+			builder.Write("op_divide(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -408,7 +408,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[0], builder);
 			convert_member_access(syntax.children[0], builder);
-			builder.Write("op_Remainder(");
+			builder.Write("op_remainder(");
 			convert_expression(syntax.children[2], builder);
 			builder.Write(")");
 		}
@@ -749,8 +749,8 @@ public class Emitter
 			class_declarations.BeginBlock();
 			class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
 			// Write out basic reference equality comparisons
-			class_declarations.WriteLine("p_bool op_Equal(" + class_name + "_ const * other) const { return this == other; }");
-			class_declarations.WriteLine("p_bool op_NotEqual(" + class_name + "_ const * other) const { return this != other; }");
+			class_declarations.WriteLine("p_bool op_equal(" + class_name + "_ const * other) const { return this == other; }");
+			class_declarations.WriteLine("p_bool op_not_equal(" + class_name + "_ const * other) const { return this != other; }");
 			var current_access_level: int = PublicKeyword;
 			var has_constructors: bool = false;
 			for let member: Semantic_Node in declaration.members()
