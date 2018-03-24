@@ -7,13 +7,13 @@
 #include <stdexcept>
 
 template<typename T, typename F>
-T LogicalAnd(T const & lhs, F rhs)
+T op_and(T const & lhs, F rhs)
 {
 	return lhs.op_False().Value ? lhs : lhs.op_And(rhs());
 }
 
 template<typename T, typename F>
-T LogicalOr(T const & lhs, F rhs)
+T op_or(T const & lhs, F rhs)
 {
 	return lhs.op_True().Value ? lhs : lhs.op_Or(rhs());
 }
