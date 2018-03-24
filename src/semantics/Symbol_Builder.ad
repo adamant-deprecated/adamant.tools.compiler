@@ -8,6 +8,6 @@ public class Symbol_Builder
 	{
 		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
-		return new Symbol.package(package_name.unqualified_name, symbols);
+		return new Symbol.package(package_name.unqualified, symbols);
 	}
 }

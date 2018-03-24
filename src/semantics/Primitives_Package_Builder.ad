@@ -18,7 +18,7 @@ public class Primitives_Package_Builder
 		let primitive_symbols: mut System.Collections.List<Symbol> = build_primitive_symbols(name);
 		assert(|primitive_symbols| > 0, "|primitive_symbols|=" + |primitive_symbols|);
 
-		let package_symbol: Symbol = new Symbol.package(name.unqualified_name, primitive_symbols);
+		let package_symbol: Symbol = new Symbol.package(name.unqualified, primitive_symbols);
 		assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
 
 		return new Package(name, references, compilation_units, package_symbol);

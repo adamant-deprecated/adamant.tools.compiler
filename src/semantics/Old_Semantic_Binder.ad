@@ -4,13 +4,13 @@ public class Old_Semantic_Binder
 	public bind(self, package: Old_Package) -> void
 	{
 		// TODO we are assuming there is only the package references we are expecting
-		assert(|package.references| == 2, "package=" + package.name.unqualified_name);
+		assert(|package.references| == 2, "package=" + package.name.unqualified);
 
 		let primitive_package: Package = package.references[0].package;
-		assert(primitive_package.name.unqualified_name == "$primitives", "package name='" + primitive_package.name.unqualified_name + "'");
+		assert(primitive_package.name.unqualified == "$primitives", "package name='" + primitive_package.name.unqualified + "'");
 
 		let runtime_package: Package = package.references[1].package;
-		assert(runtime_package.name.unqualified_name == "$runtime", "package name='" + runtime_package.name.unqualified_name + "'");
+		assert(runtime_package.name.unqualified == "$runtime", "package name='" + runtime_package.name.unqualified + "'");
 
 		let primitives: System.Collections.List<Symbol> = primitive_package.symbol.children;
 		assert(|primitives| > 0, "|primitives|=" + |primitives|);

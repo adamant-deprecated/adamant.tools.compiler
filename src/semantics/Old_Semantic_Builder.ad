@@ -6,7 +6,7 @@ public class Old_Semantic_Builder
 	{
 		// TODO the package symbol name should match the package name
 		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		let package_symbol: mut Symbol = new Symbol.package(package_name.unqualified_name, children);
+		let package_symbol: mut Symbol = new Symbol.package(package_name.unqualified, children);
 		for let compilation_unit: mut Semantic_Node in compilation_units
 		{
 			if compilation_unit.kind =/= CompilationUnit

@@ -15,7 +15,7 @@ public class Runtime_Library_Package_Builder
 		let symbols: mut System.Collections.List<Symbol> = build_symbols(name);
 		assert(|symbols| > 0, "|symbols|=" + |symbols|);
 
-		let package_symbol: Symbol = new Symbol.package(name.unqualified_name, symbols);
+		let package_symbol: Symbol = new Symbol.package(name.unqualified, symbols);
 		assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
 
 		return new Package(name, references, compilation_units, package_symbol);

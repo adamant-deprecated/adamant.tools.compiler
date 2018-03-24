@@ -13,10 +13,10 @@ public class Semantic_Analyzer
 		references.add(new Package_Reference(runtime_package));
 
 		// New code path
-		let binding_scopes_builder: Binding_Scopes_Builder = new Binding_Scopes_Builder();
-		let package_binding_scope: Package_Binding_Scope = binding_scopes_builder.build(name, package_syntax, references);
+		let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
+		let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
 		let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();
-		let compilation_units: System.Collections.List<Compilation_Unit> = semantic_tree_builder.build(package_syntax, package_binding_scope);
+		let compilation_units: System.Collections.List<Compilation_Unit> = semantic_tree_builder.build(package_syntax, name_table);
 		let symbol_builder: Symbol_Builder = new Symbol_Builder();
 		let package_symbol: Symbol = symbol_builder.build(name, compilation_units);
 		let package: Package = new Package(name, references, compilation_units, package_symbol);

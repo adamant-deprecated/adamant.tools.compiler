@@ -1,0 +1,39 @@
+/// Builds the binding scopes so that we can look up names
+public class Name_Table_Builder
+{
+	public build(self,
+		package_name: Package_Name,
+		package_syntax: Syntax_Node,
+		references: System.Collections.List<Package_Reference>)
+		-> Name_Table
+	{
+		let name_table: mut Name_Table = new Name_Table();
+
+		build_referenced(name_table, references);
+
+		// TODO load package declarations into `global_binding_scope`
+		NOT_IMPLEMENTED("");
+	}
+
+	private build_referenced(
+		name_table: mut Name_Table,
+		references: System.Collections.List<Package_Reference>)
+		-> void
+	{
+		for let reference: Package_Reference in references
+		{
+			let reference_name: Package_Name = new Package_Name(reference.name);
+			name_table.add(reference_name);
+			// We already added the package symbol as a reference name, now add the children
+			for let symbol: Symbol in reference.package.symbol.children
+			{
+				add_symbol(/*mut*/ name_table, new Name.global_namespace(reference_name), symbol);
+			}
+		}
+	}
+
+	private add_symbol(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> void
+	{
+		name_table.add(parent, symbol);
+	}
+}

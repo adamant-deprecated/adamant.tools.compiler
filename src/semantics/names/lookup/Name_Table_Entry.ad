@@ -1,0 +1,23 @@
+// TODO make this a nested class of Name_Table so it is Name_Table.Entry
+public class Name_Table_Entry
+{
+	public let package_name: Package_Name;
+	public let is_any: bool;
+	private let name_subtables: mut System.Collections.List<Name_Subtable>;
+
+	/// Create one for the any scope used when no package qualifier is used
+	public new any_package()
+	{
+		// The combined global namespace goes by the special package name `$any`
+		self.package_name = new Package_Name("$any");
+		self.is_any = true;
+		name_subtables = new System.Collections.List<Name_Subtable>();
+	}
+
+	public new(package_name: Package_Name)
+	{
+		self.package_name = package_name;
+		self.is_any = false;
+		name_subtables = new System.Collections.List<Name_Subtable>();
+	}
+}

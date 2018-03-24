@@ -1,3 +1,5 @@
+/// Symbols are a tree referencing semantic nodes that are used to look up names.
+/// they don't internally store names so that they are not interdependent.
 public class Symbol
 {
 	public let name: string;
@@ -66,9 +68,9 @@ public class Symbol
 		children: mut System.Collections.List<Symbol>)
 	{
 		assert(declares_type =/= none, "");
-		assert(declarations =/= none, "name="+declares_type.name.unqualified_name());
-		assert(children =/= none, "name="+declares_type.name.unqualified_name());
-		self.name = declares_type.name.unqualified_name();
+		assert(declarations =/= none, "name="+declares_type.name.unqualified());
+		assert(children =/= none, "name="+declares_type.name.unqualified());
+		self.name = declares_type.name.unqualified();
 		if declares_type.is_primitive
 			{ self.kind = SpecialSymbol; }
 		else

@@ -1,0 +1,35 @@
+/// The root binding scope that accounts for package names
+public /*mut*/ class Name_Table
+{
+	private let entries: mut System.Collections.List<Name_Table_Entry>;
+
+	public new()
+	{
+		self.entries = new System.Collections.List<Name_Table_Entry>();
+		entries.add(new Name_Table_Entry.any_package());
+	}
+
+	/// Adds a `Package_Binding_Declaration` for the named package
+	public add(self, package_name: Package_Name) -> void
+	{
+		// TODO deal with duplicate package names
+		entries.add(new Name_Table_Entry(package_name));
+	}
+
+	// Adds a name to the `Name_Table`
+	public add(self, parent: Name, symbol: Symbol) -> Name_Subtable
+	{
+		let name: Name = new Name(parent, symbol.name);
+		let subtable: Name_Subtable = new Name_Subtable(self, name);
+		for let entry: Name_Table_Entry in entries
+		{
+			if entry.is_any
+				// TODO should be able to directly compare package names
+				or entry.package_name.full() == name.package.full()
+			{
+				NOT_IMPLEMENTED("");
+			}
+		}
+		NOT_IMPLEMENTED("");
+	}
+}

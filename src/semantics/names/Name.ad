@@ -43,13 +43,13 @@ public class Name
 		self.is_special = true;
 	}
 
-	public unqualified_name(self) -> string
+	public unqualified(self) -> string
 	{
 		if |segments|==0 { return ""; }
 		return segments[|segments| - 1];
 	}
 
-	public full_name(self) -> string
+	public full(self) -> string
 	{
 		NOT_IMPLEMENTED("");
 	}

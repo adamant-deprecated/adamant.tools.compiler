@@ -9,7 +9,7 @@ public struct Package_Reference
 
 	public new(package: Package)
 	{
-		self.name = package.name.unqualified_name;
+		self.name = package.name.unqualified;
 		self.package = package;
 	}
 	public new(name: string, package: Package)
