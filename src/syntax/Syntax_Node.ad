@@ -239,6 +239,23 @@ public class Syntax_Node
 			child.collection_diagnostics(diagnostics);
 		}
 	}
+
+	// TODO this should only be on things like class, struct that have members
+	public members(self) -> System.Collections.List<Syntax_Node>
+	{
+		let members: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+		for let child: Syntax_Node in children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.kind == ConstructorDeclaration
+				or child.kind == FieldDeclaration
+				or child.kind == MethodDeclaration
+			{
+				members.Add(child);
+			}
+		}
+		return members;
+	}
 }
 
 // TODO make this a named constructor

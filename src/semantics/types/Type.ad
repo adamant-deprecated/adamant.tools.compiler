@@ -53,4 +53,13 @@ public class Type
 	{
 		return new Type(kind, name, is_primitive, true);
 	}
+
+	public remove_package(self) -> Type
+	{
+		assert(kind == NamespaceType, "kind=" + kind);
+		if name.is_package_qualified()
+			{ return new Type(kind, name.remove_package(), is_primitive, immutable); }
+		else
+			{ return self; }
+	}
 }

@@ -1,6 +1,5 @@
 /// The name of a package. Note this is the full name of the package, for example
-/// "system.collections". A package name is never the alias for a package. It is
-// always the full name of the package.
+/// "system.collections".
 //
 // TODO this should be more like a typed string
 public class Package_Name

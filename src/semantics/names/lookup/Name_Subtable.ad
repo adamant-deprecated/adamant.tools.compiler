@@ -3,6 +3,7 @@ public /*mut*/ class Name_Subtable
 	public let name_table: Name_Table;
 	public let parent: Name_Subtable?; // TODO this should point at the package binding scope?
 	public let name: Name;
+	public let type: Type;
 	private let subtables: mut System.Collections.List<mut Name_Subtable>;
 
 	public new global_namespace(name_table: Name_Table)
@@ -11,6 +12,7 @@ public /*mut*/ class Name_Subtable
 		self.name_table = name_table;
 		self.parent = none;
 		self.name = new Name.global_namespace();
+		self.type = new Type.namespace(self.name);
 		subtables = new System.Collections.List<mut Name_Subtable>();
 	}
 
@@ -20,25 +22,34 @@ public /*mut*/ class Name_Subtable
 		self.name_table = name_table;
 		self.parent = none;
 		self.name = new Name.global_namespace(package_name);
+		self.type = new Type.namespace(self.name);
 		subtables = new System.Collections.List<mut Name_Subtable>();
 	}
 
-	private new(parent: Name_Subtable, name: Name)
+	private new(parent: Name_Subtable, name: Name, type: Type)
 	{
 		// assert(parent.name.package == name.package);
 		// assert parent name contains us
 		self.name_table = parent.name_table;
 		self.parent = parent;
 		self.name = name;
+		self.type = type;
 		subtables = new System.Collections.List<mut Name_Subtable>();
 	}
 
-	public add(mut self, name: Name) -> void
+	public add(mut self, name: Name, type: Type) -> void
 	{
 		assert(name.is_descendant_of(self.name), "\""+name.full()+"\" is not a child of \""+self.name.full()+"\"");
 		if name.is_child_of(self.name)
 		{
-			subtables.add(new Name_Subtable(self, name));
+			if self.name.package == none and type =/= none and type.kind == NamespaceType
+			{
+				subtables.add(new Name_Subtable(self, name.remove_package(), type.remove_package()));
+			}
+			else
+			{
+				subtables.add(new Name_Subtable(self, name, type));
+			}
 			return;
 		}
 
@@ -46,7 +57,7 @@ public /*mut*/ class Name_Subtable
 		{
 			if name.is_descendant_of(subtable.name)
 			{
-				subtable.add(name);
+				subtable.add(name, type);
 				return;
 			}
 		}

@@ -57,6 +57,16 @@ public class Name
 		self.is_special = true;
 	}
 
+	private new(
+		package: Package_Name?,
+		segments: System.Collections.List<string>,
+		is_special: bool)
+	{
+		self.package = package;
+		self.segments = segments;
+		self.is_special = is_special;
+	}
+
 	public unqualified(self) -> string
 	{
 		if |segments|==0 { return ""; }
@@ -109,5 +119,18 @@ public class Name
 	{
 		return |parent.segments|+1 == |segments|
 			and is_descendant_of(parent);
+	}
+
+	public is_package_qualified(self) -> bool
+	{
+		return package =/= none;
+	}
+
+	public remove_package(self) -> Name
+	{
+		if package == none
+			{ return self; }
+		else
+			{ return new Name(none, segments, is_special); }
 	}
 }

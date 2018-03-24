@@ -7,6 +7,7 @@ public class Name_Table_Builder
 		references: System.Collections.List<Package_Reference>)
 		-> Name_Table
 	{
+		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
 		let name_table: mut Name_Table = new Name_Table();
 		add_referenced(name_table, references);
 		add_package(name_table, package_name, package_syntax);
@@ -44,6 +45,71 @@ public class Name_Table_Builder
 		name_table: mut Name_Table,
 		package_name: Package_Name,
 		package_syntax: Syntax_Node)
+		-> void
+	{
+		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+		let global_namespace: Name = new Name.global_namespace(package_name);
+		for let compilation_unit: Syntax_Node in package_syntax.children
+		{
+			add_compilation_unit(name_table, global_namespace, compilation_unit);
+		}
+	}
+
+	private add_compilation_unit(
+		name_table: mut Name_Table,
+		global_namespace: Name,
+		compilation_unit: Syntax_Node)
+		-> void
+	{
+		assert(compilation_unit.kind == CompilationUnit, "compilation_unit.kind=" + compilation_unit.kind);
+		for let declaration: Syntax_Node in compilation_unit.children
+		{
+			add_syntax(name_table, global_namespace, declaration);
+		}
+	}
+
+	private add_syntax(
+		name_table: mut Name_Table,
+		parent: Name,
+		syntax: Syntax_Node)
+		-> void
+	{
+		if syntax.kind == FunctionDeclaration
+			or syntax.kind == MethodDeclaration
+		{
+			let name: Name = new Name(parent, syntax.first_child(Identifier).get_text());
+			add_function(name_table, name, syntax);
+		}
+		else if syntax.kind == ClassDeclaration
+			or syntax.kind == StructDeclaration
+		{
+			let unqualified_name: string = syntax.first_child(Identifier).get_text();
+			var type_kind: int;
+			if syntax.kind == ClassDeclaration
+				{ type_kind = ReferenceType; }
+			else
+				{ type_kind = ValueType; }
+			let type: Type = new Type(type_kind, new Name(parent, unqualified_name), false);
+			let name: Name = name_table.add(parent, unqualified_name, type);
+			for let member: Syntax_Node in syntax.members()
+			{
+				add_syntax(name_table, name, member);
+			}
+		}
+		if syntax.kind == EndOfFileToken
+		{
+			// ignore these
+		}
+		else
+		{
+			NOT_IMPLEMENTED("syntax.kind=" + syntax.kind);
+		}
+	}
+
+	private add_function(
+		name_table: mut Name_Table,
+		name: Name,
+		syntax: Syntax_Node)
 		-> void
 	{
 		NOT_IMPLEMENTED("");
