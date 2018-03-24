@@ -1,20 +1,20 @@
 /// The root binding scope that accounts for package names
 public /*mut*/ class Name_Table
 {
-	private let any_package: mut Name_Table_Entry;
-	private let entries: mut System.Collections.List<mut Name_Table_Entry>;
+	private let any_package: mut Name_Subtable;
+	private let packages: mut System.Collections.List<mut Name_Subtable>;
 
 	public new()
 	{
-		self.entries = new System.Collections.List<mut Name_Table_Entry>();
-		self.any_package = new Name_Table_Entry.any_package(self);
+		self.any_package = new Name_Subtable.global_namespace(self);
+		self.packages = new System.Collections.List<mut Name_Subtable>();
 	}
 
 	/// Adds a `Package_Binding_Declaration` for the named package
 	public add(mut self, package_name: Package_Name) -> void
 	{
 		// TODO deal with duplicate package names
-		entries.add(new Name_Table_Entry(self, package_name));
+		packages.add(new Name_Subtable.global_namespace(self, package_name));
 	}
 
 	// Adds a name to the `Name_Table`
@@ -22,16 +22,15 @@ public /*mut*/ class Name_Table
 	{
 		let name: Name = new Name(parent, symbol.name);
 		any_package.add(name);
-		for let entry: mut Name_Table_Entry in entries
+		for let package: mut Name_Subtable in packages
 		{
-			// TODO should be able to directly compare package names
-			if entry.package_name.full() == name.package.full()
+			if name.is_descendant_of(package.name)
 			{
-				entry.add(name);
+				package.add(name);
 				return name;
 			}
 		}
-		THROW_EXCEPTION("Can't add name \""+symbol.name+"\" in package \""+parent.package.full()+"\""+
-			" because package doesn't exit in table.");
+		THROW_EXCEPTION("Can't add name \""+symbol.name+"\" in package \""+parent.full()+"\""+
+			" because package doesn't exist in table.");
 	}
 }

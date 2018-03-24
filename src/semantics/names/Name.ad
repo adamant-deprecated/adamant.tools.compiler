@@ -1,9 +1,23 @@
 // TODO split this into various more specific kinds of names
+
+// TODO: There is actually a hierarchy where more qualified names inherit from less qualified names
+// Unqualified_Name = `c`
+// Qualified_Name = `a.b.c`
+// Fully_Qualified_Name = `::a.b.c` has optional package name
+// Package_Qualified_Name = `p::a.b.c`
 public class Name
 {
-	public let package: Package_Name;
+	// package == none means that the package is unspecified
+	public let package: Package_Name?; // TODO there should be kinds of names that have to have a package
 	public let segments: System.Collections.List<string>;
 	public let is_special: bool;
+
+	public new global_namespace()
+	{
+		self.package = none;
+		self.segments = new System.Collections.List<string>();
+		self.is_special = false;
+	}
 
 	public new global_namespace(package: Package_Name)
 	{
@@ -51,19 +65,39 @@ public class Name
 
 	public full(self) -> string
 	{
-		NOT_IMPLEMENTED("");
+		var name: string = "";
+		if package =/= none
+			{ name = package.full(); }
+
+		name = name + "::";
+		// TODO need string join
+		var first: bool = true;
+		for let segment: string in segments
+		{
+			if first
+			{
+				first = false;
+				name = name + segment;
+				continue;
+			}
+			// TODO correctly format names with special chars etc.
+			name = name + "." + segment;
+		}
+		return name;
 	}
 
 	public is_descendant_of(self, ancestor: Name) -> bool
 	{
-		if package =/= ancestor.package
+		if (package =/= none
+			and ancestor.package =/= none
+			and package.full() =/= ancestor.package.full())
 			or |segments| <= |ancestor.segments|
 			{ return false; }
 
 		var i: int = 0;
-		for let segment: string in segments
+		for let segment: string in ancestor.segments
 		{
-			if segment =/= ancestor.segments[i]
+			if segment =/= segments[i]
 				{ return false;}
 
 			i += 1;

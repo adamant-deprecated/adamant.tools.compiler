@@ -36,7 +36,7 @@ public class Name_Table_Builder
 		let name: Name = name_table.add(parent, symbol);
 		for let child: Symbol in symbol.children
 		{
-			add_symbol(/*mut*/ name_table, name, symbol);
+			add_symbol(/*mut*/ name_table, name, child);
 		}
 	}
 

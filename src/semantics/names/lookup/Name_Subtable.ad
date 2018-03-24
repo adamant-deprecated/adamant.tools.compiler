@@ -5,6 +5,15 @@ public /*mut*/ class Name_Subtable
 	public let name: Name;
 	private let subtables: mut System.Collections.List<mut Name_Subtable>;
 
+	public new global_namespace(name_table: Name_Table)
+	{
+		// assert name package should be in the Name_Table
+		self.name_table = name_table;
+		self.parent = none;
+		self.name = new Name.global_namespace();
+		subtables = new System.Collections.List<mut Name_Subtable>();
+	}
+
 	public new global_namespace(name_table: Name_Table, package_name: Package_Name)
 	{
 		// assert name package should be in the Name_Table
@@ -41,6 +50,8 @@ public /*mut*/ class Name_Subtable
 				return;
 			}
 		}
+
+		// TODO this assert is wrong
 		assert(|name.segments| == |self.name.segments| + 1, "Can't add \""+name.full()+"\" to \""+self.name.full()+"\"");
 	}
 }
