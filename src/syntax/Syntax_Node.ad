@@ -272,6 +272,22 @@ public class Syntax_Node
 		}
 		return parameters;
 	}
+
+		// TODO this should only be on things like block
+	public statements(self) -> System.Collections.List<Syntax_Node>
+	{
+		let statements: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+		for let child: Syntax_Node in children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.kind =/= LeftBrace
+				and child.kind =/= RightBrace
+			{
+				statements.Add(child);
+			}
+		}
+		return statements;
+	}
 }
 
 // TODO make this a named constructor

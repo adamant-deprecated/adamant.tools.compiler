@@ -95,6 +95,13 @@ public class Name_Table_Builder
 				add_syntax(name_table, name, member);
 			}
 		}
+		else if syntax.kind == Block
+		{
+			for let statement: Syntax_Node in syntax.statements()
+			{
+				add_syntax(name_table, parent, statement);
+			}
+		}
 		if syntax.kind == EndOfFileToken
 		{
 			// ignore these
