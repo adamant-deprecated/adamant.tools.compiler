@@ -415,7 +415,7 @@ public class Emitter
 		else if syntax.kind == OrExpression
 		{
 			// TODO based on types decide how to translate
-			builder.Write("LogicalOr(");
+			builder.Write("op_or(");
 			convert_expression(syntax.children[0], builder);
 			builder.Write(", [&] { return ");
 			convert_expression(syntax.children[2], builder);
@@ -424,7 +424,7 @@ public class Emitter
 		else if syntax.kind == AndExpression
 		{
 			// TODO based on types decide how to translate
-			builder.Write("LogicalAnd(");
+			builder.Write("op_and(");
 			convert_expression(syntax.children[0], builder);
 			builder.Write(", [&] { return ");
 			convert_expression(syntax.children[2], builder);

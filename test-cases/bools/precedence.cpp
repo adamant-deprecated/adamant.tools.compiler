@@ -14,9 +14,9 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	p_bool x_;
-	x_ = LogicalAnd(p_bool(true).op_Not(), [&] { return p_bool(false); });
-	x_ = LogicalOr(p_bool(true).op_Not(), [&] { return p_bool(false); });
-	x_ = LogicalOr(p_bool(false), [&] { return LogicalAnd(p_bool(true), [&] { return p_bool(true); }); });
+	x_ = op_and(p_bool(true).op_Not(), [&] { return p_bool(false); });
+	x_ = op_or(p_bool(true).op_Not(), [&] { return p_bool(false); });
+	x_ = op_or(p_bool(false), [&] { return op_and(p_bool(true), [&] { return p_bool(true); }); });
 }
 
 // Entry Point Adapter
