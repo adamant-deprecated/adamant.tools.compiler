@@ -25,20 +25,39 @@ public /*mut*/ class Semantic_Tree_Builder
 	{
 		assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + compilation_unit_syntax.kind);
 
-		let name_subtable: Name_Subtable = none; //name_table; // TODO this isn't right, we need to load the correct one
+		let scope: Name_Subtable = none; //name_table; // TODO this isn't right, we need to load the correct one
 		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 		for let declaration_syntax: Syntax_Node in compilation_unit_syntax.children
 		{
-			declarations.add(build_declaration(declaration_syntax, name_subtable));
+			declarations.add(build(declaration_syntax, name_table, name_table.any_package));
 		}
 		return new Compilation_Unit(compilation_unit_syntax.source, declarations);
 	}
 
-	private build_declaration(
-		declaration_syntax: Syntax_Node,
-		name_subtable: Name_Subtable)
+	private build(
+		syntax: Syntax_Node,
+		name_table: Name_Table,
+		scope: Name_Subtable)
 		-> Semantic_Node
 	{
-		NOT_IMPLEMENTED("declaration_syntax.kind=" + declaration_syntax.kind);
+		if syntax.kind == FunctionDeclaration
+			or syntax.kind == MethodDeclaration
+		{
+			let parameters: Syntax_Node = syntax.first_child(ParameterList);
+			build(parameters, name_table, scope);
+
+			let return_type: Syntax_Node = syntax.children[4];
+			build(return_type, name_table, scope);
+
+			let function_scope: Name_Subtable = scope.find(syntax.first_child(Identifier).get_text());
+			let body: Syntax_Node = syntax.first_child(Block);
+			build(body, name_table, function_scope);
+
+			NOT_IMPLEMENTED("Return Semantic_Node");
+		}
+		else
+		{
+			NOT_IMPLEMENTED("declaration_syntax.kind=" + syntax.kind);
+		}
 	}
 }

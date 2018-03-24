@@ -1,7 +1,7 @@
 /// The root binding scope that accounts for package names
 public /*mut*/ class Name_Table
 {
-	private let any_package: mut Name_Subtable;
+	public let any_package: mut Name_Subtable;
 	private let packages: mut System.Collections.List<mut Name_Subtable>;
 
 	public new()
