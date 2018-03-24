@@ -22,8 +22,7 @@ public class Name_Table_Builder
 		for let reference: Package_Reference in references
 		{
 			let reference_name: Package_Name = new Package_Name(reference.name);
-			name_table.add(reference_name);
-			let global_namespace: Name = new Name.global_namespace(reference_name);
+			let global_namespace: Name = name_table.add(reference_name);
 			// We already added the package symbol as a reference name, now add the children
 			for let symbol: Symbol in reference.package.symbol.children
 			{
@@ -48,7 +47,7 @@ public class Name_Table_Builder
 		-> void
 	{
 		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
-		let global_namespace: Name = new Name.global_namespace(package_name);
+		let global_namespace: Name = name_table.add(package_name);
 		for let compilation_unit: Syntax_Node in package_syntax.children
 		{
 			add_compilation_unit(name_table, global_namespace, compilation_unit);
@@ -109,9 +108,19 @@ public class Name_Table_Builder
 	private add_function(
 		name_table: mut Name_Table,
 		name: Name,
-		syntax: Syntax_Node)
+		function: Syntax_Node)
 		-> void
 	{
-		NOT_IMPLEMENTED("");
+		let type: Type? = none; // we don't have a type for functions yet
+		name_table.add(name, type); // ambiguous unless we type the variable first
+
+		let parameters: Syntax_Node = function.first_child(ParameterList);
+		for let parameter: Syntax_Node in parameters.parameters()
+		{
+			add_syntax(name_table, name, parameter);
+		}
+
+		let body: Syntax_Node = function.first_child(Block);
+		add_syntax(name_table, name, body);
 	}
 }

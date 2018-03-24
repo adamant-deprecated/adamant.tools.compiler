@@ -256,6 +256,22 @@ public class Syntax_Node
 		}
 		return members;
 	}
+
+	// TODO this should only be on things like parameter list and function
+	public parameters(self) -> System.Collections.List<Syntax_Node>
+	{
+		let parameters: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+		for let child: Syntax_Node in children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.kind == Parameter
+				or child.kind == SelfParameter
+			{
+				parameters.Add(child);
+			}
+		}
+		return parameters;
+	}
 }
 
 // TODO make this a named constructor
