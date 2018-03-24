@@ -1,6 +1,6 @@
 public class Test
 {
-	let Value: bool;
+	let value: bool;
 }
 
 public Main() -> void

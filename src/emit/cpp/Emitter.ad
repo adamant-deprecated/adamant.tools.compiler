@@ -246,7 +246,7 @@ public class Emitter
 		{
 			convert_expression(syntax.children[1], builder);
 			convert_member_access(syntax.children[1], builder);
-			builder.Write("op_Not()");
+			builder.Write("op_not()");
 		}
 		else if syntax.kind == MagnitudeExpression
 		{
@@ -499,7 +499,7 @@ public class Emitter
 		{
 			definitions.BeginLine("while (");
 			convert_expression(statement.children[1], definitions);
-			definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
+			definitions.EndLine(".value)"); // if the type isn't just bool, we need op_true() etc.
 			emit_statement(statement.children[2]); // Block Statement
 		}
 		else if statement.kind == ForStatement
@@ -521,7 +521,7 @@ public class Emitter
 			emit_statement(statement.children[1]); // Block Statement
 			definitions.BeginLine("while (");
 			convert_expression(statement.children[3], definitions);
-			definitions.EndLine(".Value);"); // if the type isn't just bool, we need op_true() etc.
+			definitions.EndLine(".value);"); // if the type isn't just bool, we need op_true() etc.
 		}
 		else if statement.kind == IfStatement
 		{
@@ -531,7 +531,7 @@ public class Emitter
 			{
 				definitions.Write("if (");
 				convert_expression(if_statement.children[1], definitions);
-				definitions.EndLine(".Value)"); // if the type isn't just bool, we need op_true() etc.
+				definitions.EndLine(".value)"); // if the type isn't just bool, we need op_true() etc.
 				emit_statement(if_statement.children[2]); // Block Statement
 				let elseClause: Semantic_Node? = if_statement.first_child(ElseClause);
 				if elseClause =/= none
@@ -914,7 +914,7 @@ public class Emitter
 		}
 		else
 		{
-			definitions.WriteLine("return " + main_function_name + "_(" + args.ToString() + ").Value;");
+			definitions.WriteLine("return " + main_function_name + "_(" + args.ToString() + ").value;");
 		}
 
 		definitions.EndBlock(); // try

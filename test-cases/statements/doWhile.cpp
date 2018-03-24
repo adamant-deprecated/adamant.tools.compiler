@@ -17,7 +17,7 @@ auto Main_() -> p_int
 	{
 		return p_int(0);
 	}
-	while (p_bool(true).Value);
+	while (p_bool(true).value);
 }
 
 // Entry Point Adapter
@@ -25,7 +25,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return Main_().Value;
+		return Main_().value;
 	}
 	catch(std::exception &ex)
 	{

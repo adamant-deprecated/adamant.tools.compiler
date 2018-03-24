@@ -13,7 +13,7 @@ auto Main_() -> p_int;
 
 auto Main_() -> p_int
 {
-	while (p_bool(true).Value)
+	while (p_bool(true).value)
 	{
 		return p_int(0);
 	}
@@ -26,7 +26,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return Main_().Value;
+		return Main_().value;
 	}
 	catch(std::exception &ex)
 	{

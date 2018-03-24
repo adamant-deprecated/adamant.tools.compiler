@@ -22,7 +22,7 @@ auto Main_() -> void
 	p_bool x_;
 	x_ = op_and(p_bool(true), [&] { return p_bool(false); });
 	x_ = op_or(p_bool(true), [&] { return p_bool(false); });
-	x_ = p_bool(true).op_Not();
+	x_ = p_bool(true).op_not();
 	x_ = op_or(True_(), [&] { return True_(); });
 }
 

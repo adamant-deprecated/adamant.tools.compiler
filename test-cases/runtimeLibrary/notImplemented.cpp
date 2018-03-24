@@ -21,7 +21,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return main_().Value;
+		return main_().value;
 	}
 	catch(std::exception &ex)
 	{

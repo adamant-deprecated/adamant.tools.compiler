@@ -3,26 +3,26 @@
 
 p_uint p_int::AsUInt_() const
 {
-	if(this->Value < 0)
+	if(this->value < 0)
 		throw std::range_error("Can't convert negative number to unsigned");
 
-	return this->Value;
+	return this->value;
 }
 
 char p_code_point::CharValue() const
 {
-	if(this->Value > 0xFF)
+	if(this->value > 0xFF)
 		throw std::range_error("Unicode char values not yet supported");
 
-	return this->Value;
+	return this->value;
 }
 
 p_string p_string::construct(p_code_point c, p_int repeat)
 {
 	p_string self;
-	self.Length = repeat.Value;
-	char* buffer = new char[repeat.Value];
-	for (int i = 0; i < repeat.Value; i++)
+	self.Length = repeat.value;
+	char* buffer = new char[repeat.value];
+	for (int i = 0; i < repeat.value; i++)
 		buffer[i] = c.CharValue();
 
 	self.Buffer = buffer;
@@ -51,7 +51,7 @@ p_string::p_string(p_int other)
 	: Length(0), Buffer(0)
 {
 	char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
-	int length = std::sprintf(buffer,"%d", other.Value);
+	int length = std::sprintf(buffer,"%d", other.value);
 	if(length <= 0) throw std::runtime_error("Could not convert int to string");
 	Length = length;
 	Buffer = buffer;
@@ -64,7 +64,7 @@ p_string::p_string(p_code_point other)
 
 p_string p_string::Substring_(p_int start, p_int length) const
 {
-	return p_string(length.Value, Buffer + start.Value);
+	return p_string(length.value, Buffer + start.value);
 }
 
 p_string p_string::Replace_(p_string oldValue, p_string newValue) const
@@ -73,7 +73,7 @@ p_string p_string::Replace_(p_string oldValue, p_string newValue) const
 	int limit = Length - oldValue.Length + 1;
 	int lastIndex = 0;
 	for(int i=0; i < limit; i++)
-		if (Substring_(i, oldValue.Length).op_Equal(oldValue).Value)
+		if (Substring_(i, oldValue.Length).op_Equal(oldValue).value)
 		{
 			buffer = buffer.op_Add(Substring_(lastIndex, i-lastIndex)).op_Add(newValue);
 			i += oldValue.Length; // skip over the value we just matched
@@ -246,12 +246,12 @@ namespace system_
 
 		void String_Builder_::Remove_(p_int start, p_int length)
 		{
-			buffer = buffer.Substring_(0, start).op_Add(buffer.Substring_(start.Value+length.Value));
+			buffer = buffer.Substring_(0, start).op_Add(buffer.Substring_(start.value+length.value));
 		}
 
 		void String_Builder_::Remove_(p_int start)
 		{
-			String_Builder_::Remove_(start, buffer.Length-start.Value);
+			String_Builder_::Remove_(start, buffer.Length-start.value);
 		}
 	}
 }

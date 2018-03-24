@@ -13,7 +13,7 @@ class Test_
 public:
 	p_bool op_Equal(Test_ const * other) const { return this == other; }
 	p_bool op_NotEqual(Test_ const * other) const { return this != other; }
-	p_bool Value_;
+	p_bool value_;
 	auto construct() -> ::Test_*;
 };
 
@@ -24,13 +24,13 @@ public:
 auto ::Test_::construct() -> ::Test_*
 {
 	::Test_* self = this;
-	Value_ = p_bool(true);
+	value_ = p_bool(true);
 	return self;
 }
 
 auto Main_() -> void
 {
-	p_bool const value_ = (new ::Test_())->construct()->Value_;
+	p_bool const value_ = (new ::Test_())->construct()->value_;
 }
 
 // Entry Point Adapter
