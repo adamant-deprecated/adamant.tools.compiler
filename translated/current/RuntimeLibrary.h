@@ -107,21 +107,21 @@ public:
 
 	// Adamant Members
 	static auto construct() -> p_int { return 0; }
-	void op_AddAssign(p_int other) { this->value += other.value; }
-	void op_SubtractAssign(p_int other) { this->value -= other.value; }
-	p_bool op_Equal(p_int other) const { return this->value == other.value; }
-	p_bool op_NotEqual(p_int other) const { return this->value != other.value; }
-	p_bool op_LessThan(p_int other) const { return this->value < other.value; }
-	p_bool op_LessThanOrEqual(p_int other) const { return this->value <= other.value; }
-	p_bool op_GreaterThan(p_int other) const { return this->value > other.value; }
-	p_bool op_GreaterThanOrEqual(p_int other) const { return this->value >= other.value; }
-	p_int op_Add(p_int other) const { return this->value + other.value; }
-	p_int op_Subtract(p_int other) const { return this->value - other.value; }
-	p_int op_Negate() const { return -this->value; }
-	p_int op_Multiply(p_int other) const { return this->value * other.value; }
-	p_int op_Divide(p_int other) const { return this->value / other.value; }
-	p_int op_Remainder(p_int other) const { return this->value % other.value; }
-	p_int op_Magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return this->value < 0 ? -this->value : this->value; }
+	void op_add_assign(p_int other) { this->value += other.value; }
+	void op_subtract_assign(p_int other) { this->value -= other.value; }
+	p_bool op_equal(p_int other) const { return this->value == other.value; }
+	p_bool op_not_equal(p_int other) const { return this->value != other.value; }
+	p_bool op_less_than(p_int other) const { return this->value < other.value; }
+	p_bool op_less_than_or_equal(p_int other) const { return this->value <= other.value; }
+	p_bool op_greater_than(p_int other) const { return this->value > other.value; }
+	p_bool op_greater_than_or_equal(p_int other) const { return this->value >= other.value; }
+	p_int op_add(p_int other) const { return this->value + other.value; }
+	p_int op_subtract(p_int other) const { return this->value - other.value; }
+	p_int op_negate() const { return -this->value; }
+	p_int op_multiply(p_int other) const { return this->value * other.value; }
+	p_int op_divide(p_int other) const { return this->value / other.value; }
+	p_int op_remainder(p_int other) const { return this->value % other.value; }
+	p_int op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return this->value < 0 ? -this->value : this->value; }
 
 	// Hack because we don't support as correctly yet
 	p_uint AsUInt_() const;
@@ -146,16 +146,16 @@ public:
 
 	// Adamant Members
 	static auto construct() -> p_uint { return 0; }
-	void op_AddAssign(p_uint other) { this->value += other.value; }
-	void op_SubtractAssign(p_uint other) { this->value -= other.value; }
-	p_bool op_Equal(p_uint other) const { return this->value == other.value; }
-	p_bool op_NotEqual(p_uint other) const { return this->value != other.value; }
-	p_bool op_LessThan(p_uint other) const { return this->value < other.value; }
-	p_bool op_LessThanOrEqual(p_uint other) const { return this->value <= other.value; }
-	p_bool op_GreaterThan(p_uint other) const { return this->value > other.value; }
-	p_bool op_GreaterThanOrEqual(p_uint other) const { return this->value >= other.value; }
-	p_uint op_Add(p_uint other) const { return this->value + other.value; }
-	p_uint op_Subtract(p_uint other) const { return this->value - other.value; }
+	void op_add_assign(p_uint other) { this->value += other.value; }
+	void op_subtract_assign(p_uint other) { this->value -= other.value; }
+	p_bool op_equal(p_uint other) const { return this->value == other.value; }
+	p_bool op_not_equal(p_uint other) const { return this->value != other.value; }
+	p_bool op_less_than(p_uint other) const { return this->value < other.value; }
+	p_bool op_less_than_or_equal(p_uint other) const { return this->value <= other.value; }
+	p_bool op_greater_than(p_uint other) const { return this->value > other.value; }
+	p_bool op_greater_than_or_equal(p_uint other) const { return this->value >= other.value; }
+	p_uint op_add(p_uint other) const { return this->value + other.value; }
+	p_uint op_subtract(p_uint other) const { return this->value - other.value; }
 };
 
 inline p_int::p_int(p_uint value)
@@ -181,13 +181,13 @@ public:
 
 	// Adamant Members
 	static auto construct() -> p_code_point { return '\0'; }
-	p_bool op_Equal(p_code_point const & other) const { return this->value == other.value; }
-	p_bool op_NotEqual(p_code_point const & other) const { return this->value != other.value; }
+	p_bool op_equal(p_code_point const & other) const { return this->value == other.value; }
+	p_bool op_not_equal(p_code_point const & other) const { return this->value != other.value; }
 	// TODO: Not sure code_point should support these operations
-	p_bool op_LessThan(p_code_point other) const { return this->value < other.value; }
-	p_bool op_LessThanOrEqual(p_code_point other) const { return this->value <= other.value; }
-	p_bool op_GreaterThan(p_code_point other) const { return this->value > other.value; }
-	p_bool op_GreaterThanOrEqual(p_code_point other) const { return this->value >= other.value; }
+	p_bool op_less_than(p_code_point other) const { return this->value < other.value; }
+	p_bool op_less_than_or_equal(p_code_point other) const { return this->value <= other.value; }
+	p_bool op_greater_than(p_code_point other) const { return this->value > other.value; }
+	p_bool op_greater_than_or_equal(p_code_point other) const { return this->value >= other.value; }
 
 };
 
@@ -227,13 +227,13 @@ public:
 	p_int index_of_(p_code_point c) const;
 
 	p_code_point op_Element(p_int const index) const { return Buffer[index.value]; }
-	p_string op_Add(p_string const & value) const;
-	p_bool op_Equal(p_string const & other) const;
-	p_bool op_NotEqual(p_string const & other) const { return !this->op_Equal(other).value; }
-	p_bool op_LessThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }
-	p_bool op_LessThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }
-	p_bool op_GreaterThan(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }
-	p_bool op_GreaterThanOrEqual(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }
+	p_string op_add(p_string const & value) const;
+	p_bool op_equal(p_string const & other) const;
+	p_bool op_not_equal(p_string const & other) const { return !this->op_equal(other).value; }
+	p_bool op_less_than(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }
+	p_bool op_less_than_or_equal(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }
+	p_bool op_greater_than(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }
+	p_bool op_greater_than_or_equal(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }
 };
 
 class None
@@ -295,8 +295,8 @@ inline void assert(const p_bool condition, const p_string code, const p_string m
 {
 	if(!condition.value)
 		throw std::runtime_error(
-			p_string("Assertion failed: ").op_Add(code).op_Add(", ").op_Add(message)
-			.op_Add(", file ").op_Add(file).op_Add(", line ").op_Add(p_int(line)).cstr());
+			p_string("Assertion failed: ").op_add(code).op_add(", ").op_add(message)
+			.op_add(", file ").op_add(file).op_add(", line ").op_add(p_int(line)).cstr());
 }
 
 #define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
@@ -305,8 +305,8 @@ inline void assert(const p_bool condition, const p_string code, const p_string m
 _Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string function, const p_string file, const std::int32_t line)
 {
 	throw std::runtime_error(
-		p_string("Function ").op_Add(function)
-		.op_Add(p_string(" not yet implemented, ")).op_Add(message).op_Add(p_string(", ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).cstr());
+		p_string("Function ").op_add(function)
+		.op_add(p_string(" not yet implemented, ")).op_add(message).op_add(p_string(", ")).op_add(file).op_add(p_string(", line ")).op_add(p_int(line)).cstr());
 }
 
 #define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
@@ -315,8 +315,8 @@ _Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string fun
 _Noreturn inline void UNREACHABLE(const p_string function, const p_string file, const std::int32_t line)
 {
 	throw std::runtime_error(
-		p_string("Reached \"UNREACHABLE\" statement in function ").op_Add(function)
-		.op_Add(p_string(", ")).op_Add(file).op_Add(p_string(", line ")).op_Add(p_int(line)).cstr());
+		p_string("Reached \"UNREACHABLE\" statement in function ").op_add(function)
+		.op_add(p_string(", ")).op_add(file).op_add(p_string(", line ")).op_add(p_int(line)).cstr());
 }
 
 #define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)
@@ -349,15 +349,15 @@ namespace system_
 			const_iterator end() const { return &values[length]; }
 
 			// Adamant Members
-			p_bool op_Equal(List_<T> const *_Nonnull other) const { return this == other; }
-			p_bool op_NotEqual(List_<T> const *_Nonnull other) const { return this != other; }
+			p_bool op_equal(List_<T> const *_Nonnull other) const { return this == other; }
+			p_bool op_not_equal(List_<T> const *_Nonnull other) const { return this != other; }
 
 			List_ *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
 			void Add_(T value) { add_(value); }
 			void Clear_() { clear_(); }
 			void add_(T value);
 			void clear_() { length = 0; }
-			p_int op_Magnitude() const { return length; }
+			p_int op_magnitude() const { return length; }
 			T const & op_Element(p_int const index) const;
 		};
 
@@ -412,7 +412,7 @@ namespace system_
 			const int Count;
 
 			// Adamant Members
-			p_int op_Magnitude() const { return Count; }
+			p_int op_magnitude() const { return Count; }
 			p_string const & Get_(int const index) const { return args[index]; }
 		};
 	}
@@ -453,8 +453,8 @@ namespace system_
 			String_Builder_() = default;
 
 			// Adamant Members
-			p_bool op_Equal(String_Builder_ const *_Nonnull other) const { return this == other; }
-			p_bool op_NotEqual(String_Builder_ const *_Nonnull other) const { return this != other; }
+			p_bool op_equal(String_Builder_ const *_Nonnull other) const { return this == other; }
+			p_bool op_not_equal(String_Builder_ const *_Nonnull other) const { return this != other; }
 
 			String_Builder_ *_Nonnull construct() { buffer = p_string(""); return this; }
 			String_Builder_ *_Nonnull construct(p_string const & value);
