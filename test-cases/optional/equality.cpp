@@ -23,7 +23,7 @@ public:
 auto Main_() -> void
 {
 	::Test_ const *_Nonnull const v_ = (new ::Test_())->construct();
-	::Test_ const *_Nullable const n_ = ::None;
+	::Test_ const *_Nullable const n_ = p_none;
 	p_bool x_;
 	x_ = v_->op_Equal(n_);
 	x_ = v_->op_NotEqual(n_);

@@ -266,7 +266,7 @@ public class Emitter
 		}
 		else if syntax.kind == NoneLiteralExpression
 		{
-			builder.Write("::None");
+			builder.Write("p_none");
 		}
 		else if syntax.kind == SelfExpression
 		{
