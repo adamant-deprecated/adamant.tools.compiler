@@ -200,13 +200,13 @@ public:
 
 extern ResourceManager *const resource_manager_;
 
-class NoneType
+class None
 {
 public:
 	template<class T>
 	operator T*() const { return static_cast<T*>(0); }
 };
-static const NoneType None = NoneType();
+static const None p_none = None();
 
 template<typename T>
 struct p_optional
@@ -220,7 +220,7 @@ private:
 
 public:
 	p_optional(T const & value) : data(value), hasValue(true) {}
-	p_optional(::NoneType const & none) : hasValue(false) {}
+	p_optional(None const none) : hasValue(false) {}
 	T & operator->()
 	{
 		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
