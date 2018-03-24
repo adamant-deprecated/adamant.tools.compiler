@@ -102,7 +102,16 @@ public class Name_Table_Builder
 				add_syntax(name_table, parent, statement);
 			}
 		}
-		if syntax.kind == EndOfFileToken
+		else if syntax.kind == LocalDeclarationStatement
+		{
+			let identifier: Syntax_Node = syntax.first_child(VariableDeclaration).first_child(Identifier);
+			name_table.add(parent, identifier.get_text(), none); // Haven't bound the type yet
+		}
+		else if syntax.kind == ExpressionStatement
+			or syntax.kind == ReturnStatement
+			or syntax.kind == BreakStatement
+			or syntax.kind == ContinueStatement
+			or syntax.kind == EndOfFileToken
 		{
 			// ignore these
 		}
