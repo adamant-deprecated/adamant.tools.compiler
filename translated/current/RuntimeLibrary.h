@@ -270,7 +270,7 @@ public:
 	ref(ref_own<T>& other) { return other.borrow(); }
 
 	template<typename U>
-	auto op_equal(U other) const -> decltype(value->op_equal(other)) { return value.op_equal(other); }
+	auto op_equal(U other) const -> decltype(value->op_equal(other)) { return value->op_equal(other); }
 
 	friend struct ::ref_own<T>;
 };
