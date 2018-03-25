@@ -28,7 +28,7 @@ public /*mut*/ class Name_Table
 		}
 		else
 		{
-			return add(parent, symbol.name, symbol.type);
+			return add(parent, symbol.name, symbol.of_type);
 		}
 	}
 

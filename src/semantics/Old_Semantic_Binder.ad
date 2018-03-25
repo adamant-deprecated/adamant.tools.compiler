@@ -244,7 +244,7 @@ public class Old_Semantic_Binder
 				var type: Type? = symbol.declares_type;
 				if type =/= none
 					{ node.bind_type(type); }
-				type = symbol.type;
+				type = symbol.of_type;
 				// TODO save this as a different kind of type on the name
 				if type =/= none
 					{ node.bind_type(type); }

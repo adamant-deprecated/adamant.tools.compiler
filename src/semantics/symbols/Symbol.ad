@@ -5,8 +5,7 @@ public class Symbol
 	public let name: string;
 	public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
 	public let is_primitive: bool; // TODO does this belong here? Part of type
-	// TODO rename has_type or of_type
-	public let type: Type; // for variables and parameters, the type of the value they represent
+	public let of_type: Type; // for variables and parameters, the type of the value they represent
 	public let declares_type: Type; // for class/struct/enum symbols, the type being declared
 	// TODO declarations should be immutable
 	public let declarations: mut System.Collections.List<Semantic_Node>;
@@ -18,7 +17,7 @@ public class Symbol
 		self.name = name;
 		kind = IdentifierSymbol;
 		is_primitive = false;
-		type = none;
+		of_type = none;
 		declares_type = none;
 		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
@@ -30,7 +29,7 @@ public class Symbol
 		self.name = name;
 		self.kind = kind;
 		is_primitive = false;
-		type = none;
+		of_type = none;
 		declares_type = none;
 		declarations = new System.Collections.List<Semantic_Node>();
 		children = new System.Collections.List<Symbol>();
@@ -43,7 +42,7 @@ public class Symbol
 		self.name = name;
 		self.kind = IdentifierSymbol;
 		self.is_primitive = false;
-		self.type = none;
+		self.of_type = none;
 		self.declares_type = none;
 		self.declarations = declarations;
 		self.children = new System.Collections.List<Symbol>();
@@ -56,7 +55,7 @@ public class Symbol
 		self.name = name;
 		self.kind = PackageSymbol;
 		is_primitive = false;
-		self.type = none;
+		self.of_type = none;
 		self.declares_type = none;
 		declarations = new System.Collections.List<Semantic_Node>();
 		self.children = children;
@@ -76,7 +75,7 @@ public class Symbol
 		else
 			{ self.kind = IdentifierSymbol; }
 		self.is_primitive = declares_type.is_primitive;
-		self.type = none;
+		self.of_type = none;
 		self.declares_type = declares_type;
 		self.declarations = declarations;
 		self.children = children;
@@ -95,6 +94,7 @@ public class Symbol
 		return none;
 	}
 
+	// TODO remove once unused by old semantic analyzer stuff
 	public declares_value_type(self) -> bool
 	{
 		if declares_type =/= none
