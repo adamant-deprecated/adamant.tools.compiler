@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <stdexcept>
+#include <string>
 
 // -----------------------------------------------------------------------------
 // Logical Operators
@@ -28,34 +29,250 @@ T op_or(T const & lhs, F rhs)
 // -----------------------------------------------------------------------------
 // Types used to model the language semantics
 
+struct Borrows;
+
+/// Reference to the borrows tracker of a value
+struct Borrows_Ref final
+{
+private:
+	Borrows *_Nullable borrows;
+
+	Borrows_Ref(Borrows *_Nullable borrows): borrows(borrows) {}
+	static auto own() -> Borrows_Ref { return Borrows_Ref(0); }
+
+public:
+	// no default constructor
+	Borrows_Ref() = delete;
+
+	// no copy constructor
+	Borrows_Ref(Borrows_Ref const & other) = delete;
+
+	// default move constructor
+	Borrows_Ref(Borrows_Ref&& other) noexcept = default;
+
+	// no copy assignment operator
+	Borrows_Ref& operator=(Borrows_Ref const& other) = delete;
+
+	// default move assignment operator
+	Borrows_Ref& operator=(Borrows_Ref&& other) noexcept = default;
+
+	friend struct Borrows;
+};
+
+/// Tracks borrows at runtime
+struct Borrows final
+{
+private:
+	const std::uint32_t Writing = UINT32_MAX;
+	std::uint32_t borrows = 0;
+
+public:
+	Borrows() = default;
+
+	// no copy constructor
+	Borrows(Borrows const & other) = delete;
+
+	// default move constructor
+	Borrows(Borrows&& other) noexcept = delete;
+
+	// no copy assignment operator
+	Borrows& operator=(Borrows const& other) = delete;
+
+	// default move assignment operator
+	Borrows& operator=(Borrows&& other) noexcept = delete;
+
+	auto take_mut(char const *_Nonnull kind) -> Borrows_Ref;
+	auto take(char const *_Nonnull kind) -> Borrows_Ref;
+	auto borrow_mut(char const *_Nonnull kind) -> Borrows_Ref;
+	auto borrow(char const *_Nonnull kind) -> Borrows_Ref;
+	auto destruct(char const *_Nonnull kind) -> void;
+};
+
+template<typename T>
+struct ref_mut;
+
+template<typename T>
+struct ref;
+
+template<typename T>
+struct ref_own final
+{
+private:
+	T *_Nonnull value;
+	Borrows mutable borrows;
+
+	// Must be constructed through alloc()
+	ref_own(T *_Nonnull other): value(other) {}
+
+public:
+	// no default constructor
+	ref_own() = delete;
+
+	// no copy constructor
+	ref_own(ref_own<T> const & other) = delete;
+
+	// default move constructor
+	ref_own(ref_own<T>&& other) noexcept = default;
+
+	// no copy assignment operator
+	ref_own<T>& operator=(ref_own<T> const& other) = delete;
+
+	// default move assignment operator
+	ref_own<T>& operator=(ref_own<T>&& other) noexcept = default;
+
+	// allocate a new owned object. NOT INITALIZED
+	// Note: this calls the default constructor because we have to setup the vtable
+	static auto alloc() -> ref_own<T> { return ref_own(new T()); }
+
+	auto take_mut() const -> ref_mut<T>
+	{
+		return ref_mut<T>(borrows.take_mut("owned reference"), value);
+	}
+	auto take() const -> ref<T>
+	{
+		return ref<T>(borrows.take("owned reference"), value);
+	}
+	auto borrow_mut() const -> ref_mut<T>
+	{
+		return ref_mut<T>(borrows.borrow_mut("owned reference"), value);
+	}
+	auto borrow() const -> ref<T>
+	{
+		return ref<T>(borrows.borrow("owned reference"), value);
+	}
+
+	~ref_own<T>()
+	{
+		borrows.destruct("owned reference");
+		delete value;
+	}
+};
+
+enum Binding_State
+{
+	Uninitialized,
+	Initialized,
+	Moved
+};
+
+template<typename T>
+struct binding
+{
+private:
+	T value;
+	Binding_State mutable binding_state = Binding_State::Uninitialized;
+	Borrows mutable borrows;
+
+protected:
+	binding() = default;
+	binding(T& value): value(T::copy_implicit(value)), binding_state(Binding_State::Initialized) {}
+
+public:
+	operator T() const;
+};
+
+template<typename T>
+binding<T>::operator T() const
+{
+	if(binding_state == Binding_State::Uninitialized)
+		throw std::runtime_error("Can't access a binding before it is initialized");
+	if(binding_state == Binding_State::Moved)
+		throw std::runtime_error("Can't access moved value");
+
+	if(T::ImplicitCopy)
+	{
+		return T::copy(value);
+	}
+	else
+	{
+		binding_state = Binding_State::Moved;
+		return std::move(value);
+	}
+}
+
+template<typename T>
+struct var final: binding<T>
+{
+public:
+	// default constructor
+	var() = default;
+
+	// var(T&& value): value(value) {}
+};
+
+template<typename T>
+struct let final: binding<T>
+{
+public:
+	// default constructor
+	let() = default;
+
+	// no copy constructor
+	// let(let<T> const & other): base(other.value()) {}
+
+	// // default move constructor
+	// let(let<T>&& other) noexcept = default;
+
+	// // no copy assignment operator
+	// let<T>& operator=(let<T> const& other) = delete;
+
+	// // default move assignment operator
+	// let<T>& operator=(let<T>&& other) noexcept = default;
+
+	// operator T() const { return T::copy_implicit(value); }
+
+	// template<typename U>
+	// auto op_equal(U other) const -> decltype(binding<T const>::get_value().op_equal(other)) { return binding<T const>::get_value().op_equal(other); }
+};
+
+/// a mutable borrow
+template<typename T>
+struct ref_mut final
+{
+private:
+	std::uint32_t mutable *_Nullable borrows;
+	T *_Nonnull value;
+	ref_mut(std::uint32_t *_Nullable borrows, T *_Nonnull value): borrows(borrows), value(value) {}
+
+public:
+	// no default constructor
+	ref_mut() = delete;
+
+	// no copy constructor
+	ref_mut(ref_mut<T> const & other) = delete;
+
+	// default move constructor
+	ref_mut(ref_mut<T>&& other) noexcept = default;
+
+	// no copy assignment operator
+	ref_mut<T>& operator=(ref_mut<T> const& other) = delete;
+
+	// default move assignment operator
+	ref_mut<T>& operator=(ref_mut<T>&& other) noexcept;
+
+	ref_mut(ref_own<T>&& other) { return other.take_mut(); }
+	ref_mut(ref_own<T>& other) { return other.borrow_mut(); }
+
+	friend struct ::ref_own<T>;
+};
+
+/// a non-mutable borrow
 template<typename T>
 struct ref
 {
 private:
-	T *_Nonnull value;
+	std::uint32_t mutable *_Nullable borrows;
+	T const *_Nonnull value;
+	ref(std::uint32_t *_Nullable borrows, T *_Nonnull value): borrows(borrows), value(value) {}
 
 public:
-	ref(T *_Nonnull value): value(value) {}
-};
+	ref(ref_own<T>&& other) { return other.take(); }
+	ref(ref_own<T>& other) { return other.borrow(); }
 
-template<typename T>
-struct var
-{
-private:
-	T value;
+	template<typename U>
+	auto op_equal(U other) const -> decltype(value->op_equal(other)) { return value.op_equal(other); }
 
-public:
-	var(T&& value): value(value) {}
-};
-
-template<typename T>
-struct let
-{
-private:
-	T const value;
-
-public:
-	let(T&& value): value(value) {}
+	friend struct ::ref_own<T>;
 };
 
 // -----------------------------------------------------------------------------
@@ -92,6 +309,7 @@ struct p_int
 {
 public:
 	// Runtime Use Members
+	static const bool ImplicitCopy = true;
 	std::int32_t value;
 
 	p_int() = default;
@@ -107,6 +325,7 @@ public:
 
 	// Adamant Members
 	static auto construct() -> p_int { return 0; }
+	static auto copy(p_int const & other) -> p_int { return other; }
 	void op_add_assign(p_int other) { this->value += other.value; }
 	void op_subtract_assign(p_int other) { this->value -= other.value; }
 	p_bool op_equal(p_int other) const { return this->value == other.value; }
