@@ -88,7 +88,7 @@ public class Name_Table_Builder
 				{ type_kind = ReferenceType; }
 			else
 				{ type_kind = ValueType; }
-			let type: Type = new Type(type_kind, new Name(parent, unqualified_name), false);
+			let type: Type = new Type(type_kind, new Name(parent, unqualified_name), true);
 			let name: Name = name_table.add(parent, unqualified_name, type);
 			for let member: Syntax_Node in syntax.members()
 			{

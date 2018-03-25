@@ -45,7 +45,7 @@ public class Old_Semantic_Builder
 				{ type_kind = ReferenceType; }
 			else
 				{ type_kind = ValueType; }
-			let type: Type = new Type(type_kind, new Name(new Name.global_namespace(new Package_Name("default")), name), false);
+			let type: Type = new Type(type_kind, new Name(new Name.global_namespace(new Package_Name("default")), name), true);
 			let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 			declarations.add(node);
 			let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();

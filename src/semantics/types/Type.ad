@@ -5,15 +5,19 @@ public class Type
 	public let name: Name;
 	public let is_primitive: bool;
 	public let is_value_type: bool;
-	public let immutable: bool; // TODO need to distinguish if the type is inherently immutable
+	public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
+	public let is_mutable: bool;
 
-	public new(kind: int, name: Name, immutable: bool)
+	/// # Parameters
+	/// * is_mutable - whether the type as declared is mutable
+	public new(kind: int, name: Name, is_mutable: bool)
 	{
 		self.kind = kind;
 		self.name = name;
 		self.is_primitive = false;
 		self.is_value_type = kind == ValueType;
-		self.immutable = immutable;
+		self.is_potentially_mutable = is_mutable;
+		self.is_mutable = is_mutable;
 	}
 
 	public new primitive(name: Name)
@@ -22,7 +26,8 @@ public class Type
 		self.name = name;
 		self.is_primitive = true;
 		self.is_value_type = true;
-		self.immutable = true;
+		self.is_potentially_mutable = false;
+		self.is_mutable = false;
 	}
 
 	public new namespace(name: Name)
@@ -30,35 +35,38 @@ public class Type
 		self.kind = NamespaceType;
 		self.name = name;
 		self.is_primitive = false;
-		// TODO these don't make sense for namespaces
+		// TODO value type don't make sense for namespaces
 		self.is_value_type = true;
-		self.immutable = true;
+		self.is_potentially_mutable = false;
+		self.is_mutable = false;
 	}
 
-	private new(kind: int, name: Name, is_primitive: bool, immutable: bool)
+	private new(kind: int, name: Name, is_primitive: bool, is_potentially_mutable: bool, is_mutable: bool)
 	{
 		self.kind = kind;
 		self.name = name;
 		self.is_primitive = is_primitive;
 		self.is_value_type = kind == ValueType;
-		self.immutable = immutable;
+		self.is_potentially_mutable = is_potentially_mutable;
+		self.is_mutable = is_mutable;
 	}
 
 	public make_mutable(self) -> Type
 	{
-		return new Type(kind, name, is_primitive, false);
+		assert(is_potentially_mutable, "self.name="+name.full());
+		return new Type(kind, name, is_primitive, is_potentially_mutable, true);
 	}
 
 	public make_immutable(self) -> Type
 	{
-		return new Type(kind, name, is_primitive, true);
+		return new Type(kind, name, is_primitive, is_potentially_mutable, false);
 	}
 
 	public remove_package(self) -> Type
 	{
 		assert(kind == NamespaceType, "kind=" + kind);
 		if name.is_package_qualified()
-			{ return new Type(kind, name.remove_package(), is_primitive, immutable); }
+			{ return new Type(kind, name.remove_package(), is_primitive, is_potentially_mutable, is_mutable); }
 		else
 			{ return self; }
 	}
