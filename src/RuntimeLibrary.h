@@ -332,9 +332,9 @@ T op_or(T const & lhs, F rhs)
 
 class None
 {
-// public:
-	// template<class T>
-	// operator T*_Nullable() const { return static_cast<T*>(0); }
+public:
+	template<class T>
+	operator T*_Nullable() const { return static_cast<T*>(0); }
 };
 static const None p_none = None();
 
