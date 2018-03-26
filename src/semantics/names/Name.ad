@@ -9,12 +9,15 @@ public class Name
 {
 	// package == none means that the package is unspecified
 	public let package: Package_Name?; // TODO there should be kinds of names that have to have a package
+	public let kind: int;
 	public let segments: System.Collections.List<string>;
 	public let is_special: bool;
 
+	// TODO rename to Name.of_global_namespace
 	public new global_namespace()
 	{
 		self.package = none;
+		self.kind = NamespaceName;
 		self.segments = new System.Collections.List<string>();
 		self.is_special = false;
 	}
@@ -23,15 +26,20 @@ public class Name
 	{
 		assert(package =/= none, "");
 		self.package = package;
+		self.kind = NamespaceName;
 		self.segments = new System.Collections.List<string>();
 		self.is_special = false;
 	}
 
-	public new(parent: Name, name: string)
+	// TODO rename to Name.of_global_namespace
+	// TODO replace kind with name constructors Name.of_function etc.
+	//      once constructors can call each other and the code isn't so long
+	public new(parent: Name, kind: int, name: string)
 	{
 		assert(parent =/= none, "");
 		assert(name.ByteLength() > 0, "");
 		self.package = parent.package;
+		self.kind = kind;
 		let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
 		for let segment: string in parent.segments
 		{
@@ -42,11 +50,12 @@ public class Name
 		self.is_special = false;
 	}
 
-	public new special(parent: Name, name: string)
+	public new special(parent: Name, kind: int, name: string)
 	{
 		assert(parent =/= none, "");
 		assert(name.ByteLength() > 0, "");
 		self.package = parent.package;
+		self.kind = kind;
 		let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
 		for let segment: string in parent.segments
 		{
@@ -59,10 +68,12 @@ public class Name
 
 	private new(
 		package: Package_Name?,
+		kind: int,
 		segments: System.Collections.List<string>,
 		is_special: bool)
 	{
 		self.package = package;
+		self.kind = kind;
 		self.segments = segments;
 		self.is_special = is_special;
 	}
@@ -131,6 +142,6 @@ public class Name
 		if package == none
 			{ return self; }
 		else
-			{ return new Name(none, segments, is_special); }
+			{ return new Name(none, kind, segments, is_special); }
 	}
 }

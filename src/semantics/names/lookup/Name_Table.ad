@@ -22,21 +22,18 @@ public /*mut*/ class Name_Table
 	// Adds a name to the `Name_Table`
 	public add(mut self, parent: Name, symbol: Symbol) -> Name
 	{
+		var name: Name; // make this let when I can
 		if symbol.declares_type =/= none
 		{
-			return add(parent, symbol.name, symbol.declares_type);
+			name = new Name(parent, TypeName, symbol.name);
+			add(name, symbol.declares_type);
 		}
 		else
 		{
-			return add(parent, symbol.name, symbol.of_type);
+			// TODO this could be something besides a function name
+			name = new Name(parent, FunctionName, symbol.name);
+			add(name, symbol.of_type);
 		}
-	}
-
-	// TODO not sure the name should be constructed in this function, pass it in instead?
-	public add(mut self, parent: Name, unqualified_name: string, type: Type) -> Name
-	{
-		let name: Name = new Name(parent, unqualified_name);
-		add(name, type);
 		return name;
 	}
 

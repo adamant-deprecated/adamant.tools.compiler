@@ -29,6 +29,7 @@ public class Primitives_Package_Builder
 		let global_namespace: Name = new Name.global_namespace(package_name);
 		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
+		symbols.Add(build_optional(global_namespace));
 		symbols.Add(build_primitive("void", global_namespace));
 		symbols.Add(build_primitive("never", global_namespace));
 
@@ -67,9 +68,19 @@ public class Primitives_Package_Builder
 		return symbols;
 	}
 
+	private build_optional(namespace: Name) -> Symbol
+	{
+		let type_parameters: mut System.Collections.List<Type> = new System.Collections.List<Type>();
+		type_parameters.add(new Type(TypeParameterType, new Name(namespace, TypeParameterName, "T"), true));
+		let type: Type = new Type(TypeName, new Name(namespace, TypeName, "Optional"), type_parameters, true);
+		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+		return new Symbol.declaring(type, declarations, children);
+	}
+
 	private build_primitive(name: string, namespace: Name) -> Symbol
 	{
-		let type: Type = new Type.primitive(new Name(namespace, name));
+		let type: Type = new Type.primitive(new Name(namespace, TypeName, name));
 		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 		return new Symbol.declaring(type, declarations, children);

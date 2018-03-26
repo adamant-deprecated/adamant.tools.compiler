@@ -76,7 +76,7 @@ public class Name_Table_Builder
 		if syntax.kind == FunctionDeclaration
 			or syntax.kind == MethodDeclaration
 		{
-			let name: Name = new Name(parent, syntax.first_child(Identifier).get_text());
+			let name: Name = new Name(parent, FunctionName, syntax.first_child(Identifier).get_text());
 			add_function(name_table, name, syntax);
 		}
 		else if syntax.kind == ClassDeclaration
@@ -88,8 +88,9 @@ public class Name_Table_Builder
 				{ type_kind = ReferenceType; }
 			else
 				{ type_kind = ValueType; }
-			let type: Type = new Type(type_kind, new Name(parent, unqualified_name), true);
-			let name: Name = name_table.add(parent, unqualified_name, type);
+			let name: Name = new Name(parent, TypeName, unqualified_name);
+			let type: Type = new Type(type_kind, name, true);
+			name_table.add(name, type);
 			for let member: Syntax_Node in syntax.members()
 			{
 				add_syntax(name_table, name, member);
@@ -105,7 +106,9 @@ public class Name_Table_Builder
 		else if syntax.kind == LocalDeclarationStatement
 		{
 			let identifier: Syntax_Node = syntax.first_child(VariableDeclaration).first_child(Identifier);
-			name_table.add(parent, identifier.get_text(), none); // Haven't bound the type yet
+			let name: Name = new Name(parent, VariableName, identifier.get_text());
+			let type: Type = none; // Haven't bound the type yet
+			name_table.add(name, type); // need variable to avoid ambiguity about types
 		}
 		else if syntax.kind == ExpressionStatement
 			or syntax.kind == ReturnStatement
