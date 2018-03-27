@@ -6,10 +6,10 @@ public class Old_Semantic_Binder
 		// TODO we are assuming there is only the package references we are expecting
 		assert(|package.references| == 2, "package=" + package.name.unqualified);
 
-		let primitive_package: Package = package.references[0].package;
+		let primitive_package: Old_Package = package.references[0].package;
 		assert(primitive_package.name.unqualified == "$primitives", "package name='" + primitive_package.name.unqualified + "'");
 
-		let runtime_package: Package = package.references[1].package;
+		let runtime_package: Old_Package = package.references[1].package;
 		assert(runtime_package.name.unqualified == "$runtime", "package name='" + runtime_package.name.unqualified + "'");
 
 		let primitives: System.Collections.List<Old_Symbol> = primitive_package.symbol.children;

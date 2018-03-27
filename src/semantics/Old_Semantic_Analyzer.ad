@@ -6,11 +6,11 @@ public class Old_Semantic_Analyzer
 
 		// Hard code a stand-in package-name for now
 		let name: Package_Name = new Package_Name("default");
-		let primitives_package: Package = new Primitives_Package_Builder().build();
-		let runtime_package: Package = new Runtime_Library_Package_Builder().build();
-		let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
-		references.add(new Package_Reference(primitives_package));
-		references.add(new Package_Reference(runtime_package));
+		let primitives_package: Old_Package = new Old_Primitives_Package_Builder().build();
+		let runtime_package: Old_Package = new Old_Runtime_Library_Package_Builder().build();
+		let references: mut System.Collections.List<Old_Package_Reference> = new System.Collections.List<Old_Package_Reference>();
+		references.add(new Old_Package_Reference(primitives_package));
+		references.add(new Old_Package_Reference(runtime_package));
 
 		// Old code path
 		let old_compilation_units: System.Collections.List<mut Old_Semantic_Node> = new Old_Semantic_Node(package_syntax).children;

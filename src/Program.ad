@@ -5,7 +5,7 @@ public compile(sources: System.Collections.List<Source_Text>) -> Old_Package
 	let old_semantic_analyzer: Old_Semantic_Analyzer = new Old_Semantic_Analyzer();
 	let old_package: Old_Package = old_semantic_analyzer.analyze(package_syntax);
 	let semantic_analyzer: Semantic_Analyzer = new Semantic_Analyzer();
-	// let package: Package = semantic_analyzer.analyze(package_syntax);
+	let package: Package = semantic_analyzer.analyze(package_syntax);
 	return old_package;
 }
 

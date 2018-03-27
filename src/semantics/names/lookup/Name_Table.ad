@@ -20,7 +20,7 @@ public /*mut*/ class Name_Table
 	}
 
 	// Adds a name to the `Name_Table`
-	public add(mut self, parent: Name, symbol: Old_Symbol) -> Name
+	public add(mut self, parent: Name, symbol: Symbol) -> Name
 	{
 		var name: Name; // make this let when I can
 		if symbol.declares_type =/= none

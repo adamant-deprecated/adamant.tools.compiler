@@ -24,17 +24,17 @@ public class Name_Table_Builder
 			let reference_name: Package_Name = new Package_Name(reference.name);
 			let global_namespace: Name = name_table.add(reference_name);
 			// We already added the package symbol as a reference name, now add the children
-			for let symbol: Old_Symbol in reference.package.symbol.children
+			for let symbol: Symbol in reference.package.symbol.children
 			{
 				add_symbol(/*mut*/ name_table, global_namespace, symbol);
 			}
 		}
 	}
 
-	private add_symbol(name_table: mut Name_Table, parent: Name, symbol: Old_Symbol) -> void
+	private add_symbol(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> void
 	{
 		let name: Name = name_table.add(parent, symbol);
-		for let child: Old_Symbol in symbol.children
+		for let child: Symbol in symbol.children
 		{
 			add_symbol(/*mut*/ name_table, name, child);
 		}

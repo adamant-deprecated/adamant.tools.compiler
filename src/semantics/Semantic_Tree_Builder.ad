@@ -1,4 +1,4 @@
-/// Builds up the tree of `Old_Semantic_Node`s for all the compilation units
+/// Builds up the tree of `Semantic_Node`s for all the compilation units
 /// This class actually builds up the semantic tree for the package
 public /*mut*/ class Semantic_Tree_Builder
 {
@@ -26,7 +26,7 @@ public /*mut*/ class Semantic_Tree_Builder
 		assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + compilation_unit_syntax.kind);
 
 		let scope: Name_Subtable = none; //name_table; // TODO this isn't right, we need to load the correct one
-		let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
+		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 		for let declaration_syntax: Syntax_Node in compilation_unit_syntax.children
 		{
 			declarations.add(build(declaration_syntax, name_table, name_table.any_package));
@@ -38,7 +38,7 @@ public /*mut*/ class Semantic_Tree_Builder
 		syntax: Syntax_Node,
 		name_table: Name_Table,
 		scope: Name_Subtable)
-		-> Old_Semantic_Node
+		-> Semantic_Node
 	{
 		if syntax.kind == FunctionDeclaration
 			or syntax.kind == MethodDeclaration
@@ -53,7 +53,7 @@ public /*mut*/ class Semantic_Tree_Builder
 			let body: Syntax_Node = syntax.first_child(Block);
 			build(body, name_table, function_scope);
 
-			NOT_IMPLEMENTED("Return Old_Semantic_Node");
+			NOT_IMPLEMENTED("Return Semantic_Node");
 		}
 		else
 		{
