@@ -1,6 +1,6 @@
-public class Semantic_Analyzer
+public class New_Semantic_Analyzer
 {
-	public analyze(package_syntax: Syntax_Node) -> Old_Package
+	public analyze(package_syntax: Syntax_Node) -> Package
 	{
 		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
 
@@ -21,14 +21,6 @@ public class Semantic_Analyzer
 		let package_symbol: Symbol = symbol_builder.build(name, compilation_units);
 		let package: Package = new Package(name, references, compilation_units, package_symbol);
 
-		// Old code path
-		let old_compilation_units: System.Collections.List<mut Semantic_Node> = new Semantic_Node(package_syntax).children;
-		let old_semantic_builder: Old_Semantic_Builder = new Old_Semantic_Builder();
-		let old_package_symbol: Symbol = old_semantic_builder.build_symbols(name, old_compilation_units);
-		let old_package: mut Old_Package = new Old_Package(name, references, old_compilation_units, old_package_symbol);
-		let old_semantic_binder: Old_Semantic_Binder = new Old_Semantic_Binder();
-		old_semantic_binder.bind(old_package);
-
-		return old_package;
+		return package;
 	}
 }

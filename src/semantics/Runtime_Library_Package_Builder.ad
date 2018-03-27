@@ -26,6 +26,7 @@ public class Runtime_Library_Package_Builder
 		let global_namespace: Name = new Name.global_namespace(package_name);
 		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
+		// global symbols
 		symbols.Add(build_function("THROW_EXCEPTION"));
 		symbols.Add(build_function("NOT_IMPLEMENTED"));
 		symbols.Add(build_function("UNREACHABLE"));
@@ -35,6 +36,7 @@ public class Runtime_Library_Package_Builder
 
 		symbols.Add(build_function("resource_manager"));
 
+		// System
 		let system_namespace: Name = new Name(global_namespace, NamespaceName, "System");
 		let system_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 

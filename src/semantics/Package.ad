@@ -7,7 +7,11 @@ public class Package
 	public let symbol: Symbol;
 
 	// TODO constructor not adequately encapsulated to enforce invariants
-	public new(name: Package_Name, references: System.Collections.List<Package_Reference>, compilation_units: System.Collections.List<Compilation_Unit>, symbol: Symbol)
+	public new(
+		name: Package_Name,
+		references: System.Collections.List<Package_Reference>,
+		compilation_units: System.Collections.List<Compilation_Unit>,
+		symbol: Symbol)
 	{
 		self.name = name;
 		self.references = references;

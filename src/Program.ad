@@ -1,9 +1,9 @@
 public compile(sources: System.Collections.List<Source_Text>) -> Old_Package
 {
 	let parser: Parser = new Parser();
-	let packageSyntax: Syntax_Node = parser.ParsePackage(sources);
-	let semanticAnalyzer: Semantic_Analyzer = new Semantic_Analyzer();
-	let package: Old_Package = semanticAnalyzer.analyze(packageSyntax);
+	let package_syntax: Syntax_Node = parser.ParsePackage(sources);
+	let old_semantic_analyzer: Old_Semantic_Analyzer = new Old_Semantic_Analyzer();
+	let package: Old_Package = old_semantic_analyzer.analyze(package_syntax);
 	return package;
 }
 
