@@ -1,4 +1,4 @@
-public class New_Semantic_Analyzer
+public class Semantic_Analyzer
 {
 	public analyze(package_syntax: Syntax_Node) -> Package
 	{
