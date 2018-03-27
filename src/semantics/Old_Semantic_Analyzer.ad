@@ -13,7 +13,7 @@ public class Old_Semantic_Analyzer
 		references.add(new Package_Reference(runtime_package));
 
 		// Old code path
-		let old_compilation_units: System.Collections.List<mut Semantic_Node> = new Semantic_Node(package_syntax).children;
+		let old_compilation_units: System.Collections.List<mut Old_Semantic_Node> = new Old_Semantic_Node(package_syntax).children;
 		let old_semantic_builder: Old_Semantic_Builder = new Old_Semantic_Builder();
 		let old_package_symbol: Symbol = old_semantic_builder.build_symbols(name, old_compilation_units);
 		let old_package: mut Old_Package = new Old_Package(name, references, old_compilation_units, old_package_symbol);

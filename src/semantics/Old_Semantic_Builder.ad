@@ -1,13 +1,13 @@
-/// Builds the semantic tree (`Semantic_Node`s) including creating `Symbol`s and declared `Type`s
+/// Builds the semantic tree (`Old_Semantic_Node`s) including creating `Symbol`s and declared `Type`s
 public class Old_Semantic_Builder
 {
 	// Takes a package and builds the symbols for it
-	public build_symbols(self, package_name: Package_Name, compilation_units: System.Collections.List<mut Semantic_Node>) -> Symbol
+	public build_symbols(self, package_name: Package_Name, compilation_units: System.Collections.List<mut Old_Semantic_Node>) -> Symbol
 	{
 		// TODO the package symbol name should match the package name
 		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 		let package_symbol: mut Symbol = new Symbol.package(package_name.unqualified, children);
-		for let compilation_unit: mut Semantic_Node in compilation_units
+		for let compilation_unit: mut Old_Semantic_Node in compilation_units
 		{
 			if compilation_unit.kind =/= CompilationUnit
 				{ THROW_EXCEPTION("`Semantic_Builder.build_symbols(...)` called with node of type " + compilation_unit.kind); }
@@ -20,11 +20,11 @@ public class Old_Semantic_Builder
 
 	// Because a single call could produce multiple symbols, we pass the symbol collection in and add symbols to it.
 	// Once we have generators, this would be a good place to use them.
-	private build_symbols(self, parent: Symbol, node: mut Semantic_Node) -> void
+	private build_symbols(self, parent: Symbol, node: mut Old_Semantic_Node) -> void
 	{
 		if node.kind == CompilationUnit
 		{
-			for let declaration: mut Semantic_Node in node.children
+			for let declaration: mut Old_Semantic_Node in node.children
 			{
 				build_symbols(parent, declaration);
 			}
@@ -46,12 +46,12 @@ public class Old_Semantic_Builder
 			else
 				{ type_kind = ValueType; }
 			let type: Type = new Type(type_kind, new Name(new Name.global_namespace(new Package_Name("default")), TypeName, name), true);
-			let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+			let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
 			declarations.add(node);
 			let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 			let symbol: Symbol = new Symbol.declaring(type, declarations, children);
 
-			for let member: mut Semantic_Node in node.members()
+			for let member: mut Old_Semantic_Node in node.members()
 			{
 				build_symbols(symbol, member);
 			}
@@ -62,7 +62,7 @@ public class Old_Semantic_Builder
 		else if node.kind == ConstructorDeclaration
 		{
 			var full_name: string = "new";
-			let constructor_name: Semantic_Node? = node.first_child(Identifier);
+			let constructor_name: Old_Semantic_Node? = node.first_child(Identifier);
 			if constructor_name =/= none
 				{ full_name = "new_" + constructor_name.get_text(); }
 			let constructor_symbol: Symbol = new Symbol.special(full_name);
@@ -72,7 +72,7 @@ public class Old_Semantic_Builder
 			let self_symbol: Symbol = new Symbol.special("self");
 			// let type: Type = parent.get_type();
 			// assert(type =/= none);
-			// let declaration: Semantic_Node = parent.declarations[0];
+			// let declaration: Old_Semantic_Node = parent.declarations[0];
 			// assert(declaration =/= none and (declaration.kind == ClassDeclaration or declaration.kind == StructDeclaration));
 			// self_symbol.declarations.Add(declaration); // We reference our containing class/struct
 			constructor_symbol.children.Add(self_symbol);
@@ -105,7 +105,7 @@ public class Old_Semantic_Builder
 		}
 		else if node.kind == Block
 		{
-			for let statement: mut Semantic_Node in node.statements()
+			for let statement: mut Old_Semantic_Node in node.statements()
 			{
 				build_symbols(parent, statement);
 			}
@@ -127,8 +127,8 @@ public class Old_Semantic_Builder
 		}
 		else if node.kind == LocalDeclarationStatement
 		{
-			let identifier: mut Semantic_Node = node.first_child(VariableDeclaration).first_child(Identifier);
-			let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+			let identifier: mut Old_Semantic_Node = node.first_child(VariableDeclaration).first_child(Identifier);
+			let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
 			declarations.add(node);
 			let symbol: Symbol = new Symbol.identifier(identifier.get_text(), declarations);
 			identifier.bind_symbol(symbol);
@@ -137,7 +137,7 @@ public class Old_Semantic_Builder
 		else if node.kind == IfStatement
 		{
 			build_symbols(parent, node.first_child(Block));
-			let else_clause: mut Semantic_Node? = node.first_child(ElseClause);
+			let else_clause: mut Old_Semantic_Node? = node.first_child(ElseClause);
 			if else_clause =/= none
 			{
 				build_symbols(parent, else_clause);
@@ -146,7 +146,7 @@ public class Old_Semantic_Builder
 		else if node.kind == ElseClause
 		{
 			// This might be a good place for some kind of coalesce operator
-			let block: mut Semantic_Node? = node.first_child(Block);
+			let block: mut Old_Semantic_Node? = node.first_child(Block);
 			if block =/= none
 			{
 				build_symbols(parent, block);
@@ -183,17 +183,17 @@ public class Old_Semantic_Builder
 		}
 	}
 
-	private build_function_symbols(self, parent: Symbol, function: mut Semantic_Node, symbol: Symbol) -> void
+	private build_function_symbols(self, parent: Symbol, function: mut Old_Semantic_Node, symbol: Symbol) -> void
 	{
 		symbol.declarations.Add(function);
 
-		let parameters: mut Semantic_Node = function.first_child(ParameterList);
-		for let parameter: mut Semantic_Node in parameters.parameters()
+		let parameters: mut Old_Semantic_Node = function.first_child(ParameterList);
+		for let parameter: mut Old_Semantic_Node in parameters.parameters()
 		{
 			build_symbols(symbol, parameter);
 		}
 
-		let body: mut Semantic_Node = function.first_child(Block);
+		let body: mut Old_Semantic_Node = function.first_child(Block);
 		build_symbols(symbol, body);
 
 		parent.children.Add(symbol);

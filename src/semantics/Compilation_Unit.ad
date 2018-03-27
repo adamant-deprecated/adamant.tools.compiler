@@ -3,9 +3,9 @@ public class Compilation_Unit
 {
 	// TODO Package_Location
 	public let source: Source_Text;
-	public let declarations: System.Collections.List<Semantic_Node>;
+	public let declarations: System.Collections.List<Old_Semantic_Node>;
 
-	public new(source: Source_Text, declarations: System.Collections.List<Semantic_Node>)
+	public new(source: Source_Text, declarations: System.Collections.List<Old_Semantic_Node>)
 	{
 		self.source = source;
 		self.declarations = declarations;
@@ -18,7 +18,7 @@ public class Compilation_Unit
 		// 	diagnostics.Add(diagnostic);
 		// }
 
-		// for let child: Semantic_Node in children
+		// for let child: Old_Semantic_Node in children
 		// {
 		// 	child.collect_diagnostics(diagnostics);
 		// }

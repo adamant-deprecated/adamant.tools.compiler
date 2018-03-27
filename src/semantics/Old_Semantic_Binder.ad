@@ -22,17 +22,17 @@ public class Old_Semantic_Binder
 		var global_scope: Old_Binding_Scope = new Old_Binding_Scope(package.symbol.children, primitives);
 		global_scope = new Old_Binding_Scope(global_scope, runtime_symbols);
 
-		for let compilation_unit: mut Semantic_Node in package.compilation_units
+		for let compilation_unit: mut Old_Semantic_Node in package.compilation_units
 		{
 			bind(compilation_unit, global_scope);
 		}
 	}
 
-	private bind(self, node: mut Semantic_Node, scope: Old_Binding_Scope) -> void
+	private bind(self, node: mut Old_Semantic_Node, scope: Old_Binding_Scope) -> void
 	{
 		if node.kind == CompilationUnit
 		{
-			for let child: mut Semantic_Node in node.children
+			for let child: mut Old_Semantic_Node in node.children
 			{
 				bind(child, scope);
 			}
@@ -40,33 +40,33 @@ public class Old_Semantic_Binder
 		else if node.kind == FunctionDeclaration
 			or node.kind == MethodDeclaration
 		{
-			let parameters: mut Semantic_Node = node.first_child(ParameterList);
+			let parameters: mut Old_Semantic_Node = node.first_child(ParameterList);
 			bind(parameters, scope);
 
-			let return_type: mut Semantic_Node = node.children[4];
+			let return_type: mut Old_Semantic_Node = node.children[4];
 			bind_type_name(return_type, scope);
 
 			let function_scope: Old_Binding_Scope = new Old_Binding_Scope(scope, node.symbol.children);
-			let body: mut Semantic_Node = node.first_child(Block);
+			let body: mut Old_Semantic_Node = node.first_child(Block);
 			bind(body, function_scope);
 		}
 		else if node.kind == ParameterList
 		{
-			for let parameter: mut Semantic_Node in node.children_of_kind(Parameter)
+			for let parameter: mut Old_Semantic_Node in node.children_of_kind(Parameter)
 			{
 				bind(parameter, scope);
 			}
 		}
 		else if node.kind == Parameter
 		{
-			let type: mut Semantic_Node = node.children[|node.children| - 1];
+			let type: mut Old_Semantic_Node = node.children[|node.children| - 1];
 			bind_type_name(type, scope);
 		}
 		else if node.kind == ClassDeclaration
 			or node.kind == StructDeclaration
 		{
 			let type_scope: Old_Binding_Scope = new Old_Binding_Scope(scope, node.symbol.children);
-			for let member: mut Semantic_Node in node.members()
+			for let member: mut Old_Semantic_Node in node.members()
 			{
 				bind(member, type_scope);
 			}
@@ -74,27 +74,27 @@ public class Old_Semantic_Binder
 		else if node.kind == FieldDeclaration
 			or node.kind == GlobalDeclaration
 		{
-			let variable_declaration: mut Semantic_Node = node.first_child(VariableDeclaration);
+			let variable_declaration: mut Old_Semantic_Node = node.first_child(VariableDeclaration);
 			bind(variable_declaration, scope);
 		}
 		else if node.kind == ConstructorDeclaration
 		{
-			let parameters: mut Semantic_Node = node.first_child(ParameterList);
+			let parameters: mut Old_Semantic_Node = node.first_child(ParameterList);
 			bind(parameters, scope);
 
 			let constructor_scope: Old_Binding_Scope = new Old_Binding_Scope(scope, node.symbol.children);
-			let body: mut Semantic_Node = node.first_child(Block);
+			let body: mut Old_Semantic_Node = node.first_child(Block);
 			bind(body, constructor_scope);
 		}
 		else if node.kind == VariableDeclaration
 		{
-			let identifier: mut Semantic_Node = node.first_child(Identifier);
+			let identifier: mut Old_Semantic_Node = node.first_child(Identifier);
 			assert(identifier =/= none, "for '"+node.get_text()+"'");
-			let type_name: mut Semantic_Node = node.children[3];
+			let type_name: mut Old_Semantic_Node = node.children[3];
 			bind_type_name(type_name, scope);
 			if |node.children| == 6
 			{
-				let initalizer: mut Semantic_Node = node.children[5];
+				let initalizer: mut Old_Semantic_Node = node.children[5];
 				bind(initalizer, scope);
 			}
 			if type_name.type == none
@@ -111,7 +111,7 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == Block
 		{
-			for let statement: mut Semantic_Node in node.statements()
+			for let statement: mut Old_Semantic_Node in node.statements()
 			{
 				bind(statement, scope);
 			}
@@ -137,7 +137,7 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == LocalDeclarationStatement
 		{
-			let variable_declaration: mut Semantic_Node = node.first_child(VariableDeclaration);
+			let variable_declaration: mut Old_Semantic_Node = node.first_child(VariableDeclaration);
 			bind(variable_declaration, scope);
 			if variable_declaration.type == none
 			{
@@ -150,7 +150,7 @@ public class Old_Semantic_Binder
 		{
 			bind(node.children[1], scope); // condition expression
 			bind(node.first_child(Block), scope);
-			let else_clause: mut Semantic_Node? = node.first_child(ElseClause);
+			let else_clause: mut Old_Semantic_Node? = node.first_child(ElseClause);
 			if else_clause =/= none
 			{
 				bind(else_clause, scope);
@@ -159,7 +159,7 @@ public class Old_Semantic_Binder
 		else if node.kind == ElseClause
 		{
 			// This might be a good place for some kind of coalesce operator
-			let block: mut Semantic_Node? = node.first_child(Block);
+			let block: mut Old_Semantic_Node? = node.first_child(Block);
 			if block =/= none
 			{
 				bind(block, scope);
@@ -175,7 +175,7 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == ReturnStatement
 		{
-			let child: mut Semantic_Node = node.children[1];
+			let child: mut Old_Semantic_Node = node.children[1];
 			if child.kind =/= Semicolon
 				{ bind(child, scope); }
 		}
@@ -219,7 +219,7 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == ArgumentList
 		{
-			for let child: mut Semantic_Node in node.children
+			for let child: mut Old_Semantic_Node in node.children
 			{
 				if child.kind =/= LeftParen
 					and child.kind =/= Comma
@@ -291,7 +291,7 @@ public class Old_Semantic_Binder
 		}
 	}
 
-	private bind_type_name(self, node: mut Semantic_Node, scope: Old_Binding_Scope) -> void
+	private bind_type_name(self, node: mut Old_Semantic_Node, scope: Old_Binding_Scope) -> void
 	{
 		if node.kind == PredefinedType
 		{
@@ -303,7 +303,7 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == MutableType
 		{
-			let inner_type_node: mut Semantic_Node = node.children[1];
+			let inner_type_node: mut Old_Semantic_Node = node.children[1];
 			bind_type_name(inner_type_node, scope);
 			if inner_type_node.type == none
 			{
@@ -314,7 +314,7 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == ImmutableType
 		{
-			let inner_type_node: mut Semantic_Node = node.children[0];
+			let inner_type_node: mut Old_Semantic_Node = node.children[0];
 			bind_type_name(inner_type_node, scope);
 			if inner_type_node.type == none
 			{
@@ -325,7 +325,7 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == OptionalType
 		{
-			let inner_type_node: mut Semantic_Node = node.children[0];
+			let inner_type_node: mut Old_Semantic_Node = node.children[0];
 			bind_type_name(inner_type_node, scope);
 			if inner_type_node.type == none
 			{
@@ -336,10 +336,10 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == QualifiedName
 		{
-			let qualifier: mut Semantic_Node = node.children[0];
+			let qualifier: mut Old_Semantic_Node = node.children[0];
 			bind_type_name(qualifier, scope);
 
-			let name: mut Semantic_Node = node.children[2];
+			let name: mut Old_Semantic_Node = node.children[2];
 			if qualifier.type == none
 			{
 				// Skip because this means we aren't sure about the qualifier (i.e. type unknown)
@@ -371,7 +371,7 @@ public class Old_Semantic_Binder
 			}
 			else if name.kind == GenericName
 			{
-				let identifer_name: mut Semantic_Node = name.first_child(IdentifierName);
+				let identifer_name: mut Old_Semantic_Node = name.first_child(IdentifierName);
 				let symbol: Symbol = qualifier.symbol.get(identifer_name.get_text(), IdentifierSymbol);
 				if symbol == none
 				{
@@ -385,7 +385,7 @@ public class Old_Semantic_Binder
 
 				// TODO need way to get the generic type arguments
 				var type_arg: bool = false;
-				for let type_argument: mut Semantic_Node in name.children
+				for let type_argument: mut Old_Semantic_Node in name.children
 				{
 					if type_arg
 					{
@@ -434,15 +434,15 @@ public class Old_Semantic_Binder
 	}
 
 
-	private bind_constructor_name(self, node: mut Semantic_Node, scope: Old_Binding_Scope) -> void
+	private bind_constructor_name(self, node: mut Old_Semantic_Node, scope: Old_Binding_Scope) -> void
 	{
 		if node.kind == QualifiedName
 			and node.children[2].kind == IdentifierName
 		{
 			// It could be a named constructor call
 			bind_type_name(node.children[0], scope);
-			let qualifier: mut Semantic_Node = node.children[0];
-			let name: mut Semantic_Node = node.children[2];
+			let qualifier: mut Old_Semantic_Node = node.children[0];
+			let name: mut Old_Semantic_Node = node.children[2];
 			let constructor_name: string = "new_" + name.get_text();
 			let constructor_symbol: Symbol? = qualifier.symbol.get(constructor_name, SpecialSymbol);
 			if constructor_symbol =/= none
@@ -472,12 +472,12 @@ public class Old_Semantic_Binder
 			{ bind_type_name(node, scope); }
 	}
 
-	private add_resolution_error(node: Semantic_Node) -> void
+	private add_resolution_error(node: Old_Semantic_Node) -> void
 	{
 		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
 	}
 
-	private add_could_not_determine_type_error(node: Semantic_Node) -> void
+	private add_could_not_determine_type_error(node: Old_Semantic_Node) -> void
 	{
 		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not determine type for `" + node.get_text() + "`"));
 	}

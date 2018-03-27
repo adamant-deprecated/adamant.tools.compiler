@@ -34,7 +34,7 @@ public class Emitter
 
 		emit_preamble();
 
-		for let compilation_unit: Semantic_Node in package.compilation_units
+		for let compilation_unit: Old_Semantic_Node in package.compilation_units
 		{
 			emit_compilation_unit(compilation_unit);
 		}
@@ -49,11 +49,11 @@ public class Emitter
 	}
 
 	// Converts a type to C++
-	private convert_type_name(type: Semantic_Node) -> string
+	private convert_type_name(type: Old_Semantic_Node) -> string
 	{
 		if type.kind == PredefinedType
 		{
-			let keyword: Semantic_Node = type.children[0];
+			let keyword: Old_Semantic_Node = type.children[0];
 			// void we still use the C++ keyword
 			if keyword.kind == Void
 				{ return keyword.get_text(); }
@@ -77,7 +77,7 @@ public class Emitter
 		return format_error("Unexpected Token of type "+type.kind+" found in convert_type_name(), `"+type.get_text()+"`");
 	}
 
-	private convert_reference_type(mutable_binding: bool, var type: Semantic_Node, nullable: bool, mutable_value: bool) -> string
+	private convert_reference_type(mutable_binding: bool, var type: Old_Semantic_Node, nullable: bool, mutable_value: bool) -> string
 	{
 		var cpp_type: string = convert_type_name(type);
 		if not mutable_value { cpp_type = cpp_type + " const"; }
@@ -91,7 +91,7 @@ public class Emitter
 	}
 
 	// Converts a type to C++
-	private convert_type(mutable_binding: bool, var type: Semantic_Node, optional: bool) -> string
+	private convert_type(mutable_binding: bool, var type: Old_Semantic_Node, optional: bool) -> string
 	{
 		assert(type =/= none, "");
 
@@ -111,7 +111,7 @@ public class Emitter
 
 		if type.kind == OptionalType
 		{
-			let optional_type: Semantic_Node = type.children[0];
+			let optional_type: Old_Semantic_Node = type.children[0];
 			assert(optional_type.kind == MutableType or optional_type.kind == ImmutableType, "optional_type.kind="+optional_type.kind);
 			if optional_type.is_value_type()
 			{
@@ -139,18 +139,18 @@ public class Emitter
 		}
 	}
 
-	private convert_type(mutable_binding: bool, type: Semantic_Node) -> string
+	private convert_type(mutable_binding: bool, type: Old_Semantic_Node) -> string
 	{
 		return convert_type(mutable_binding, type, false); // not optional
 	}
 
-	private convert_parameter_list(mut self, parameter_list: Semantic_Node, is_main_function: bool) -> string
+	private convert_parameter_list(mut self, parameter_list: Old_Semantic_Node, is_main_function: bool) -> string
 	{
 		assert(parameter_list.kind == ParameterList, "parameter_list.kind=" + parameter_list.kind);
 		let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
 		builder.Append("(");
 		var first_parameter: bool = true;
-		for let parameter: Semantic_Node in parameter_list.children_of_kind(Parameter)
+		for let parameter: Old_Semantic_Node in parameter_list.children_of_kind(Parameter)
 		{
 			if not first_parameter
 				{ builder.Append(", "); }
@@ -158,7 +158,7 @@ public class Emitter
 				{ first_parameter = false; }
 
 			let mutable_binding: bool = parameter.has_child(VarKeyword);
-			let type: Semantic_Node = parameter.children[|parameter.children| - 1];
+			let type: Old_Semantic_Node = parameter.children[|parameter.children| - 1];
 			builder.Append(convert_type(mutable_binding, type));
 			builder.Append(" ");
 			builder.Append(parameter.first_child(Identifier).get_text());
@@ -181,20 +181,20 @@ public class Emitter
 		return builder.ToString();
 	}
 
-	private convert_parameter_list(mut self, parameter_list: Semantic_Node) -> string
+	private convert_parameter_list(mut self, parameter_list: Old_Semantic_Node) -> string
 	{
 		return convert_parameter_list(parameter_list, false);
 	}
 
-	private convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builder) -> void
+	private convert_expression(syntax: Old_Semantic_Node, builder: mut Source_File_Builder) -> void
 	{
 		if syntax.kind == NewExpression
 		{
 			var constructor_name: string = "construct";
-			var type: Semantic_Node = syntax.children[1];
+			var type: Old_Semantic_Node = syntax.children[1];
 			if type.kind == QualifiedName
 			{
-				let name: Semantic_Node = type.children[2];
+				let name: Old_Semantic_Node = type.children[2];
 
 				if name.kind == IdentifierName
 					and name.symbol.kind == SpecialSymbol
@@ -220,14 +220,14 @@ public class Emitter
 				builder.Write("())->");
 				builder.Write(constructor_name);
 			}
-			let argumentList: Semantic_Node = syntax.children[2];
+			let argumentList: Old_Semantic_Node = syntax.children[2];
 			convert_expression(argumentList, builder);
 		}
 		else if syntax.kind == ArgumentList
 		{
 			builder.Write("(");
 			var first_expression: bool = true;
-			for let arg: Semantic_Node in syntax.children
+			for let arg: Old_Semantic_Node in syntax.children
 			{
 				if arg.kind =/= LeftParen
 					and arg.kind =/= RightParen
@@ -455,7 +455,7 @@ public class Emitter
 		}
 	}
 
-	private convert_member_access(lhs: Semantic_Node, builder: mut Source_File_Builder) -> void
+	private convert_member_access(lhs: Old_Semantic_Node, builder: mut Source_File_Builder) -> void
 	{
 		let type: Type? = lhs.type;
 		if type =/= none and type.is_value_type // TODO eventually, we shouldn't need to check if the type is null
@@ -465,7 +465,7 @@ public class Emitter
 		// builder.Write("->");
 	}
 
-	private emit_statement(mut self, statement: Semantic_Node) -> void
+	private emit_statement(mut self, statement: Old_Semantic_Node) -> void
 	{
 		definitions.StatementSeparatorLine();
 
@@ -489,7 +489,7 @@ public class Emitter
 		else if statement.kind == Block
 		{
 			definitions.BeginBlock();
-			for let block_statement: Semantic_Node in statement.statements()
+			for let block_statement: Old_Semantic_Node in statement.statements()
 			{
 				emit_statement(block_statement);
 			}
@@ -505,10 +505,10 @@ public class Emitter
 		else if statement.kind == ForStatement
 		{
 			definitions.BeginLine("for (");
-			let variable_declaration: Semantic_Node = statement.children[1];
+			let variable_declaration: Old_Semantic_Node = statement.children[1];
 			let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
 			let name: string = variable_declaration.first_child(Identifier).get_text();
-			let type: Semantic_Node = variable_declaration.children[3];
+			let type: Old_Semantic_Node = variable_declaration.children[3];
 			definitions.Write(convert_type(mutable_binding, type) + " " + name + "_");
 			definitions.Write(" : *(");
 			convert_expression(statement.children[3], definitions); // expression
@@ -525,7 +525,7 @@ public class Emitter
 		}
 		else if statement.kind == IfStatement
 		{
-			var if_statement: Semantic_Node? = statement;
+			var if_statement: Old_Semantic_Node? = statement;
 			definitions.BeginLine("");
 			loop
 			{
@@ -533,7 +533,7 @@ public class Emitter
 				convert_expression(if_statement.children[1], definitions);
 				definitions.EndLine(".value)"); // if the type isn't just bool, we need op_true() etc.
 				emit_statement(if_statement.children[2]); // Block Statement
-				let elseClause: Semantic_Node? = if_statement.first_child(ElseClause);
+				let elseClause: Old_Semantic_Node? = if_statement.first_child(ElseClause);
 				if elseClause =/= none
 				{
 					if_statement = elseClause.first_child(IfStatement);
@@ -562,9 +562,9 @@ public class Emitter
 		}
 		else if statement.kind == LocalDeclarationStatement
 		{
-			let variable_declaration: Semantic_Node = statement.children[0];
+			let variable_declaration: Old_Semantic_Node = statement.children[0];
 			let variable_name: string = variable_declaration.first_child(Identifier).get_text();
-			let variable_type: Semantic_Node = variable_declaration.children[3];
+			let variable_type: Old_Semantic_Node = variable_declaration.children[3];
 			let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
 			definitions.BeginLine(convert_type(mutable_binding, variable_type));
 			definitions.Write(" " + variable_name + "_");
@@ -587,21 +587,21 @@ public class Emitter
 		}
 	}
 
-	private emit_method_body(mut self, block: Semantic_Node, is_associated_function: bool) -> void
+	private emit_method_body(mut self, block: Old_Semantic_Node, is_associated_function: bool) -> void
 	{
 		definitions.BeginBlock();
 		if not is_associated_function
 		{
 			definitions.WriteLine("auto self = this;");
 		}
-		for let statement: Semantic_Node in block.statements()
+		for let statement: Old_Semantic_Node in block.statements()
 		{
 			emit_statement(statement);
 		}
 		definitions.EndBlock();
 	}
 
-	private emit_constructor_body(mut self, block: Semantic_Node, self_type: string, is_value_type: bool) -> void
+	private emit_constructor_body(mut self, block: Old_Semantic_Node, self_type: string, is_value_type: bool) -> void
 	{
 		// TODO this doesn't support explicit return from constructors
 		definitions.BeginBlock();
@@ -613,7 +613,7 @@ public class Emitter
 		{
 			definitions.WriteLine(self_type + " self = this;");
 		}
-		for let statement: Semantic_Node in block.statements()
+		for let statement: Old_Semantic_Node in block.statements()
 		{
 			emit_statement(statement);
 		}
@@ -648,7 +648,7 @@ public class Emitter
 		return access_modifer;
 	}
 
-	private emit_member_declaration(mut self, member: Semantic_Node, class_name: string, is_value_type: bool, current_access_level: int) -> int
+	private emit_member_declaration(mut self, member: Old_Semantic_Node, class_name: string, is_value_type: bool, current_access_level: int) -> int
 	{
 		var access_modifer: int = member.children[0].kind;
 		access_modifer = emit_access_modifer(current_access_level, access_modifer);
@@ -656,7 +656,7 @@ public class Emitter
 		{
 			let parameters: string = convert_parameter_list(member.first_child(ParameterList));
 			var full_name: string = "construct";
-			let constructor_name: Semantic_Node? = member.first_child(Identifier);
+			let constructor_name: Old_Semantic_Node? = member.first_child(Identifier);
 			if constructor_name =/= none
 				{ full_name = "construct_" + constructor_name.get_text(); }
 			var return_type: string = "::" + class_name + "_";
@@ -672,21 +672,21 @@ public class Emitter
 		}
 		else if member.kind == FieldDeclaration
 		{
-			let variable_declaration: Semantic_Node = member.first_child(VariableDeclaration);
+			let variable_declaration: Old_Semantic_Node = member.first_child(VariableDeclaration);
 			let field_name: string = variable_declaration.children[1].get_text();
-			let field_type: Semantic_Node = variable_declaration.children[3];
+			let field_type: Old_Semantic_Node = variable_declaration.children[3];
 			let cpp_type: string = convert_type(true, field_type); // because we need to assign them in constructors don't mark fields const
 			class_declarations.WriteLine(cpp_type + " " + field_name + "_;");
 		}
 		else if member.kind == MethodDeclaration
 		{
 			let method_name: string = member.children[1].get_text();
-			let parameter_list: Semantic_Node = member.children[2];
+			let parameter_list: Old_Semantic_Node = member.children[2];
 			let parameters: string = convert_parameter_list(parameter_list);
-			let self_parameter: Semantic_Node? = parameter_list.first_child(SelfParameter);
+			let self_parameter: Old_Semantic_Node? = parameter_list.first_child(SelfParameter);
 			let is_associated_function: bool = self_parameter == none;
 			let mutable_self: bool = not is_associated_function and self_parameter.has_child(MutableKeyword);
-			let return_type: Semantic_Node = member.children[4];
+			let return_type: Old_Semantic_Node = member.children[4];
 			let cpp_type: string = convert_type(true, return_type);
 			var static_modifier: string = "";
 			if is_associated_function
@@ -697,7 +697,7 @@ public class Emitter
 			class_declarations.WriteLine(static_modifier + "auto " + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type + ";");
 			definitions.ElementSeparatorLine();
 			definitions.WriteLine("auto ::" + class_name + "_::" + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type);
-			let block: Semantic_Node = member.children[5];
+			let block: Old_Semantic_Node = member.children[5];
 			emit_method_body(block, is_associated_function);
 		}
 		else
@@ -725,18 +725,18 @@ public class Emitter
 			{ class_declarations.EndLine(" { return this; }"); }
 	}
 
-	private emit_declaration(mut self, declaration: Semantic_Node) -> void
+	private emit_declaration(mut self, declaration: Old_Semantic_Node) -> void
 	{
 		if declaration.kind == GlobalDeclaration
 		{
-			let variable_declaration: Semantic_Node = declaration.children[1];
+			let variable_declaration: Old_Semantic_Node = declaration.children[1];
 			let variable_name: string = variable_declaration.children[1].get_text();
-			let variable_type: Semantic_Node = variable_declaration.children[3];
+			let variable_type: Old_Semantic_Node = variable_declaration.children[3];
 			let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
 			let cpp_type: string = convert_type(mutable_binding, variable_type);
 			global_definitions.BeginLine(cpp_type);
 			global_definitions.Write(" " + variable_name + "_ = ");
-			let expression: Semantic_Node = variable_declaration.children[5];
+			let expression: Old_Semantic_Node = variable_declaration.children[5];
 			convert_expression(expression, global_definitions);
 			global_definitions.EndLine(";");
 		}
@@ -753,7 +753,7 @@ public class Emitter
 			class_declarations.WriteLine("p_bool op_not_equal(" + class_name + "_ const * other) const { return this != other; }");
 			var current_access_level: int = PublicKeyword;
 			var has_constructors: bool = false;
-			for let member: Semantic_Node in declaration.members()
+			for let member: Old_Semantic_Node in declaration.members()
 			{
 				has_constructors = has_constructors or member.kind == ConstructorDeclaration;
 				current_access_level = emit_member_declaration(member, class_name, false, current_access_level);
@@ -780,7 +780,7 @@ public class Emitter
 			class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
 			var current_access_level: int = PublicKeyword;
 			var has_constructors: bool = false;
-			for let member: Semantic_Node in declaration.members()
+			for let member: Old_Semantic_Node in declaration.members()
 			{
 				has_constructors = has_constructors or member.kind == ConstructorDeclaration;
 				current_access_level = emit_member_declaration(member, struct_name, true, current_access_level);
@@ -798,13 +798,13 @@ public class Emitter
 			class_declarations.ElementSeparatorLine();
 			class_declarations.WriteLine("enum class " + enum_name + "_");
 			class_declarations.BeginBlock();
-			for let member: Semantic_Node in declaration.children
+			for let member: Old_Semantic_Node in declaration.children
 			{
 				if member.kind == EnumMemberDeclaration
 				{
 					let member_name: string = member.children[0].get_text();
 					class_declarations.BeginLine(member_name + "_");
-					let member_value: Semantic_Node? = member.first_child(Number);
+					let member_value: Old_Semantic_Node? = member.first_child(Number);
 					if member_value =/= none
 					{
 						class_declarations.Write(" = ");
@@ -821,7 +821,7 @@ public class Emitter
 			let is_main: bool = name == "Main" or name == "main";
 			if is_main { main_function_name = name; }
 			let parameters: string = convert_parameter_list(declaration.children[2], is_main);
-			let return_type: Semantic_Node = declaration.children[4];
+			let return_type: Old_Semantic_Node = declaration.children[4];
 			let cpp_type: string = convert_type(true, return_type);
 			// Write out the function declaration for C++ so we can call functions defined after others
 			function_declarations.WriteLine("auto " + name + "_" + parameters + " -> " + cpp_type + ";");
@@ -845,9 +845,9 @@ public class Emitter
 		}
 	}
 
-	private emit_compilation_unit(mut self, unit: Semantic_Node) -> void
+	private emit_compilation_unit(mut self, unit: Old_Semantic_Node) -> void
 	{
-		for let declaration: Semantic_Node in unit.children
+		for let declaration: Old_Semantic_Node in unit.children
 		{
 			emit_declaration(declaration);
 		}

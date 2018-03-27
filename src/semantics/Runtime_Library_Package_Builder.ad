@@ -79,14 +79,14 @@ public class Runtime_Library_Package_Builder
 	private build_namespace(name: Name, symbols: mut System.Collections.List<Symbol>) -> Symbol
 	{
 		let type: Type = new Type.namespace(name);
-		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
 		return new Symbol.declaring(type, declarations, symbols);
 	}
 
 	private build_class(namespace: Name, class_name: string) -> Symbol
 	{
 		let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
-		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
 		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 		return new Symbol.declaring(type, declarations, children);
 	}

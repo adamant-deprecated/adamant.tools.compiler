@@ -73,7 +73,7 @@ public class Primitives_Package_Builder
 		let type_parameters: mut System.Collections.List<Type> = new System.Collections.List<Type>();
 		type_parameters.add(new Type(TypeParameterType, new Name(namespace, TypeParameterName, "T"), true));
 		let type: Type = new Type(TypeName, new Name(namespace, TypeName, "Optional"), type_parameters, true);
-		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
 		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 		return new Symbol.declaring(type, declarations, children);
 	}
@@ -81,7 +81,7 @@ public class Primitives_Package_Builder
 	private build_primitive(name: string, namespace: Name) -> Symbol
 	{
 		let type: Type = new Type.primitive(new Name(namespace, TypeName, name));
-		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
 		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 		return new Symbol.declaring(type, declarations, children);
 	}

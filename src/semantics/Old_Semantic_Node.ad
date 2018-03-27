@@ -1,7 +1,7 @@
 // Long term, the idea is to have a tree that implements the interface of the
 // syntax tree, but adds additional methods and functionality
 
-public class Semantic_Node
+public class Old_Semantic_Node
 {
 	public let syntax: Syntax_Node;
 	public let kind: int;
@@ -9,7 +9,7 @@ public class Semantic_Node
 	public let source: Source_Text;
 	public let start: uint;
 	public let byte_length: uint; // TODO is this ByteLength?
-	public let children: System.Collections.List<mut Semantic_Node>;
+	public let children: System.Collections.List<mut Old_Semantic_Node>;
 	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 	public var symbol: Symbol?;
 	// TODO split symbol into:
@@ -31,10 +31,10 @@ public class Semantic_Node
 		source = syntax.source;
 		self.start = syntax.start;
 		byte_length = syntax.byte_length;
-		let children: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
+		let children: mut System.Collections.List<mut Old_Semantic_Node> = new System.Collections.List<mut Old_Semantic_Node>();
 		for let child_syntax: Syntax_Node in syntax.children
 		{
-			children.Add(new Semantic_Node(child_syntax));
+			children.Add(new Old_Semantic_Node(child_syntax));
 		}
 		self.children = children;
 		let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
@@ -60,21 +60,21 @@ public class Semantic_Node
 
 	public bind_symbol(mut self, symbol: Symbol) -> void
 	{
-		if self.symbol =/= none { THROW_EXCEPTION("`Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `" + get_text() + "`"); }
-		if symbol == none { THROW_EXCEPTION("`Semantic_Node.bind_symbol(..)` called without a symbol on `" + get_text() + "`"); }
+		if self.symbol =/= none { THROW_EXCEPTION("`Old_Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `" + get_text() + "`"); }
+		if symbol == none { THROW_EXCEPTION("`Old_Semantic_Node.bind_symbol(..)` called without a symbol on `" + get_text() + "`"); }
 		self.symbol = symbol;
 	}
 
 	public bind_type(mut self, type: Type) -> void
 	{
-		if self.type =/= none { THROW_EXCEPTION("`Semantic_Node.bind_type(..)` called on node that already has a type. Node: `" + get_text() + "` of kind "+kind); }
+		if self.type =/= none { THROW_EXCEPTION("`Old_Semantic_Node.bind_type(..)` called on node that already has a type. Node: `" + get_text() + "` of kind "+kind); }
 		assert(type =/= none, "Node: `" + get_text() + "` of kind " + kind);
 		self.type = type;
 	}
 
-	public first_child(self, kind: int) -> mut Semantic_Node?
+	public first_child(self, kind: int) -> mut Old_Semantic_Node?
 	{
-		for let child: mut Semantic_Node in children
+		for let child: mut Old_Semantic_Node in children
 		{
 			if child.kind == kind
 				{ return child; }
@@ -82,10 +82,10 @@ public class Semantic_Node
 		return none;
 	}
 
-	public children_of_kind(self, kind: int) -> System.Collections.List<mut Semantic_Node>
+	public children_of_kind(self, kind: int) -> System.Collections.List<mut Old_Semantic_Node>
 	{
-		let children: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in self.children
+		let children: mut System.Collections.List<mut Old_Semantic_Node> = new System.Collections.List<mut Old_Semantic_Node>();
+		for let child: mut Old_Semantic_Node in self.children
 		{
 			if child.kind == kind
 			{
@@ -96,10 +96,10 @@ public class Semantic_Node
 	}
 
 	// TODO this should only be on things like class, struct that have members
-	public members(self) -> System.Collections.List<mut Semantic_Node>
+	public members(self) -> System.Collections.List<mut Old_Semantic_Node>
 	{
-		let members: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in children
+		let members: mut System.Collections.List<mut Old_Semantic_Node> = new System.Collections.List<mut Old_Semantic_Node>();
+		for let child: mut Old_Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
 			if child.kind == ConstructorDeclaration
@@ -113,10 +113,10 @@ public class Semantic_Node
 	}
 
 	// TODO this should only be on things like block
-	public statements(self) -> System.Collections.List<mut Semantic_Node>
+	public statements(self) -> System.Collections.List<mut Old_Semantic_Node>
 	{
-		let statements: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in children
+		let statements: mut System.Collections.List<mut Old_Semantic_Node> = new System.Collections.List<mut Old_Semantic_Node>();
+		for let child: mut Old_Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
 			if child.kind =/= LeftBrace
@@ -129,10 +129,10 @@ public class Semantic_Node
 	}
 
 	// TODO this should only be on things like parameter list and function
-	public parameters(self) -> System.Collections.List<mut Semantic_Node>
+	public parameters(self) -> System.Collections.List<mut Old_Semantic_Node>
 	{
-		let parameters: mut System.Collections.List<mut Semantic_Node> = new System.Collections.List<mut Semantic_Node>();
-		for let child: mut Semantic_Node in children
+		let parameters: mut System.Collections.List<mut Old_Semantic_Node> = new System.Collections.List<mut Old_Semantic_Node>();
+		for let child: mut Old_Semantic_Node in children
 		{
 			// TODO fix this to a more reliable means of telling what should be visited
 			if child.kind == Parameter
@@ -146,7 +146,7 @@ public class Semantic_Node
 
 	public has_child(self, kind: int) -> bool
 	{
-		for let child: Semantic_Node in children
+		for let child: Old_Semantic_Node in children
 		{
 			if child.kind == kind
 				{ return true; }
@@ -174,7 +174,7 @@ public class Semantic_Node
 			diagnostics.Add(diagnostic);
 		}
 
-		for let child: Semantic_Node in children
+		for let child: Old_Semantic_Node in children
 		{
 			child.collect_diagnostics(diagnostics);
 		}

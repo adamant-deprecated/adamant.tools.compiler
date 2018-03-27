@@ -8,7 +8,7 @@ public class Symbol
 	public let of_type: Type; // for variables and parameters, the type of the value they represent
 	public let declares_type: Type; // for class/struct/enum symbols, the type being declared
 	// TODO declarations should be immutable
-	public let declarations: mut System.Collections.List<Semantic_Node>;
+	public let declarations: mut System.Collections.List<Old_Semantic_Node>;
 	// TODO children should be immutable
 	public let children: mut System.Collections.List<Symbol>;
 
@@ -20,7 +20,7 @@ public class Symbol
 		self.is_primitive = false;
 		self.of_type = none;
 		self.declares_type = none;
-		self.declarations = new System.Collections.List<Semantic_Node>();
+		self.declarations = new System.Collections.List<Old_Semantic_Node>();
 		self.children = new System.Collections.List<Symbol>();
 	}
 
@@ -32,11 +32,11 @@ public class Symbol
 		self.is_primitive = false;
 		self.of_type = none;
 		self.declares_type = none;
-		self.declarations = new System.Collections.List<Semantic_Node>();
+		self.declarations = new System.Collections.List<Old_Semantic_Node>();
 		self.children = new System.Collections.List<Symbol>();
 	}
 
-	public new identifier(name: string, declarations: System.Collections.List<Semantic_Node>)
+	public new identifier(name: string, declarations: System.Collections.List<Old_Semantic_Node>)
 	{
 		assert(name.ByteLength() > 0, "");
 		assert(declarations =/= none, "name="+name);
@@ -58,13 +58,13 @@ public class Symbol
 		is_primitive = false;
 		self.of_type = none;
 		self.declares_type = none;
-		declarations = new System.Collections.List<Semantic_Node>();
+		declarations = new System.Collections.List<Old_Semantic_Node>();
 		self.children = mutable_copy(children);
 	}
 
 	public new declaring(
 		declares_type: Type,
-		declarations: System.Collections.List<Semantic_Node>,
+		declarations: System.Collections.List<Old_Semantic_Node>,
 		children: System.Collections.List<Symbol>)
 	{
 		assert(declares_type =/= none, "");
@@ -92,10 +92,10 @@ public class Symbol
 		return copy;
 	}
 
-	private mutable_copy(declarations: System.Collections.List<Semantic_Node>) -> mut System.Collections.List<Semantic_Node>
+	private mutable_copy(declarations: System.Collections.List<Old_Semantic_Node>) -> mut System.Collections.List<Old_Semantic_Node>
 	{
-		let copy: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-		for let declaration: Semantic_Node in declarations
+		let copy: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
+		for let declaration: Old_Semantic_Node in declarations
 		{
 			copy.add(declaration);
 		}
@@ -126,7 +126,7 @@ public class Symbol
 		{
 			assert(|declarations| =/= 0, "Could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations.");
 			// if |declarations| == 0  { THROW_EXCEPTION("Symbol.is_value_type() could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations."); }
-			let declaration: Semantic_Node = declarations[0]; // TODO assuming there is only one for now
+			let declaration: Old_Semantic_Node = declarations[0]; // TODO assuming there is only one for now
 			if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
 				{ return false; }
 			else if declaration.kind == StructDeclaration
