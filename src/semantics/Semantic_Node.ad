@@ -1,0 +1,174 @@
+// Long term, the idea is to have a tree that implements the interface of the
+// syntax tree, but adds additional methods and functionality
+
+public class Semantic_Node
+{
+	public let syntax: Syntax_Node;
+	public let kind: int;
+	public let is_missing: bool;
+	public let source: Source_Text;
+	public let start: uint;
+	public let byte_length: uint;
+	public let children: System.Collections.List<Semantic_Node>;
+	private let node_diagnostics: mut System.Collections.List<Diagnostic>;
+
+	/// The type of an expression (or variable) before any implicit conversions
+	public let type: Type?;
+
+	/// The type of an expression after any implicit conversions
+	public let converted_type: Type?;
+
+	/// For declarations, the type that is being declared (created)
+	public let declares_type: Type?;
+
+	/// For type names, the type that is being referenced
+	public let referenced_type: Type?;
+
+	// TODO create the correct constructor
+	public new for_token(syntax: Syntax_Node)
+	{
+		assert(syntax =/= none, "");
+		assert(|syntax.children| == 0, "syntax.text=" + syntax.get_text());
+		self.syntax = syntax;
+		self.kind = syntax.kind;
+		self.is_missing = syntax.is_missing;
+		self.source = syntax.source;
+		self.start = syntax.start;
+		self.byte_length = syntax.byte_length;
+		self.children = new System.Collections.List<Semantic_Node>();
+		let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+		for let diagnostic: Diagnostic in syntax.node_diagnostics
+		{
+			diagnostics.Add(diagnostic);
+		}
+		self.node_diagnostics = diagnostics;
+		self.type = none;
+		self.converted_type = none;
+		self.declares_type = none;
+		self.referenced_type = none;
+	}
+
+	public get_text_span(self) -> Text_Span
+	{
+		return new Text_Span(start, byte_length);
+	}
+
+	public get_text(self) -> string
+	{
+		if source == none { return "$No Source$"; }
+		return source.Text.Substring(start, byte_length);
+	}
+
+	public first_child(self, kind: int) -> Semantic_Node?
+	{
+		for let child: Semantic_Node in children
+		{
+			if child.kind == kind
+				{ return child; }
+		}
+		return none;
+	}
+
+	public children_of_kind(self, kind: int) -> System.Collections.List<Semantic_Node>
+	{
+		let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		for let child: Semantic_Node in self.children
+		{
+			if child.kind == kind
+			{
+				children.Add(child);
+			}
+		}
+		return children;
+	}
+
+	// TODO this should only be on things like class, struct that have members
+	public members(self) -> System.Collections.List<Semantic_Node>
+	{
+		let members: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		for let child: Semantic_Node in children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.kind == ConstructorDeclaration
+				or child.kind == FieldDeclaration
+				or child.kind == MethodDeclaration
+			{
+				members.Add(child);
+			}
+		}
+		return members;
+	}
+
+	// TODO this should only be on things like block
+	public statements(self) -> System.Collections.List<Semantic_Node>
+	{
+		let statements: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		for let child: Semantic_Node in children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.kind =/= LeftBrace
+				and child.kind =/= RightBrace
+			{
+				statements.Add(child);
+			}
+		}
+		return statements;
+	}
+
+	// TODO this should only be on things like parameter list and function
+	public parameters(self) -> System.Collections.List<Semantic_Node>
+	{
+		let parameters: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		for let child: Semantic_Node in children
+		{
+			// TODO fix this to a more reliable means of telling what should be visited
+			if child.kind == Parameter
+				or child.kind == SelfParameter
+			{
+				parameters.Add(child);
+			}
+		}
+		return parameters;
+	}
+
+	public has_child(self, kind: int) -> bool
+	{
+		for let child: Semantic_Node in children
+		{
+			if child.kind == kind
+				{ return true; }
+		}
+		return false;
+	}
+
+	public add(self, diagnostic: Diagnostic) -> void
+	{
+		node_diagnostics.Add(diagnostic);
+	}
+
+	public diagnostics(self) -> System.Collections.List<Diagnostic>
+	{
+		return self.node_diagnostics;
+	}
+
+	// TODO remove with old code flow
+	public all_diagnostics(self) -> System.Collections.List<Diagnostic>
+	{
+		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+		collect_diagnostics(diagnostics);
+		return diagnostics;
+	}
+
+	protected collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+	{
+		for let diagnostic: Diagnostic in node_diagnostics
+		{
+			diagnostics.add(diagnostic);
+		}
+
+		for let child: Semantic_Node in children
+		{
+			child.collect_diagnostics(diagnostics);
+		}
+	}
+}
