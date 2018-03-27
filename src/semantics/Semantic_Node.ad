@@ -1,6 +1,8 @@
 // Long term, the idea is to have a tree that implements the interface of the
 // syntax tree, but adds additional methods and functionality
-
+//
+// But perhaps it would be better to have a tree that is very different from the
+// syntax tree and fully abstracts away the syntax while still being linked to it.
 public class Semantic_Node
 {
 	public let syntax: Syntax_Node;
@@ -23,6 +25,28 @@ public class Semantic_Node
 
 	/// For type names, the type that is being referenced
 	public let referenced_type: Type?;
+
+	public new token(syntax: Syntax_Node)
+	{
+		assert(syntax =/= none, "");
+		self.syntax = syntax;
+		self.kind = syntax.kind;
+		self.is_missing = syntax.is_missing;
+		self.source = syntax.source;
+		self.start = syntax.start;
+		self.byte_length = syntax.byte_length;
+		self.children = new System.Collections.List<Semantic_Node>();
+		let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+		for let diagnostic: Diagnostic in syntax.node_diagnostics
+		{
+			diagnostics.Add(diagnostic);
+		}
+		self.node_diagnostics = diagnostics;
+		self.type = none;
+		self.converted_type = none;
+		self.declares_type = none;
+		self.referenced_type = none;
+	}
 
 	/// Construct a concrete mirror of
 	public new concrete(syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)

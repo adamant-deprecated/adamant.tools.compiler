@@ -273,7 +273,7 @@ public class Syntax_Node
 		return parameters;
 	}
 
-		// TODO this should only be on things like block
+	// TODO this should only be on things like block
 	public statements(self) -> System.Collections.List<Syntax_Node>
 	{
 		let statements: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
@@ -287,6 +287,22 @@ public class Syntax_Node
 			}
 		}
 		return statements;
+	}
+
+	// TODO this should only be on things that would have access modifiers
+	public access_modifier(self) -> Syntax_Node?
+	{
+		for let child: Syntax_Node in children
+		{
+			if child.kind == PublicKeyword
+				or child.kind == ProtectedKeyword
+				or child.kind == InternalKeyword
+				or child.kind == PrivateKeyword
+			{
+				return child;
+			}
+		}
+		return none;
 	}
 }
 
