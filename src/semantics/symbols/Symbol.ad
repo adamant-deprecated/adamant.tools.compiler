@@ -35,7 +35,7 @@ public class Symbol
 		children = new System.Collections.List<Symbol>();
 	}
 
-	public new(name: string, declarations: mut System.Collections.List<Semantic_Node>)
+	public new(name: string, declarations: System.Collections.List<Semantic_Node>)
 	{
 		assert(name.ByteLength() > 0, "");
 		assert(declarations =/= none, "name="+name);
@@ -44,11 +44,11 @@ public class Symbol
 		self.is_primitive = false;
 		self.of_type = none;
 		self.declares_type = none;
-		self.declarations = declarations;
+		self.declarations = mutable_copy(declarations);
 		self.children = new System.Collections.List<Symbol>();
 	}
 
-	public new package(name: string, children: mut System.Collections.List<Symbol>)
+	public new package(name: string, children: System.Collections.List<Symbol>)
 	{
 		assert(name.ByteLength() > 0, "");
 		assert(children =/= none, "name="+name);
@@ -58,13 +58,13 @@ public class Symbol
 		self.of_type = none;
 		self.declares_type = none;
 		declarations = new System.Collections.List<Semantic_Node>();
-		self.children = children;
+		self.children = mutable_copy(children);
 	}
 
 	public new declaring(
 		declares_type: Type,
-		declarations: mut System.Collections.List<Semantic_Node>,
-		children: mut System.Collections.List<Symbol>)
+		declarations: System.Collections.List<Semantic_Node>,
+		children: System.Collections.List<Symbol>)
 	{
 		assert(declares_type =/= none, "");
 		assert(declarations =/= none, "name="+declares_type.name.unqualified());
@@ -77,8 +77,28 @@ public class Symbol
 		self.is_primitive = declares_type.is_primitive;
 		self.of_type = none;
 		self.declares_type = declares_type;
-		self.declarations = declarations;
-		self.children = children;
+		self.declarations = mutable_copy(declarations);
+		self.children = mutable_copy(children);
+	}
+
+	private mutable_copy(symbols: System.Collections.List<Symbol>) -> mut System.Collections.List<Symbol>
+	{
+		let copy: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+		for let symbol: Symbol in symbols
+		{
+			copy.add(symbol);
+		}
+		return copy;
+	}
+
+	private mutable_copy(declarations: System.Collections.List<Semantic_Node>) -> mut System.Collections.List<Semantic_Node>
+	{
+		let copy: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+		for let declaration: Semantic_Node in declarations
+		{
+			copy.add(declaration);
+		}
+		return copy;
 	}
 
 	// TODO change to operator []
