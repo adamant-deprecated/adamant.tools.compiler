@@ -4,10 +4,10 @@ public class Symbol_Builder
 	public build(
 		package_name: Package_Name,
 		compilation_units: System.Collections.List<Compilation_Unit>)
-		-> Symbol
+		-> Old_Symbol
 	{
-		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+		let symbols: mut System.Collections.List<Old_Symbol> = new System.Collections.List<Old_Symbol>();
 
-		return new Symbol.package(package_name.unqualified, symbols);
+		return new Old_Symbol.package(package_name.unqualified, symbols);
 	}
 }

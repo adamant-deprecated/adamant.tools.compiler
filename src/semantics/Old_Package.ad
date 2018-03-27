@@ -4,10 +4,10 @@ public class Old_Package
 	public let name: Package_Name;
 	public let references: System.Collections.List<Package_Reference>;
 	public let compilation_units: System.Collections.List<mut Old_Semantic_Node>;
-	public let symbol: Symbol;
+	public let symbol: Old_Symbol;
 
 	// TODO constructor not adequately encapsulated to enforce invariants
-	public new(name: Package_Name, references: System.Collections.List<Package_Reference>, compilation_units: System.Collections.List<mut Old_Semantic_Node>, symbol: Symbol)
+	public new(name: Package_Name, references: System.Collections.List<Package_Reference>, compilation_units: System.Collections.List<mut Old_Semantic_Node>, symbol: Old_Symbol)
 	{
 		self.name = name;
 		self.references = references;

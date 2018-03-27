@@ -12,10 +12,10 @@ public class Old_Semantic_Binder
 		let runtime_package: Package = package.references[1].package;
 		assert(runtime_package.name.unqualified == "$runtime", "package name='" + runtime_package.name.unqualified + "'");
 
-		let primitives: System.Collections.List<Symbol> = primitive_package.symbol.children;
+		let primitives: System.Collections.List<Old_Symbol> = primitive_package.symbol.children;
 		assert(|primitives| > 0, "|primitives|=" + |primitives|);
 
-		let runtime_symbols: System.Collections.List<Symbol> = runtime_package.symbol.children;
+		let runtime_symbols: System.Collections.List<Old_Symbol> = runtime_package.symbol.children;
 		assert(|runtime_symbols| > 0, "|runtime_symbols|=" + |runtime_symbols|);
 
 		// TODO this is a hacky way to get both the primitives and runtime lib symbols in scope
@@ -233,7 +233,7 @@ public class Old_Semantic_Binder
 		{
 			if node.is_missing { return; }
 			let name: string = node.get_text();
-			let symbol: Symbol = scope.lookup(name);
+			let symbol: Old_Symbol = scope.lookup(name);
 			if symbol == none
 			{
 				add_resolution_error(node);
@@ -296,7 +296,7 @@ public class Old_Semantic_Binder
 		if node.kind == PredefinedType
 		{
 			let primitive_name: string = node.children[0].get_text();
-			let symbol: Symbol = scope.lookup_special(primitive_name);
+			let symbol: Old_Symbol = scope.lookup_special(primitive_name);
 			if symbol == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
 			node.bind_symbol(symbol);
 			node.bind_type(symbol.declares_type);
@@ -352,7 +352,7 @@ public class Old_Semantic_Binder
 			}
 			else if name.kind == IdentifierName
 			{
-				let symbol: Symbol = qualifier.symbol.get(name.get_text(), IdentifierSymbol);
+				let symbol: Old_Symbol = qualifier.symbol.get(name.get_text(), IdentifierSymbol);
 				if symbol == none
 				{
 					add_resolution_error(name);
@@ -372,7 +372,7 @@ public class Old_Semantic_Binder
 			else if name.kind == GenericName
 			{
 				let identifer_name: mut Old_Semantic_Node = name.first_child(IdentifierName);
-				let symbol: Symbol = qualifier.symbol.get(identifer_name.get_text(), IdentifierSymbol);
+				let symbol: Old_Symbol = qualifier.symbol.get(identifer_name.get_text(), IdentifierSymbol);
 				if symbol == none
 				{
 					add_resolution_error(name);
@@ -415,7 +415,7 @@ public class Old_Semantic_Binder
 		{
 			if node.is_missing { return; }
 			let name: string = node.get_text();
-			let symbol: Symbol = scope.lookup(name); // TODO this should be lookup type. Types are separate
+			let symbol: Old_Symbol = scope.lookup(name); // TODO this should be lookup type. Types are separate
 			if symbol == none
 			{
 				add_resolution_error(node);
@@ -444,7 +444,7 @@ public class Old_Semantic_Binder
 			let qualifier: mut Old_Semantic_Node = node.children[0];
 			let name: mut Old_Semantic_Node = node.children[2];
 			let constructor_name: string = "new_" + name.get_text();
-			let constructor_symbol: Symbol? = qualifier.symbol.get(constructor_name, SpecialSymbol);
+			let constructor_symbol: Old_Symbol? = qualifier.symbol.get(constructor_name, SpecialSymbol);
 			if constructor_symbol =/= none
 			{
 				name.bind_symbol(constructor_symbol);
@@ -453,7 +453,7 @@ public class Old_Semantic_Binder
 			else
 			{
 				// TODO this is duplicated from bind_type_name
-				let symbol: Symbol = qualifier.symbol.get(name.get_text(), IdentifierSymbol);
+				let symbol: Old_Symbol = qualifier.symbol.get(name.get_text(), IdentifierSymbol);
 				if symbol == none
 				{
 					add_resolution_error(name);

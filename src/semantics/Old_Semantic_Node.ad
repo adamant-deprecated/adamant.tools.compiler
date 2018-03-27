@@ -11,7 +11,7 @@ public class Old_Semantic_Node
 	public let byte_length: uint; // TODO is this ByteLength?
 	public let children: System.Collections.List<mut Old_Semantic_Node>;
 	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
-	public var symbol: Symbol?;
+	public var symbol: Old_Symbol?;
 	// TODO split symbol into:
 	// * declares_symbol - for declarations, the symbol being declared
 	// * referenced_symbol - for names (outside where they are declared), the symbol they reference
@@ -58,7 +58,7 @@ public class Old_Semantic_Node
 		return source.Text.Substring(start, byte_length);
 	}
 
-	public bind_symbol(mut self, symbol: Symbol) -> void
+	public bind_symbol(mut self, symbol: Old_Symbol) -> void
 	{
 		if self.symbol =/= none { THROW_EXCEPTION("`Old_Semantic_Node.bind_symbol(..)` called on node that already has a symbol on `" + get_text() + "`"); }
 		if symbol == none { THROW_EXCEPTION("`Old_Semantic_Node.bind_symbol(..)` called without a symbol on `" + get_text() + "`"); }

@@ -15,19 +15,19 @@ public class Primitives_Package_Builder
 		// The primitives package has no compilation units because it has no source
 		let compilation_units: System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
 
-		let primitive_symbols: mut System.Collections.List<Symbol> = build_primitive_symbols(name);
+		let primitive_symbols: mut System.Collections.List<Old_Symbol> = build_primitive_symbols(name);
 		assert(|primitive_symbols| > 0, "|primitive_symbols|=" + |primitive_symbols|);
 
-		let package_symbol: Symbol = new Symbol.package(name.unqualified, primitive_symbols);
+		let package_symbol: Old_Symbol = new Old_Symbol.package(name.unqualified, primitive_symbols);
 		assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
 
 		return new Package(name, references, compilation_units, package_symbol);
 	}
 
-	private build_primitive_symbols(self, package_name: Package_Name) -> mut System.Collections.List<Symbol>
+	private build_primitive_symbols(self, package_name: Package_Name) -> mut System.Collections.List<Old_Symbol>
 	{
 		let global_namespace: Name = new Name.global_namespace(package_name);
-		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+		let symbols: mut System.Collections.List<Old_Symbol> = new System.Collections.List<Old_Symbol>();
 
 		symbols.Add(build_optional(global_namespace));
 		symbols.Add(build_primitive("void", global_namespace));
@@ -68,26 +68,26 @@ public class Primitives_Package_Builder
 		return symbols;
 	}
 
-	private build_optional(namespace: Name) -> Symbol
+	private build_optional(namespace: Name) -> Old_Symbol
 	{
 		let type_parameters: mut System.Collections.List<Type> = new System.Collections.List<Type>();
 		type_parameters.add(new Type(TypeParameterType, new Name(namespace, TypeParameterName, "T"), true));
 		let type: Type = new Type(TypeName, new Name(namespace, TypeName, "Optional"), type_parameters, true);
 		let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
-		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		return new Symbol.declaring(type, declarations, children);
+		let children: mut System.Collections.List<Old_Symbol> = new System.Collections.List<Old_Symbol>();
+		return new Old_Symbol.declaring(type, declarations, children);
 	}
 
-	private build_primitive(name: string, namespace: Name) -> Symbol
+	private build_primitive(name: string, namespace: Name) -> Old_Symbol
 	{
 		let type: Type = new Type.primitive(new Name(namespace, TypeName, name));
 		let declarations: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
-		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		return new Symbol.declaring(type, declarations, children);
+		let children: mut System.Collections.List<Old_Symbol> = new System.Collections.List<Old_Symbol>();
+		return new Old_Symbol.declaring(type, declarations, children);
 	}
 
 	private build_fixed_point_primitives(
-		symbols: mut System.Collections.List<Symbol>,
+		symbols: mut System.Collections.List<Old_Symbol>,
 		bits: int /*size*/,
 		namespace: Name)
 		-> void

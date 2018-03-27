@@ -1,43 +1,43 @@
 public class Old_Binding_Scope
 {
 	private let containing_scope: Old_Binding_Scope?;
-	private let symbols: System.Collections.List<Symbol>;
+	private let symbols: System.Collections.List<Old_Symbol>;
 
-	public new(symbols: System.Collections.List<Symbol>, primitives: System.Collections.List<Symbol>)
+	public new(symbols: System.Collections.List<Old_Symbol>, primitives: System.Collections.List<Old_Symbol>)
 	{
 		self.containing_scope = none;
-		let scope_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		for let s: Symbol in symbols
+		let scope_symbols: mut System.Collections.List<Old_Symbol> = new System.Collections.List<Old_Symbol>();
+		for let s: Old_Symbol in symbols
 			{ scope_symbols.Add(s); }
-		for let s: Symbol in primitives
+		for let s: Old_Symbol in primitives
 			{ scope_symbols.Add(s); }
 		self.symbols = scope_symbols;
 	}
 
-	public new(containing_scope: Old_Binding_Scope, symbols: System.Collections.List<Symbol>)
+	public new(containing_scope: Old_Binding_Scope, symbols: System.Collections.List<Old_Symbol>)
 	{
 		self.containing_scope = containing_scope;
 		self.symbols = symbols;
 	}
 
-	public lookup(self, name: string) -> Symbol?
+	public lookup(self, name: string) -> Old_Symbol?
 	{
 		return lookup(name, IdentifierSymbol);
 	}
 
-	public lookup_special(self, name: string) -> Symbol?
+	public lookup_special(self, name: string) -> Old_Symbol?
 	{
 		return lookup(name, SpecialSymbol);
 	}
 
-	public lookup_package(self, name: string) -> Symbol?
+	public lookup_package(self, name: string) -> Old_Symbol?
 	{
 		return lookup(name, PackageSymbol);
 	}
 
-	public lookup(self, name: string, kind: int) -> Symbol?
+	public lookup(self, name: string, kind: int) -> Old_Symbol?
 	{
-		for let symbol: Symbol in symbols
+		for let symbol: Old_Symbol in symbols
 		{
 			if symbol.name == name and symbol.kind == kind
 			{

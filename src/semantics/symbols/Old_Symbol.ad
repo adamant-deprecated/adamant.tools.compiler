@@ -1,6 +1,6 @@
 /// Symbols are a tree referencing semantic nodes that are used to look up names.
 /// they don't internally store names so that they are not interdependent.
-public class Symbol
+public class Old_Symbol
 {
 	public let name: string;
 	public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
@@ -10,7 +10,7 @@ public class Symbol
 	// TODO declarations should be immutable
 	public let declarations: mut System.Collections.List<Old_Semantic_Node>;
 	// TODO children should be immutable
-	public let children: mut System.Collections.List<Symbol>;
+	public let children: mut System.Collections.List<Old_Symbol>;
 
 	public new identifier(name: string)
 	{
@@ -21,7 +21,7 @@ public class Symbol
 		self.of_type = none;
 		self.declares_type = none;
 		self.declarations = new System.Collections.List<Old_Semantic_Node>();
-		self.children = new System.Collections.List<Symbol>();
+		self.children = new System.Collections.List<Old_Symbol>();
 	}
 
 	public new special(name: string)
@@ -33,7 +33,7 @@ public class Symbol
 		self.of_type = none;
 		self.declares_type = none;
 		self.declarations = new System.Collections.List<Old_Semantic_Node>();
-		self.children = new System.Collections.List<Symbol>();
+		self.children = new System.Collections.List<Old_Symbol>();
 	}
 
 	public new identifier(name: string, declarations: System.Collections.List<Old_Semantic_Node>)
@@ -46,10 +46,10 @@ public class Symbol
 		self.of_type = none;
 		self.declares_type = none;
 		self.declarations = mutable_copy(declarations);
-		self.children = new System.Collections.List<Symbol>();
+		self.children = new System.Collections.List<Old_Symbol>();
 	}
 
-	public new package(name: string, children: System.Collections.List<Symbol>)
+	public new package(name: string, children: System.Collections.List<Old_Symbol>)
 	{
 		assert(name.ByteLength() > 0, "");
 		assert(children =/= none, "name="+name);
@@ -65,7 +65,7 @@ public class Symbol
 	public new declaring(
 		declares_type: Type,
 		declarations: System.Collections.List<Old_Semantic_Node>,
-		children: System.Collections.List<Symbol>)
+		children: System.Collections.List<Old_Symbol>)
 	{
 		assert(declares_type =/= none, "");
 		assert(declarations =/= none, "name="+declares_type.name.unqualified());
@@ -82,10 +82,10 @@ public class Symbol
 		self.children = mutable_copy(children);
 	}
 
-	private mutable_copy(symbols: System.Collections.List<Symbol>) -> mut System.Collections.List<Symbol>
+	private mutable_copy(symbols: System.Collections.List<Old_Symbol>) -> mut System.Collections.List<Old_Symbol>
 	{
-		let copy: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		for let symbol: Symbol in symbols
+		let copy: mut System.Collections.List<Old_Symbol> = new System.Collections.List<Old_Symbol>();
+		for let symbol: Old_Symbol in symbols
 		{
 			copy.add(symbol);
 		}
@@ -103,9 +103,9 @@ public class Symbol
 	}
 
 	// TODO change to operator []
-	public get(self, name: string, kind: int) -> Symbol?
+	public get(self, name: string, kind: int) -> Old_Symbol?
 	{
-		for let child: Symbol in children
+		for let child: Old_Symbol in children
 		{
 			if child.name == name and child.kind == kind
 			{
@@ -125,7 +125,7 @@ public class Symbol
 		else if kind == IdentifierSymbol
 		{
 			assert(|declarations| =/= 0, "Could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations.");
-			// if |declarations| == 0  { THROW_EXCEPTION("Symbol.is_value_type() could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations."); }
+			// if |declarations| == 0  { THROW_EXCEPTION("Old_Symbol.is_value_type() could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations."); }
 			let declaration: Old_Semantic_Node = declarations[0]; // TODO assuming there is only one for now
 			if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
 				{ return false; }
@@ -139,7 +139,7 @@ public class Symbol
 		}
 		else
 		{
-			THROW_EXCEPTION("Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
+			THROW_EXCEPTION("Old_Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
 		}
 	}
 }
