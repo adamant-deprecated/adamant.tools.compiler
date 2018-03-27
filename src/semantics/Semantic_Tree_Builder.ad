@@ -57,7 +57,14 @@ public /*mut*/ class Semantic_Tree_Builder
 		}
 		else
 		{
-			NOT_IMPLEMENTED("declaration_syntax.kind=" + syntax.kind);
+			// TODO this is a temporary measure to build up the tree.
+			//      replace with specific constructions
+			let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+			for let child_syntax: Syntax_Node in syntax.children
+			{
+				children.add(build(child_syntax, name_table, scope));
+			}
+			return new Semantic_Node.concrete(syntax, children);
 		}
 	}
 }

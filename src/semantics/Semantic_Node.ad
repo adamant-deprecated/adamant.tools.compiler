@@ -24,18 +24,17 @@ public class Semantic_Node
 	/// For type names, the type that is being referenced
 	public let referenced_type: Type?;
 
-	// TODO create the correct constructor
-	public new for_token(syntax: Syntax_Node)
+	/// Construct a concrete mirror of
+	public new concrete(syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
 	{
 		assert(syntax =/= none, "");
-		assert(|syntax.children| == 0, "syntax.text=" + syntax.get_text());
 		self.syntax = syntax;
 		self.kind = syntax.kind;
 		self.is_missing = syntax.is_missing;
 		self.source = syntax.source;
 		self.start = syntax.start;
 		self.byte_length = syntax.byte_length;
-		self.children = new System.Collections.List<Semantic_Node>();
+		self.children = children;
 		let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
 		for let diagnostic: Diagnostic in syntax.node_diagnostics
 		{
