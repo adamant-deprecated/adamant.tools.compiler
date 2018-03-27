@@ -33,7 +33,7 @@ public class Old_Semantic_Builder
 			or node.kind == MethodDeclaration
 		{
 			let name: string = node.first_child(Identifier).get_text();
-			let symbol: Symbol = new Symbol(name);
+			let symbol: Symbol = new Symbol.identifier(name);
 			build_function_symbols(parent, node, symbol);
 		}
 		else if node.kind == ClassDeclaration
@@ -65,11 +65,11 @@ public class Old_Semantic_Builder
 			let constructor_name: Semantic_Node? = node.first_child(Identifier);
 			if constructor_name =/= none
 				{ full_name = "new_" + constructor_name.get_text(); }
-			let constructor_symbol: Symbol = new Symbol(full_name, SpecialSymbol);
+			let constructor_symbol: Symbol = new Symbol.special(full_name);
 			constructor_symbol.declarations.Add(node);
 			parent.children.Add(constructor_symbol);
 			// Implicit `self` parameter
-			let self_symbol: Symbol = new Symbol("self", SpecialSymbol);
+			let self_symbol: Symbol = new Symbol.special("self");
 			// let type: Type = parent.get_type();
 			// assert(type =/= none);
 			// let declaration: Semantic_Node = parent.declarations[0];
@@ -81,7 +81,7 @@ public class Old_Semantic_Builder
 		else if node.kind == FieldDeclaration
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
-			let field_symbol: Symbol = new Symbol(name);
+			let field_symbol: Symbol = new Symbol.identifier(name);
 			field_symbol.declarations.Add(node);
 			parent.children.Add(field_symbol);
 			node.bind_symbol(field_symbol);
@@ -89,7 +89,7 @@ public class Old_Semantic_Builder
 		else if node.kind == EnumDeclaration
 		{
 			let name: string = node.first_child(Identifier).get_text();
-			let enum_symbol: Symbol = new Symbol(name);
+			let enum_symbol: Symbol = new Symbol.identifier(name);
 			enum_symbol.declarations.Add(node);
 			// TODO Add enum member symbols
 			parent.children.Add(enum_symbol);
@@ -98,7 +98,7 @@ public class Old_Semantic_Builder
 		else if node.kind == GlobalDeclaration
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
-			let global_declaration_symbol: Symbol = new Symbol(name);
+			let global_declaration_symbol: Symbol = new Symbol.identifier(name);
 			global_declaration_symbol.declarations.Add(node);
 			parent.children.Add(global_declaration_symbol);
 			node.bind_symbol(global_declaration_symbol);
@@ -119,7 +119,7 @@ public class Old_Semantic_Builder
 		else if node.kind == ForStatement
 		{
 			let name: string = node.first_child(VariableDeclaration).first_child(Identifier).get_text();
-			let for_symbol: Symbol = new Symbol(name);
+			let for_symbol: Symbol = new Symbol.identifier(name);
 			for_symbol.declarations.Add(node);
 			parent.children.Add(for_symbol);
 			node.bind_symbol(for_symbol);
@@ -130,7 +130,7 @@ public class Old_Semantic_Builder
 			let identifier: mut Semantic_Node = node.first_child(VariableDeclaration).first_child(Identifier);
 			let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 			declarations.add(node);
-			let symbol: Symbol = new Symbol(identifier.get_text(), declarations);
+			let symbol: Symbol = new Symbol.identifier(identifier.get_text(), declarations);
 			identifier.bind_symbol(symbol);
 			parent.children.Add(symbol);
 		}
@@ -159,13 +159,13 @@ public class Old_Semantic_Builder
 		else if node.kind == Parameter
 		{
 			let name: string = node.first_child(Identifier).get_text();
-			let symbol: Symbol = new Symbol(name);
+			let symbol: Symbol = new Symbol.identifier(name);
 			symbol.declarations.Add(node);
 			parent.children.Add(symbol);
 		}
 		else if node.kind == SelfParameter
 		{
-			let symbol: Symbol = new Symbol("self", SpecialSymbol);
+			let symbol: Symbol = new Symbol.special("self");
 			symbol.declarations.Add(node);
 			parent.children.Add(symbol);
 		}

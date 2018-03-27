@@ -71,7 +71,7 @@ public class Runtime_Library_Package_Builder
 
 	private build_function(name: string) -> Symbol
 	{
-		return new Symbol(name);
+		return new Symbol.identifier(name);
 	}
 
 	private build_namespace(name: Name, symbols: mut System.Collections.List<Symbol>) -> Symbol

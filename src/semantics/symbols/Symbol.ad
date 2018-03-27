@@ -12,30 +12,31 @@ public class Symbol
 	// TODO children should be immutable
 	public let children: mut System.Collections.List<Symbol>;
 
-	public new(name: string)
+	public new identifier(name: string)
 	{
+		assert(name.ByteLength() > 0, "");
 		self.name = name;
-		kind = IdentifierSymbol;
-		is_primitive = false;
-		of_type = none;
-		declares_type = none;
-		declarations = new System.Collections.List<Semantic_Node>();
-		children = new System.Collections.List<Symbol>();
+		self.kind = IdentifierSymbol;
+		self.is_primitive = false;
+		self.of_type = none;
+		self.declares_type = none;
+		self.declarations = new System.Collections.List<Semantic_Node>();
+		self.children = new System.Collections.List<Symbol>();
 	}
 
-	// TODO replace with named constructors
-	public new(name: string, kind: int)
+	public new special(name: string)
 	{
+		assert(name.ByteLength() > 0, "");
 		self.name = name;
-		self.kind = kind;
-		is_primitive = false;
-		of_type = none;
-		declares_type = none;
-		declarations = new System.Collections.List<Semantic_Node>();
-		children = new System.Collections.List<Symbol>();
+		self.kind = SpecialSymbol;
+		self.is_primitive = false;
+		self.of_type = none;
+		self.declares_type = none;
+		self.declarations = new System.Collections.List<Semantic_Node>();
+		self.children = new System.Collections.List<Symbol>();
 	}
 
-	public new(name: string, declarations: System.Collections.List<Semantic_Node>)
+	public new identifier(name: string, declarations: System.Collections.List<Semantic_Node>)
 	{
 		assert(name.ByteLength() > 0, "");
 		assert(declarations =/= none, "name="+name);
