@@ -7,22 +7,73 @@
 #include <stdexcept>
 #include <string>
 
-// -----------------------------------------------------------------------------
-// Logical Operators
-// -----------------------------------------------------------------------------
-// Use special templates taking closures to support short circuit evaluation
 
-template<typename T, typename F>
-T op_and(T const & lhs, F rhs)
-{
-	return lhs.op_false().value ? lhs : lhs.op_and(rhs());
-}
+// -----------------------------------------------------------------------------
+// Utility Types
+// -----------------------------------------------------------------------------
+// Utility types that help ensure proper use of C++
 
-template<typename T, typename F>
-T op_or(T const & lhs, F rhs)
+// A base class for all structs that prevents the default special members
+struct Struct_Base
 {
-	return lhs.op_true().value ? lhs : lhs.op_or(rhs());
-}
+protected:
+	Struct_Base() noexcept {}
+	Struct_Base(Struct_Base const & other) = delete;
+};
+
+// A base class for all classes that prevents the default special members
+// and ensures a virutal destructor
+class Class_Base
+{
+protected:
+	Class_Base() noexcept {}
+	Class_Base(Class_Base const & other) = delete;
+public:
+	virtual ~Class_Base() noexcept = default;
+};
+
+template<typename T>
+struct Optional final: Struct_Base
+{
+private:
+	bool has_value;
+	union
+	{
+		char dummy;
+		T value;
+	};
+
+public:
+	Optional() : has_value(false) {}
+	Optional(T&& value) : has_value(true) { new (&value) T(std::move(value)); }
+
+	T & operator->()
+	{
+		if(!has_value) throw std::runtime_error("Access to empty Optional value");
+		return &value;
+	}
+	T const & operator->() const
+	{
+		if(!has_value) throw std::runtime_error("Access to empty Optional value");
+		return &value;
+	}
+	T & operator* ()
+	{
+		if(!has_value) throw std::runtime_error("Access to empty Optional value");
+		return &value;
+	}
+	T const & operator* () const
+	{
+		if(!has_value) throw std::runtime_error("Access to empty Optional value");
+		return &value;
+	}
+
+	~Optional()
+	{
+		if(has_value) (&value)->~T();
+	}
+};
+
 
 // -----------------------------------------------------------------------------
 // Runtime Types
@@ -32,7 +83,7 @@ T op_or(T const & lhs, F rhs)
 struct Borrows;
 
 /// Reference to the borrows tracker of a value
-struct Borrows_Ref final
+struct Borrows_Ref final: Struct_Base
 {
 private:
 	Borrows *_Nullable borrows;
@@ -41,46 +92,20 @@ private:
 	static auto own() -> Borrows_Ref { return Borrows_Ref(0); }
 
 public:
-	// no default constructor
-	Borrows_Ref() = delete;
-
-	// no copy constructor
-	Borrows_Ref(Borrows_Ref const & other) = delete;
-
-	// default move constructor
-	Borrows_Ref(Borrows_Ref&& other) noexcept = default;
-
-	// no copy assignment operator
-	Borrows_Ref& operator=(Borrows_Ref const& other) = delete;
-
-	// default move assignment operator
-	Borrows_Ref& operator=(Borrows_Ref&& other) noexcept = default;
+	Borrows_Ref(Borrows_Ref&& other): borrows(other.borrows) {}
 
 	friend struct Borrows;
 };
 
 /// Tracks borrows at runtime
-struct Borrows final
+struct Borrows final: Struct_Base
 {
 private:
 	const std::uint32_t Writing = UINT32_MAX;
 	std::uint32_t borrows = 0;
 
 public:
-	Borrows() = default;
-
-	// no copy constructor
-	Borrows(Borrows const & other) = delete;
-
-	// default move constructor
-	Borrows(Borrows&& other) noexcept = delete;
-
-	// no copy assignment operator
-	Borrows& operator=(Borrows const& other) = delete;
-
-	// default move assignment operator
-	Borrows& operator=(Borrows&& other) noexcept = delete;
-
+	Borrows() noexcept {}
 	auto take_mut(char const *_Nonnull kind) -> Borrows_Ref;
 	auto take(char const *_Nonnull kind) -> Borrows_Ref;
 	auto borrow_mut(char const *_Nonnull kind) -> Borrows_Ref;
@@ -95,7 +120,7 @@ template<typename T>
 struct ref;
 
 template<typename T>
-struct ref_own final
+struct ref_own final: Struct_Base
 {
 private:
 	T *_Nonnull value;
@@ -156,23 +181,25 @@ enum Binding_State
 };
 
 template<typename T>
-struct binding
+struct Binding final: Struct_Base
 {
 private:
-	T value;
-	Binding_State mutable binding_state = Binding_State::Uninitialized;
-	Borrows mutable borrows;
-
-protected:
-	binding() = default;
-	binding(T& value): value(T::copy_implicit(value)), binding_state(Binding_State::Initialized) {}
+	Optional<T> value;
+	Binding_State binding_state = Binding_State::Uninitialized;
+	Borrows borrows;
+	// Take the value, potentially leaving in a bad state
+	auto steal_value() -> T;
 
 public:
-	operator T() const;
+	Binding() {}
+	Binding(T&& other): value(std::move(other)) {}
+	Binding(Binding<T>&& other): value(other.steal_value()) {}
+	// Move or copy (if implicitly copyable) value out of binding
+	auto move_value() -> T;
 };
 
 template<typename T>
-binding<T>::operator T() const
+auto Binding<T>::move_value() -> T
 {
 	if(binding_state == Binding_State::Uninitialized)
 		throw std::runtime_error("Can't access a binding before it is initialized");
@@ -181,7 +208,7 @@ binding<T>::operator T() const
 
 	if(T::ImplicitCopy)
 	{
-		return T::copy(value);
+		return T::copy(*value);
 	}
 	else
 	{
@@ -191,7 +218,7 @@ binding<T>::operator T() const
 }
 
 template<typename T>
-struct var final: binding<T>
+struct var final: Struct_Base
 {
 public:
 	// default constructor
@@ -201,12 +228,18 @@ public:
 };
 
 template<typename T>
-struct let final: binding<T>
+struct let final: Struct_Base
 {
+private:
+	Binding<T> binding;
 public:
-	// default constructor
-	let() = default;
+	let() {};
+	explicit let(let<T>& other): binding(other.move_value()) {}
+	let(T&& other): binding(std::move(other)) {}
+	auto move_value() -> T { return binding.move_value(); }
 
+	// let(let<T>&& other): binding<T>((T)other) {}
+	// let(let<T>& other): binding<T>((T)other) {}
 	// no copy constructor
 	// let(let<T> const & other): base(other.value()) {}
 
@@ -219,7 +252,8 @@ public:
 	// // default move assignment operator
 	// let<T>& operator=(let<T>&& other) noexcept = default;
 
-	// operator T() const { return T::copy_implicit(value); }
+	// This is the strange syntax for a move conversion operator
+	operator T() && { return binding.move_value(); }
 
 	// template<typename U>
 	// auto op_equal(U other) const -> decltype(binding<T const>::get_value().op_equal(other)) { return binding<T const>::get_value().op_equal(other); }
@@ -227,7 +261,7 @@ public:
 
 /// a mutable borrow
 template<typename T>
-struct ref_mut final
+struct ref_mut final: Struct_Base
 {
 private:
 	std::uint32_t mutable *_Nullable borrows;
@@ -258,7 +292,7 @@ public:
 
 /// a non-mutable borrow
 template<typename T>
-struct ref
+struct ref: Struct_Base
 {
 private:
 	std::uint32_t mutable *_Nullable borrows;
@@ -276,8 +310,68 @@ public:
 };
 
 // -----------------------------------------------------------------------------
+// Logical Operators
+// -----------------------------------------------------------------------------
+// Use special templates taking closures to support short circuit evaluation
+
+template<typename T, typename F>
+T op_and(T const & lhs, F rhs)
+{
+	return lhs.op_false().value ? lhs : lhs.op_and(rhs());
+}
+
+template<typename T, typename F>
+T op_or(T const & lhs, F rhs)
+{
+	return lhs.op_true().value ? lhs : lhs.op_or(rhs());
+}
+
+// -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
+
+class None
+{
+public:
+	template<class T>
+	operator T*_Nullable() const { return static_cast<T*>(0); }
+};
+static const None p_none = None();
+
+template<typename T>
+struct p_optional final: Struct_Base
+{
+private:
+	bool hasValue;
+	union
+    {
+        T data;
+    };
+
+public:
+	p_optional(T const & value) : data(value), hasValue(true) {}
+	p_optional(None const none) : hasValue(false) {}
+	T & operator->()
+	{
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
+		return data;
+	}
+	T const & operator->() const
+	{
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
+		return data;
+	}
+	T & operator* ()
+	{
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
+		return data;
+	}
+	T const & operator* () const
+	{
+		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
+		return data;
+	}
+};
 
 struct p_bool
 {
@@ -453,49 +547,6 @@ public:
 	p_bool op_less_than_or_equal(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }
 	p_bool op_greater_than(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }
 	p_bool op_greater_than_or_equal(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }
-};
-
-class None
-{
-public:
-	template<class T>
-	operator T*_Nullable() const { return static_cast<T*>(0); }
-};
-static const None p_none = None();
-
-template<typename T>
-struct p_optional
-{
-private:
-	bool hasValue;
-	union
-    {
-        T data;
-    };
-
-public:
-	p_optional(T const & value) : data(value), hasValue(true) {}
-	p_optional(None const none) : hasValue(false) {}
-	T & operator->()
-	{
-		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
-		return data;
-	}
-	T const & operator->() const
-	{
-		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
-		return data;
-	}
-	T & operator* ()
-	{
-		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
-		return data;
-	}
-	T const & operator* () const
-	{
-		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
-		return data;
-	}
 };
 
 // -----------------------------------------------------------------------------

@@ -2,58 +2,6 @@
 #include <map>
 
 // -----------------------------------------------------------------------------
-// Runtime Types
-// -----------------------------------------------------------------------------
-
-auto Borrows::take_mut(char const *_Nonnull kind) -> Borrows_Ref
-{
-	if(borrows == Writing)
-		throw std::runtime_error(std::string("Can't mutably take ") + kind + " that is mutably borrowed");
-	else if(borrows > 0)
-		throw std::runtime_error(std::string("Can't mutably take ") + kind + " that is immutably borrowed");
-
-	return Borrows_Ref::own();
-}
-
-auto Borrows::take(char const *_Nonnull kind) -> Borrows_Ref
-{
-	if(borrows == Writing)
-		throw std::runtime_error(std::string("Can't immutably take ") + kind + " that is mutably borrowed");
-	else if(borrows > 0)
-		throw std::runtime_error(std::string("Can't immutably take ") + kind + " that is immutably borrowed");
-
-	return Borrows_Ref::own();
-}
-
-auto Borrows::borrow_mut(char const *_Nonnull kind) -> Borrows_Ref
-{
-	if(borrows == Writing)
-		throw std::runtime_error(std::string("Can't mutably borrow ") + kind + " that is mutably borrowed");
-	else if(borrows > 0)
-		throw std::runtime_error(std::string("Can't mutably borrow ") + kind + " that is immutably borrowed");
-
-	borrows = Writing;
-	return Borrows_Ref(this);
-}
-
-auto Borrows::borrow(char const *_Nonnull kind) -> Borrows_Ref
-{
-	if(borrows == Writing)
-		throw std::runtime_error(std::string("Can't immutably borrow") + kind + " that is already mutably borrowed");
-
-	borrows += 1;
-	return Borrows_Ref(this);
-}
-
-auto Borrows::destruct(char const *_Nonnull kind) -> void
-{
-	if(borrows == Writing)
-		throw std::runtime_error(std::string("Can't delete ") + kind + " that is mutably borrowed");
-	else if(borrows > 0)
-		throw std::runtime_error(std::string("Can't delete ") + kind + " that is immutably borrowed");
-}
-
-// -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
 
@@ -184,6 +132,58 @@ p_bool p_string::op_equal(p_string const & other) const
 bool operator < (p_string const & lhs, p_string const & rhs)
 {
     return std::strcmp(lhs.cstr(), rhs.cstr()) < 0;
+}
+
+// -----------------------------------------------------------------------------
+// Runtime Types
+// -----------------------------------------------------------------------------
+
+auto Borrows::take_mut(char const *_Nonnull kind) -> Borrows_Ref
+{
+	if(borrows == Writing)
+		throw std::runtime_error(std::string("Can't mutably take ") + kind + " that is mutably borrowed");
+	else if(borrows > 0)
+		throw std::runtime_error(std::string("Can't mutably take ") + kind + " that is immutably borrowed");
+
+	return Borrows_Ref::own();
+}
+
+auto Borrows::take(char const *_Nonnull kind) -> Borrows_Ref
+{
+	if(borrows == Writing)
+		throw std::runtime_error(std::string("Can't immutably take ") + kind + " that is mutably borrowed");
+	else if(borrows > 0)
+		throw std::runtime_error(std::string("Can't immutably take ") + kind + " that is immutably borrowed");
+
+	return Borrows_Ref::own();
+}
+
+auto Borrows::borrow_mut(char const *_Nonnull kind) -> Borrows_Ref
+{
+	if(borrows == Writing)
+		throw std::runtime_error(std::string("Can't mutably borrow ") + kind + " that is mutably borrowed");
+	else if(borrows > 0)
+		throw std::runtime_error(std::string("Can't mutably borrow ") + kind + " that is immutably borrowed");
+
+	borrows = Writing;
+	return Borrows_Ref(this);
+}
+
+auto Borrows::borrow(char const *_Nonnull kind) -> Borrows_Ref
+{
+	if(borrows == Writing)
+		throw std::runtime_error(std::string("Can't immutably borrow") + kind + " that is already mutably borrowed");
+
+	borrows += 1;
+	return Borrows_Ref(this);
+}
+
+auto Borrows::destruct(char const *_Nonnull kind) -> void
+{
+	if(borrows == Writing)
+		throw std::runtime_error(std::string("Can't delete ") + kind + " that is mutably borrowed");
+	else if(borrows > 0)
+		throw std::runtime_error(std::string("Can't delete ") + kind + " that is immutably borrowed");
 }
 
 // -----------------------------------------------------------------------------
