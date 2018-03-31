@@ -126,11 +126,54 @@ public class Name_Table_Builder
 			name_table.add(name, type);
 			// TODO Add enum member symbols
 		}
+		else if syntax.kind == GlobalDeclaration
+		{
+			let unqualified_name: string = syntax.first_child(VariableDeclaration).first_child(Identifier).get_text();
+			let name: Name = new Name(parent, TypeName, unqualified_name);
+			let type: Type? = none; // we don't have a type for functions yet
+			name_table.add(name, type);
+		}
 		else if syntax.kind == Block
 		{
 			for let statement: Syntax_Node in syntax.statements()
 			{
 				add_syntax(name_table, parent, statement);
+			}
+		}
+		else if syntax.kind == LoopStatement
+			or syntax.kind == WhileStatement
+			or syntax.kind == DoWhileStatement
+		{
+			add_syntax(name_table, parent, syntax.first_child(Block));
+		}
+		else if syntax.kind == ForStatement
+		{
+			let identifier: Syntax_Node = syntax.first_child(VariableDeclaration).first_child(Identifier);
+			let name: Name = new Name(parent, VariableName, identifier.get_text());
+			let type: Type = none; // Haven't bound the type yet
+			name_table.add(name, type); // need variable to avoid ambiguity about types
+			add_syntax(name_table, parent, syntax.first_child(Block));
+		}
+		else if syntax.kind == IfStatement
+		{
+			add_syntax(name_table, parent, syntax.first_child(Block));
+			let else_clause: Syntax_Node? = syntax.first_child(ElseClause);
+			if else_clause =/= none
+			{
+				add_syntax(name_table, parent, else_clause);
+			}
+		}
+		else if syntax.kind == ElseClause
+		{
+			// This might be a good place for some kind of coalesce operator
+			let block: Syntax_Node? = syntax.first_child(Block);
+			if block =/= none
+			{
+				add_syntax(name_table, parent, block);
+			}
+			else
+			{
+				add_syntax(name_table, parent, syntax.first_child(IfStatement));
 			}
 		}
 		else if syntax.kind == LocalDeclarationStatement
