@@ -50,6 +50,22 @@ public class Name
 		self.is_special = false;
 	}
 
+	public new(parent: Name, kind: int, name: string, is_special: bool)
+	{
+		assert(parent =/= none, "");
+		assert(name.ByteLength() > 0, "");
+		self.package = parent.package;
+		self.kind = kind;
+		let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
+		for let segment: string in parent.segments
+		{
+			segments.Add(segment);
+		}
+		segments.Add(name);
+		self.segments = segments;
+		self.is_special = is_special;
+	}
+
 	public new special(parent: Name, kind: int, name: string)
 	{
 		assert(parent =/= none, "");

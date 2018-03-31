@@ -25,13 +25,13 @@ public /*mut*/ class Name_Table
 		var name: Name; // make this let when I can
 		if symbol.declares_type =/= none
 		{
-			name = new Name(parent, TypeName, symbol.name);
+			name = new Name(parent, TypeName, symbol.name, symbol.is_special_name);
 			add(name, symbol.declares_type);
 		}
 		else
 		{
 			// TODO this could be something besides a function name
-			name = new Name(parent, FunctionName, symbol.name);
+			name = new Name(parent, FunctionName, symbol.name, symbol.is_special_name);
 			add(name, symbol.of_type);
 		}
 		return name;
