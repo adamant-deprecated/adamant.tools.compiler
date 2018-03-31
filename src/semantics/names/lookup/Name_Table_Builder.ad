@@ -96,6 +96,21 @@ public class Name_Table_Builder
 				add_syntax(name_table, name, member);
 			}
 		}
+		else if syntax.kind == ConstructorDeclaration
+		{
+			var full_name: string = "new";
+			let constructor_name: Syntax_Node? = syntax.first_child(Identifier);
+			if constructor_name =/= none
+				{ full_name = "new_" + constructor_name.get_text(); }
+			let name: Name = new Name.special(parent, FunctionName, full_name);
+
+			add_function(name_table, name, syntax);
+
+			// Implicit Self Parameter (have to add after adding function name)
+			let self_name: Name = new Name.special(name, VariableName, "self");
+			let self_type: Type = none; // TODO: do we already know the class/struct type?
+			name_table.add(self_name, self_type); // need variable to avoid ambiguity about types
+		}
 		else if syntax.kind == FieldDeclaration
 		{
 			let unqualified_name: string = syntax.first_child(VariableDeclaration).first_child(Identifier).get_text();
