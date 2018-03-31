@@ -187,21 +187,29 @@ public /*mut*/ class Semantic_Tree_Builder
 		-> Semantic_Node
 	{
 		let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-		// TODO this is a temporary measure to build up the tree.
-		//      replace with specific constructions
-		for let child_syntax: Syntax_Node in syntax.children
+
+		if syntax.kind == PredefinedType
 		{
-			children.add(build_type_name(child_syntax, name_table, scope));
+			let primitive_name: string = syntax.children[0].get_text();
+			let primitive_entry: Name_Subtable? = scope.lookup_special(primitive_name);
+			assert(primitive_entry =/= none, "No entry for primitive `"+primitive_name+"`");
+			return new Semantic_Node.referencing_type(primitive_entry.type, syntax, children);
+			// 	let primitive_name: string = node.children[0].get_text();
+			// 	let symbol: Old_Symbol = scope.lookup_special(primitive_name);
+			// 	if symbol == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
+			// 	node.bind_symbol(symbol);
+			// 	node.bind_type(symbol.declares_type);
 		}
-		return new Semantic_Node.concrete(syntax, children);
-		// if node.kind == PredefinedType
-		// {
-		// 	let primitive_name: string = node.children[0].get_text();
-		// 	let symbol: Old_Symbol = scope.lookup_special(primitive_name);
-		// 	if symbol == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
-		// 	node.bind_symbol(symbol);
-		// 	node.bind_type(symbol.declares_type);
-		// }
+		else
+		{
+			// TODO this is a temporary measure to build up the tree.
+			//      replace with specific constructions
+			for let child_syntax: Syntax_Node in syntax.children
+			{
+				children.add(build_type_name(child_syntax, name_table, scope));
+			}
+			return new Semantic_Node.concrete(syntax, children);
+		}
 		// else if node.kind == MutableType
 		// {
 		// 	let inner_type_node: mut Old_Semantic_Node = node.children[1];
