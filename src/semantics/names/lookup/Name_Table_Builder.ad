@@ -118,6 +118,14 @@ public class Name_Table_Builder
 			let type: Type? = none; // we don't have a type for functions yet
 			name_table.add(name, type);
 		}
+		else if syntax.kind == EnumDeclaration
+		{
+			let unqualified_name: string = syntax.first_child(Identifier).get_text();
+			let name: Name = new Name(parent, TypeName, unqualified_name);
+			let type: Type = new Type(ReferenceType, name, true);
+			name_table.add(name, type);
+			// TODO Add enum member symbols
+		}
 		else if syntax.kind == Block
 		{
 			for let statement: Syntax_Node in syntax.statements()
