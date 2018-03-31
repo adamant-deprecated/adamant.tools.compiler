@@ -220,7 +220,8 @@ public class Syntax_Node
 		node_diagnostics.Add(diagnostic);
 	}
 
-	public all_diagnostics(self) -> System.Collections.List<Diagnostic>
+	// We are returning ownership of the list, so they can mutate it if wanted
+	public all_diagnostics(self) -> mut System.Collections.List<Diagnostic>
 	{
 		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
 		collection_diagnostics(diagnostics);

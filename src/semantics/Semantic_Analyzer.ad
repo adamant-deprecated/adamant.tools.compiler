@@ -12,7 +12,6 @@ public class Semantic_Analyzer
 		references.add(new Package_Reference(primitives_package));
 		references.add(new Package_Reference(runtime_package));
 
-		// New code path
 		let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
 		let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
 		let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();

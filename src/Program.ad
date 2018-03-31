@@ -1,12 +1,19 @@
-public compile(sources: System.Collections.List<Source_Text>) -> Old_Package
+public old_compile(sources: System.Collections.List<Source_Text>) -> Old_Package
 {
 	let parser: Parser = new Parser();
 	let package_syntax: Syntax_Node = parser.ParsePackage(sources);
 	let old_semantic_analyzer: Old_Semantic_Analyzer = new Old_Semantic_Analyzer();
 	let old_package: Old_Package = old_semantic_analyzer.analyze(package_syntax);
+	return old_package;
+}
+
+public compile(sources: System.Collections.List<Source_Text>) -> Package
+{
+	let parser: Parser = new Parser();
+	let package_syntax: Syntax_Node = parser.ParsePackage(sources);
 	let semantic_analyzer: Semantic_Analyzer = new Semantic_Analyzer();
 	let package: Package = semantic_analyzer.analyze(package_syntax);
-	return old_package;
+	return package;
 }
 
 public write(console: mut System.Console.Console, diagnostics: System.Collections.List<Diagnostic>) -> void
@@ -135,17 +142,19 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
 		sources.Add(read_source(sourceFilePath));
 	}
 
-	let package: Old_Package = compile(sources);
+	let old_package: Old_Package = old_compile(sources);
+	let package: Package = compile(sources);
 
+	let old_diagnostics: System.Collections.List<Diagnostic> = old_package.all_diagnostics();
 	let diagnostics: System.Collections.List<Diagnostic> = package.all_diagnostics();
 	write(console, diagnostics);
 
-	if has_errors(diagnostics)
+	if has_errors(old_diagnostics)
 	{
 		return DataError;
 	}
 
-	var emitter: mut Emitter = new Emitter(package, resources);
+	var emitter: mut Emitter = new Emitter(old_package, resources);
 	let translated: string = emitter.Emit();
 
 	// Write output
