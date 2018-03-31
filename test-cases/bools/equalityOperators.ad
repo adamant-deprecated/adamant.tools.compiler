@@ -1,0 +1,12 @@
+public True() -> bool
+{
+	return true;
+}
+
+public Main() -> void
+{
+	var x: bool;
+	x = true == false;
+	x = true =/= false;
+	x = True() == True(); // has weird problem parsing expressions
+}

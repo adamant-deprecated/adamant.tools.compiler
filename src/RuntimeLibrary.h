@@ -395,6 +395,8 @@ public:
 	p_bool op_false() const { return !this->value; }
 	p_bool op_and(p_bool other) const { return this->value & other.value; }
 	p_bool op_or(p_bool other) const { return this->value | other.value; }
+	p_bool op_equal(p_bool other) const { return this->value == other.value; }
+	p_bool op_not_equal(p_bool other) const { return this->value != other.value; }
 };
 
 struct p_uint;
