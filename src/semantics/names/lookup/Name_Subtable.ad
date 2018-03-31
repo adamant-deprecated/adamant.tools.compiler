@@ -26,16 +26,6 @@ public /*mut*/ class Name_Subtable
 		subtables = new System.Collections.List<mut Name_Subtable>();
 	}
 
-	public find(self, name: string) -> Name_Subtable
-	{
-		for let subtable: Name_Subtable in subtables
-		{
-			if subtable.name.unqualified() == name
-				{ return subtable; }
-		}
-		return none;
-	}
-
 	private new(parent: Name_Subtable, name: Name, type: Type)
 	{
 		// assert(parent.name.package == name.package);
@@ -74,5 +64,47 @@ public /*mut*/ class Name_Subtable
 
 		// TODO this assert is wrong
 		assert(|name.segments| == |self.name.segments| + 1, "Can't add \""+name.full()+"\" to \""+self.name.full()+"\"");
+	}
+
+	/// Get a child name
+	public find(self, name: string) -> Name_Subtable?
+	{
+		return find(name, false);
+	}
+
+	public find_special(self, name: string) -> Name_Subtable?
+	{
+		return find(name, true);
+	}
+
+	private find(self, name: string, is_special: bool) -> Name_Subtable?
+	{
+		for let subtable: Name_Subtable in subtables
+		{
+			if subtable.name.unqualified() == name
+				and subtable.name.is_special == is_special
+				{ return subtable; }
+		}
+		return none;
+	}
+
+	public lookup(self, name: string) -> Name_Subtable?
+	{
+		return lookup(name, false);
+	}
+
+	public lookup_special(self, name: string) -> Name_Subtable?
+	{
+		return lookup(name, true);
+	}
+
+	protected lookup(self, name: string, is_special: bool) -> Name_Subtable?
+	{
+		var subtable: Name_Subtable? = find(name, is_special);
+		if subtable == none and parent =/= none
+		{
+			subtable = parent.lookup(name, is_special);
+		}
+		return subtable;
 	}
 }

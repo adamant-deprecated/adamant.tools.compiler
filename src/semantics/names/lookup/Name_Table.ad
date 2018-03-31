@@ -50,4 +50,9 @@ public /*mut*/ class Name_Table
 		}
 		THROW_EXCEPTION("Can't add name \""+name.full()+"\" because package doesn't exist in table.");
 	}
+
+	public get(self, name: Name) -> Name_Subtable?
+	{
+		NOT_IMPLEMENTED("");
+	}
 }
