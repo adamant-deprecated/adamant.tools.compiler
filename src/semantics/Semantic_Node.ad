@@ -15,7 +15,7 @@ public class Semantic_Node
 	private let node_diagnostics: mut System.Collections.List<Diagnostic>;
 
 	/// The type of an expression (or variable) before any implicit conversions
-	public let type: Type?;
+	public let of_type: Type?;
 
 	/// The type of an expression after any implicit conversions
 	public let converted_type: Type?;
@@ -42,13 +42,13 @@ public class Semantic_Node
 			diagnostics.Add(diagnostic);
 		}
 		self.node_diagnostics = diagnostics;
-		self.type = none;
+		self.of_type = none;
 		self.converted_type = none;
 		self.declares_type = none;
 		self.referenced_type = none;
 	}
 
-	/// Construct a concrete mirror of
+	/// Construct a concrete mirror of a `Syntax_Node`
 	public new concrete(syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
 	{
 		assert(syntax =/= none, "");
@@ -65,8 +65,31 @@ public class Semantic_Node
 			diagnostics.Add(diagnostic);
 		}
 		self.node_diagnostics = diagnostics;
-		self.type = none;
+		self.of_type = none;
 		self.converted_type = none;
+		self.declares_type = none;
+		self.referenced_type = none;
+	}
+
+	public new of_type(of_type: Type, syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
+	{
+		assert(of_type =/= none, "");
+		assert(syntax =/= none, "");
+		self.syntax = syntax;
+		self.kind = syntax.kind;
+		self.is_missing = syntax.is_missing;
+		self.source = syntax.source;
+		self.start = syntax.start;
+		self.byte_length = syntax.byte_length;
+		self.children = children;
+		let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+		for let diagnostic: Diagnostic in syntax.node_diagnostics
+		{
+			diagnostics.Add(diagnostic);
+		}
+		self.node_diagnostics = diagnostics;
+		self.of_type = of_type;
+		self.converted_type = of_type;
 		self.declares_type = none;
 		self.referenced_type = none;
 	}

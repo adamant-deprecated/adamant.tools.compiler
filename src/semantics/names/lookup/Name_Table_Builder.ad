@@ -96,6 +96,13 @@ public class Name_Table_Builder
 				add_syntax(name_table, name, member);
 			}
 		}
+		else if syntax.kind == FieldDeclaration
+		{
+			let unqualified_name: string = syntax.first_child(VariableDeclaration).first_child(Identifier).get_text();
+			let name: Name = new Name(parent, TypeName, unqualified_name);
+			let type: Type? = none; // we don't have a type for functions yet
+			name_table.add(name, type);
+		}
 		else if syntax.kind == Block
 		{
 			for let statement: Syntax_Node in syntax.statements()
@@ -108,6 +115,19 @@ public class Name_Table_Builder
 			let identifier: Syntax_Node = syntax.first_child(VariableDeclaration).first_child(Identifier);
 			let name: Name = new Name(parent, VariableName, identifier.get_text());
 			let type: Type = none; // Haven't bound the type yet
+			name_table.add(name, type); // need variable to avoid ambiguity about types
+		}
+		else if syntax.kind == Parameter
+		{
+			let identifier: Syntax_Node = syntax.first_child(Identifier);
+			let name: Name = new Name(parent, VariableName, identifier.get_text());
+			let type: Type = none; // Haven't bound the type yet
+			name_table.add(name, type); // need variable to avoid ambiguity about types
+		}
+		else if syntax.kind == SelfParameter
+		{
+			let name: Name = new Name.special(parent, VariableName, "self");
+			let type: Type = none; // TODO: do we already know the class/struct type?
 			name_table.add(name, type); // need variable to avoid ambiguity about types
 		}
 		else if syntax.kind == ExpressionStatement

@@ -45,17 +45,19 @@ public /*mut*/ class Semantic_Tree_Builder
 			or syntax.kind == MethodDeclaration
 		{
 			children.add(build(syntax.access_modifier(), name_table, scope));
-			children.add(build(syntax.first_child(Identifier), name_table, scope));
+			let function_name: Syntax_Node = syntax.first_child(Identifier);
+			children.add(build(function_name, name_table, scope));
 			build_parameters(syntax, name_table, scope, children);
 
 			let return_type: Syntax_Node = syntax.children[4]; // TODO need more reliable way to pick this out
 			children.add(build(return_type, name_table, scope));
 
-			let function_scope: Name_Subtable = scope.find(syntax.first_child(Identifier).get_text());
+			let function_scope: Name_Subtable = scope.find(function_name.get_text());
 			let body: Syntax_Node = syntax.first_child(Block);
 			children.add(build(body, name_table, function_scope));
 
-			NOT_IMPLEMENTED("Return Semantic_Node");
+			// TODO what about the function type?
+			return new Semantic_Node.concrete(syntax, children);
 		}
 		else if |syntax.children| == 0
 		{
@@ -84,7 +86,26 @@ public /*mut*/ class Semantic_Tree_Builder
 		let parameter_list: Syntax_Node = syntax.first_child(ParameterList);
 		for let parameter: Syntax_Node in parameter_list.parameters()
 		{
-			NOT_IMPLEMENTED("add to nodes");
+			let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+			if parameter.kind == Parameter
+			{
+				children.add(new Semantic_Node.token(parameter.first_child(Identifier)));
+				let type_syntax: Syntax_Node = parameter.children[2];
+				let type_node: Semantic_Node = build(type_syntax, name_table, scope);
+				children.add(type_node);
+
+				nodes.add(new Semantic_Node.concrete(parameter, children));
+				// TODO nodes.add(new Semantic_Node.of_type(type_node.referenced_type, parameter, children));
+			}
+			else if parameter.kind == SelfParameter
+			{
+				// TODO figure out the class type and call new Semantic_Node.of_type
+				nodes.add(new Semantic_Node.concrete(parameter, children));
+			}
+			else
+			{
+				NOT_IMPLEMENTED("parameter.kind="+parameter.kind);
+			}
 		}
 	}
 }
