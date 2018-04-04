@@ -1,4 +1,5 @@
 65
+6
 test-cases/functions/semicolonAfterReturnType.ad:1:22 Error:
   Missing token of type 1
 test-cases/functions/semicolonAfterReturnType.ad:1:22 Error:

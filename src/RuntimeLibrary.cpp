@@ -203,6 +203,19 @@ void ResourceManager::AddResource(p_string name, p_string value)
 
 ResourceManager *const resource_manager_ = new ResourceManager();
 
+void debug_write_(p_string value)
+{
+	std::fprintf(stderr, "%.*s", value.Length, value.Buffer);
+}
+void debug_write_line_(p_string value)
+{
+	std::fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
+}
+void debug_write_line_()
+{
+	std::fprintf(stderr, "\n");
+}
+
 namespace system_
 {
 	namespace Console_

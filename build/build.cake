@@ -417,7 +417,9 @@ void Test(string version)
 
 bool TestResult(FilePath testCase, CommandResult expected, CommandResult actual)
 {
-	if(expected.ExitCode == actual.ExitCode && expected.Output.SequenceEqual(actual.Output))
+	if(expected.ExitCode == actual.ExitCode
+		&& expected.Output.SequenceEqual(actual.Output)
+		&& expected.ErrorOutput.SequenceEqual(actual.ErrorOutput))
 		return false;
 
 	Error("  {0} [FAIL]", testCase.ToString());
@@ -433,6 +435,16 @@ bool TestResult(FilePath testCase, CommandResult expected, CommandResult actual)
 				Information("    Line {0} didn't match", i);
 				Information("    Expected: {0}", expected.Output[i]);
 				Information("    Actual:   {0}", actual.Output[i]);
+			}
+	if(expected.ErrorOutput.Count != actual.ErrorOutput.Count)
+		Information("    {0} error lines output did not match the {1} expected", actual.ErrorOutput.Count, expected.ErrorOutput.Count);
+	else
+		for(var i = 0; i < actual.ErrorOutput.Count; i++)
+			if(expected.ErrorOutput[i] != actual.ErrorOutput[i])
+			{
+				Information("    Error Line {0} didn't match", i);
+				Information("    Expected: {0}", expected.ErrorOutput[i]);
+				Information("    Actual:   {0}", actual.ErrorOutput[i]);
 			}
 	return true;
 }
@@ -617,9 +629,10 @@ public class ConsoleCommand
 			{
 				Arguments = Arguments,
 				RedirectStandardOutput = true,
+				RedirectStandardError = true,
 			});
 		process.WaitForExit();
-		return new CommandResult(context, process.GetExitCode(), process.GetStandardOutput());
+		return new CommandResult(context, process.GetExitCode(), process.GetStandardOutput(), process.GetStandardError());
 	}
 }
 
@@ -628,35 +641,76 @@ public class CommandResult
 	private readonly ICakeContext context;
 	public readonly int ExitCode;
 	public readonly IReadOnlyList<string> Output;
+	public readonly IReadOnlyList<string> ErrorOutput;
 
-	public CommandResult(ICakeContext context, int exitCode, IEnumerable<string> output)
+	public CommandResult(ICakeContext context, int exitCode, IEnumerable<string> output, IEnumerable<string> errorOutput)
 	{
 		this.context = context;
 		ExitCode = exitCode;
 		Output = output.ToList().AsReadOnly();
+		ErrorOutput = errorOutput.ToList().AsReadOnly();
 	}
 
 	public void WriteFile(FilePath file)
 	{
-		context.FileWriteLines(file, new [] { ExitCode.ToString()}.Concat(Output).ToArray());
+		var lines = new [] { ExitCode.ToString()}
+			.Append(Output.Count.ToString())
+			.Concat(Output);
+
+		if(ErrorOutput.Any())
+		{
+			lines = lines
+				.Append(ErrorOutput.Count.ToString())
+				.Concat(ErrorOutput);
+		}
+		context.FileWriteLines(file, lines.ToArray());
 	}
 }
 
 // Can't be a static field because we need access to `Context`
 CommandResult DefaultResult()
 {
-	return new CommandResult(Context, 0, Enumerable.Empty<string>());
+	return new CommandResult(Context, 0, Enumerable.Empty<string>(), Enumerable.Empty<string>());
 }
 
 // Can't be a static method because we need access to `Context`
 CommandResult ReadResultFile(FilePath file)
 {
+	Verbose("Reading result file");
 	var lines = FileReadLines(file);
+	if(lines.Length < 2)
+	{
+		Error("{0} file should have at least 2 lines, has {1}", file, lines.Length);
+		throw new Exception();
+	}
+	Verbose("  Reading exitCode");
 	int exitCode = -1;
 	if(!int.TryParse(lines[0], out exitCode))
 	{
-		Error("First line of .run.txt file '{0}' should be expected exit code", lines[0]);
+		Error("First line of {0} file '{1}' should be expected exit code", file, lines[0]);
 		throw new Exception();
 	}
-	return new CommandResult(Context, exitCode, lines.Skip(1));
+	Verbose("  Reading outputLines");
+	int outputLines = -1;
+	if(!int.TryParse(lines[1], out outputLines))
+	{
+		Error("Second line of {0} file '{1}' should be number of output lines", file, lines[1]);
+		throw new Exception();
+	}
+	Verbose("  Reading errorLines");
+	var errorCountLine = 2+outputLines;
+	int errorLines = 0;
+	if(lines.Length > errorCountLine)
+	{
+		Verbose("  Has error lines");
+		Verbose("    errorCountLine={0}", errorCountLine);
+		Verbose("    lines.Length={0}", lines.Length);
+		if(!int.TryParse(lines[errorCountLine], out errorLines))
+		{
+			Error("Line {0} of {1} file '{2}' should be number of error lines", errorCountLine, file, lines[errorCountLine]);
+			throw new Exception();
+		}
+	}
+	Verbose("  Returning Result");
+	return new CommandResult(Context, exitCode, lines.Skip(2).Take(outputLines), lines.Skip(errorCountLine+1).Take(errorLines));
 }

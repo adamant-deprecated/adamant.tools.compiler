@@ -1,4 +1,5 @@
 0
+6
 strings[0]=Hello
 Hello
 World!

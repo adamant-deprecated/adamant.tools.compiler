@@ -1,0 +1,7 @@
+public main() -> void
+{
+	debug_write("prefix: ");
+	debug_write_line("value");
+	debug_write_line();
+	debug_write_line("eom");
+}
