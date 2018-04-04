@@ -8,6 +8,8 @@ public /*mut*/ class Semantic_Tree_Builder
 		-> System.Collections.List<Compilation_Unit>
 	{
 		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+		// TODO remove below assertion once this if fixed
+		assert(name_table.any_package.lookup_special("string") =/= none, "name_table.any_package.name="+name_table.any_package.name.full());
 
 		let compilation_units: mut System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
 
@@ -191,14 +193,38 @@ public /*mut*/ class Semantic_Tree_Builder
 		if syntax.kind == PredefinedType
 		{
 			let primitive_name: string = syntax.children[0].get_text();
-			let primitive_entry: Name_Subtable? = scope.lookup_special(primitive_name);
+			let primitive_entry: Name_Subtable? = scope.lookup_special(primitive_name); // TODO this should be lookup type. Types are separate
 			assert(primitive_entry =/= none, "No entry for primitive `"+primitive_name+"`");
 			return new Semantic_Node.referencing_type(primitive_entry.type, syntax, children);
-			// 	let primitive_name: string = node.children[0].get_text();
-			// 	let symbol: Old_Symbol = scope.lookup_special(primitive_name);
-			// 	if symbol == none { THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` no symbol for primitive type " + primitive_name); }
-			// 	node.bind_symbol(symbol);
-			// 	node.bind_type(symbol.declares_type);
+		}
+		else if syntax.kind == IdentifierName
+		{
+			if syntax.is_missing { return new Semantic_Node.token(syntax); }
+			let name: string = syntax.get_text();
+			let entry: Name_Subtable? = scope.lookup(name); // TODO this should be lookup type. Types are separate
+			if entry == none
+			{
+				let node: Semantic_Node = new Semantic_Node.token(syntax);
+				add_resolution_error(node);
+				return node;
+			}
+			else
+			{
+				return new Semantic_Node.referencing_type(entry.type, syntax, children);
+			}
+			// 	if node.is_missing { return; }
+			// 	let name: string = node.get_text();
+			// 	let symbol: Old_Symbol = scope.lookup(name); // TODO this should be lookup type. Types are separate
+			// 	if symbol == none
+			// 	{
+			// 		add_resolution_error(node);
+			// 	}
+			// 	else
+			// 	{
+			// 		node.bind_symbol(symbol);
+			// 		assert(symbol.declares_type =/= none, "symbol.name="+symbol.name);
+			// 		node.bind_type(symbol.declares_type);
+			// 	}
 		}
 		else
 		{
@@ -318,22 +344,6 @@ public /*mut*/ class Semantic_Tree_Builder
 		// 	else
 		// 	{
 		// 		THROW_EXCEPTION("Unreachable: `Semantic_Binder.bind(..)` name.kind = " + name.kind);
-		// 	}
-		// }
-		// else if node.kind == IdentifierName
-		// {
-		// 	if node.is_missing { return; }
-		// 	let name: string = node.get_text();
-		// 	let symbol: Old_Symbol = scope.lookup(name); // TODO this should be lookup type. Types are separate
-		// 	if symbol == none
-		// 	{
-		// 		add_resolution_error(node);
-		// 	}
-		// 	else
-		// 	{
-		// 		node.bind_symbol(symbol);
-		// 		assert(symbol.declares_type =/= none, "symbol.name="+symbol.name);
-		// 		node.bind_type(symbol.declares_type);
 		// 	}
 		// }
 		// else
