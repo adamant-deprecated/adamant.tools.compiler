@@ -358,7 +358,9 @@ public /*mut*/ class Semantic_Tree_Builder
 			let qualifier: Syntax_Node = syntax.children[0];
 			let name: Syntax_Node = syntax.children[2];
 			let constructor_name: string = "new_" + name.get_text();
-			let constructor_scope: Name_Subtable? = name_table.get(type_node.referenced_type.name).lookup_special(constructor_name);
+			let referenced_type: Type = type_node.referenced_type;
+			assert(referenced_type =/= none, "no referenced type for `"+type_node.get_text()+"`");
+			let constructor_scope: Name_Subtable? = name_table.get(referenced_type.name).lookup_special(constructor_name);
 			if constructor_scope =/= none
 			{
 				children.add(new Semantic_Node.token(name));
