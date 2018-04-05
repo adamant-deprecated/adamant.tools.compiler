@@ -602,6 +602,10 @@ public:
 
 extern ResourceManager *_Nonnull const resource_manager_;
 
+void debug_write_(p_string value);
+void debug_write_line_(p_string value);
+void debug_write_line_();
+
 namespace system_
 {
 	namespace Collections_
