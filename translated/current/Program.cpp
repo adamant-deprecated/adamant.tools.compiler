@@ -42,6 +42,9 @@ auto write_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::C
 auto has_errors_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull const diagnostics_) -> p_bool;
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> p_int;
 auto read_source_(p_string const path_) -> ::Source_Text_ const *_Nonnull;
+auto run_unit_tests_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
+auto unit_test_Text_Position_() -> void;
+auto Text_Position_retains_given_offeset_line_and_column_() -> void;
 auto format_error_(p_string const message_) -> p_string;
 auto new_syntax_node_missing_(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_) -> ::Syntax_Node_ const *_Nonnull;
 auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *_Nonnull const skipped_) -> ::Syntax_Node_ const *_Nonnull;
@@ -783,6 +786,12 @@ auto has_errors_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> c
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> p_int
 {
+	if (op_and(args_->op_magnitude()->op_equal(p_int(1)), [&] { return args_->op_Element(p_int(0))->op_equal(p_string("--unit-test")); }).value)
+	{
+		run_unit_tests_(console_);
+		return p_int(0);
+	}
+
 	::System_::Collections_::List_<p_string> *_Nonnull const sourceFilePaths_ = (new ::System_::Collections_::List_<p_string>())->construct();
 	::System_::Collections_::List_<p_string> *_Nonnull const resourceFilePaths_ = (new ::System_::Collections_::List_<p_string>())->construct();
 	p_string outputFilePath_ = p_string("");
@@ -920,6 +929,12 @@ auto read_source_(p_string const path_) -> ::Source_Text_ const *_Nonnull
 	p_string const contents_ = file_->ReadToEndSync_();
 	file_->Close_();
 	return (new ::Source_Text_())->construct(p_string("<default>"), path_, contents_);
+}
+
+auto run_unit_tests_(::System_::Console_::Console_ *_Nonnull const console_) -> void
+{
+	console_->WriteLine_(p_string("Running Unit Tests..."));
+	unit_test_Text_Position_();
 }
 
 auto ::Line_Info_::construct(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<p_int> const *_Nonnull const lineStarts_) -> ::Line_Info_*
@@ -1095,6 +1110,19 @@ auto ::Text_Position_::construct(p_int const offset_, p_int const line_, p_int c
 	Line_ = line_;
 	Column_ = column_;
 	return self;
+}
+
+auto unit_test_Text_Position_() -> void
+{
+	Text_Position_retains_given_offeset_line_and_column_();
+}
+
+auto Text_Position_retains_given_offeset_line_and_column_() -> void
+{
+	::Text_Position_ const *_Nonnull const position_ = (new ::Text_Position_())->construct(p_int(23), p_int(2), p_int(5));
+	assert_(position_->Offset_->op_equal(p_int(23)), p_string(""));
+	assert_(position_->Line_->op_equal(p_int(2)), p_string(""));
+	assert_(position_->Column_->op_equal(p_int(5)), p_string(""));
 }
 
 auto ::Text_Span_::construct(p_int const start_, p_int const length_) -> ::Text_Span_*
