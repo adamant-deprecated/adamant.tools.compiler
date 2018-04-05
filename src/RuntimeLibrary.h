@@ -689,7 +689,12 @@ namespace system_
 
 			// Adamant Members
 			p_int op_magnitude() const { return Count; }
-			p_string const & Get_(int const index) const { return args[index]; }
+			p_string const & op_Element(p_int const index) const
+			{
+				if(index.value < 0 || index.value >= Count)
+					throw std::out_of_range("Argument index out of bounds");
+				return args[index.value];
+			}
 		};
 	}
 
