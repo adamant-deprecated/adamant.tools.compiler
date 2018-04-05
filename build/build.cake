@@ -112,6 +112,13 @@ Task("Build-Current")
 		CompileCpp("translated/current/*.cpp", "target/current/Program").Run();
 	});
 
+Task("Unit-Test-Current")
+	.IsDependentOn("Build-Current")
+	.Does(() =>
+	{
+		UnitTest("current");
+	});
+
 Task("Test-Current")
 	.IsDependentOn("Build-Current")
 	.Does(() =>
@@ -133,6 +140,13 @@ Task("Build-Bootstrapped")
 		Information("Compiling bootstrapped C++");
 		EnsureDirectoryExists("target/bootstrapped");
 		CompileCpp("translated/bootstrapped/*.cpp", "target/bootstrapped/Program").Run();
+	});
+
+Task("Unit-Test-Bootstrapped")
+	.IsDependentOn("Build-Bootstrapped")
+	.Does(() =>
+	{
+		UnitTest("bootstrapped");
 	});
 
 Task("Test-Bootstrapped")
@@ -173,6 +187,13 @@ Task("Build-Double-Bootstrapped")
 				throw new Exception("Double boostrapping failed");
 			}
 		}
+	});
+
+Task("Unit-Test-Double-Bootstrapped")
+	.IsDependentOn("Build-Double-Bootstrapped")
+	.Does(() =>
+	{
+		UnitTest("double-bootstrapped");
 	});
 
 Task("Test-Double-Bootstrapped")
@@ -239,8 +260,10 @@ Task("Test-Expected")
 // This is the default task
 Task("Build")
 	.IsDependentOn("Build-Current")
+	.IsDependentOn("Unit-Test-Current")
 	.IsDependentOn("Test-Current")
 	.IsDependentOn("Build-Bootstrapped")
+	.IsDependentOn("Unit-Test-Bootstrapped")
 	.IsDependentOn("Test-Bootstrapped");
 
 // Force clean and build
@@ -249,9 +272,12 @@ Task("Rebuild")
 	.IsDependentOn("Build");
 
 Task("All")
+	.IsDependentOn("Unit-Test-Current")
 	.IsDependentOn("Test-Current")
 	.IsDependentOn("Test-Expected")
+	.IsDependentOn("Unit-Test-Bootstrapped")
 	.IsDependentOn("Test-Bootstrapped")
+	.IsDependentOn("Unit-Test-Double-Bootstrapped")
 	.IsDependentOn("Test-Double-Bootstrapped");
 
 Task("Rebuild-All")
@@ -361,6 +387,16 @@ Task("Clean-Translated")
 
 RunTarget(target);
 
+void UnitTest(string version)
+{
+	var program = File(string.Format("target/{0}/Program", version)).Path;
+	if(IsRunningOnWindows())
+	{
+		program = program.AppendExtension("exe");
+	}
+	Command(program, "--unit-test").Run();
+}
+
 void Test(string version)
 {
 	var outputDir = Directory(string.Format("translated/{0}-test-cases", version));
@@ -460,7 +496,6 @@ ConsoleCommand CompileAdamant(string sourceVersion, string targetVersion)
 
 ConsoleCommand CompileAdamant(FilePath compiler, IEnumerable<FilePath> sources, FilePath output, IEnumerable<FilePath> resources)
 {
-	var windows = IsRunningOnWindows();
 	if(IsRunningOnWindows())
 	{
 		compiler = compiler.AppendExtension("exe");

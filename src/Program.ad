@@ -44,6 +44,12 @@ public let DataError: int = 65;
 
 public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> int
 {
+	if |args| == 1 and args[0] == "--unit-test"
+	{
+		run_unit_tests(console);
+		return 0;
+	}
+
 	let sourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
 	let resourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
 	var outputFilePath: string = "";
