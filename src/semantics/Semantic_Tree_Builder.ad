@@ -226,6 +226,49 @@ public /*mut*/ class Semantic_Tree_Builder
 			// 		node.bind_type(symbol.declares_type);
 			// 	}
 		}
+		else if syntax.kind == QualifiedName
+		{
+			let qualifier_syntax: Syntax_Node = syntax.children[0];
+			let qualifier: Semantic_Node = build_type_name(qualifier_syntax, name_table, scope);
+			children.add(qualifier);
+
+			let name_syntax: Syntax_Node = syntax.children[2];
+
+			if qualifier.referenced_type == none
+			{
+				// This means we aren't sure about the qualifier (i.e. type unknown)
+				let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
+				add_resolution_error(name_node);
+				children.add(name_node);
+
+				let qualified_name: Semantic_Node = new Semantic_Node.concrete(syntax, children);
+				add_could_not_determine_type_error(qualified_name);
+				return qualified_name;
+			}
+			else
+			{
+				let containing_type: Type = qualifier.referenced_type;
+				let containing_scope: Name_Subtable = name_table.get(containing_type.name);
+				let referenced_scope: Name_Subtable = containing_scope.find(name_syntax.get_text());
+
+				if referenced_scope == none
+				{
+					let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
+					add_resolution_error(name_node);
+					children.add(name_node);
+					build_type_arguments(syntax, name_table, scope, children);
+					return new Semantic_Node.concrete(syntax, children);
+				}
+
+				let referenced_type: Type = referenced_scope.type;
+				let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type, name_syntax, new System.Collections.List<Semantic_Node>());
+				children.add(name_node);
+				build_type_arguments(syntax, name_table, scope, children);
+				return new Semantic_Node.referencing_type(referenced_type, syntax, children);
+			}
+
+			UNREACHABLE();
+		}
 		else
 		{
 			// TODO this is a temporary measure to build up the tree.
@@ -269,87 +312,31 @@ public /*mut*/ class Semantic_Tree_Builder
 		// 	}
 		// 	node.bind_type(inner_type_node.type.make_immutable());
 		// }
-		// else if node.kind == QualifiedName
-		// {
-		// 	let qualifier: mut Old_Semantic_Node = node.children[0];
-		// 	bind_type_name(qualifier, scope);
+	}
 
-		// 	let name: mut Old_Semantic_Node = node.children[2];
-		// 	if qualifier.type == none
-		// 	{
-		// 		// Skip because this means we aren't sure about the qualifier (i.e. type unknown)
-		// 		//add_could_not_determine_type_error(qualifier);
-		// 	}
-		// 	else if qualifier.symbol == none
-		// 	{
-		// 		// Skip because this means we aren't sure about the qualifier (i.e. type unknown)
-		// 		//add_resolution_error(name);
-		// 	}
-		// 	else if name.kind == IdentifierName
-		// 	{
-		// 		let symbol: Old_Symbol = qualifier.symbol.get(name.get_text(), IdentifierSymbol);
-		// 		if symbol == none
-		// 		{
-		// 			add_resolution_error(name);
-		// 		}
-		// 		else
-		// 		{
-		// 			name.bind_symbol(symbol);
-		// 			// TODO transition away from using symbols at higher levels, use types instead
-		// 			node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
-
-		// 			let type: Type = symbol.declares_type;
-		// 			assert(type =/= none, "symbol.name="+symbol.name);
-		// 			name.bind_type(type);
-		// 			node.bind_type(type);
-		// 		}
-		// 	}
-		// 	else if name.kind == GenericName
-		// 	{
-		// 		let identifer_name: mut Old_Semantic_Node = name.first_child(IdentifierName);
-		// 		let symbol: Old_Symbol = qualifier.symbol.get(identifer_name.get_text(), IdentifierSymbol);
-		// 		if symbol == none
-		// 		{
-		// 			add_resolution_error(name);
-		// 			return;
-		// 		}
-		// 		identifer_name.bind_symbol(symbol);
-
-		// 		// TODO transition away from using symbols at higher levels, use types instead
-		// 		node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
-
-		// 		// TODO need way to get the generic type arguments
-		// 		var type_arg: bool = false;
-		// 		for let type_argument: mut Old_Semantic_Node in name.children
-		// 		{
-		// 			if type_arg
-		// 			{
-		// 				if type_argument.kind =/= GreaterThan
-		// 				{
-		// 					bind_type_name(type_argument, scope);
-		// 				}
-		// 			}
-		// 			else if type_argument.kind == LessThan
-		// 			{
-		// 				type_arg = true;
-		// 			}
-		// 		}
-
-		// 		let type: Type = symbol.declares_type;
-		// 		assert(type =/= none, "symbol.name="+symbol.name);
-		// 		identifer_name.bind_type(type);
-		// 		// TODO the type of the node should account for the generic type parameters
-		// 		node.bind_type(type); // Set it on the name as a whole, not just the identifier
-		// 	}
-		// 	else
-		// 	{
-		// 		THROW_EXCEPTION("Unreachable: `Semantic_Binder.bind(..)` name.kind = " + name.kind);
-		// 	}
-		// }
-		// else
-		// {
-		// 	THROW_EXCEPTION("`Semantic_Binder.bind_type_name()` unimplemented node type " + node.kind);
-		// }
+	private build_type_arguments(self,
+		syntax: Syntax_Node,
+		name_table: Name_Table,
+		scope: Name_Subtable,
+		children: mut System.Collections.List<Semantic_Node>)
+		-> void
+	{
+		// TODO need way to get the generic type arguments
+		var in_type_arguments: bool = false;
+		for let type_argument: Syntax_Node in syntax.children
+		{
+			if in_type_arguments
+			{
+				if type_argument.kind =/= GreaterThan
+				{
+					children.add(build_type_name(type_argument, name_table, scope));
+				}
+			}
+			else if type_argument.kind == LessThan
+			{
+				in_type_arguments = true;
+			}
+		}
 	}
 
 	private build_constructor_name(self,
@@ -385,5 +372,10 @@ public /*mut*/ class Semantic_Tree_Builder
 	private add_resolution_error(node: Semantic_Node) -> void
 	{
 		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
+	}
+
+	private add_could_not_determine_type_error(node: Semantic_Node) -> void
+	{
+		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not determine type for `" + node.get_text() + "`"));
 	}
 }
