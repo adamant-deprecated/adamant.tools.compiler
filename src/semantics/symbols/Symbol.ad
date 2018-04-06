@@ -24,18 +24,6 @@ public class Symbol
 		self.children = new System.Collections.List<Symbol>();
 	}
 
-	public new special(name: string)
-	{
-		assert(name.ByteLength() > 0, "");
-		self.name = name;
-		self.kind = SpecialSymbol;
-		self.is_special_name = false;
-		self.of_type = none;
-		self.declares_type = none;
-		self.declarations = new System.Collections.List<Semantic_Node>();
-		self.children = new System.Collections.List<Symbol>();
-	}
-
 	public new identifier(name: string, declarations: System.Collections.List<Semantic_Node>)
 	{
 		assert(name.ByteLength() > 0, "");
@@ -71,10 +59,6 @@ public class Symbol
 		assert(declarations =/= none, "name="+declares_type.name.unqualified());
 		assert(children =/= none, "name="+declares_type.name.unqualified());
 		self.name = declares_type.name.unqualified();
-		// if declares_type.is_primitive
-		// 	{ self.kind = SpecialSymbol; }
-		// else
-		// 	{ self.kind = IdentifierSymbol; }
 		self.is_special_name = declares_type.name.is_special;
 		self.of_type = none;
 		self.declares_type = declares_type;

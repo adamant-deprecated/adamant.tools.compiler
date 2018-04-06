@@ -197,7 +197,7 @@ public class Emitter
 				let name: Old_Semantic_Node = type.children[2];
 
 				if name.kind == IdentifierName
-					and name.symbol.kind == SpecialSymbol
+					and name.symbol.kind == Old_SpecialSymbol
 					and not name.symbol.is_primitive
 				{
 					// Named constructor

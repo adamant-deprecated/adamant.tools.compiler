@@ -444,7 +444,7 @@ public class Old_Semantic_Binder
 			let qualifier: mut Old_Semantic_Node = node.children[0];
 			let name: mut Old_Semantic_Node = node.children[2];
 			let constructor_name: string = "new_" + name.get_text();
-			let constructor_symbol: Old_Symbol? = qualifier.symbol.get(constructor_name, SpecialSymbol);
+			let constructor_symbol: Old_Symbol? = qualifier.symbol.get(constructor_name, Old_SpecialSymbol);
 			if constructor_symbol =/= none
 			{
 				name.bind_symbol(constructor_symbol);

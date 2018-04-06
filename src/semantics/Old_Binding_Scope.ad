@@ -27,7 +27,7 @@ public class Old_Binding_Scope
 
 	public lookup_special(self, name: string) -> Old_Symbol?
 	{
-		return lookup(name, SpecialSymbol);
+		return lookup(name, Old_SpecialSymbol);
 	}
 
 	public lookup_package(self, name: string) -> Old_Symbol?

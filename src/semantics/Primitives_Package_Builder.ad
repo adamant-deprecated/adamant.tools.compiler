@@ -80,7 +80,7 @@ public class Primitives_Package_Builder
 
 	private build_primitive(name: string, namespace: Name) -> Symbol
 	{
-		let type: Type = new Type.primitive(new Name(namespace, TypeName, name));
+		let type: Type = new Type.primitive(new Name.special(namespace, TypeName, name));
 		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 		return new Symbol.declaring(type, declarations, children);

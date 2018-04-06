@@ -4,4 +4,10 @@ public run_unit_tests(console: mut System.Console.Console) -> void
 
 	// core
 	unit_test_Text_Position();
+
+	// semantics
+	unit_test_Primitives_Package_Builder();
+
+	// semantics.symbols
+	unit_test_Symbol();
 }

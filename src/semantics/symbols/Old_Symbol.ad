@@ -28,7 +28,7 @@ public class Old_Symbol
 	{
 		assert(name.ByteLength() > 0, "");
 		self.name = name;
-		self.kind = SpecialSymbol;
+		self.kind = Old_SpecialSymbol;
 		self.is_primitive = false;
 		self.of_type = none;
 		self.declares_type = none;
@@ -72,7 +72,7 @@ public class Old_Symbol
 		assert(children =/= none, "name="+declares_type.name.unqualified());
 		self.name = declares_type.name.unqualified();
 		if declares_type.is_primitive
-			{ self.kind = SpecialSymbol; }
+			{ self.kind = Old_SpecialSymbol; }
 		else
 			{ self.kind = IdentifierSymbol; }
 		self.is_primitive = declares_type.is_primitive;
@@ -133,7 +133,7 @@ public class Old_Symbol
 				{ return true; }
 			else { THROW_EXCEPTION("Could not determine if IdentifierSymbol `" + name + "` is a value type. Declaration of type " + declaration.kind); }
 		}
-		else if kind == SpecialSymbol
+		else if kind == Old_SpecialSymbol
 		{
 			return true;
 		}
