@@ -1,0 +1,24 @@
+public unit_test_Name_Subtable() -> void
+{
+	global_namespace_contains_added_name();
+	namespace_contains_added_name();
+}
+
+public global_namespace_contains_added_name() -> void
+{
+	let name_table: Name_Table = new Name_Table();
+	let global_namespace: mut Name_Subtable = new Name_Subtable.global_namespace(name_table);
+	global_namespace.add(new Name(global_namespace.name, TypeName, "test"), none);
+	assert(global_namespace.find("test") =/= none, "");
+}
+
+public namespace_contains_added_name() -> void
+{
+	let name_table: Name_Table = new Name_Table();
+	let global_namespace: mut Name_Subtable = new Name_Subtable.global_namespace(name_table);
+	let namespace_name: Name = new Name(global_namespace.name, NamespaceName, "namespace");
+	global_namespace.add(namespace_name, none);
+	global_namespace.add(new Name(namespace_name, TypeName, "test"), none);
+	let namespace: Name_Subtable = global_namespace.find("namespace");
+	assert(namespace.find("test") =/= none, "");
+}

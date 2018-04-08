@@ -9,6 +9,10 @@ public run_unit_tests(console: mut System.Console.Console) -> void
 	unit_test_Primitives_Package_Builder();
 	unit_test_Runtime_Library_Package_Builder();
 
+	// semantics.names.lookup
+	unit_test_Name_Subtable();
+	unit_test_Name_Table_Builder();
+
 	// semantics.symbols
 	unit_test_Symbol();
 }
