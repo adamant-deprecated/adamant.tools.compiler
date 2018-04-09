@@ -34,14 +34,14 @@ public class Name
 
 	// TODO replace kind with name constructors Name.of_function etc.
 	//      once constructors can call each other and the code isn't so long
-	public new(parent: Name, kind: int, name: string)
+	public new(qualifier: Name, kind: int, name: string)
 	{
-		assert(parent =/= none, "");
+		assert(qualifier =/= none, "");
 		assert(name.ByteLength() > 0, "");
-		self.package = parent.package;
+		self.package = qualifier.package;
 		self.kind = kind;
 		let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
-		for let segment: string in parent.segments
+		for let segment: string in qualifier.segments
 		{
 			segments.Add(segment);
 		}
@@ -50,14 +50,14 @@ public class Name
 		self.is_special = false;
 	}
 
-	public new(parent: Name, kind: int, name: string, is_special: bool)
+	public new(qualifier: Name, kind: int, name: string, is_special: bool)
 	{
-		assert(parent =/= none, "");
+		assert(qualifier =/= none, "");
 		assert(name.ByteLength() > 0, "");
-		self.package = parent.package;
+		self.package = qualifier.package;
 		self.kind = kind;
 		let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
-		for let segment: string in parent.segments
+		for let segment: string in qualifier.segments
 		{
 			segments.Add(segment);
 		}
@@ -66,14 +66,14 @@ public class Name
 		self.is_special = is_special;
 	}
 
-	public new special(parent: Name, kind: int, name: string)
+	public new special(qualifier: Name, kind: int, name: string)
 	{
-		assert(parent =/= none, "");
+		assert(qualifier =/= none, "");
 		assert(name.ByteLength() > 0, "");
-		self.package = parent.package;
+		self.package = qualifier.package;
 		self.kind = kind;
 		let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
-		for let segment: string in parent.segments
+		for let segment: string in qualifier.segments
 		{
 			segments.Add(segment);
 		}
@@ -123,16 +123,18 @@ public class Name
 		return name;
 	}
 
-	public is_descendant_of(self, ancestor: Name) -> bool
+	/// Whether the qualifier is the qualifier of some name qualifying this name
+	// TODO this method name doesn't make it clear that the package could be unspecified
+	public is_qualified_with(self, qualifier: Name) -> bool
 	{
 		if (package =/= none
-			and ancestor.package =/= none
-			and package.full() =/= ancestor.package.full())
-			or |segments| <= |ancestor.segments|
+			and qualifier.package =/= none
+			and package.full() =/= qualifier.package.full())
+			or |segments| <= |qualifier.segments|
 			{ return false; }
 
 		var i: int = 0;
-		for let segment: string in ancestor.segments
+		for let segment: string in qualifier.segments
 		{
 			if segment =/= segments[i]
 				{ return false;}
@@ -142,10 +144,12 @@ public class Name
 		return true;
 	}
 
-	public is_child_of(self, parent: Name) -> bool
+	/// Whether the qualifier is the immediate qualifier of this name
+	// TODO this method name doesn't make it clear that the package could be unspecified
+	public qualifier_is(self, qualifier: Name) -> bool
 	{
-		return |parent.segments|+1 == |segments|
-			and is_descendant_of(parent);
+		return |qualifier.segments|+1 == |segments|
+			and is_qualified_with(qualifier);
 	}
 
 	// TODO this name is a little confusing, it is like equal except for the package

@@ -39,8 +39,8 @@ public /*mut*/ class Name_Subtable
 
 	public add(mut self, name: Name, type: Type) -> void
 	{
-		assert(name.is_descendant_of(self.name), "\""+name.full()+"\" is not a child of \""+self.name.full()+"\"");
-		if name.is_child_of(self.name)
+		assert(name.is_qualified_with(self.name), "\""+name.full()+"\" is not a child of \""+self.name.full()+"\"");
+		if name.qualifier_is(self.name)
 		{
 			if self.name.package == none and type =/= none and type.kind == NamespaceType
 			{
@@ -55,7 +55,7 @@ public /*mut*/ class Name_Subtable
 
 		for let subtable: mut Name_Subtable in subtables
 		{
-			if name.is_descendant_of(subtable.name)
+			if name.is_qualified_with(subtable.name)
 			{
 				subtable.add(name, type);
 				return;
@@ -113,7 +113,8 @@ public /*mut*/ class Name_Subtable
 		if name.names(self.name)
 		{
 			return self;
-		} else if not name.is_child_of(self.name)
+		}
+		else if not name.is_qualified_with(self.name)
 		{
 			return none;
 		}
