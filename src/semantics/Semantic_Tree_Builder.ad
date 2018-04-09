@@ -146,6 +146,7 @@ public /*mut*/ class Semantic_Tree_Builder
 				children.add(build(child_syntax, name_table, scope));
 			}
 			return new Semantic_Node.concrete(syntax, children);
+			// NOT_IMPLEMENTED("syntax.kind="+syntax.kind);
 		}
 	}
 
@@ -164,7 +165,7 @@ public /*mut*/ class Semantic_Tree_Builder
 			{
 				children.add(new Semantic_Node.token(parameter.first_child(Identifier)));
 				let type_syntax: Syntax_Node = parameter.children[2];
-				let type_node: Semantic_Node = build(type_syntax, name_table, scope);
+				let type_node: Semantic_Node = build_type_name(type_syntax, name_table, scope);
 				children.add(type_node);
 
 				nodes.add(new Semantic_Node.concrete(parameter, children));
@@ -212,19 +213,6 @@ public /*mut*/ class Semantic_Tree_Builder
 			{
 				return new Semantic_Node.referencing_type(entry.type, syntax, children);
 			}
-			// 	if node.is_missing { return; }
-			// 	let name: string = node.get_text();
-			// 	let symbol: Old_Symbol = scope.lookup(name); // TODO this should be lookup type. Types are separate
-			// 	if symbol == none
-			// 	{
-			// 		add_resolution_error(node);
-			// 	}
-			// 	else
-			// 	{
-			// 		node.bind_symbol(symbol);
-			// 		assert(symbol.declares_type =/= none, "symbol.name="+symbol.name);
-			// 		node.bind_type(symbol.declares_type);
-			// 	}
 		}
 		else if syntax.kind == QualifiedName
 		{
@@ -238,7 +226,7 @@ public /*mut*/ class Semantic_Tree_Builder
 			{
 				// This means we aren't sure about the qualifier (i.e. type unknown)
 				let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
-				add_resolution_error(name_node);
+				add_resolution_error(name_node, qualifier);
 				children.add(name_node);
 
 				let qualified_name: Semantic_Node = new Semantic_Node.concrete(syntax, children);
@@ -249,12 +237,14 @@ public /*mut*/ class Semantic_Tree_Builder
 			{
 				let containing_type: Type = qualifier.referenced_type;
 				let containing_scope: Name_Subtable = name_table.get(containing_type.name);
+				// `containing_scope` shouldn't be none, because we looked it up to get the name
+				assert(containing_scope =/= none, containing_type.name.full());
 				let referenced_scope: Name_Subtable = containing_scope.find(name_syntax.get_text());
 
 				if referenced_scope == none
 				{
 					let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
-					add_resolution_error(name_node);
+					add_resolution_error(name_node, qualifier);
 					children.add(name_node);
 					build_type_arguments(syntax, name_table, scope, children);
 					return new Semantic_Node.concrete(syntax, children);
@@ -372,6 +362,11 @@ public /*mut*/ class Semantic_Tree_Builder
 	private add_resolution_error(node: Semantic_Node) -> void
 	{
 		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
+	}
+
+	private add_resolution_error(node: Semantic_Node, qualifier: Semantic_Node) -> void
+	{
+		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "` because qualifier `" + qualifier.get_text() +"` could not be resolved."));
 	}
 
 	private add_could_not_determine_type_error(node: Semantic_Node) -> void

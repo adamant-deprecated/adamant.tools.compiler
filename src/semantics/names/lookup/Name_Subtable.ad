@@ -107,4 +107,24 @@ public /*mut*/ class Name_Subtable
 		}
 		return subtable;
 	}
+
+	public get(self, name: Name) -> Name_Subtable?
+	{
+		if name.names(self.name)
+		{
+			return self;
+		} else if not name.is_child_of(self.name)
+		{
+			return none;
+		}
+
+		for let subtable: Name_Subtable in subtables
+		{
+			let value: Name_Subtable? = subtable.get(name);
+			if value =/= none
+				{ return value; }
+		}
+
+		return none;
+	}
 }

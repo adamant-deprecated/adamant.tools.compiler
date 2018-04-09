@@ -8,8 +8,10 @@ public global_namespace_contains_added_name() -> void
 {
 	let name_table: Name_Table = new Name_Table();
 	let global_namespace: mut Name_Subtable = new Name_Subtable.global_namespace(name_table);
-	global_namespace.add(new Name(global_namespace.name, TypeName, "test"), none);
+	let test_name: Name = new Name(global_namespace.name, TypeName, "test");
+	global_namespace.add(test_name, none);
 	assert(global_namespace.find("test") =/= none, "");
+	assert(global_namespace.get(test_name) =/= none, "");
 }
 
 public namespace_contains_added_name() -> void

@@ -53,6 +53,20 @@ public /*mut*/ class Name_Table
 
 	public get(self, name: Name) -> Name_Subtable?
 	{
-		NOT_IMPLEMENTED("");
+		// TODO this condition isn't intention revealing
+		if name.package == none
+		{
+			return any_package.get(name);
+		}
+
+		for let package: Name_Subtable in packages
+		{
+			if name.is_child_of(package.name)
+			{
+				return package.get(name);
+			}
+		}
+
+		return none;
 	}
 }

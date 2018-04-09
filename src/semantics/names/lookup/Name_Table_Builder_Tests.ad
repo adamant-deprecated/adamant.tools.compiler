@@ -1,6 +1,7 @@
 public unit_test_Name_Table_Builder() -> void
 {
 	table_contains_referenced_child_names();
+	can_get_root_namespace_from_name();
 }
 
 public table_contains_referenced_child_names() -> void
@@ -15,4 +16,18 @@ public table_contains_referenced_child_names() -> void
 	let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
 	let namespace: Name_Subtable = name_table.any_package.find("System");
 	assert(namespace.find("Console") =/= none, "");
+}
+
+public can_get_root_namespace_from_name() -> void
+{
+	let name: Package_Name = new Package_Name("default");
+	let runtime_package: Package = new Runtime_Library_Package_Builder().build();
+	let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+	references.add(new Package_Reference(runtime_package));
+
+	let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
+	let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+	let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
+	let namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "System");
+	assert(name_table.get(namespace_name) =/= none, "");
 }
