@@ -187,39 +187,40 @@ public class Emitter
     {
         if syntax.kind == NewExpression
         {
-            builder.Error("NewExpression");
-            // var constructor_name: string = "construct";
-            // var type: Semantic_Node = syntax.children[1];
-            // if type.kind == QualifiedName
-            // {
-            //     let name: Semantic_Node = type.children[2];
+            var constructor_name: string = "construct";
+            var type_node: Semantic_Node = syntax.children[0];
+            if type_node.kind == QualifiedName
+            {
+                let name_node: Semantic_Node = type_node.children[1];
 
-            //     if name.kind == IdentifierName
-            //         and name.symbol.is_special_name
-            //         and not name.symbol.is_primitive
-            //     {
-            //         // Named constructor
-            //         constructor_name = "construct_" + name.get_text();
-            //         type = type.children[0];
-            //     }
-            // }
+                // We assume that if there is no type, then it is a named constructor
+                if name_node.kind == IdentifierName
+                    and name_node.referenced_type == none
+                {
+                    // Named constructor
+                    constructor_name = "construct_" + name_node.get_text();
+                    type_node = type_node.children[0];
+                }
+            }
 
-            // if type.is_value_type()
-            // {
-            //     // place value types on the stack in C++ by not using new
-            //     builder.Write(convert_type_name(type));
-            //     builder.Write("::");
-            //     builder.Write(constructor_name);
-            // }
-            // else
-            // {
-            //     builder.Write("(new ");
-            //     builder.Write(convert_type_name(type));
-            //     builder.Write("())->");
-            //     builder.Write(constructor_name);
-            // }
-            // let argumentList: Semantic_Node = syntax.children[2];
-            // convert_expression(argumentList, builder);
+            let type: Type = type_node.referenced_type;
+            assert(type =/= none, type_node.get_text());
+            if type.is_value_type
+            {
+                // place value types on the stack in C++ by not using new
+                builder.Write(convert_type_name(type));
+                builder.Write("::");
+                builder.Write(constructor_name);
+            }
+            else
+            {
+                builder.Write("(new ");
+                builder.Write(convert_type_name(type));
+                builder.Write("())->");
+                builder.Write(constructor_name);
+            }
+            let argumentList: Semantic_Node = syntax.children[1];
+            convert_expression(argumentList, builder);
         }
         else if syntax.kind == ArgumentList
         {
