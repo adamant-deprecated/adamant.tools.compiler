@@ -2,382 +2,382 @@
 /// This class actually builds up the semantic tree for the package
 public /*mut*/ class Semantic_Tree_Builder
 {
-	public build(self,
-		package_syntax: Syntax_Node,
-		name_table: Name_Table)
-		-> System.Collections.List<Compilation_Unit>
-	{
-		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
-		// TODO remove below assertion once this if fixed
-		assert(name_table.any_package.lookup_special("string") =/= none, "name_table.any_package.name="+name_table.any_package.name.full());
+    public build(self,
+        package_syntax: Syntax_Node,
+        name_table: Name_Table)
+        -> System.Collections.List<Compilation_Unit>
+    {
+        assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+        // TODO remove below assertion once this if fixed
+        assert(name_table.any_package.lookup_special("string") =/= none, "name_table.any_package.name="+name_table.any_package.name.full());
 
-		let compilation_units: mut System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
+        let compilation_units: mut System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
 
-		for let compilation_unit_syntax: Syntax_Node in package_syntax.children
-		{
-			compilation_units.add(build_compilation_unit(compilation_unit_syntax, name_table));
-		}
-		return compilation_units;
-	}
+        for let compilation_unit_syntax: Syntax_Node in package_syntax.children
+        {
+            compilation_units.add(build_compilation_unit(compilation_unit_syntax, name_table));
+        }
+        return compilation_units;
+    }
 
-	private build_compilation_unit(self,
-		compilation_unit_syntax: Syntax_Node,
-		name_table: Name_Table)
-		-> Compilation_Unit
-	{
-		assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + compilation_unit_syntax.kind);
+    private build_compilation_unit(self,
+        compilation_unit_syntax: Syntax_Node,
+        name_table: Name_Table)
+        -> Compilation_Unit
+    {
+        assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + compilation_unit_syntax.kind);
 
-		let scope: Name_Subtable = none; //name_table; // TODO this isn't right, we need to load the correct one
-		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-		for let declaration_syntax: Syntax_Node in compilation_unit_syntax.children
-		{
-			declarations.add(build(declaration_syntax, name_table, name_table.any_package));
-		}
-		return new Compilation_Unit(compilation_unit_syntax.source, declarations);
-	}
+        let scope: Name_Subtable = none; //name_table; // TODO this isn't right, we need to load the correct one
+        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        for let declaration_syntax: Syntax_Node in compilation_unit_syntax.children
+        {
+            declarations.add(build(declaration_syntax, name_table, name_table.any_package));
+        }
+        return new Compilation_Unit(compilation_unit_syntax.source, declarations);
+    }
 
-	private build(self,
-		syntax: Syntax_Node,
-		name_table: Name_Table,
-		scope: Name_Subtable)
-		-> Semantic_Node
-	{
-		let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-		if syntax.kind == FunctionDeclaration
-			or syntax.kind == MethodDeclaration
-		{
-			children.add(build(syntax.access_modifier(), name_table, scope));
-			let function_name: Syntax_Node = syntax.first_child(Identifier);
-			children.add(build(function_name, name_table, scope));
-			build_parameters(syntax, name_table, scope, children);
+    private build(self,
+        syntax: Syntax_Node,
+        name_table: Name_Table,
+        scope: Name_Subtable)
+        -> Semantic_Node
+    {
+        let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        if syntax.kind == FunctionDeclaration
+            or syntax.kind == MethodDeclaration
+        {
+            children.add(build(syntax.access_modifier(), name_table, scope));
+            let function_name: Syntax_Node = syntax.first_child(Identifier);
+            children.add(build(function_name, name_table, scope));
+            build_parameters(syntax, name_table, scope, children);
 
-			let return_type: Syntax_Node = syntax.children[4]; // TODO need more reliable way to pick this out
-			children.add(build(return_type, name_table, scope));
+            let return_type: Syntax_Node = syntax.children[4]; // TODO need more reliable way to pick this out
+            children.add(build(return_type, name_table, scope));
 
-			let function_scope: Name_Subtable = scope.find(function_name.get_text());
-			assert(function_scope =/= none, "function_name.get_text()="+function_name.get_text());
-			let body: Syntax_Node = syntax.first_child(Block);
-			if body =/= none
-			{
-				children.add(build(body, name_table, function_scope));
-			}
+            let function_scope: Name_Subtable = scope.find(function_name.get_text());
+            assert(function_scope =/= none, "function_name.get_text()="+function_name.get_text());
+            let body: Syntax_Node = syntax.first_child(Block);
+            if body =/= none
+            {
+                children.add(build(body, name_table, function_scope));
+            }
 
-			// TODO what about the function type?
-			return new Semantic_Node.concrete(syntax, children);
-		}
-		else if syntax.kind == ClassDeclaration
-			or syntax.kind == StructDeclaration
-		{
-			let type_name: Syntax_Node = syntax.first_child(Identifier);
-			children.add(build(type_name, name_table, scope));
-			let type_scope: Name_Subtable = scope.find(type_name.get_text());
-			assert(type_scope =/= none, "type_name.get_text()="+type_name.get_text());
-			let body: Syntax_Node = syntax.first_child(Block);
-			if body =/= none
-			{
-				children.add(build(body, name_table, type_scope));
-			}
+            // TODO what about the function type?
+            return new Semantic_Node.concrete(syntax, children);
+        }
+        else if syntax.kind == ClassDeclaration
+            or syntax.kind == StructDeclaration
+        {
+            let type_name: Syntax_Node = syntax.first_child(Identifier);
+            children.add(build(type_name, name_table, scope));
+            let type_scope: Name_Subtable = scope.find(type_name.get_text());
+            assert(type_scope =/= none, "type_name.get_text()="+type_name.get_text());
+            let body: Syntax_Node = syntax.first_child(Block);
+            if body =/= none
+            {
+                children.add(build(body, name_table, type_scope));
+            }
 
-			// TODO what about the class/struct type?
-			return new Semantic_Node.concrete(syntax, children);
-		}
-		else if syntax.kind == ConstructorDeclaration
-		{
-			children.add(build(syntax.access_modifier(), name_table, scope));
-			var full_name: string = "new";
-			let constructor_name: Syntax_Node? = syntax.first_child(Identifier);
-			if constructor_name =/= none
-			{
-				full_name = "new_" + constructor_name.get_text();
-				children.add(new Semantic_Node.token(constructor_name));
-			}
+            // TODO what about the class/struct type?
+            return new Semantic_Node.concrete(syntax, children);
+        }
+        else if syntax.kind == ConstructorDeclaration
+        {
+            children.add(build(syntax.access_modifier(), name_table, scope));
+            var full_name: string = "new";
+            let constructor_name: Syntax_Node? = syntax.first_child(Identifier);
+            if constructor_name =/= none
+            {
+                full_name = "new_" + constructor_name.get_text();
+                children.add(new Semantic_Node.token(constructor_name));
+            }
 
-			let parameters: Syntax_Node = syntax.first_child(ParameterList);
-			build_parameters(syntax, name_table, scope, children);
+            let parameters: Syntax_Node = syntax.first_child(ParameterList);
+            build_parameters(syntax, name_table, scope, children);
 
-			let constructor_scope: Name_Subtable = scope.find_special(full_name);
-			assert(constructor_scope =/= none, "full_name="+full_name);
-			let body: Syntax_Node = syntax.first_child(Block);
-			if body =/= none
-			{
-				children.add(build(body, name_table, constructor_scope));
-			}
+            let constructor_scope: Name_Subtable = scope.find_special(full_name);
+            assert(constructor_scope =/= none, "full_name="+full_name);
+            let body: Syntax_Node = syntax.first_child(Block);
+            if body =/= none
+            {
+                children.add(build(body, name_table, constructor_scope));
+            }
 
-			// TODO what about the function type?
-			return new Semantic_Node.concrete(syntax, children);
-		}
-		else if syntax.kind == IdentifierName
-		{
-			let node: Semantic_Node = new Semantic_Node.token(syntax);
-			if scope.lookup(syntax.get_text()) == none
-				and not node.is_missing
-			{
-				add_resolution_error(node);
-			}
-			return node;
-		}
-		else if syntax.kind == MemberAccessExpression
-		{
-			// Before dot
-			children.add(build(syntax.children[0], name_table, scope));
-			// After dot
-			// TODO bind member, need type of expression to left
-			children.add(new Semantic_Node.token(syntax.children[2]));
-			// TODO what about the expression type
-			return new Semantic_Node.concrete(syntax, children);
-		}
-		else if syntax.kind == NewExpression
-		{
-			children.add(build_constructor_name(syntax.children[1], name_table, scope)); // Type
-			children.add(build(syntax.first_child(ArgumentList), name_table, scope)); // Call Arguments
-			return new Semantic_Node.concrete(syntax, children);
-		}
-		else if |syntax.children| == 0
-		{
-			// Create a semantic node to represent the token
-			return new Semantic_Node.token(syntax);
-		}
-		else
-		{
-			// TODO this is a temporary measure to build up the tree.
-			//      replace with specific constructions
-			for let child_syntax: Syntax_Node in syntax.children
-			{
-				children.add(build(child_syntax, name_table, scope));
-			}
-			return new Semantic_Node.concrete(syntax, children);
-			// NOT_IMPLEMENTED("syntax.kind="+syntax.kind);
-		}
-	}
+            // TODO what about the function type?
+            return new Semantic_Node.concrete(syntax, children);
+        }
+        else if syntax.kind == IdentifierName
+        {
+            let node: Semantic_Node = new Semantic_Node.token(syntax);
+            if scope.lookup(syntax.get_text()) == none
+                and not node.is_missing
+            {
+                add_resolution_error(node);
+            }
+            return node;
+        }
+        else if syntax.kind == MemberAccessExpression
+        {
+            // Before dot
+            children.add(build(syntax.children[0], name_table, scope));
+            // After dot
+            // TODO bind member, need type of expression to left
+            children.add(new Semantic_Node.token(syntax.children[2]));
+            // TODO what about the expression type
+            return new Semantic_Node.concrete(syntax, children);
+        }
+        else if syntax.kind == NewExpression
+        {
+            children.add(build_constructor_name(syntax.children[1], name_table, scope)); // Type
+            children.add(build(syntax.first_child(ArgumentList), name_table, scope)); // Call Arguments
+            return new Semantic_Node.concrete(syntax, children);
+        }
+        else if |syntax.children| == 0
+        {
+            // Create a semantic node to represent the token
+            return new Semantic_Node.token(syntax);
+        }
+        else
+        {
+            // TODO this is a temporary measure to build up the tree.
+            //      replace with specific constructions
+            for let child_syntax: Syntax_Node in syntax.children
+            {
+                children.add(build(child_syntax, name_table, scope));
+            }
+            return new Semantic_Node.concrete(syntax, children);
+            // NOT_IMPLEMENTED("syntax.kind="+syntax.kind);
+        }
+    }
 
-	private build_parameters(self,
-		syntax: Syntax_Node,
-		name_table: Name_Table,
-		scope: Name_Subtable,
-		nodes: mut System.Collections.List<Semantic_Node>)
-		-> void
-	{
-		let parameter_list: Syntax_Node = syntax.first_child(ParameterList);
-		for let parameter: Syntax_Node in parameter_list.parameters()
-		{
-			let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-			if parameter.kind == Parameter
-			{
-				children.add(new Semantic_Node.token(parameter.first_child(Identifier)));
+    private build_parameters(self,
+        syntax: Syntax_Node,
+        name_table: Name_Table,
+        scope: Name_Subtable,
+        nodes: mut System.Collections.List<Semantic_Node>)
+        -> void
+    {
+        let parameter_list: Syntax_Node = syntax.first_child(ParameterList);
+        for let parameter: Syntax_Node in parameter_list.parameters()
+        {
+            let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+            if parameter.kind == Parameter
+            {
+                children.add(new Semantic_Node.token(parameter.first_child(Identifier)));
                 // Because a parameter can have `var` at the beginning, the position of the type isn't constant
-				let type_syntax: Syntax_Node = parameter.children[|parameter.children| - 1];
-				let type_node: Semantic_Node = build_type_name(type_syntax, name_table, scope);
-				children.add(type_node);
+                let type_syntax: Syntax_Node = parameter.children[|parameter.children| - 1];
+                let type_node: Semantic_Node = build_type_name(type_syntax, name_table, scope);
+                children.add(type_node);
 
-				nodes.add(new Semantic_Node.concrete(parameter, children));
-				// TODO nodes.add(new Semantic_Node.of_type(type_node.referenced_type, parameter, children));
-			}
-			else if parameter.kind == SelfParameter
-			{
-				// TODO figure out the class type and call new Semantic_Node.of_type
-				nodes.add(new Semantic_Node.concrete(parameter, children));
-			}
-			else
-			{
-				NOT_IMPLEMENTED("parameter.kind="+parameter.kind);
-			}
-		}
-	}
+                nodes.add(new Semantic_Node.concrete(parameter, children));
+                // TODO nodes.add(new Semantic_Node.of_type(type_node.referenced_type, parameter, children));
+            }
+            else if parameter.kind == SelfParameter
+            {
+                // TODO figure out the class type and call new Semantic_Node.of_type
+                nodes.add(new Semantic_Node.concrete(parameter, children));
+            }
+            else
+            {
+                NOT_IMPLEMENTED("parameter.kind="+parameter.kind);
+            }
+        }
+    }
 
-	private build_type_name(self,
-		syntax: Syntax_Node,
-		name_table: Name_Table,
-		scope: Name_Subtable)
-		-> Semantic_Node
-	{
-		let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+    private build_type_name(self,
+        syntax: Syntax_Node,
+        name_table: Name_Table,
+        scope: Name_Subtable)
+        -> Semantic_Node
+    {
+        let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 
-		if syntax.kind == PredefinedType
-		{
-			let primitive_name: string = syntax.children[0].get_text();
-			let primitive_entry: Name_Subtable? = scope.lookup_special(primitive_name); // TODO this should be lookup type. Types are separate
-			assert(primitive_entry =/= none, "No entry for primitive `"+primitive_name+"`");
-			return new Semantic_Node.referencing_type(primitive_entry.type, syntax, children);
-		}
-		else if syntax.kind == IdentifierName
-		{
-			if syntax.is_missing { return new Semantic_Node.token(syntax); }
-			let name: string = syntax.get_text();
-			let entry: Name_Subtable? = scope.lookup(name); // TODO this should be lookup type. Types are separate
-			if entry == none
-			{
-				let node: Semantic_Node = new Semantic_Node.token(syntax);
-				add_resolution_error(node);
-				return node;
-			}
-			else
-			{
-				return new Semantic_Node.referencing_type(entry.type, syntax, children);
-			}
-		}
-		else if syntax.kind == QualifiedName
-		{
-			let qualifier_syntax: Syntax_Node = syntax.children[0];
-			let qualifier: Semantic_Node = build_type_name(qualifier_syntax, name_table, scope);
-			children.add(qualifier);
+        if syntax.kind == PredefinedType
+        {
+            let primitive_name: string = syntax.children[0].get_text();
+            let primitive_entry: Name_Subtable? = scope.lookup_special(primitive_name); // TODO this should be lookup type. Types are separate
+            assert(primitive_entry =/= none, "No entry for primitive `"+primitive_name+"`");
+            return new Semantic_Node.referencing_type(primitive_entry.type, syntax, children);
+        }
+        else if syntax.kind == IdentifierName
+        {
+            if syntax.is_missing { return new Semantic_Node.token(syntax); }
+            let name: string = syntax.get_text();
+            let entry: Name_Subtable? = scope.lookup(name); // TODO this should be lookup type. Types are separate
+            if entry == none
+            {
+                let node: Semantic_Node = new Semantic_Node.token(syntax);
+                add_resolution_error(node);
+                return node;
+            }
+            else
+            {
+                return new Semantic_Node.referencing_type(entry.type, syntax, children);
+            }
+        }
+        else if syntax.kind == QualifiedName
+        {
+            let qualifier_syntax: Syntax_Node = syntax.children[0];
+            let qualifier: Semantic_Node = build_type_name(qualifier_syntax, name_table, scope);
+            children.add(qualifier);
 
-			let name_syntax: Syntax_Node = syntax.children[2];
+            let name_syntax: Syntax_Node = syntax.children[2];
 
-			if qualifier.referenced_type == none
-			{
-				// This means we aren't sure about the qualifier (i.e. type unknown)
-				let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
-				add_resolution_error(name_node, qualifier);
-				children.add(name_node);
+            if qualifier.referenced_type == none
+            {
+                // This means we aren't sure about the qualifier (i.e. type unknown)
+                let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
+                add_resolution_error(name_node, qualifier);
+                children.add(name_node);
 
-				let qualified_name: Semantic_Node = new Semantic_Node.concrete(syntax, children);
-				add_could_not_determine_type_error(qualified_name);
-				return qualified_name;
-			}
-			else
-			{
-				let containing_type: Type = qualifier.referenced_type;
-				let containing_scope: Name_Subtable = name_table.get(containing_type.name);
-				// `containing_scope` shouldn't be none, because we looked it up to get the name
-				assert(containing_scope =/= none, containing_type.name.full());
-				let referenced_scope: Name_Subtable = containing_scope.find(name_syntax.get_text());
+                let qualified_name: Semantic_Node = new Semantic_Node.concrete(syntax, children);
+                add_could_not_determine_type_error(qualified_name);
+                return qualified_name;
+            }
+            else
+            {
+                let containing_type: Type = qualifier.referenced_type;
+                let containing_scope: Name_Subtable = name_table.get(containing_type.name);
+                // `containing_scope` shouldn't be none, because we looked it up to get the name
+                assert(containing_scope =/= none, containing_type.name.full());
+                let referenced_scope: Name_Subtable = containing_scope.find(name_syntax.get_text());
 
-				if referenced_scope == none
-				{
-					let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
-					add_resolution_error(name_node, qualifier);
-					children.add(name_node);
-					build_type_arguments(syntax, name_table, scope, children);
-					return new Semantic_Node.concrete(syntax, children);
-				}
+                if referenced_scope == none
+                {
+                    let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
+                    add_resolution_error(name_node, qualifier);
+                    children.add(name_node);
+                    build_type_arguments(syntax, name_table, scope, children);
+                    return new Semantic_Node.concrete(syntax, children);
+                }
 
-				let referenced_type: Type = referenced_scope.type;
-				let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type, name_syntax, new System.Collections.List<Semantic_Node>());
-				children.add(name_node);
-				build_type_arguments(syntax, name_table, scope, children);
-				return new Semantic_Node.referencing_type(referenced_type, syntax, children);
-			}
+                let referenced_type: Type = referenced_scope.type;
+                let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type, name_syntax, new System.Collections.List<Semantic_Node>());
+                children.add(name_node);
+                build_type_arguments(syntax, name_table, scope, children);
+                return new Semantic_Node.referencing_type(referenced_type, syntax, children);
+            }
 
-			UNREACHABLE();
-		}
-		else if syntax.kind == MutableType
-		{
-			let inner_type: Semantic_Node = build_type_name(syntax.children[1], name_table, scope);
-			children.add(inner_type);
-			if inner_type.referenced_type == none
-			{
-				add_could_not_determine_type_error(inner_type);
-				return new Semantic_Node.concrete(syntax, children);
-			}
-			let type: Type = inner_type.referenced_type.make_mutable();
-			return new Semantic_Node.referencing_type(type, syntax, children);
-		}
-		else if syntax.kind == ImmutableType
-		{
-			let inner_type: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
-			children.add(inner_type);
-			if inner_type.referenced_type == none
-			{
-				add_could_not_determine_type_error(inner_type);
-				return new Semantic_Node.concrete(syntax, children);
-			}
-			let type: Type = inner_type.referenced_type.make_immutable();
-			return new Semantic_Node.referencing_type(type, syntax, children);
-		}
-		else if syntax.kind == OptionalType
-		{
-			let inner_type: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
-			children.add(inner_type);
-			if inner_type.referenced_type == none
-			{
-				add_could_not_determine_type_error(inner_type);
-				return new Semantic_Node.concrete(syntax, children);
-			}
-			// TODO construct an actual optional type
-			let type: Type = inner_type.referenced_type.make_immutable();
-			return new Semantic_Node.referencing_type(type, syntax, children);
-		}
-		else
-		{
-			// TODO this is a temporary measure to build up the tree.
-			//      replace with specific constructions
-			// for let child_syntax: Syntax_Node in syntax.children
-			// {
-			// 	children.add(build_type_name(child_syntax, name_table, scope));
-			// }
-			// return new Semantic_Node.concrete(syntax, children);
+            UNREACHABLE();
+        }
+        else if syntax.kind == MutableType
+        {
+            let inner_type: Semantic_Node = build_type_name(syntax.children[1], name_table, scope);
+            children.add(inner_type);
+            if inner_type.referenced_type == none
+            {
+                add_could_not_determine_type_error(inner_type);
+                return new Semantic_Node.concrete(syntax, children);
+            }
+            let type: Type = inner_type.referenced_type.make_mutable();
+            return new Semantic_Node.referencing_type(type, syntax, children);
+        }
+        else if syntax.kind == ImmutableType
+        {
+            let inner_type: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
+            children.add(inner_type);
+            if inner_type.referenced_type == none
+            {
+                add_could_not_determine_type_error(inner_type);
+                return new Semantic_Node.concrete(syntax, children);
+            }
+            let type: Type = inner_type.referenced_type.make_immutable();
+            return new Semantic_Node.referencing_type(type, syntax, children);
+        }
+        else if syntax.kind == OptionalType
+        {
+            let inner_type: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
+            children.add(inner_type);
+            if inner_type.referenced_type == none
+            {
+                add_could_not_determine_type_error(inner_type);
+                return new Semantic_Node.concrete(syntax, children);
+            }
+            // TODO construct an actual optional type
+            let type: Type = inner_type.referenced_type.make_immutable();
+            return new Semantic_Node.referencing_type(type, syntax, children);
+        }
+        else
+        {
+            // TODO this is a temporary measure to build up the tree.
+            //      replace with specific constructions
+            // for let child_syntax: Syntax_Node in syntax.children
+            // {
+            // 	children.add(build_type_name(child_syntax, name_table, scope));
+            // }
+            // return new Semantic_Node.concrete(syntax, children);
             let place: int = syntax.start;
-			NOT_IMPLEMENTED("syntax.kind="+syntax.kind+" at "+place);
-		}
-	}
+            NOT_IMPLEMENTED("syntax.kind="+syntax.kind+" at "+place);
+        }
+    }
 
-	private build_type_arguments(self,
-		syntax: Syntax_Node,
-		name_table: Name_Table,
-		scope: Name_Subtable,
-		children: mut System.Collections.List<Semantic_Node>)
-		-> void
-	{
-		// TODO need way to get the generic type arguments
-		var in_type_arguments: bool = false;
-		for let type_argument: Syntax_Node in syntax.children
-		{
-			if in_type_arguments
-			{
-				if type_argument.kind =/= GreaterThan
-				{
-					children.add(build_type_name(type_argument, name_table, scope));
-				}
-			}
-			else if type_argument.kind == LessThan
-			{
-				in_type_arguments = true;
-			}
-		}
-	}
+    private build_type_arguments(self,
+        syntax: Syntax_Node,
+        name_table: Name_Table,
+        scope: Name_Subtable,
+        children: mut System.Collections.List<Semantic_Node>)
+        -> void
+    {
+        // TODO need way to get the generic type arguments
+        var in_type_arguments: bool = false;
+        for let type_argument: Syntax_Node in syntax.children
+        {
+            if in_type_arguments
+            {
+                if type_argument.kind =/= GreaterThan
+                {
+                    children.add(build_type_name(type_argument, name_table, scope));
+                }
+            }
+            else if type_argument.kind == LessThan
+            {
+                in_type_arguments = true;
+            }
+        }
+    }
 
-	private build_constructor_name(self,
-		syntax: Syntax_Node,
-		name_table: Name_Table,
-		scope: Name_Subtable)
-		-> Semantic_Node
-	{
-		if syntax.kind == QualifiedName
-			and syntax.children[2].kind == IdentifierName
-		{
-			let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-			// It could be a named constructor call
-			let type_node: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
-			children.add(type_node);
-			let qualifier: Syntax_Node = syntax.children[0];
-			let name: Syntax_Node = syntax.children[2];
-			let constructor_name: string = "new_" + name.get_text();
-			let referenced_type: Type = type_node.referenced_type;
-			assert(referenced_type =/= none, "no referenced type for `"+type_node.get_text()+"`");
-			let constructor_scope: Name_Subtable? = name_table.get(referenced_type.name).lookup_special(constructor_name);
-			if constructor_scope =/= none
-			{
-				children.add(new Semantic_Node.token(name));
-				// Need referenced name etc
-				return new Semantic_Node.concrete(syntax, children);
-			}
-		}
+    private build_constructor_name(self,
+        syntax: Syntax_Node,
+        name_table: Name_Table,
+        scope: Name_Subtable)
+        -> Semantic_Node
+    {
+        if syntax.kind == QualifiedName
+            and syntax.children[2].kind == IdentifierName
+        {
+            let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+            // It could be a named constructor call
+            let type_node: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
+            children.add(type_node);
+            let qualifier: Syntax_Node = syntax.children[0];
+            let name: Syntax_Node = syntax.children[2];
+            let constructor_name: string = "new_" + name.get_text();
+            let referenced_type: Type = type_node.referenced_type;
+            assert(referenced_type =/= none, "no referenced type for `"+type_node.get_text()+"`");
+            let constructor_scope: Name_Subtable? = name_table.get(referenced_type.name).lookup_special(constructor_name);
+            if constructor_scope =/= none
+            {
+                children.add(new Semantic_Node.token(name));
+                // Need referenced name etc
+                return new Semantic_Node.concrete(syntax, children);
+            }
+        }
 
-		return build_type_name(syntax, name_table, scope);
-	}
+        return build_type_name(syntax, name_table, scope);
+    }
 
-	private add_resolution_error(node: Semantic_Node) -> void
-	{
-		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
-	}
+    private add_resolution_error(node: Semantic_Node) -> void
+    {
+        node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
+    }
 
-	private add_resolution_error(node: Semantic_Node, qualifier: Semantic_Node) -> void
-	{
-		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "` because qualifier `" + qualifier.get_text() +"` could not be resolved."));
-	}
+    private add_resolution_error(node: Semantic_Node, qualifier: Semantic_Node) -> void
+    {
+        node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "` because qualifier `" + qualifier.get_text() +"` could not be resolved."));
+    }
 
-	private add_could_not_determine_type_error(node: Semantic_Node) -> void
-	{
-		node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not determine type for `" + node.get_text() + "`"));
-	}
+    private add_could_not_determine_type_error(node: Semantic_Node) -> void
+    {
+        node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not determine type for `" + node.get_text() + "`"));
+    }
 }

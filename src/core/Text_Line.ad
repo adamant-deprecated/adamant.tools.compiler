@@ -1,26 +1,26 @@
 public class Text_Line
 {
-	public let source: Source_Text;
-	public let start: int;
-	public let byte_length: int;
+    public let source: Source_Text;
+    public let start: int;
+    public let byte_length: int;
 
-	public new(source: Source_Text, start: int, length: int)
-	{
-		self.source = source;
-		self.start = start;
-		byte_length = length;
-	}
+    public new(source: Source_Text, start: int, length: int)
+    {
+        self.source = source;
+        self.start = start;
+        byte_length = length;
+    }
 
-	public new spanning(source: Source_Text, start: int, end: int)
-	{
-		self.source = source;
-		self.start = start;
-		self.byte_length = end - start;
-	}
+    public new spanning(source: Source_Text, start: int, end: int)
+    {
+        self.source = source;
+        self.start = start;
+        self.byte_length = end - start;
+    }
 
-	// TODO get Property
-	public End(self) -> int
-	{
-		return start + byte_length;
-	}
+    // TODO get Property
+    public End(self) -> int
+    {
+        return start + byte_length;
+    }
 }

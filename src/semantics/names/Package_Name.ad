@@ -4,17 +4,17 @@
 // TODO this should be more like a typed string
 public class Package_Name
 {
-	public let unqualified: string;
+    public let unqualified: string;
 
-	public new(name: string)
-	{
-		assert(name.ByteLength() > 0, "");
-		self.unqualified = name;
-	}
+    public new(name: string)
+    {
+        assert(name.ByteLength() > 0, "");
+        self.unqualified = name;
+    }
 
-	// TODO get
-	public full(self) -> string
-	{
-		return unqualified;
-	}
+    // TODO get
+    public full(self) -> string
+    {
+        return unqualified;
+    }
 }

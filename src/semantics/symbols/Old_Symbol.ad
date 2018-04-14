@@ -2,144 +2,144 @@
 /// they don't internally store names so that they are not interdependent.
 public class Old_Symbol
 {
-	public let name: string;
-	public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
-	public let is_primitive: bool; // TODO does this belong here? Part of type
-	public let of_type: Type; // for variables and parameters, the type of the value they represent
-	public let declares_type: Type; // for class/struct/enum symbols, the type being declared
-	// TODO declarations should be immutable
-	public let declarations: mut System.Collections.List<Old_Semantic_Node>;
-	// TODO children should be immutable
-	public let children: mut System.Collections.List<Old_Symbol>;
+    public let name: string;
+    public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
+    public let is_primitive: bool; // TODO does this belong here? Part of type
+    public let of_type: Type; // for variables and parameters, the type of the value they represent
+    public let declares_type: Type; // for class/struct/enum symbols, the type being declared
+    // TODO declarations should be immutable
+    public let declarations: mut System.Collections.List<Old_Semantic_Node>;
+    // TODO children should be immutable
+    public let children: mut System.Collections.List<Old_Symbol>;
 
-	public new identifier(name: string)
-	{
-		assert(name.ByteLength() > 0, "");
-		self.name = name;
-		self.kind = IdentifierSymbol;
-		self.is_primitive = false;
-		self.of_type = none;
-		self.declares_type = none;
-		self.declarations = new System.Collections.List<Old_Semantic_Node>();
-		self.children = new System.Collections.List<Old_Symbol>();
-	}
+    public new identifier(name: string)
+    {
+        assert(name.ByteLength() > 0, "");
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_primitive = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = new System.Collections.List<Old_Semantic_Node>();
+        self.children = new System.Collections.List<Old_Symbol>();
+    }
 
-	public new special(name: string)
-	{
-		assert(name.ByteLength() > 0, "");
-		self.name = name;
-		self.kind = Old_SpecialSymbol;
-		self.is_primitive = false;
-		self.of_type = none;
-		self.declares_type = none;
-		self.declarations = new System.Collections.List<Old_Semantic_Node>();
-		self.children = new System.Collections.List<Old_Symbol>();
-	}
+    public new special(name: string)
+    {
+        assert(name.ByteLength() > 0, "");
+        self.name = name;
+        self.kind = Old_SpecialSymbol;
+        self.is_primitive = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = new System.Collections.List<Old_Semantic_Node>();
+        self.children = new System.Collections.List<Old_Symbol>();
+    }
 
-	public new identifier(name: string, declarations: System.Collections.List<Old_Semantic_Node>)
-	{
-		assert(name.ByteLength() > 0, "");
-		assert(declarations =/= none, "name="+name);
-		self.name = name;
-		self.kind = IdentifierSymbol;
-		self.is_primitive = false;
-		self.of_type = none;
-		self.declares_type = none;
-		self.declarations = mutable_copy(declarations);
-		self.children = new System.Collections.List<Old_Symbol>();
-	}
+    public new identifier(name: string, declarations: System.Collections.List<Old_Semantic_Node>)
+    {
+        assert(name.ByteLength() > 0, "");
+        assert(declarations =/= none, "name="+name);
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_primitive = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = mutable_copy(declarations);
+        self.children = new System.Collections.List<Old_Symbol>();
+    }
 
-	public new package(name: string, children: System.Collections.List<Old_Symbol>)
-	{
-		assert(name.ByteLength() > 0, "");
-		assert(children =/= none, "name="+name);
-		self.name = name;
-		self.kind = PackageSymbol;
-		is_primitive = false;
-		self.of_type = none;
-		self.declares_type = none;
-		declarations = new System.Collections.List<Old_Semantic_Node>();
-		self.children = mutable_copy(children);
-	}
+    public new package(name: string, children: System.Collections.List<Old_Symbol>)
+    {
+        assert(name.ByteLength() > 0, "");
+        assert(children =/= none, "name="+name);
+        self.name = name;
+        self.kind = PackageSymbol;
+        is_primitive = false;
+        self.of_type = none;
+        self.declares_type = none;
+        declarations = new System.Collections.List<Old_Semantic_Node>();
+        self.children = mutable_copy(children);
+    }
 
-	public new declaring(
-		declares_type: Type,
-		declarations: System.Collections.List<Old_Semantic_Node>,
-		children: System.Collections.List<Old_Symbol>)
-	{
-		assert(declares_type =/= none, "");
-		assert(declarations =/= none, "name="+declares_type.name.unqualified());
-		assert(children =/= none, "name="+declares_type.name.unqualified());
-		self.name = declares_type.name.unqualified();
-		if declares_type.is_primitive
-			{ self.kind = Old_SpecialSymbol; }
-		else
-			{ self.kind = IdentifierSymbol; }
-		self.is_primitive = declares_type.is_primitive;
-		self.of_type = none;
-		self.declares_type = declares_type;
-		self.declarations = mutable_copy(declarations);
-		self.children = mutable_copy(children);
-	}
+    public new declaring(
+        declares_type: Type,
+        declarations: System.Collections.List<Old_Semantic_Node>,
+        children: System.Collections.List<Old_Symbol>)
+    {
+        assert(declares_type =/= none, "");
+        assert(declarations =/= none, "name="+declares_type.name.unqualified());
+        assert(children =/= none, "name="+declares_type.name.unqualified());
+        self.name = declares_type.name.unqualified();
+        if declares_type.is_primitive
+            { self.kind = Old_SpecialSymbol; }
+        else
+            { self.kind = IdentifierSymbol; }
+        self.is_primitive = declares_type.is_primitive;
+        self.of_type = none;
+        self.declares_type = declares_type;
+        self.declarations = mutable_copy(declarations);
+        self.children = mutable_copy(children);
+    }
 
-	private mutable_copy(symbols: System.Collections.List<Old_Symbol>) -> mut System.Collections.List<Old_Symbol>
-	{
-		let copy: mut System.Collections.List<Old_Symbol> = new System.Collections.List<Old_Symbol>();
-		for let symbol: Old_Symbol in symbols
-		{
-			copy.add(symbol);
-		}
-		return copy;
-	}
+    private mutable_copy(symbols: System.Collections.List<Old_Symbol>) -> mut System.Collections.List<Old_Symbol>
+    {
+        let copy: mut System.Collections.List<Old_Symbol> = new System.Collections.List<Old_Symbol>();
+        for let symbol: Old_Symbol in symbols
+        {
+            copy.add(symbol);
+        }
+        return copy;
+    }
 
-	private mutable_copy(declarations: System.Collections.List<Old_Semantic_Node>) -> mut System.Collections.List<Old_Semantic_Node>
-	{
-		let copy: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
-		for let declaration: Old_Semantic_Node in declarations
-		{
-			copy.add(declaration);
-		}
-		return copy;
-	}
+    private mutable_copy(declarations: System.Collections.List<Old_Semantic_Node>) -> mut System.Collections.List<Old_Semantic_Node>
+    {
+        let copy: mut System.Collections.List<Old_Semantic_Node> = new System.Collections.List<Old_Semantic_Node>();
+        for let declaration: Old_Semantic_Node in declarations
+        {
+            copy.add(declaration);
+        }
+        return copy;
+    }
 
-	// TODO change to operator []
-	public get(self, name: string, kind: int) -> Old_Symbol?
-	{
-		for let child: Old_Symbol in children
-		{
-			if child.name == name and child.kind == kind
-			{
-				return child;
-			}
-		}
-		return none;
-	}
+    // TODO change to operator []
+    public get(self, name: string, kind: int) -> Old_Symbol?
+    {
+        for let child: Old_Symbol in children
+        {
+            if child.name == name and child.kind == kind
+            {
+                return child;
+            }
+        }
+        return none;
+    }
 
-	// TODO remove once unused by old semantic analyzer stuff
-	public declares_value_type(self) -> bool
-	{
-		if declares_type =/= none
-		{
-			return declares_type.is_value_type;
-		}
-		else if kind == IdentifierSymbol
-		{
-			assert(|declarations| =/= 0, "Could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations.");
-			// if |declarations| == 0  { THROW_EXCEPTION("Old_Symbol.is_value_type() could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations."); }
-			let declaration: Old_Semantic_Node = declarations[0]; // TODO assuming there is only one for now
-			if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
-				{ return false; }
-			else if declaration.kind == StructDeclaration
-				{ return true; }
-			else { THROW_EXCEPTION("Could not determine if IdentifierSymbol `" + name + "` is a value type. Declaration of type " + declaration.kind); }
-		}
-		else if kind == Old_SpecialSymbol
-		{
-			return true;
-		}
-		else
-		{
-			THROW_EXCEPTION("Old_Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
-		}
-	}
+    // TODO remove once unused by old semantic analyzer stuff
+    public declares_value_type(self) -> bool
+    {
+        if declares_type =/= none
+        {
+            return declares_type.is_value_type;
+        }
+        else if kind == IdentifierSymbol
+        {
+            assert(|declarations| =/= 0, "Could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations.");
+            // if |declarations| == 0  { THROW_EXCEPTION("Old_Symbol.is_value_type() could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations."); }
+            let declaration: Old_Semantic_Node = declarations[0]; // TODO assuming there is only one for now
+            if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
+                { return false; }
+            else if declaration.kind == StructDeclaration
+                { return true; }
+            else { THROW_EXCEPTION("Could not determine if IdentifierSymbol `" + name + "` is a value type. Declaration of type " + declaration.kind); }
+        }
+        else if kind == Old_SpecialSymbol
+        {
+            return true;
+        }
+        else
+        {
+            THROW_EXCEPTION("Old_Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
+        }
+    }
 }

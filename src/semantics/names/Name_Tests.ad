@@ -1,18 +1,18 @@
 public unit_test_Name() -> void
 {
-	name_with_unspecified_package_names_name_with_package();
-	name_with_unspecified_package_names_itself();
+    name_with_unspecified_package_names_name_with_package();
+    name_with_unspecified_package_names_itself();
 }
 
 public name_with_unspecified_package_names_name_with_package() -> void
 {
-	let name_without_package: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
-	let name_with_package: Name = new Name(new Name.global_namespace(new Package_Name("package")), NamespaceName, "system");
-	assert(name_without_package.names(name_with_package), "");
+    let name_without_package: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
+    let name_with_package: Name = new Name(new Name.global_namespace(new Package_Name("package")), NamespaceName, "system");
+    assert(name_without_package.names(name_with_package), "");
 }
 
 public name_with_unspecified_package_names_itself() -> void
 {
-	let name_without_package: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
-	assert(name_without_package.names(name_without_package), "");
+    let name_without_package: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
+    assert(name_without_package.names(name_without_package), "");
 }

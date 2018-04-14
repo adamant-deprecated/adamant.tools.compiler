@@ -1,49 +1,49 @@
 public old_compile(sources: System.Collections.List<Source_Text>) -> Old_Package
 {
-	let parser: Parser = new Parser();
-	let package_syntax: Syntax_Node = parser.ParsePackage(sources);
-	let old_semantic_analyzer: Old_Semantic_Analyzer = new Old_Semantic_Analyzer();
-	let old_package: Old_Package = old_semantic_analyzer.analyze(package_syntax);
-	return old_package;
+    let parser: Parser = new Parser();
+    let package_syntax: Syntax_Node = parser.ParsePackage(sources);
+    let old_semantic_analyzer: Old_Semantic_Analyzer = new Old_Semantic_Analyzer();
+    let old_package: Old_Package = old_semantic_analyzer.analyze(package_syntax);
+    return old_package;
 }
 
 public compile(sources: System.Collections.List<Source_Text>) -> Package
 {
-	let parser: Parser = new Parser();
-	let package_syntax: Syntax_Node = parser.ParsePackage(sources);
-	let semantic_analyzer: Semantic_Analyzer = new Semantic_Analyzer();
-	let package: Package = semantic_analyzer.analyze(package_syntax);
-	return package;
+    let parser: Parser = new Parser();
+    let package_syntax: Syntax_Node = parser.ParsePackage(sources);
+    let semantic_analyzer: Semantic_Analyzer = new Semantic_Analyzer();
+    let package: Package = semantic_analyzer.analyze(package_syntax);
+    return package;
 }
 
 public write(console: mut System.Console.Console, diagnostics: System.Collections.List<Diagnostic>) -> void
 {
-	for let diagnostic: Diagnostic in diagnostics
-	{
-		let position: Text_Position = diagnostic.Position;
-		var severity: string;
-		if diagnostic.Level == Info
-			{ severity = "Informational"; }
-		else if diagnostic.Level == Warning
-			{ severity = "Warning"; }
-		else
-			{ severity = "Error"; }
+    for let diagnostic: Diagnostic in diagnostics
+    {
+        let position: Text_Position = diagnostic.Position;
+        var severity: string;
+        if diagnostic.Level == Info
+            { severity = "Informational"; }
+        else if diagnostic.Level == Warning
+            { severity = "Warning"; }
+        else
+            { severity = "Error"; }
 
-		console.WriteLine(diagnostic.source.Path+":"+position.Line+":"+position.Column+" "+severity+":");
-		console.WriteLine("  "+diagnostic.Message);
-	}
+        console.WriteLine(diagnostic.source.Path+":"+position.Line+":"+position.Column+" "+severity+":");
+        console.WriteLine("  "+diagnostic.Message);
+    }
 }
 
 public has_errors(diagnostics: System.Collections.List<Diagnostic>) -> bool
 {
-	for let diagnostic: Diagnostic in diagnostics
-	{
-		if diagnostic.Level >= CompilationError
-		{
-			return true;
-		}
-	}
-	return false;
+    for let diagnostic: Diagnostic in diagnostics
+    {
+        if diagnostic.Level >= CompilationError
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 // based on sysexits.h
@@ -53,149 +53,149 @@ public let DataError: int = 65;
 
 public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> int
 {
-	if |args| == 1 and args[0] == "--unit-test"
-	{
-		run_unit_tests(console);
-		return 0;
-	}
+    if |args| == 1 and args[0] == "--unit-test"
+    {
+        run_unit_tests(console);
+        return 0;
+    }
 
-	let sourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
-	let resourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
-	var outputFilePath: string = "";
-	var verbose: bool = false;
-	var argType: int = 0; // 0=source file, 1=resource file, 2=output file
-	for let arg: string in args
-	{
-		if argType == 0 // Not option value
-		{
-			if arg == "-r"
-			{
-				argType = 1;
-			}
-			else if arg == "-o"
-			{
-				argType = 2;
-			}
-			else if arg == "-v" or arg == "--verbose"
-			{
-				verbose = true;
-			}
-			else
-			{
-				sourceFilePaths.Add(arg);
-			}
-		}
-		else if argType == 1 // resource file
-		{
-			resourceFilePaths.Add(arg);
-			argType = 0;
-		}
-		else if argType == 2 // output file
-		{
-			outputFilePath = arg;
-			argType = 0;
-		}
+    let sourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
+    let resourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
+    var outputFilePath: string = "";
+    var verbose: bool = false;
+    var argType: int = 0; // 0=source file, 1=resource file, 2=output file
+    for let arg: string in args
+    {
+        if argType == 0 // Not option value
+        {
+            if arg == "-r"
+            {
+                argType = 1;
+            }
+            else if arg == "-o"
+            {
+                argType = 2;
+            }
+            else if arg == "-v" or arg == "--verbose"
+            {
+                verbose = true;
+            }
+            else
+            {
+                sourceFilePaths.Add(arg);
+            }
+        }
+        else if argType == 1 // resource file
+        {
+            resourceFilePaths.Add(arg);
+            argType = 0;
+        }
+        else if argType == 2 // output file
+        {
+            outputFilePath = arg;
+            argType = 0;
+        }
 
-		// else should be impossible
-	}
+        // else should be impossible
+    }
 
-	if verbose
-	{
-		console.WriteLine("Adamant Compiler v0.1.0");
-	}
-	if |sourceFilePaths| == 0 or outputFilePath == ""
-	{
-		console.WriteLine("Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
-		return UsageError;
-	}
+    if verbose
+    {
+        console.WriteLine("Adamant Compiler v0.1.0");
+    }
+    if |sourceFilePaths| == 0 or outputFilePath == ""
+    {
+        console.WriteLine("Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
+        return UsageError;
+    }
 
-	// Read Resources
-	let resources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
-	if |resourceFilePaths| > 0
-	{
-		if verbose
-		{
-			console.WriteLine("Reading Resources:");
-		}
-		for let resourceFilePath: string in resourceFilePaths
-		{
-			if verbose
-			{
-				console.WriteLine("  " + resourceFilePath);
-			}
-			resources.Add(read_source(resourceFilePath));
-		}
-	}
+    // Read Resources
+    let resources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
+    if |resourceFilePaths| > 0
+    {
+        if verbose
+        {
+            console.WriteLine("Reading Resources:");
+        }
+        for let resourceFilePath: string in resourceFilePaths
+        {
+            if verbose
+            {
+                console.WriteLine("  " + resourceFilePath);
+            }
+            resources.Add(read_source(resourceFilePath));
+        }
+    }
 
-	// Read Source(s)
-	if(verbose)
-	{
-		console.WriteLine("Compiling:");
-	}
-	let sources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
-	for let sourceFilePath: string in sourceFilePaths
-	{
-		if(verbose)
-		{
-			console.WriteLine("  " + sourceFilePath);
-		}
-		sources.Add(read_source(sourceFilePath));
-	}
+    // Read Source(s)
+    if(verbose)
+    {
+        console.WriteLine("Compiling:");
+    }
+    let sources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
+    for let sourceFilePath: string in sourceFilePaths
+    {
+        if(verbose)
+        {
+            console.WriteLine("  " + sourceFilePath);
+        }
+        sources.Add(read_source(sourceFilePath));
+    }
 
-	let old_package: Old_Package = old_compile(sources);
-	let package: Package = compile(sources);
+    let old_package: Old_Package = old_compile(sources);
+    let package: Package = compile(sources);
 
-	let old_diagnostics: System.Collections.List<Diagnostic> = old_package.all_diagnostics();
-	let diagnostics: System.Collections.List<Diagnostic> = package.all_diagnostics();
-	write(console, diagnostics);
+    let old_diagnostics: System.Collections.List<Diagnostic> = old_package.all_diagnostics();
+    let diagnostics: System.Collections.List<Diagnostic> = package.all_diagnostics();
+    write(console, diagnostics);
 
-	if has_errors(old_diagnostics)
-	{
-		return DataError;
-	}
+    if has_errors(old_diagnostics)
+    {
+        return DataError;
+    }
 
-	var emitter: mut Emitter = new Emitter(old_package, resources);
-	let translated: string = emitter.Emit();
+    var emitter: mut Emitter = new Emitter(old_package, resources);
+    let translated: string = emitter.Emit();
 
-	// Write output
-	if verbose
-	{
-		console.Write("Output: ");
-		console.WriteLine(outputFilePath);
-	}
-	// TODO should be `new mut`
-	let outputFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputFilePath);
-	outputFile.Write(translated);
-	outputFile.Close();
+    // Write output
+    if verbose
+    {
+        console.Write("Output: ");
+        console.WriteLine(outputFilePath);
+    }
+    // TODO should be `new mut`
+    let outputFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputFilePath);
+    outputFile.Write(translated);
+    outputFile.Close();
 
-	// Write RuntimeLibrary
-	var outputDirPath: string = outputFilePath;
-	var index: int = outputDirPath.LastIndexOf('/');
-	if index =/= -1
-		{ outputDirPath = outputDirPath.Substring(0, index+1); }
-	index = outputDirPath.LastIndexOf('\\');
-	if index =/= -1
-		{ outputDirPath = outputDirPath.Substring(0, index+1); }
-	if verbose
-	{
-		console.Write("Outputting RuntimeLibrary to: ");
-		console.WriteLine(outputDirPath);
-	}
-	var resourceFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.h");
-	resourceFile.Write(resource_manager.GetString("RuntimeLibrary.h"));
-	resourceFile.Close();
-	resourceFile = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.cpp");
-	resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
-	resourceFile.Close();
+    // Write RuntimeLibrary
+    var outputDirPath: string = outputFilePath;
+    var index: int = outputDirPath.LastIndexOf('/');
+    if index =/= -1
+        { outputDirPath = outputDirPath.Substring(0, index+1); }
+    index = outputDirPath.LastIndexOf('\\');
+    if index =/= -1
+        { outputDirPath = outputDirPath.Substring(0, index+1); }
+    if verbose
+    {
+        console.Write("Outputting RuntimeLibrary to: ");
+        console.WriteLine(outputDirPath);
+    }
+    var resourceFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.h");
+    resourceFile.Write(resource_manager.GetString("RuntimeLibrary.h"));
+    resourceFile.Close();
+    resourceFile = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.cpp");
+    resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
+    resourceFile.Close();
 
-	return Success;
+    return Success;
 }
 
 public read_source(path: string) -> Source_Text
 {
-	// TODO should be `mut new` or `new mut`, whichever is decided to be the correct syntax
-	let file: mut System.IO.File_Reader = new System.IO.File_Reader(path);
-	let contents: string = file.ReadToEndSync();
-	file.Close(); // TODO this should automatically be handled
-	return new Source_Text("<default>", path, contents);
+    // TODO should be `mut new` or `new mut`, whichever is decided to be the correct syntax
+    let file: mut System.IO.File_Reader = new System.IO.File_Reader(path);
+    let contents: string = file.ReadToEndSync();
+    file.Close(); // TODO this should automatically be handled
+    return new Source_Text("<default>", path, contents);
 }

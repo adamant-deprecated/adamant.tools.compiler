@@ -1,43 +1,43 @@
 public unit_test_Primitives_Package_Builder() -> void
 {
-	Package_name_is__dollar_primitives();
-	Package_has_no_references_or_compilation_units();
-	Package_symbol_has_package_name();
-	Package_symbol_has_children();
-	Package_contains_the_string_type();
+    Package_name_is__dollar_primitives();
+    Package_has_no_references_or_compilation_units();
+    Package_symbol_has_package_name();
+    Package_symbol_has_children();
+    Package_contains_the_string_type();
 }
 
 public Package_name_is__dollar_primitives() -> void
 {
-	let package: Package = new Primitives_Package_Builder().build();
-	let name: Package_Name = package.name;
-	assert(name.unqualified == "$primitives", "");
+    let package: Package = new Primitives_Package_Builder().build();
+    let name: Package_Name = package.name;
+    assert(name.unqualified == "$primitives", "");
 }
 
 public Package_has_no_references_or_compilation_units() -> void
 {
-	let package: Package = new Primitives_Package_Builder().build();
-	assert(|package.references| == 0, "");
-	assert(|package.compilation_units| == 0, "");
+    let package: Package = new Primitives_Package_Builder().build();
+    assert(|package.references| == 0, "");
+    assert(|package.compilation_units| == 0, "");
 }
 
 public Package_symbol_has_package_name() -> void
 {
-	let package: Package = new Primitives_Package_Builder().build();
-	let symbol: Symbol = package.symbol;
-	assert(symbol.kind == PackageSymbol, "");
-	assert(symbol.name == package.name.unqualified, "");
+    let package: Package = new Primitives_Package_Builder().build();
+    let symbol: Symbol = package.symbol;
+    assert(symbol.kind == PackageSymbol, "");
+    assert(symbol.name == package.name.unqualified, "");
 }
 
 public Package_symbol_has_children() -> void
 {
-	let package: Package = new Primitives_Package_Builder().build();
-	assert(|package.symbol.children| > 0, "");
+    let package: Package = new Primitives_Package_Builder().build();
+    assert(|package.symbol.children| > 0, "");
 }
 
 public Package_contains_the_string_type() -> void
 {
-	let package: Package = new Primitives_Package_Builder().build();
-	let string_symbol: Symbol = package.symbol.get("string", IdentifierSymbol);
-	assert(string_symbol =/= none, "");
+    let package: Package = new Primitives_Package_Builder().build();
+    let string_symbol: Symbol = package.symbol.get("string", IdentifierSymbol);
+    assert(string_symbol =/= none, "");
 }

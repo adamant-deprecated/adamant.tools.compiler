@@ -1,25 +1,25 @@
 public class Semantic_Analyzer
 {
-	public analyze(package_syntax: Syntax_Node) -> Package
-	{
-		assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+    public analyze(package_syntax: Syntax_Node) -> Package
+    {
+        assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
 
-		// Hard code a stand-in package-name for now
-		let name: Package_Name = new Package_Name("default");
-		let primitives_package: Package = new Primitives_Package_Builder().build();
-		let runtime_package: Package = new Runtime_Library_Package_Builder().build();
-		let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
-		references.add(new Package_Reference(primitives_package));
-		references.add(new Package_Reference(runtime_package));
+        // Hard code a stand-in package-name for now
+        let name: Package_Name = new Package_Name("default");
+        let primitives_package: Package = new Primitives_Package_Builder().build();
+        let runtime_package: Package = new Runtime_Library_Package_Builder().build();
+        let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+        references.add(new Package_Reference(primitives_package));
+        references.add(new Package_Reference(runtime_package));
 
-		let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
-		let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
-		let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();
-		let compilation_units: System.Collections.List<Compilation_Unit> = semantic_tree_builder.build(package_syntax, name_table);
-		let symbol_builder: Symbol_Builder = new Symbol_Builder();
-		let package_symbol: Symbol = symbol_builder.build(name, compilation_units);
-		let package: Package = new Package(name, references, compilation_units, package_symbol);
+        let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
+        let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
+        let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();
+        let compilation_units: System.Collections.List<Compilation_Unit> = semantic_tree_builder.build(package_syntax, name_table);
+        let symbol_builder: Symbol_Builder = new Symbol_Builder();
+        let package_symbol: Symbol = symbol_builder.build(name, compilation_units);
+        let package: Package = new Package(name, references, compilation_units, package_symbol);
 
-		return package;
-	}
+        return package;
+    }
 }

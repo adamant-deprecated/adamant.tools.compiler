@@ -133,203 +133,203 @@ public let NamespaceDeclaration: int = 129;
 
 public class Syntax_Node
 {
-	public let kind: int;
-	public let is_missing: bool;
-	public let source: Source_Text;
-	public let start: uint;
-	public let byte_length: uint; // TODO is this ByteLength?
-	public let children: System.Collections.List<Syntax_Node>;
-	public let node_diagnostics: mut System.Collections.List<Diagnostic>;
+    public let kind: int;
+    public let is_missing: bool;
+    public let source: Source_Text;
+    public let start: uint;
+    public let byte_length: uint; // TODO is this ByteLength?
+    public let children: System.Collections.List<Syntax_Node>;
+    public let node_diagnostics: mut System.Collections.List<Diagnostic>;
 
-	public new(type: int, source: Source_Text, start: uint, length: uint)
-	{
-		kind = type;
-		is_missing = false;
-		self.source = source;
-		self.start = start;
-		byte_length = length;
-		self.children = new System.Collections.List<Syntax_Node>();
-		node_diagnostics = new System.Collections.List<Diagnostic>();
-	}
+    public new(type: int, source: Source_Text, start: uint, length: uint)
+    {
+        kind = type;
+        is_missing = false;
+        self.source = source;
+        self.start = start;
+        byte_length = length;
+        self.children = new System.Collections.List<Syntax_Node>();
+        node_diagnostics = new System.Collections.List<Diagnostic>();
+    }
 
-	public new(type: int, isMissing: bool, source: Source_Text, start: uint, length: uint)
-	{
-		kind = type;
-		is_missing = isMissing;
-		self.source = source;
-		self.start = start;
-		byte_length = length;
-		self.children = new System.Collections.List<Syntax_Node>();
-		node_diagnostics = new System.Collections.List<Diagnostic>();
-	}
+    public new(type: int, isMissing: bool, source: Source_Text, start: uint, length: uint)
+    {
+        kind = type;
+        is_missing = isMissing;
+        self.source = source;
+        self.start = start;
+        byte_length = length;
+        self.children = new System.Collections.List<Syntax_Node>();
+        node_diagnostics = new System.Collections.List<Diagnostic>();
+    }
 
-	public new(type: int, child: Syntax_Node)
-	{
-		kind = type;
-		is_missing = child.is_missing;
-		source = child.source;
-		start = child.start;
-		byte_length = child.byte_length;
-		let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-		children.Add(child);
-		self.children = children;
-		node_diagnostics = new System.Collections.List<Diagnostic>();
-	}
+    public new(type: int, child: Syntax_Node)
+    {
+        kind = type;
+        is_missing = child.is_missing;
+        source = child.source;
+        start = child.start;
+        byte_length = child.byte_length;
+        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        children.Add(child);
+        self.children = children;
+        node_diagnostics = new System.Collections.List<Diagnostic>();
+    }
 
-	// TODO we want to take ownership of the child list
-	public new(type: int, children: System.Collections.List<Syntax_Node>)
-	{
-		kind = type;
-		is_missing = false;
-		// TODO enforce that list is not empty, for now we rely on `children[0]` failing
-		source = children[0].source;
-		start = children[0].start;
-		let lastChild: Syntax_Node = children[|children| - 1];
-		byte_length = lastChild.start - start + lastChild.byte_length;
-		self.children = children;
-		node_diagnostics = new System.Collections.List<Diagnostic>();
-	}
+    // TODO we want to take ownership of the child list
+    public new(type: int, children: System.Collections.List<Syntax_Node>)
+    {
+        kind = type;
+        is_missing = false;
+        // TODO enforce that list is not empty, for now we rely on `children[0]` failing
+        source = children[0].source;
+        start = children[0].start;
+        let lastChild: Syntax_Node = children[|children| - 1];
+        byte_length = lastChild.start - start + lastChild.byte_length;
+        self.children = children;
+        node_diagnostics = new System.Collections.List<Diagnostic>();
+    }
 
-	public get_text(self) -> string
-	{
-		return source.Text.Substring(start, byte_length);
-	}
+    public get_text(self) -> string
+    {
+        return source.Text.Substring(start, byte_length);
+    }
 
-	public first_child(self, type: int) -> Syntax_Node?
-	{
-		for let child: Syntax_Node in children
-		{
-			if child.kind == type
-				{ return child; }
-		}
-		return none;
-	}
+    public first_child(self, type: int) -> Syntax_Node?
+    {
+        for let child: Syntax_Node in children
+        {
+            if child.kind == type
+                { return child; }
+        }
+        return none;
+    }
 
-	public has_child(self, type: int) -> bool
-	{
-		for let child: Syntax_Node in children
-		{
-			if child.kind == type
-				{ return true; }
-		}
-		return false;
-	}
+    public has_child(self, type: int) -> bool
+    {
+        for let child: Syntax_Node in children
+        {
+            if child.kind == type
+                { return true; }
+        }
+        return false;
+    }
 
-	public add(self, diagnostic: Diagnostic) -> void
-	{
-		node_diagnostics.Add(diagnostic);
-	}
+    public add(self, diagnostic: Diagnostic) -> void
+    {
+        node_diagnostics.Add(diagnostic);
+    }
 
-	// We are returning ownership of the list, so they can mutate it if wanted
-	public all_diagnostics(self) -> mut System.Collections.List<Diagnostic>
-	{
-		var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
-		collection_diagnostics(diagnostics);
-		return diagnostics;
-	}
+    // We are returning ownership of the list, so they can mutate it if wanted
+    public all_diagnostics(self) -> mut System.Collections.List<Diagnostic>
+    {
+        var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+        collection_diagnostics(diagnostics);
+        return diagnostics;
+    }
 
-	protected collection_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
-	{
-		for let diagnostic: Diagnostic in node_diagnostics
-		{
-			diagnostics.Add(diagnostic);
-		}
+    protected collection_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+    {
+        for let diagnostic: Diagnostic in node_diagnostics
+        {
+            diagnostics.Add(diagnostic);
+        }
 
-		for let child: Syntax_Node in children
-		{
-			child.collection_diagnostics(diagnostics);
-		}
-	}
+        for let child: Syntax_Node in children
+        {
+            child.collection_diagnostics(diagnostics);
+        }
+    }
 
-	// TODO this should only be on things like class, struct that have members
-	public members(self) -> System.Collections.List<Syntax_Node>
-	{
-		let members: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-		for let child: Syntax_Node in children
-		{
-			// TODO fix this to a more reliable means of telling what should be visited
-			if child.kind == ConstructorDeclaration
-				or child.kind == FieldDeclaration
-				or child.kind == MethodDeclaration
-			{
-				members.Add(child);
-			}
-		}
-		return members;
-	}
+    // TODO this should only be on things like class, struct that have members
+    public members(self) -> System.Collections.List<Syntax_Node>
+    {
+        let members: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        for let child: Syntax_Node in children
+        {
+            // TODO fix this to a more reliable means of telling what should be visited
+            if child.kind == ConstructorDeclaration
+                or child.kind == FieldDeclaration
+                or child.kind == MethodDeclaration
+            {
+                members.Add(child);
+            }
+        }
+        return members;
+    }
 
-	// TODO this should only be on things like parameter list and function
-	public parameters(self) -> System.Collections.List<Syntax_Node>
-	{
-		let parameters: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-		for let child: Syntax_Node in children
-		{
-			// TODO fix this to a more reliable means of telling what should be visited
-			if child.kind == Parameter
-				or child.kind == SelfParameter
-			{
-				parameters.Add(child);
-			}
-		}
-		return parameters;
-	}
+    // TODO this should only be on things like parameter list and function
+    public parameters(self) -> System.Collections.List<Syntax_Node>
+    {
+        let parameters: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        for let child: Syntax_Node in children
+        {
+            // TODO fix this to a more reliable means of telling what should be visited
+            if child.kind == Parameter
+                or child.kind == SelfParameter
+            {
+                parameters.Add(child);
+            }
+        }
+        return parameters;
+    }
 
-	// TODO this should only be on things like block
-	public statements(self) -> System.Collections.List<Syntax_Node>
-	{
-		let statements: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-		for let child: Syntax_Node in children
-		{
-			// TODO fix this to a more reliable means of telling what should be visited
-			if child.kind =/= LeftBrace
-				and child.kind =/= RightBrace
-			{
-				statements.Add(child);
-			}
-		}
-		return statements;
-	}
+    // TODO this should only be on things like block
+    public statements(self) -> System.Collections.List<Syntax_Node>
+    {
+        let statements: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        for let child: Syntax_Node in children
+        {
+            // TODO fix this to a more reliable means of telling what should be visited
+            if child.kind =/= LeftBrace
+                and child.kind =/= RightBrace
+            {
+                statements.Add(child);
+            }
+        }
+        return statements;
+    }
 
-	// TODO this should only be on things that would have access modifiers
-	public access_modifier(self) -> Syntax_Node?
-	{
-		for let child: Syntax_Node in children
-		{
-			if child.kind == PublicKeyword
-				or child.kind == ProtectedKeyword
-				or child.kind == InternalKeyword
-				or child.kind == PrivateKeyword
-			{
-				return child;
-			}
-		}
-		return none;
-	}
+    // TODO this should only be on things that would have access modifiers
+    public access_modifier(self) -> Syntax_Node?
+    {
+        for let child: Syntax_Node in children
+        {
+            if child.kind == PublicKeyword
+                or child.kind == ProtectedKeyword
+                or child.kind == InternalKeyword
+                or child.kind == PrivateKeyword
+            {
+                return child;
+            }
+        }
+        return none;
+    }
 }
 
 // TODO make this a named constructor
 public new_syntax_node_missing(type: int, source: Source_Text, start: uint) -> Syntax_Node
 {
-	let node: mut Syntax_Node = new Syntax_Node(type, true, source, start, 0);
-	let span: Text_Span = new Text_Span(start, 0);
-	node.add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
-	return node;
+    let node: mut Syntax_Node = new Syntax_Node(type, true, source, start, 0);
+    let span: Text_Span = new Text_Span(start, 0);
+    node.add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
+    return node;
 }
 
 // TODO make this a named constructor
 public new_Syntax_Node_Skipped(skipped: Syntax_Node) -> Syntax_Node
 {
-	let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
-	let span: Text_Span = new Text_Span(skipped.start, skipped.byte_length);
-	node.add(new Diagnostic(CompilationError, Parsing, skipped.source, span, "Skipped unexpected token of type " + skipped.kind));
-	return node;
+    let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
+    let span: Text_Span = new Text_Span(skipped.start, skipped.byte_length);
+    node.add(new Diagnostic(CompilationError, Parsing, skipped.source, span, "Skipped unexpected token of type " + skipped.kind));
+    return node;
 }
 
 // TODO make this a named constructor
 public new_Syntax_Node_Skipped(skipped: System.Collections.List<Syntax_Node>) -> Syntax_Node
 {
-	let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
-	let span: Text_Span = new Text_Span(node.start, node.byte_length);
-	node.add(new Diagnostic(CompilationError, Parsing, node.source, span, "Skipped " + |skipped| + " unexpected token(s)"));
-	return node;
+    let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
+    let span: Text_Span = new Text_Span(node.start, node.byte_length);
+    node.add(new Diagnostic(CompilationError, Parsing, node.source, span, "Skipped " + |skipped| + " unexpected token(s)"));
+    return node;
 }
