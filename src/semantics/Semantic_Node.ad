@@ -212,7 +212,7 @@ public class Semantic_Node
         return false;
     }
 
-    public add(self, diagnostic: Diagnostic) -> void
+    public add(mut self, diagnostic: Diagnostic) -> void
     {
         node_diagnostics.Add(diagnostic);
     }

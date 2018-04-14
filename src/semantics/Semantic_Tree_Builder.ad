@@ -108,7 +108,7 @@ public /*mut*/ class Semantic_Tree_Builder
         }
         else if syntax.kind == IdentifierName
         {
-            let node: Semantic_Node = new Semantic_Node.token(syntax);
+            let node: mut Semantic_Node = new Semantic_Node.token(syntax);
             if scope.lookup(syntax.get_text()) == none
                 and not node.is_missing
             {
@@ -147,10 +147,10 @@ public /*mut*/ class Semantic_Tree_Builder
             let type_syntax: Syntax_Node = syntax.children[3];
             children.add(build_type_name(type_syntax, name_table, scope));
             if |syntax.children| == 6
-			{
-				let initalizer: Syntax_Node = syntax.children[5];
-				children.add(build(initalizer, name_table, scope));
-			}
+            {
+                let initalizer: Syntax_Node = syntax.children[5];
+                children.add(build(initalizer, name_table, scope));
+            }
             return new Semantic_Node.concrete(syntax, children);
         }
         else if |syntax.children| == 0
@@ -209,7 +209,7 @@ public /*mut*/ class Semantic_Tree_Builder
         syntax: Syntax_Node,
         name_table: Name_Table,
         scope: Name_Subtable)
-        -> Semantic_Node
+        -> mut Semantic_Node
     {
         let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
 
@@ -227,7 +227,7 @@ public /*mut*/ class Semantic_Tree_Builder
             let entry: Name_Subtable? = scope.lookup(name); // TODO this should be lookup type. Types are separate
             if entry == none
             {
-                let node: Semantic_Node = new Semantic_Node.token(syntax);
+                let node: mut Semantic_Node = new Semantic_Node.token(syntax);
                 add_resolution_error(node);
                 return node;
             }
@@ -242,16 +242,29 @@ public /*mut*/ class Semantic_Tree_Builder
             let qualifier: Semantic_Node = build_type_name(qualifier_syntax, name_table, scope);
             children.add(qualifier);
 
-            let name_syntax: Syntax_Node = syntax.children[2];
+            let qualified_syntax: Syntax_Node = syntax.children[2];
+            var name_syntax: Syntax_Node;
+            if qualified_syntax.kind == GenericName
+            {
+                name_syntax = qualified_syntax.first_child(IdentifierName);
+            }
+            else if qualified_syntax.kind == IdentifierName
+            {
+                name_syntax = qualified_syntax;
+            }
+            else
+            {
+                UNREACHABLE();
+            }
 
             if qualifier.referenced_type == none
             {
                 // This means we aren't sure about the qualifier (i.e. type unknown)
-                let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
+                let name_node: mut Semantic_Node = new Semantic_Node.token(name_syntax);
                 add_resolution_error(name_node, qualifier);
                 children.add(name_node);
-
-                let qualified_name: Semantic_Node = new Semantic_Node.concrete(syntax, children);
+                build_type_arguments(syntax, name_table, scope, children);
+                let qualified_name: mut Semantic_Node = new Semantic_Node.concrete(syntax, children);
                 add_could_not_determine_type_error(qualified_name);
                 return qualified_name;
             }
@@ -265,7 +278,7 @@ public /*mut*/ class Semantic_Tree_Builder
 
                 if referenced_scope == none
                 {
-                    let name_node: Semantic_Node = new Semantic_Node.token(name_syntax);
+                    let name_node: mut Semantic_Node = new Semantic_Node.token(name_syntax);
                     add_resolution_error(name_node, qualifier);
                     children.add(name_node);
                     build_type_arguments(syntax, name_table, scope, children);
@@ -283,7 +296,7 @@ public /*mut*/ class Semantic_Tree_Builder
         }
         else if syntax.kind == MutableType
         {
-            let inner_type: Semantic_Node = build_type_name(syntax.children[1], name_table, scope);
+            let inner_type: mut Semantic_Node = build_type_name(syntax.children[1], name_table, scope);
             children.add(inner_type);
             if inner_type.referenced_type == none
             {
@@ -295,7 +308,7 @@ public /*mut*/ class Semantic_Tree_Builder
         }
         else if syntax.kind == ImmutableType
         {
-            let inner_type: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
+            let inner_type: mut Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
             children.add(inner_type);
             if inner_type.referenced_type == none
             {
@@ -307,7 +320,7 @@ public /*mut*/ class Semantic_Tree_Builder
         }
         else if syntax.kind == OptionalType
         {
-            let inner_type: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
+            let inner_type: mut Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
             children.add(inner_type);
             if inner_type.referenced_type == none
             {
@@ -387,17 +400,17 @@ public /*mut*/ class Semantic_Tree_Builder
         return build_type_name(syntax, name_table, scope);
     }
 
-    private add_resolution_error(node: Semantic_Node) -> void
+    private add_resolution_error(node: mut Semantic_Node) -> void
     {
         node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
     }
 
-    private add_resolution_error(node: Semantic_Node, qualifier: Semantic_Node) -> void
+    private add_resolution_error(node: mut Semantic_Node, qualifier: Semantic_Node) -> void
     {
         node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "` because qualifier `" + qualifier.get_text() +"` could not be resolved."));
     }
 
-    private add_could_not_determine_type_error(node: Semantic_Node) -> void
+    private add_could_not_determine_type_error(node: mut Semantic_Node) -> void
     {
         node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not determine type for `" + node.get_text() + "`"));
     }
