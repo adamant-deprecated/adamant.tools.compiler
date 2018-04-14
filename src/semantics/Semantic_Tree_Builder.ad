@@ -49,7 +49,8 @@ public /*mut*/ class Semantic_Tree_Builder
             children.add(build(syntax.access_modifier(), name_table, scope));
             let function_name: Syntax_Node = syntax.first_child(Identifier);
             children.add(build(function_name, name_table, scope));
-            children.add(build_parameters(syntax, name_table, scope));
+            let parameters: Syntax_Node = syntax.first_child(ParameterList);
+            children.add(build_parameters(parameters, name_table, scope));
 
             let return_type: Syntax_Node = syntax.children[4]; // TODO need more reliable way to pick this out
             children.add(build_type_name(return_type, name_table, scope));
@@ -93,7 +94,7 @@ public /*mut*/ class Semantic_Tree_Builder
             }
 
             let parameters: Syntax_Node = syntax.first_child(ParameterList);
-            children.add(build_parameters(syntax, name_table, scope));
+            children.add(build_parameters(parameters, name_table, scope));
 
             let constructor_scope: Name_Subtable = scope.find_special(full_name);
             assert(constructor_scope =/= none, "full_name="+full_name);
@@ -172,18 +173,21 @@ public /*mut*/ class Semantic_Tree_Builder
     }
 
     private build_parameters(self,
-        syntax: Syntax_Node,
+        parameters_syntax: Syntax_Node,
         name_table: Name_Table,
         scope: Name_Subtable)
         -> mut Semantic_Node
     {
+        assert(parameters_syntax.kind == ParameterList, "parameters_syntax.kind="+ parameters_syntax.kind);
         let parameters: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-        let parameter_list: Syntax_Node = syntax.first_child(ParameterList);
-        for let parameter: Syntax_Node in parameter_list.parameters()
+        for let parameter: Syntax_Node in parameters_syntax.parameters()
         {
             let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
             if parameter.kind == Parameter
             {
+                let var_syntax: Syntax_Node? = parameter.first_child(VarKeyword);
+                if var_syntax =/= none
+                    { children.add(new Semantic_Node.token(var_syntax)); }
                 children.add(new Semantic_Node.token(parameter.first_child(Identifier)));
                 // Because a parameter can have `var` at the beginning, the position of the type isn't constant
                 let type_syntax: Syntax_Node = parameter.children[|parameter.children| - 1];
@@ -204,7 +208,7 @@ public /*mut*/ class Semantic_Tree_Builder
             }
         }
 
-        return new Semantic_Node.concrete(syntax, parameters);
+        return new Semantic_Node.concrete(parameters_syntax, parameters);
     }
 
     private build_type_name(self,
