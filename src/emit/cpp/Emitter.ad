@@ -155,8 +155,8 @@ public class Emitter
                 { first_parameter = false; }
 
             let mutable_binding: bool = parameter.has_child(VarKeyword);
-            let type: Semantic_Node = parameter.children[|parameter.children| - 1];
-            builder.Append(convert_type(mutable_binding, type));
+            let type_node: Semantic_Node = parameter.children[|parameter.children| - 1];
+            builder.Append(convert_type(mutable_binding, type_node));
             builder.Append(" ");
             builder.Append(parameter.first_child(Identifier).get_text());
             builder.Append("_");
@@ -164,10 +164,10 @@ public class Emitter
             if is_main_function
             {
                 var type_string: string;
-                if type.kind == MutableType
-                    { type_string = type.children[1].get_text(); }
+                if type_node.kind == MutableType
+                    { type_string = type_node.children[0].get_text(); }
                 else
-                    { type_string = type.get_text(); }
+                    { type_string = type_node.get_text(); }
                 if type_string == "System.Console.Console"
                     { main_function_accepts_console = true; }
                 if type_string == "System.Console.Arguments"
@@ -502,10 +502,10 @@ public class Emitter
         else if statement.kind == ForStatement
         {
             definitions.BeginLine("for (");
-            let variable_declaration: Semantic_Node = statement.children[1];
+            let variable_declaration: Semantic_Node = statement.first_child(VariableDeclaration);
             let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
             let name: string = variable_declaration.first_child(Identifier).get_text();
-            let type: Semantic_Node = variable_declaration.children[3];
+            let type: Semantic_Node = variable_declaration.children[2];
             definitions.Write(convert_type(mutable_binding, type) + " " + name + "_");
             definitions.Write(" : *(");
             convert_expression(statement.children[3], definitions); // expression
@@ -693,7 +693,7 @@ public class Emitter
             class_declarations.WriteLine(static_modifier + "auto " + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type + ";");
             definitions.ElementSeparatorLine();
             definitions.WriteLine("auto ::" + class_name + "_::" + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type);
-            let block: Semantic_Node = member.children[5];
+            let block: Semantic_Node = member.first_child(Block);
             emit_method_body(block, is_associated_function);
         }
         else
