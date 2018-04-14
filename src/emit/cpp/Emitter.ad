@@ -49,19 +49,42 @@ public class Emitter
     }
 
     // Converts a type to C++
-    private convert_type_name(type: Semantic_Node) -> string
+    private convert_type_name(type_node: Semantic_Node) -> string
     {
-        return format_error("`convert_type_name(Semantic_Node)` not implemented");
-    //     if type.kind == PredefinedType
-    //     {
-    //         let keyword: Semantic_Node = type.children[0];
-    //         // void we still use the C++ keyword
-    //         if keyword.kind == Void
-    //             { return keyword.get_text(); }
-    //         // `int`, `bool`, `string`, `code_point`, `uint``
-    //         return "p_" + keyword.get_text();
-    //     }
+        assert(type_node.referenced_type =/= none, type_node.get_text());
+        return convert_type_name(type_node.referenced_type);
+    }
 
+    private convert_type_name(type: Type) -> string
+    {
+        if type.is_primitive
+        {
+            if type.name.unqualified() == "void"
+                { return "void"; }
+            // `int`, `bool`, `string`, `code_point`, `uint`
+            return "p_" + type.name.unqualified();
+        }
+
+        var cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder();
+        for let segment: string in type.name.segments
+        {
+            cpp_type.Append("::");
+            cpp_type.Append(segment);
+            cpp_type.Append("_");
+        }
+        if |type.type_parameters| > 0
+        {
+            cpp_type.Append("<");
+            var first: bool = true;
+            for let type_parameter: Type in type.type_parameters
+            {
+                if first { first = false; }
+                else { cpp_type.Append(", "); }
+                cpp_type.Append(convert_type(true, type_parameter, false));
+            }
+            cpp_type.Append(">");
+        }
+        return cpp_type.ToString();
     //     if type.kind == IdentifierName
     //     {
     //         return "::" + type.get_text() + "_";
@@ -78,37 +101,23 @@ public class Emitter
     //     return format_error("Unexpected Token of type "+type.kind+" found in convert_type_name(), `"+type.get_text()+"`");
     }
 
-    // private convert_reference_type(mutable_binding: bool, var type: Semantic_Node, nullable: bool, mutable_value: bool) -> string
-    // {
-    //     var cpp_type: string = convert_type_name(type);
-    //     if not mutable_value { cpp_type = cpp_type + " const"; }
-    //     cpp_type = cpp_type + " *";
-    //     if nullable
-    //         { cpp_type = cpp_type + "_Nullable"; }
-    //     else
-    //         { cpp_type = cpp_type + "_Nonnull"; }
-    //     if not mutable_binding { cpp_type = cpp_type + " const" ; }
-    //     return cpp_type;
-    // }
+    private convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
+    {
+        var cpp_type: string = convert_type_name(type);
+        if not type.is_mutable { cpp_type = cpp_type + " const"; }
+        cpp_type = cpp_type + " *";
+        if nullable
+            { cpp_type = cpp_type + "_Nullable"; }
+        else
+            { cpp_type = cpp_type + "_Nonnull"; }
+        if not mutable_binding { cpp_type = cpp_type + " const" ; }
+        return cpp_type;
+    }
 
     // Converts a type to C++
-    // private convert_type(mutable_binding: bool, var type: Semantic_Node, optional: bool) -> string
-    // {
-    //     assert(type =/= none, "");
-
-    //     let mutable_value: bool = type.kind == MutableType;
-    //     if mutable_value
-    //     {
-    //         type = type.children[1]; // Remove the mutable wrapper
-    //     }
-    //     else if type.kind == ImmutableType
-    //     {
-    //         type = type.children[0]; // Remove the immutable wrapper
-    //     }
-    //     else
-    //     {
-    //         return format_error("Expected mutable or immutable type in convert_type(). Found token `"+type.get_text()+"` of type "+type.kind);
-    //     }
+    private convert_type(mutable_binding: bool, var type: Type, optional: bool) -> string
+    {
+        assert(type =/= none, "");
 
     //     if type.kind == OptionalType
     //     {
@@ -126,33 +135,35 @@ public class Emitter
     //     }
     //     else
     //     {
-    //         if type.is_value_type()
-    //         {
-    //             var cpp_type: string = convert_type_name(type);
-    //             if not mutable_binding and not mutable_value
-    //                 { cpp_type = cpp_type + " const"; }
-    //             return cpp_type;
-    //         }
-    //         else
-    //         {
-    //             return convert_reference_type(mutable_binding, type, optional, mutable_value);
-    //         }
+            if type.is_value_type
+            {
+                var cpp_type: string = convert_type_name(type);
+                if not mutable_binding and not type.is_mutable
+                    { cpp_type = cpp_type + " const"; }
+                return cpp_type;
+            }
+            else
+            {
+                return convert_reference_type(mutable_binding, type, optional);
+            }
     //     }
-    // }
-
-    private convert_type(mutable_binding: bool, type: Semantic_Node) -> string
-    {
-        // return convert_type(mutable_binding, type, false); // not optional
-        return format_error("`convert_type(bool, Semantic_Node)` not implemented");
     }
 
-    private convert_parameter_list(mut self, parameter_list: Semantic_Node, is_main_function: bool) -> string
+    private convert_type(mutable_binding: bool, type_node: Semantic_Node) -> string
     {
-        assert(parameter_list.kind == ParameterList, "parameter_list.kind=" + parameter_list.kind);
+        assert(type_node.referenced_type =/= none, type_node.get_text());
+        return convert_type(mutable_binding, type_node.referenced_type, false); // not optional
+    }
+
+    private convert_parameter_list(mut self, declaration: Semantic_Node, is_main_function: bool) -> string
+    {
+        assert(declaration.kind == ConstructorDeclaration
+            or declaration.kind == FunctionDeclaration,
+            "declaration.kind=" + declaration.kind);
         let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
         builder.Append("(");
         var first_parameter: bool = true;
-        for let parameter: Semantic_Node in parameter_list.children_of_kind(Parameter)
+        for let parameter: Semantic_Node in declaration.children_of_kind(Parameter)
         {
             if not first_parameter
                 { builder.Append(", "); }
@@ -183,9 +194,9 @@ public class Emitter
         return builder.ToString();
     }
 
-    private convert_parameter_list(mut self, parameter_list: Semantic_Node) -> string
+    private convert_parameter_list(mut self, declaration: Semantic_Node) -> string
     {
-        return convert_parameter_list(parameter_list, false);
+        return convert_parameter_list(declaration, false);
     }
 
     private convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builder) -> void
@@ -657,7 +668,7 @@ public class Emitter
         access_modifer = emit_access_modifer(current_access_level, access_modifer);
         if member.kind == ConstructorDeclaration
         {
-            let parameters: string = convert_parameter_list(member.first_child(ParameterList));
+            let parameters: string = convert_parameter_list(member);
             var full_name: string = "construct";
             let constructor_name: Semantic_Node? = member.first_child(Identifier);
             if constructor_name =/= none
@@ -684,9 +695,8 @@ public class Emitter
         else if member.kind == MethodDeclaration
         {
             let method_name: string = member.children[1].get_text();
-            let parameter_list: Semantic_Node = member.children[2];
-            let parameters: string = convert_parameter_list(parameter_list);
-            let self_parameter: Semantic_Node? = parameter_list.first_child(SelfParameter);
+            let parameters: string = convert_parameter_list(member);
+            let self_parameter: Semantic_Node? = member.first_child(SelfParameter);
             let is_associated_function: bool = self_parameter == none;
             let mutable_self: bool = not is_associated_function and self_parameter.has_child(MutableKeyword);
             let return_type: Semantic_Node = member.children[4];
@@ -743,88 +753,88 @@ public class Emitter
             convert_expression(expression, global_definitions);
             global_definitions.EndLine(";");
         }
-        else if declaration.kind == ClassDeclaration
-        {
-            let class_name: string = declaration.children[2].get_text();
-            type_declarations.WriteLine("class " + class_name + "_;");
-            class_declarations.ElementSeparatorLine();
-            class_declarations.WriteLine("class " + class_name + "_");
-            class_declarations.BeginBlock();
-            class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
-            // Write out basic reference equality comparisons
-            class_declarations.WriteLine("p_bool op_equal(" + class_name + "_ const * other) const { return this == other; }");
-            class_declarations.WriteLine("p_bool op_not_equal(" + class_name + "_ const * other) const { return this != other; }");
-            var current_access_level: int = PublicKeyword;
-            var has_constructors: bool = false;
-            for let member: Semantic_Node in declaration.members()
-            {
-                has_constructors = has_constructors or member.kind == ConstructorDeclaration;
-                current_access_level = emit_member_declaration(member, class_name, false, current_access_level);
-            }
-            if not has_constructors
-            {
-                emit_default_constructor(class_name, false, current_access_level);
-            }
-            class_declarations.EndBlockWithSemicolon();
-        }
-        else if declaration.kind == StructDeclaration
-        {
-            let struct_name: string = declaration.children[2].get_text();
-            type_declarations.WriteLine("struct " + struct_name + "_;");
-            class_declarations.ElementSeparatorLine();
-            class_declarations.WriteLine("struct " + struct_name + "_ final");
-            class_declarations.BeginBlock();
-            class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
-            // Write out arrow and dereference operators for using value types like reference types
-            // TODO Emit correct code to use value types as value types rather than reference types and drop this code
-            class_declarations.WriteLine(struct_name + "_ * operator->() { return this; }");
-            class_declarations.WriteLine(struct_name + "_ const * operator->() const { return this; }");
-            class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
-            class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
-            var current_access_level: int = PublicKeyword;
-            var has_constructors: bool = false;
-            for let member: Semantic_Node in declaration.members()
-            {
-                has_constructors = has_constructors or member.kind == ConstructorDeclaration;
-                current_access_level = emit_member_declaration(member, struct_name, true, current_access_level);
-            }
-            if not has_constructors
-            {
-                emit_default_constructor(struct_name, true, current_access_level);
-            }
-            class_declarations.EndBlockWithSemicolon();
-        }
-        else if declaration.kind == EnumDeclaration
-        {
-            let enum_name: string = declaration.children[3].get_text();
-            type_declarations.WriteLine("enum class " + enum_name + "_;");
-            class_declarations.ElementSeparatorLine();
-            class_declarations.WriteLine("enum class " + enum_name + "_");
-            class_declarations.BeginBlock();
-            for let member: Semantic_Node in declaration.children
-            {
-                if member.kind == EnumMemberDeclaration
-                {
-                    let member_name: string = member.children[0].get_text();
-                    class_declarations.BeginLine(member_name + "_");
-                    let member_value: Semantic_Node? = member.first_child(Number);
-                    if member_value =/= none
-                    {
-                        class_declarations.Write(" = ");
-                        class_declarations.Write(member_value.get_text());
-                    }
-                    class_declarations.EndLine(",");
-                }
-            }
-            class_declarations.EndBlockWithSemicolon();
-        }
+        // else if declaration.kind == ClassDeclaration
+        // {
+        //     let class_name: string = declaration.children[2].get_text();
+        //     type_declarations.WriteLine("class " + class_name + "_;");
+        //     class_declarations.ElementSeparatorLine();
+        //     class_declarations.WriteLine("class " + class_name + "_");
+        //     class_declarations.BeginBlock();
+        //     class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
+        //     // Write out basic reference equality comparisons
+        //     class_declarations.WriteLine("p_bool op_equal(" + class_name + "_ const * other) const { return this == other; }");
+        //     class_declarations.WriteLine("p_bool op_not_equal(" + class_name + "_ const * other) const { return this != other; }");
+        //     var current_access_level: int = PublicKeyword;
+        //     var has_constructors: bool = false;
+        //     for let member: Semantic_Node in declaration.members()
+        //     {
+        //         has_constructors = has_constructors or member.kind == ConstructorDeclaration;
+        //         current_access_level = emit_member_declaration(member, class_name, false, current_access_level);
+        //     }
+        //     if not has_constructors
+        //     {
+        //         emit_default_constructor(class_name, false, current_access_level);
+        //     }
+        //     class_declarations.EndBlockWithSemicolon();
+        // }
+        // else if declaration.kind == StructDeclaration
+        // {
+        //     let struct_name: string = declaration.children[2].get_text();
+        //     type_declarations.WriteLine("struct " + struct_name + "_;");
+        //     class_declarations.ElementSeparatorLine();
+        //     class_declarations.WriteLine("struct " + struct_name + "_ final");
+        //     class_declarations.BeginBlock();
+        //     class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
+        //     // Write out arrow and dereference operators for using value types like reference types
+        //     // TODO Emit correct code to use value types as value types rather than reference types and drop this code
+        //     class_declarations.WriteLine(struct_name + "_ * operator->() { return this; }");
+        //     class_declarations.WriteLine(struct_name + "_ const * operator->() const { return this; }");
+        //     class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
+        //     class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
+        //     var current_access_level: int = PublicKeyword;
+        //     var has_constructors: bool = false;
+        //     for let member: Semantic_Node in declaration.members()
+        //     {
+        //         has_constructors = has_constructors or member.kind == ConstructorDeclaration;
+        //         current_access_level = emit_member_declaration(member, struct_name, true, current_access_level);
+        //     }
+        //     if not has_constructors
+        //     {
+        //         emit_default_constructor(struct_name, true, current_access_level);
+        //     }
+        //     class_declarations.EndBlockWithSemicolon();
+        // }
+        // else if declaration.kind == EnumDeclaration
+        // {
+        //     let enum_name: string = declaration.children[3].get_text();
+        //     type_declarations.WriteLine("enum class " + enum_name + "_;");
+        //     class_declarations.ElementSeparatorLine();
+        //     class_declarations.WriteLine("enum class " + enum_name + "_");
+        //     class_declarations.BeginBlock();
+        //     for let member: Semantic_Node in declaration.children
+        //     {
+        //         if member.kind == EnumMemberDeclaration
+        //         {
+        //             let member_name: string = member.children[0].get_text();
+        //             class_declarations.BeginLine(member_name + "_");
+        //             let member_value: Semantic_Node? = member.first_child(Number);
+        //             if member_value =/= none
+        //             {
+        //                 class_declarations.Write(" = ");
+        //                 class_declarations.Write(member_value.get_text());
+        //             }
+        //             class_declarations.EndLine(",");
+        //         }
+        //     }
+        //     class_declarations.EndBlockWithSemicolon();
+        // }
         else if declaration.kind == FunctionDeclaration
         {
-            let name: string = declaration.children[1].get_text();
+            let name: string = declaration.first_child(Identifier).get_text();
             let is_main: bool = name == "Main" or name == "main";
             if is_main { main_function_name = name; }
-            let parameters: string = convert_parameter_list(declaration.children[2], is_main);
-            let return_type: Semantic_Node = declaration.children[4];
+            let parameters: string = convert_parameter_list(declaration, is_main);
+            let return_type: Semantic_Node = declaration.children[3];
             let cpp_type: string = convert_type(true, return_type);
             // Write out the function declaration for C++ so we can call functions defined after others
             function_declarations.WriteLine("auto " + name + "_" + parameters + " -> " + cpp_type + ";");
@@ -836,7 +846,7 @@ public class Emitter
                     { definitions.Error("Multiple declarations of main"); }
                 main_function_return_type = cpp_type;
             }
-            emit_statement(declaration.children[5]);
+            emit_statement(declaration.first_child(Block));
         }
         else if declaration.kind == EndOfFileToken
         {
