@@ -180,6 +180,24 @@ public class Semantic_Node
         return parameters;
     }
 
+    // TODO this should only be on things with access modifiers
+    public access_modifier(self) -> Semantic_Node?
+    {
+        for let child: Semantic_Node in children
+        {
+            // TODO fix this to a more reliable means of telling what should be visited
+            if child.kind == PublicKeyword
+                or child.kind == ProtectedKeyword
+                or child.kind == PrivateKeyword
+                or child.kind == InternalKeyword
+            {
+                return child;
+            }
+        }
+
+        return none;
+    }
+
     public has_child(self, kind: int) -> bool
     {
         for let child: Semantic_Node in children

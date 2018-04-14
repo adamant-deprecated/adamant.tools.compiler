@@ -43,6 +43,7 @@ public /*mut*/ class Semantic_Tree_Builder
         -> Semantic_Node
     {
         let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+
         if syntax.kind == FunctionDeclaration
             or syntax.kind == MethodDeclaration
         {
@@ -73,10 +74,10 @@ public /*mut*/ class Semantic_Tree_Builder
             children.add(build(type_name, name_table, scope));
             let type_scope: Name_Subtable = scope.find(type_name.get_text());
             assert(type_scope =/= none, "type_name.get_text()="+type_name.get_text());
-            let body: Syntax_Node = syntax.first_child(Block);
-            if body =/= none
+
+            for let member: Syntax_Node in syntax.members()
             {
-                children.add(build(body, name_table, type_scope));
+                children.add(build(member, name_table, type_scope));
             }
 
             // TODO what about the class/struct type?

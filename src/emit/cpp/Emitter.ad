@@ -438,7 +438,7 @@ public class Emitter
         {
             convert_expression(syntax.children[0], builder);
             convert_member_access(syntax.children[0], builder);
-            convert_expression(syntax.children[2], builder);
+            convert_expression(syntax.children[1], builder);
         }
         else if syntax.kind == ElementAccessExpression
         {
@@ -469,7 +469,6 @@ public class Emitter
 
         if statement.kind == ReturnStatement
         {
-
             if |statement.children| == 2
                 { definitions.WriteLine("return;"); }
             else
@@ -648,7 +647,7 @@ public class Emitter
 
     private emit_member_declaration(mut self, member: Semantic_Node, class_name: string, is_value_type: bool, current_access_level: int) -> int
     {
-        var access_modifer: int = member.children[0].kind;
+        var access_modifer: int = member.access_modifier().kind;
         access_modifer = emit_access_modifer(current_access_level, access_modifer);
         if member.kind == ConstructorDeclaration
         {
@@ -671,14 +670,14 @@ public class Emitter
         else if member.kind == FieldDeclaration
         {
             let variable_declaration: Semantic_Node = member.first_child(VariableDeclaration);
-            let field_name: string = variable_declaration.children[1].get_text();
-            let field_type: Semantic_Node = variable_declaration.children[3];
+            let field_name: string = variable_declaration.first_child(Identifier).get_text();
+            let field_type: Semantic_Node = variable_declaration.children[2];
             let cpp_type: string = convert_type(true, field_type); // because we need to assign them in constructors don't mark fields const
             class_declarations.WriteLine(cpp_type + " " + field_name + "_;");
         }
         else if member.kind == MethodDeclaration
         {
-            let method_name: string = member.children[1].get_text();
+            let method_name: string = member.first_child(Identifier).get_text();
             let parameters: string = convert_parameter_list(member.first_child(ParameterList));
             let self_parameter: Semantic_Node? = member.first_child(ParameterList).first_child(SelfParameter);
             let is_associated_function: bool = self_parameter == none;
