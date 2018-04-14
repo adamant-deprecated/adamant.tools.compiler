@@ -149,8 +149,15 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
     let diagnostics: System.Collections.List<Diagnostic> = package.all_diagnostics();
     write(console, diagnostics);
 
+    if has_errors(diagnostics)
+    {
+        return DataError;
+    }
+
     if has_errors(old_diagnostics)
     {
+        console.WriteLine("Old Errors:");
+        write(console, old_diagnostics);
         return DataError;
     }
 

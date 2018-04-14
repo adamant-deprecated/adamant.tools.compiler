@@ -31,6 +31,8 @@ public class Old_Runtime_Library_Package_Builder
 		symbols.Add(build_function("NOT_IMPLEMENTED"));
 		symbols.Add(build_function("UNREACHABLE"));
 		symbols.Add(build_function("assert"));
+        symbols.Add(build_function("debug_write"));
+        symbols.Add(build_function("debug_write_line"));
 
 		symbols.Add(build_function("resource_manager"));
 
