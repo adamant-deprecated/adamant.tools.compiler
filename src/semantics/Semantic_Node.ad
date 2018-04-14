@@ -36,7 +36,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = new System.Collections.List<Semantic_Node>();
-        self.node_diagnostics = get_diagnostics(syntax, self.children);
+        self.node_diagnostics = new System.Collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
@@ -54,7 +54,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = get_diagnostics(syntax, children);
+        self.node_diagnostics = new System.Collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
@@ -72,7 +72,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = get_diagnostics(syntax, children);
+        self.node_diagnostics = new System.Collections.List<Diagnostic>();
         self.of_type = of_type;
         self.converted_type = of_type;
         self.declares_type = none;
@@ -90,33 +90,11 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = get_diagnostics(syntax, children);
+        self.node_diagnostics = new System.Collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
         self.referenced_type = type;
-    }
-
-    private get_diagnostics(syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
-        -> mut System.Collections.List<Diagnostic>
-    {
-        let diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
-        for let diagnostic: Diagnostic in syntax.node_diagnostics
-        {
-            diagnostics.Add(diagnostic);
-        }
-
-        // let diagnostics: mut System.Collections.List<Diagnostic> = syntax.all_diagnostics();
-        // let child_diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
-        // for let child: Semantic_Node in children
-        // {
-        // 	child.collect_diagnostics(child_diagnostics);
-        // }
-        // for let diagnostic: Diagnostic in child_diagnostics
-        // {
-        // 	diagnostics.
-        // }
-        return diagnostics;
     }
 
     public get_text_span(self) -> Text_Span

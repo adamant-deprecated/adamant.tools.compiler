@@ -33,7 +33,7 @@ public /*mut*/ class Semantic_Tree_Builder
         {
             declarations.add(build(declaration_syntax, name_table, name_table.any_package));
         }
-        return new Compilation_Unit(compilation_unit_syntax.source, declarations);
+        return new Compilation_Unit(compilation_unit_syntax, declarations);
     }
 
     private build(self,

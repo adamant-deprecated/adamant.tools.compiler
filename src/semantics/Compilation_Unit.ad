@@ -2,17 +2,18 @@
 public class Compilation_Unit
 {
     // TODO Package_Location
-    public let source: Source_Text;
+    public let syntax: Syntax_Node;
     public let declarations: System.Collections.List<Semantic_Node>;
 
-    public new(source: Source_Text, declarations: System.Collections.List<Semantic_Node>)
+    public new(syntax: Syntax_Node, declarations: System.Collections.List<Semantic_Node>)
     {
-        self.source = source;
+        self.syntax = syntax;
         self.declarations = declarations;
     }
 
     public collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
     {
+        syntax.collect_diagnostics(diagnostics);
         for let declaration: Semantic_Node in declarations
         {
             declaration.collect_diagnostics(diagnostics);
