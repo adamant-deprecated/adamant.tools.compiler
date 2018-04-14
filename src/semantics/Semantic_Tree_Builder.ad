@@ -52,7 +52,7 @@ public /*mut*/ class Semantic_Tree_Builder
             build_parameters(syntax, name_table, scope, children);
 
             let return_type: Syntax_Node = syntax.children[4]; // TODO need more reliable way to pick this out
-            children.add(build(return_type, name_table, scope));
+            children.add(build_type_name(return_type, name_table, scope));
 
             let function_scope: Name_Subtable = scope.find(function_name.get_text());
             assert(function_scope =/= none, "function_name.get_text()="+function_name.get_text());
