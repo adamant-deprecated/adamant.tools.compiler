@@ -736,81 +736,81 @@ public class Emitter
             convert_expression(expression, global_definitions);
             global_definitions.EndLine(";");
         }
-        // else if declaration.kind == ClassDeclaration
-        // {
-        //     let class_name: string = declaration.children[2].get_text();
-        //     type_declarations.WriteLine("class " + class_name + "_;");
-        //     class_declarations.ElementSeparatorLine();
-        //     class_declarations.WriteLine("class " + class_name + "_");
-        //     class_declarations.BeginBlock();
-        //     class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
-        //     // Write out basic reference equality comparisons
-        //     class_declarations.WriteLine("p_bool op_equal(" + class_name + "_ const * other) const { return this == other; }");
-        //     class_declarations.WriteLine("p_bool op_not_equal(" + class_name + "_ const * other) const { return this != other; }");
-        //     var current_access_level: int = PublicKeyword;
-        //     var has_constructors: bool = false;
-        //     for let member: Semantic_Node in declaration.members()
-        //     {
-        //         has_constructors = has_constructors or member.kind == ConstructorDeclaration;
-        //         current_access_level = emit_member_declaration(member, class_name, false, current_access_level);
-        //     }
-        //     if not has_constructors
-        //     {
-        //         emit_default_constructor(class_name, false, current_access_level);
-        //     }
-        //     class_declarations.EndBlockWithSemicolon();
-        // }
-        // else if declaration.kind == StructDeclaration
-        // {
-        //     let struct_name: string = declaration.children[2].get_text();
-        //     type_declarations.WriteLine("struct " + struct_name + "_;");
-        //     class_declarations.ElementSeparatorLine();
-        //     class_declarations.WriteLine("struct " + struct_name + "_ final");
-        //     class_declarations.BeginBlock();
-        //     class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
-        //     // Write out arrow and dereference operators for using value types like reference types
-        //     // TODO Emit correct code to use value types as value types rather than reference types and drop this code
-        //     class_declarations.WriteLine(struct_name + "_ * operator->() { return this; }");
-        //     class_declarations.WriteLine(struct_name + "_ const * operator->() const { return this; }");
-        //     class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
-        //     class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
-        //     var current_access_level: int = PublicKeyword;
-        //     var has_constructors: bool = false;
-        //     for let member: Semantic_Node in declaration.members()
-        //     {
-        //         has_constructors = has_constructors or member.kind == ConstructorDeclaration;
-        //         current_access_level = emit_member_declaration(member, struct_name, true, current_access_level);
-        //     }
-        //     if not has_constructors
-        //     {
-        //         emit_default_constructor(struct_name, true, current_access_level);
-        //     }
-        //     class_declarations.EndBlockWithSemicolon();
-        // }
-        // else if declaration.kind == EnumDeclaration
-        // {
-        //     let enum_name: string = declaration.children[3].get_text();
-        //     type_declarations.WriteLine("enum class " + enum_name + "_;");
-        //     class_declarations.ElementSeparatorLine();
-        //     class_declarations.WriteLine("enum class " + enum_name + "_");
-        //     class_declarations.BeginBlock();
-        //     for let member: Semantic_Node in declaration.children
-        //     {
-        //         if member.kind == EnumMemberDeclaration
-        //         {
-        //             let member_name: string = member.children[0].get_text();
-        //             class_declarations.BeginLine(member_name + "_");
-        //             let member_value: Semantic_Node? = member.first_child(Number);
-        //             if member_value =/= none
-        //             {
-        //                 class_declarations.Write(" = ");
-        //                 class_declarations.Write(member_value.get_text());
-        //             }
-        //             class_declarations.EndLine(",");
-        //         }
-        //     }
-        //     class_declarations.EndBlockWithSemicolon();
-        // }
+        else if declaration.kind == ClassDeclaration
+        {
+            let class_name: string = declaration.first_child(Identifier).get_text();
+            type_declarations.WriteLine("class " + class_name + "_;");
+            class_declarations.ElementSeparatorLine();
+            class_declarations.WriteLine("class " + class_name + "_");
+            class_declarations.BeginBlock();
+            class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
+            // Write out basic reference equality comparisons
+            class_declarations.WriteLine("p_bool op_equal(" + class_name + "_ const * other) const { return this == other; }");
+            class_declarations.WriteLine("p_bool op_not_equal(" + class_name + "_ const * other) const { return this != other; }");
+            var current_access_level: int = PublicKeyword;
+            var has_constructors: bool = false;
+            for let member: Semantic_Node in declaration.members()
+            {
+                has_constructors = has_constructors or member.kind == ConstructorDeclaration;
+                current_access_level = emit_member_declaration(member, class_name, false, current_access_level);
+            }
+            if not has_constructors
+            {
+                emit_default_constructor(class_name, false, current_access_level);
+            }
+            class_declarations.EndBlockWithSemicolon();
+        }
+        else if declaration.kind == StructDeclaration
+        {
+            let struct_name: string = declaration.first_child(Identifier).get_text();
+            type_declarations.WriteLine("struct " + struct_name + "_;");
+            class_declarations.ElementSeparatorLine();
+            class_declarations.WriteLine("struct " + struct_name + "_ final");
+            class_declarations.BeginBlock();
+            class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
+            // Write out arrow and dereference operators for using value types like reference types
+            // TODO Emit correct code to use value types as value types rather than reference types and drop this code
+            class_declarations.WriteLine(struct_name + "_ * operator->() { return this; }");
+            class_declarations.WriteLine(struct_name + "_ const * operator->() const { return this; }");
+            class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
+            class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
+            var current_access_level: int = PublicKeyword;
+            var has_constructors: bool = false;
+            for let member: Semantic_Node in declaration.members()
+            {
+                has_constructors = has_constructors or member.kind == ConstructorDeclaration;
+                current_access_level = emit_member_declaration(member, struct_name, true, current_access_level);
+            }
+            if not has_constructors
+            {
+                emit_default_constructor(struct_name, true, current_access_level);
+            }
+            class_declarations.EndBlockWithSemicolon();
+        }
+        else if declaration.kind == EnumDeclaration
+        {
+            let enum_name: string = declaration.first_child(Identifier).get_text();
+            type_declarations.WriteLine("enum class " + enum_name + "_;");
+            class_declarations.ElementSeparatorLine();
+            class_declarations.WriteLine("enum class " + enum_name + "_");
+            class_declarations.BeginBlock();
+            for let member: Semantic_Node in declaration.children
+            {
+                if member.kind == EnumMemberDeclaration
+                {
+                    let member_name: string = member.children[0].get_text();
+                    class_declarations.BeginLine(member_name + "_");
+                    let member_value: Semantic_Node? = member.first_child(Number);
+                    if member_value =/= none
+                    {
+                        class_declarations.Write(" = ");
+                        class_declarations.Write(member_value.get_text());
+                    }
+                    class_declarations.EndLine(",");
+                }
+            }
+            class_declarations.EndBlockWithSemicolon();
+        }
         else if declaration.kind == FunctionDeclaration
         {
             let name: string = declaration.first_child(Identifier).get_text();
