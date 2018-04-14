@@ -568,7 +568,7 @@ public class Emitter
             if |variable_declaration.children| > 3
             {
                 definitions.Write(" = ");
-                convert_expression(variable_declaration.children[4], definitions);
+                convert_expression(variable_declaration.children[3], definitions);
             }
             definitions.EndLine(";");
         }
@@ -682,7 +682,7 @@ public class Emitter
             let self_parameter: Semantic_Node? = member.first_child(ParameterList).first_child(SelfParameter);
             let is_associated_function: bool = self_parameter == none;
             let mutable_self: bool = not is_associated_function and self_parameter.has_child(MutableKeyword);
-            let return_type: Semantic_Node = member.children[4];
+            let return_type: Semantic_Node = member.children[3];
             let cpp_type: string = convert_type(true, return_type);
             var static_modifier: string = "";
             if is_associated_function
