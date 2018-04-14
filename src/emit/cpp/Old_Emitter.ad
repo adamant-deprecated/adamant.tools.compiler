@@ -1,4 +1,4 @@
-public class Emitter
+public class Old_Emitter
 {
     private let package: Old_Package;
     private let resources: System.Collections.List<Source_Text>;
@@ -642,7 +642,7 @@ public class Emitter
             }
             else
             {
-                THROW_EXCEPTION("Invalid access modifier in Emitter.emit_member_declaration(). kind is " + access_modifer);
+                THROW_EXCEPTION("Invalid access modifier in Old_Emitter.emit_member_declaration(). kind is " + access_modifer);
             }
         }
         return access_modifer;

@@ -161,8 +161,8 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
         return DataError;
     }
 
-    var emitter: mut Emitter = new Emitter(old_package, resources);
-    let translated: string = emitter.Emit();
+    var old_emitter: mut Old_Emitter = new Old_Emitter(old_package, resources);
+    let translated: string = old_emitter.Emit();
 
     // Write output
     if verbose
