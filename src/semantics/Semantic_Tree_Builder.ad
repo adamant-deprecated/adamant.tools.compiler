@@ -132,6 +132,27 @@ public /*mut*/ class Semantic_Tree_Builder
             children.add(build(syntax.first_child(ArgumentList), name_table, scope)); // Call Arguments
             return new Semantic_Node.concrete(syntax, children);
         }
+        else if syntax.kind == LocalDeclarationStatement
+        {
+            let variable_declaration: Syntax_Node = syntax.children[0];
+            children.add(build(variable_declaration, name_table, scope));
+            return new Semantic_Node.concrete(syntax, children);
+        }
+        else if syntax.kind == VariableDeclaration
+        {
+            let binding_syntax: Syntax_Node = syntax.children[0];
+            children.add(new Semantic_Node.token(binding_syntax));
+            let identifier: Syntax_Node = syntax.first_child(Identifier);
+            children.add(new Semantic_Node.token(identifier));
+            let type_syntax: Syntax_Node = syntax.children[3];
+            children.add(build_type_name(type_syntax, name_table, scope));
+            if |syntax.children| == 6
+			{
+				let initalizer: Syntax_Node = syntax.children[5];
+				children.add(build(initalizer, name_table, scope));
+			}
+            return new Semantic_Node.concrete(syntax, children);
+        }
         else if |syntax.children| == 0
         {
             // Create a semantic node to represent the token
