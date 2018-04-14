@@ -164,7 +164,8 @@ public /*mut*/ class Semantic_Tree_Builder
 			if parameter.kind == Parameter
 			{
 				children.add(new Semantic_Node.token(parameter.first_child(Identifier)));
-				let type_syntax: Syntax_Node = parameter.children[2];
+                // Because a parameter can have `var` at the beginning, the position of the type isn't constant
+				let type_syntax: Syntax_Node = parameter.children[|parameter.children| - 1];
 				let type_node: Semantic_Node = build_type_name(type_syntax, name_table, scope);
 				children.add(type_node);
 
@@ -259,49 +260,55 @@ public /*mut*/ class Semantic_Tree_Builder
 
 			UNREACHABLE();
 		}
+		else if syntax.kind == MutableType
+		{
+			let inner_type: Semantic_Node = build_type_name(syntax.children[1], name_table, scope);
+			children.add(inner_type);
+			if inner_type.referenced_type == none
+			{
+				add_could_not_determine_type_error(inner_type);
+				return new Semantic_Node.concrete(syntax, children);
+			}
+			let type: Type = inner_type.referenced_type.make_mutable();
+			return new Semantic_Node.referencing_type(type, syntax, children);
+		}
+		else if syntax.kind == ImmutableType
+		{
+			let inner_type: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
+			children.add(inner_type);
+			if inner_type.referenced_type == none
+			{
+				add_could_not_determine_type_error(inner_type);
+				return new Semantic_Node.concrete(syntax, children);
+			}
+			let type: Type = inner_type.referenced_type.make_immutable();
+			return new Semantic_Node.referencing_type(type, syntax, children);
+		}
+		else if syntax.kind == OptionalType
+		{
+			let inner_type: Semantic_Node = build_type_name(syntax.children[0], name_table, scope);
+			children.add(inner_type);
+			if inner_type.referenced_type == none
+			{
+				add_could_not_determine_type_error(inner_type);
+				return new Semantic_Node.concrete(syntax, children);
+			}
+			// TODO construct an actual optional type
+			let type: Type = inner_type.referenced_type.make_immutable();
+			return new Semantic_Node.referencing_type(type, syntax, children);
+		}
 		else
 		{
 			// TODO this is a temporary measure to build up the tree.
 			//      replace with specific constructions
-			for let child_syntax: Syntax_Node in syntax.children
-			{
-				children.add(build_type_name(child_syntax, name_table, scope));
-			}
-			return new Semantic_Node.concrete(syntax, children);
+			// for let child_syntax: Syntax_Node in syntax.children
+			// {
+			// 	children.add(build_type_name(child_syntax, name_table, scope));
+			// }
+			// return new Semantic_Node.concrete(syntax, children);
+            let place: int = syntax.start;
+			NOT_IMPLEMENTED("syntax.kind="+syntax.kind+" at "+place);
 		}
-		// else if node.kind == MutableType
-		// {
-		// 	let inner_type_node: mut Old_Semantic_Node = node.children[1];
-		// 	bind_type_name(inner_type_node, scope);
-		// 	if inner_type_node.type == none
-		// 	{
-		// 		add_could_not_determine_type_error(inner_type_node);
-		// 		return;
-		// 	}
-		// 	node.bind_type(inner_type_node.type.make_mutable());
-		// }
-		// else if node.kind == ImmutableType
-		// {
-		// 	let inner_type_node: mut Old_Semantic_Node = node.children[0];
-		// 	bind_type_name(inner_type_node, scope);
-		// 	if inner_type_node.type == none
-		// 	{
-		// 		add_could_not_determine_type_error(inner_type_node);
-		// 		return;
-		// 	}
-		// 	node.bind_type(inner_type_node.type.make_immutable());
-		// }
-		// else if node.kind == OptionalType
-		// {
-		// 	let inner_type_node: mut Old_Semantic_Node = node.children[0];
-		// 	bind_type_name(inner_type_node, scope);
-		// 	if inner_type_node.type == none
-		// 	{
-		// 		add_could_not_determine_type_error(inner_type_node);
-		// 		return;
-		// 	}
-		// 	node.bind_type(inner_type_node.type.make_immutable());
-		// }
 	}
 
 	private build_type_arguments(self,
