@@ -162,7 +162,10 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
     }
 
     var old_emitter: mut Old_Emitter = new Old_Emitter(old_package, resources);
-    let translated: string = old_emitter.Emit();
+    let old_translated: string = old_emitter.Emit();
+
+    var emitter: mut Emitter = new Emitter(old_package, resources);
+    let translated: string = emitter.Emit();
 
     // Write output
     if verbose
@@ -195,6 +198,10 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
     resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
     resourceFile.Close();
 
+    if old_translated =/= translated
+    {
+        return -1;
+    }
     return Success;
 }
 
