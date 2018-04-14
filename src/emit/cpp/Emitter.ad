@@ -85,20 +85,6 @@ public class Emitter
             cpp_type.Append(">");
         }
         return cpp_type.ToString();
-    //     if type.kind == IdentifierName
-    //     {
-    //         return "::" + type.get_text() + "_";
-    //     }
-    //     if type.kind == QualifiedName
-    //     {
-    //         return convert_type_name(type.children[0]) + convert_type_name(type.children[2]);
-    //     }
-    //     if type.kind == GenericName
-    //     {
-    //         return convert_type_name(type.children[0]) + "<" + convert_type(true, type.children[2]) + ">";
-    //     }
-
-    //     return format_error("Unexpected Token of type "+type.kind+" found in convert_type_name(), `"+type.get_text()+"`");
     }
 
     private convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
@@ -576,16 +562,16 @@ public class Emitter
         }
         else if statement.kind == LocalDeclarationStatement
         {
-            let variable_declaration: Semantic_Node = statement.children[0];
+            let variable_declaration: Semantic_Node = statement.first_child(VariableDeclaration);
             let variable_name: string = variable_declaration.first_child(Identifier).get_text();
-            let variable_type: Semantic_Node = variable_declaration.children[3];
+            let variable_type: Semantic_Node = variable_declaration.children[2];
             let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
             definitions.BeginLine(convert_type(mutable_binding, variable_type));
             definitions.Write(" " + variable_name + "_");
-            if variable_declaration.has_child(Equals)
+            if |variable_declaration.children| > 3
             {
                 definitions.Write(" = ");
-                convert_expression(variable_declaration.children[5], definitions);
+                convert_expression(variable_declaration.children[4], definitions);
             }
             definitions.EndLine(";");
         }
@@ -742,14 +728,14 @@ public class Emitter
     {
         if declaration.kind == GlobalDeclaration
         {
-            let variable_declaration: Semantic_Node = declaration.children[1];
-            let variable_name: string = variable_declaration.children[1].get_text();
-            let variable_type: Semantic_Node = variable_declaration.children[3];
+            let variable_declaration: Semantic_Node = declaration.first_child(VariableDeclaration);
+            let variable_name: string = variable_declaration.first_child(Identifier).get_text();
+            let variable_type: Semantic_Node = variable_declaration.children[2];
             let mutable_binding: bool = variable_declaration.has_child(VarKeyword);
             let cpp_type: string = convert_type(mutable_binding, variable_type);
             global_definitions.BeginLine(cpp_type);
             global_definitions.Write(" " + variable_name + "_ = ");
-            let expression: Semantic_Node = variable_declaration.children[5];
+            let expression: Semantic_Node = variable_declaration.children[3];
             convert_expression(expression, global_definitions);
             global_definitions.EndLine(";");
         }
