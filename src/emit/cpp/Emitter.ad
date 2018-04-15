@@ -57,21 +57,25 @@ public class Emitter
 
     private convert_type_name(type: Type) -> string
     {
+        let cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder();
         if type.is_primitive
         {
             if type.name.unqualified() == "void"
                 { return "void"; }
             // `int`, `bool`, `string`, `code_point`, `uint`
-            return "p_" + type.name.unqualified();
+            cpp_type.Append("p_");
+            cpp_type.Append(type.name.unqualified());
+        }
+        else
+        {
+            for let segment: string in type.name.segments
+            {
+                cpp_type.Append("::");
+                cpp_type.Append(segment);
+                cpp_type.Append("_");
+            }
         }
 
-        var cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder();
-        for let segment: string in type.name.segments
-        {
-            cpp_type.Append("::");
-            cpp_type.Append(segment);
-            cpp_type.Append("_");
-        }
         if |type.type_parameters| > 0
         {
             cpp_type.Append("<");
