@@ -3,7 +3,7 @@ public /*mut*/ class Name_Subtable
     public let name_table: Name_Table;
     public let parent: Name_Subtable?; // TODO this should point at the package binding scope?
     public let name: Name;
-    public let type: Type;
+    public var type: Type;
     private let subtables: mut System.Collections.List<mut Name_Subtable>;
 
     public new global_namespace(name_table: Name_Table)
@@ -67,19 +67,19 @@ public /*mut*/ class Name_Subtable
     }
 
     /// Get a child name
-    public find(self, name: string) -> Name_Subtable?
+    public find(self, name: string) -> mut Name_Subtable?
     {
         return find(name, false);
     }
 
-    public find_special(self, name: string) -> Name_Subtable?
+    public find_special(self, name: string) -> mut Name_Subtable?
     {
         return find(name, true);
     }
 
-    private find(self, name: string, is_special: bool) -> Name_Subtable?
+    private find(self, name: string, is_special: bool) -> mut Name_Subtable?
     {
-        for let subtable: Name_Subtable in subtables
+        for let subtable: mut Name_Subtable in subtables
         {
             if subtable.name.unqualified() == name
                 and subtable.name.is_special == is_special
@@ -88,19 +88,19 @@ public /*mut*/ class Name_Subtable
         return none;
     }
 
-    public lookup(self, name: string) -> Name_Subtable?
+    public lookup(self, name: string) -> mut Name_Subtable?
     {
         return lookup(name, false);
     }
 
-    public lookup_special(self, name: string) -> Name_Subtable?
+    public lookup_special(self, name: string) -> mut Name_Subtable?
     {
         return lookup(name, true);
     }
 
-    protected lookup(self, name: string, is_special: bool) -> Name_Subtable?
+    protected lookup(self, name: string, is_special: bool) -> mut Name_Subtable?
     {
-        var subtable: Name_Subtable? = find(name, is_special);
+        var subtable: mut Name_Subtable? = find(name, is_special);
         if subtable == none and parent =/= none
         {
             subtable = parent.lookup(name, is_special);
@@ -127,5 +127,11 @@ public /*mut*/ class Name_Subtable
         }
 
         return none;
+    }
+
+    public bind_type(mut self, type: Type) -> void
+    {
+        assert(self.type == none, self.name.full());
+        self.type = type;
     }
 }

@@ -50,14 +50,20 @@ public /*mut*/ class Semantic_Tree_Builder
             children.add(build(syntax.access_modifier(), name_table, scope));
             let function_name: Syntax_Node = syntax.first_child(Identifier);
             children.add(build(function_name, name_table, scope));
+
+            let function_scope: mut Name_Subtable = scope.find(function_name.get_text());
+            assert(function_scope =/= none, "function_name.get_text()="+function_name.get_text());
+
             let parameters: Syntax_Node = syntax.first_child(ParameterList);
-            children.add(build_parameters(parameters, name_table, scope));
+            // TODO it is really only the parameters that are in this scope, the types aren't
+            children.add(build_parameters(parameters, name_table, function_scope));
 
             let return_type: Syntax_Node = syntax.children[4]; // TODO need more reliable way to pick this out
             children.add(build_type_name(return_type, name_table, scope));
 
-            let function_scope: Name_Subtable = scope.find(function_name.get_text());
-            assert(function_scope =/= none, "function_name.get_text()="+function_name.get_text());
+            let function_type: Type = new Type(FunctionType, function_scope.name, false);
+            // debug_write_line("Binding function `"+function_name.get_text()+"` with type `"+function_type.name.full()+"`, scope `"+function_scope.name.full()+"`");
+            function_scope.bind_type(function_type);
             let body: Syntax_Node = syntax.first_child(Block);
             if body =/= none
             {
@@ -110,13 +116,21 @@ public /*mut*/ class Semantic_Tree_Builder
         }
         else if syntax.kind == IdentifierName
         {
-            let node: mut Semantic_Node = new Semantic_Node.token(syntax);
-            if scope.lookup(syntax.get_text()) == none
-                and not node.is_missing
+            let name_scope: Name_Subtable = scope.lookup(syntax.get_text());
+            if name_scope == none
             {
-                add_resolution_error(node);
+                let node: mut Semantic_Node = new Semantic_Node.token(syntax);
+                if not syntax.is_missing
+                    { add_resolution_error(node); }
+                return node;
             }
-            return node;
+            else
+            {
+                let place: int = syntax.start;
+                // debug_write_line("Building identifier `"+syntax.get_text()+"` at "+place+", scope `"+name_scope.name.full()+'`');
+                assert(name_scope.type =/= none, syntax.get_text());
+                return new Semantic_Node.of_type(name_scope.type, syntax, children);
+            }
         }
         else if syntax.kind == MemberAccessExpression
         {
@@ -136,18 +150,24 @@ public /*mut*/ class Semantic_Tree_Builder
         }
         else if syntax.kind == LocalDeclarationStatement
         {
-            let variable_declaration: Syntax_Node = syntax.children[0];
+            let variable_declaration: Syntax_Node = syntax.first_child(VariableDeclaration);
             children.add(build(variable_declaration, name_table, scope));
             return new Semantic_Node.concrete(syntax, children);
         }
         else if syntax.kind == VariableDeclaration
         {
-            let binding_syntax: Syntax_Node = syntax.children[0];
+            let binding_syntax: Syntax_Node = syntax.children[0]; // i.e. `let` or `var`
             children.add(new Semantic_Node.token(binding_syntax));
             let identifier: Syntax_Node = syntax.first_child(Identifier);
             children.add(new Semantic_Node.token(identifier));
             let type_syntax: Syntax_Node = syntax.children[3];
-            children.add(build_type_name(type_syntax, name_table, scope));
+            let type_node: Semantic_Node = build_type_name(type_syntax, name_table, scope);
+            assert(type_node.referenced_type =/= none, type_node.get_text());
+            let variable_scope: mut Name_Subtable = scope.lookup(identifier.get_text());
+            assert(variable_scope =/= none, syntax.get_text());
+            // debug_write_line("Binding variable `"+identifier.get_text()+"` with type `"+type_node.referenced_type.name.full()+"`, scope `"+variable_scope.name.full()+"`");
+            variable_scope.bind_type(type_node.referenced_type);
+            children.add(type_node);
             if |syntax.children| == 6
             {
                 let initalizer: Syntax_Node = syntax.children[5];
@@ -210,14 +230,17 @@ public /*mut*/ class Semantic_Tree_Builder
                 let var_syntax: Syntax_Node? = parameter.first_child(VarKeyword);
                 if var_syntax =/= none
                     { children.add(new Semantic_Node.token(var_syntax)); }
-                children.add(new Semantic_Node.token(parameter.first_child(Identifier)));
+                let identifier: Syntax_Node = parameter.first_child(Identifier);
+                children.add(new Semantic_Node.token(identifier));
                 // Because a parameter can have `var` at the beginning, the position of the type isn't constant
                 let type_syntax: Syntax_Node = parameter.children[|parameter.children| - 1];
                 let type_node: Semantic_Node = build_type_name(type_syntax, name_table, scope);
+                assert(type_node.referenced_type =/= none, parameter.get_text());
                 children.add(type_node);
-
-                parameters.add(new Semantic_Node.concrete(parameter, children));
-                // TODO nodes.add(new Semantic_Node.of_type(type_node.referenced_type, parameter, children));
+                let parameter_scope: mut Name_Subtable = scope.lookup(identifier.get_text());
+                assert(parameter_scope =/= none, identifier.get_text());
+                parameter_scope.bind_type(type_node.referenced_type);
+                parameters.add(new Semantic_Node.of_type(type_node.referenced_type, parameter, children));
             }
             else if parameter.kind == SelfParameter
             {

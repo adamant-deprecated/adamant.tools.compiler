@@ -66,6 +66,23 @@ public class Symbol
         self.children = children;
     }
 
+    public new of_type(
+        name: string,
+        of_type: Type,
+        declarations: System.Collections.List<Semantic_Node>,
+        children: System.Collections.List<Symbol>)
+    {
+        assert(of_type =/= none, "name="+name);
+        assert(declarations =/= none, "name="+name);
+        assert(children =/= none, "name="+name);
+        self.name = name;
+        self.is_special_name = false;
+        self.of_type = of_type;
+        self.declares_type = none;
+        self.declarations = declarations;
+        self.children = children;
+    }
+
     // TODO change to operator []
     public get(self, name: string, kind: int) -> Symbol?
     {
