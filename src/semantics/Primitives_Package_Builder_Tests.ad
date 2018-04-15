@@ -1,13 +1,14 @@
 public unit_test_Primitives_Package_Builder() -> void
 {
-    Package_name_is__dollar_primitives();
+    Package_name_is_dollar_primitives();
     Package_has_no_references_or_compilation_units();
     Package_symbol_has_package_name();
     Package_symbol_has_children();
     Package_contains_the_string_type();
+    Package_contains_optional_type();
 }
 
-public Package_name_is__dollar_primitives() -> void
+public Package_name_is_dollar_primitives() -> void
 {
     let package: Package = new Primitives_Package_Builder().build();
     let name: Package_Name = package.name;
@@ -40,4 +41,15 @@ public Package_contains_the_string_type() -> void
     let package: Package = new Primitives_Package_Builder().build();
     let string_symbol: Symbol = package.symbol.get("string", IdentifierSymbol);
     assert(string_symbol =/= none, "");
+}
+
+public Package_contains_optional_type() -> void
+{
+    let package: Package = new Primitives_Package_Builder().build();
+    let adamant_symbol: Symbol? = package.symbol.get("adamant", IdentifierSymbol);
+    assert(adamant_symbol =/= none, "");
+    let langauge_symbol: Symbol? = adamant_symbol.get("language", IdentifierSymbol);
+    assert(langauge_symbol =/= none, "");
+    let optional_symbol: Symbol? = langauge_symbol.get("optional", IdentifierSymbol);
+    assert(optional_symbol =/= none, "");
 }

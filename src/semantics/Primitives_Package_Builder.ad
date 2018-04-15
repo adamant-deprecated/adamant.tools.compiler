@@ -29,7 +29,7 @@ public class Primitives_Package_Builder
         let global_namespace: Name = new Name.global_namespace(package_name);
         let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
-        symbols.Add(build_optional(global_namespace));
+        symbols.Add(build_adamant_language_namespace(global_namespace));
         symbols.Add(build_primitive("void", global_namespace));
         symbols.Add(build_primitive("never", global_namespace));
 
@@ -68,11 +68,23 @@ public class Primitives_Package_Builder
         return symbols;
     }
 
-    private build_optional(namespace: Name) -> Symbol
+    private build_adamant_language_namespace(global_namespace: Name) -> Symbol
     {
+        let adamant_namespace: Name = new Name(global_namespace, NamespaceName, "adamant");
+        let language_namespace: Name = new Name(adamant_namespace, NamespaceName, "language");
+        let language_children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        language_children.add(build_optional(language_namespace));
+        let adamant_children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        adamant_children.add(new Symbol.identifier(language_namespace.unqualified(), language_children));
+        return new Symbol.identifier(adamant_namespace.unqualified(), adamant_children);
+    }
+
+    private build_optional(language_namespace: Name) -> Symbol
+    {
+        let optional_name: Name = new Name(language_namespace, TypeName, "optional");
         let type_parameters: mut System.Collections.List<Type> = new System.Collections.List<Type>();
-        type_parameters.add(new Type(TypeParameterType, new Name(namespace, TypeParameterName, "T"), true));
-        let type: Type = new Type(TypeName, new Name(namespace, TypeName, "Optional"), type_parameters, true);
+        type_parameters.add(new Type(TypeParameterType, new Name(optional_name, TypeParameterName, "T"), true));
+        let type: Type = new Type.primitive(optional_name, type_parameters);
         let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
         let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
         return new Symbol.declaring(type, declarations, children);

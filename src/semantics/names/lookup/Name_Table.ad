@@ -61,7 +61,7 @@ public /*mut*/ class Name_Table
 
         for let package: Name_Subtable in packages
         {
-            if name.qualifier_is(package.name)
+            if name.is_qualified_with(package.name)
             {
                 return package.get(name);
             }

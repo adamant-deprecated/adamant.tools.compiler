@@ -2,6 +2,17 @@
 /// This class actually builds up the semantic tree for the package
 public /*mut*/ class Semantic_Tree_Builder
 {
+    private let optional_type_name: Name;
+
+    public new()
+    {
+        let primitives_package: Package_Name = new Package_Name("$primitives");
+        let global_namespace: Name = new Name.global_namespace(primitives_package);
+        let adamant_namespace: Name = new Name(global_namespace, NamespaceName, "adamant");
+        let language_namespace: Name = new Name(adamant_namespace, NamespaceName, "language");
+        self.optional_type_name = new Name(language_namespace, TypeName, "optional");
+    }
+
     public build(self,
         package_syntax: Syntax_Node,
         name_table: Name_Table)
@@ -420,8 +431,12 @@ public /*mut*/ class Semantic_Tree_Builder
                 add_could_not_determine_type_error(inner_type);
                 return new Semantic_Node.concrete(syntax, children);
             }
-            // TODO construct an actual optional type
-            let type: Type = inner_type.referenced_type.make_immutable();
+            let optional_type_scope: Name_Subtable? = name_table.get(optional_type_name);
+            assert(optional_type_scope =/= none, "");
+            let optional_type: Type = optional_type_scope.type;
+            let type_arguments: mut System.Collections.List<Type> = new System.Collections.List<Type>();
+            type_arguments.add(inner_type.referenced_type);
+            let type: Type = new Type.generic(optional_type, type_arguments);
             return new Semantic_Node.referencing_type(type, syntax, children);
         }
         else
