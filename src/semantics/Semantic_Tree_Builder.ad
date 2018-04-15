@@ -290,57 +290,97 @@ public /*mut*/ class Semantic_Tree_Builder
         else if syntax.kind == QualifiedName
         {
             let qualifier_syntax: Syntax_Node = syntax.children[0];
-            let qualifier: Semantic_Node = build_type_name(qualifier_syntax, name_table, scope);
+            let qualifier: mut Semantic_Node = build_type_name(qualifier_syntax, name_table, scope);
             children.add(qualifier);
 
             let qualified_syntax: Syntax_Node = syntax.children[2];
-            var name_syntax: Syntax_Node;
-            if qualified_syntax.kind == GenericName
+            // TODO there seems to be a lot of duplicate code in these cases
+            if qualified_syntax.kind == IdentifierName
             {
-                name_syntax = qualified_syntax.first_child(IdentifierName);
+                let name_syntax: Syntax_Node = qualified_syntax;
+
+                if qualifier.referenced_type == none
+                {
+                    // This means we aren't sure about the qualifier (i.e. type unknown)
+                    add_could_not_determine_type_error(qualifier);
+
+                    let name_node: mut Semantic_Node = new Semantic_Node.token(name_syntax);
+                    add_resolution_error(name_node, qualifier);
+                    children.add(name_node);
+                    return new Semantic_Node.concrete(syntax, children);
+                }
+                else
+                {
+                    let containing_type: Type = qualifier.referenced_type;
+                    let containing_scope: Name_Subtable = name_table.get(containing_type.name);
+                    // `containing_scope` shouldn't be none, because we looked it up to get the name
+                    assert(containing_scope =/= none, containing_type.name.full());
+                    let referenced_scope: Name_Subtable = containing_scope.find(name_syntax.get_text());
+
+                    if referenced_scope == none
+                    {
+                        let name_node: mut Semantic_Node = new Semantic_Node.token(name_syntax);
+                        add_resolution_error(name_node, qualifier);
+                        children.add(name_node);
+                        return new Semantic_Node.concrete(syntax, children);
+                    }
+
+                    let referenced_type: Type = referenced_scope.type;
+                    let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type, name_syntax, new System.Collections.List<Semantic_Node>());
+                    children.add(name_node);
+                    return new Semantic_Node.referencing_type(referenced_type, syntax, children);
+                }
             }
-            else if qualified_syntax.kind == IdentifierName
+            else if qualified_syntax.kind == GenericName
             {
-                name_syntax = qualified_syntax;
+                let name_syntax: Syntax_Node = qualified_syntax.first_child(IdentifierName);
+                let generic_name_children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+
+                if qualifier.referenced_type == none
+                {
+                    // This means we aren't sure about the qualifier (i.e. type unknown)
+                    add_could_not_determine_type_error(qualifier);
+
+                    let name_node: mut Semantic_Node = new Semantic_Node.token(name_syntax);
+                    add_resolution_error(name_node, qualifier);
+                    generic_name_children.add(name_node);
+                    build_type_arguments(qualified_syntax, name_table, scope, generic_name_children);
+                    let qualified_name: mut Semantic_Node = new Semantic_Node.concrete(qualified_syntax, generic_name_children);
+                    children.add(qualified_name);
+                    return new Semantic_Node.concrete(syntax, children);
+                }
+                else
+                {
+                    let containing_type: Type = qualifier.referenced_type;
+                    let containing_scope: Name_Subtable = name_table.get(containing_type.name);
+                    // `containing_scope` shouldn't be none, because we looked it up to get the name
+                    assert(containing_scope =/= none, containing_type.name.full());
+                    let referenced_scope: Name_Subtable = containing_scope.find(name_syntax.get_text());
+
+                    if referenced_scope == none
+                    {
+                        let name_node: mut Semantic_Node = new Semantic_Node.token(name_syntax);
+                        add_resolution_error(name_node, qualifier);
+                        generic_name_children.add(name_node);
+                        build_type_arguments(qualified_syntax, name_table, scope, generic_name_children);
+                        let qualified_name: mut Semantic_Node = new Semantic_Node.concrete(qualified_syntax, generic_name_children);
+                        children.add(qualified_name);
+                        return new Semantic_Node.concrete(syntax, children);
+                    }
+
+                    let referenced_type_name: Type = referenced_scope.type;
+                    let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type_name, name_syntax, new System.Collections.List<Semantic_Node>());
+                    generic_name_children.add(name_node);
+                    let type_parameters: System.Collections.List<Type> = build_type_arguments(qualified_syntax, name_table, scope, generic_name_children);
+                    let referenced_type: Type = new Type.generic(referenced_type_name, type_parameters);
+                    let qualified_name: mut Semantic_Node = new Semantic_Node.referencing_type(referenced_type, qualified_syntax, generic_name_children);
+                    children.add(qualified_name);
+                    return new Semantic_Node.referencing_type(referenced_type, syntax, children);
+                }
             }
             else
             {
                 UNREACHABLE();
-            }
-
-            if qualifier.referenced_type == none
-            {
-                // This means we aren't sure about the qualifier (i.e. type unknown)
-                let name_node: mut Semantic_Node = new Semantic_Node.token(name_syntax);
-                add_resolution_error(name_node, qualifier);
-                children.add(name_node);
-                build_type_arguments(syntax, name_table, scope, children);
-                let qualified_name: mut Semantic_Node = new Semantic_Node.concrete(syntax, children);
-                add_could_not_determine_type_error(qualified_name);
-                return qualified_name;
-            }
-            else
-            {
-                let containing_type: Type = qualifier.referenced_type;
-                let containing_scope: Name_Subtable = name_table.get(containing_type.name);
-                // `containing_scope` shouldn't be none, because we looked it up to get the name
-                assert(containing_scope =/= none, containing_type.name.full());
-                let referenced_scope: Name_Subtable = containing_scope.find(name_syntax.get_text());
-
-                if referenced_scope == none
-                {
-                    let name_node: mut Semantic_Node = new Semantic_Node.token(name_syntax);
-                    add_resolution_error(name_node, qualifier);
-                    children.add(name_node);
-                    build_type_arguments(syntax, name_table, scope, children);
-                    return new Semantic_Node.concrete(syntax, children);
-                }
-
-                let referenced_type: Type = referenced_scope.type;
-                let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type, name_syntax, new System.Collections.List<Semantic_Node>());
-                children.add(name_node);
-                build_type_arguments(syntax, name_table, scope, children);
-                return new Semantic_Node.referencing_type(referenced_type, syntax, children);
             }
 
             UNREACHABLE();
@@ -401,9 +441,13 @@ public /*mut*/ class Semantic_Tree_Builder
         name_table: Name_Table,
         scope: Name_Subtable,
         children: mut System.Collections.List<Semantic_Node>)
-        -> void
+        -> System.Collections.List<Type>
     {
-        // TODO need way to get the generic type arguments
+        let type_parameters: mut System.Collections.List<Type> = new System.Collections.List<Type>();
+        // for convenience, we ignore identifier names
+        if syntax.kind == IdentifierName
+            { return type_parameters; }
+        assert(syntax.kind == GenericName, "syntax.kind=="+syntax.kind);
         var in_type_arguments: bool = false;
         for let type_argument: Syntax_Node in syntax.children
         {
@@ -411,7 +455,9 @@ public /*mut*/ class Semantic_Tree_Builder
             {
                 if type_argument.kind =/= GreaterThan
                 {
-                    children.add(build_type_name(type_argument, name_table, scope));
+                    let type_node: Semantic_Node = build_type_name(type_argument, name_table, scope);
+                    type_parameters.add(type_node.referenced_type);
+                    children.add(type_node);
                 }
             }
             else if type_argument.kind == LessThan
@@ -419,6 +465,7 @@ public /*mut*/ class Semantic_Tree_Builder
                 in_type_arguments = true;
             }
         }
+        return type_parameters;
     }
 
     private build_constructor_name(self,

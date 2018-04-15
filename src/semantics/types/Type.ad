@@ -13,6 +13,7 @@ public class Type
     /// * is_mutable - whether the type as declared is mutable
     public new(kind: int, name: Name, is_mutable: bool)
     {
+        assert(name =/= none, "");
         self.kind = kind;
         self.name = name;
         self.type_parameters = new System.Collections.List<Type>();
@@ -20,6 +21,17 @@ public class Type
         self.is_value_type = kind == ValueType;
         self.is_potentially_mutable = is_mutable;
         self.is_mutable = is_mutable;
+    }
+
+    public new parameter(name: string)
+    {
+        self.kind = TypeParameterType;
+        self.name = new Name(new Name.global_namespace(), TypeParameterName, name);
+        self.type_parameters = new System.Collections.List<Type>();
+        self.is_primitive = false;
+        self.is_value_type = false;
+        self.is_potentially_mutable = true;
+        self.is_mutable = false;
     }
 
     public new(kind: int, name: Name, type_parameters: System.Collections.List<Type>, is_mutable: bool)
@@ -37,8 +49,8 @@ public class Type
     {
         self.kind = ValueType;
         self.name = name;
-        self.is_primitive = true;
         self.type_parameters = new System.Collections.List<Type>();
+        self.is_primitive = true;
         self.is_value_type = true;
         self.is_potentially_mutable = false;
         self.is_mutable = false;
@@ -56,6 +68,20 @@ public class Type
         self.is_mutable = false;
     }
 
+    public new generic(definition: Type, type_arguments: System.Collections.List<Type>)
+    {
+        assert(definition =/= none, "");
+        assert(type_arguments =/= none, definition.name.full());
+        assert(|definition.type_parameters| == |type_arguments|,
+            definition.name.full()+" "+|definition.type_parameters|+" given "+|type_arguments|);
+        self.kind = definition.kind;
+        self.name = definition.name;
+        self.type_parameters = type_arguments;
+        self.is_primitive = definition.is_primitive;
+        self.is_value_type = definition.is_value_type;
+        self.is_potentially_mutable = definition.is_potentially_mutable;
+        self.is_mutable = definition.is_mutable;
+    }
     private new(kind: int, name: Name, type_parameters: System.Collections.List<Type>, is_primitive: bool, is_potentially_mutable: bool, is_mutable: bool)
     {
         self.kind = kind;

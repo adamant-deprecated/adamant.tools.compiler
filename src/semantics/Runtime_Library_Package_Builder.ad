@@ -44,7 +44,9 @@ public class Runtime_Library_Package_Builder
         // System.Collections
         let collections_namespace: Name = new Name(system_namespace, NamespaceName, "Collections");
         let collections_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-        collections_symbols.Add(build_class(collections_namespace, "List"));
+        let list_type_parameters: mut System.Collections.List<Type> = new System.Collections.List<Type>();
+        list_type_parameters.add(new Type.parameter("T"));
+        collections_symbols.Add(build_generic_class(collections_namespace, "List", list_type_parameters));
         system_symbols.Add(build_namespace(collections_namespace, collections_symbols));
 
         // System.Console
@@ -91,6 +93,14 @@ public class Runtime_Library_Package_Builder
     private build_class(namespace: Name, class_name: string) -> Symbol
     {
         let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
+        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        return new Symbol.declaring(type, declarations, children);
+    }
+
+    private build_generic_class(namespace: Name, class_name: string, type_parameters: System.Collections.List<Type>) -> Symbol
+    {
+        let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), type_parameters, true);
         let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
         let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
         return new Symbol.declaring(type, declarations, children);
