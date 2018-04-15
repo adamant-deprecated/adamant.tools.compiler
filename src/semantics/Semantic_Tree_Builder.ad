@@ -155,6 +155,27 @@ public /*mut*/ class Semantic_Tree_Builder
             }
             return new Semantic_Node.concrete(syntax, children);
         }
+        else if syntax.kind == TrueLiteralExpression
+            or syntax.kind == FalseLiteralExpression
+        {
+            // TODO rather than looking up the time, directly use the one in the package
+            return new Semantic_Node.of_type(scope.lookup_special("bool").type, syntax, children);
+        }
+        else if syntax.kind == StringLiteralExpression
+        {
+            // TODO rather than looking up the time, directly use the one in the package
+            return new Semantic_Node.of_type(scope.lookup_special("string").type, syntax, children);
+        }
+        else if syntax.kind == CodePointLiteralExpression
+        {
+            // TODO rather than looking up the time, directly use the one in the package
+            return new Semantic_Node.of_type(scope.lookup_special("code_point").type, syntax, children);
+        }
+        else if syntax.kind == NumericLiteralExpression
+        {
+            // TODO rather than looking up the time, directly use the one in the package
+            return new Semantic_Node.of_type(scope.lookup_special("int").type, syntax, children);
+        }
         else if |syntax.children| == 0
         {
             // Create a semantic node to represent the token
