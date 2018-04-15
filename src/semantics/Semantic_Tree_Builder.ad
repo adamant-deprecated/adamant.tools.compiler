@@ -100,11 +100,13 @@ public /*mut*/ class Semantic_Tree_Builder
                 children.add(new Semantic_Node.token(constructor_name));
             }
 
-            let parameters: Syntax_Node = syntax.first_child(ParameterList);
-            children.add(build_parameters(parameters, name_table, scope));
-
             let constructor_scope: Name_Subtable = scope.find_special(full_name);
             assert(constructor_scope =/= none, "full_name="+full_name);
+
+            let parameters: Syntax_Node = syntax.first_child(ParameterList);
+            // TODO it is really only the parameters that are in this scope, the types aren't
+            children.add(build_parameters(parameters, name_table, constructor_scope));
+
             let body: Syntax_Node = syntax.first_child(Block);
             if body =/= none
             {
