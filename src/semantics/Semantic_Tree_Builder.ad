@@ -141,8 +141,16 @@ public /*mut*/ class Semantic_Tree_Builder
             {
                 let place: int = syntax.start;
                 // debug_write_line("Building identifier `"+syntax.get_text()+"` at "+place+", scope `"+name_scope.name.full()+'`');
-                assert(name_scope.type =/= none, syntax.get_text());
-                return new Semantic_Node.of_type(name_scope.type, syntax, children);
+                // assert(name_scope.type =/= none, syntax.get_text());
+                if name_scope.type == none
+                {
+                    // TODO this case exists because of out of order declarations, fix it
+                    return new Semantic_Node.concrete(syntax, children);
+                }
+                else
+                {
+                    return new Semantic_Node.of_type(name_scope.type, syntax, children);
+                }
             }
         }
         else if syntax.kind == MemberAccessExpression

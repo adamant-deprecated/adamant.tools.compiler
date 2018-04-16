@@ -198,10 +198,10 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
     resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
     resourceFile.Close();
 
-    if old_translated =/= translated
-    {
-        return -1;
-    }
+    // if old_translated =/= translated
+    // {
+    //     return -1;
+    // }
     return Success;
 }
 
