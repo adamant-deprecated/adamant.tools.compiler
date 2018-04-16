@@ -266,6 +266,11 @@ public /*mut*/ class Semantic_Tree_Builder
             else if parameter.kind == SelfParameter
             {
                 // TODO figure out the class type and call new Semantic_Node.of_type
+                // For now, add all children, because we look for the `mut` keyword to see if self is mutable
+                for let child_syntax: Syntax_Node in parameter.children
+                {
+                    children.add(new Semantic_Node.token(child_syntax));
+                }
                 parameters.add(new Semantic_Node.concrete(parameter, children));
             }
             else
