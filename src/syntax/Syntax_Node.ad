@@ -317,19 +317,19 @@ public new_syntax_node_missing(type: int, source: Source_Text, start: uint) -> S
 }
 
 // TODO make this a named constructor
-public new_Syntax_Node_Skipped(skipped: Syntax_Node) -> Syntax_Node
+public new_Syntax_Node_Skipped(skipped_node: Syntax_Node) -> Syntax_Node
 {
-    let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
-    let span: Text_Span = new Text_Span(skipped.start, skipped.byte_length);
-    node.add(new Diagnostic(CompilationError, Parsing, skipped.source, span, "Skipped unexpected token of type " + skipped.kind));
+    let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped_node);
+    let span: Text_Span = new Text_Span(skipped_node.start, skipped_node.byte_length);
+    node.add(new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + skipped_node.kind));
     return node;
 }
 
 // TODO make this a named constructor
-public new_Syntax_Node_Skipped(skipped: System.Collections.List<Syntax_Node>) -> Syntax_Node
+public new_Syntax_Node_Skipped(skipped_nodes: System.Collections.List<Syntax_Node>) -> Syntax_Node
 {
-    let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped);
+    let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped_nodes);
     let span: Text_Span = new Text_Span(node.start, node.byte_length);
-    node.add(new Diagnostic(CompilationError, Parsing, node.source, span, "Skipped " + |skipped| + " unexpected token(s)"));
+    node.add(new Diagnostic(CompilationError, Parsing, node.source, span, "Skipped " + |skipped_nodes| + " unexpected token(s)"));
     return node;
 }

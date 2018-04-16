@@ -131,10 +131,13 @@ public /*mut*/ class Name_Subtable
 
     public bind_type(mut self, type: Type) -> void
     {
-        assert(self.type == none
+        assert(type =/= none, self.name.full());
+        if self.type =/= none
+        {
             // TODO this is a hack to allow multiple variables with the same name and type in a method
-            or self.type.name.full() == type.name.full(),
-            self.name.full());
+            assert(self.type.name.full() == type.name.full(),
+                self.name.full()+" currently `"+self.type.name.full()+"` trying to set to `"+type.name.full()+"`");
+        }
         self.type = type;
     }
 }

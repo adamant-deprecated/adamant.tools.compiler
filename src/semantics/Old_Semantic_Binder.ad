@@ -59,8 +59,8 @@ public class Old_Semantic_Binder
 		}
 		else if node.kind == Parameter
 		{
-			let type: mut Old_Semantic_Node = node.children[|node.children| - 1];
-			bind_type_name(type, scope);
+			let type_node: mut Old_Semantic_Node = node.children[|node.children| - 1];
+			bind_type_name(type_node, scope);
 		}
 		else if node.kind == ClassDeclaration
 			or node.kind == StructDeclaration
@@ -339,7 +339,7 @@ public class Old_Semantic_Binder
 			let qualifier: mut Old_Semantic_Node = node.children[0];
 			bind_type_name(qualifier, scope);
 
-			let name: mut Old_Semantic_Node = node.children[2];
+			let name_node: mut Old_Semantic_Node = node.children[2];
 			if qualifier.type == none
 			{
 				// Skip because this means we aren't sure about the qualifier (i.e. type unknown)
@@ -350,32 +350,32 @@ public class Old_Semantic_Binder
 				// Skip because this means we aren't sure about the qualifier (i.e. type unknown)
 				//add_resolution_error(name);
 			}
-			else if name.kind == IdentifierName
+			else if name_node.kind == IdentifierName
 			{
-				let symbol: Old_Symbol = qualifier.symbol.get(name.get_text(), IdentifierSymbol);
+				let symbol: Old_Symbol = qualifier.symbol.get(name_node.get_text(), IdentifierSymbol);
 				if symbol == none
 				{
-					add_resolution_error(name);
+					add_resolution_error(name_node);
 				}
 				else
 				{
-					name.bind_symbol(symbol);
+					name_node.bind_symbol(symbol);
 					// TODO transition away from using symbols at higher levels, use types instead
 					node.bind_symbol(symbol); // Set it on the name as a whole, not just the identifier
 
-					let type: Type = symbol.declares_type;
+					let type: Type? = symbol.declares_type;
 					assert(type =/= none, "symbol.name="+symbol.name);
-					name.bind_type(type);
+					name_node.bind_type(type);
 					node.bind_type(type);
 				}
 			}
-			else if name.kind == GenericName
+			else if name_node.kind == GenericName
 			{
-				let identifer_name: mut Old_Semantic_Node = name.first_child(IdentifierName);
+				let identifer_name: mut Old_Semantic_Node = name_node.first_child(IdentifierName);
 				let symbol: Old_Symbol = qualifier.symbol.get(identifer_name.get_text(), IdentifierSymbol);
 				if symbol == none
 				{
-					add_resolution_error(name);
+					add_resolution_error(name_node);
 					return;
 				}
 				identifer_name.bind_symbol(symbol);
@@ -385,7 +385,7 @@ public class Old_Semantic_Binder
 
 				// TODO need way to get the generic type arguments
 				var type_arg: bool = false;
-				for let type_argument: mut Old_Semantic_Node in name.children
+				for let type_argument: mut Old_Semantic_Node in name_node.children
 				{
 					if type_arg
 					{
@@ -400,7 +400,7 @@ public class Old_Semantic_Binder
 					}
 				}
 
-				let type: Type = symbol.declares_type;
+				let type: Type? = symbol.declares_type;
 				assert(type =/= none, "symbol.name="+symbol.name);
 				identifer_name.bind_type(type);
 				// TODO the type of the node should account for the generic type parameters
@@ -408,7 +408,7 @@ public class Old_Semantic_Binder
 			}
 			else
 			{
-				THROW_EXCEPTION("Unreachable: `Semantic_Binder.bind(..)` name.kind = " + name.kind);
+				THROW_EXCEPTION("Unreachable: `Semantic_Binder.bind(..)` name.kind = " + name_node.kind);
 			}
 		}
 		else if node.kind == IdentifierName

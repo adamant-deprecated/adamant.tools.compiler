@@ -686,8 +686,8 @@ public class Old_Emitter
             let self_parameter: Old_Semantic_Node? = parameter_list.first_child(SelfParameter);
             let is_associated_function: bool = self_parameter == none;
             let mutable_self: bool = not is_associated_function and self_parameter.has_child(MutableKeyword);
-            let return_type: Old_Semantic_Node = member.children[4];
-            let cpp_type: string = convert_type(true, return_type);
+            let return_type_node: Old_Semantic_Node = member.children[4];
+            let cpp_type: string = convert_type(true, return_type_node);
             var static_modifier: string = "";
             if is_associated_function
                 { static_modifier = "static "; }
@@ -821,8 +821,8 @@ public class Old_Emitter
             let is_main: bool = name == "Main" or name == "main";
             if is_main { main_function_name = name; }
             let parameters: string = convert_parameter_list(declaration.children[2], is_main);
-            let return_type: Old_Semantic_Node = declaration.children[4];
-            let cpp_type: string = convert_type(true, return_type);
+            let return_type_node: Old_Semantic_Node = declaration.children[4];
+            let cpp_type: string = convert_type(true, return_type_node);
             // Write out the function declaration for C++ so we can call functions defined after others
             function_declarations.WriteLine("auto " + name + "_" + parameters + " -> " + cpp_type + ";");
             definitions.ElementSeparatorLine();
