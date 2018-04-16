@@ -109,22 +109,24 @@ public class Emitter
     {
         assert(type =/= none, "");
 
-    //     if type.kind == OptionalType
-    //     {
-    //         let optional_type: Semantic_Node = type.children[0];
-    //         assert(optional_type.kind == MutableType or optional_type.kind == ImmutableType, "optional_type.kind="+optional_type.kind);
-    //         if optional_type.is_value_type()
-    //         {
-    //             // Optional<T> is a const struct
-    //             return "p_optional<" + convert_type(true, optional_type, true) + "> const";
-    //         }
-    //         else
-    //         {
-    //             return convert_type(mutable_binding, optional_type, true);
-    //         }
-    //     }
-    //     else
-    //     {
+        if type.is_primitive and type.name.unqualified() == "optional"
+        {
+            let optional_type: Type = type.type_parameters[0];
+            if optional_type.is_value_type
+            {
+                // optional<T> is a const struct
+                var cpp_type: string = "p_optional<" + convert_type(true, optional_type, true) + ">";
+                if not mutable_binding and not type.is_mutable
+                    { cpp_type = cpp_type + " const"; }
+                return  cpp_type;
+            }
+            else
+            {
+                return convert_type(mutable_binding, optional_type, true);
+            }
+        }
+        else
+        {
             if type.is_value_type
             {
                 var cpp_type: string = convert_type_name(type);
@@ -136,7 +138,7 @@ public class Emitter
             {
                 return convert_reference_type(mutable_binding, type, optional);
             }
-    //     }
+        }
     }
 
     private convert_type(mutable_binding: bool, type_node: Semantic_Node) -> string
