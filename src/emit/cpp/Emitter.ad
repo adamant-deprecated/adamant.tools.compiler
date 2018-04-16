@@ -464,6 +464,9 @@ public class Emitter
     {
         let type: Type? = lhs.of_type;
         if type =/= none and type.is_value_type // TODO eventually, we shouldn't need to check if the type is null
+            and not (type.is_primitive // optional reference types are still pointers
+                    and type.name.unqualified() == "optional"
+                    and not type.type_parameters[0].is_value_type)
             { builder.Write("."); }
         else
             { builder.Write("->"); }
