@@ -742,6 +742,7 @@ namespace system_
 
 			String_Builder_ *_Nonnull construct() { return this; }
 			String_Builder_ *_Nonnull construct(p_string const & value);
+			String_Builder_ *_Nonnull construct_with_capacity(p_int capacity);
 			void Append_(p_string const & value);
 			void Append_(String_Builder_ const *_Nonnull value);
 			void AppendLine_(p_string const& value);
