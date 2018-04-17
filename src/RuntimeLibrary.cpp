@@ -291,40 +291,98 @@ namespace system_
 
 	namespace Text_
 	{
+		void String_Builder_::ensure_capacity(int needed)
+		{
+			int new_capacity = capacity == 0 ? 128 : capacity;
+			while(new_capacity < needed)
+			{
+				new_capacity *= 2;
+			}
+
+			if(new_capacity > capacity)
+			{
+				char* new_buffer = new char[new_capacity];
+				if(length > 0)
+					std::memcpy(new_buffer, buffer, length);
+
+				if(capacity > 0)
+					delete[] buffer;
+
+				buffer = new_buffer;
+				capacity = new_capacity;
+			}
+		}
+
 		String_Builder_* String_Builder_::construct(p_string const & value)
 		{
-			buffer = value;
+			ensure_capacity(value.Length);
+			std::memcpy(buffer, value.Buffer, value.Length);
+			length = value.Length;
 			return this;
 		}
 
 		void String_Builder_::Append_(p_string const & value)
 		{
-			buffer = buffer.op_add(value);
+			int new_length = length + value.Length;
+			ensure_capacity(new_length);
+			std::memcpy(buffer+length, value.Buffer, value.Length);
+			length = new_length;
 		}
 
 		void String_Builder_::Append_(String_Builder_ const * value)
 		{
-			buffer = buffer.op_add(value->buffer);
+			int new_length = length + value->length;
+			ensure_capacity(new_length);
+			std::memcpy(buffer+length, value->buffer, value->length);
+			length = new_length;
 		}
 
 		void String_Builder_::AppendLine_(p_string const & value)
 		{
-			buffer = buffer.op_add(value).op_add(p_string("\n"));
+			int new_length = length + value.Length + 1;
+			ensure_capacity(new_length);
+			std::memcpy(buffer+length, value.Buffer, value.Length);
+			buffer[new_length-1] = '\n';
+			length = new_length;
 		}
 
 		void String_Builder_::AppendLine_()
 		{
-			buffer = buffer.op_add(p_string("\n"));
+			int new_length = length + 1;
+			ensure_capacity(new_length);
+			buffer[new_length-1] = '\n';
+			length = new_length;
 		}
 
 		void String_Builder_::Remove_(p_int start, p_int length)
 		{
-			buffer = buffer.Substring_(0, start).op_add(buffer.Substring_(start.value+length.value));
+			if(start.value >= this->length)
+				throw std::runtime_error("String_Builder.Remove() start >= length");
+
+			int end = start.value + length.value;
+			if(end > this->length) // greater than because end is one past the end of the remove
+				throw std::runtime_error("String_Builder.Remove() end > length");
+
+			std::memmove(buffer+start.value, buffer+end, this->length-end);
+			this->length -= length.value;
 		}
 
 		void String_Builder_::Remove_(p_int start)
 		{
-			String_Builder_::Remove_(start, buffer.Length-start.value);
+			if(start.value >= length)
+				throw std::runtime_error("String_Builder.Remove() start >= length");
+
+			length = start.value;
+		}
+
+		p_string String_Builder_::ToString_()
+		{
+			p_string result(length, buffer);
+			// give up ownership of buffer
+			buffer = 0;
+			length = 0;
+			capacity = 0;
+			return result;
 		}
 	}
 }
