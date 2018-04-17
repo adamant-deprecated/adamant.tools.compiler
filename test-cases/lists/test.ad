@@ -25,7 +25,7 @@ public Main(console: mut System.Console.Console) -> void
 	{
 		sb.Append("value");
 	}
-	for let sb: System.Text.String_Builder in builders
+	for let sb: mut System.Text.String_Builder in builders
 	{
 		console.WriteLine(sb.ToString());
 	}
