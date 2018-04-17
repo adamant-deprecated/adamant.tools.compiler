@@ -637,7 +637,7 @@ public class ConsoleCommand
 		context.Verbose(Command + " " + Arguments);
 		var result = context.StartProcess(Command, Arguments);
 		if(result != 0)
-			throw new Exception(string.Format("\"{0}\" exited with result: ", Command, result));
+			throw new Exception(string.Format("\"{0}\" exited with result: {2}", Command, result));
 	}
 
 	// Run the command, return the output and report an error on failure
