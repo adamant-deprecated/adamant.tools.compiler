@@ -37,7 +37,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 		sb_->Append_(p_string("value"));
 	}
 
-	for (::System_::Text_::String_Builder_ const *_Nonnull const sb_ : *(builders_))
+	for (::System_::Text_::String_Builder_ *_Nonnull const sb_ : *(builders_))
 	{
 		console_->WriteLine_(sb_->ToString_());
 	}
