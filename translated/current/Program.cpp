@@ -880,15 +880,15 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 	{
 		if (argType_.op_equal(p_int(0)).value)
 		{
-			if (arg_->op_equal(p_string("-r")).value)
+			if (arg_.op_equal(p_string("-r")).value)
 			{
 				argType_ = p_int(1);
 			}
-			else if (arg_->op_equal(p_string("-o")).value)
+			else if (arg_.op_equal(p_string("-o")).value)
 			{
 				argType_ = p_int(2);
 			}
-			else if (op_or(arg_->op_equal(p_string("-v")), [&] { return arg_->op_equal(p_string("--verbose")); }).value)
+			else if (op_or(arg_.op_equal(p_string("-v")), [&] { return arg_.op_equal(p_string("--verbose")); }).value)
 			{
 				verbose_ = p_bool(true);
 			}
@@ -1039,7 +1039,7 @@ auto ::Line_Info_::Count_() const -> p_int
 auto ::Line_Info_::get_(p_int const lineNumber_) const -> ::Text_Line_ const *_Nonnull
 {
 	auto self = this;
-	p_int const index_ = lineNumber_->op_subtract(p_int(1));
+	p_int const index_ = lineNumber_.op_subtract(p_int(1));
 	p_int const start_ = lineStarts_->op_Element(index_);
 	if (index_.op_equal(lineStarts_->op_magnitude()->op_subtract(p_int(1))).value)
 	{
@@ -1109,7 +1109,7 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 	p_int position_ = p_int(0);
 	while (position_.op_less_than(length_).value)
 	{
-		p_code_point const c_ = Text_->op_Element(position_);
+		p_code_point const c_ = Text_.op_Element(position_);
 		position_.op_add_assign(p_int(1));
 		if (op_and(c_.op_greater_than(p_code_point('\r')), [&] { return c_.op_less_than_or_equal(p_code_point('\x7F')); }).value)
 		{
@@ -1118,7 +1118,7 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 
 		if (c_.op_equal(p_code_point('\r')).value)
 		{
-			if (op_and(position_.op_less_than(length_), [&] { return Text_->op_Element(position_)->op_equal(p_code_point('\n')); }).value)
+			if (op_and(position_.op_less_than(length_), [&] { return Text_.op_Element(position_)->op_equal(p_code_point('\n')); }).value)
 			{
 				position_.op_add_assign(p_int(1));
 			}
@@ -1140,7 +1140,7 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 auto ::Source_Text_::ByteLength_() const -> p_int
 {
 	auto self = this;
-	return Text_->ByteLength_();
+	return Text_.ByteLength_();
 }
 
 auto ::Source_Text_::PositionOfStart_(::Text_Span_ const *_Nonnull const span_) const -> ::Text_Position_ const *_Nonnull
@@ -1153,7 +1153,7 @@ auto ::Source_Text_::PositionOfStart_(::Text_Span_ const *_Nonnull const span_) 
 	p_int i_ = lineStart_;
 	while (i_.op_less_than(offset_).value)
 	{
-		if (Text_->op_Element(i_)->op_equal(p_code_point('\t')).value)
+		if (Text_.op_Element(i_)->op_equal(p_code_point('\t')).value)
 		{
 			column_.op_add_assign(p_int(3));
 		}
@@ -1178,14 +1178,14 @@ auto ::Text_Line_::construct_spanning(::Source_Text_ const *_Nonnull const sourc
 	::Text_Line_* self = this;
 	self->source_ = source_;
 	self->start_ = start_;
-	self->byte_length_ = end_->op_subtract(start_);
+	self->byte_length_ = end_.op_subtract(start_);
 	return self;
 }
 
 auto ::Text_Line_::End_() const -> p_int
 {
 	auto self = this;
-	return start_->op_add(byte_length_);
+	return start_.op_add(byte_length_);
 }
 
 auto ::Text_Position_::construct(p_int const offset_, p_int const line_, p_int const column_) -> ::Text_Position_*
@@ -1221,7 +1221,7 @@ auto ::Text_Span_::construct(p_int const start_, p_int const length_) -> ::Text_
 auto ::Text_Span_::End_() const -> p_int
 {
 	auto self = this;
-	return start_->op_add(byte_length_);
+	return start_.op_add(byte_length_);
 }
 
 auto format_error_(p_string const message_) -> p_string
@@ -1288,7 +1288,7 @@ auto ::Source_File_Builder_::BlankLine_() -> void
 auto ::Source_File_Builder_::ElementSeparatorLine_() -> void
 {
 	auto self = this;
-	if (firstElement_->op_not().value)
+	if (firstElement_.op_not().value)
 	{
 		code_->AppendLine_();
 		firstElement_ = p_bool(true);
@@ -2630,84 +2630,84 @@ auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) ->
 		p_bool leftAssociative_;
 		p_bool suffixOperator_ = p_bool(false);
 		p_int expressionType_;
-		if (op_and(op_or(op_or(token_->kind_->op_equal(Equals_), [&] { return token_->kind_->op_equal(PlusEquals_); }), [&] { return token_->kind_->op_equal(MinusEquals_); }), [&] { return minPrecedence_->op_less_than_or_equal(p_int(1)); }).value)
+		if (op_and(op_or(op_or(token_->kind_->op_equal(Equals_), [&] { return token_->kind_->op_equal(PlusEquals_); }), [&] { return token_->kind_->op_equal(MinusEquals_); }), [&] { return minPrecedence_.op_less_than_or_equal(p_int(1)); }).value)
 		{
 			precedence_ = p_int(1);
 			leftAssociative_ = p_bool(false);
 			children_->Add_(AcceptToken_());
 			expressionType_ = AssignmentExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(OrKeyword_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(2)); }).value)
+		else if (op_and(token_->kind_->op_equal(OrKeyword_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(2)); }).value)
 		{
 			precedence_ = p_int(2);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(OrKeyword_));
 			expressionType_ = OrExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(AndKeyword_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(3)); }).value)
+		else if (op_and(token_->kind_->op_equal(AndKeyword_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(3)); }).value)
 		{
 			precedence_ = p_int(3);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(AndKeyword_));
 			expressionType_ = AndExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(EqualsEquals_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(4)); }).value)
+		else if (op_and(token_->kind_->op_equal(EqualsEquals_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(4)); }).value)
 		{
 			precedence_ = p_int(4);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(EqualsEquals_));
 			expressionType_ = EqualExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(EqualsSlashEquals_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(4)); }).value)
+		else if (op_and(token_->kind_->op_equal(EqualsSlashEquals_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(4)); }).value)
 		{
 			precedence_ = p_int(4);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(EqualsSlashEquals_));
 			expressionType_ = NotEqualExpression_;
 		}
-		else if (op_and(op_or(op_or(op_or(token_->kind_->op_equal(LessThan_), [&] { return token_->kind_->op_equal(LessThanEquals_); }), [&] { return token_->kind_->op_equal(GreaterThan_); }), [&] { return token_->kind_->op_equal(GreaterThanEquals_); }), [&] { return minPrecedence_->op_less_than_or_equal(p_int(5)); }).value)
+		else if (op_and(op_or(op_or(op_or(token_->kind_->op_equal(LessThan_), [&] { return token_->kind_->op_equal(LessThanEquals_); }), [&] { return token_->kind_->op_equal(GreaterThan_); }), [&] { return token_->kind_->op_equal(GreaterThanEquals_); }), [&] { return minPrecedence_.op_less_than_or_equal(p_int(5)); }).value)
 		{
 			precedence_ = p_int(5);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(AcceptToken_());
 			expressionType_ = ComparisonExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(Plus_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(6)); }).value)
+		else if (op_and(token_->kind_->op_equal(Plus_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(6)); }).value)
 		{
 			precedence_ = p_int(6);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(Plus_));
 			expressionType_ = AddExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(Minus_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(6)); }).value)
+		else if (op_and(token_->kind_->op_equal(Minus_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(6)); }).value)
 		{
 			precedence_ = p_int(6);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(Minus_));
 			expressionType_ = SubtractExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(Asterisk_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(7)); }).value)
+		else if (op_and(token_->kind_->op_equal(Asterisk_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(7)); }).value)
 		{
 			precedence_ = p_int(7);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(Asterisk_));
 			expressionType_ = MultiplyExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(Slash_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(7)); }).value)
+		else if (op_and(token_->kind_->op_equal(Slash_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(7)); }).value)
 		{
 			precedence_ = p_int(7);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(Slash_));
 			expressionType_ = DivideExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(Percent_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(7)); }).value)
+		else if (op_and(token_->kind_->op_equal(Percent_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(7)); }).value)
 		{
 			precedence_ = p_int(7);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(Percent_));
 			expressionType_ = RemainderExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(LeftParen_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(9)); }).value)
+		else if (op_and(token_->kind_->op_equal(LeftParen_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(9)); }).value)
 		{
 			precedence_ = p_int(9);
 			leftAssociative_ = p_bool(true);
@@ -2715,14 +2715,14 @@ auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) ->
 			children_->Add_(ParseCallArguments_());
 			expressionType_ = InvocationExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(Dot_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(9)); }).value)
+		else if (op_and(token_->kind_->op_equal(Dot_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(9)); }).value)
 		{
 			precedence_ = p_int(9);
 			leftAssociative_ = p_bool(true);
 			children_->Add_(ExpectToken_(Dot_));
 			expressionType_ = MemberAccessExpression_;
 		}
-		else if (op_and(token_->kind_->op_equal(LeftBracket_), [&] { return minPrecedence_->op_less_than_or_equal(p_int(9)); }).value)
+		else if (op_and(token_->kind_->op_equal(LeftBracket_), [&] { return minPrecedence_.op_less_than_or_equal(p_int(9)); }).value)
 		{
 			precedence_ = p_int(9);
 			leftAssociative_ = p_bool(true);
@@ -3380,18 +3380,18 @@ auto ::Token_Stream_::construct(::Source_Text_ const *_Nonnull const source_) ->
 auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 {
 	auto self = this;
-	if (position_->op_greater_than_or_equal(source_->ByteLength_()).value)
+	if (position_.op_greater_than_or_equal(source_->ByteLength_()).value)
 	{
 		return EndOfFile_();
 	}
 
 	p_uint end_ = p_int(1).op_negate();
-	while (position_->op_less_than(source_->ByteLength_()).value)
+	while (position_.op_less_than(source_->ByteLength_()).value)
 	{
 		p_code_point const curChar_ = source_->Text_->op_Element(position_);
 		if (op_or(op_or(op_or(curChar_.op_equal(p_code_point(' ')), [&] { return curChar_.op_equal(p_code_point('\t')); }), [&] { return curChar_.op_equal(p_code_point('\n')); }), [&] { return curChar_.op_equal(p_code_point('\r')); }).value)
 		{
-			position_->op_add_assign(p_int(1));
+			position_.op_add_assign(p_int(1));
 			continue;
 		}
 		else if (curChar_.op_equal(p_code_point('{')).value)
@@ -3448,12 +3448,12 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (curChar_.op_equal(p_code_point('=')).value)
 		{
-			if (op_and(position_->op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
+			if (op_and(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
 			{
 				return NewOperator_(EqualsEquals_, p_int(2));
 			}
 
-			if (op_and(op_and(position_->op_add(p_int(2))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('/')); }), [&] { return source_->Text_->op_Element(position_->op_add(p_int(2)))->op_equal(p_code_point('=')); }).value)
+			if (op_and(op_and(position_.op_add(p_int(2))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('/')); }), [&] { return source_->Text_->op_Element(position_.op_add(p_int(2)))->op_equal(p_code_point('=')); }).value)
 			{
 				return NewOperator_(EqualsSlashEquals_, p_int(3));
 			}
@@ -3462,7 +3462,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (curChar_.op_equal(p_code_point('+')).value)
 		{
-			if (op_and(position_->op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
+			if (op_and(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
 			{
 				return NewOperator_(PlusEquals_, p_int(2));
 			}
@@ -3471,12 +3471,12 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (curChar_.op_equal(p_code_point('-')).value)
 		{
-			if (op_and(position_->op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('>')); }).value)
+			if (op_and(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('>')); }).value)
 			{
 				return NewOperator_(Arrow_, p_int(2));
 			}
 
-			if (op_and(position_->op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
+			if (op_and(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
 			{
 				return NewOperator_(MinusEquals_, p_int(2));
 			}
@@ -3485,27 +3485,27 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (curChar_.op_equal(p_code_point('/')).value)
 		{
-			if (op_and(position_->op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('/')); }).value)
+			if (op_and(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('/')); }).value)
 			{
-				while (op_and(op_and(position_->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_)->op_not_equal(p_code_point('\r')); }), [&] { return source_->Text_->op_Element(position_)->op_not_equal(p_code_point('\n')); }).value)
+				while (op_and(op_and(position_.op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_)->op_not_equal(p_code_point('\r')); }), [&] { return source_->Text_->op_Element(position_)->op_not_equal(p_code_point('\n')); }).value)
 				{
-					position_->op_add_assign(p_int(1));
+					position_.op_add_assign(p_int(1));
 				}
 
 				continue;
 			}
 
-			if (op_and(position_->op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('*')); }).value)
+			if (op_and(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('*')); }).value)
 			{
-				position_->op_add_assign(p_int(2));
+				position_.op_add_assign(p_int(2));
 				p_bool lastCharStar_ = p_bool(false);
-				while (op_and(position_->op_less_than(source_->ByteLength_()), [&] { return op_and(lastCharStar_, [&] { return source_->Text_->op_Element(position_)->op_equal(p_code_point('/')); })->op_not(); }).value)
+				while (op_and(position_.op_less_than(source_->ByteLength_()), [&] { return op_and(lastCharStar_, [&] { return source_->Text_->op_Element(position_)->op_equal(p_code_point('/')); })->op_not(); }).value)
 				{
 					lastCharStar_ = source_->Text_->op_Element(position_)->op_equal(p_code_point('*'));
-					position_->op_add_assign(p_int(1));
+					position_.op_add_assign(p_int(1));
 				}
 
-				position_->op_add_assign(p_int(1));
+				position_.op_add_assign(p_int(1));
 				continue;
 			}
 
@@ -3517,7 +3517,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (curChar_.op_equal(p_code_point('<')).value)
 		{
-			if (op_and(position_->op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
+			if (op_and(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
 			{
 				return NewOperator_(LessThanEquals_, p_int(2));
 			}
@@ -3526,7 +3526,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (curChar_.op_equal(p_code_point('>')).value)
 		{
-			if (op_and(position_->op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_->op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
+			if (op_and(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_()), [&] { return source_->Text_->op_Element(position_.op_add(p_int(1)))->op_equal(p_code_point('=')); }).value)
 			{
 				return NewOperator_(GreaterThanEquals_, p_int(2));
 			}
@@ -3535,7 +3535,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (curChar_.op_equal(p_code_point('"')).value)
 		{
-			end_ = position_->op_add(p_int(1));
+			end_ = position_.op_add(p_int(1));
 			p_bool escaped_ = p_bool(false);
 			while (op_and(end_.op_less_than(source_->ByteLength_()), [&] { return op_or(source_->Text_->op_Element(end_)->op_not_equal(p_code_point('"')), [&] { return escaped_; }); }).value)
 			{
@@ -3548,7 +3548,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (curChar_.op_equal(p_code_point('\'')).value)
 		{
-			end_ = position_->op_add(p_int(1));
+			end_ = position_.op_add(p_int(1));
 			p_bool escaped_ = p_bool(false);
 			while (op_and(end_.op_less_than(source_->ByteLength_()), [&] { return op_or(source_->Text_->op_Element(end_)->op_not_equal(p_code_point('\'')), [&] { return escaped_; }); }).value)
 			{
@@ -3563,7 +3563,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		{
 			if (IsIdentifierChar_(curChar_).value)
 			{
-				end_ = position_->op_add(p_int(1));
+				end_ = position_.op_add(p_int(1));
 				while (IsIdentifierChar_(source_->Text_->op_Element(end_)).value)
 				{
 					end_.op_add_assign(p_int(1));
@@ -3574,7 +3574,7 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 			if (IsNumberChar_(curChar_).value)
 			{
-				end_ = position_->op_add(p_int(1));
+				end_ = position_.op_add(p_int(1));
 				while (IsNumberChar_(source_->Text_->op_Element(end_)).value)
 				{
 					end_.op_add_assign(p_int(1));
@@ -3607,7 +3607,7 @@ auto ::Token_Stream_::EndOfFile_() -> ::Syntax_Node_ const *_Nullable
 auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	p_uint const length_ = end_->op_subtract(position_);
+	p_uint const length_ = end_.op_subtract(position_);
 	p_string const value_ = source_->Text_->Substring_(position_, length_);
 	p_int type_;
 	if (value_.op_equal(p_string("new")).value)
@@ -3761,19 +3761,19 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Nod
 auto ::Token_Stream_::NewOperator_(p_int const type_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	return NewToken_(type_, position_->op_add(p_int(1)));
+	return NewToken_(type_, position_.op_add(p_int(1)));
 }
 
 auto ::Token_Stream_::NewOperator_(p_int const type_, p_uint const length_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	return NewToken_(type_, position_->op_add(length_));
+	return NewToken_(type_, position_.op_add(length_));
 }
 
 auto ::Token_Stream_::NewToken_(p_int const type_, p_uint const end_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	::Syntax_Node_ *_Nonnull const token_ = (new ::Syntax_Node_())->construct(type_, source_, position_, end_->op_subtract(position_));
+	::Syntax_Node_ *_Nonnull const token_ = (new ::Syntax_Node_())->construct(type_, source_, position_, end_.op_subtract(position_));
 	for (::Diagnostic_ const *_Nonnull const diagnostic_ : *(diagnostics_))
 	{
 		token_->add_(diagnostic_);
@@ -3786,12 +3786,12 @@ auto ::Token_Stream_::NewToken_(p_int const type_, p_uint const end_) -> ::Synta
 
 auto ::Token_Stream_::IsIdentifierChar_(p_code_point const c_) -> p_bool
 {
-	return op_or(op_or(op_and(c_->op_greater_than_or_equal(p_code_point('a')), [&] { return c_->op_less_than_or_equal(p_code_point('z')); }), [&] { return op_and(c_->op_greater_than_or_equal(p_code_point('A')), [&] { return c_->op_less_than_or_equal(p_code_point('Z')); }); }), [&] { return c_->op_equal(p_code_point('_')); });
+	return op_or(op_or(op_and(c_.op_greater_than_or_equal(p_code_point('a')), [&] { return c_.op_less_than_or_equal(p_code_point('z')); }), [&] { return op_and(c_.op_greater_than_or_equal(p_code_point('A')), [&] { return c_.op_less_than_or_equal(p_code_point('Z')); }); }), [&] { return c_.op_equal(p_code_point('_')); });
 }
 
 auto ::Token_Stream_::IsNumberChar_(p_code_point const c_) -> p_bool
 {
-	return op_and(c_->op_greater_than_or_equal(p_code_point('0')), [&] { return c_->op_less_than_or_equal(p_code_point('9')); });
+	return op_and(c_.op_greater_than_or_equal(p_code_point('0')), [&] { return c_.op_less_than_or_equal(p_code_point('9')); });
 }
 
 auto ::Diagnostic_::construct(p_int const level_, p_int const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_) -> ::Diagnostic_*
@@ -3906,7 +3906,7 @@ auto ::Emitter_::convert_reference_type_(p_bool const mutable_binding_, ::Type_ 
 		cpp_type_ = cpp_type_.op_add(p_string("_Nonnull"));
 	}
 
-	if (mutable_binding_->op_not().value)
+	if (mutable_binding_.op_not().value)
 	{
 		cpp_type_ = cpp_type_.op_add(p_string(" const"));
 	}
@@ -3923,7 +3923,7 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Type_ const *_No
 		if (optional_type_->is_value_type_.value)
 		{
 			p_string cpp_type_ = p_string("p_optional<").op_add(convert_type_(p_bool(true), optional_type_, p_bool(true)))->op_add(p_string(">"));
-			if (op_and(mutable_binding_->op_not(), [&] { return type_->is_mutable_->op_not(); }).value)
+			if (op_and(mutable_binding_.op_not(), [&] { return type_->is_mutable_->op_not(); }).value)
 			{
 				cpp_type_ = cpp_type_.op_add(p_string(" const"));
 			}
@@ -3940,7 +3940,7 @@ auto ::Emitter_::convert_type_(p_bool const mutable_binding_, ::Type_ const *_No
 		if (type_->is_value_type_.value)
 		{
 			p_string cpp_type_ = convert_type_name_(type_);
-			if (op_and(mutable_binding_->op_not(), [&] { return type_->is_mutable_->op_not(); }).value)
+			if (op_and(mutable_binding_.op_not(), [&] { return type_->is_mutable_->op_not(); }).value)
 			{
 				cpp_type_ = cpp_type_.op_add(p_string(" const"));
 			}
@@ -4432,7 +4432,7 @@ auto ::Emitter_::emit_method_body_(::Semantic_Node_ const *_Nonnull const block_
 {
 	auto self = this;
 	definitions_->BeginBlock_();
-	if (is_associated_function_->op_not().value)
+	if (is_associated_function_.op_not().value)
 	{
 		definitions_->WriteLine_(p_string("auto self = this;"));
 	}
@@ -4451,11 +4451,11 @@ auto ::Emitter_::emit_constructor_body_(::Semantic_Node_ const *_Nonnull const b
 	definitions_->BeginBlock_();
 	if (is_value_type_.value)
 	{
-		definitions_->WriteLine_(self_type_->op_add(p_string(" self;")));
+		definitions_->WriteLine_(self_type_.op_add(p_string(" self;")));
 	}
 	else
 	{
-		definitions_->WriteLine_(self_type_->op_add(p_string(" self = this;")));
+		definitions_->WriteLine_(self_type_.op_add(p_string(" self = this;")));
 	}
 
 	for (::Semantic_Node_ const *_Nonnull const statement_ : *(block_->statements_()))
@@ -4470,18 +4470,18 @@ auto ::Emitter_::emit_constructor_body_(::Semantic_Node_ const *_Nonnull const b
 auto ::Emitter_::emit_access_modifer_(p_int const current_access_level_, p_int const access_modifer_) -> p_int
 {
 	auto self = this;
-	if (access_modifer_->op_not_equal(current_access_level_).value)
+	if (access_modifer_.op_not_equal(current_access_level_).value)
 	{
-		if (op_or(access_modifer_->op_equal(PublicKeyword_), [&] { return access_modifer_->op_equal(InternalKeyword_); }).value)
+		if (op_or(access_modifer_.op_equal(PublicKeyword_), [&] { return access_modifer_.op_equal(InternalKeyword_); }).value)
 		{
 			class_declarations_->EndLine_(p_string("public:"));
 			return PublicKeyword_;
 		}
-		else if (access_modifer_->op_equal(ProtectedKeyword_).value)
+		else if (access_modifer_.op_equal(ProtectedKeyword_).value)
 		{
 			class_declarations_->EndLine_(p_string("public:"));
 		}
-		else if (access_modifer_->op_equal(PrivateKeyword_).value)
+		else if (access_modifer_.op_equal(PrivateKeyword_).value)
 		{
 			class_declarations_->EndLine_(p_string("private:"));
 		}
@@ -4510,7 +4510,7 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 		}
 
 		p_string return_type_ = p_string("::").op_add(class_name_)->op_add(p_string("_"));
-		if (is_value_type_->op_not().value)
+		if (is_value_type_.op_not().value)
 		{
 			return_type_ = return_type_.op_add(p_string("*"));
 		}
@@ -4574,7 +4574,7 @@ auto ::Emitter_::emit_default_constructor_(p_string const type_name_, p_bool con
 	auto self = this;
 	emit_access_modifer_(current_access_level_, PublicKeyword_);
 	p_string return_type_ = p_string("::").op_add(type_name_)->op_add(p_string("_"));
-	if (is_value_type_->op_not().value)
+	if (is_value_type_.op_not().value)
 	{
 		return_type_ = return_type_.op_add(p_string("*"));
 	}
@@ -4707,7 +4707,7 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		definitions_->WriteLine_(p_string("auto ").op_add(name_)->op_add(p_string("_"))->op_add(parameters_)->op_add(p_string(" -> "))->op_add(cpp_type_));
 		if (is_main_.value)
 		{
-			if (main_function_return_type_->op_not_equal(p_string("")).value)
+			if (main_function_return_type_.op_not_equal(p_string("")).value)
 			{
 				definitions_->Error_(p_string("Multiple declarations of main"));
 			}
@@ -4790,9 +4790,9 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 		args_->Append_(p_string("new ::System_::Console_::Arguments_(argc, argv)"));
 	}
 
-	if (main_function_return_type_->op_equal(p_string("void")).value)
+	if (main_function_return_type_.op_equal(p_string("void")).value)
 	{
-		definitions_->WriteLine_(main_function_name_->op_add(p_string("_("))->op_add(args_->ToString_())->op_add(p_string(");")));
+		definitions_->WriteLine_(main_function_name_.op_add(p_string("_("))->op_add(args_->ToString_())->op_add(p_string(");")));
 		definitions_->WriteLine_(p_string("return 0;"));
 	}
 	else
@@ -4835,7 +4835,7 @@ auto ::Name_::construct(::Name_ const *_Nonnull const qualifier_, p_int const ki
 {
 	::Name_* self = this;
 	assert_(qualifier_->op_not_equal(p_none), p_string(""));
-	assert_(name_->ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
 	::System_::Collections_::List_<p_string> *_Nonnull const segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
@@ -4854,7 +4854,7 @@ auto ::Name_::construct(::Name_ const *_Nonnull const qualifier_, p_int const ki
 {
 	::Name_* self = this;
 	assert_(qualifier_->op_not_equal(p_none), p_string(""));
-	assert_(name_->ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
 	::System_::Collections_::List_<p_string> *_Nonnull const segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
@@ -4873,7 +4873,7 @@ auto ::Name_::construct_special(::Name_ const *_Nonnull const qualifier_, p_int 
 {
 	::Name_* self = this;
 	assert_(qualifier_->op_not_equal(p_none), p_string(""));
-	assert_(name_->ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
 	::System_::Collections_::List_<p_string> *_Nonnull const segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
@@ -4946,7 +4946,7 @@ auto ::Name_::is_qualified_with_(::Name_ const *_Nonnull const qualifier_) const
 	p_int i_ = p_int(0);
 	for (p_string const segment_ : *(qualifier_->segments_))
 	{
-		if (segment_->op_not_equal(segments_->op_Element(i_)).value)
+		if (segment_.op_not_equal(segments_->op_Element(i_)).value)
 		{
 			return p_bool(false);
 		}
@@ -4974,7 +4974,7 @@ auto ::Name_::names_(::Name_ const *_Nonnull const other_) const -> p_bool
 	p_int i_ = p_int(0);
 	for (p_string const segment_ : *(other_->segments_))
 	{
-		if (segment_->op_not_equal(segments_->op_Element(i_)).value)
+		if (segment_.op_not_equal(segments_->op_Element(i_)).value)
 		{
 			return p_bool(false);
 		}
@@ -5026,7 +5026,7 @@ auto name_with_unspecified_package_names_itself_() -> void
 auto ::Package_Name_::construct(p_string const name_) -> ::Package_Name_*
 {
 	::Package_Name_* self = this;
-	assert_(name_->ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
 	self->unqualified_ = name_;
 	return self;
 }
@@ -5040,7 +5040,7 @@ auto ::Package_Name_::full_() const -> p_string
 auto ::Symbol_::construct_identifier(p_string const name_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_->ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
 	self->name_ = name_;
 	self->kind_ = IdentifierSymbol_;
 	self->is_special_name_ = p_bool(false);
@@ -5054,7 +5054,7 @@ auto ::Symbol_::construct_identifier(p_string const name_) -> ::Symbol_*
 auto ::Symbol_::construct_identifier(p_string const name_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const declarations_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_->ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
 	assert_(declarations_->op_not_equal(p_none), p_string("name=").op_add(name_));
 	self->name_ = name_;
 	self->kind_ = IdentifierSymbol_;
@@ -5069,7 +5069,7 @@ auto ::Symbol_::construct_identifier(p_string const name_, ::System_::Collection
 auto ::Symbol_::construct_identifier(p_string const name_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_->ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
 	assert_(children_->op_not_equal(p_none), p_string("name=").op_add(name_));
 	self->name_ = name_;
 	self->kind_ = IdentifierSymbol_;
@@ -5084,7 +5084,7 @@ auto ::Symbol_::construct_identifier(p_string const name_, ::System_::Collection
 auto ::Symbol_::construct_package(p_string const name_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_->ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
 	assert_(children_->op_not_equal(p_none), p_string("name=").op_add(name_));
 	self->name_ = name_;
 	self->kind_ = PackageSymbol_;
@@ -5161,7 +5161,7 @@ auto ::Type_::construct(p_int const kind_, ::Name_ const *_Nonnull const name_, 
 	self->name_ = name_;
 	self->type_parameters_ = (new ::System_::Collections_::List_<::Type_ const *_Nonnull>())->construct();
 	self->is_primitive_ = p_bool(false);
-	self->is_value_type_ = kind_->op_equal(ValueType_);
+	self->is_value_type_ = kind_.op_equal(ValueType_);
 	self->is_potentially_mutable_ = is_mutable_;
 	self->is_mutable_ = is_mutable_;
 	return self;
@@ -5187,7 +5187,7 @@ auto ::Type_::construct(p_int const kind_, ::Name_ const *_Nonnull const name_, 
 	self->name_ = name_;
 	self->type_parameters_ = type_parameters_;
 	self->is_primitive_ = p_bool(false);
-	self->is_value_type_ = kind_->op_equal(ValueType_);
+	self->is_value_type_ = kind_.op_equal(ValueType_);
 	self->is_potentially_mutable_ = is_mutable_;
 	self->is_mutable_ = is_mutable_;
 	return self;
@@ -5255,7 +5255,7 @@ auto ::Type_::construct(p_int const kind_, ::Name_ const *_Nonnull const name_, 
 	self->name_ = name_;
 	self->type_parameters_ = type_parameters_;
 	self->is_primitive_ = is_primitive_;
-	self->is_value_type_ = kind_->op_equal(ValueType_);
+	self->is_value_type_ = kind_.op_equal(ValueType_);
 	self->is_potentially_mutable_ = is_potentially_mutable_;
 	self->is_mutable_ = is_mutable_;
 	return self;
@@ -5277,7 +5277,7 @@ auto ::Type_::make_immutable_() const -> ::Type_ const *_Nonnull
 auto ::Type_::remove_package_() const -> ::Type_ const *_Nonnull
 {
 	auto self = this;
-	assert_(kind_->op_equal(NamespaceType_), p_string("kind=").op_add(kind_));
+	assert_(kind_.op_equal(NamespaceType_), p_string("kind=").op_add(kind_));
 	if (name_->is_package_qualified_().value)
 	{
 		return (new ::Type_())->construct(kind_, name_->remove_package_(), type_parameters_, is_primitive_, is_potentially_mutable_, is_mutable_);
@@ -5547,9 +5547,9 @@ auto ::Name_Table_Builder_::add_referenced_(::Name_Table_ *_Nonnull const name_t
 {
 	for (::Package_Reference_ const reference_ : *(references_))
 	{
-		::Package_Name_ const *_Nonnull const reference_name_ = (new ::Package_Name_())->construct(reference_->name_);
+		::Package_Name_ const *_Nonnull const reference_name_ = (new ::Package_Name_())->construct(reference_.name_);
 		::Name_ const *_Nonnull const global_namespace_ = name_table_->add_(reference_name_);
-		for (::Symbol_ const *_Nonnull const symbol_ : *(reference_->package_->symbol_->children_))
+		for (::Symbol_ const *_Nonnull const symbol_ : *(reference_.package_->symbol_->children_))
 		{
 			add_symbol_(name_table_, global_namespace_, symbol_);
 		}
