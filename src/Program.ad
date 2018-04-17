@@ -1,12 +1,3 @@
-public old_compile(sources: System.Collections.List<Source_Text>) -> Old_Package
-{
-    let parser: Parser = new Parser();
-    let package_syntax: Syntax_Node = parser.ParsePackage(sources);
-    let old_semantic_analyzer: Old_Semantic_Analyzer = new Old_Semantic_Analyzer();
-    let old_package: Old_Package = old_semantic_analyzer.analyze(package_syntax);
-    return old_package;
-}
-
 public compile(sources: System.Collections.List<Source_Text>) -> Package
 {
     let parser: Parser = new Parser();
@@ -142,10 +133,8 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
         sources.Add(read_source(sourceFilePath));
     }
 
-    let old_package: Old_Package = old_compile(sources);
     let package: Package = compile(sources);
 
-    let old_diagnostics: System.Collections.List<Diagnostic> = old_package.all_diagnostics();
     let diagnostics: System.Collections.List<Diagnostic> = package.all_diagnostics();
     write(console, diagnostics);
 
@@ -153,16 +142,6 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
     {
         return DataError;
     }
-
-    if has_errors(old_diagnostics)
-    {
-        console.WriteLine("Old Errors:");
-        write(console, old_diagnostics);
-        return DataError;
-    }
-
-    var old_emitter: mut Old_Emitter = new Old_Emitter(old_package, resources);
-    let old_translated: string = old_emitter.Emit();
 
     var emitter: mut Emitter = new Emitter(package, resources);
     let translated: string = emitter.Emit();
@@ -198,10 +177,6 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
     resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
     resourceFile.Close();
 
-    // if old_translated =/= translated
-    // {
-    //     return -1;
-    // }
     return Success;
 }
 

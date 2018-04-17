@@ -1,4 +1,2 @@
 public let IdentifierSymbol: int = 0;
 public let PackageSymbol: int = 1;
-public let Old_SpecialSymbol: int = 2;
-
