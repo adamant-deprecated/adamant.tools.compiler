@@ -321,6 +321,12 @@ namespace system_
 			return this;
 		}
 
+        String_Builder_ *_Nonnull String_Builder_::construct_with_capacity(p_int capacity)
+        {
+            ensure_capacity(capacity.value);
+            return this;
+        }
+
 		void String_Builder_::Append_(p_string const & value)
 		{
 			int new_length = length + value.Length;
