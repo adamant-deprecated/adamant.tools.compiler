@@ -728,16 +728,19 @@ namespace system_
 		class String_Builder_
 		{
 		private:
-			p_string buffer;
+			char *_Nullable buffer;
+			int capacity;
+			int length;
+			void ensure_capacity(int needed);
 		public:
 			// Runtime Use Members
-			String_Builder_() = default;
+			String_Builder_(): buffer(0), capacity(0), length(0) { }
 
 			// Adamant Members
 			p_bool op_equal(String_Builder_ const *_Nonnull other) const { return this == other; }
 			p_bool op_not_equal(String_Builder_ const *_Nonnull other) const { return this != other; }
 
-			String_Builder_ *_Nonnull construct() { buffer = p_string(""); return this; }
+			String_Builder_ *_Nonnull construct() { return this; }
 			String_Builder_ *_Nonnull construct(p_string const & value);
 			void Append_(p_string const & value);
 			void Append_(String_Builder_ const *_Nonnull value);
@@ -745,7 +748,7 @@ namespace system_
 			void AppendLine_();
 			void Remove_(p_int start, p_int length);
 			void Remove_(p_int start);
-			p_string ToString_() const { return buffer; }
+			p_string ToString_();
 		};
 	}
 }
