@@ -50,6 +50,19 @@ public class Symbol
         self.children = children;
     }
 
+    public new constructor(name: string, declarations: System.Collections.List<Semantic_Node>)
+    {
+        assert(name.ByteLength() > 0, "");
+        assert(declarations =/= none, "name="+name);
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_special_name = true;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = declarations;
+        self.children = new System.Collections.List<Symbol>();
+    }
+
     public new package(name: string, children: System.Collections.List<Symbol>)
     {
         assert(name.ByteLength() > 0, "");
