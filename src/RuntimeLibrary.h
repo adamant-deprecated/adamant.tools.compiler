@@ -545,10 +545,10 @@ public:
 	p_string op_add(p_string const & value) const;
 	p_bool op_equal(p_string const & other) const;
 	p_bool op_not_equal(p_string const & other) const { return !this->op_equal(other).value; }
-	p_bool op_less_than(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) < 0; }
-	p_bool op_less_than_or_equal(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) <= 0; }
-	p_bool op_greater_than(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) > 0; }
-	p_bool op_greater_than_or_equal(p_string other) const { return std::strcmp(this->cstr(), other.cstr()) >= 0; }
+	p_bool op_less_than(p_string other) const;
+	p_bool op_less_than_or_equal(p_string other) const;
+	p_bool op_greater_than(p_string other) const;
+	p_bool op_greater_than_or_equal(p_string other) const;
 };
 
 // -----------------------------------------------------------------------------
