@@ -66,7 +66,9 @@ public class Runtime_Library_Package_Builder
         // System.Text
         let text_namespace: Name = new Name(system_namespace, NamespaceName, "Text");
         let text_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-        text_symbols.Add(build_class(text_namespace, "String_Builder"));
+        let string_builder_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        string_builder_symbols.Add(build_constructor("with_capacity"));
+        text_symbols.Add(build_class(text_namespace, "String_Builder", string_builder_symbols));
         system_symbols.Add(build_namespace(text_namespace, text_symbols));
 
         symbols.Add(build_namespace(system_namespace, system_symbols));
@@ -78,31 +80,45 @@ public class Runtime_Library_Package_Builder
     {
         // TODO this should be a function type
         let type: Type = new Type(FunctionType, name, false);
-        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        let declarations: System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
         return new Symbol.of_type(name.unqualified(), type, declarations, children);
     }
 
-    private build_namespace(name: Name, symbols: mut System.Collections.List<Symbol>) -> Symbol
+    private build_namespace(name: Name, symbols: System.Collections.List<Symbol>) -> Symbol
     {
         let type: Type = new Type.namespace(name);
-        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let declarations: System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
         return new Symbol.declaring(type, declarations, symbols);
     }
 
     private build_class(namespace: Name, class_name: string) -> Symbol
     {
         let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
-        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        let declarations: System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        return new Symbol.declaring(type, declarations, children);
+    }
+
+    private build_class(namespace: Name, class_name: string, children: System.Collections.List<Symbol>) -> Symbol
+    {
+        let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
+        let declarations: System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
         return new Symbol.declaring(type, declarations, children);
     }
 
     private build_generic_class(namespace: Name, class_name: string, type_parameters: System.Collections.List<Type>) -> Symbol
     {
         let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), type_parameters, true);
-        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        let declarations: System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
         return new Symbol.declaring(type, declarations, children);
+    }
+
+    private build_constructor(name: string) -> Symbol
+    {
+        let constructor_name: string = "new_" + name;
+        let declarations: System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        return new Symbol.constructor(constructor_name, declarations);
     }
 }

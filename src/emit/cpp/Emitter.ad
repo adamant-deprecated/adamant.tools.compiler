@@ -41,7 +41,14 @@ public class Emitter
 
         emit_entry_point_adapter();
 
-        let cpp_code: mut System.Text.String_Builder = new System.Text.String_Builder();
+        // TODO all of this should be `string.join()`
+        // TODO the `string.join()` call should be optimized into existence by the compiler from addition
+        let total_size: int = type_declarations.byte_length()
+            + function_declarations.byte_length()
+            + class_declarations.byte_length()
+            + global_definitions.byte_length()
+            + definitions.byte_length();
+        let cpp_code: mut System.Text.String_Builder = new System.Text.String_Builder()/*.with_capacity(total_size)*/;
         cpp_code.Append(type_declarations.ToString());
         cpp_code.Append(function_declarations.ToString());
         cpp_code.Append(class_declarations.ToString());
@@ -51,21 +58,23 @@ public class Emitter
     }
 
     // Converts a type to C++
-    private convert_type_name(type_node: Semantic_Node) -> string
+    private convert_type_name(type_node: Semantic_Node) -> mut System.Text.String_Builder
     {
         assert(type_node.referenced_type =/= none, type_node.get_text());
         return convert_type_name(type_node.referenced_type);
     }
 
-    private convert_type_name(type: Type) -> string
+    private convert_type_name(type: Type) -> mut System.Text.String_Builder
     {
         let cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder();
         if type.is_primitive
         {
-            if type.name.unqualified() == "void"
-                { return "void"; }
-            // `int`, `bool`, `string`, `code_point`, `uint`
-            cpp_type.Append("p_");
+            if type.name.unqualified() =/= "void"
+            {
+                // `int`, `bool`, `string`, `code_point`, `uint`
+                cpp_type.Append("p_");
+            }
+            // else `void`
             cpp_type.Append(type.name.unqualified());
         }
         else
@@ -90,20 +99,20 @@ public class Emitter
             }
             cpp_type.Append(">");
         }
-        return cpp_type.ToString();
+        return cpp_type;
     }
 
     private convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
     {
-        var cpp_type: string = convert_type_name(type);
-        if not type.is_mutable { cpp_type = cpp_type + " const"; }
-        cpp_type = cpp_type + " *";
+        let cpp_type: mut System.Text.String_Builder = convert_type_name(type);
+        if not type.is_mutable { cpp_type.Append(" const"); }
+        cpp_type.Append(" *");
         if nullable
-            { cpp_type = cpp_type + "_Nullable"; }
+            { cpp_type.Append("_Nullable"); }
         else
-            { cpp_type = cpp_type + "_Nonnull"; }
-        if not mutable_binding { cpp_type = cpp_type + " const" ; }
-        return cpp_type;
+            { cpp_type.Append("_Nonnull"); }
+        if not mutable_binding { cpp_type.Append(" const") ; }
+        return cpp_type.ToString();
     }
 
     // Converts a type to C++
@@ -117,10 +126,12 @@ public class Emitter
             if optional_type.is_value_type
             {
                 // optional<T> is a const struct
-                var cpp_type: string = "p_optional<" + convert_type(true, optional_type, true) + ">";
+                let cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder("p_optional<");
+                cpp_type.Append(convert_type(true, optional_type, true));
+                cpp_type.Append(">");
                 if not mutable_binding and not type.is_mutable
-                    { cpp_type = cpp_type + " const"; }
-                return  cpp_type;
+                    { cpp_type.Append(" const"); }
+                return  cpp_type.ToString();
             }
             else
             {
@@ -131,10 +142,10 @@ public class Emitter
         {
             if type.is_value_type
             {
-                var cpp_type: string = convert_type_name(type);
+                let cpp_type: mut System.Text.String_Builder = convert_type_name(type);
                 if not mutable_binding and not type.is_mutable
-                    { cpp_type = cpp_type + " const"; }
-                return cpp_type;
+                    { cpp_type.Append(" const"); }
+                return cpp_type.ToString();
             }
             else
             {
@@ -216,14 +227,14 @@ public class Emitter
             if type.is_value_type
             {
                 // place value types on the stack in C++ by not using new
-                builder.Write(convert_type_name(type));
+                builder.Write(convert_type_name(type).ToString());
                 builder.Write("::");
                 builder.Write(constructor_name);
             }
             else
             {
                 builder.Write("(new ");
-                builder.Write(convert_type_name(type));
+                builder.Write(convert_type_name(type).ToString());
                 builder.Write("())->");
                 builder.Write(constructor_name);
             }

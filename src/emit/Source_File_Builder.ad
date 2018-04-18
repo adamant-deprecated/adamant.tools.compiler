@@ -97,6 +97,11 @@ public class Source_File_Builder
         WriteLine("};");
     }
 
+    public byte_length(self) -> int
+    {
+        return code.byte_length();
+    }
+
     public ToString(mut self) -> string
     {
         return code.ToString();
