@@ -41,11 +41,13 @@ public class Emitter
 
         emit_entry_point_adapter();
 
-        return type_declarations.ToString()
-            + function_declarations.ToString()
-            + class_declarations.ToString()
-            + global_definitions.ToString()
-            + definitions.ToString();
+        let cpp_code: mut System.Text.String_Builder = new System.Text.String_Builder();
+        cpp_code.Append(type_declarations.ToString());
+        cpp_code.Append(function_declarations.ToString());
+        cpp_code.Append(class_declarations.ToString());
+        cpp_code.Append(global_definitions.ToString());
+        cpp_code.Append(definitions.ToString());
+        return cpp_code.ToString();
     }
 
     // Converts a type to C++
