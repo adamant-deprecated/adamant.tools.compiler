@@ -533,7 +533,7 @@ public:
 	static auto construct(p_string value) -> p_string { return value; }
 	static auto construct(p_code_point c, p_int repeat) -> p_string;
 	// TODO ByteLength should be a property
-	p_int ByteLength_() const { return this->Length; }
+	p_int ByteLength_() const { return Length; }
 
 	p_string Substring_(p_int start, p_int length) const;
 	p_string Substring_(p_int start) const { return Substring_(start, Length-start.value); }
@@ -743,6 +743,8 @@ namespace system_
 			String_Builder_ *_Nonnull construct() { return this; }
 			String_Builder_ *_Nonnull construct(p_string const & value);
 			String_Builder_ *_Nonnull construct_with_capacity(p_int capacity);
+            // TODO ByteLength should be a property
+	        p_int byte_length_() const { return length; }
 			void Append_(p_string const & value);
 			void Append_(String_Builder_ const *_Nonnull value);
 			void AppendLine_(p_string const& value);

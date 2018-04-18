@@ -97,7 +97,7 @@ public class Source_File_Builder
         WriteLine("};");
     }
 
-    public ToString(self) -> string
+    public ToString(mut self) -> string
     {
         return code.ToString();
     }
