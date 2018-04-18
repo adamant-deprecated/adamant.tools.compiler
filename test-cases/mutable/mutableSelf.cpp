@@ -4,7 +4,6 @@
 class Test_;
 
 // Function Declarations
-auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int>;
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
@@ -14,6 +13,10 @@ class Test_
 public:
 	p_bool op_equal(Test_ const * other) const { return this == other; }
 	p_bool op_not_equal(Test_ const * other) const { return this != other; }
+private:
+	p_bool value_;
+public:
+	auto change_(p_bool const value_) -> void;
 	auto construct() -> ::Test_* { return this; }
 };
 
@@ -21,20 +24,16 @@ public:
 
 // Definitions
 
-auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int>
+auto ::Test_::change_(p_bool const value_) -> void
 {
-	p_optional<p_int> const z_ = p_none;
-	::Test_ const *_Nullable const t_ = p_none;
-	::System_::Text_::String_Builder_ *_Nullable const sb_ = p_none;
-	::System_::Collections_::List_<p_optional<p_int>> const *_Nonnull const l_ = (new ::System_::Collections_::List_<p_optional<p_int>>())->construct();
-	::Test_ *_Nullable const m_ = p_none;
-	p_optional<p_optional<p_int>> const d_ = p_none;
-	return p_none;
+	auto self = this;
+	self->value_ = value_;
 }
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
-	Func_(p_none, p_none);
+	::Test_ *_Nonnull const test_ = (new ::Test_())->construct();
+	test_->change_(p_bool(true));
 }
 
 // Entry Point Adapter

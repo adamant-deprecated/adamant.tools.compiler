@@ -1,7 +1,7 @@
 public class Lexer
 {
-	public analyze(self, source: Source_Text) -> mut Token_Stream
-	{
-		return new Token_Stream(source);
-	}
+    public analyze(self, source: Source_Text) -> mut Token_Stream
+    {
+        return new Token_Stream(source);
+    }
 }

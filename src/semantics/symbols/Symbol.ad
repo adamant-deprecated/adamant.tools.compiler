@@ -1,122 +1,111 @@
+/// Symbols are a tree referencing semantic nodes that are used to look up names.
+/// they don't internally store names so that they are not interdependent.
 public class Symbol
 {
-	public let name: string;
-	public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
-	public let is_primitive: bool; // TODO does this belong here? Part of type
-	// TODO rename has_type or of_type
-	public let type: Type; // for variables and parameters, the type of the value they represent
-	public let declares_type: Type; // for class/struct/enum symbols, the type being declared
-	// TODO declarations should be immutable
-	public let declarations: mut System.Collections.List<Semantic_Node>;
-	// TODO children should be immutable
-	public let children: mut System.Collections.List<Symbol>;
+    public let name: string;
+    public let is_special_name: bool;
+    public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
+    public let of_type: Type; // for variables and parameters, the type of the value they represent
+    public let declares_type: Type; // for class/struct/enum symbols, the type being declared
+    // TODO declarations should be immutable
+    public let declarations: System.Collections.List<Semantic_Node>;
+    // TODO children should be immutable
+    public let children: System.Collections.List<Symbol>;
 
-	public new(name: string)
-	{
-		self.name = name;
-		kind = IdentifierSymbol;
-		is_primitive = false;
-		type = none;
-		declares_type = none;
-		declarations = new System.Collections.List<Semantic_Node>();
-		children = new System.Collections.List<Symbol>();
-	}
+    public new identifier(name: string)
+    {
+        assert(name.ByteLength() > 0, "");
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_special_name = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = new System.Collections.List<Semantic_Node>();
+        self.children = new System.Collections.List<Symbol>();
+    }
 
-	// TODO replace with named constructors
-	public new(name: string, kind: int)
-	{
-		self.name = name;
-		self.kind = kind;
-		is_primitive = false;
-		type = none;
-		declares_type = none;
-		declarations = new System.Collections.List<Semantic_Node>();
-		children = new System.Collections.List<Symbol>();
-	}
+    public new identifier(name: string, declarations: System.Collections.List<Semantic_Node>)
+    {
+        assert(name.ByteLength() > 0, "");
+        assert(declarations =/= none, "name="+name);
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_special_name = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = declarations;
+        self.children = new System.Collections.List<Symbol>();
+    }
 
-	public new(name: string, declarations: mut System.Collections.List<Semantic_Node>)
-	{
-		assert(name.ByteLength() > 0, "");
-		assert(declarations =/= none, "name="+name);
-		self.name = name;
-		self.kind = IdentifierSymbol;
-		self.is_primitive = false;
-		self.type = none;
-		self.declares_type = none;
-		self.declarations = declarations;
-		self.children = new System.Collections.List<Symbol>();
-	}
+    public new identifier(name: string, children: System.Collections.List<Symbol>)
+    {
+        assert(name.ByteLength() > 0, "");
+        assert(children =/= none, "name="+name);
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_special_name = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = new System.Collections.List<Semantic_Node>();
+        self.children = children;
+    }
 
-	public new package(name: string, children: mut System.Collections.List<Symbol>)
-	{
-		assert(name.ByteLength() > 0, "");
-		assert(children =/= none, "name="+name);
-		self.name = name;
-		self.kind = PackageSymbol;
-		is_primitive = false;
-		self.type = none;
-		self.declares_type = none;
-		declarations = new System.Collections.List<Semantic_Node>();
-		self.children = children;
-	}
+    public new package(name: string, children: System.Collections.List<Symbol>)
+    {
+        assert(name.ByteLength() > 0, "");
+        assert(children =/= none, "name="+name);
+        self.name = name;
+        self.kind = PackageSymbol;
+        self.is_special_name = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = new System.Collections.List<Semantic_Node>();
+        self.children = children;
+    }
 
-	public new declaring(
-		declares_type: Type,
-		declarations: mut System.Collections.List<Semantic_Node>,
-		children: mut System.Collections.List<Symbol>)
-	{
-		assert(declares_type =/= none, "");
-		assert(declarations =/= none, "name="+declares_type.name.unqualified_name());
-		assert(children =/= none, "name="+declares_type.name.unqualified_name());
-		self.name = declares_type.name.unqualified_name();
-		if declares_type.is_primitive
-			{ self.kind = SpecialSymbol; }
-		else
-			{ self.kind = IdentifierSymbol; }
-		self.is_primitive = declares_type.is_primitive;
-		self.type = none;
-		self.declares_type = declares_type;
-		self.declarations = declarations;
-		self.children = children;
-	}
+    public new declaring(
+        declares_type: Type,
+        declarations: System.Collections.List<Semantic_Node>,
+        children: System.Collections.List<Symbol>)
+    {
+        assert(declares_type =/= none, "");
+        assert(declarations =/= none, "name="+declares_type.name.unqualified());
+        assert(children =/= none, "name="+declares_type.name.unqualified());
+        self.name = declares_type.name.unqualified();
+        self.is_special_name = declares_type.name.is_special;
+        self.of_type = none;
+        self.declares_type = declares_type;
+        self.declarations = declarations;
+        self.children = children;
+    }
 
-	// TODO change to operator []
-	public get(self, name: string, kind: int) -> Symbol?
-	{
-		for let child: Symbol in children
-		{
-			if child.name == name and child.kind == kind
-			{
-				return child;
-			}
-		}
-		return none;
-	}
+    public new of_type(
+        name: string,
+        of_type: Type,
+        declarations: System.Collections.List<Semantic_Node>,
+        children: System.Collections.List<Symbol>)
+    {
+        assert(of_type =/= none, "name="+name);
+        assert(declarations =/= none, "name="+name);
+        assert(children =/= none, "name="+name);
+        self.name = name;
+        self.is_special_name = false;
+        self.of_type = of_type;
+        self.declares_type = none;
+        self.declarations = declarations;
+        self.children = children;
+    }
 
-	public declares_value_type(self) -> bool
-	{
-		if declares_type =/= none
-		{
-			return declares_type.is_value_type;
-		}
-		else if kind == IdentifierSymbol
-		{
-			assert(|declarations| =/= 0, "Could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations.");
-			// if |declarations| == 0  { THROW_EXCEPTION("Symbol.is_value_type() could not determine if IdentifierSymbol `" + name + "` is a value type. No declarations."); }
-			let declaration: Semantic_Node = declarations[0]; // TODO assuming there is only one for now
-			if declaration.kind == ClassDeclaration or declaration.kind == NamespaceDeclaration
-				{ return false; }
-			else if declaration.kind == StructDeclaration
-				{ return true; }
-			else { THROW_EXCEPTION("Could not determine if IdentifierSymbol `" + name + "` is a value type. Declaration of type " + declaration.kind); }
-		}
-		else if kind == SpecialSymbol
-		{
-			return true;
-		}
-		else
-		{
-			THROW_EXCEPTION("Symbol.is_value_type() is not defined for Symbol_Kind "+kind);
-		}
-	}
+    // TODO change to operator []
+    public get(self, name: string, kind: int) -> Symbol?
+    {
+        for let child: Symbol in children
+        {
+            if child.name == name and child.kind == kind
+            {
+                return child;
+            }
+        }
+        return none;
+    }
 }

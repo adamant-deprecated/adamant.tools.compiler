@@ -1,91 +1,108 @@
 public class Runtime_Library_Package_Builder
 {
-	public build(self) -> Package
-	{
-		// The runtime library package has the special name `$runtime` to distinguish
-		// it from all normal packages since dollar is invalid in a package name.
-		let name: Package_Name = new Package_Name("$runtime");
+    public build(self) -> Package
+    {
+        // The runtime library package has the special name `$runtime` to distinguish
+        // it from all normal packages since dollar is invalid in a package name.
+        let name: Package_Name = new Package_Name("$runtime");
 
-		// No referenced packages
-		let references: System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+        // No referenced packages
+        let references: System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
 
-		// The runtime package has no compilation units because it has no source
-		let compilation_units: System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
+        // The runtime package has no compilation units because it has no source
+        let compilation_units: System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
 
-		let symbols: mut System.Collections.List<Symbol> = build_symbols(name);
-		assert(|symbols| > 0, "|symbols|=" + |symbols|);
+        let symbols: mut System.Collections.List<Symbol> = build_symbols(name);
+        assert(|symbols| > 0, "|symbols|=" + |symbols|);
 
-		let package_symbol: Symbol = new Symbol.package(name.unqualified_name, symbols);
-		assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
+        let package_symbol: Symbol = new Symbol.package(name.unqualified, symbols);
+        assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
 
-		return new Package(name, references, compilation_units, package_symbol);
-	}
+        return new Package(name, references, compilation_units, package_symbol);
+    }
 
-	private build_symbols(self, package_name: Package_Name) -> mut System.Collections.List<Symbol>
-	{
-		let global_namespace: Name = new Name.global_namespace(package_name);
-		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+    private build_symbols(self, package_name: Package_Name) -> mut System.Collections.List<Symbol>
+    {
+        let global_namespace: Name = new Name.global_namespace(package_name);
+        let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
-		symbols.Add(build_function("THROW_EXCEPTION"));
-		symbols.Add(build_function("NOT_IMPLEMENTED"));
-		symbols.Add(build_function("UNREACHABLE"));
-		symbols.Add(build_function("assert"));
-		symbols.Add(build_function("debug_write"));
-		symbols.Add(build_function("debug_write_line"));
+        // global symbols
+        symbols.Add(build_function(new Name(global_namespace, FunctionName, "THROW_EXCEPTION")));
+        symbols.Add(build_function(new Name(global_namespace, FunctionName, "NOT_IMPLEMENTED")));
+        symbols.Add(build_function(new Name(global_namespace, FunctionName, "UNREACHABLE")));
+        symbols.Add(build_function(new Name(global_namespace, FunctionName, "assert")));
+        symbols.Add(build_function(new Name(global_namespace, FunctionName, "debug_write")));
+        symbols.Add(build_function(new Name(global_namespace, FunctionName, "debug_write_line")));
 
-		symbols.Add(build_function("resource_manager"));
+        // TODO this is actually a global variable
+        symbols.Add(build_function(new Name(global_namespace, VariableName, "resource_manager")));
 
-		let system_namespace: Name = new Name(global_namespace, "System");
-		let system_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        // System
+        let system_namespace: Name = new Name(global_namespace, NamespaceName, "System");
+        let system_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
-		// System.Collections
-		let collections_namespace: Name = new Name(system_namespace, "Collections");
-		let collections_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		collections_symbols.Add(build_class(collections_namespace, "List"));
-		system_symbols.Add(build_namespace(collections_namespace, collections_symbols));
+        // System.Collections
+        let collections_namespace: Name = new Name(system_namespace, NamespaceName, "Collections");
+        let collections_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        let list_type_parameters: mut System.Collections.List<Type> = new System.Collections.List<Type>();
+        list_type_parameters.add(new Type.parameter("T"));
+        collections_symbols.Add(build_generic_class(collections_namespace, "List", list_type_parameters));
+        system_symbols.Add(build_namespace(collections_namespace, collections_symbols));
 
-		// System.Console
-		let console_namespace: Name = new Name(system_namespace, "Console");
-		let console_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		console_symbols.Add(build_class(console_namespace, "Console"));
-		console_symbols.Add(build_class(console_namespace, "Arguments"));
-		system_symbols.Add(build_namespace(console_namespace, console_symbols));
+        // System.Console
+        let console_namespace: Name = new Name(system_namespace, NamespaceName, "Console");
+        let console_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        console_symbols.Add(build_class(console_namespace, "Console"));
+        console_symbols.Add(build_class(console_namespace, "Arguments"));
+        system_symbols.Add(build_namespace(console_namespace, console_symbols));
 
-		// System.IO
-		let io_namespace: Name = new Name(system_namespace, "IO");
-		let io_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		io_symbols.Add(build_class(io_namespace, "File_Reader"));
-		io_symbols.Add(build_class(io_namespace, "File_Writer"));
-		system_symbols.Add(build_namespace(io_namespace, io_symbols));
+        // System.IO
+        let io_namespace: Name = new Name(system_namespace, NamespaceName, "IO");
+        let io_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        io_symbols.Add(build_class(io_namespace, "File_Reader"));
+        io_symbols.Add(build_class(io_namespace, "File_Writer"));
+        system_symbols.Add(build_namespace(io_namespace, io_symbols));
 
-		// System.Text
-		let text_namespace: Name = new Name(system_namespace, "Text");
-		let text_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		text_symbols.Add(build_class(text_namespace, "String_Builder"));
-		system_symbols.Add(build_namespace(text_namespace, text_symbols));
+        // System.Text
+        let text_namespace: Name = new Name(system_namespace, NamespaceName, "Text");
+        let text_symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        text_symbols.Add(build_class(text_namespace, "String_Builder"));
+        system_symbols.Add(build_namespace(text_namespace, text_symbols));
 
-		symbols.Add(build_namespace(system_namespace, system_symbols));
+        symbols.Add(build_namespace(system_namespace, system_symbols));
 
-		return symbols;
-	}
+        return symbols;
+    }
 
-	private build_function(name: string) -> Symbol
-	{
-		return new Symbol(name);
-	}
+    private build_function(name: Name) -> Symbol
+    {
+        // TODO this should be a function type
+        let type: Type = new Type(FunctionType, name, false);
+        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        return new Symbol.of_type(name.unqualified(), type, declarations, children);
+    }
 
-	private build_namespace(name: Name, symbols: mut System.Collections.List<Symbol>) -> Symbol
-	{
-		let type: Type = new Type.namespace(name);
-		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-		return new Symbol.declaring(type, declarations, symbols);
-	}
+    private build_namespace(name: Name, symbols: mut System.Collections.List<Symbol>) -> Symbol
+    {
+        let type: Type = new Type.namespace(name);
+        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        return new Symbol.declaring(type, declarations, symbols);
+    }
 
-	private build_class(namespace: Name, class_name: string) -> Symbol
-	{
-		let type: Type = new Type(ReferenceType, new Name(namespace, class_name), false);
-		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		return new Symbol.declaring(type, declarations, children);
-	}
+    private build_class(namespace: Name, class_name: string) -> Symbol
+    {
+        let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
+        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        return new Symbol.declaring(type, declarations, children);
+    }
+
+    private build_generic_class(namespace: Name, class_name: string, type_parameters: System.Collections.List<Type>) -> Symbol
+    {
+        let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), type_parameters, true);
+        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        return new Symbol.declaring(type, declarations, children);
+    }
 }

@@ -1,0 +1,78 @@
+public unit_test_Name_Table_Builder() -> void
+{
+    table_contains_referenced_child_names();
+    can_get_root_namespace_from_name();
+    can_get_Console_class_from_name_without_package();
+    can_get_Optional_class_from_name_with_package();
+}
+
+public table_contains_referenced_child_names() -> void
+{
+    let name: Package_Name = new Package_Name("default");
+    let runtime_package: Package = new Runtime_Library_Package_Builder().build();
+    let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+    references.add(new Package_Reference(runtime_package));
+
+    let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
+    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+    let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
+    let namespace: Name_Subtable = name_table.any_package.find("System");
+    assert(namespace.find("Console") =/= none, "");
+
+    let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "System");
+    assert(name_table.get(system_namespace_name) =/= none, "");
+    let console_namespace_name: Name = new Name(system_namespace_name, NamespaceName, "Console");
+    assert(name_table.get(console_namespace_name) =/= none, "");
+    let console_class_name: Name = new Name(console_namespace_name, TypeName, "Console");
+    assert(name_table.get(console_class_name) =/= none, "");
+}
+
+public can_get_root_namespace_from_name() -> void
+{
+    let name: Package_Name = new Package_Name("default");
+    let runtime_package: Package = new Runtime_Library_Package_Builder().build();
+    let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+    references.add(new Package_Reference(runtime_package));
+
+    let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
+    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+    let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
+    let namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "System");
+    assert(name_table.get(namespace_name) =/= none, "");
+}
+
+public can_get_Console_class_from_name_without_package() -> void
+{
+    let name: Package_Name = new Package_Name("default");
+    let runtime_package: Package = new Runtime_Library_Package_Builder().build();
+    let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+    references.add(new Package_Reference(runtime_package));
+
+    let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
+    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+    let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
+
+    let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "System");
+    let console_namespace_name: Name = new Name(system_namespace_name, NamespaceName, "Console");
+    let console_class_name: Name = new Name(console_namespace_name, TypeName, "Console");
+    assert(name_table.get(console_class_name) =/= none, "");
+}
+
+public can_get_Optional_class_from_name_with_package() -> void
+{
+    let name: Package_Name = new Package_Name("default");
+    let primitives_package: Package = new Primitives_Package_Builder().build();
+    let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+    references.add(new Package_Reference(primitives_package));
+
+    let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
+    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+    let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
+
+    let package_name: Package_Name = new Package_Name("$primitives");
+    let adamant_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "adamant");
+    let language_namespace_name: Name = new Name(adamant_namespace_name, NamespaceName, "language");
+    assert(name_table.get(language_namespace_name) =/= none, "");
+    let optional_class_name: Name = new Name(language_namespace_name, TypeName, "optional");
+    assert(name_table.get(optional_class_name) =/= none, "");
+}

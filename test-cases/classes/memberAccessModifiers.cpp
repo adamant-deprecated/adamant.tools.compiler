@@ -40,7 +40,7 @@ auto ::C_::method_() const -> p_string
 auto ::C_::double_name_() const -> p_string
 {
 	auto self = this;
-	return name_->op_add(name_);
+	return name_.op_add(name_);
 }
 
 auto Main_() -> void

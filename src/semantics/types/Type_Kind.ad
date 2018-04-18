@@ -1,3 +1,5 @@
 public let ReferenceType: int = 1;
 public let ValueType: int = 2;
 public let NamespaceType: int = 3; // Namespaces will have types for consistency
+public let TypeParameterType: int = 4;
+public let FunctionType: int = 5;

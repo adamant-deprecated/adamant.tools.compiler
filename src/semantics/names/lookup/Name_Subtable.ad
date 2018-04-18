@@ -1,0 +1,143 @@
+public /*mut*/ class Name_Subtable
+{
+    public let name_table: Name_Table;
+    public let parent: Name_Subtable?; // TODO this should point at the package binding scope?
+    public let name: Name;
+    public var type: Type;
+    private let subtables: mut System.Collections.List<mut Name_Subtable>;
+
+    public new global_namespace(name_table: Name_Table)
+    {
+        // assert name package should be in the Name_Table
+        self.name_table = name_table;
+        self.parent = none;
+        self.name = new Name.global_namespace();
+        self.type = new Type.namespace(self.name);
+        subtables = new System.Collections.List<mut Name_Subtable>();
+    }
+
+    public new global_namespace(name_table: Name_Table, package_name: Package_Name)
+    {
+        // assert name package should be in the Name_Table
+        self.name_table = name_table;
+        self.parent = none;
+        self.name = new Name.global_namespace(package_name);
+        self.type = new Type.namespace(self.name);
+        subtables = new System.Collections.List<mut Name_Subtable>();
+    }
+
+    private new(parent: Name_Subtable, name: Name, type: Type)
+    {
+        // assert(parent.name.package == name.package);
+        // assert parent name contains us
+        self.name_table = parent.name_table;
+        self.parent = parent;
+        self.name = name;
+        self.type = type;
+        subtables = new System.Collections.List<mut Name_Subtable>();
+    }
+
+    public add(mut self, name: Name, type: Type) -> void
+    {
+        assert(name.is_qualified_with(self.name), "\""+name.full()+"\" is not a child of \""+self.name.full()+"\"");
+        if name.qualifier_is(self.name)
+        {
+            if self.name.package == none and type =/= none and type.kind == NamespaceType
+            {
+                subtables.add(new Name_Subtable(self, name.remove_package(), type.remove_package()));
+            }
+            else
+            {
+                subtables.add(new Name_Subtable(self, name, type));
+            }
+            return;
+        }
+
+        for let subtable: mut Name_Subtable in subtables
+        {
+            if name.is_qualified_with(subtable.name)
+            {
+                subtable.add(name, type);
+                return;
+            }
+        }
+
+        // TODO this assert is wrong
+        assert(|name.segments| == |self.name.segments| + 1, "Can't add \""+name.full()+"\" to \""+self.name.full()+"\"");
+    }
+
+    /// Get a child name
+    public find(self, name: string) -> mut Name_Subtable?
+    {
+        return find(name, false);
+    }
+
+    public find_special(self, name: string) -> mut Name_Subtable?
+    {
+        return find(name, true);
+    }
+
+    private find(self, name: string, is_special: bool) -> mut Name_Subtable?
+    {
+        for let subtable: mut Name_Subtable in subtables
+        {
+            if subtable.name.unqualified() == name
+                and subtable.name.is_special == is_special
+                { return subtable; }
+        }
+        return none;
+    }
+
+    public lookup(self, name: string) -> mut Name_Subtable?
+    {
+        return lookup(name, false);
+    }
+
+    public lookup_special(self, name: string) -> mut Name_Subtable?
+    {
+        return lookup(name, true);
+    }
+
+    protected lookup(self, name: string, is_special: bool) -> mut Name_Subtable?
+    {
+        var subtable: mut Name_Subtable? = find(name, is_special);
+        if subtable == none and parent =/= none
+        {
+            subtable = parent.lookup(name, is_special);
+        }
+        return subtable;
+    }
+
+    public get(self, name: Name) -> Name_Subtable?
+    {
+        if name.names(self.name)
+        {
+            return self;
+        }
+        else if not name.is_qualified_with(self.name)
+        {
+            return none;
+        }
+
+        for let subtable: Name_Subtable in subtables
+        {
+            let value: Name_Subtable? = subtable.get(name);
+            if value =/= none
+                { return value; }
+        }
+
+        return none;
+    }
+
+    public bind_type(mut self, type: Type) -> void
+    {
+        assert(type =/= none, self.name.full());
+        if self.type =/= none
+        {
+            // TODO this is a hack to allow multiple variables with the same name and type in a method
+            assert(self.type.name.full() == type.name.full(),
+                self.name.full()+" currently `"+self.type.name.full()+"` trying to set to `"+type.name.full()+"`");
+        }
+        self.type = type;
+    }
+}

@@ -1,16 +1,22 @@
 // TODO implement Semantic Node
 public class Compilation_Unit
 {
-	public collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
-	{
-		// for let diagnostic: Diagnostic in node_diagnostics
-		// {
-		// 	diagnostics.Add(diagnostic);
-		// }
+    // TODO Package_Location
+    public let syntax: Syntax_Node;
+    public let declarations: System.Collections.List<Semantic_Node>;
 
-		// for let child: Semantic_Node in children
-		// {
-		// 	child.collect_diagnostics(diagnostics);
-		// }
-	}
+    public new(syntax: Syntax_Node, declarations: System.Collections.List<Semantic_Node>)
+    {
+        self.syntax = syntax;
+        self.declarations = declarations;
+    }
+
+    public collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+    {
+        syntax.collect_diagnostics(diagnostics);
+        for let declaration: Semantic_Node in declarations
+        {
+            declaration.collect_diagnostics(diagnostics);
+        }
+    }
 }

@@ -1,0 +1,15 @@
+public class Test
+{
+    private var value: bool;
+
+    public change(mut self, value: bool) -> void
+    {
+        self.value = value;
+    }
+}
+
+public Main(console: mut System.Console.Console) -> void
+{
+    let test: mut Test = new Test();
+    test.change(true);
+}

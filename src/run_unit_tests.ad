@@ -1,7 +1,21 @@
 public run_unit_tests(console: mut System.Console.Console) -> void
 {
-	console.WriteLine("Running Unit Tests...");
+    console.WriteLine("Running Unit Tests...");
 
-	// core
-	unit_test_Text_Position();
+    // core
+    unit_test_Text_Position();
+
+    // semantics
+    unit_test_Primitives_Package_Builder();
+    unit_test_Runtime_Library_Package_Builder();
+
+    // semantics.names
+    unit_test_Name();
+
+    // semantics.names.lookup
+    unit_test_Name_Subtable();
+    unit_test_Name_Table_Builder();
+
+    // semantics.symbols
+    unit_test_Symbol();
 }

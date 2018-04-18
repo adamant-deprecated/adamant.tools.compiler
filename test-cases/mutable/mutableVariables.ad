@@ -1,0 +1,16 @@
+public Func(var x: int, y: int) -> mut System.Text.String_Builder
+{
+    x += 1;
+    let i: int = x + 2;
+    var j: int = y - 23;
+    j = i;
+    let stringA: mut System.Text.String_Builder = new System.Text.String_Builder("Hello");
+    var stringB: System.Text.String_Builder;
+    stringB = stringA;
+    return stringA;
+}
+
+public Main(console: mut System.Console.Console) -> void
+{
+    console.WriteLine(Func(1, 2).ToString());
+}

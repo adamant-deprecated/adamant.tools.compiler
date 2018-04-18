@@ -1,19 +1,21 @@
+/// A compiler diagnostic (i.e. warning, error etc.) with information about its location.
+/// TODO implement in terms of `Diagnostic_Info`
 public class Diagnostic
 {
-	public let Level: int;
-	public let Phase: int;
-	public let source: Source_Text;
-	public let Span: Text_Span;
-	public let Position: Text_Position;
-	public let Message: string;
+    public let Level: int;
+    public let Phase: int;
+    public let source: Source_Text;
+    public let Span: Text_Span;
+    public let Position: Text_Position;
+    public let Message: string;
 
-	public new(level: int, phase: int, source: Source_Text, span: Text_Span, message: string)
-	{
-		Level = level;
-		Phase = phase;
-		self.source = source;
-		Span = span;
-		Position = source.PositionOfStart(span);
-		Message = message;
-	}
+    public new(level: int, phase: int, source: Source_Text, span: Text_Span, message: string)
+    {
+        Level = level;
+        Phase = phase;
+        self.source = source;
+        Span = span;
+        Position = source.PositionOfStart(span);
+        Message = message;
+    }
 }

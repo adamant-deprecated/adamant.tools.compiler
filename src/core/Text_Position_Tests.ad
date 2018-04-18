@@ -1,12 +1,12 @@
 public unit_test_Text_Position() -> void
 {
-	Text_Position_retains_given_offeset_line_and_column();
+    Text_Position_retains_given_offeset_line_and_column();
 }
 
 public Text_Position_retains_given_offeset_line_and_column() -> void
 {
-	let position: Text_Position = new Text_Position(23, 2, 5);
-	assert(position.Offset == 23, "");
-	assert(position.Line == 2, "");
-	assert(position.Column == 5, "");
+    let position: Text_Position = new Text_Position(23, 2, 5);
+    assert(position.Offset == 23, "");
+    assert(position.Line == 2, "");
+    assert(position.Column == 5, "");
 }

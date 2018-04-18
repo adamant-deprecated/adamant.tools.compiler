@@ -1,0 +1,12 @@
+public unit_test_Symbol() -> void
+{
+    Package_symbol_children_can_be_found_by_name_and_kind();
+}
+
+public Package_symbol_children_can_be_found_by_name_and_kind() -> void
+{
+    let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+    children.add(new Symbol.identifier("child"));
+    let package_with_children: Symbol = new Symbol.package("package", children);
+    assert(package_with_children.get("child", IdentifierSymbol) =/= none, "");
+}

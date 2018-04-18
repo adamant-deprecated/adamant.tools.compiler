@@ -2,19 +2,19 @@
 
 public class Text_Span
 {
-	public let start: int;
-	public let byte_length: int;
+    public let start: int;
+    public let byte_length: int;
 
-	// @pre start+length doesn't overflow
-	public new(start: int, length: int)
-	{
-		self.start = start;
-		byte_length = length;
-	}
+    // @pre start+length doesn't overflow
+    public new(start: int, length: int)
+    {
+        self.start = start;
+        byte_length = length;
+    }
 
-	// TODO get Property
-	public End(self) -> int
-	{
-		return start + byte_length;
-	}
+    // TODO get Property
+    public End(self) -> int
+    {
+        return start + byte_length;
+    }
 }

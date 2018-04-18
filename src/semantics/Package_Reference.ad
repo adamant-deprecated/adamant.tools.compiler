@@ -1,20 +1,20 @@
 // TODO inherit from Package_Name?
 public struct Package_Reference
 {
-	/// The name the package will be referred to by within the current package.
-	/// For most packages, this is the same as the package name. However, if a
-	/// package alias is given, it will be the alias.
-	public let name: string;
-	public let package: Package;
+    /// The name the package will be referred to by within the current package.
+    /// For most packages, this is the same as the package name. However, if a
+    /// package alias is given, it will be the alias.
+    public let name: string;
+    public let package: Package;
 
-	public new(package: Package)
-	{
-		self.name = package.name.unqualified_name;
-		self.package = package;
-	}
-	public new(name: string, package: Package)
-	{
-		self.name = name;
-		self.package = package;
-	}
+    public new(package: Package)
+    {
+        self.name = package.name.unqualified;
+        self.package = package;
+    }
+    public new(name: string, package: Package)
+    {
+        self.name = name;
+        self.package = package;
+    }
 }

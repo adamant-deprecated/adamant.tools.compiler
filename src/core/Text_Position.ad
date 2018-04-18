@@ -4,14 +4,14 @@
 /// reported as on the line they terminate.
 public class Text_Position
 {
-	public let Offset: int; // Zero based
-	public let Line: int; // One based
-	public let Column: int; // One based
+    public let Offset: int; // Zero based
+    public let Line: int; // One based
+    public let Column: int; // One based
 
-	public new(offset: int, line: int, column: int)
-	{
-		Offset = offset;
-		Line = line;
-		Column = column;
-	}
+    public new(offset: int, line: int, column: int)
+    {
+        Offset = offset;
+        Line = line;
+        Column = column;
+    }
 }

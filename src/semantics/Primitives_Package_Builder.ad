@@ -3,89 +3,112 @@
 // Note: Primitives are special symbols that are effectively in the global namespace
 public class Primitives_Package_Builder
 {
-	public build(self) -> Package
-	{
-		// The primitives package has the special name `$primitives` to distinguish
-		// it from all normal packages since dollar is invalid in a package name.
-		let name: Package_Name = new Package_Name("$primitives");
+    public build(self) -> Package
+    {
+        // The primitives package has the special name `$primitives` to distinguish
+        // it from all normal packages since dollar is invalid in a package name.
+        let name: Package_Name = new Package_Name("$primitives");
 
-		// No referenced packages
-		let references: System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+        // No referenced packages
+        let references: System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
 
-		// The primitives package has no compilation units because it has no source
-		let compilation_units: System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
+        // The primitives package has no compilation units because it has no source
+        let compilation_units: System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
 
-		let primitive_symbols: mut System.Collections.List<Symbol> = build_primitive_symbols(name);
-		assert(|primitive_symbols| > 0, "|primitive_symbols|=" + |primitive_symbols|);
+        let primitive_symbols: mut System.Collections.List<Symbol> = build_primitive_symbols(name);
+        assert(|primitive_symbols| > 0, "|primitive_symbols|=" + |primitive_symbols|);
 
-		let package_symbol: Symbol = new Symbol.package(name.unqualified_name, primitive_symbols);
-		assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
+        let package_symbol: Symbol = new Symbol.package(name.unqualified, primitive_symbols);
+        assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
 
-		return new Package(name, references, compilation_units, package_symbol);
-	}
+        return new Package(name, references, compilation_units, package_symbol);
+    }
 
-	private build_primitive_symbols(self, package_name: Package_Name) -> mut System.Collections.List<Symbol>
-	{
-		let global_namespace: Name = new Name.global_namespace(package_name);
-		let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+    private build_primitive_symbols(self, package_name: Package_Name) -> mut System.Collections.List<Symbol>
+    {
+        let global_namespace: Name = new Name.global_namespace(package_name);
+        let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
-		symbols.Add(build_primitive("void", global_namespace));
-		symbols.Add(build_primitive("never", global_namespace));
+        symbols.Add(build_adamant_language_namespace(global_namespace));
+        symbols.Add(build_primitive("void", global_namespace));
+        symbols.Add(build_primitive("never", global_namespace));
 
-		symbols.Add(build_primitive("bool", global_namespace));
-		symbols.Add(build_primitive("code_point", global_namespace));
-		symbols.Add(build_primitive("string", global_namespace));
+        symbols.Add(build_primitive("bool", global_namespace));
+        symbols.Add(build_primitive("code_point", global_namespace));
+        symbols.Add(build_primitive("string", global_namespace));
 
-		symbols.Add(build_primitive("int8", global_namespace));
-		symbols.Add(build_primitive("int16", global_namespace));
-		symbols.Add(build_primitive("int", global_namespace));
-		symbols.Add(build_primitive("int64", global_namespace));
-		symbols.Add(build_primitive("int128", global_namespace));
+        symbols.Add(build_primitive("int8", global_namespace));
+        symbols.Add(build_primitive("int16", global_namespace));
+        symbols.Add(build_primitive("int", global_namespace));
+        symbols.Add(build_primitive("int64", global_namespace));
+        symbols.Add(build_primitive("int128", global_namespace));
 
-		symbols.Add(build_primitive("byte", global_namespace));
-		symbols.Add(build_primitive("uint16", global_namespace));
-		symbols.Add(build_primitive("uint", global_namespace));
-		symbols.Add(build_primitive("uint64", global_namespace));
-		symbols.Add(build_primitive("uint128", global_namespace));
+        symbols.Add(build_primitive("byte", global_namespace));
+        symbols.Add(build_primitive("uint16", global_namespace));
+        symbols.Add(build_primitive("uint", global_namespace));
+        symbols.Add(build_primitive("uint64", global_namespace));
+        symbols.Add(build_primitive("uint128", global_namespace));
 
-		symbols.Add(build_primitive("float32", global_namespace));
-		symbols.Add(build_primitive("float", global_namespace));
-		symbols.Add(build_primitive("float128", global_namespace));
+        symbols.Add(build_primitive("float32", global_namespace));
+        symbols.Add(build_primitive("float", global_namespace));
+        symbols.Add(build_primitive("float128", global_namespace));
 
-		build_fixed_point_primitives(symbols, 8, global_namespace);
-		build_fixed_point_primitives(symbols, 16, global_namespace);
-		build_fixed_point_primitives(symbols, 32, global_namespace);
-		build_fixed_point_primitives(symbols, 64, global_namespace);
+        build_fixed_point_primitives(symbols, 8, global_namespace);
+        build_fixed_point_primitives(symbols, 16, global_namespace);
+        build_fixed_point_primitives(symbols, 32, global_namespace);
+        build_fixed_point_primitives(symbols, 64, global_namespace);
 
-		symbols.Add(build_primitive("decimal32", global_namespace));
-		symbols.Add(build_primitive("decimal", global_namespace));
-		symbols.Add(build_primitive("decimal128", global_namespace));
+        symbols.Add(build_primitive("decimal32", global_namespace));
+        symbols.Add(build_primitive("decimal", global_namespace));
+        symbols.Add(build_primitive("decimal128", global_namespace));
 
-		symbols.Add(build_primitive("size", global_namespace));
-		symbols.Add(build_primitive("offset", global_namespace));
+        symbols.Add(build_primitive("size", global_namespace));
+        symbols.Add(build_primitive("offset", global_namespace));
 
-		return symbols;
-	}
+        return symbols;
+    }
 
-	private build_primitive(name: string, namespace: Name) -> Symbol
-	{
-		let type: Type = new Type.primitive(new Name(namespace, name));
-		let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
-		let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
-		return new Symbol.declaring(type, declarations, children);
-	}
+    private build_adamant_language_namespace(global_namespace: Name) -> Symbol
+    {
+        let adamant_namespace: Name = new Name(global_namespace, NamespaceName, "adamant");
+        let language_namespace: Name = new Name(adamant_namespace, NamespaceName, "language");
+        let language_children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        language_children.add(build_optional(language_namespace));
+        let adamant_children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        adamant_children.add(new Symbol.identifier(language_namespace.unqualified(), language_children));
+        return new Symbol.identifier(adamant_namespace.unqualified(), adamant_children);
+    }
 
-	private build_fixed_point_primitives(
-		symbols: mut System.Collections.List<Symbol>,
-		bits: int /*size*/,
-		namespace: Name)
-		-> void
-	{
-		// TODO implement when language features make it easier
-		// for let i: usize in 1..usize-1
-		// {
-		// 	symbols.Add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
-		// 	symbols.Add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
-		// }
-	}
+    private build_optional(language_namespace: Name) -> Symbol
+    {
+        let optional_name: Name = new Name(language_namespace, TypeName, "optional");
+        let type_parameters: mut System.Collections.List<Type> = new System.Collections.List<Type>();
+        type_parameters.add(new Type(TypeParameterType, new Name(optional_name, TypeParameterName, "T"), true));
+        let type: Type = new Type.primitive(optional_name, type_parameters);
+        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        return new Symbol.declaring(type, declarations, children);
+    }
+
+    private build_primitive(name: string, namespace: Name) -> Symbol
+    {
+        let type: Type = new Type.primitive(new Name.special(namespace, TypeName, name));
+        let declarations: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        return new Symbol.declaring(type, declarations, children);
+    }
+
+    private build_fixed_point_primitives(
+        symbols: mut System.Collections.List<Symbol>,
+        bits: int /*size*/,
+        namespace: Name)
+        -> void
+    {
+        // TODO implement when language features make it easier
+        // for let i: usize in 1..usize-1
+        // {
+        // 	symbols.Add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
+        // 	symbols.Add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
+        // }
+    }
 }

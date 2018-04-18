@@ -1,0 +1,5 @@
+public let NamespaceName: int = 1;
+public let TypeName: int = 2;
+public let FunctionName: int = 3;
+public let TypeParameterName: int = 4;
+public let VariableName: int = 5;

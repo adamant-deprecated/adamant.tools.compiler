@@ -1,16 +1,16 @@
 /// A single syntax tree with its source and nodes. Typically a syntax tree
 /// represents the source of a single code file. However, it could also be
 /// constructed from a string or stream containing a snippet of source.
-public class Syntax_Tree
-{
-	public let path: string; // TODO use
-	public let source: Source_Text;
-	public let root: Syntax_Node;
+// public class Syntax_Tree
+// {
+//     public let path: string; // TODO use
+//     public let source: Source_Text;
+//     public let root: Syntax_Node;
 
-	public new(path: string, source: Source_Text, root: Syntax_Node)
-	{
-		self.path = path;
-		self.source = source;
-		self.root = root;
-	}
-}
+//     public new(path: string, source: Source_Text, root: Syntax_Node)
+//     {
+//         self.path = path;
+//         self.source = source;
+//         self.root = root;
+//     }
+// }

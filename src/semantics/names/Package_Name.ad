@@ -1,21 +1,20 @@
 /// The name of a package. Note this is the full name of the package, for example
-/// "system.collections". A package name is never the alias for a package. It is
-// always the full name of the package.
+/// "system.collections".
 //
 // TODO this should be more like a typed string
 public class Package_Name
 {
-	public let unqualified_name: string;
+    public let unqualified: string;
 
-	public new(name: string)
-	{
-		assert(name.ByteLength() > 0, "");
-		self.unqualified_name = name;
-	}
+    public new(name: string)
+    {
+        assert(name.ByteLength() > 0, "");
+        self.unqualified = name;
+    }
 
-	// TODO get
-	public full_name(self) -> string
-	{
-		return unqualified_name;
-	}
+    // TODO get
+    public full(self) -> string
+    {
+        return unqualified;
+    }
 }
