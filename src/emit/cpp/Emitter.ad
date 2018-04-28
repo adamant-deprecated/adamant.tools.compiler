@@ -895,7 +895,7 @@ public class Emitter
     private emit_preamble(mut self) -> void
     {
         // Setup the beginning of each section
-        type_declarations.WriteLine("#include \"RuntimeLibrary.h\"");
+        type_declarations.WriteLine("#include \"RuntimeLibrary.hpp\"");
         type_declarations.BlankLine();
         type_declarations.WriteLine("// Type Declarations");
         function_declarations.BlankLine();

@@ -490,7 +490,7 @@ ConsoleCommand CompileAdamant(string sourceVersion, string targetVersion)
 	var compiler = string.Format("target/{0}/Program", sourceVersion);
 	var sources = GetFiles("src/**/*.ad");
 	var output = string.Format("translated/{0}/Program.cpp", targetVersion);
-	var resources = new FilePath[] { "src/RuntimeLibrary.cpp", "src/RuntimeLibrary.h" };
+	var resources = new FilePath[] { "src/RuntimeLibrary.cpp", "src/RuntimeLibrary.hpp" };
 	return CompileAdamant(compiler, sources, output, resources);
 }
 

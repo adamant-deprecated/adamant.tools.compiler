@@ -170,8 +170,8 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
         console.Write("Outputting RuntimeLibrary to: ");
         console.WriteLine(outputDirPath);
     }
-    var resourceFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.h");
-    resourceFile.Write(resource_manager.GetString("RuntimeLibrary.h"));
+    var resourceFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.hpp");
+    resourceFile.Write(resource_manager.GetString("RuntimeLibrary.hpp"));
     resourceFile.Close();
     resourceFile = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.cpp");
     resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
