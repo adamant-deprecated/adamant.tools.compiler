@@ -1,3 +1,24 @@
+/// # Unusual Unicode Characters for use in Name Mangling
+/// * U+00B7 `·` Middle Dot
+/// * U+1401 `ᐁ`
+/// * U+1403 `ᐃ`
+/// * U+1405 `ᐅ`
+/// * U+140A `ᐊ`
+/// * U+141E `ᐞ`
+/// * U+1421 `ᐡ`
+/// * U+1422 `ᐢ`
+/// * U+1424 `ᐤ`
+/// * U+1428 `ᐨ`
+/// * U+1429 `ᐩ`
+/// * U+142A `ᐪ`
+///
+/// # Possible Names
+/// i32ᐪ voidᐪ
+/// ᐅadd
+/// Some_Classᐊ
+/// functionᐊi32ᐪᐤf64ᐪ
+/// new·Fooᐊ
+///
 public class Emitter
 {
     private let package: Package;
