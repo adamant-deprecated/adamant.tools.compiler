@@ -184,13 +184,15 @@ inline p_int::p_int(p_uint value)
 struct p_code_point
 {
 private:
-	std::uint32_t value;
+	std::uint32_t raw_value;
 
 public:
 	// Runtime Use Members
 	p_code_point() = default;
-	p_code_point(char value): value(value) {}
+	p_code_point(char value): raw_value(value) {}
 	char CharValue() const;
+
+    auto value() const -> std::uint32_t { return raw_value; }
 
 	p_code_point *_Nonnull operator->() { return this; }
 	p_code_point const *_Nonnull operator->() const { return this; }
@@ -199,13 +201,13 @@ public:
 
 	// Adamant Members
 	static auto construct() -> p_code_point { return '\0'; }
-	p_bool op_equal(p_code_point const & other) const { return this->value == other.value; }
-	p_bool op_not_equal(p_code_point const & other) const { return this->value != other.value; }
+	p_bool op_equal(p_code_point const & other) const { return this->raw_value == other.raw_value; }
+	p_bool op_not_equal(p_code_point const & other) const { return this->raw_value != other.raw_value; }
 	// TODO: Not sure code_point should support these operations
-	p_bool op_less_than(p_code_point other) const { return this->value < other.value; }
-	p_bool op_less_than_or_equal(p_code_point other) const { return this->value <= other.value; }
-	p_bool op_greater_than(p_code_point other) const { return this->value > other.value; }
-	p_bool op_greater_than_or_equal(p_code_point other) const { return this->value >= other.value; }
+	p_bool op_less_than(p_code_point other) const { return this->raw_value < other.raw_value; }
+	p_bool op_less_than_or_equal(p_code_point other) const { return this->raw_value <= other.raw_value; }
+	p_bool op_greater_than(p_code_point other) const { return this->raw_value > other.raw_value; }
+	p_bool op_greater_than_or_equal(p_code_point other) const { return this->raw_value >= other.raw_value; }
 
 };
 

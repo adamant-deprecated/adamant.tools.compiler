@@ -15,10 +15,10 @@ p_uint p_int::AsUInt_() const
 
 char p_code_point::CharValue() const
 {
-    if(this->value > 0xFF)
+    if(this->raw_value > 0xFF)
         throw std::range_error("Unicode char values not yet supported");
 
-    return this->value;
+    return this->raw_value;
 }
 
 p_string p_string::construct(p_code_point c, p_int repeat)
