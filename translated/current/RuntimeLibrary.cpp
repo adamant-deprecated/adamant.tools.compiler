@@ -15,10 +15,10 @@ p_uint p_int::AsUInt_() const
 
 char p_code_point::CharValue() const
 {
-    if(this->value > 0xFF)
+    if(this->raw_value > 0xFF)
         throw std::range_error("Unicode char values not yet supported");
 
-    return this->value;
+    return this->raw_value;
 }
 
 p_string p_string::construct(p_code_point c, p_int repeat)
@@ -179,58 +179,6 @@ bool operator < (p_string const & lhs, p_string const & rhs)
     delete[] left;
     delete[] right;
     return result;
-}
-
-// -----------------------------------------------------------------------------
-// Runtime Types
-// -----------------------------------------------------------------------------
-
-auto Borrows::take_mut(char const *_Nonnull kind) -> Borrows_Ref
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't mutably take ") + kind + " that is mutably borrowed");
-    else if(borrows > 0)
-        throw std::runtime_error(std::string("Can't mutably take ") + kind + " that is immutably borrowed");
-
-    return Borrows_Ref::own();
-}
-
-auto Borrows::take(char const *_Nonnull kind) -> Borrows_Ref
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't immutably take ") + kind + " that is mutably borrowed");
-    else if(borrows > 0)
-        throw std::runtime_error(std::string("Can't immutably take ") + kind + " that is immutably borrowed");
-
-    return Borrows_Ref::own();
-}
-
-auto Borrows::borrow_mut(char const *_Nonnull kind) -> Borrows_Ref
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't mutably borrow ") + kind + " that is mutably borrowed");
-    else if(borrows > 0)
-        throw std::runtime_error(std::string("Can't mutably borrow ") + kind + " that is immutably borrowed");
-
-    borrows = Writing;
-    return Borrows_Ref(this);
-}
-
-auto Borrows::borrow(char const *_Nonnull kind) -> Borrows_Ref
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't immutably borrow") + kind + " that is already mutably borrowed");
-
-    borrows += 1;
-    return Borrows_Ref(this);
-}
-
-auto Borrows::destruct(char const *_Nonnull kind) -> void
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't delete ") + kind + " that is mutably borrowed");
-    else if(borrows > 0)
-        throw std::runtime_error(std::string("Can't delete ") + kind + " that is immutably borrowed");
 }
 
 // -----------------------------------------------------------------------------
