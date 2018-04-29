@@ -21,18 +21,18 @@ public:
 
 auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<i32>
 {
-	p_optional<i32> const z_ = p_none;
-	::Test_ const *_Nullable const t_ = p_none;
-	::System_::Text_::String_Builder_ *_Nullable const sb_ = p_none;
+	p_optional<i32> const z_ = none;
+	::Test_ const *_Nullable const t_ = none;
+	::System_::Text_::String_Builder_ *_Nullable const sb_ = none;
 	::System_::Collections_::List_<p_optional<i32>> const *_Nonnull const l_ = (new ::System_::Collections_::List_<p_optional<i32>>())->construct();
-	::Test_ *_Nullable const m_ = p_none;
-	p_optional<p_optional<i32>> const d_ = p_none;
-	return p_none;
+	::Test_ *_Nullable const m_ = none;
+	p_optional<p_optional<i32>> const d_ = none;
+	return none;
 }
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
-	Func_(p_none, p_none);
+	Func_(none, none);
 }
 
 // Entry Point Adapter
