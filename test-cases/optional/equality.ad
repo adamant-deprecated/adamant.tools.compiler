@@ -1,14 +1,45 @@
-public class Test
+public Main(console: mut System.Console.Console) -> void
 {
-}
-
-public Main() -> void
-{
-	let v: int = 0;
+	let v: int = 42;
 	let n: int? = none;
-	var x: bool;
-	x = v == n;
-	x = v =/= n;
-	x = n == v;
-	x = n =/= v;
+	var r: bool;
+
+	// Equal
+	r = v == n;
+	console.WriteLine("v == n: " + r);
+	r = n == v;
+	console.WriteLine("n == v: " + r);
+	r = n == n;
+	console.WriteLine("n == v: " + r);
+	r = 42 == none;
+	console.WriteLine("42 == none: " + r);
+	r = none == 42;
+	console.WriteLine("none == 42: " + r);
+	r = none == none;
+	console.WriteLine("none == none: " + r);
+
+	// Not Equal
+	r = v =/= n;
+	console.WriteLine("v =/= n: " + r);
+	r = n =/= v;
+	console.WriteLine("n =/= v: " + r);
+	r = n =/= n;
+	console.WriteLine("n =/= v: " + r);
+	r = 42 =/= none;
+	console.WriteLine("42 =/= none: " + r);
+	r = none =/= 42;
+	console.WriteLine("none =/= 42: " + r);
+	r = none =/= none;
+	console.WriteLine("none =/= none: " + r);
+
+    // Reference equal none
+    let sb: System.Text.String_Builder? = none;
+    r = sb == none;
+    console.WriteLine("sb == none: " + r);
+    r = none == sb;
+    console.WriteLine("none == sb: " + r);
+    r = sb =/= none;
+    console.WriteLine("sb =/= none: " + r);
+    r = none =/= sb;
+    console.WriteLine("none =/= sb: " + r);
 }

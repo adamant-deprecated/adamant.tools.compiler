@@ -226,6 +226,7 @@ public:
 	// Hack to support conversion of int and code_point to strings for now
 	p_string(p_int other);
 	p_string(p_code_point other);
+    explicit p_string(p_bool other);
 
 	// Adamant Members
 	static auto construct() -> p_string { p_string self; self.Length = 0; self.Buffer = 0; return self; }
@@ -243,6 +244,7 @@ public:
     // TODO check index bounds
 	p_code_point op_Element(p_int const index) const { return p_code_point(Buffer[index.value]); }
 	p_string op_add(p_string const & value) const;
+    p_string op_add(p_bool value) const { return this->op_add(p_string(value)); }
 	p_bool op_less_than(p_string other) const;
 	p_bool op_less_than_or_equal(p_string other) const;
 	p_bool op_greater_than(p_string other) const;
@@ -277,6 +279,11 @@ inline auto equal_op(p_optional<p_int> lhs, p_optional<p_int> rhs) -> p_bool
         return p_bool(not rhs.has_value().value);
 }
 
+inline auto equal_op(None lhs, None rhs) -> p_bool
+{
+    return p_bool(true);
+}
+
 inline auto equal_op(p_code_point lhs, p_code_point rhs) -> p_bool
 {
     return p_bool(lhs.value() == rhs.value());
@@ -289,6 +296,13 @@ template<typename T>
 inline auto equal_op(T const *_Nullable lhs, None const & rhs) -> p_bool
 {
     return p_bool(lhs == 0);
+}
+
+// TODO implement this without templates
+template<typename T>
+inline auto equal_op(None lhs, T const *_Nullable rhs) -> p_bool
+{
+    return p_bool(0 == rhs);
 }
 
 // TODO Get rid of this ability
@@ -322,6 +336,13 @@ template<typename T>
 inline auto not_equal_op(T const *_Nullable lhs, None const & rhs) -> p_bool
 {
     return p_bool(lhs != 0);
+}
+
+// TODO implement this without templates
+template<typename T>
+inline auto not_equal_op(None lhs, T const *_Nullable rhs) -> p_bool
+{
+    return p_bool(0 != rhs);
 }
 
 // -----------------------------------------------------------------------------

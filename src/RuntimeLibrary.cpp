@@ -66,6 +66,11 @@ p_string::p_string(p_code_point other)
 {
 }
 
+p_string::p_string(p_bool other)
+    : p_string(other.value ? "true" : "false")
+{
+}
+
 p_string p_string::Substring_(p_int start, p_int length) const
 {
     return p_string(length.value, Buffer + start.value);

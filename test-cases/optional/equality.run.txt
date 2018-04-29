@@ -1,0 +1,18 @@
+0
+16
+v == n: false
+n == v: false
+n == v: true
+42 == none: false
+none == 42: false
+none == none: true
+v =/= n: true
+n =/= v: true
+n =/= v: false
+42 =/= none: true
+none =/= 42: true
+none =/= none: false
+sb == none: true
+none == sb: true
+sb =/= none: false
+none =/= sb: false
