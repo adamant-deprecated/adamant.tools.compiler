@@ -4,14 +4,14 @@
 class Test_;
 
 // Function Declarations
-auto Main_() -> p_int;
+auto Main_() -> i32;
 
 // Class Declarations
 
 class Test_
 {
 public:
-	p_int value_;
+	i32 value_;
 	auto construct() -> ::Test_*;
 };
 
@@ -22,11 +22,11 @@ public:
 auto ::Test_::construct() -> ::Test_*
 {
 	::Test_* self = this;
-	value_ = p_int(0);
+	value_ = i32(0);
 	return self;
 }
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
 	::Test_ const *_Nonnull const t_ = (new ::Test_())->construct();
 	return t_->value_;

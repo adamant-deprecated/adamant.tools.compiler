@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_string x_ = p_string("Hello ").op_add(p_string("World! "))->op_add(p_int(4))->op_add(p_code_point('c'));
+	p_string x_ = p_string("Hello ").op_add(p_string("World! "))->op_add(i32(4))->op_add(p_code_point('c'));
 }
 
 // Entry Point Adapter

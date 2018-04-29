@@ -101,39 +101,39 @@ public:
 
 struct p_uint;
 
-struct p_int
+struct i32
 {
 public:
 	// Runtime Use Members
 	std::int32_t value;
 
-	p_int() = default;
-	p_int(std::int32_t value): value(value) {}
+	i32() = default;
+	i32(std::int32_t value): value(value) {}
 
-	p_int *_Nonnull operator->() { return this; }
-	p_int const *_Nonnull operator->() const { return this; }
-	p_int & operator* () { return *this; }
-	p_int const & operator* () const { return *this; }
+	i32 *_Nonnull operator->() { return this; }
+	i32 const *_Nonnull operator->() const { return this; }
+	i32 & operator* () { return *this; }
+	i32 const & operator* () const { return *this; }
 
 	// Hack to support conversion of uint to int for now
-	p_int(p_uint value);
+	i32(p_uint value);
 
 	// Adamant Members
-	static auto construct() -> p_int { return 0; }
-	static auto copy(p_int const & other) -> p_int { return other; }
-	void op_add_assign(p_int other) { this->value += other.value; }
-	void op_subtract_assign(p_int other) { this->value -= other.value; }
-	bit op_less_than(p_int other) const { return bit_from(this->value < other.value); }
-	bit op_less_than_or_equal(p_int other) const { return bit_from(this->value <= other.value); }
-	bit op_greater_than(p_int other) const { return bit_from(this->value > other.value); }
-	bit op_greater_than_or_equal(p_int other) const { return bit_from(this->value >= other.value); }
-	p_int op_add(p_int other) const { return this->value + other.value; }
-	p_int op_subtract(p_int other) const { return this->value - other.value; }
-	p_int op_negate() const { return -this->value; }
-	p_int op_multiply(p_int other) const { return this->value * other.value; }
-	p_int op_divide(p_int other) const { return this->value / other.value; }
-	p_int op_remainder(p_int other) const { return this->value % other.value; }
-	p_int op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return this->value < 0 ? -this->value : this->value; }
+	static auto construct() -> i32 { return 0; }
+	static auto copy(i32 const & other) -> i32 { return other; }
+	void op_add_assign(i32 other) { this->value += other.value; }
+	void op_subtract_assign(i32 other) { this->value -= other.value; }
+	bit op_less_than(i32 other) const { return bit_from(this->value < other.value); }
+	bit op_less_than_or_equal(i32 other) const { return bit_from(this->value <= other.value); }
+	bit op_greater_than(i32 other) const { return bit_from(this->value > other.value); }
+	bit op_greater_than_or_equal(i32 other) const { return bit_from(this->value >= other.value); }
+	i32 op_add(i32 other) const { return this->value + other.value; }
+	i32 op_subtract(i32 other) const { return this->value - other.value; }
+	i32 op_negate() const { return -this->value; }
+	i32 op_multiply(i32 other) const { return this->value * other.value; }
+	i32 op_divide(i32 other) const { return this->value / other.value; }
+	i32 op_remainder(i32 other) const { return this->value % other.value; }
+	i32 op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return this->value < 0 ? -this->value : this->value; }
 
 	// Hack because we don't support as correctly yet
 	p_uint AsUInt_() const;
@@ -154,7 +154,7 @@ public:
 	p_uint const & operator* () const { return *this; }
 
 	// Hack to support conversion of int to uint for now
-	p_uint(p_int value): value(value.value) {}
+	p_uint(i32 value): value(value.value) {}
 
 	// Adamant Members
 	static auto construct() -> p_uint { return 0; }
@@ -168,7 +168,7 @@ public:
 	p_uint op_subtract(p_uint other) const { return this->value - other.value; }
 };
 
-inline p_int::p_int(p_uint value)
+inline i32::i32(p_uint value)
 	: value(value.value)
 {
 }
@@ -219,25 +219,25 @@ public:
 	const_iterator end() const { return &Buffer[Length]; }
 
 	// Hack to support conversion of int and code_point to strings for now
-	p_string(p_int other);
+	p_string(i32 other);
 	p_string(p_code_point other);
     explicit p_string(bit other);
 
 	// Adamant Members
 	static auto construct() -> p_string { p_string self; self.Length = 0; self.Buffer = 0; return self; }
 	static auto construct(p_string value) -> p_string { return value; }
-	static auto construct(p_code_point c, p_int repeat) -> p_string;
+	static auto construct(p_code_point c, i32 repeat) -> p_string;
 	// TODO ByteLength should be a property
-	p_int ByteLength_() const { return Length; }
+	i32 ByteLength_() const { return Length; }
 
-	p_string Substring_(p_int start, p_int length) const;
-	p_string Substring_(p_int start) const { return Substring_(start, Length-start.value); }
+	p_string Substring_(i32 start, i32 length) const;
+	p_string Substring_(i32 start) const { return Substring_(start, Length-start.value); }
 	p_string Replace_(p_string oldValue, p_string newValue) const;
-	p_int LastIndexOf_(p_code_point c) const;
-	p_int index_of_(p_code_point c) const;
+	i32 LastIndexOf_(p_code_point c) const;
+	i32 index_of_(p_code_point c) const;
 
     // TODO check index bounds
-	p_code_point op_Element(p_int const index) const { return p_code_point(Buffer[index.value]); }
+	p_code_point op_Element(i32 const index) const { return p_code_point(Buffer[index.value]); }
 	p_string op_add(p_string const & value) const;
     p_string op_add(bit value) const { return this->op_add(p_string(value)); }
 	bit op_less_than(p_string other) const;
@@ -262,11 +262,11 @@ inline auto equal_op(p_optional<bit> lhs, p_optional<bit> rhs) -> bit
         return bit_not(rhs.has_value());
 }
 
-inline auto equal_op(p_int lhs, p_int rhs) -> bit
+inline auto equal_op(i32 lhs, i32 rhs) -> bit
 {
     return bit_from(lhs.value == rhs.value);
 }
-inline auto equal_op(p_optional<p_int> lhs, p_optional<p_int> rhs) -> bit
+inline auto equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit
 {
     if(lhs.has_value().value)
         return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));
@@ -307,11 +307,11 @@ inline auto equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs) -> 
     return bit_from(lhs == 0);
 }
 
-inline auto not_equal_op(p_int lhs, p_int rhs) -> bit
+inline auto not_equal_op(i32 lhs, i32 rhs) -> bit
 {
     return bit_from(lhs.value != rhs.value);
 }
-inline auto not_equal_op(p_optional<p_int> lhs, p_optional<p_int> rhs) -> bit
+inline auto not_equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit
 {
     if(lhs.has_value().value)
         return bit_op(bit_arg(bit_not(rhs.has_value())) || bit_arg(not_equal_op(lhs.value(), rhs.value())));
@@ -357,7 +357,7 @@ inline void assert(const bit condition, const p_string code, const p_string mess
 	if(!condition.value)
 		throw std::runtime_error(
 			p_string("Assertion failed: ").op_add(code).op_add(", ").op_add(message)
-			.op_add(", file ").op_add(file).op_add(", line ").op_add(p_int(line)).cstr());
+			.op_add(", file ").op_add(file).op_add(", line ").op_add(i32(line)).cstr());
 }
 
 #define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
@@ -367,7 +367,7 @@ _Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string fun
 {
 	throw std::runtime_error(
 		p_string("Function ").op_add(function)
-		.op_add(p_string(" not yet implemented, ")).op_add(message).op_add(p_string(", ")).op_add(file).op_add(p_string(", line ")).op_add(p_int(line)).cstr());
+		.op_add(p_string(" not yet implemented, ")).op_add(message).op_add(p_string(", ")).op_add(file).op_add(p_string(", line ")).op_add(i32(line)).cstr());
 }
 
 #define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
@@ -377,7 +377,7 @@ _Noreturn inline void UNREACHABLE(const p_string function, const p_string file, 
 {
 	throw std::runtime_error(
 		p_string("Reached \"UNREACHABLE\" statement in function ").op_add(function)
-		.op_add(p_string(", ")).op_add(file).op_add(p_string(", line ")).op_add(p_int(line)).cstr());
+		.op_add(p_string(", ")).op_add(file).op_add(p_string(", line ")).op_add(i32(line)).cstr());
 }
 
 #define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)
@@ -419,8 +419,8 @@ namespace system_
 			void Clear_() { clear_(); }
 			void add_(T value);
 			void clear_() { length = 0; }
-			p_int op_magnitude() const { return length; }
-			T const & op_Element(p_int const index) const;
+			i32 op_magnitude() const { return length; }
+			T const & op_Element(i32 const index) const;
 		};
 
 		template<typename T>
@@ -441,7 +441,7 @@ namespace system_
 		}
 
 		template<typename T>
-		T const & List_<T>::op_Element(p_int const index) const
+		T const & List_<T>::op_Element(i32 const index) const
 		{
 			if(index.value < 0 || index.value >= length)
 				throw std::out_of_range("List index out of bounds");
@@ -474,8 +474,8 @@ namespace system_
 			const int Count;
 
 			// Adamant Members
-			p_int op_magnitude() const { return Count; }
-			p_string const & op_Element(p_int const index) const
+			i32 op_magnitude() const { return Count; }
+			p_string const & op_Element(i32 const index) const
 			{
 				if(index.value < 0 || index.value >= Count)
 					throw std::out_of_range("Argument index out of bounds");
@@ -525,15 +525,15 @@ namespace system_
 			// Adamant Members
 			String_Builder_ *_Nonnull construct() { return this; }
 			String_Builder_ *_Nonnull construct(p_string const & value);
-			String_Builder_ *_Nonnull construct_with_capacity(p_int capacity);
+			String_Builder_ *_Nonnull construct_with_capacity(i32 capacity);
             // TODO byte_length_ should be a property
-	        p_int byte_length_() const { return length; }
+	        i32 byte_length_() const { return length; }
 			void Append_(p_string const & value);
 			void Append_(String_Builder_ const *_Nonnull value);
 			void AppendLine_(p_string const& value);
 			void AppendLine_();
-			void Remove_(p_int start, p_int length);
-			void Remove_(p_int start);
+			void Remove_(i32 start, i32 length);
+			void Remove_(i32 start);
 			p_string ToString_();
 		};
 	}

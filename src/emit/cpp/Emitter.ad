@@ -127,13 +127,17 @@ public class Emitter
             {
                 cpp_type.Append("bit");
             }
+            else if type.name.unqualified() == "int"
+            {
+                cpp_type.Append("i32");
+            }
             else if type.name.unqualified() == "void"
             {
                 cpp_type.Append("void");
             }
             else
             {
-                // `int`, `string`, `code_point`, `uint`
+                // `string`, `code_point`, `uint`
                 cpp_type.Append("p_");
                 cpp_type.Append(type.name.unqualified());
             }
@@ -354,7 +358,7 @@ public class Emitter
         }
         else if syntax.kind == NumericLiteralExpression
         {
-            builder.Write("p_int(" + syntax.get_text() + ")");
+            builder.Write("i32(" + syntax.get_text() + ")");
         }
         else if syntax.kind == TrueLiteralExpression
             or syntax.kind == FalseLiteralExpression

@@ -16,12 +16,12 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 	::System_::Collections_::List_<p_string> *_Nonnull const strings_ = (new ::System_::Collections_::List_<p_string>())->construct();
 	strings_->Add_(p_string("Hello"));
 	strings_->Add_(p_string("World!"));
-	if (cond(not_equal_op(strings_->op_magnitude(), p_int(2))))
+	if (cond(not_equal_op(strings_->op_magnitude(), i32(2))))
 	{
 		console_->WriteLine_(p_string("List length not 2!"));
 	}
 
-	console_->WriteLine_(p_string("strings[0]=").op_add(strings_->op_Element(p_int(0))));
+	console_->WriteLine_(p_string("strings[0]=").op_add(strings_->op_Element(i32(0))));
 	for (p_string const s_ : *(strings_))
 	{
 		console_->WriteLine_(s_);

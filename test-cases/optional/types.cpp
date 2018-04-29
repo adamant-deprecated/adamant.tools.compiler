@@ -4,7 +4,7 @@
 class Test_;
 
 // Function Declarations
-auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int>;
+auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<i32>;
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
@@ -19,14 +19,14 @@ public:
 
 // Definitions
 
-auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<p_int>
+auto Func_(p_optional<p_string> const x_, p_optional<p_uint> const y_) -> p_optional<i32>
 {
-	p_optional<p_int> const z_ = p_none;
+	p_optional<i32> const z_ = p_none;
 	::Test_ const *_Nullable const t_ = p_none;
 	::System_::Text_::String_Builder_ *_Nullable const sb_ = p_none;
-	::System_::Collections_::List_<p_optional<p_int>> const *_Nonnull const l_ = (new ::System_::Collections_::List_<p_optional<p_int>>())->construct();
+	::System_::Collections_::List_<p_optional<i32>> const *_Nonnull const l_ = (new ::System_::Collections_::List_<p_optional<i32>>())->construct();
 	::Test_ *_Nullable const m_ = p_none;
-	p_optional<p_optional<p_int>> const d_ = p_none;
+	p_optional<p_optional<i32>> const d_ = p_none;
 	return p_none;
 }
 

@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(p_int const a_, p_int const b_) -> p_int;
-auto Main_() -> p_int;
+auto Func_(i32 const a_, i32 const b_) -> i32;
+auto Main_() -> i32;
 
 // Class Declarations
 
@@ -12,14 +12,14 @@ auto Main_() -> p_int;
 
 // Definitions
 
-auto Func_(p_int const a_, p_int const b_) -> p_int
+auto Func_(i32 const a_, i32 const b_) -> i32
 {
 	return b_;
 }
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
-	return Func_(p_int(0), p_int(42));
+	return Func_(i32(0), i32(42));
 }
 
 // Entry Point Adapter

@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	(new ::System_::Text_::String_Builder_())->construct_with_capacity(p_int(1000));
+	(new ::System_::Text_::String_Builder_())->construct_with_capacity(i32(1000));
 }
 
 // Entry Point Adapter

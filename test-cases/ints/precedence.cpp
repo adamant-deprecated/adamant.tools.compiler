@@ -13,9 +13,9 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_int x_;
-	x_ = p_int(1).op_add(p_int(3).op_subtract(p_int(1))->op_divide(p_int(2)));
-	x_ = p_int(1).op_add(p_int(3))->op_subtract(p_int(1).op_divide(p_int(2)));
+	i32 x_;
+	x_ = i32(1).op_add(i32(3).op_subtract(i32(1))->op_divide(i32(2)));
+	x_ = i32(1).op_add(i32(3))->op_subtract(i32(1).op_divide(i32(2)));
 }
 
 // Entry Point Adapter

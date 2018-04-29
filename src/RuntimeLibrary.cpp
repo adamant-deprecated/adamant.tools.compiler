@@ -5,7 +5,7 @@
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-p_uint p_int::AsUInt_() const
+p_uint i32::AsUInt_() const
 {
     if(this->value < 0)
         throw std::range_error("Can't convert negative number to unsigned");
@@ -21,7 +21,7 @@ char p_code_point::CharValue() const
     return this->raw_value;
 }
 
-p_string p_string::construct(p_code_point c, p_int repeat)
+p_string p_string::construct(p_code_point c, i32 repeat)
 {
     p_string self;
     self.Length = repeat.value;
@@ -51,7 +51,7 @@ char const * p_string::cstr() const
     return buffer;
 }
 
-p_string::p_string(p_int other)
+p_string::p_string(i32 other)
     : Length(0), Buffer(0)
 {
     char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
@@ -71,7 +71,7 @@ p_string::p_string(bit other)
 {
 }
 
-p_string p_string::Substring_(p_int start, p_int length) const
+p_string p_string::Substring_(i32 start, i32 length) const
 {
     return p_string(length.value, Buffer + start.value);
 }
@@ -96,7 +96,7 @@ p_string p_string::Replace_(p_string oldValue, p_string newValue) const
     return builder.ToString_();
 }
 
-p_int p_string::LastIndexOf_(p_code_point c) const
+i32 p_string::LastIndexOf_(p_code_point c) const
 {
     for(int i = Length - 1; i >= 0; i--)
         if(Buffer[i] == c.CharValue())
@@ -105,7 +105,7 @@ p_int p_string::LastIndexOf_(p_code_point c) const
     return -1; // TODO should return none
 }
 
-p_int p_string::index_of_(p_code_point c) const
+i32 p_string::index_of_(p_code_point c) const
 {
     for(int i = 0; i < Length; i++)
         if(Buffer[i] == c.CharValue())
@@ -321,7 +321,7 @@ namespace system_
             return this;
         }
 
-        String_Builder_ *_Nonnull String_Builder_::construct_with_capacity(p_int capacity)
+        String_Builder_ *_Nonnull String_Builder_::construct_with_capacity(i32 capacity)
         {
             ensure_capacity(capacity.value);
             return this;
@@ -360,7 +360,7 @@ namespace system_
             length = new_length;
         }
 
-        void String_Builder_::Remove_(p_int start, p_int length)
+        void String_Builder_::Remove_(i32 start, i32 length)
         {
             if(start.value >= this->length)
                 throw std::runtime_error("String_Builder.Remove() start >= length");
@@ -373,7 +373,7 @@ namespace system_
             this->length -= length.value;
         }
 
-        void String_Builder_::Remove_(p_int start)
+        void String_Builder_::Remove_(i32 start)
         {
             if(start.value >= length)
                 throw std::runtime_error("String_Builder.Remove() start >= length");

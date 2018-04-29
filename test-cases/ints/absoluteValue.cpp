@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_int x_ = p_int(1).op_negate()->op_magnitude();
+	i32 x_ = i32(1).op_negate()->op_magnitude();
 }
 
 // Entry Point Adapter

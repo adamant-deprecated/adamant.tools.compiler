@@ -13,8 +13,8 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
-	p_int const v_ = p_int(42);
-	p_optional<p_int> const n_ = p_none;
+	i32 const v_ = i32(42);
+	p_optional<i32> const n_ = p_none;
 	bit r_;
 	r_ = equal_op(v_, n_);
 	console_->WriteLine_(p_string("v == n: ").op_add(r_));
@@ -22,9 +22,9 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 	console_->WriteLine_(p_string("n == v: ").op_add(r_));
 	r_ = equal_op(n_, n_);
 	console_->WriteLine_(p_string("n == v: ").op_add(r_));
-	r_ = equal_op(p_int(42), p_none);
+	r_ = equal_op(i32(42), p_none);
 	console_->WriteLine_(p_string("42 == none: ").op_add(r_));
-	r_ = equal_op(p_none, p_int(42));
+	r_ = equal_op(p_none, i32(42));
 	console_->WriteLine_(p_string("none == 42: ").op_add(r_));
 	r_ = equal_op(p_none, p_none);
 	console_->WriteLine_(p_string("none == none: ").op_add(r_));
@@ -34,9 +34,9 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 	console_->WriteLine_(p_string("n =/= v: ").op_add(r_));
 	r_ = not_equal_op(n_, n_);
 	console_->WriteLine_(p_string("n =/= v: ").op_add(r_));
-	r_ = not_equal_op(p_int(42), p_none);
+	r_ = not_equal_op(i32(42), p_none);
 	console_->WriteLine_(p_string("42 =/= none: ").op_add(r_));
-	r_ = not_equal_op(p_none, p_int(42));
+	r_ = not_equal_op(p_none, i32(42));
 	console_->WriteLine_(p_string("none =/= 42: ").op_add(r_));
 	r_ = not_equal_op(p_none, p_none);
 	console_->WriteLine_(p_string("none =/= none: ").op_add(r_));

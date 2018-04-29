@@ -13,12 +13,12 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
-	p_int x_ = p_int(1);
+	i32 x_ = i32(1);
 	for (;;)
 	{
-		if (cond(equal_op(x_.op_remainder(p_int(3)), p_int(0))))
+		if (cond(equal_op(x_.op_remainder(i32(3)), i32(0))))
 		{
-			if (cond(equal_op(x_.op_remainder(p_int(5)), p_int(0))))
+			if (cond(equal_op(x_.op_remainder(i32(5)), i32(0))))
 			{
 				console_->WriteLine_(p_string("FizzBuzz"));
 			}
@@ -27,7 +27,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 				console_->WriteLine_(p_string("Fizz"));
 			}
 		}
-		else if (cond(equal_op(x_.op_remainder(p_int(5)), p_int(0))))
+		else if (cond(equal_op(x_.op_remainder(i32(5)), i32(0))))
 		{
 			console_->WriteLine_(p_string("Buzz"));
 		}
@@ -36,8 +36,8 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 			console_->WriteLine_(x_);
 		}
 
-		x_.op_add_assign(p_int(1));
-		if (cond(x_.op_greater_than(p_int(100))))
+		x_.op_add_assign(i32(1));
+		if (cond(x_.op_greater_than(i32(100))))
 		{
 			break;
 		}

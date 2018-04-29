@@ -12,7 +12,7 @@ class C_
 {
 public:
 	p_string name_;
-	p_int kind_;
+	i32 kind_;
 	auto construct(p_string const name_) -> ::C_*;
 	auto construct_one(p_string const name_) -> ::C_*;
 	auto construct_two(p_string const name_) -> ::C_*;
@@ -26,7 +26,7 @@ auto ::C_::construct(p_string const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
-	self->kind_ = p_int(0);
+	self->kind_ = i32(0);
 	return self;
 }
 
@@ -34,7 +34,7 @@ auto ::C_::construct_one(p_string const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
-	self->kind_ = p_int(1);
+	self->kind_ = i32(1);
 	return self;
 }
 
@@ -42,7 +42,7 @@ auto ::C_::construct_two(p_string const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
-	self->kind_ = p_int(2);
+	self->kind_ = i32(2);
 	return self;
 }
 
