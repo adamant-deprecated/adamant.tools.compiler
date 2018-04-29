@@ -4,8 +4,8 @@ public class Test
 
 public Main() -> void
 {
-	let v: Test = new Test();
-	let n: Test? = none;
+	let v: int = 0;
+	let n: int? = none;
 	var x: bool;
 	x = v == n;
 	x = v =/= n;

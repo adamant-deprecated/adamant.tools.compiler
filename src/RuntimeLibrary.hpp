@@ -7,6 +7,32 @@
 #include <stdexcept>
 #include <string>
 
+// Double underscores replace dots
+// Runs of more than one underscore, add an underscore (except at end)
+// TODO what about functionst that end with underscores?
+// Functions suffix with double underscore then number of args (then types)
+// Types and variables
+// Pritives:
+// * code_point
+// * i32, u32
+// * size
+// * string
+// * optional__
+// # Prefixes
+// * c_ class
+// * s_ struct
+// * m_ method
+// * f_ function
+// # Combinable prefixes
+// * r reference
+// * rv refernce to variable
+// * o optional
+// * rv_Foo - reference to foo
+// # Generic Argucments
+// * c_Foo__3__i32_5s_Bar_string_
+int x__y();
+int m_x___y__0();
+
 // -----------------------------------------------------------------------------
 // Utility Types
 // -----------------------------------------------------------------------------
@@ -33,6 +59,30 @@ T op_or(T const & lhs, F rhs)
 // Primitive Types
 // -----------------------------------------------------------------------------
 
+struct p_bool
+{
+public:
+	// Runtime Members
+	bool value;
+
+	explicit p_bool() = default;
+	explicit p_bool(bool value): value(value) {}
+	p_bool& operator=(p_bool const& value) = default;
+
+	p_bool *_Nonnull operator->() { return this; }
+	p_bool const *_Nonnull operator->() const { return this; }
+	p_bool & operator* () { return *this; }
+	p_bool const & operator* () const { return *this; }
+
+	// Adamant Members
+	static auto construct() -> p_bool { return p_bool(false); }
+	p_bool op_not() const { return p_bool(!this->value); }
+	p_bool op_true() const { return p_bool(this->value); }
+	p_bool op_false() const { return p_bool(!this->value); }
+	p_bool op_and(p_bool other) const { return p_bool(this->value & other.value); }
+	p_bool op_or(p_bool other) const { return p_bool(this->value | other.value); }
+};
+
 class None
 {
 public:
@@ -52,8 +102,13 @@ private:
     };
 
 public:
+    // TODO make this constructor explicit
 	p_optional(T const & value) : data(value), hasValue(true) {}
+    // TODO make this constructor explicit
 	p_optional(None const none) : hasValue(false) {}
+    auto has_value() const -> p_bool { return p_bool(hasValue); }
+    auto value() const -> T { return data; }
+
 	T & operator->()
 	{
 		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
@@ -74,32 +129,6 @@ public:
 		if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
 		return data;
 	}
-};
-
-struct p_bool
-{
-public:
-	// Runtime Members
-	bool value;
-
-	p_bool() = default;
-	p_bool(bool value): value(value) {}
-	p_bool& operator=(p_bool const& value) = default;
-
-	p_bool *_Nonnull operator->() { return this; }
-	p_bool const *_Nonnull operator->() const { return this; }
-	p_bool & operator* () { return *this; }
-	p_bool const & operator* () const { return *this; }
-
-	// Adamant Members
-	static auto construct() -> p_bool { return p_bool(false); }
-	p_bool op_not() const { return !this->value; }
-	p_bool op_true() const { return this->value; }
-	p_bool op_false() const { return !this->value; }
-	p_bool op_and(p_bool other) const { return this->value & other.value; }
-	p_bool op_or(p_bool other) const { return this->value | other.value; }
-	p_bool op_equal(p_bool other) const { return this->value == other.value; }
-	p_bool op_not_equal(p_bool other) const { return this->value != other.value; }
 };
 
 struct p_uint;
@@ -127,12 +156,10 @@ public:
 	static auto copy(p_int const & other) -> p_int { return other; }
 	void op_add_assign(p_int other) { this->value += other.value; }
 	void op_subtract_assign(p_int other) { this->value -= other.value; }
-	p_bool op_equal(p_int other) const { return this->value == other.value; }
-	p_bool op_not_equal(p_int other) const { return this->value != other.value; }
-	p_bool op_less_than(p_int other) const { return this->value < other.value; }
-	p_bool op_less_than_or_equal(p_int other) const { return this->value <= other.value; }
-	p_bool op_greater_than(p_int other) const { return this->value > other.value; }
-	p_bool op_greater_than_or_equal(p_int other) const { return this->value >= other.value; }
+	p_bool op_less_than(p_int other) const { return p_bool(this->value < other.value); }
+	p_bool op_less_than_or_equal(p_int other) const { return p_bool(this->value <= other.value); }
+	p_bool op_greater_than(p_int other) const { return p_bool(this->value > other.value); }
+	p_bool op_greater_than_or_equal(p_int other) const { return p_bool(this->value >= other.value); }
 	p_int op_add(p_int other) const { return this->value + other.value; }
 	p_int op_subtract(p_int other) const { return this->value - other.value; }
 	p_int op_negate() const { return -this->value; }
@@ -166,12 +193,10 @@ public:
 	static auto construct() -> p_uint { return 0; }
 	void op_add_assign(p_uint other) { this->value += other.value; }
 	void op_subtract_assign(p_uint other) { this->value -= other.value; }
-	p_bool op_equal(p_uint other) const { return this->value == other.value; }
-	p_bool op_not_equal(p_uint other) const { return this->value != other.value; }
-	p_bool op_less_than(p_uint other) const { return this->value < other.value; }
-	p_bool op_less_than_or_equal(p_uint other) const { return this->value <= other.value; }
-	p_bool op_greater_than(p_uint other) const { return this->value > other.value; }
-	p_bool op_greater_than_or_equal(p_uint other) const { return this->value >= other.value; }
+	p_bool op_less_than(p_uint other) const { return p_bool(this->value < other.value); }
+	p_bool op_less_than_or_equal(p_uint other) const { return p_bool(this->value <= other.value); }
+	p_bool op_greater_than(p_uint other) const { return p_bool(this->value > other.value); }
+	p_bool op_greater_than_or_equal(p_uint other) const { return p_bool(this->value >= other.value); }
 	p_uint op_add(p_uint other) const { return this->value + other.value; }
 	p_uint op_subtract(p_uint other) const { return this->value - other.value; }
 };
@@ -188,10 +213,9 @@ private:
 
 public:
 	// Runtime Use Members
-	p_code_point() = default;
-	p_code_point(char value): raw_value(value) {}
+	explicit p_code_point() = default;
+	explicit p_code_point(char value): raw_value(value) {}
 	char CharValue() const;
-
     auto value() const -> std::uint32_t { return raw_value; }
 
 	p_code_point *_Nonnull operator->() { return this; }
@@ -200,14 +224,12 @@ public:
 	p_code_point const & operator* () const { return *this; }
 
 	// Adamant Members
-	static auto construct() -> p_code_point { return '\0'; }
-	p_bool op_equal(p_code_point const & other) const { return this->raw_value == other.raw_value; }
-	p_bool op_not_equal(p_code_point const & other) const { return this->raw_value != other.raw_value; }
+	static auto construct() -> p_code_point { return p_code_point('\0'); }
 	// TODO: Not sure code_point should support these operations
-	p_bool op_less_than(p_code_point other) const { return this->raw_value < other.raw_value; }
-	p_bool op_less_than_or_equal(p_code_point other) const { return this->raw_value <= other.raw_value; }
-	p_bool op_greater_than(p_code_point other) const { return this->raw_value > other.raw_value; }
-	p_bool op_greater_than_or_equal(p_code_point other) const { return this->raw_value >= other.raw_value; }
+	p_bool op_less_than(p_code_point other) const { return p_bool(this->raw_value < other.raw_value); }
+	p_bool op_less_than_or_equal(p_code_point other) const { return p_bool(this->raw_value <= other.raw_value); }
+	p_bool op_greater_than(p_code_point other) const { return p_bool(this->raw_value > other.raw_value); }
+	p_bool op_greater_than_or_equal(p_code_point other) const { return p_bool(this->raw_value >= other.raw_value); }
 
 };
 
@@ -246,15 +268,89 @@ public:
 	p_int LastIndexOf_(p_code_point c) const;
 	p_int index_of_(p_code_point c) const;
 
-	p_code_point op_Element(p_int const index) const { return Buffer[index.value]; }
+    // TODO check index bounds
+	p_code_point op_Element(p_int const index) const { return p_code_point(Buffer[index.value]); }
 	p_string op_add(p_string const & value) const;
-	p_bool op_equal(p_string const & other) const;
-	p_bool op_not_equal(p_string const & other) const { return !this->op_equal(other).value; }
 	p_bool op_less_than(p_string other) const;
 	p_bool op_less_than_or_equal(p_string other) const;
 	p_bool op_greater_than(p_string other) const;
 	p_bool op_greater_than_or_equal(p_string other) const;
 };
+
+// -----------------------------------------------------------------------------
+// Operators
+// -----------------------------------------------------------------------------
+
+inline auto equal_op(p_bool lhs, p_bool rhs) -> p_bool
+{
+    return p_bool(lhs.value == rhs.value);
+}
+inline auto equal_op(p_optional<p_bool> lhs, p_optional<p_bool> rhs) -> p_bool
+{
+    if(lhs.has_value().value)
+        return p_bool(rhs.has_value().value and equal_op(lhs.value(), rhs.value()).value);
+    else
+        return p_bool(not rhs.has_value().value);
+}
+
+inline auto equal_op(p_int lhs, p_int rhs) -> p_bool
+{
+    return p_bool(lhs.value == rhs.value);
+}
+inline auto equal_op(p_optional<p_int> lhs, p_optional<p_int> rhs) -> p_bool
+{
+    if(lhs.has_value().value)
+        return p_bool(rhs.has_value().value and equal_op(lhs.value(), rhs.value()).value);
+    else
+        return p_bool(not rhs.has_value().value);
+}
+
+inline auto equal_op(p_code_point lhs, p_code_point rhs) -> p_bool
+{
+    return p_bool(lhs.value() == rhs.value());
+}
+
+auto equal_op(p_string lhs, p_string rhs) -> p_bool;
+
+// TODO implement this without templates
+template<typename T>
+inline auto equal_op(T const *_Nullable lhs, None const & rhs) -> p_bool
+{
+    return p_bool(lhs == 0);
+}
+
+// TODO Get rid of this ability
+template<typename T>
+inline auto equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs) -> p_bool
+{
+    return p_bool(lhs == 0);
+}
+
+inline auto not_equal_op(p_int lhs, p_int rhs) -> p_bool
+{
+    return p_bool(lhs.value != rhs.value);
+}
+inline auto not_equal_op(p_optional<p_int> lhs, p_optional<p_int> rhs) -> p_bool
+{
+    if(lhs.has_value().value)
+        return p_bool(not rhs.has_value().value or not_equal_op(lhs.value(), rhs.value()).value);
+    else
+        return p_bool(rhs.has_value().value);
+}
+
+// TODO implement this without templates
+template<typename T>
+inline auto not_equal_op(T lhs, T  rhs) -> p_bool
+{
+    return p_bool(not equal_op(lhs, rhs).value);
+}
+
+// TODO implement this without templates
+template<typename T>
+inline auto not_equal_op(T const *_Nullable lhs, None const & rhs) -> p_bool
+{
+    return p_bool(lhs != 0);
+}
 
 // -----------------------------------------------------------------------------
 // Standard Library
@@ -330,9 +426,6 @@ namespace system_
 			const_iterator end() const { return &values[length]; }
 
 			// Adamant Members
-			p_bool op_equal(List_<T> const *_Nonnull other) const { return this == other; }
-			p_bool op_not_equal(List_<T> const *_Nonnull other) const { return this != other; }
-
 			List_ *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
 			void Add_(T value) { add_(value); }
 			void Clear_() { clear_(); }
@@ -442,13 +535,10 @@ namespace system_
 			String_Builder_(): buffer(0), capacity(0), length(0) { }
 
 			// Adamant Members
-			p_bool op_equal(String_Builder_ const *_Nonnull other) const { return this == other; }
-			p_bool op_not_equal(String_Builder_ const *_Nonnull other) const { return this != other; }
-
 			String_Builder_ *_Nonnull construct() { return this; }
 			String_Builder_ *_Nonnull construct(p_string const & value);
 			String_Builder_ *_Nonnull construct_with_capacity(p_int capacity);
-            // TODO ByteLength should be a property
+            // TODO byte_length_ should be a property
 	        p_int byte_length_() const { return length; }
 			void Append_(p_string const & value);
 			void Append_(String_Builder_ const *_Nonnull value);

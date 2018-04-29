@@ -11,8 +11,6 @@ auto Main_() -> void;
 class Test_
 {
 public:
-	p_bool op_equal(Test_ const * other) const { return this == other; }
-	p_bool op_not_equal(Test_ const * other) const { return this != other; }
 	p_bool value_;
 	auto construct() -> ::Test_*;
 };

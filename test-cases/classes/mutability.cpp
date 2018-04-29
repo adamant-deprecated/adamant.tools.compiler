@@ -12,16 +12,12 @@ auto Main_() -> void;
 class Mutable_Object_
 {
 public:
-	p_bool op_equal(Mutable_Object_ const * other) const { return this == other; }
-	p_bool op_not_equal(Mutable_Object_ const * other) const { return this != other; }
 	auto construct() -> ::Mutable_Object_* { return this; }
 };
 
 class immutable_object_
 {
 public:
-	p_bool op_equal(immutable_object_ const * other) const { return this == other; }
-	p_bool op_not_equal(immutable_object_ const * other) const { return this != other; }
 	auto construct() -> ::immutable_object_* { return this; }
 };
 

@@ -12,8 +12,6 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 class Test_
 {
 public:
-	p_bool op_equal(Test_ const * other) const { return this == other; }
-	p_bool op_not_equal(Test_ const * other) const { return this != other; }
 	auto construct() -> ::Test_* { return this; }
 };
 

@@ -1,24 +1,3 @@
-/// # Unusual Unicode Characters for use in Name Mangling
-/// * U+00B7 `·` Middle Dot
-/// * U+1401 `ᐁ`
-/// * U+1403 `ᐃ`
-/// * U+1405 `ᐅ`
-/// * U+140A `ᐊ`
-/// * U+141E `ᐞ`
-/// * U+1421 `ᐡ`
-/// * U+1422 `ᐢ`
-/// * U+1424 `ᐤ`
-/// * U+1428 `ᐨ`
-/// * U+1429 `ᐩ`
-/// * U+142A `ᐪ`
-///
-/// # Possible Names
-/// i32ᐪ voidᐪ
-/// ᐅadd
-/// Some_Classᐊ
-/// functionᐊi32ᐪᐤf64ᐪ
-/// new·Fooᐊ
-///
 public class Emitter
 {
     private let package: Package;
@@ -367,17 +346,17 @@ public class Emitter
         }
         else if syntax.kind == EqualExpression
         {
+            builder.Write("equal_op(");
             convert_expression(syntax.children[0], builder);
-            convert_member_access(syntax.children[0], builder);
-            builder.Write("op_equal(");
+            builder.Write(", ");
             convert_expression(syntax.children[2], builder);
             builder.Write(")");
         }
         else if syntax.kind == NotEqualExpression
         {
+            builder.Write("not_equal_op(");
             convert_expression(syntax.children[0], builder);
-            convert_member_access(syntax.children[0], builder);
-            builder.Write("op_not_equal(");
+            builder.Write(", ");
             convert_expression(syntax.children[2], builder);
             builder.Write(")");
         }
@@ -787,9 +766,6 @@ public class Emitter
             class_declarations.WriteLine("class " + class_name + "_");
             class_declarations.BeginBlock();
             class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
-            // Write out basic reference equality comparisons
-            class_declarations.WriteLine("p_bool op_equal(" + class_name + "_ const * other) const { return this == other; }");
-            class_declarations.WriteLine("p_bool op_not_equal(" + class_name + "_ const * other) const { return this != other; }");
             var current_access_level: int = PublicKeyword;
             var has_constructors: bool = false;
             for let member: Semantic_Node in declaration.members()
