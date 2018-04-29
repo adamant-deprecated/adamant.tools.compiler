@@ -1,3 +1,57 @@
+
+// Names starting or ending with underscores are reserved.
+// Names with 2 or more underscores in the middle, add one underscore.
+// Form compound names by joining with double underscore.
+// Prefix names with kind indicator.
+// Suffix names with number followed by parameters.
+//
+// # Primitives
+// Have no prefix, contain no underscores. Names chosen to avoid conflicts with C/C++
+// * c32: code point
+// * i32, u32: signed and unsigned int
+// * size, offset
+// * f32: float
+// * f16_16: fixed point
+// * str: string
+// * bit:  bool
+//
+// # Tuples
+// Have a prefix of `t__` and are followed by type parameters. For example:
+// t__2__i__i: is a pair of ints
+//
+// # Prefixes
+// The simple name prefixes are:
+// * t_ class/struct
+// * m_ method
+// * f_ function
+// * op_ operator
+// * c_ construct
+// * new_ new and construct
+//
+// # Combinable prefixes
+// Reference and optional types are formed by a sequence of letters in a prefix
+// * t: a type that isn't primitive
+// * r: reference (don't need to distinguish class/struct the type name says that)
+// * o: optional
+//
+// Examples:
+// * rt_Foo - reference to `Foo`
+// * or_i32: optional reference to a variable holding an int
+//
+// # Generic Type Parameters
+// The number of generic is appended after a double underscore (except for none)
+// * t_Foo__3 - number of type parameters
+//
+// # Function Parameter Types
+// Number of parameters is appended after double underscore, even for none.
+
+// Then arguments are listed, double underscore, number of segments followed by
+// name prefix (run together).  Primitives can be listed in place of the number
+// example: f_bar__3_s__0r_system__text__String_Builder__1__0i32__0string
+// example: f_bar__3__0i32__0r_system__text__String_Builder__0__string
+// f_bar__baz__3__1_i32__3r_system_text__String_Builder
+// first parameter doesn't need  double underscore or zero
+// additional abbreviations i=i32, c=c32, b=bit
 public class Emitter
 {
     private let package: Package;

@@ -7,41 +7,14 @@
 #include <stdexcept>
 #include <string>
 
-// Double underscores replace dots
-// Runs of more than one underscore, add an underscore (except at end)
-// TODO what about functionst that end with underscores?
-// Functions suffix with double underscore then number of args (then types)
-// Types and variables
-// Pritives:
-// * code_point
-// * i32, u32
-// * size
-// * string
-// * optional__
-// # Prefixes
-// * c_ class
-// * s_ struct
-// * m_ method
-// * f_ function
-// # Combinable prefixes
-// * r reference
-// * rv refernce to variable
-// * o optional
-// * rv_Foo - reference to foo
-// # Generic Argucments
-// * c_Foo__3__i32_5s_Bar_string_
-int x__y();
-int m_x___y__0();
-
-// -----------------------------------------------------------------------------
-// Utility Types
-// -----------------------------------------------------------------------------
-// Utility types that help ensure proper use of C++
 
 // -----------------------------------------------------------------------------
 // Logical Operators
 // -----------------------------------------------------------------------------
 // Use special templates taking closures to support short circuit evaluation
+
+// TODO Based on the type of the values involved, either emit x.value() && y.value()
+// or compound expression ({ T _left = lhs; _left.op_false() ? _left : _left.op_and(rhs); })
 
 template<typename T, typename F>
 T op_and(T const & lhs, F rhs)
@@ -137,7 +110,6 @@ struct p_int
 {
 public:
 	// Runtime Use Members
-	static const bool ImplicitCopy = true;
 	std::int32_t value;
 
 	p_int() = default;
