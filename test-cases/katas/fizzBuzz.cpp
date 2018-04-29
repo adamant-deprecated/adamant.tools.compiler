@@ -16,9 +16,9 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 	p_int x_ = p_int(1);
 	for (;;)
 	{
-		if (x_.op_remainder(p_int(3))->op_equal(p_int(0)).value)
+		if (equal_op(x_.op_remainder(p_int(3)), p_int(0)).value)
 		{
-			if (x_.op_remainder(p_int(5))->op_equal(p_int(0)).value)
+			if (equal_op(x_.op_remainder(p_int(5)), p_int(0)).value)
 			{
 				console_->WriteLine_(p_string("FizzBuzz"));
 			}
@@ -27,7 +27,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 				console_->WriteLine_(p_string("Fizz"));
 			}
 		}
-		else if (x_.op_remainder(p_int(5))->op_equal(p_int(0)).value)
+		else if (equal_op(x_.op_remainder(p_int(5)), p_int(0)).value)
 		{
 			console_->WriteLine_(p_string("Buzz"));
 		}

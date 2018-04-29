@@ -20,9 +20,9 @@ auto True_() -> p_bool
 auto Main_() -> void
 {
 	p_bool x_;
-	x_ = p_bool(true).op_equal(p_bool(false));
-	x_ = p_bool(true).op_not_equal(p_bool(false));
-	x_ = True_()->op_equal(True_());
+	x_ = equal_op(p_bool(true), p_bool(false));
+	x_ = not_equal_op(p_bool(true), p_bool(false));
+	x_ = equal_op(True_(), True_());
 }
 
 // Entry Point Adapter

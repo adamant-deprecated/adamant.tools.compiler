@@ -15,10 +15,10 @@ p_uint p_int::AsUInt_() const
 
 char p_code_point::CharValue() const
 {
-    if(this->value > 0xFF)
+    if(this->raw_value > 0xFF)
         throw std::range_error("Unicode char values not yet supported");
 
-    return this->value;
+    return this->raw_value;
 }
 
 p_string p_string::construct(p_code_point c, p_int repeat)
@@ -78,7 +78,7 @@ p_string p_string::Replace_(p_string oldValue, p_string newValue) const
     int lastIndex = 0;
     // TODO the Substring calls in here are leaking memory
     for(int i=0; i < limit; i++)
-        if (Substring_(i, oldValue.Length).op_equal(oldValue).value)
+        if (equal_op(Substring_(i, oldValue.Length), oldValue).value)
         {
             builder.Append_(Substring_(lastIndex, i-lastIndex));
             builder.Append_(newValue);
@@ -119,16 +119,16 @@ p_string p_string::op_add(p_string const & value) const
     return p_string(newLength, chars);
 }
 
-p_bool p_string::op_equal(p_string const & other) const
+auto equal_op(p_string lhs, p_string rhs) -> p_bool
 {
-    if (Length != other.Length)
-        return false;
+    if (lhs.Length != rhs.Length)
+        return p_bool(false);
 
-    for (int i = 0; i < Length; i++)
-        if (Buffer[i] != other.Buffer[i])
-            return false;
+    for (int i = 0; i < lhs.Length; i++)
+        if (lhs.Buffer[i] != rhs.Buffer[i])
+            return p_bool(false);
 
-    return true;
+    return p_bool(true);
 }
 
 p_bool p_string::op_less_than(p_string other) const
@@ -138,7 +138,7 @@ p_bool p_string::op_less_than(p_string other) const
     bool result = std::strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
-    return result;
+    return p_bool(result);
 }
 
 p_bool p_string::op_less_than_or_equal(p_string other) const
@@ -148,7 +148,7 @@ p_bool p_string::op_less_than_or_equal(p_string other) const
     bool result = std::strcmp(left, right) <= 0;
     delete[] left;
     delete[] right;
-    return result;
+    return p_bool(result);
 }
 
 p_bool p_string::op_greater_than(p_string other) const
@@ -158,7 +158,7 @@ p_bool p_string::op_greater_than(p_string other) const
     bool result = std::strcmp(left, right) > 0;
     delete[] left;
     delete[] right;
-    return result;
+    return p_bool(result);
 }
 
 p_bool p_string::op_greater_than_or_equal(p_string other) const
@@ -168,7 +168,7 @@ p_bool p_string::op_greater_than_or_equal(p_string other) const
     bool result = std::strcmp(left, right) >= 0;
     delete[] left;
     delete[] right;
-    return result;
+    return p_bool(result);
 }
 
 bool operator < (p_string const & lhs, p_string const & rhs)
@@ -179,58 +179,6 @@ bool operator < (p_string const & lhs, p_string const & rhs)
     delete[] left;
     delete[] right;
     return result;
-}
-
-// -----------------------------------------------------------------------------
-// Runtime Types
-// -----------------------------------------------------------------------------
-
-auto Borrows::take_mut(char const *_Nonnull kind) -> Borrows_Ref
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't mutably take ") + kind + " that is mutably borrowed");
-    else if(borrows > 0)
-        throw std::runtime_error(std::string("Can't mutably take ") + kind + " that is immutably borrowed");
-
-    return Borrows_Ref::own();
-}
-
-auto Borrows::take(char const *_Nonnull kind) -> Borrows_Ref
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't immutably take ") + kind + " that is mutably borrowed");
-    else if(borrows > 0)
-        throw std::runtime_error(std::string("Can't immutably take ") + kind + " that is immutably borrowed");
-
-    return Borrows_Ref::own();
-}
-
-auto Borrows::borrow_mut(char const *_Nonnull kind) -> Borrows_Ref
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't mutably borrow ") + kind + " that is mutably borrowed");
-    else if(borrows > 0)
-        throw std::runtime_error(std::string("Can't mutably borrow ") + kind + " that is immutably borrowed");
-
-    borrows = Writing;
-    return Borrows_Ref(this);
-}
-
-auto Borrows::borrow(char const *_Nonnull kind) -> Borrows_Ref
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't immutably borrow") + kind + " that is already mutably borrowed");
-
-    borrows += 1;
-    return Borrows_Ref(this);
-}
-
-auto Borrows::destruct(char const *_Nonnull kind) -> void
-{
-    if(borrows == Writing)
-        throw std::runtime_error(std::string("Can't delete ") + kind + " that is mutably borrowed");
-    else if(borrows > 0)
-        throw std::runtime_error(std::string("Can't delete ") + kind + " that is immutably borrowed");
 }
 
 // -----------------------------------------------------------------------------

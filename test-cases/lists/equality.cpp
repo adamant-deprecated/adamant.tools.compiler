@@ -14,8 +14,8 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	::System_::Collections_::List_<p_int> const *_Nonnull const values_ = (new ::System_::Collections_::List_<p_int>())->construct();
-	values_->op_equal(values_);
-	values_->op_not_equal(values_);
+	equal_op(values_, values_);
+	not_equal_op(values_, values_);
 }
 
 // Entry Point Adapter
