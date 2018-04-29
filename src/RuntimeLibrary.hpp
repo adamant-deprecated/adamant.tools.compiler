@@ -7,7 +7,6 @@
 #include <stdexcept>
 #include <string>
 
-
 // -----------------------------------------------------------------------------
 // Logical Operators
 // -----------------------------------------------------------------------------
@@ -57,6 +56,9 @@ struct bit
 
 const bit bit_true = bit(true); // TODO change to C style init
 const bit bit_false = bit(false);
+
+// Function used in conditions to make them take `bit`
+inline bool cond(bit cond) { return cond.value; }
 
 class None
 {

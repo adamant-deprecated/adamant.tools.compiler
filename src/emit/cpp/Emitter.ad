@@ -577,9 +577,9 @@ public class Emitter
         }
         else if statement.kind == WhileStatement
         {
-            definitions.BeginLine("while (");
+            definitions.BeginLine("while (cond(");
             convert_expression(statement.children[1], definitions);
-            definitions.EndLine(".value)"); // if the type isn't just bool, we need op_true() etc.
+            definitions.EndLine("))");
             emit_statement(statement.children[2]); // Block Statement
         }
         else if statement.kind == ForStatement
@@ -599,9 +599,9 @@ public class Emitter
         {
             definitions.WriteLine("do");
             emit_statement(statement.children[1]); // Block Statement
-            definitions.BeginLine("while (");
+            definitions.BeginLine("while (cond(");
             convert_expression(statement.children[3], definitions);
-            definitions.EndLine(".value);"); // if the type isn't just bool, we need op_true() etc.
+            definitions.EndLine("));");
         }
         else if statement.kind == IfStatement
         {
@@ -609,9 +609,9 @@ public class Emitter
             definitions.BeginLine("");
             loop
             {
-                definitions.Write("if (");
+                definitions.Write("if (cond(");
                 convert_expression(if_statement.children[1], definitions);
-                definitions.EndLine(".value)"); // if the type isn't just bool, we need op_true() etc.
+                definitions.EndLine("))");
                 emit_statement(if_statement.children[2]); // Block Statement
                 let elseClause: Semantic_Node? = if_statement.first_child(ElseClause);
                 if elseClause =/= none

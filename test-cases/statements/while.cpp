@@ -13,7 +13,7 @@ auto Main_() -> p_int;
 
 auto Main_() -> p_int
 {
-	while (bit_true.value)
+	while (cond(bit_true))
 	{
 		return p_int(0);
 	}
