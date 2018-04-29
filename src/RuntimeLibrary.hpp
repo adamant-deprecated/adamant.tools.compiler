@@ -51,6 +51,10 @@ inline bit bit_op(bool v) { return bit { v }; }
 inline bool bit_arg(bit v) { return v.value; }
 inline bit bit_not(bit v) { return bit { !v.value }; }
 
+struct never
+{
+};
+
 class None
 {
 public:
