@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_bool x_;
+	bit x_;
 	x_ = p_code_point('a').op_less_than(p_code_point('b'));
 	x_ = p_code_point('a').op_less_than_or_equal(p_code_point('b'));
 	x_ = p_code_point('a').op_greater_than(p_code_point('b'));

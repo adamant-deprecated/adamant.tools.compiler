@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto True_() -> p_bool;
+auto True_() -> bit;
 auto Main_() -> void;
 
 // Class Declarations
@@ -12,17 +12,17 @@ auto Main_() -> void;
 
 // Definitions
 
-auto True_() -> p_bool
+auto True_() -> bit
 {
-	return p_bool(true);
+	return bit_true;
 }
 
 auto Main_() -> void
 {
-	p_bool x_;
-	x_ = op_and(p_bool(true), [&] { return p_bool(false); });
-	x_ = op_or(p_bool(true), [&] { return p_bool(false); });
-	x_ = p_bool(true).op_not();
+	bit x_;
+	x_ = op_and(bit_true, [&] { return bit_false; });
+	x_ = op_or(bit_true, [&] { return bit_false; });
+	x_ = bit_true.op_not();
 	x_ = op_or(True_(), [&] { return True_(); });
 }
 

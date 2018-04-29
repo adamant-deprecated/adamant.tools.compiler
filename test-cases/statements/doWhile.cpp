@@ -17,7 +17,7 @@ auto Main_() -> p_int
 	{
 		return p_int(0);
 	}
-	while (p_bool(true).value);
+	while (bit_true.value);
 }
 
 // Entry Point Adapter

@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_bool x_;
+	bit x_;
 	x_ = equal_op(p_code_point('a'), p_code_point('b'));
 	x_ = not_equal_op(p_code_point('a'), p_code_point('b'));
 }

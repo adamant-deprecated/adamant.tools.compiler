@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(p_bool const value_) -> p_bool;
+auto Func_(bit const value_) -> bit;
 auto Main_() -> void;
 
 // Class Declarations
@@ -12,14 +12,14 @@ auto Main_() -> void;
 
 // Definitions
 
-auto Func_(p_bool const value_) -> p_bool
+auto Func_(bit const value_) -> bit
 {
-	return p_bool(false);
+	return bit_false;
 }
 
 auto Main_() -> void
 {
-	Func_(p_bool(true));
+	Func_(bit_true);
 }
 
 // Entry Point Adapter

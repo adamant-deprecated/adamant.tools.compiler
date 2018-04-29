@@ -13,15 +13,15 @@ auto Main_() -> p_int;
 
 auto Main_() -> p_int
 {
-	if (p_bool(false).value)
+	if (bit_false.value)
 	{
 		return p_int(0);
 	}
-	else if (p_bool(false).value)
+	else if (bit_false.value)
 	{
 		return p_int(42);
 	}
-	else if (p_bool(false).value)
+	else if (bit_false.value)
 	{
 		return p_int(10);
 	}

@@ -13,7 +13,7 @@ auto Main_() -> p_int;
 
 auto Main_() -> p_int
 {
-	if (p_bool(true).value)
+	if (bit_true.value)
 	{
 		return p_int(0);
 	}

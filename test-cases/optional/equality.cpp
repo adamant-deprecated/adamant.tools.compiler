@@ -15,7 +15,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	p_int const v_ = p_int(42);
 	p_optional<p_int> const n_ = p_none;
-	p_bool r_;
+	bit r_;
 	r_ = equal_op(v_, n_);
 	console_->WriteLine_(p_string("v == n: ").op_add(r_));
 	r_ = equal_op(n_, v_);

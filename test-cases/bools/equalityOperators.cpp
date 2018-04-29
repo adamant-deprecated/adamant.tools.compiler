@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto True_() -> p_bool;
+auto True_() -> bit;
 auto Main_() -> void;
 
 // Class Declarations
@@ -12,16 +12,16 @@ auto Main_() -> void;
 
 // Definitions
 
-auto True_() -> p_bool
+auto True_() -> bit
 {
-	return p_bool(true);
+	return bit_true;
 }
 
 auto Main_() -> void
 {
-	p_bool x_;
-	x_ = equal_op(p_bool(true), p_bool(false));
-	x_ = not_equal_op(p_bool(true), p_bool(false));
+	bit x_;
+	x_ = equal_op(bit_true, bit_false);
+	x_ = not_equal_op(bit_true, bit_false);
 	x_ = equal_op(True_(), True_());
 }
 

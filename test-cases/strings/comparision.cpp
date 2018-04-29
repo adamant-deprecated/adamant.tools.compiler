@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_bool x_;
+	bit x_;
 	x_ = p_string("a").op_less_than(p_string("b"));
 	x_ = p_string("a").op_less_than_or_equal(p_string("b"));
 	x_ = p_string("a").op_greater_than(p_string("b"));
