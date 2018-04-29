@@ -323,9 +323,10 @@ public class Emitter
         }
         else if syntax.kind == NotExpression
         {
+            // TODO change to other functions based on argument type
+            builder.Write("bit_not(");
             convert_expression(syntax.children[1], builder);
-            convert_member_access(syntax.children[1], builder);
-            builder.Write("op_not()");
+            builder.Write(")");
         }
         else if syntax.kind == MagnitudeExpression
         {
@@ -494,20 +495,20 @@ public class Emitter
         else if syntax.kind == OrExpression
         {
             // TODO based on types decide how to translate
-            builder.Write("op_or(");
+            builder.Write("bit_op(bit_arg(");
             convert_expression(syntax.children[0], builder);
-            builder.Write(", [&] { return ");
+            builder.Write(") || bit_arg(");
             convert_expression(syntax.children[2], builder);
-            builder.Write("; })");
+            builder.Write("))");
         }
         else if syntax.kind == AndExpression
         {
-            // TODO based on types decide how to translate
-            builder.Write("op_and(");
+            // TODO change to other structure for none `bit` arguments`
+            builder.Write("bit_op(bit_arg(");
             convert_expression(syntax.children[0], builder);
-            builder.Write(", [&] { return ");
+            builder.Write(") && bit_arg(");
             convert_expression(syntax.children[2], builder);
-            builder.Write("; })");
+            builder.Write("))");
         }
         else if syntax.kind == InvocationExpression
         {

@@ -127,13 +127,13 @@ p_string p_string::op_add(p_string const & value) const
 auto equal_op(p_string lhs, p_string rhs) -> bit
 {
     if (lhs.Length != rhs.Length)
-        return bit(false);
+        return bit_false;
 
     for (int i = 0; i < lhs.Length; i++)
         if (lhs.Buffer[i] != rhs.Buffer[i])
-            return bit(false);
+            return bit_false;
 
-    return bit(true);
+    return bit_true;
 }
 
 bit p_string::op_less_than(p_string other) const
@@ -143,7 +143,7 @@ bit p_string::op_less_than(p_string other) const
     bool result = std::strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
-    return bit(result);
+    return bit_from(result);
 }
 
 bit p_string::op_less_than_or_equal(p_string other) const
@@ -153,7 +153,7 @@ bit p_string::op_less_than_or_equal(p_string other) const
     bool result = std::strcmp(left, right) <= 0;
     delete[] left;
     delete[] right;
-    return bit(result);
+    return bit_from(result);
 }
 
 bit p_string::op_greater_than(p_string other) const
@@ -163,7 +163,7 @@ bit p_string::op_greater_than(p_string other) const
     bool result = std::strcmp(left, right) > 0;
     delete[] left;
     delete[] right;
-    return bit(result);
+    return bit_from(result);
 }
 
 bit p_string::op_greater_than_or_equal(p_string other) const
@@ -173,7 +173,7 @@ bit p_string::op_greater_than_or_equal(p_string other) const
     bool result = std::strcmp(left, right) >= 0;
     delete[] left;
     delete[] right;
-    return bit(result);
+    return bit_from(result);
 }
 
 bool operator < (p_string const & lhs, p_string const & rhs)

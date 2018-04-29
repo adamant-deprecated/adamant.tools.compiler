@@ -33,32 +33,23 @@ T op_or(T const & lhs, F rhs)
 
 struct bit
 {
-	// Runtime Members
 	bool value;
-
-	explicit bit() = default;
-	explicit bit(bool value): value(value) {}
-	bit& operator=(bit const& value) = default;
-
-	bit *_Nonnull operator->() { return this; }
-	bit const *_Nonnull operator->() const { return this; }
-	bit & operator* () { return *this; }
-	bit const & operator* () const { return *this; }
-
-	// Adamant Members
-	static auto construct() -> bit { return bit(false); }
-	bit op_not() const { return bit(!this->value); }
-	bit op_true() const { return bit(this->value); }
-	bit op_false() const { return bit(!this->value); }
-	bit op_and(bit other) const { return bit(this->value & other.value); }
-	bit op_or(bit other) const { return bit(this->value | other.value); }
 };
 
-const bit bit_true = bit(true); // TODO change to C style init
-const bit bit_false = bit(false);
+const bit bit_true = { true };
+const bit bit_false = { false };
 
 // Function used in conditions to make them take `bit`
 inline bool cond(bit cond) { return cond.value; }
+
+// Used by runtime for converting to bit
+inline bit bit_from(bool v) { return bit { v }; }
+
+// Wrap a bit operation that is bool based
+inline bit bit_op(bool v) { return bit { v }; }
+// Convert the arguments of a logical operation to bool
+inline bool bit_arg(bit v) { return v.value; }
+inline bit bit_not(bit v) { return bit { !v.value }; }
 
 class None
 {
@@ -83,7 +74,7 @@ public:
 	p_optional(T const & value) : data(value), hasValue(true) {}
     // TODO make this constructor explicit
 	p_optional(None const none) : hasValue(false) {}
-    auto has_value() const -> bit { return bit(hasValue); }
+    auto has_value() const -> bit { return bit_from(hasValue); }
     auto value() const -> T { return data; }
 
 	T & operator->()
@@ -132,10 +123,10 @@ public:
 	static auto copy(p_int const & other) -> p_int { return other; }
 	void op_add_assign(p_int other) { this->value += other.value; }
 	void op_subtract_assign(p_int other) { this->value -= other.value; }
-	bit op_less_than(p_int other) const { return bit(this->value < other.value); }
-	bit op_less_than_or_equal(p_int other) const { return bit(this->value <= other.value); }
-	bit op_greater_than(p_int other) const { return bit(this->value > other.value); }
-	bit op_greater_than_or_equal(p_int other) const { return bit(this->value >= other.value); }
+	bit op_less_than(p_int other) const { return bit_from(this->value < other.value); }
+	bit op_less_than_or_equal(p_int other) const { return bit_from(this->value <= other.value); }
+	bit op_greater_than(p_int other) const { return bit_from(this->value > other.value); }
+	bit op_greater_than_or_equal(p_int other) const { return bit_from(this->value >= other.value); }
 	p_int op_add(p_int other) const { return this->value + other.value; }
 	p_int op_subtract(p_int other) const { return this->value - other.value; }
 	p_int op_negate() const { return -this->value; }
@@ -169,10 +160,10 @@ public:
 	static auto construct() -> p_uint { return 0; }
 	void op_add_assign(p_uint other) { this->value += other.value; }
 	void op_subtract_assign(p_uint other) { this->value -= other.value; }
-	bit op_less_than(p_uint other) const { return bit(this->value < other.value); }
-	bit op_less_than_or_equal(p_uint other) const { return bit(this->value <= other.value); }
-	bit op_greater_than(p_uint other) const { return bit(this->value > other.value); }
-	bit op_greater_than_or_equal(p_uint other) const { return bit(this->value >= other.value); }
+	bit op_less_than(p_uint other) const { return bit_from(this->value < other.value); }
+	bit op_less_than_or_equal(p_uint other) const { return bit_from(this->value <= other.value); }
+	bit op_greater_than(p_uint other) const { return bit_from(this->value > other.value); }
+	bit op_greater_than_or_equal(p_uint other) const { return bit_from(this->value >= other.value); }
 	p_uint op_add(p_uint other) const { return this->value + other.value; }
 	p_uint op_subtract(p_uint other) const { return this->value - other.value; }
 };
@@ -202,10 +193,10 @@ public:
 	// Adamant Members
 	static auto construct() -> p_code_point { return p_code_point('\0'); }
 	// TODO: Not sure code_point should support these operations
-	bit op_less_than(p_code_point other) const { return bit(this->raw_value < other.raw_value); }
-	bit op_less_than_or_equal(p_code_point other) const { return bit(this->raw_value <= other.raw_value); }
-	bit op_greater_than(p_code_point other) const { return bit(this->raw_value > other.raw_value); }
-	bit op_greater_than_or_equal(p_code_point other) const { return bit(this->raw_value >= other.raw_value); }
+	bit op_less_than(p_code_point other) const { return bit_from(this->raw_value < other.raw_value); }
+	bit op_less_than_or_equal(p_code_point other) const { return bit_from(this->raw_value <= other.raw_value); }
+	bit op_greater_than(p_code_point other) const { return bit_from(this->raw_value > other.raw_value); }
+	bit op_greater_than_or_equal(p_code_point other) const { return bit_from(this->raw_value >= other.raw_value); }
 
 };
 
@@ -261,36 +252,36 @@ public:
 
 inline auto equal_op(bit lhs, bit rhs) -> bit
 {
-    return bit(lhs.value == rhs.value);
+    return bit_from(lhs.value == rhs.value);
 }
 inline auto equal_op(p_optional<bit> lhs, p_optional<bit> rhs) -> bit
 {
     if(lhs.has_value().value)
-        return bit(rhs.has_value().value and equal_op(lhs.value(), rhs.value()).value);
+        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));
     else
-        return bit(not rhs.has_value().value);
+        return bit_not(rhs.has_value());
 }
 
 inline auto equal_op(p_int lhs, p_int rhs) -> bit
 {
-    return bit(lhs.value == rhs.value);
+    return bit_from(lhs.value == rhs.value);
 }
 inline auto equal_op(p_optional<p_int> lhs, p_optional<p_int> rhs) -> bit
 {
     if(lhs.has_value().value)
-        return bit(rhs.has_value().value and equal_op(lhs.value(), rhs.value()).value);
+        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));
     else
-        return bit(not rhs.has_value().value);
+        return bit_not(rhs.has_value());
 }
 
 inline auto equal_op(None lhs, None rhs) -> bit
 {
-    return bit(true);
+    return bit_true;
 }
 
 inline auto equal_op(p_code_point lhs, p_code_point rhs) -> bit
 {
-    return bit(lhs.value() == rhs.value());
+    return bit_from(lhs.value() == rhs.value());
 }
 
 auto equal_op(p_string lhs, p_string rhs) -> bit;
@@ -299,54 +290,54 @@ auto equal_op(p_string lhs, p_string rhs) -> bit;
 template<typename T>
 inline auto equal_op(T const *_Nullable lhs, None const & rhs) -> bit
 {
-    return bit(lhs == 0);
+    return bit_from(lhs == 0);
 }
 
 // TODO implement this without templates
 template<typename T>
 inline auto equal_op(None lhs, T const *_Nullable rhs) -> bit
 {
-    return bit(0 == rhs);
+    return bit_from(0 == rhs);
 }
 
 // TODO Get rid of this ability
 template<typename T>
 inline auto equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs) -> bit
 {
-    return bit(lhs == 0);
+    return bit_from(lhs == 0);
 }
 
 inline auto not_equal_op(p_int lhs, p_int rhs) -> bit
 {
-    return bit(lhs.value != rhs.value);
+    return bit_from(lhs.value != rhs.value);
 }
 inline auto not_equal_op(p_optional<p_int> lhs, p_optional<p_int> rhs) -> bit
 {
     if(lhs.has_value().value)
-        return bit(not rhs.has_value().value or not_equal_op(lhs.value(), rhs.value()).value);
+        return bit_op(bit_arg(bit_not(rhs.has_value())) || bit_arg(not_equal_op(lhs.value(), rhs.value())));
     else
-        return bit(rhs.has_value().value);
+        return rhs.has_value();
 }
 
 // TODO implement this without templates
 template<typename T>
 inline auto not_equal_op(T lhs, T  rhs) -> bit
 {
-    return bit(not equal_op(lhs, rhs).value);
+    return bit_not(equal_op(lhs, rhs));
 }
 
 // TODO implement this without templates
 template<typename T>
 inline auto not_equal_op(T const *_Nullable lhs, None const & rhs) -> bit
 {
-    return bit(lhs != 0);
+    return bit_from(lhs != 0);
 }
 
 // TODO implement this without templates
 template<typename T>
 inline auto not_equal_op(None lhs, T const *_Nullable rhs) -> bit
 {
-    return bit(0 != rhs);
+    return bit_from(0 != rhs);
 }
 
 // -----------------------------------------------------------------------------

@@ -14,9 +14,9 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	bit x_;
-	x_ = op_and(bit_true.op_not(), [&] { return bit_false; });
-	x_ = op_or(bit_true.op_not(), [&] { return bit_false; });
-	x_ = op_or(bit_false, [&] { return op_and(bit_true, [&] { return bit_true; }); });
+	x_ = bit_op(bit_arg(bit_not(bit_true)) && bit_arg(bit_false));
+	x_ = bit_op(bit_arg(bit_not(bit_true)) || bit_arg(bit_false));
+	x_ = bit_op(bit_arg(bit_false) || bit_arg(bit_op(bit_arg(bit_true) && bit_arg(bit_true))));
 }
 
 // Entry Point Adapter
