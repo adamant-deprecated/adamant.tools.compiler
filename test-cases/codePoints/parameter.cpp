@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Identity_(p_code_point const value_) -> p_code_point;
+auto Identity_(cp const value_) -> cp;
 auto Main_() -> void;
 
 // Class Declarations
@@ -12,14 +12,14 @@ auto Main_() -> void;
 
 // Definitions
 
-auto Identity_(p_code_point const value_) -> p_code_point
+auto Identity_(cp const value_) -> cp
 {
 	return value_;
 }
 
 auto Main_() -> void
 {
-	Identity_(p_code_point('a'));
+	Identity_(cp('a'));
 }
 
 // Entry Point Adapter

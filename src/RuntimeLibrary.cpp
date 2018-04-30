@@ -13,21 +13,21 @@ u32 i32::AsUInt_() const
     return u32(this->value);
 }
 
-char p_code_point::CharValue() const
+char cp_to_char(cp v)
 {
-    if(this->raw_value > 0xFF)
+    if(v.value > 0xFF)
         throw std::range_error("Unicode char values not yet supported");
 
-    return this->raw_value;
+    return v.value;
 }
 
-p_string p_string::construct(p_code_point c, i32 repeat)
+p_string p_string::construct(cp c, i32 repeat)
 {
     p_string self;
     self.Length = repeat.value;
     char* buffer = new char[repeat.value];
     for (int i = 0; i < repeat.value; i++)
-        buffer[i] = c.CharValue();
+        buffer[i] = cp_to_char(c);
 
     self.Buffer = buffer;
     return self;
@@ -61,8 +61,8 @@ p_string::p_string(i32 other)
     Buffer = buffer;
 }
 
-p_string::p_string(p_code_point other)
-    : Length(1), Buffer(new char[1] { other.CharValue() })
+p_string::p_string(cp other)
+    : Length(1), Buffer(new char[1] { cp_to_char(other) })
 {
 }
 
@@ -96,19 +96,19 @@ p_string p_string::Replace_(p_string oldValue, p_string newValue) const
     return builder.ToString_();
 }
 
-i32 p_string::LastIndexOf_(p_code_point c) const
+i32 p_string::LastIndexOf_(cp c) const
 {
     for(int i = Length - 1; i >= 0; i--)
-        if(Buffer[i] == c.CharValue())
+        if(Buffer[i] == cp_to_char(c))
             return i32(i);
 
     return i32(-1); // TODO should return none
 }
 
-i32 p_string::index_of_(p_code_point c) const
+i32 p_string::index_of_(cp c) const
 {
     for(int i = 0; i < Length; i++)
-        if(Buffer[i] == c.CharValue())
+        if(Buffer[i] == cp_to_char(c))
             return i32(i);
 
     return i32(-1);

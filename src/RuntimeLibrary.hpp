@@ -94,7 +94,6 @@ struct u32;
 // `int`
 struct i32
 {
-public:
     // Runtime Use Members
     std::int32_t value;
 
@@ -133,7 +132,6 @@ public:
 // `uint`
 struct u32
 {
-public:
     // Runtime Use Members
     std::uint32_t value;
 
@@ -165,32 +163,30 @@ inline i32::i32(u32 value)
 {
 }
 
-struct p_code_point
+struct cp
 {
-private:
-    std::uint32_t raw_value;
+    std::uint32_t value;
 
-public:
     // Runtime Use Members
-    explicit p_code_point() = default;
-    explicit p_code_point(char value): raw_value(value) {}
-    char CharValue() const;
-    auto value() const -> std::uint32_t { return raw_value; }
+    explicit cp() = default;
+    explicit cp(char value): value(value) {}
 
-    p_code_point *_Nonnull operator->() { return this; }
-    p_code_point const *_Nonnull operator->() const { return this; }
-    p_code_point & operator* () { return *this; }
-    p_code_point const & operator* () const { return *this; }
+    cp *_Nonnull operator->() { return this; }
+    cp const *_Nonnull operator->() const { return this; }
+    cp & operator* () { return *this; }
+    cp const & operator* () const { return *this; }
 
     // Adamant Members
-    static auto construct() -> p_code_point { return p_code_point('\0'); }
+    static auto construct() -> cp { return cp('\0'); }
     // TODO: Not sure code_point should support these operations
-    bit op_less_than(p_code_point other) const { return bit_from(this->raw_value < other.raw_value); }
-    bit op_less_than_or_equal(p_code_point other) const { return bit_from(this->raw_value <= other.raw_value); }
-    bit op_greater_than(p_code_point other) const { return bit_from(this->raw_value > other.raw_value); }
-    bit op_greater_than_or_equal(p_code_point other) const { return bit_from(this->raw_value >= other.raw_value); }
+    bit op_less_than(cp other) const { return bit_from(this->value < other.value); }
+    bit op_less_than_or_equal(cp other) const { return bit_from(this->value <= other.value); }
+    bit op_greater_than(cp other) const { return bit_from(this->value > other.value); }
+    bit op_greater_than_or_equal(cp other) const { return bit_from(this->value >= other.value); }
 
 };
+
+char cp_to_char(cp v);
 
 struct p_string
 {
@@ -212,24 +208,24 @@ public:
 
     // Hack to support conversion of int and code_point to strings for now
     p_string(i32 other);
-    p_string(p_code_point other);
+    p_string(cp other);
     explicit p_string(bit other);
 
     // Adamant Members
     static auto construct() -> p_string { p_string self; self.Length = 0; self.Buffer = 0; return self; }
     static auto construct(p_string value) -> p_string { return value; }
-    static auto construct(p_code_point c, i32 repeat) -> p_string;
+    static auto construct(cp c, i32 repeat) -> p_string;
     // TODO ByteLength should be a property
     i32 ByteLength_() const { return i32(Length); }
 
     p_string Substring_(i32 start, i32 length) const;
     p_string Substring_(i32 start) const { return Substring_(start, i32(Length-start.value)); }
     p_string Replace_(p_string oldValue, p_string newValue) const;
-    i32 LastIndexOf_(p_code_point c) const;
-    i32 index_of_(p_code_point c) const;
+    i32 LastIndexOf_(cp c) const;
+    i32 index_of_(cp c) const;
 
     // TODO check index bounds
-    p_code_point op_Element(i32 const index) const { return p_code_point(Buffer[index.value]); }
+    cp op_Element(i32 const index) const { return cp(Buffer[index.value]); }
     p_string op_add(p_string const & value) const;
     p_string op_add(bit value) const { return this->op_add(p_string(value)); }
     bit op_less_than(p_string other) const;
@@ -271,9 +267,9 @@ inline auto equal_op(o_never lhs, o_never rhs) -> bit
     return bit_true;
 }
 
-inline auto equal_op(p_code_point lhs, p_code_point rhs) -> bit
+inline auto equal_op(cp lhs, cp rhs) -> bit
 {
-    return bit_from(lhs.value() == rhs.value());
+    return bit_from(lhs.value == rhs.value);
 }
 
 auto equal_op(p_string lhs, p_string rhs) -> bit;

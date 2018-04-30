@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_code_point result_;
+	cp result_;
 	result_ = p_string("hello").op_Element(i32(0));
 }
 

@@ -14,8 +14,8 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	p_string s_ = p_string("\"\\");
-	p_code_point c_ = p_code_point('\'');
-	c_ = p_code_point('\\');
+	cp c_ = cp('\'');
+	c_ = cp('\\');
 }
 
 // Entry Point Adapter
