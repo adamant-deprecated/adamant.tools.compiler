@@ -10,7 +10,7 @@ u32 i32::AsUInt_() const
     if(this->value < 0)
         throw std::range_error("Can't convert negative number to unsigned");
 
-    return this->value;
+    return u32(this->value);
 }
 
 char p_code_point::CharValue() const

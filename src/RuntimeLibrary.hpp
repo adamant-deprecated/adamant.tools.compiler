@@ -111,6 +111,7 @@ public:
 
 struct u32;
 
+// `int`
 struct i32
 {
 public:
@@ -149,14 +150,15 @@ public:
     u32 AsUInt_() const;
 };
 
+// `uint`
 struct u32
 {
 public:
     // Runtime Use Members
     std::uint32_t value;
 
-    u32() = default;
-    u32(std::uint32_t value): value(value) {}
+    explicit u32() = default;
+    explicit u32(std::uint32_t value): value(value) {}
 
     u32 *_Nonnull operator->() { return this; }
     u32 const *_Nonnull operator->() const { return this; }
@@ -167,15 +169,15 @@ public:
     u32(i32 value): value(value.value) {}
 
     // Adamant Members
-    static auto construct() -> u32 { return 0; }
+    static auto construct() -> u32 { return u32(0); }
     void op_add_assign(u32 other) { this->value += other.value; }
     void op_subtract_assign(u32 other) { this->value -= other.value; }
     bit op_less_than(u32 other) const { return bit_from(this->value < other.value); }
     bit op_less_than_or_equal(u32 other) const { return bit_from(this->value <= other.value); }
     bit op_greater_than(u32 other) const { return bit_from(this->value > other.value); }
     bit op_greater_than_or_equal(u32 other) const { return bit_from(this->value >= other.value); }
-    u32 op_add(u32 other) const { return this->value + other.value; }
-    u32 op_subtract(u32 other) const { return this->value - other.value; }
+    u32 op_add(u32 other) const { return u32(this->value + other.value); }
+    u32 op_subtract(u32 other) const { return u32(this->value - other.value); }
 };
 
 inline i32::i32(u32 value)
