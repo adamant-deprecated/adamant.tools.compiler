@@ -8,26 +8,6 @@
 #include <string>
 
 // -----------------------------------------------------------------------------
-// Logical Operators
-// -----------------------------------------------------------------------------
-// Use special templates taking closures to support short circuit evaluation
-
-// TODO Based on the type of the values involved, either emit x.value() && y.value()
-// or compound expression ({ T _left = lhs; _left.op_false() ? _left : _left.op_and(rhs); })
-
-template<typename T, typename F>
-T op_and(T const & lhs, F rhs)
-{
-    return lhs.op_false().value ? lhs : lhs.op_and(rhs());
-}
-
-template<typename T, typename F>
-T op_or(T const & lhs, F rhs)
-{
-    return lhs.op_true().value ? lhs : lhs.op_or(rhs());
-}
-
-// -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
 

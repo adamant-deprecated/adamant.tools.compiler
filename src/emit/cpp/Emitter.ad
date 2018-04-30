@@ -502,7 +502,10 @@ public class Emitter
         }
         else if syntax.kind == OrExpression
         {
-            // TODO based on types decide how to translate
+            // TODO Based on the type of the values involved, either:
+            // * bit_op(bit_arg(lhs) || bit_arg(rhs))
+            // * ({ T _lhs = lhs; op_true(_lhs) ? _lhs : op_or(_lhs, rhs); })
+            // Note: that is a "compound expression"
             builder.Write("bit_op(bit_arg(");
             convert_expression(syntax.children[0], builder);
             builder.Write(") || bit_arg(");
@@ -511,7 +514,10 @@ public class Emitter
         }
         else if syntax.kind == AndExpression
         {
-            // TODO change to other structure for none `bit` arguments`
+            // TODO Based on the type of the values involved, either:
+            // * bit_op(bit_arg(lhs) && bit_arg(rhs))
+            // * ({ T _lhs = lhs; op_false(_lhs) ? _lhs : op_and(_lhs, rhs); })
+            // Note: that is a "compound expression"
             builder.Write("bit_op(bit_arg(");
             convert_expression(syntax.children[0], builder);
             builder.Write(") && bit_arg(");
