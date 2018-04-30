@@ -37,7 +37,7 @@ class Name_Table_Builder_;
 auto compile_(::System_::Collections_::List_<::Source_Text_ const *_Nonnull> const *_Nonnull const sources_) -> ::Package_ const *_Nonnull;
 auto write_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull const diagnostics_) -> void;
 auto has_errors_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull const diagnostics_) -> bit;
-auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> p_int;
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> i32;
 auto read_source_(p_string const path_) -> ::Source_Text_ const *_Nonnull;
 auto run_unit_tests_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 auto unit_test_Text_Position_() -> void;
@@ -56,7 +56,7 @@ auto System_namespace_contains_Console_namespace_() -> void;
 auto Console_namespace_contains_Console_class_() -> void;
 auto System_namespace_contains_Collections_namespace_() -> void;
 auto Collections_namespace_contains_List_class_() -> void;
-auto new_syntax_node_missing_(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_) -> ::Syntax_Node_ const *_Nonnull;
+auto new_syntax_node_missing_(i32 const type_, ::Source_Text_ const *_Nonnull const source_, u32 const start_) -> ::Syntax_Node_ const *_Nonnull;
 auto new_Syntax_Node_Skipped_(::Syntax_Node_ const *_Nonnull const skipped_node_) -> ::Syntax_Node_ const *_Nonnull;
 auto new_Syntax_Node_Skipped_(::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const skipped_nodes_) -> ::Syntax_Node_ const *_Nonnull;
 auto unit_test_Name_() -> void;
@@ -80,12 +80,12 @@ class Line_Info_
 public:
 private:
 	::Source_Text_ const *_Nonnull source_;
-	::System_::Collections_::List_<p_int> const *_Nonnull lineStarts_;
+	::System_::Collections_::List_<i32> const *_Nonnull lineStarts_;
 public:
-	auto construct(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<p_int> const *_Nonnull const lineStarts_) -> ::Line_Info_*;
-	auto Count_() const -> p_int;
-	auto get_(p_int const lineNumber_) const -> ::Text_Line_ const *_Nonnull;
-	auto LineNumber_(p_int const offset_) const -> p_int;
+	auto construct(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<i32> const *_Nonnull const lineStarts_) -> ::Line_Info_*;
+	auto Count_() const -> i32;
+	auto get_(i32 const lineNumber_) const -> ::Text_Line_ const *_Nonnull;
+	auto LineNumber_(i32 const offset_) const -> i32;
 };
 
 class Location_
@@ -104,9 +104,9 @@ public:
 	::Line_Info_ const *_Nonnull Lines_;
 	auto construct(p_string const package_, p_string const path_, p_string const text_) -> ::Source_Text_*;
 private:
-	auto LineStarts_() const -> ::System_::Collections_::List_<p_int> const *_Nonnull;
+	auto LineStarts_() const -> ::System_::Collections_::List_<i32> const *_Nonnull;
 public:
-	auto ByteLength_() const -> p_int;
+	auto ByteLength_() const -> i32;
 	auto PositionOfStart_(::Text_Span_ const *_Nonnull const span_) const -> ::Text_Position_ const *_Nonnull;
 };
 
@@ -114,29 +114,29 @@ class Text_Line_
 {
 public:
 	::Source_Text_ const *_Nonnull source_;
-	p_int start_;
-	p_int byte_length_;
-	auto construct(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const length_) -> ::Text_Line_*;
-	auto construct_spanning(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const end_) -> ::Text_Line_*;
-	auto End_() const -> p_int;
+	i32 start_;
+	i32 byte_length_;
+	auto construct(::Source_Text_ const *_Nonnull const source_, i32 const start_, i32 const length_) -> ::Text_Line_*;
+	auto construct_spanning(::Source_Text_ const *_Nonnull const source_, i32 const start_, i32 const end_) -> ::Text_Line_*;
+	auto End_() const -> i32;
 };
 
 class Text_Position_
 {
 public:
-	p_int Offset_;
-	p_int Line_;
-	p_int Column_;
-	auto construct(p_int const offset_, p_int const line_, p_int const column_) -> ::Text_Position_*;
+	i32 Offset_;
+	i32 Line_;
+	i32 Column_;
+	auto construct(i32 const offset_, i32 const line_, i32 const column_) -> ::Text_Position_*;
 };
 
 class Text_Span_
 {
 public:
-	p_int start_;
-	p_int byte_length_;
-	auto construct(p_int const start_, p_int const length_) -> ::Text_Span_*;
-	auto End_() const -> p_int;
+	i32 start_;
+	i32 byte_length_;
+	auto construct(i32 const start_, i32 const length_) -> ::Text_Span_*;
+	auto End_() const -> i32;
 };
 
 class Source_File_Builder_
@@ -160,7 +160,7 @@ public:
 	auto BeginBlock_() -> void;
 	auto EndBlock_() -> void;
 	auto EndBlockWithSemicolon_() -> void;
-	auto byte_length_() const -> p_int;
+	auto byte_length_() const -> i32;
 	auto ToString_() -> p_string;
 };
 
@@ -206,7 +206,7 @@ private:
 	static auto build_adamant_language_namespace_(::Name_ const *_Nonnull const global_namespace_) -> ::Symbol_ const *_Nonnull;
 	static auto build_optional_(::Name_ const *_Nonnull const language_namespace_) -> ::Symbol_ const *_Nonnull;
 	static auto build_primitive_(p_string const name_, ::Name_ const *_Nonnull const namespace_) -> ::Symbol_ const *_Nonnull;
-	static auto build_fixed_point_primitives_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, p_int const bits_, ::Name_ const *_Nonnull const namespace_) -> void;
+	static auto build_fixed_point_primitives_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, i32 const bits_, ::Name_ const *_Nonnull const namespace_) -> void;
 public:
 	auto construct() -> ::Primitives_Package_Builder_* { return this; }
 };
@@ -238,11 +238,11 @@ class Semantic_Node_
 {
 public:
 	::Syntax_Node_ const *_Nonnull syntax_;
-	p_int kind_;
+	i32 kind_;
 	bit is_missing_;
 	::Source_Text_ const *_Nonnull source_;
-	p_uint start_;
-	p_uint byte_length_;
+	u32 start_;
+	u32 byte_length_;
 	::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull children_;
 private:
 	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull node_diagnostics_;
@@ -257,13 +257,13 @@ public:
 	auto construct_referencing_type(::Type_ const *_Nonnull const type_, ::Syntax_Node_ const *_Nonnull const syntax_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Semantic_Node_*;
 	auto get_text_span_() const -> ::Text_Span_ const *_Nonnull;
 	auto get_text_() const -> p_string;
-	auto first_child_(p_int const kind_) const -> ::Semantic_Node_ const *_Nullable;
-	auto children_of_kind_(p_int const kind_) const -> ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull;
+	auto first_child_(i32 const kind_) const -> ::Semantic_Node_ const *_Nullable;
+	auto children_of_kind_(i32 const kind_) const -> ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull;
 	auto members_() const -> ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull;
 	auto statements_() const -> ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull;
 	auto parameters_() const -> ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull;
 	auto access_modifier_() const -> ::Semantic_Node_ const *_Nullable;
-	auto has_child_(p_int const kind_) const -> bit;
+	auto has_child_(i32 const kind_) const -> bit;
 	auto add_(::Diagnostic_ const *_Nonnull const diagnostic_) -> void;
 	auto diagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> const *_Nonnull;
 public:
@@ -309,13 +309,13 @@ public:
 	auto Parse_() -> ::Syntax_Node_ const *_Nonnull;
 private:
 	auto AcceptToken_() -> ::Syntax_Node_ const *_Nullable;
-	auto ExpectToken_(p_int const tokenType_) -> ::Syntax_Node_ const *_Nonnull;
+	auto ExpectToken_(i32 const tokenType_) -> ::Syntax_Node_ const *_Nonnull;
 	auto ParseTypeName_() -> ::Syntax_Node_ const *_Nonnull;
 	auto ParseNonOptionalType_() -> ::Syntax_Node_ const *_Nonnull;
 	auto ParseType_() -> ::Syntax_Node_ const *_Nonnull;
 	auto ParseAtom_() -> ::Syntax_Node_ const *_Nonnull;
 	auto ParseCallArguments_() -> ::Syntax_Node_ const *_Nonnull;
-	auto ParseExpression_(p_int const minPrecedence_) -> ::Syntax_Node_ const *_Nonnull;
+	auto ParseExpression_(i32 const minPrecedence_) -> ::Syntax_Node_ const *_Nonnull;
 	auto ParseExpression_() -> ::Syntax_Node_ const *_Nonnull;
 	auto ParseStatement_() -> ::Syntax_Node_ const *_Nonnull;
 	auto ParseIfStatement_() -> ::Syntax_Node_ const *_Nonnull;
@@ -344,20 +344,20 @@ public:
 class Syntax_Node_
 {
 public:
-	p_int kind_;
+	i32 kind_;
 	bit is_missing_;
 	::Source_Text_ const *_Nonnull source_;
-	p_uint start_;
-	p_uint byte_length_;
+	u32 start_;
+	u32 byte_length_;
 	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull children_;
 	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull node_diagnostics_;
-	auto construct(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_) -> ::Syntax_Node_*;
-	auto construct(p_int const type_, bit const isMissing_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_) -> ::Syntax_Node_*;
-	auto construct(p_int const type_, ::Syntax_Node_ const *_Nonnull const child_) -> ::Syntax_Node_*;
-	auto construct(p_int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Syntax_Node_*;
+	auto construct(i32 const type_, ::Source_Text_ const *_Nonnull const source_, u32 const start_, u32 const length_) -> ::Syntax_Node_*;
+	auto construct(i32 const type_, bit const isMissing_, ::Source_Text_ const *_Nonnull const source_, u32 const start_, u32 const length_) -> ::Syntax_Node_*;
+	auto construct(i32 const type_, ::Syntax_Node_ const *_Nonnull const child_) -> ::Syntax_Node_*;
+	auto construct(i32 const type_, ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Syntax_Node_*;
 	auto get_text_() const -> p_string;
-	auto first_child_(p_int const type_) const -> ::Syntax_Node_ const *_Nullable;
-	auto has_child_(p_int const type_) const -> bit;
+	auto first_child_(i32 const type_) const -> ::Syntax_Node_ const *_Nullable;
+	auto has_child_(i32 const type_) const -> bit;
 	auto add_(::Diagnostic_ const *_Nonnull const diagnostic_) const -> void;
 	auto all_diagnostics_() const -> ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull;
 	auto collect_diagnostics_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull const diagnostics_) const -> void;
@@ -372,7 +372,7 @@ class Token_Stream_
 public:
 	::Source_Text_ const *_Nonnull source_;
 private:
-	p_uint position_;
+	u32 position_;
 	::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> *_Nonnull diagnostics_;
 	bit endOfFile_;
 public:
@@ -380,10 +380,10 @@ public:
 	auto GetNextToken_() -> ::Syntax_Node_ const *_Nullable;
 private:
 	auto EndOfFile_() -> ::Syntax_Node_ const *_Nullable;
-	auto NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Node_ const *_Nonnull;
-	auto NewOperator_(p_int const type_) -> ::Syntax_Node_ const *_Nonnull;
-	auto NewOperator_(p_int const type_, p_uint const length_) -> ::Syntax_Node_ const *_Nonnull;
-	auto NewToken_(p_int const type_, p_uint const end_) -> ::Syntax_Node_ const *_Nonnull;
+	auto NewIdentifierOrKeyword_(u32 const end_) -> ::Syntax_Node_ const *_Nonnull;
+	auto NewOperator_(i32 const type_) -> ::Syntax_Node_ const *_Nonnull;
+	auto NewOperator_(i32 const type_, u32 const length_) -> ::Syntax_Node_ const *_Nonnull;
+	auto NewToken_(i32 const type_, u32 const end_) -> ::Syntax_Node_ const *_Nonnull;
 	static auto IsIdentifierChar_(p_code_point const c_) -> bit;
 	static auto IsNumberChar_(p_code_point const c_) -> bit;
 };
@@ -391,13 +391,13 @@ private:
 class Diagnostic_
 {
 public:
-	p_int Level_;
-	p_int Phase_;
+	i32 Level_;
+	i32 Phase_;
 	::Source_Text_ const *_Nonnull source_;
 	::Text_Span_ const *_Nonnull Span_;
 	::Text_Position_ const *_Nonnull Position_;
 	p_string Message_;
-	auto construct(p_int const level_, p_int const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_) -> ::Diagnostic_*;
+	auto construct(i32 const level_, i32 const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_) -> ::Diagnostic_*;
 };
 
 class Diagnostic_Info_
@@ -437,9 +437,9 @@ private:
 	auto emit_statement_(::Semantic_Node_ const *_Nonnull const statement_) -> void;
 	auto emit_method_body_(::Semantic_Node_ const *_Nonnull const block_, bit const is_associated_function_) -> void;
 	auto emit_constructor_body_(::Semantic_Node_ const *_Nonnull const block_, p_string const self_type_, bit const is_value_type_) -> void;
-	auto emit_access_modifer_(p_int const current_access_level_, p_int const access_modifer_) -> p_int;
-	auto emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, bit const is_value_type_, p_int const current_access_level_) -> p_int;
-	auto emit_default_constructor_(p_string const type_name_, bit const is_value_type_, p_int const current_access_level_) -> void;
+	auto emit_access_modifer_(i32 const current_access_level_, i32 const access_modifer_) -> i32;
+	auto emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, bit const is_value_type_, i32 const current_access_level_) -> i32;
+	auto emit_default_constructor_(p_string const type_name_, bit const is_value_type_, i32 const current_access_level_) -> void;
 	auto emit_declaration_(::Semantic_Node_ const *_Nonnull const declaration_) -> void;
 	auto emit_compilation_unit_(::Compilation_Unit_ const *_Nonnull const unit_) -> void;
 	auto emit_preamble_() -> void;
@@ -450,16 +450,16 @@ class Name_
 {
 public:
 	::Package_Name_ const *_Nullable package_;
-	p_int kind_;
+	i32 kind_;
 	::System_::Collections_::List_<p_string> const *_Nonnull segments_;
 	bit is_special_;
 	auto construct_global_namespace() -> ::Name_*;
 	auto construct_global_namespace(::Package_Name_ const *_Nonnull const package_) -> ::Name_*;
-	auto construct(::Name_ const *_Nonnull const qualifier_, p_int const kind_, p_string const name_) -> ::Name_*;
-	auto construct(::Name_ const *_Nonnull const qualifier_, p_int const kind_, p_string const name_, bit const is_special_) -> ::Name_*;
-	auto construct_special(::Name_ const *_Nonnull const qualifier_, p_int const kind_, p_string const name_) -> ::Name_*;
+	auto construct(::Name_ const *_Nonnull const qualifier_, i32 const kind_, p_string const name_) -> ::Name_*;
+	auto construct(::Name_ const *_Nonnull const qualifier_, i32 const kind_, p_string const name_, bit const is_special_) -> ::Name_*;
+	auto construct_special(::Name_ const *_Nonnull const qualifier_, i32 const kind_, p_string const name_) -> ::Name_*;
 private:
-	auto construct(::Package_Name_ const *_Nullable const package_, p_int const kind_, ::System_::Collections_::List_<p_string> const *_Nonnull const segments_, bit const is_special_) -> ::Name_*;
+	auto construct(::Package_Name_ const *_Nullable const package_, i32 const kind_, ::System_::Collections_::List_<p_string> const *_Nonnull const segments_, bit const is_special_) -> ::Name_*;
 public:
 	auto unqualified_() const -> p_string;
 	auto full_() const -> p_string;
@@ -483,7 +483,7 @@ class Symbol_
 public:
 	p_string name_;
 	bit is_special_name_;
-	p_int kind_;
+	i32 kind_;
 	::Type_ const *_Nonnull of_type_;
 	::Type_ const *_Nonnull declares_type_;
 	::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull declarations_;
@@ -495,28 +495,28 @@ public:
 	auto construct_package(p_string const name_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*;
 	auto construct_declaring(::Type_ const *_Nonnull const declares_type_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const declarations_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*;
 	auto construct_of_type(p_string const name_, ::Type_ const *_Nonnull const of_type_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const declarations_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*;
-	auto get_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable;
+	auto get_(p_string const name_, i32 const kind_) const -> ::Symbol_ const *_Nullable;
 };
 
 class Type_
 {
 public:
-	p_int kind_;
+	i32 kind_;
 	::Name_ const *_Nonnull name_;
 	::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull type_parameters_;
 	bit is_primitive_;
 	bit is_value_type_;
 	bit is_potentially_mutable_;
 	bit is_mutable_;
-	auto construct(p_int const kind_, ::Name_ const *_Nonnull const name_, bit const is_mutable_) -> ::Type_*;
+	auto construct(i32 const kind_, ::Name_ const *_Nonnull const name_, bit const is_mutable_) -> ::Type_*;
 	auto construct_parameter(p_string const name_) -> ::Type_*;
-	auto construct(p_int const kind_, ::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_) -> ::Type_*;
+	auto construct(i32 const kind_, ::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_) -> ::Type_*;
 	auto construct_primitive(::Name_ const *_Nonnull const name_) -> ::Type_*;
 	auto construct_primitive(::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_) -> ::Type_*;
 	auto construct_namespace(::Name_ const *_Nonnull const name_) -> ::Type_*;
 	auto construct_generic(::Type_ const *_Nonnull const definition_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_arguments_) -> ::Type_*;
 private:
-	auto construct(p_int const kind_, ::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_) -> ::Type_*;
+	auto construct(i32 const kind_, ::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_) -> ::Type_*;
 public:
 	auto make_mutable_() const -> ::Type_ const *_Nonnull;
 	auto make_immutable_() const -> ::Type_ const *_Nonnull;
@@ -583,160 +583,160 @@ public:
 };
 
 // Global Definitions
-p_int const Success_ = p_int(0);
-p_int const UsageError_ = p_int(64);
-p_int const DataError_ = p_int(65);
-p_int const SkippedTokens_ = p_int(1).op_negate();
-p_int const EndOfFileToken_ = p_int(0);
-p_int const LeftBrace_ = p_int(1);
-p_int const RightBrace_ = p_int(2);
-p_int const LeftParen_ = p_int(3);
-p_int const RightParen_ = p_int(4);
-p_int const Semicolon_ = p_int(5);
-p_int const Comma_ = p_int(6);
-p_int const Dot_ = p_int(7);
-p_int const Colon_ = p_int(8);
-p_int const LeftBracket_ = p_int(9);
-p_int const RightBracket_ = p_int(10);
-p_int const Question_ = p_int(11);
-p_int const EqualsEquals_ = p_int(12);
-p_int const Equals_ = p_int(13);
-p_int const PlusEquals_ = p_int(14);
-p_int const Plus_ = p_int(15);
-p_int const Arrow_ = p_int(16);
-p_int const MinusEquals_ = p_int(17);
-p_int const Minus_ = p_int(18);
-p_int const Slash_ = p_int(19);
-p_int const EqualsSlashEquals_ = p_int(20);
-p_int const LessThanEquals_ = p_int(21);
-p_int const LessThan_ = p_int(22);
-p_int const GreaterThanEquals_ = p_int(23);
-p_int const GreaterThan_ = p_int(24);
-p_int const StringLiteral_ = p_int(25);
-p_int const CodePointLiteral_ = p_int(26);
-p_int const Identifier_ = p_int(27);
-p_int const Number_ = p_int(28);
-p_int const NewKeyword_ = p_int(29);
-p_int const NotOperator_ = p_int(30);
-p_int const NullReservedWord_ = p_int(31);
-p_int const SelfKeyword_ = p_int(32);
-p_int const TrueKeyword_ = p_int(33);
-p_int const FalseKeyword_ = p_int(34);
-p_int const IdentifierName_ = p_int(35);
-p_int const GenericName_ = p_int(36);
-p_int const QualifiedName_ = p_int(37);
-p_int const PackageQualifiedName_ = p_int(38);
-p_int const MutableKeyword_ = p_int(39);
-p_int const OptionalType_ = p_int(40);
-p_int const PredefinedType_ = p_int(41);
-p_int const CodePoint_ = p_int(42);
-p_int const String_ = p_int(43);
-p_int const Int_ = p_int(44);
-p_int const Bool_ = p_int(45);
-p_int const Void_ = p_int(46);
-p_int const UnsignedInt_ = p_int(47);
-p_int const ParameterList_ = p_int(48);
-p_int const Parameter_ = p_int(49);
-p_int const SelfParameter_ = p_int(50);
-p_int const VarKeyword_ = p_int(51);
-p_int const MutableType_ = p_int(52);
-p_int const NewExpression_ = p_int(53);
-p_int const ArgumentList_ = p_int(54);
-p_int const NotExpression_ = p_int(55);
-p_int const ParenthesizedExpression_ = p_int(56);
-p_int const NoneLiteralExpression_ = p_int(57);
-p_int const SelfExpression_ = p_int(58);
-p_int const TrueLiteralExpression_ = p_int(59);
-p_int const FalseLiteralExpression_ = p_int(60);
-p_int const StringLiteralExpression_ = p_int(61);
-p_int const CodePointLiteralExpression_ = p_int(62);
-p_int const NumericLiteralExpression_ = p_int(63);
-p_int const AssignmentExpression_ = p_int(64);
-p_int const OrExpression_ = p_int(65);
-p_int const AndExpression_ = p_int(66);
-p_int const EqualExpression_ = p_int(67);
-p_int const NotEqualExpression_ = p_int(68);
-p_int const AndKeyword_ = p_int(69);
-p_int const OrKeyword_ = p_int(70);
-p_int const ComparisonExpression_ = p_int(71);
-p_int const AddExpression_ = p_int(72);
-p_int const SubtractExpression_ = p_int(73);
-p_int const InvocationExpression_ = p_int(74);
-p_int const MemberAccessExpression_ = p_int(75);
-p_int const ElementAccessExpression_ = p_int(76);
-p_int const NegateExpression_ = p_int(77);
-p_int const ReturnKeyword_ = p_int(78);
-p_int const ReturnStatement_ = p_int(79);
-p_int const LoopKeyword_ = p_int(80);
-p_int const LoopStatement_ = p_int(81);
-p_int const Block_ = p_int(82);
-p_int const WhileKeyword_ = p_int(83);
-p_int const WhileStatement_ = p_int(84);
-p_int const ForKeyword_ = p_int(85);
-p_int const ForStatement_ = p_int(86);
-p_int const LetKeyword_ = p_int(87);
-p_int const VariableDeclaration_ = p_int(88);
-p_int const LocalDeclarationStatement_ = p_int(89);
-p_int const InKeyword_ = p_int(90);
-p_int const DoKeyword_ = p_int(91);
-p_int const DoWhileStatement_ = p_int(92);
-p_int const IfKeyword_ = p_int(93);
-p_int const ElseKeyword_ = p_int(94);
-p_int const IfStatement_ = p_int(95);
-p_int const ElseClause_ = p_int(96);
-p_int const BreakKeyword_ = p_int(97);
-p_int const BreakStatement_ = p_int(98);
-p_int const ContinueKeyword_ = p_int(99);
-p_int const ContinueStatement_ = p_int(100);
-p_int const ExpressionStatement_ = p_int(101);
-p_int const PublicKeyword_ = p_int(102);
-p_int const ProtectedKeyword_ = p_int(103);
-p_int const InternalKeyword_ = p_int(104);
-p_int const PrivateKeyword_ = p_int(105);
-p_int const ConstructorDeclaration_ = p_int(106);
-p_int const FieldDeclaration_ = p_int(107);
-p_int const MethodDeclaration_ = p_int(108);
-p_int const GlobalDeclaration_ = p_int(109);
-p_int const ClassKeyword_ = p_int(110);
-p_int const ClassDeclaration_ = p_int(111);
-p_int const EnumKeyword_ = p_int(112);
-p_int const StructKeyword_ = p_int(113);
-p_int const EnumDeclaration_ = p_int(114);
-p_int const EnumMemberDeclaration_ = p_int(115);
-p_int const FunctionDeclaration_ = p_int(116);
-p_int const CompilationUnit_ = p_int(117);
-p_int const PackageNode_ = p_int(118);
-p_int const Percent_ = p_int(119);
-p_int const RemainderExpression_ = p_int(120);
-p_int const Pipe_ = p_int(121);
-p_int const MagnitudeExpression_ = p_int(122);
-p_int const Asterisk_ = p_int(123);
-p_int const MultiplyExpression_ = p_int(124);
-p_int const DivideExpression_ = p_int(125);
-p_int const NoneKeyword_ = p_int(126);
-p_int const StructDeclaration_ = p_int(127);
-p_int const ImmutableType_ = p_int(128);
-p_int const NamespaceDeclaration_ = p_int(129);
-p_int const Lexing_ = p_int(1);
-p_int const Parsing_ = p_int(2);
-p_int const Analysis_ = p_int(3);
-p_int const Info_ = p_int(1);
-p_int const Warning_ = p_int(2);
-p_int const RuntimeError_ = p_int(3);
-p_int const CompilationError_ = p_int(4);
-p_int const FatalCompilationError_ = p_int(5);
-p_int const NamespaceName_ = p_int(1);
-p_int const TypeName_ = p_int(2);
-p_int const FunctionName_ = p_int(3);
-p_int const TypeParameterName_ = p_int(4);
-p_int const VariableName_ = p_int(5);
-p_int const IdentifierSymbol_ = p_int(0);
-p_int const PackageSymbol_ = p_int(1);
-p_int const ReferenceType_ = p_int(1);
-p_int const ValueType_ = p_int(2);
-p_int const NamespaceType_ = p_int(3);
-p_int const TypeParameterType_ = p_int(4);
-p_int const FunctionType_ = p_int(5);
+i32 const Success_ = i32(0);
+i32 const UsageError_ = i32(64);
+i32 const DataError_ = i32(65);
+i32 const SkippedTokens_ = i32(1).op_negate();
+i32 const EndOfFileToken_ = i32(0);
+i32 const LeftBrace_ = i32(1);
+i32 const RightBrace_ = i32(2);
+i32 const LeftParen_ = i32(3);
+i32 const RightParen_ = i32(4);
+i32 const Semicolon_ = i32(5);
+i32 const Comma_ = i32(6);
+i32 const Dot_ = i32(7);
+i32 const Colon_ = i32(8);
+i32 const LeftBracket_ = i32(9);
+i32 const RightBracket_ = i32(10);
+i32 const Question_ = i32(11);
+i32 const EqualsEquals_ = i32(12);
+i32 const Equals_ = i32(13);
+i32 const PlusEquals_ = i32(14);
+i32 const Plus_ = i32(15);
+i32 const Arrow_ = i32(16);
+i32 const MinusEquals_ = i32(17);
+i32 const Minus_ = i32(18);
+i32 const Slash_ = i32(19);
+i32 const EqualsSlashEquals_ = i32(20);
+i32 const LessThanEquals_ = i32(21);
+i32 const LessThan_ = i32(22);
+i32 const GreaterThanEquals_ = i32(23);
+i32 const GreaterThan_ = i32(24);
+i32 const StringLiteral_ = i32(25);
+i32 const CodePointLiteral_ = i32(26);
+i32 const Identifier_ = i32(27);
+i32 const Number_ = i32(28);
+i32 const NewKeyword_ = i32(29);
+i32 const NotOperator_ = i32(30);
+i32 const NullReservedWord_ = i32(31);
+i32 const SelfKeyword_ = i32(32);
+i32 const TrueKeyword_ = i32(33);
+i32 const FalseKeyword_ = i32(34);
+i32 const IdentifierName_ = i32(35);
+i32 const GenericName_ = i32(36);
+i32 const QualifiedName_ = i32(37);
+i32 const PackageQualifiedName_ = i32(38);
+i32 const MutableKeyword_ = i32(39);
+i32 const OptionalType_ = i32(40);
+i32 const PredefinedType_ = i32(41);
+i32 const CodePoint_ = i32(42);
+i32 const String_ = i32(43);
+i32 const Int_ = i32(44);
+i32 const Bool_ = i32(45);
+i32 const Void_ = i32(46);
+i32 const UnsignedInt_ = i32(47);
+i32 const ParameterList_ = i32(48);
+i32 const Parameter_ = i32(49);
+i32 const SelfParameter_ = i32(50);
+i32 const VarKeyword_ = i32(51);
+i32 const MutableType_ = i32(52);
+i32 const NewExpression_ = i32(53);
+i32 const ArgumentList_ = i32(54);
+i32 const NotExpression_ = i32(55);
+i32 const ParenthesizedExpression_ = i32(56);
+i32 const NoneLiteralExpression_ = i32(57);
+i32 const SelfExpression_ = i32(58);
+i32 const TrueLiteralExpression_ = i32(59);
+i32 const FalseLiteralExpression_ = i32(60);
+i32 const StringLiteralExpression_ = i32(61);
+i32 const CodePointLiteralExpression_ = i32(62);
+i32 const NumericLiteralExpression_ = i32(63);
+i32 const AssignmentExpression_ = i32(64);
+i32 const OrExpression_ = i32(65);
+i32 const AndExpression_ = i32(66);
+i32 const EqualExpression_ = i32(67);
+i32 const NotEqualExpression_ = i32(68);
+i32 const AndKeyword_ = i32(69);
+i32 const OrKeyword_ = i32(70);
+i32 const ComparisonExpression_ = i32(71);
+i32 const AddExpression_ = i32(72);
+i32 const SubtractExpression_ = i32(73);
+i32 const InvocationExpression_ = i32(74);
+i32 const MemberAccessExpression_ = i32(75);
+i32 const ElementAccessExpression_ = i32(76);
+i32 const NegateExpression_ = i32(77);
+i32 const ReturnKeyword_ = i32(78);
+i32 const ReturnStatement_ = i32(79);
+i32 const LoopKeyword_ = i32(80);
+i32 const LoopStatement_ = i32(81);
+i32 const Block_ = i32(82);
+i32 const WhileKeyword_ = i32(83);
+i32 const WhileStatement_ = i32(84);
+i32 const ForKeyword_ = i32(85);
+i32 const ForStatement_ = i32(86);
+i32 const LetKeyword_ = i32(87);
+i32 const VariableDeclaration_ = i32(88);
+i32 const LocalDeclarationStatement_ = i32(89);
+i32 const InKeyword_ = i32(90);
+i32 const DoKeyword_ = i32(91);
+i32 const DoWhileStatement_ = i32(92);
+i32 const IfKeyword_ = i32(93);
+i32 const ElseKeyword_ = i32(94);
+i32 const IfStatement_ = i32(95);
+i32 const ElseClause_ = i32(96);
+i32 const BreakKeyword_ = i32(97);
+i32 const BreakStatement_ = i32(98);
+i32 const ContinueKeyword_ = i32(99);
+i32 const ContinueStatement_ = i32(100);
+i32 const ExpressionStatement_ = i32(101);
+i32 const PublicKeyword_ = i32(102);
+i32 const ProtectedKeyword_ = i32(103);
+i32 const InternalKeyword_ = i32(104);
+i32 const PrivateKeyword_ = i32(105);
+i32 const ConstructorDeclaration_ = i32(106);
+i32 const FieldDeclaration_ = i32(107);
+i32 const MethodDeclaration_ = i32(108);
+i32 const GlobalDeclaration_ = i32(109);
+i32 const ClassKeyword_ = i32(110);
+i32 const ClassDeclaration_ = i32(111);
+i32 const EnumKeyword_ = i32(112);
+i32 const StructKeyword_ = i32(113);
+i32 const EnumDeclaration_ = i32(114);
+i32 const EnumMemberDeclaration_ = i32(115);
+i32 const FunctionDeclaration_ = i32(116);
+i32 const CompilationUnit_ = i32(117);
+i32 const PackageNode_ = i32(118);
+i32 const Percent_ = i32(119);
+i32 const RemainderExpression_ = i32(120);
+i32 const Pipe_ = i32(121);
+i32 const MagnitudeExpression_ = i32(122);
+i32 const Asterisk_ = i32(123);
+i32 const MultiplyExpression_ = i32(124);
+i32 const DivideExpression_ = i32(125);
+i32 const NoneKeyword_ = i32(126);
+i32 const StructDeclaration_ = i32(127);
+i32 const ImmutableType_ = i32(128);
+i32 const NamespaceDeclaration_ = i32(129);
+i32 const Lexing_ = i32(1);
+i32 const Parsing_ = i32(2);
+i32 const Analysis_ = i32(3);
+i32 const Info_ = i32(1);
+i32 const Warning_ = i32(2);
+i32 const RuntimeError_ = i32(3);
+i32 const CompilationError_ = i32(4);
+i32 const FatalCompilationError_ = i32(5);
+i32 const NamespaceName_ = i32(1);
+i32 const TypeName_ = i32(2);
+i32 const FunctionName_ = i32(3);
+i32 const TypeParameterName_ = i32(4);
+i32 const VariableName_ = i32(5);
+i32 const IdentifierSymbol_ = i32(0);
+i32 const PackageSymbol_ = i32(1);
+i32 const ReferenceType_ = i32(1);
+i32 const ValueType_ = i32(2);
+i32 const NamespaceType_ = i32(3);
+i32 const TypeParameterType_ = i32(4);
+i32 const FunctionType_ = i32(5);
 
 // Definitions
 
@@ -786,30 +786,30 @@ auto has_errors_(::System_::Collections_::List_<::Diagnostic_ const *_Nonnull> c
 	return bit_false;
 }
 
-auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> p_int
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> i32
 {
-	if (cond(bit_op(bit_arg(equal_op(args_->op_magnitude(), p_int(1))) && bit_arg(equal_op(args_->op_Element(p_int(0)), p_string("--unit-test"))))))
+	if (cond(bit_op(bit_arg(equal_op(args_->op_magnitude(), i32(1))) && bit_arg(equal_op(args_->op_Element(i32(0)), p_string("--unit-test"))))))
 	{
 		run_unit_tests_(console_);
-		return p_int(0);
+		return i32(0);
 	}
 
 	::System_::Collections_::List_<p_string> *_Nonnull const sourceFilePaths_ = (new ::System_::Collections_::List_<p_string>())->construct();
 	::System_::Collections_::List_<p_string> *_Nonnull const resourceFilePaths_ = (new ::System_::Collections_::List_<p_string>())->construct();
 	p_string outputFilePath_ = p_string("");
 	bit verbose_ = bit_false;
-	p_int argType_ = p_int(0);
+	i32 argType_ = i32(0);
 	for (p_string const arg_ : *(args_))
 	{
-		if (cond(equal_op(argType_, p_int(0))))
+		if (cond(equal_op(argType_, i32(0))))
 		{
 			if (cond(equal_op(arg_, p_string("-r"))))
 			{
-				argType_ = p_int(1);
+				argType_ = i32(1);
 			}
 			else if (cond(equal_op(arg_, p_string("-o"))))
 			{
-				argType_ = p_int(2);
+				argType_ = i32(2);
 			}
 			else if (cond(bit_op(bit_arg(equal_op(arg_, p_string("-v"))) || bit_arg(equal_op(arg_, p_string("--verbose"))))))
 			{
@@ -820,15 +820,15 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 				sourceFilePaths_->Add_(arg_);
 			}
 		}
-		else if (cond(equal_op(argType_, p_int(1))))
+		else if (cond(equal_op(argType_, i32(1))))
 		{
 			resourceFilePaths_->Add_(arg_);
-			argType_ = p_int(0);
+			argType_ = i32(0);
 		}
-		else if (cond(equal_op(argType_, p_int(2))))
+		else if (cond(equal_op(argType_, i32(2))))
 		{
 			outputFilePath_ = arg_;
-			argType_ = p_int(0);
+			argType_ = i32(0);
 		}
 	}
 
@@ -837,14 +837,14 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 		console_->WriteLine_(p_string("Adamant Compiler v0.1.0"));
 	}
 
-	if (cond(bit_op(bit_arg(equal_op(sourceFilePaths_->op_magnitude(), p_int(0))) || bit_arg(equal_op(outputFilePath_, p_string(""))))))
+	if (cond(bit_op(bit_arg(equal_op(sourceFilePaths_->op_magnitude(), i32(0))) || bit_arg(equal_op(outputFilePath_, p_string(""))))))
 	{
 		console_->WriteLine_(p_string("Args: <Input File(s)> -o <OutputFile> -r <Resource File>"));
 		return UsageError_;
 	}
 
 	::System_::Collections_::List_<::Source_Text_ const *_Nonnull> *_Nonnull const resources_ = (new ::System_::Collections_::List_<::Source_Text_ const *_Nonnull>())->construct();
-	if (cond(resourceFilePaths_->op_magnitude()->op_greater_than(p_int(0))))
+	if (cond(resourceFilePaths_->op_magnitude()->op_greater_than(i32(0))))
 	{
 		if (cond(verbose_))
 		{
@@ -898,16 +898,16 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 	outputFile_->Write_(translated_);
 	outputFile_->Close_();
 	p_string outputDirPath_ = outputFilePath_;
-	p_int index_ = outputDirPath_.LastIndexOf_(p_code_point('/'));
-	if (cond(not_equal_op(index_, p_int(1).op_negate())))
+	i32 index_ = outputDirPath_.LastIndexOf_(p_code_point('/'));
+	if (cond(not_equal_op(index_, i32(1).op_negate())))
 	{
-		outputDirPath_ = outputDirPath_.Substring_(p_int(0), index_.op_add(p_int(1)));
+		outputDirPath_ = outputDirPath_.Substring_(i32(0), index_.op_add(i32(1)));
 	}
 
 	index_ = outputDirPath_.LastIndexOf_(p_code_point('\\'));
-	if (cond(not_equal_op(index_, p_int(1).op_negate())))
+	if (cond(not_equal_op(index_, i32(1).op_negate())))
 	{
-		outputDirPath_ = outputDirPath_.Substring_(p_int(0), index_.op_add(p_int(1)));
+		outputDirPath_ = outputDirPath_.Substring_(i32(0), index_.op_add(i32(1)));
 	}
 
 	if (cond(verbose_))
@@ -945,7 +945,7 @@ auto run_unit_tests_(::System_::Console_::Console_ *_Nonnull const console_) -> 
 	unit_test_Symbol_();
 }
 
-auto ::Line_Info_::construct(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<p_int> const *_Nonnull const lineStarts_) -> ::Line_Info_*
+auto ::Line_Info_::construct(::Source_Text_ const *_Nonnull const source_, ::System_::Collections_::List_<i32> const *_Nonnull const lineStarts_) -> ::Line_Info_*
 {
 	::Line_Info_* self = this;
 	self->source_ = source_;
@@ -953,46 +953,46 @@ auto ::Line_Info_::construct(::Source_Text_ const *_Nonnull const source_, ::Sys
 	return self;
 }
 
-auto ::Line_Info_::Count_() const -> p_int
+auto ::Line_Info_::Count_() const -> i32
 {
 	auto self = this;
 	return lineStarts_->op_magnitude();
 }
 
-auto ::Line_Info_::get_(p_int const lineNumber_) const -> ::Text_Line_ const *_Nonnull
+auto ::Line_Info_::get_(i32 const lineNumber_) const -> ::Text_Line_ const *_Nonnull
 {
 	auto self = this;
-	p_int const index_ = lineNumber_.op_subtract(p_int(1));
-	p_int const start_ = lineStarts_->op_Element(index_);
-	if (cond(equal_op(index_, lineStarts_->op_magnitude()->op_subtract(p_int(1)))))
+	i32 const index_ = lineNumber_.op_subtract(i32(1));
+	i32 const start_ = lineStarts_->op_Element(index_);
+	if (cond(equal_op(index_, lineStarts_->op_magnitude()->op_subtract(i32(1)))))
 	{
 		return (new ::Text_Line_())->construct_spanning(source_, start_, source_->ByteLength_());
 	}
 
-	p_int const end_ = lineStarts_->op_Element(index_.op_add(p_int(1)));
+	i32 const end_ = lineStarts_->op_Element(index_.op_add(i32(1)));
 	return (new ::Text_Line_())->construct_spanning(source_, start_, end_);
 }
 
-auto ::Line_Info_::LineNumber_(p_int const offset_) const -> p_int
+auto ::Line_Info_::LineNumber_(i32 const offset_) const -> i32
 {
 	auto self = this;
-	p_int left_ = p_int(0);
-	p_int right_ = lineStarts_->op_magnitude()->op_subtract(p_int(1));
+	i32 left_ = i32(0);
+	i32 right_ = lineStarts_->op_magnitude()->op_subtract(i32(1));
 	while (cond(left_.op_less_than_or_equal(right_)))
 	{
-		p_int const mid_ = left_.op_add(right_.op_subtract(left_)->op_divide(p_int(2)));
-		p_int const midLineStart_ = lineStarts_->op_Element(mid_);
+		i32 const mid_ = left_.op_add(right_.op_subtract(left_)->op_divide(i32(2)));
+		i32 const midLineStart_ = lineStarts_->op_Element(mid_);
 		if (cond(midLineStart_.op_less_than(offset_)))
 		{
-			left_ = mid_.op_add(p_int(1));
+			left_ = mid_.op_add(i32(1));
 		}
 		else if (cond(midLineStart_.op_greater_than(offset_)))
 		{
-			right_ = mid_.op_subtract(p_int(1));
+			right_ = mid_.op_subtract(i32(1));
 		}
 		else
 		{
-			return mid_.op_add(p_int(1));
+			return mid_.op_add(i32(1));
 		}
 	}
 
@@ -1005,16 +1005,16 @@ auto ::Source_Text_::construct(p_string const package_, p_string const path_, p_
 	Package_ = package_;
 	Path_ = path_;
 	p_string name_ = path_;
-	p_int index_ = name_.LastIndexOf_(p_code_point('/'));
-	if (cond(not_equal_op(index_, p_int(1).op_negate())))
+	i32 index_ = name_.LastIndexOf_(p_code_point('/'));
+	if (cond(not_equal_op(index_, i32(1).op_negate())))
 	{
-		name_ = name_.Substring_(index_.op_add(p_int(1)));
+		name_ = name_.Substring_(index_.op_add(i32(1)));
 	}
 
 	index_ = name_.LastIndexOf_(p_code_point('\\'));
-	if (cond(not_equal_op(index_, p_int(1).op_negate())))
+	if (cond(not_equal_op(index_, i32(1).op_negate())))
 	{
-		name_ = name_.Substring_(index_.op_add(p_int(1)));
+		name_ = name_.Substring_(index_.op_add(i32(1)));
 	}
 
 	self->name_ = name_;
@@ -1023,17 +1023,17 @@ auto ::Source_Text_::construct(p_string const package_, p_string const path_, p_
 	return self;
 }
 
-auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int> const *_Nonnull
+auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<i32> const *_Nonnull
 {
 	auto self = this;
-	p_int const length_ = ByteLength_();
-	::System_::Collections_::List_<p_int> *_Nonnull const lineStarts_ = (new ::System_::Collections_::List_<p_int>())->construct();
-	lineStarts_->Add_(p_int(0));
-	p_int position_ = p_int(0);
+	i32 const length_ = ByteLength_();
+	::System_::Collections_::List_<i32> *_Nonnull const lineStarts_ = (new ::System_::Collections_::List_<i32>())->construct();
+	lineStarts_->Add_(i32(0));
+	i32 position_ = i32(0);
 	while (cond(position_.op_less_than(length_)))
 	{
 		p_code_point const c_ = Text_.op_Element(position_);
-		position_.op_add_assign(p_int(1));
+		position_.op_add_assign(i32(1));
 		if (cond(bit_op(bit_arg(c_.op_greater_than(p_code_point('\r'))) && bit_arg(c_.op_less_than_or_equal(p_code_point('\x7F'))))))
 		{
 			continue;
@@ -1043,7 +1043,7 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 		{
 			if (cond(bit_op(bit_arg(position_.op_less_than(length_)) && bit_arg(equal_op(Text_.op_Element(position_), p_code_point('\n'))))))
 			{
-				position_.op_add_assign(p_int(1));
+				position_.op_add_assign(i32(1));
 			}
 		}
 		else if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(c_, p_code_point('\n'))) || bit_arg(equal_op(c_, p_code_point('\x0B'))))) || bit_arg(equal_op(c_, p_code_point('\f'))))) || bit_arg(equal_op(c_, p_code_point('\x85'))))))
@@ -1060,7 +1060,7 @@ auto ::Source_Text_::LineStarts_() const -> ::System_::Collections_::List_<p_int
 	return lineStarts_;
 }
 
-auto ::Source_Text_::ByteLength_() const -> p_int
+auto ::Source_Text_::ByteLength_() const -> i32
 {
 	auto self = this;
 	return Text_.ByteLength_();
@@ -1069,25 +1069,25 @@ auto ::Source_Text_::ByteLength_() const -> p_int
 auto ::Source_Text_::PositionOfStart_(::Text_Span_ const *_Nonnull const span_) const -> ::Text_Position_ const *_Nonnull
 {
 	auto self = this;
-	p_int const offset_ = span_->start_;
-	p_int const lineNumber_ = Lines_->LineNumber_(offset_);
-	p_int const lineStart_ = Lines_->get_(lineNumber_)->start_;
-	p_int column_ = offset_.op_subtract(lineStart_)->op_add(p_int(1));
-	p_int i_ = lineStart_;
+	i32 const offset_ = span_->start_;
+	i32 const lineNumber_ = Lines_->LineNumber_(offset_);
+	i32 const lineStart_ = Lines_->get_(lineNumber_)->start_;
+	i32 column_ = offset_.op_subtract(lineStart_)->op_add(i32(1));
+	i32 i_ = lineStart_;
 	while (cond(i_.op_less_than(offset_)))
 	{
 		if (cond(equal_op(Text_.op_Element(i_), p_code_point('\t'))))
 		{
-			column_.op_add_assign(p_int(3));
+			column_.op_add_assign(i32(3));
 		}
 
-		i_.op_add_assign(p_int(1));
+		i_.op_add_assign(i32(1));
 	}
 
 	return (new ::Text_Position_())->construct(offset_, lineNumber_, column_);
 }
 
-auto ::Text_Line_::construct(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const length_) -> ::Text_Line_*
+auto ::Text_Line_::construct(::Source_Text_ const *_Nonnull const source_, i32 const start_, i32 const length_) -> ::Text_Line_*
 {
 	::Text_Line_* self = this;
 	self->source_ = source_;
@@ -1096,7 +1096,7 @@ auto ::Text_Line_::construct(::Source_Text_ const *_Nonnull const source_, p_int
 	return self;
 }
 
-auto ::Text_Line_::construct_spanning(::Source_Text_ const *_Nonnull const source_, p_int const start_, p_int const end_) -> ::Text_Line_*
+auto ::Text_Line_::construct_spanning(::Source_Text_ const *_Nonnull const source_, i32 const start_, i32 const end_) -> ::Text_Line_*
 {
 	::Text_Line_* self = this;
 	self->source_ = source_;
@@ -1105,13 +1105,13 @@ auto ::Text_Line_::construct_spanning(::Source_Text_ const *_Nonnull const sourc
 	return self;
 }
 
-auto ::Text_Line_::End_() const -> p_int
+auto ::Text_Line_::End_() const -> i32
 {
 	auto self = this;
 	return start_.op_add(byte_length_);
 }
 
-auto ::Text_Position_::construct(p_int const offset_, p_int const line_, p_int const column_) -> ::Text_Position_*
+auto ::Text_Position_::construct(i32 const offset_, i32 const line_, i32 const column_) -> ::Text_Position_*
 {
 	::Text_Position_* self = this;
 	Offset_ = offset_;
@@ -1127,13 +1127,13 @@ auto unit_test_Text_Position_() -> void
 
 auto Text_Position_retains_given_offeset_line_and_column_() -> void
 {
-	::Text_Position_ const *_Nonnull const position_ = (new ::Text_Position_())->construct(p_int(23), p_int(2), p_int(5));
-	assert_(equal_op(position_->Offset_, p_int(23)), p_string(""));
-	assert_(equal_op(position_->Line_, p_int(2)), p_string(""));
-	assert_(equal_op(position_->Column_, p_int(5)), p_string(""));
+	::Text_Position_ const *_Nonnull const position_ = (new ::Text_Position_())->construct(i32(23), i32(2), i32(5));
+	assert_(equal_op(position_->Offset_, i32(23)), p_string(""));
+	assert_(equal_op(position_->Line_, i32(2)), p_string(""));
+	assert_(equal_op(position_->Column_, i32(5)), p_string(""));
 }
 
-auto ::Text_Span_::construct(p_int const start_, p_int const length_) -> ::Text_Span_*
+auto ::Text_Span_::construct(i32 const start_, i32 const length_) -> ::Text_Span_*
 {
 	::Text_Span_* self = this;
 	self->start_ = start_;
@@ -1141,7 +1141,7 @@ auto ::Text_Span_::construct(p_int const start_, p_int const length_) -> ::Text_
 	return self;
 }
 
-auto ::Text_Span_::End_() const -> p_int
+auto ::Text_Span_::End_() const -> i32
 {
 	auto self = this;
 	return start_.op_add(byte_length_);
@@ -1241,7 +1241,7 @@ auto ::Source_File_Builder_::BeginBlock_() -> void
 auto ::Source_File_Builder_::EndBlock_() -> void
 {
 	auto self = this;
-	indent_->Remove_(p_int(0), p_int(1));
+	indent_->Remove_(i32(0), i32(1));
 	WriteLine_(p_string("}"));
 	afterBlock_ = bit_true;
 }
@@ -1249,11 +1249,11 @@ auto ::Source_File_Builder_::EndBlock_() -> void
 auto ::Source_File_Builder_::EndBlockWithSemicolon_() -> void
 {
 	auto self = this;
-	indent_->Remove_(p_int(0), p_int(1));
+	indent_->Remove_(i32(0), i32(1));
 	WriteLine_(p_string("};"));
 }
 
-auto ::Source_File_Builder_::byte_length_() const -> p_int
+auto ::Source_File_Builder_::byte_length_() const -> i32
 {
 	auto self = this;
 	return code_->byte_length_();
@@ -1328,9 +1328,9 @@ auto ::Primitives_Package_Builder_::build_() const -> ::Package_ const *_Nonnull
 	::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>())->construct();
 	::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_ = (new ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull>())->construct();
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const primitive_symbols_ = build_primitive_symbols_(name_);
-	assert_(primitive_symbols_->op_magnitude()->op_greater_than(p_int(0)), p_string("|primitive_symbols|=").op_add(primitive_symbols_->op_magnitude()));
+	assert_(primitive_symbols_->op_magnitude()->op_greater_than(i32(0)), p_string("|primitive_symbols|=").op_add(primitive_symbols_->op_magnitude()));
 	::Symbol_ const *_Nonnull const package_symbol_ = (new ::Symbol_())->construct_package(name_->unqualified_, primitive_symbols_);
-	assert_(package_symbol_->children_->op_magnitude()->op_greater_than(p_int(0)), p_string("|package_symbol.children|=").op_add(package_symbol_->children_->op_magnitude()));
+	assert_(package_symbol_->children_->op_magnitude()->op_greater_than(i32(0)), p_string("|package_symbol.children|=").op_add(package_symbol_->children_->op_magnitude()));
 	return (new ::Package_())->construct(name_, references_, compilation_units_, package_symbol_);
 }
 
@@ -1358,10 +1358,10 @@ auto ::Primitives_Package_Builder_::build_primitive_symbols_(::Package_Name_ con
 	symbols_->Add_(build_primitive_(p_string("float32"), global_namespace_));
 	symbols_->Add_(build_primitive_(p_string("float"), global_namespace_));
 	symbols_->Add_(build_primitive_(p_string("float128"), global_namespace_));
-	build_fixed_point_primitives_(symbols_, p_int(8), global_namespace_);
-	build_fixed_point_primitives_(symbols_, p_int(16), global_namespace_);
-	build_fixed_point_primitives_(symbols_, p_int(32), global_namespace_);
-	build_fixed_point_primitives_(symbols_, p_int(64), global_namespace_);
+	build_fixed_point_primitives_(symbols_, i32(8), global_namespace_);
+	build_fixed_point_primitives_(symbols_, i32(16), global_namespace_);
+	build_fixed_point_primitives_(symbols_, i32(32), global_namespace_);
+	build_fixed_point_primitives_(symbols_, i32(64), global_namespace_);
 	symbols_->Add_(build_primitive_(p_string("decimal32"), global_namespace_));
 	symbols_->Add_(build_primitive_(p_string("decimal"), global_namespace_));
 	symbols_->Add_(build_primitive_(p_string("decimal128"), global_namespace_));
@@ -1400,7 +1400,7 @@ auto ::Primitives_Package_Builder_::build_primitive_(p_string const name_, ::Nam
 	return (new ::Symbol_())->construct_declaring(type_, declarations_, children_);
 }
 
-auto ::Primitives_Package_Builder_::build_fixed_point_primitives_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, p_int const bits_, ::Name_ const *_Nonnull const namespace_) -> void
+auto ::Primitives_Package_Builder_::build_fixed_point_primitives_(::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_, i32 const bits_, ::Name_ const *_Nonnull const namespace_) -> void
 {
 }
 
@@ -1424,8 +1424,8 @@ auto Package_name_is_dollar_primitives_() -> void
 auto Package_has_no_references_or_compilation_units_() -> void
 {
 	::Package_ const *_Nonnull const package_ = (new ::Primitives_Package_Builder_())->construct()->build_();
-	assert_(equal_op(package_->references_->op_magnitude(), p_int(0)), p_string(""));
-	assert_(equal_op(package_->compilation_units_->op_magnitude(), p_int(0)), p_string(""));
+	assert_(equal_op(package_->references_->op_magnitude(), i32(0)), p_string(""));
+	assert_(equal_op(package_->compilation_units_->op_magnitude(), i32(0)), p_string(""));
 }
 
 auto Package_symbol_has_package_name_() -> void
@@ -1439,25 +1439,25 @@ auto Package_symbol_has_package_name_() -> void
 auto Package_symbol_has_children_() -> void
 {
 	::Package_ const *_Nonnull const package_ = (new ::Primitives_Package_Builder_())->construct()->build_();
-	assert_(package_->symbol_->children_->op_magnitude()->op_greater_than(p_int(0)), p_string(""));
+	assert_(package_->symbol_->children_->op_magnitude()->op_greater_than(i32(0)), p_string(""));
 }
 
 auto Package_contains_the_string_type_() -> void
 {
 	::Package_ const *_Nonnull const package_ = (new ::Primitives_Package_Builder_())->construct()->build_();
 	::Symbol_ const *_Nonnull const string_symbol_ = package_->symbol_->get_(p_string("string"), IdentifierSymbol_);
-	assert_(not_equal_op(string_symbol_, p_none), p_string(""));
+	assert_(not_equal_op(string_symbol_, none), p_string(""));
 }
 
 auto Package_contains_optional_type_() -> void
 {
 	::Package_ const *_Nonnull const package_ = (new ::Primitives_Package_Builder_())->construct()->build_();
 	::Symbol_ const *_Nullable const adamant_symbol_ = package_->symbol_->get_(p_string("adamant"), IdentifierSymbol_);
-	assert_(not_equal_op(adamant_symbol_, p_none), p_string(""));
+	assert_(not_equal_op(adamant_symbol_, none), p_string(""));
 	::Symbol_ const *_Nullable const langauge_symbol_ = adamant_symbol_->get_(p_string("language"), IdentifierSymbol_);
-	assert_(not_equal_op(langauge_symbol_, p_none), p_string(""));
+	assert_(not_equal_op(langauge_symbol_, none), p_string(""));
 	::Symbol_ const *_Nullable const optional_symbol_ = langauge_symbol_->get_(p_string("optional"), IdentifierSymbol_);
-	assert_(not_equal_op(optional_symbol_, p_none), p_string(""));
+	assert_(not_equal_op(optional_symbol_, none), p_string(""));
 }
 
 auto ::Runtime_Library_Package_Builder_::build_() const -> ::Package_ const *_Nonnull
@@ -1467,9 +1467,9 @@ auto ::Runtime_Library_Package_Builder_::build_() const -> ::Package_ const *_No
 	::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>())->construct();
 	::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> const *_Nonnull const compilation_units_ = (new ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull>())->construct();
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const symbols_ = build_symbols_(name_);
-	assert_(symbols_->op_magnitude()->op_greater_than(p_int(0)), p_string("|symbols|=").op_add(symbols_->op_magnitude()));
+	assert_(symbols_->op_magnitude()->op_greater_than(i32(0)), p_string("|symbols|=").op_add(symbols_->op_magnitude()));
 	::Symbol_ const *_Nonnull const package_symbol_ = (new ::Symbol_())->construct_package(name_->unqualified_, symbols_);
-	assert_(package_symbol_->children_->op_magnitude()->op_greater_than(p_int(0)), p_string("|package_symbol.children|=").op_add(package_symbol_->children_->op_magnitude()));
+	assert_(package_symbol_->children_->op_magnitude()->op_greater_than(i32(0)), p_string("|package_symbol.children|=").op_add(package_symbol_->children_->op_magnitude()));
 	return (new ::Package_())->construct(name_, references_, compilation_units_, package_symbol_);
 }
 
@@ -1570,14 +1570,14 @@ auto unit_test_Runtime_Library_Package_Builder_() -> void
 auto Runtime_Library_Package_contains_System_package_() -> void
 {
 	::Package_ const *_Nonnull const package_ = (new ::Runtime_Library_Package_Builder_())->construct()->build_();
-	assert_(not_equal_op(package_->symbol_->get_(p_string("System"), IdentifierSymbol_), p_none), p_string(""));
+	assert_(not_equal_op(package_->symbol_->get_(p_string("System"), IdentifierSymbol_), none), p_string(""));
 }
 
 auto System_namespace_contains_Console_namespace_() -> void
 {
 	::Package_ const *_Nonnull const package_ = (new ::Runtime_Library_Package_Builder_())->construct()->build_();
 	::Symbol_ const *_Nonnull const system_namespace_ = package_->symbol_->get_(p_string("System"), IdentifierSymbol_);
-	assert_(not_equal_op(system_namespace_->get_(p_string("Console"), IdentifierSymbol_), p_none), p_string(""));
+	assert_(not_equal_op(system_namespace_->get_(p_string("Console"), IdentifierSymbol_), none), p_string(""));
 }
 
 auto Console_namespace_contains_Console_class_() -> void
@@ -1585,14 +1585,14 @@ auto Console_namespace_contains_Console_class_() -> void
 	::Package_ const *_Nonnull const package_ = (new ::Runtime_Library_Package_Builder_())->construct()->build_();
 	::Symbol_ const *_Nonnull const system_namespace_ = package_->symbol_->get_(p_string("System"), IdentifierSymbol_);
 	::Symbol_ const *_Nonnull const console_namespace_ = system_namespace_->get_(p_string("Console"), IdentifierSymbol_);
-	assert_(not_equal_op(console_namespace_->get_(p_string("Console"), IdentifierSymbol_), p_none), p_string(""));
+	assert_(not_equal_op(console_namespace_->get_(p_string("Console"), IdentifierSymbol_), none), p_string(""));
 }
 
 auto System_namespace_contains_Collections_namespace_() -> void
 {
 	::Package_ const *_Nonnull const package_ = (new ::Runtime_Library_Package_Builder_())->construct()->build_();
 	::Symbol_ const *_Nonnull const system_namespace_ = package_->symbol_->get_(p_string("System"), IdentifierSymbol_);
-	assert_(not_equal_op(system_namespace_->get_(p_string("Collections"), IdentifierSymbol_), p_none), p_string(""));
+	assert_(not_equal_op(system_namespace_->get_(p_string("Collections"), IdentifierSymbol_), none), p_string(""));
 }
 
 auto Collections_namespace_contains_List_class_() -> void
@@ -1600,7 +1600,7 @@ auto Collections_namespace_contains_List_class_() -> void
 	::Package_ const *_Nonnull const package_ = (new ::Runtime_Library_Package_Builder_())->construct()->build_();
 	::Symbol_ const *_Nonnull const system_namespace_ = package_->symbol_->get_(p_string("System"), IdentifierSymbol_);
 	::Symbol_ const *_Nonnull const console_namespace_ = system_namespace_->get_(p_string("Collections"), IdentifierSymbol_);
-	assert_(not_equal_op(console_namespace_->get_(p_string("List"), IdentifierSymbol_), p_none), p_string(""));
+	assert_(not_equal_op(console_namespace_->get_(p_string("List"), IdentifierSymbol_), none), p_string(""));
 }
 
 auto ::Semantic_Analyzer_::analyze_(::Syntax_Node_ const *_Nonnull const package_syntax_) -> ::Package_ const *_Nonnull
@@ -1625,7 +1625,7 @@ auto ::Semantic_Analyzer_::analyze_(::Syntax_Node_ const *_Nonnull const package
 auto ::Semantic_Node_::construct_token(::Syntax_Node_ const *_Nonnull const syntax_) -> ::Semantic_Node_*
 {
 	::Semantic_Node_* self = this;
-	assert_(not_equal_op(syntax_, p_none), p_string(""));
+	assert_(not_equal_op(syntax_, none), p_string(""));
 	self->syntax_ = syntax_;
 	self->kind_ = syntax_->kind_;
 	self->is_missing_ = syntax_->is_missing_;
@@ -1634,17 +1634,17 @@ auto ::Semantic_Node_::construct_token(::Syntax_Node_ const *_Nonnull const synt
 	self->byte_length_ = syntax_->byte_length_;
 	self->children_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
 	self->node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
-	self->of_type_ = p_none;
-	self->converted_type_ = p_none;
-	self->declares_type_ = p_none;
-	self->referenced_type_ = p_none;
+	self->of_type_ = none;
+	self->converted_type_ = none;
+	self->declares_type_ = none;
+	self->referenced_type_ = none;
 	return self;
 }
 
 auto ::Semantic_Node_::construct_concrete(::Syntax_Node_ const *_Nonnull const syntax_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Semantic_Node_*
 {
 	::Semantic_Node_* self = this;
-	assert_(not_equal_op(syntax_, p_none), p_string(""));
+	assert_(not_equal_op(syntax_, none), p_string(""));
 	self->syntax_ = syntax_;
 	self->kind_ = syntax_->kind_;
 	self->is_missing_ = syntax_->is_missing_;
@@ -1653,18 +1653,18 @@ auto ::Semantic_Node_::construct_concrete(::Syntax_Node_ const *_Nonnull const s
 	self->byte_length_ = syntax_->byte_length_;
 	self->children_ = children_;
 	self->node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
-	self->of_type_ = p_none;
-	self->converted_type_ = p_none;
-	self->declares_type_ = p_none;
-	self->referenced_type_ = p_none;
+	self->of_type_ = none;
+	self->converted_type_ = none;
+	self->declares_type_ = none;
+	self->referenced_type_ = none;
 	return self;
 }
 
 auto ::Semantic_Node_::construct_of_type(::Type_ const *_Nonnull const of_type_, ::Syntax_Node_ const *_Nonnull const syntax_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Semantic_Node_*
 {
 	::Semantic_Node_* self = this;
-	assert_(not_equal_op(of_type_, p_none), p_string(""));
-	assert_(not_equal_op(syntax_, p_none), p_string(""));
+	assert_(not_equal_op(of_type_, none), p_string(""));
+	assert_(not_equal_op(syntax_, none), p_string(""));
 	self->syntax_ = syntax_;
 	self->kind_ = syntax_->kind_;
 	self->is_missing_ = syntax_->is_missing_;
@@ -1675,16 +1675,16 @@ auto ::Semantic_Node_::construct_of_type(::Type_ const *_Nonnull const of_type_,
 	self->node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
 	self->of_type_ = of_type_;
 	self->converted_type_ = of_type_;
-	self->declares_type_ = p_none;
-	self->referenced_type_ = p_none;
+	self->declares_type_ = none;
+	self->referenced_type_ = none;
 	return self;
 }
 
 auto ::Semantic_Node_::construct_referencing_type(::Type_ const *_Nonnull const type_, ::Syntax_Node_ const *_Nonnull const syntax_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Semantic_Node_*
 {
 	::Semantic_Node_* self = this;
-	assert_(not_equal_op(type_, p_none), p_string(""));
-	assert_(not_equal_op(syntax_, p_none), p_string(""));
+	assert_(not_equal_op(type_, none), p_string(""));
+	assert_(not_equal_op(syntax_, none), p_string(""));
 	self->syntax_ = syntax_;
 	self->kind_ = syntax_->kind_;
 	self->is_missing_ = syntax_->is_missing_;
@@ -1693,9 +1693,9 @@ auto ::Semantic_Node_::construct_referencing_type(::Type_ const *_Nonnull const 
 	self->byte_length_ = syntax_->byte_length_;
 	self->children_ = children_;
 	self->node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
-	self->of_type_ = p_none;
-	self->converted_type_ = p_none;
-	self->declares_type_ = p_none;
+	self->of_type_ = none;
+	self->converted_type_ = none;
+	self->declares_type_ = none;
 	self->referenced_type_ = type_;
 	return self;
 }
@@ -1709,7 +1709,7 @@ auto ::Semantic_Node_::get_text_span_() const -> ::Text_Span_ const *_Nonnull
 auto ::Semantic_Node_::get_text_() const -> p_string
 {
 	auto self = this;
-	if (cond(equal_op(source_, p_none)))
+	if (cond(equal_op(source_, none)))
 	{
 		return p_string("$No Source$");
 	}
@@ -1717,7 +1717,7 @@ auto ::Semantic_Node_::get_text_() const -> p_string
 	return source_->Text_->Substring_(start_, byte_length_);
 }
 
-auto ::Semantic_Node_::first_child_(p_int const kind_) const -> ::Semantic_Node_ const *_Nullable
+auto ::Semantic_Node_::first_child_(i32 const kind_) const -> ::Semantic_Node_ const *_Nullable
 {
 	auto self = this;
 	for (::Semantic_Node_ const *_Nonnull const child_ : *(children_))
@@ -1728,10 +1728,10 @@ auto ::Semantic_Node_::first_child_(p_int const kind_) const -> ::Semantic_Node_
 		}
 	}
 
-	return p_none;
+	return none;
 }
 
-auto ::Semantic_Node_::children_of_kind_(p_int const kind_) const -> ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull
+auto ::Semantic_Node_::children_of_kind_(i32 const kind_) const -> ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
 	::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
@@ -1802,10 +1802,10 @@ auto ::Semantic_Node_::access_modifier_() const -> ::Semantic_Node_ const *_Null
 		}
 	}
 
-	return p_none;
+	return none;
 }
 
-auto ::Semantic_Node_::has_child_(p_int const kind_) const -> bit
+auto ::Semantic_Node_::has_child_(i32 const kind_) const -> bit
 {
 	auto self = this;
 	for (::Semantic_Node_ const *_Nonnull const child_ : *(children_))
@@ -1860,7 +1860,7 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const packa
 {
 	auto self = this;
 	assert_(equal_op(package_syntax_->kind_, PackageNode_), p_string("package_syntax.kind=").op_add(package_syntax_->kind_));
-	assert_(not_equal_op(name_table_->any_package_->lookup_special_(p_string("string")), p_none), p_string("name_table.any_package.name=").op_add(name_table_->any_package_->name_->full_()));
+	assert_(not_equal_op(name_table_->any_package_->lookup_special_(p_string("string")), none), p_string("name_table.any_package.name=").op_add(name_table_->any_package_->name_->full_()));
 	::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull> *_Nonnull const compilation_units_ = (new ::System_::Collections_::List_<::Compilation_Unit_ const *_Nonnull>())->construct();
 	for (::Syntax_Node_ const *_Nonnull const compilation_unit_syntax_ : *(package_syntax_->children_))
 	{
@@ -1874,7 +1874,7 @@ auto ::Semantic_Tree_Builder_::build_compilation_unit_(::Syntax_Node_ const *_No
 {
 	auto self = this;
 	assert_(equal_op(compilation_unit_syntax_->kind_, CompilationUnit_), p_string("compilation_unit_syntax.kind=").op_add(compilation_unit_syntax_->kind_));
-	::Name_Subtable_ const *_Nonnull const scope_ = p_none;
+	::Name_Subtable_ const *_Nonnull const scope_ = none;
 	::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull const declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
 	for (::Syntax_Node_ const *_Nonnull const declaration_syntax_ : *(compilation_unit_syntax_->children_))
 	{
@@ -1894,15 +1894,15 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const synta
 		::Syntax_Node_ const *_Nonnull const function_name_ = syntax_->first_child_(Identifier_);
 		children_->add_(build_(function_name_, name_table_, scope_));
 		::Name_Subtable_ *_Nonnull const function_scope_ = scope_->find_(function_name_->get_text_());
-		assert_(not_equal_op(function_scope_, p_none), p_string("function_name.get_text()=").op_add(function_name_->get_text_()));
+		assert_(not_equal_op(function_scope_, none), p_string("function_name.get_text()=").op_add(function_name_->get_text_()));
 		::Syntax_Node_ const *_Nonnull const parameters_ = syntax_->first_child_(ParameterList_);
 		children_->add_(build_parameters_(parameters_, name_table_, function_scope_));
-		::Syntax_Node_ const *_Nonnull const return_type_ = syntax_->children_->op_Element(p_int(4));
+		::Syntax_Node_ const *_Nonnull const return_type_ = syntax_->children_->op_Element(i32(4));
 		children_->add_(build_type_name_(return_type_, name_table_, scope_));
 		::Type_ const *_Nonnull const function_type_ = (new ::Type_())->construct(FunctionType_, function_scope_->name_, bit_false);
 		function_scope_->bind_type_(function_type_);
 		::Syntax_Node_ const *_Nonnull const body_ = syntax_->first_child_(Block_);
-		if (cond(not_equal_op(body_, p_none)))
+		if (cond(not_equal_op(body_, none)))
 		{
 			children_->add_(build_(body_, name_table_, function_scope_));
 		}
@@ -1914,7 +1914,7 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const synta
 		::Syntax_Node_ const *_Nonnull const type_name_ = syntax_->first_child_(Identifier_);
 		children_->add_(build_(type_name_, name_table_, scope_));
 		::Name_Subtable_ const *_Nonnull const type_scope_ = scope_->find_(type_name_->get_text_());
-		assert_(not_equal_op(type_scope_, p_none), p_string("type_name.get_text()=").op_add(type_name_->get_text_()));
+		assert_(not_equal_op(type_scope_, none), p_string("type_name.get_text()=").op_add(type_name_->get_text_()));
 		for (::Syntax_Node_ const *_Nonnull const member_ : *(syntax_->members_()))
 		{
 			children_->add_(build_(member_, name_table_, type_scope_));
@@ -1927,18 +1927,18 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const synta
 		children_->add_(build_(syntax_->access_modifier_(), name_table_, scope_));
 		p_string full_name_ = p_string("new");
 		::Syntax_Node_ const *_Nullable const constructor_name_ = syntax_->first_child_(Identifier_);
-		if (cond(not_equal_op(constructor_name_, p_none)))
+		if (cond(not_equal_op(constructor_name_, none)))
 		{
 			full_name_ = p_string("new_").op_add(constructor_name_->get_text_());
 			children_->add_((new ::Semantic_Node_())->construct_token(constructor_name_));
 		}
 
 		::Name_Subtable_ const *_Nonnull const constructor_scope_ = scope_->find_special_(full_name_);
-		assert_(not_equal_op(constructor_scope_, p_none), p_string("full_name=").op_add(full_name_));
+		assert_(not_equal_op(constructor_scope_, none), p_string("full_name=").op_add(full_name_));
 		::Syntax_Node_ const *_Nonnull const parameters_ = syntax_->first_child_(ParameterList_);
 		children_->add_(build_parameters_(parameters_, name_table_, constructor_scope_));
 		::Syntax_Node_ const *_Nonnull const body_ = syntax_->first_child_(Block_);
-		if (cond(not_equal_op(body_, p_none)))
+		if (cond(not_equal_op(body_, none)))
 		{
 			children_->add_(build_(body_, name_table_, constructor_scope_));
 		}
@@ -1948,7 +1948,7 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const synta
 	else if (cond(equal_op(syntax_->kind_, IdentifierName_)))
 	{
 		::Name_Subtable_ const *_Nonnull const name_scope_ = scope_->lookup_(syntax_->get_text_());
-		if (cond(equal_op(name_scope_, p_none)))
+		if (cond(equal_op(name_scope_, none)))
 		{
 			::Semantic_Node_ *_Nonnull const node_ = (new ::Semantic_Node_())->construct_token(syntax_);
 			if (cond(bit_not(syntax_->is_missing_)))
@@ -1960,8 +1960,8 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const synta
 		}
 		else
 		{
-			p_int const place_ = syntax_->start_;
-			if (cond(equal_op(name_scope_->type_, p_none)))
+			i32 const place_ = syntax_->start_;
+			if (cond(equal_op(name_scope_->type_, none)))
 			{
 				return (new ::Semantic_Node_())->construct_concrete(syntax_, children_);
 			}
@@ -1973,13 +1973,13 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const synta
 	}
 	else if (cond(equal_op(syntax_->kind_, MemberAccessExpression_)))
 	{
-		children_->add_(build_(syntax_->children_->op_Element(p_int(0)), name_table_, scope_));
-		children_->add_((new ::Semantic_Node_())->construct_token(syntax_->children_->op_Element(p_int(2))));
+		children_->add_(build_(syntax_->children_->op_Element(i32(0)), name_table_, scope_));
+		children_->add_((new ::Semantic_Node_())->construct_token(syntax_->children_->op_Element(i32(2))));
 		return (new ::Semantic_Node_())->construct_concrete(syntax_, children_);
 	}
 	else if (cond(equal_op(syntax_->kind_, NewExpression_)))
 	{
-		children_->add_(build_constructor_name_(syntax_->children_->op_Element(p_int(1)), name_table_, scope_));
+		children_->add_(build_constructor_name_(syntax_->children_->op_Element(i32(1)), name_table_, scope_));
 		children_->add_(build_(syntax_->first_child_(ArgumentList_), name_table_, scope_));
 		return (new ::Semantic_Node_())->construct_concrete(syntax_, children_);
 	}
@@ -1991,20 +1991,20 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const synta
 	}
 	else if (cond(equal_op(syntax_->kind_, VariableDeclaration_)))
 	{
-		::Syntax_Node_ const *_Nonnull const binding_syntax_ = syntax_->children_->op_Element(p_int(0));
+		::Syntax_Node_ const *_Nonnull const binding_syntax_ = syntax_->children_->op_Element(i32(0));
 		children_->add_((new ::Semantic_Node_())->construct_token(binding_syntax_));
 		::Syntax_Node_ const *_Nonnull const identifier_ = syntax_->first_child_(Identifier_);
 		children_->add_((new ::Semantic_Node_())->construct_token(identifier_));
-		::Syntax_Node_ const *_Nonnull const type_syntax_ = syntax_->children_->op_Element(p_int(3));
+		::Syntax_Node_ const *_Nonnull const type_syntax_ = syntax_->children_->op_Element(i32(3));
 		::Semantic_Node_ const *_Nonnull const type_node_ = build_type_name_(type_syntax_, name_table_, scope_);
-		assert_(not_equal_op(type_node_->referenced_type_, p_none), type_node_->get_text_());
+		assert_(not_equal_op(type_node_->referenced_type_, none), type_node_->get_text_());
 		::Name_Subtable_ *_Nonnull const variable_scope_ = scope_->lookup_(identifier_->get_text_());
-		assert_(not_equal_op(variable_scope_, p_none), syntax_->get_text_());
+		assert_(not_equal_op(variable_scope_, none), syntax_->get_text_());
 		variable_scope_->bind_type_(type_node_->referenced_type_);
 		children_->add_(type_node_);
-		if (cond(equal_op(syntax_->children_->op_magnitude(), p_int(6))))
+		if (cond(equal_op(syntax_->children_->op_magnitude(), i32(6))))
 		{
-			::Syntax_Node_ const *_Nonnull const initalizer_ = syntax_->children_->op_Element(p_int(5));
+			::Syntax_Node_ const *_Nonnull const initalizer_ = syntax_->children_->op_Element(i32(5));
 			children_->add_(build_(initalizer_, name_table_, scope_));
 		}
 
@@ -2026,7 +2026,7 @@ auto ::Semantic_Tree_Builder_::build_(::Syntax_Node_ const *_Nonnull const synta
 	{
 		return (new ::Semantic_Node_())->construct_of_type(scope_->lookup_special_(p_string("int"))->type_, syntax_, children_);
 	}
-	else if (cond(equal_op(syntax_->children_->op_magnitude(), p_int(0))))
+	else if (cond(equal_op(syntax_->children_->op_magnitude(), i32(0))))
 	{
 		return (new ::Semantic_Node_())->construct_token(syntax_);
 	}
@@ -2052,19 +2052,19 @@ auto ::Semantic_Tree_Builder_::build_parameters_(::Syntax_Node_ const *_Nonnull 
 		if (cond(equal_op(parameter_->kind_, Parameter_)))
 		{
 			::Syntax_Node_ const *_Nullable const var_syntax_ = parameter_->first_child_(VarKeyword_);
-			if (cond(not_equal_op(var_syntax_, p_none)))
+			if (cond(not_equal_op(var_syntax_, none)))
 			{
 				children_->add_((new ::Semantic_Node_())->construct_token(var_syntax_));
 			}
 
 			::Syntax_Node_ const *_Nonnull const identifier_ = parameter_->first_child_(Identifier_);
 			children_->add_((new ::Semantic_Node_())->construct_token(identifier_));
-			::Syntax_Node_ const *_Nonnull const type_syntax_ = parameter_->children_->op_Element(parameter_->children_->op_magnitude()->op_subtract(p_int(1)));
+			::Syntax_Node_ const *_Nonnull const type_syntax_ = parameter_->children_->op_Element(parameter_->children_->op_magnitude()->op_subtract(i32(1)));
 			::Semantic_Node_ const *_Nonnull const type_node_ = build_type_name_(type_syntax_, name_table_, scope_);
-			assert_(not_equal_op(type_node_->referenced_type_, p_none), parameter_->get_text_());
+			assert_(not_equal_op(type_node_->referenced_type_, none), parameter_->get_text_());
 			children_->add_(type_node_);
 			::Name_Subtable_ *_Nonnull const parameter_scope_ = scope_->lookup_(identifier_->get_text_());
-			assert_(not_equal_op(parameter_scope_, p_none), identifier_->get_text_());
+			assert_(not_equal_op(parameter_scope_, none), identifier_->get_text_());
 			parameter_scope_->bind_type_(type_node_->referenced_type_);
 			parameters_->add_((new ::Semantic_Node_())->construct_of_type(type_node_->referenced_type_, parameter_, children_));
 		}
@@ -2092,9 +2092,9 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 	::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
 	if (cond(equal_op(syntax_->kind_, PredefinedType_)))
 	{
-		p_string const primitive_name_ = syntax_->children_->op_Element(p_int(0))->get_text_();
+		p_string const primitive_name_ = syntax_->children_->op_Element(i32(0))->get_text_();
 		::Name_Subtable_ const *_Nullable const primitive_entry_ = scope_->lookup_special_(primitive_name_);
-		assert_(not_equal_op(primitive_entry_, p_none), p_string("No entry for primitive `").op_add(primitive_name_)->op_add(p_string("`")));
+		assert_(not_equal_op(primitive_entry_, none), p_string("No entry for primitive `").op_add(primitive_name_)->op_add(p_string("`")));
 		return (new ::Semantic_Node_())->construct_referencing_type(primitive_entry_->type_, syntax_, children_);
 	}
 	else if (cond(equal_op(syntax_->kind_, IdentifierName_)))
@@ -2106,7 +2106,7 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 
 		p_string const name_ = syntax_->get_text_();
 		::Name_Subtable_ const *_Nullable const entry_ = scope_->lookup_(name_);
-		if (cond(equal_op(entry_, p_none)))
+		if (cond(equal_op(entry_, none)))
 		{
 			::Semantic_Node_ *_Nonnull const node_ = (new ::Semantic_Node_())->construct_token(syntax_);
 			add_resolution_error_(node_);
@@ -2119,14 +2119,14 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 	}
 	else if (cond(equal_op(syntax_->kind_, QualifiedName_)))
 	{
-		::Syntax_Node_ const *_Nonnull const qualifier_syntax_ = syntax_->children_->op_Element(p_int(0));
+		::Syntax_Node_ const *_Nonnull const qualifier_syntax_ = syntax_->children_->op_Element(i32(0));
 		::Semantic_Node_ *_Nonnull const qualifier_ = build_type_name_(qualifier_syntax_, name_table_, scope_);
 		children_->add_(qualifier_);
-		::Syntax_Node_ const *_Nonnull const qualified_syntax_ = syntax_->children_->op_Element(p_int(2));
+		::Syntax_Node_ const *_Nonnull const qualified_syntax_ = syntax_->children_->op_Element(i32(2));
 		if (cond(equal_op(qualified_syntax_->kind_, IdentifierName_)))
 		{
 			::Syntax_Node_ const *_Nonnull const name_syntax_ = qualified_syntax_;
-			if (cond(equal_op(qualifier_->referenced_type_, p_none)))
+			if (cond(equal_op(qualifier_->referenced_type_, none)))
 			{
 				add_could_not_determine_type_error_(qualifier_);
 				::Semantic_Node_ *_Nonnull const name_node_ = (new ::Semantic_Node_())->construct_token(name_syntax_);
@@ -2138,9 +2138,9 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 			{
 				::Type_ const *_Nonnull const containing_type_ = qualifier_->referenced_type_;
 				::Name_Subtable_ const *_Nonnull const containing_scope_ = name_table_->get_(containing_type_->name_);
-				assert_(not_equal_op(containing_scope_, p_none), containing_type_->name_->full_());
+				assert_(not_equal_op(containing_scope_, none), containing_type_->name_->full_());
 				::Name_Subtable_ const *_Nonnull const referenced_scope_ = containing_scope_->find_(name_syntax_->get_text_());
-				if (cond(equal_op(referenced_scope_, p_none)))
+				if (cond(equal_op(referenced_scope_, none)))
 				{
 					::Semantic_Node_ *_Nonnull const name_node_ = (new ::Semantic_Node_())->construct_token(name_syntax_);
 					add_resolution_error_(name_node_, qualifier_);
@@ -2158,7 +2158,7 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 		{
 			::Syntax_Node_ const *_Nonnull const name_syntax_ = qualified_syntax_->first_child_(IdentifierName_);
 			::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull const generic_name_children_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
-			if (cond(equal_op(qualifier_->referenced_type_, p_none)))
+			if (cond(equal_op(qualifier_->referenced_type_, none)))
 			{
 				add_could_not_determine_type_error_(qualifier_);
 				::Semantic_Node_ *_Nonnull const name_node_ = (new ::Semantic_Node_())->construct_token(name_syntax_);
@@ -2173,9 +2173,9 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 			{
 				::Type_ const *_Nonnull const containing_type_ = qualifier_->referenced_type_;
 				::Name_Subtable_ const *_Nonnull const containing_scope_ = name_table_->get_(containing_type_->name_);
-				assert_(not_equal_op(containing_scope_, p_none), containing_type_->name_->full_());
+				assert_(not_equal_op(containing_scope_, none), containing_type_->name_->full_());
 				::Name_Subtable_ const *_Nonnull const referenced_scope_ = containing_scope_->find_(name_syntax_->get_text_());
-				if (cond(equal_op(referenced_scope_, p_none)))
+				if (cond(equal_op(referenced_scope_, none)))
 				{
 					::Semantic_Node_ *_Nonnull const name_node_ = (new ::Semantic_Node_())->construct_token(name_syntax_);
 					add_resolution_error_(name_node_, qualifier_);
@@ -2205,9 +2205,9 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 	}
 	else if (cond(equal_op(syntax_->kind_, MutableType_)))
 	{
-		::Semantic_Node_ *_Nonnull const inner_type_ = build_type_name_(syntax_->children_->op_Element(p_int(1)), name_table_, scope_);
+		::Semantic_Node_ *_Nonnull const inner_type_ = build_type_name_(syntax_->children_->op_Element(i32(1)), name_table_, scope_);
 		children_->add_(inner_type_);
-		if (cond(equal_op(inner_type_->referenced_type_, p_none)))
+		if (cond(equal_op(inner_type_->referenced_type_, none)))
 		{
 			add_could_not_determine_type_error_(inner_type_);
 			return (new ::Semantic_Node_())->construct_concrete(syntax_, children_);
@@ -2218,9 +2218,9 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 	}
 	else if (cond(equal_op(syntax_->kind_, ImmutableType_)))
 	{
-		::Semantic_Node_ *_Nonnull const inner_type_ = build_type_name_(syntax_->children_->op_Element(p_int(0)), name_table_, scope_);
+		::Semantic_Node_ *_Nonnull const inner_type_ = build_type_name_(syntax_->children_->op_Element(i32(0)), name_table_, scope_);
 		children_->add_(inner_type_);
-		if (cond(equal_op(inner_type_->referenced_type_, p_none)))
+		if (cond(equal_op(inner_type_->referenced_type_, none)))
 		{
 			add_could_not_determine_type_error_(inner_type_);
 			return (new ::Semantic_Node_())->construct_concrete(syntax_, children_);
@@ -2231,16 +2231,16 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 	}
 	else if (cond(equal_op(syntax_->kind_, OptionalType_)))
 	{
-		::Semantic_Node_ *_Nonnull const inner_type_ = build_type_name_(syntax_->children_->op_Element(p_int(0)), name_table_, scope_);
+		::Semantic_Node_ *_Nonnull const inner_type_ = build_type_name_(syntax_->children_->op_Element(i32(0)), name_table_, scope_);
 		children_->add_(inner_type_);
-		if (cond(equal_op(inner_type_->referenced_type_, p_none)))
+		if (cond(equal_op(inner_type_->referenced_type_, none)))
 		{
 			add_could_not_determine_type_error_(inner_type_);
 			return (new ::Semantic_Node_())->construct_concrete(syntax_, children_);
 		}
 
 		::Name_Subtable_ const *_Nullable const optional_type_scope_ = name_table_->get_(optional_type_name_);
-		assert_(not_equal_op(optional_type_scope_, p_none), p_string(""));
+		assert_(not_equal_op(optional_type_scope_, none), p_string(""));
 		::Type_ const *_Nonnull const optional_type_ = optional_type_scope_->type_;
 		::System_::Collections_::List_<::Type_ const *_Nonnull> *_Nonnull const type_arguments_ = (new ::System_::Collections_::List_<::Type_ const *_Nonnull>())->construct();
 		type_arguments_->add_(inner_type_->referenced_type_);
@@ -2249,7 +2249,7 @@ auto ::Semantic_Tree_Builder_::build_type_name_(::Syntax_Node_ const *_Nonnull c
 	}
 	else
 	{
-		p_int const place_ = syntax_->start_;
+		i32 const place_ = syntax_->start_;
 		NOT_IMPLEMENTED_(p_string("syntax.kind=").op_add(syntax_->kind_)->op_add(p_string(" at "))->op_add(place_));
 	}
 }
@@ -2288,18 +2288,18 @@ auto ::Semantic_Tree_Builder_::build_type_arguments_(::Syntax_Node_ const *_Nonn
 auto ::Semantic_Tree_Builder_::build_constructor_name_(::Syntax_Node_ const *_Nonnull const syntax_, ::Name_Table_ const *_Nonnull const name_table_, ::Name_Subtable_ const *_Nonnull const scope_) const -> ::Semantic_Node_ const *_Nonnull
 {
 	auto self = this;
-	if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, QualifiedName_)) && bit_arg(equal_op(syntax_->children_->op_Element(p_int(2))->kind_, IdentifierName_)))))
+	if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, QualifiedName_)) && bit_arg(equal_op(syntax_->children_->op_Element(i32(2))->kind_, IdentifierName_)))))
 	{
 		::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
-		::Semantic_Node_ const *_Nonnull const type_node_ = build_type_name_(syntax_->children_->op_Element(p_int(0)), name_table_, scope_);
+		::Semantic_Node_ const *_Nonnull const type_node_ = build_type_name_(syntax_->children_->op_Element(i32(0)), name_table_, scope_);
 		children_->add_(type_node_);
-		::Syntax_Node_ const *_Nonnull const qualifier_ = syntax_->children_->op_Element(p_int(0));
-		::Syntax_Node_ const *_Nonnull const name_ = syntax_->children_->op_Element(p_int(2));
+		::Syntax_Node_ const *_Nonnull const qualifier_ = syntax_->children_->op_Element(i32(0));
+		::Syntax_Node_ const *_Nonnull const name_ = syntax_->children_->op_Element(i32(2));
 		p_string const constructor_name_ = p_string("new_").op_add(name_->get_text_());
 		::Type_ const *_Nonnull const referenced_type_ = type_node_->referenced_type_;
-		assert_(not_equal_op(referenced_type_, p_none), p_string("no referenced type for `").op_add(type_node_->get_text_())->op_add(p_string("`")));
+		assert_(not_equal_op(referenced_type_, none), p_string("no referenced type for `").op_add(type_node_->get_text_())->op_add(p_string("`")));
 		::Name_Subtable_ const *_Nullable const constructor_scope_ = name_table_->get_(referenced_type_->name_)->lookup_special_(constructor_name_);
-		if (cond(not_equal_op(constructor_scope_, p_none)))
+		if (cond(not_equal_op(constructor_scope_, none)))
 		{
 			children_->add_((new ::Semantic_Node_())->construct_token(name_));
 			return (new ::Semantic_Node_())->construct_concrete(syntax_, children_);
@@ -2334,14 +2334,14 @@ auto ::Compilation_Unit_Parser_::construct(::Token_Stream_ *_Nonnull const token
 {
 	::Compilation_Unit_Parser_* self = this;
 	self->tokenStream_ = tokenStream_;
-	self->compilationUnit_ = p_none;
+	self->compilationUnit_ = none;
 	return self;
 }
 
 auto ::Compilation_Unit_Parser_::Parse_() -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	if (cond(equal_op(compilationUnit_, p_none)))
+	if (cond(equal_op(compilationUnit_, none)))
 	{
 		token_ = tokenStream_->GetNextToken_();
 		compilationUnit_ = ParseCompilationUnit_();
@@ -2358,15 +2358,15 @@ auto ::Compilation_Unit_Parser_::AcceptToken_() -> ::Syntax_Node_ const *_Nullab
 	return node_;
 }
 
-auto ::Compilation_Unit_Parser_::ExpectToken_(p_int const tokenType_) -> ::Syntax_Node_ const *_Nonnull
+auto ::Compilation_Unit_Parser_::ExpectToken_(i32 const tokenType_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	if (cond(equal_op(token_, p_none)))
+	if (cond(equal_op(token_, none)))
 	{
 		return new_syntax_node_missing_(tokenType_, tokenStream_->source_, tokenStream_->source_->ByteLength_());
 	}
 
-	if (cond(bit_op(bit_arg(equal_op(token_, p_none)) || bit_arg(not_equal_op(token_->kind_, tokenType_)))))
+	if (cond(bit_op(bit_arg(equal_op(token_, none)) || bit_arg(not_equal_op(token_->kind_, tokenType_)))))
 	{
 		return new_syntax_node_missing_(tokenType_, tokenStream_->source_, token_->start_);
 	}
@@ -2460,7 +2460,7 @@ auto ::Compilation_Unit_Parser_::ParseAtom_() -> ::Syntax_Node_ const *_Nonnull
 	if (cond(equal_op(token_->kind_, NotOperator_)))
 	{
 		children_->Add_(ExpectToken_(NotOperator_));
-		children_->Add_(ParseExpression_(p_int(8)));
+		children_->Add_(ParseExpression_(i32(8)));
 		return (new ::Syntax_Node_())->construct(NotExpression_, children_);
 	}
 
@@ -2483,7 +2483,7 @@ auto ::Compilation_Unit_Parser_::ParseAtom_() -> ::Syntax_Node_ const *_Nonnull
 	if (cond(equal_op(token_->kind_, Minus_)))
 	{
 		children_->Add_(ExpectToken_(Minus_));
-		children_->Add_(ParseExpression_(p_int(8)));
+		children_->Add_(ParseExpression_(i32(8)));
 		return (new ::Syntax_Node_())->construct(NegateExpression_, children_);
 	}
 
@@ -2563,7 +2563,7 @@ auto ::Compilation_Unit_Parser_::ParseCallArguments_() -> ::Syntax_Node_ const *
 	return (new ::Syntax_Node_())->construct(ArgumentList_, children_);
 }
 
-auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) -> ::Syntax_Node_ const *_Nonnull
+auto ::Compilation_Unit_Parser_::ParseExpression_(i32 const minPrecedence_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
 	::Syntax_Node_ const *_Nonnull expression_ = ParseAtom_();
@@ -2571,105 +2571,105 @@ auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) ->
 	{
 		::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 		children_->Add_(expression_);
-		p_int precedence_;
+		i32 precedence_;
 		bit leftAssociative_;
 		bit suffixOperator_ = bit_false;
-		p_int expressionType_;
-		if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, Equals_)) || bit_arg(equal_op(token_->kind_, PlusEquals_)))) || bit_arg(equal_op(token_->kind_, MinusEquals_)))) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(1))))))
+		i32 expressionType_;
+		if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, Equals_)) || bit_arg(equal_op(token_->kind_, PlusEquals_)))) || bit_arg(equal_op(token_->kind_, MinusEquals_)))) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(1))))))
 		{
-			precedence_ = p_int(1);
+			precedence_ = i32(1);
 			leftAssociative_ = bit_false;
 			children_->Add_(AcceptToken_());
 			expressionType_ = AssignmentExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, OrKeyword_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(2))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, OrKeyword_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(2))))))
 		{
-			precedence_ = p_int(2);
+			precedence_ = i32(2);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(OrKeyword_));
 			expressionType_ = OrExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, AndKeyword_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(3))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, AndKeyword_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(3))))))
 		{
-			precedence_ = p_int(3);
+			precedence_ = i32(3);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(AndKeyword_));
 			expressionType_ = AndExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, EqualsEquals_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(4))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, EqualsEquals_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(4))))))
 		{
-			precedence_ = p_int(4);
+			precedence_ = i32(4);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(EqualsEquals_));
 			expressionType_ = EqualExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, EqualsSlashEquals_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(4))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, EqualsSlashEquals_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(4))))))
 		{
-			precedence_ = p_int(4);
+			precedence_ = i32(4);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(EqualsSlashEquals_));
 			expressionType_ = NotEqualExpression_;
 		}
-		else if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, LessThan_)) || bit_arg(equal_op(token_->kind_, LessThanEquals_)))) || bit_arg(equal_op(token_->kind_, GreaterThan_)))) || bit_arg(equal_op(token_->kind_, GreaterThanEquals_)))) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(5))))))
+		else if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, LessThan_)) || bit_arg(equal_op(token_->kind_, LessThanEquals_)))) || bit_arg(equal_op(token_->kind_, GreaterThan_)))) || bit_arg(equal_op(token_->kind_, GreaterThanEquals_)))) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(5))))))
 		{
-			precedence_ = p_int(5);
+			precedence_ = i32(5);
 			leftAssociative_ = bit_true;
 			children_->Add_(AcceptToken_());
 			expressionType_ = ComparisonExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Plus_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(6))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Plus_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(6))))))
 		{
-			precedence_ = p_int(6);
+			precedence_ = i32(6);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(Plus_));
 			expressionType_ = AddExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Minus_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(6))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Minus_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(6))))))
 		{
-			precedence_ = p_int(6);
+			precedence_ = i32(6);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(Minus_));
 			expressionType_ = SubtractExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Asterisk_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(7))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Asterisk_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(7))))))
 		{
-			precedence_ = p_int(7);
+			precedence_ = i32(7);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(Asterisk_));
 			expressionType_ = MultiplyExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Slash_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(7))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Slash_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(7))))))
 		{
-			precedence_ = p_int(7);
+			precedence_ = i32(7);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(Slash_));
 			expressionType_ = DivideExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Percent_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(7))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Percent_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(7))))))
 		{
-			precedence_ = p_int(7);
+			precedence_ = i32(7);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(Percent_));
 			expressionType_ = RemainderExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, LeftParen_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(9))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, LeftParen_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(9))))))
 		{
-			precedence_ = p_int(9);
+			precedence_ = i32(9);
 			leftAssociative_ = bit_true;
 			suffixOperator_ = bit_true;
 			children_->Add_(ParseCallArguments_());
 			expressionType_ = InvocationExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Dot_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(9))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Dot_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(9))))))
 		{
-			precedence_ = p_int(9);
+			precedence_ = i32(9);
 			leftAssociative_ = bit_true;
 			children_->Add_(ExpectToken_(Dot_));
 			expressionType_ = MemberAccessExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, LeftBracket_)) && bit_arg(minPrecedence_.op_less_than_or_equal(p_int(9))))))
+		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, LeftBracket_)) && bit_arg(minPrecedence_.op_less_than_or_equal(i32(9))))))
 		{
-			precedence_ = p_int(9);
+			precedence_ = i32(9);
 			leftAssociative_ = bit_true;
 			suffixOperator_ = bit_true;
 			children_->Add_(ExpectToken_(LeftBracket_));
@@ -2686,7 +2686,7 @@ auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) ->
 		{
 			if (cond(leftAssociative_))
 			{
-				precedence_.op_add_assign(p_int(1));
+				precedence_.op_add_assign(i32(1));
 			}
 
 			children_->Add_(ParseExpression_(precedence_));
@@ -2702,7 +2702,7 @@ auto ::Compilation_Unit_Parser_::ParseExpression_(p_int const minPrecedence_) ->
 auto ::Compilation_Unit_Parser_::ParseExpression_() -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	return ParseExpression_(p_int(1));
+	return ParseExpression_(i32(1));
 }
 
 auto ::Compilation_Unit_Parser_::ParseStatement_() -> ::Syntax_Node_ const *_Nonnull
@@ -2857,7 +2857,7 @@ auto ::Compilation_Unit_Parser_::ParseBlock_() -> ::Syntax_Node_ const *_Nonnull
 			::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const skipped_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
 			while (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(token_->kind_, LeftBrace_)) && bit_arg(not_equal_op(token_->kind_, RightBrace_)))) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
 			{
-				p_int const currentTokenType_ = token_->kind_;
+				i32 const currentTokenType_ = token_->kind_;
 				skipped_->Add_(AcceptToken_());
 				if (cond(equal_op(currentTokenType_, Semicolon_)))
 				{
@@ -3062,7 +3062,7 @@ auto ::Compilation_Unit_Parser_::ParseCompilationUnit_() -> ::Syntax_Node_ const
 {
 	auto self = this;
 	::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull>())->construct();
-	while (cond(bit_op(bit_arg(not_equal_op(token_, p_none)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
+	while (cond(bit_op(bit_arg(not_equal_op(token_, none)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
 	{
 		::Syntax_Node_ const *_Nonnull const startToken_ = token_;
 		children_->Add_(ParseDeclaration_());
@@ -3103,7 +3103,7 @@ auto ::Parser_::ParsePackage_(::System_::Collections_::List_<::Source_Text_ cons
 	return (new ::Syntax_Node_())->construct(PackageNode_, children_);
 }
 
-auto ::Syntax_Node_::construct(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_) -> ::Syntax_Node_*
+auto ::Syntax_Node_::construct(i32 const type_, ::Source_Text_ const *_Nonnull const source_, u32 const start_, u32 const length_) -> ::Syntax_Node_*
 {
 	::Syntax_Node_* self = this;
 	kind_ = type_;
@@ -3116,7 +3116,7 @@ auto ::Syntax_Node_::construct(p_int const type_, ::Source_Text_ const *_Nonnull
 	return self;
 }
 
-auto ::Syntax_Node_::construct(p_int const type_, bit const isMissing_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_, p_uint const length_) -> ::Syntax_Node_*
+auto ::Syntax_Node_::construct(i32 const type_, bit const isMissing_, ::Source_Text_ const *_Nonnull const source_, u32 const start_, u32 const length_) -> ::Syntax_Node_*
 {
 	::Syntax_Node_* self = this;
 	kind_ = type_;
@@ -3129,7 +3129,7 @@ auto ::Syntax_Node_::construct(p_int const type_, bit const isMissing_, ::Source
 	return self;
 }
 
-auto ::Syntax_Node_::construct(p_int const type_, ::Syntax_Node_ const *_Nonnull const child_) -> ::Syntax_Node_*
+auto ::Syntax_Node_::construct(i32 const type_, ::Syntax_Node_ const *_Nonnull const child_) -> ::Syntax_Node_*
 {
 	::Syntax_Node_* self = this;
 	kind_ = type_;
@@ -3144,14 +3144,14 @@ auto ::Syntax_Node_::construct(p_int const type_, ::Syntax_Node_ const *_Nonnull
 	return self;
 }
 
-auto ::Syntax_Node_::construct(p_int const type_, ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Syntax_Node_*
+auto ::Syntax_Node_::construct(i32 const type_, ::System_::Collections_::List_<::Syntax_Node_ const *_Nonnull> const *_Nonnull const children_) -> ::Syntax_Node_*
 {
 	::Syntax_Node_* self = this;
 	kind_ = type_;
 	is_missing_ = bit_false;
-	source_ = children_->op_Element(p_int(0))->source_;
-	start_ = children_->op_Element(p_int(0))->start_;
-	::Syntax_Node_ const *_Nonnull const lastChild_ = children_->op_Element(children_->op_magnitude()->op_subtract(p_int(1)));
+	source_ = children_->op_Element(i32(0))->source_;
+	start_ = children_->op_Element(i32(0))->start_;
+	::Syntax_Node_ const *_Nonnull const lastChild_ = children_->op_Element(children_->op_magnitude()->op_subtract(i32(1)));
 	byte_length_ = lastChild_->start_->op_subtract(start_)->op_add(lastChild_->byte_length_);
 	self->children_ = children_;
 	node_diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
@@ -3164,7 +3164,7 @@ auto ::Syntax_Node_::get_text_() const -> p_string
 	return source_->Text_->Substring_(start_, byte_length_);
 }
 
-auto ::Syntax_Node_::first_child_(p_int const type_) const -> ::Syntax_Node_ const *_Nullable
+auto ::Syntax_Node_::first_child_(i32 const type_) const -> ::Syntax_Node_ const *_Nullable
 {
 	auto self = this;
 	for (::Syntax_Node_ const *_Nonnull const child_ : *(children_))
@@ -3175,10 +3175,10 @@ auto ::Syntax_Node_::first_child_(p_int const type_) const -> ::Syntax_Node_ con
 		}
 	}
 
-	return p_none;
+	return none;
 }
 
-auto ::Syntax_Node_::has_child_(p_int const type_) const -> bit
+auto ::Syntax_Node_::has_child_(i32 const type_) const -> bit
 {
 	auto self = this;
 	for (::Syntax_Node_ const *_Nonnull const child_ : *(children_))
@@ -3276,13 +3276,13 @@ auto ::Syntax_Node_::access_modifier_() const -> ::Syntax_Node_ const *_Nullable
 		}
 	}
 
-	return p_none;
+	return none;
 }
 
-auto new_syntax_node_missing_(p_int const type_, ::Source_Text_ const *_Nonnull const source_, p_uint const start_) -> ::Syntax_Node_ const *_Nonnull
+auto new_syntax_node_missing_(i32 const type_, ::Source_Text_ const *_Nonnull const source_, u32 const start_) -> ::Syntax_Node_ const *_Nonnull
 {
-	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_())->construct(type_, bit_true, source_, start_, p_int(0));
-	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_())->construct(start_, p_int(0));
+	::Syntax_Node_ *_Nonnull const node_ = (new ::Syntax_Node_())->construct(type_, bit_true, source_, start_, i32(0));
+	::Text_Span_ const *_Nonnull const span_ = (new ::Text_Span_())->construct(start_, i32(0));
 	node_->add_((new ::Diagnostic_())->construct(CompilationError_, Parsing_, source_, span_, p_string("Missing token of type ").op_add(type_)));
 	return node_;
 }
@@ -3307,7 +3307,7 @@ auto ::Token_Stream_::construct(::Source_Text_ const *_Nonnull const source_) ->
 {
 	::Token_Stream_* self = this;
 	self->source_ = source_;
-	position_ = p_int(0);
+	position_ = i32(0);
 	diagnostics_ = (new ::System_::Collections_::List_<::Diagnostic_ const *_Nonnull>())->construct();
 	endOfFile_ = bit_false;
 	return self;
@@ -3321,13 +3321,13 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		return EndOfFile_();
 	}
 
-	p_uint end_ = p_int(1).op_negate();
+	u32 end_ = i32(1).op_negate();
 	while (cond(position_.op_less_than(source_->ByteLength_())))
 	{
 		p_code_point const curChar_ = source_->Text_->op_Element(position_);
 		if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(curChar_, p_code_point(' '))) || bit_arg(equal_op(curChar_, p_code_point('\t'))))) || bit_arg(equal_op(curChar_, p_code_point('\n'))))) || bit_arg(equal_op(curChar_, p_code_point('\r'))))))
 		{
-			position_.op_add_assign(p_int(1));
+			position_.op_add_assign(i32(1));
 			continue;
 		}
 		else if (cond(equal_op(curChar_, p_code_point('{'))))
@@ -3384,64 +3384,64 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (cond(equal_op(curChar_, p_code_point('='))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('='))))))
+			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('='))))))
 			{
-				return NewOperator_(EqualsEquals_, p_int(2));
+				return NewOperator_(EqualsEquals_, i32(2));
 			}
 
-			if (cond(bit_op(bit_arg(bit_op(bit_arg(position_.op_add(p_int(2))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('/'))))) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(2))), p_code_point('='))))))
+			if (cond(bit_op(bit_arg(bit_op(bit_arg(position_.op_add(i32(2))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('/'))))) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(2))), p_code_point('='))))))
 			{
-				return NewOperator_(EqualsSlashEquals_, p_int(3));
+				return NewOperator_(EqualsSlashEquals_, i32(3));
 			}
 
 			return NewOperator_(Equals_);
 		}
 		else if (cond(equal_op(curChar_, p_code_point('+'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('='))))))
+			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('='))))))
 			{
-				return NewOperator_(PlusEquals_, p_int(2));
+				return NewOperator_(PlusEquals_, i32(2));
 			}
 
 			return NewOperator_(Plus_);
 		}
 		else if (cond(equal_op(curChar_, p_code_point('-'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('>'))))))
+			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('>'))))))
 			{
-				return NewOperator_(Arrow_, p_int(2));
+				return NewOperator_(Arrow_, i32(2));
 			}
 
-			if (cond(bit_op(bit_arg(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('='))))))
+			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('='))))))
 			{
-				return NewOperator_(MinusEquals_, p_int(2));
+				return NewOperator_(MinusEquals_, i32(2));
 			}
 
 			return NewOperator_(Minus_);
 		}
 		else if (cond(equal_op(curChar_, p_code_point('/'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('/'))))))
+			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('/'))))))
 			{
 				while (cond(bit_op(bit_arg(bit_op(bit_arg(position_.op_less_than(source_->ByteLength_())) && bit_arg(not_equal_op(source_->Text_->op_Element(position_), p_code_point('\r'))))) && bit_arg(not_equal_op(source_->Text_->op_Element(position_), p_code_point('\n'))))))
 				{
-					position_.op_add_assign(p_int(1));
+					position_.op_add_assign(i32(1));
 				}
 
 				continue;
 			}
 
-			if (cond(bit_op(bit_arg(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('*'))))))
+			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('*'))))))
 			{
-				position_.op_add_assign(p_int(2));
+				position_.op_add_assign(i32(2));
 				bit lastCharStar_ = bit_false;
 				while (cond(bit_op(bit_arg(position_.op_less_than(source_->ByteLength_())) && bit_arg(bit_not(bit_op(bit_arg(lastCharStar_) && bit_arg(equal_op(source_->Text_->op_Element(position_), p_code_point('/')))))))))
 				{
 					lastCharStar_ = equal_op(source_->Text_->op_Element(position_), p_code_point('*'));
-					position_.op_add_assign(p_int(1));
+					position_.op_add_assign(i32(1));
 				}
 
-				position_.op_add_assign(p_int(1));
+				position_.op_add_assign(i32(1));
 				continue;
 			}
 
@@ -3453,56 +3453,56 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 		}
 		else if (cond(equal_op(curChar_, p_code_point('<'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('='))))))
+			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('='))))))
 			{
-				return NewOperator_(LessThanEquals_, p_int(2));
+				return NewOperator_(LessThanEquals_, i32(2));
 			}
 
 			return NewOperator_(LessThan_);
 		}
 		else if (cond(equal_op(curChar_, p_code_point('>'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(p_int(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(p_int(1))), p_code_point('='))))))
+			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_->op_Element(position_.op_add(i32(1))), p_code_point('='))))))
 			{
-				return NewOperator_(GreaterThanEquals_, p_int(2));
+				return NewOperator_(GreaterThanEquals_, i32(2));
 			}
 
 			return NewOperator_(GreaterThan_);
 		}
 		else if (cond(equal_op(curChar_, p_code_point('"'))))
 		{
-			end_ = position_.op_add(p_int(1));
+			end_ = position_.op_add(i32(1));
 			bit escaped_ = bit_false;
 			while (cond(bit_op(bit_arg(end_.op_less_than(source_->ByteLength_())) && bit_arg(bit_op(bit_arg(not_equal_op(source_->Text_->op_Element(end_), p_code_point('"'))) || bit_arg(escaped_))))))
 			{
 				escaped_ = bit_op(bit_arg(equal_op(source_->Text_->op_Element(end_), p_code_point('\\'))) && bit_arg(bit_not(escaped_)));
-				end_.op_add_assign(p_int(1));
+				end_.op_add_assign(i32(1));
 			}
 
-			end_.op_add_assign(p_int(1));
+			end_.op_add_assign(i32(1));
 			return NewToken_(StringLiteral_, end_);
 		}
 		else if (cond(equal_op(curChar_, p_code_point('\''))))
 		{
-			end_ = position_.op_add(p_int(1));
+			end_ = position_.op_add(i32(1));
 			bit escaped_ = bit_false;
 			while (cond(bit_op(bit_arg(end_.op_less_than(source_->ByteLength_())) && bit_arg(bit_op(bit_arg(not_equal_op(source_->Text_->op_Element(end_), p_code_point('\''))) || bit_arg(escaped_))))))
 			{
 				escaped_ = bit_op(bit_arg(equal_op(source_->Text_->op_Element(end_), p_code_point('\\'))) && bit_arg(bit_not(escaped_)));
-				end_.op_add_assign(p_int(1));
+				end_.op_add_assign(i32(1));
 			}
 
-			end_.op_add_assign(p_int(1));
+			end_.op_add_assign(i32(1));
 			return NewToken_(CodePointLiteral_, end_);
 		}
 		else
 		{
 			if (cond(IsIdentifierChar_(curChar_)))
 			{
-				end_ = position_.op_add(p_int(1));
+				end_ = position_.op_add(i32(1));
 				while (cond(IsIdentifierChar_(source_->Text_->op_Element(end_))))
 				{
-					end_.op_add_assign(p_int(1));
+					end_.op_add_assign(i32(1));
 				}
 
 				return NewIdentifierOrKeyword_(end_);
@@ -3510,16 +3510,16 @@ auto ::Token_Stream_::GetNextToken_() -> ::Syntax_Node_ const *_Nullable
 
 			if (cond(IsNumberChar_(curChar_)))
 			{
-				end_ = position_.op_add(p_int(1));
+				end_ = position_.op_add(i32(1));
 				while (cond(IsNumberChar_(source_->Text_->op_Element(end_))))
 				{
-					end_.op_add_assign(p_int(1));
+					end_.op_add_assign(i32(1));
 				}
 
 				return NewToken_(Number_, end_);
 			}
 
-			::Text_Span_ const *_Nonnull diagnosticSpan_ = (new ::Text_Span_())->construct(position_, p_int(1));
+			::Text_Span_ const *_Nonnull diagnosticSpan_ = (new ::Text_Span_())->construct(position_, i32(1));
 			diagnostics_->Add_((new ::Diagnostic_())->construct(CompilationError_, Lexing_, source_, diagnosticSpan_, p_string("Invalid character `").op_add(curChar_)->op_add(p_string("`"))));
 			position_ = end_;
 		}
@@ -3533,19 +3533,19 @@ auto ::Token_Stream_::EndOfFile_() -> ::Syntax_Node_ const *_Nullable
 	auto self = this;
 	if (cond(endOfFile_))
 	{
-		return p_none;
+		return none;
 	}
 
 	endOfFile_ = bit_true;
 	return NewToken_(EndOfFileToken_, position_);
 }
 
-auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Node_ const *_Nonnull
+auto ::Token_Stream_::NewIdentifierOrKeyword_(u32 const end_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	p_uint const length_ = end_.op_subtract(position_);
+	u32 const length_ = end_.op_subtract(position_);
 	p_string const value_ = source_->Text_->Substring_(position_, length_);
-	p_int type_;
+	i32 type_;
 	if (cond(equal_op(value_, p_string("new"))))
 	{
 		type_ = NewKeyword_;
@@ -3694,19 +3694,19 @@ auto ::Token_Stream_::NewIdentifierOrKeyword_(p_uint const end_) -> ::Syntax_Nod
 	return NewToken_(type_, end_);
 }
 
-auto ::Token_Stream_::NewOperator_(p_int const type_) -> ::Syntax_Node_ const *_Nonnull
+auto ::Token_Stream_::NewOperator_(i32 const type_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
-	return NewToken_(type_, position_.op_add(p_int(1)));
+	return NewToken_(type_, position_.op_add(i32(1)));
 }
 
-auto ::Token_Stream_::NewOperator_(p_int const type_, p_uint const length_) -> ::Syntax_Node_ const *_Nonnull
+auto ::Token_Stream_::NewOperator_(i32 const type_, u32 const length_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
 	return NewToken_(type_, position_.op_add(length_));
 }
 
-auto ::Token_Stream_::NewToken_(p_int const type_, p_uint const end_) -> ::Syntax_Node_ const *_Nonnull
+auto ::Token_Stream_::NewToken_(i32 const type_, u32 const end_) -> ::Syntax_Node_ const *_Nonnull
 {
 	auto self = this;
 	::Syntax_Node_ *_Nonnull const token_ = (new ::Syntax_Node_())->construct(type_, source_, position_, end_.op_subtract(position_));
@@ -3730,7 +3730,7 @@ auto ::Token_Stream_::IsNumberChar_(p_code_point const c_) -> bit
 	return bit_op(bit_arg(c_.op_greater_than_or_equal(p_code_point('0'))) && bit_arg(c_.op_less_than_or_equal(p_code_point('9'))));
 }
 
-auto ::Diagnostic_::construct(p_int const level_, p_int const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_) -> ::Diagnostic_*
+auto ::Diagnostic_::construct(i32 const level_, i32 const phase_, ::Source_Text_ const *_Nonnull const source_, ::Text_Span_ const *_Nonnull const span_, p_string const message_) -> ::Diagnostic_*
 {
 	::Diagnostic_* self = this;
 	Level_ = level_;
@@ -3768,7 +3768,7 @@ auto ::Emitter_::Emit_() -> p_string
 	}
 
 	emit_entry_point_adapter_();
-	p_int const total_size_ = type_declarations_->byte_length_()->op_add(function_declarations_->byte_length_())->op_add(class_declarations_->byte_length_())->op_add(global_definitions_->byte_length_())->op_add(definitions_->byte_length_());
+	i32 const total_size_ = type_declarations_->byte_length_()->op_add(function_declarations_->byte_length_())->op_add(class_declarations_->byte_length_())->op_add(global_definitions_->byte_length_())->op_add(definitions_->byte_length_());
 	::System_::Text_::String_Builder_ *_Nonnull const cpp_code_ = (new ::System_::Text_::String_Builder_())->construct();
 	cpp_code_->Append_(type_declarations_->ToString_());
 	cpp_code_->Append_(function_declarations_->ToString_());
@@ -3780,7 +3780,7 @@ auto ::Emitter_::Emit_() -> p_string
 
 auto ::Emitter_::convert_type_name_(::Semantic_Node_ const *_Nonnull const type_node_) -> ::System_::Text_::String_Builder_ *_Nonnull
 {
-	assert_(not_equal_op(type_node_->referenced_type_, p_none), type_node_->get_text_());
+	assert_(not_equal_op(type_node_->referenced_type_, none), type_node_->get_text_());
 	return convert_type_name_(type_node_->referenced_type_);
 }
 
@@ -3801,14 +3801,21 @@ auto ::Emitter_::convert_type_name_(::Type_ const *_Nonnull const type_) -> ::Sy
 		{
 			cpp_type_->Append_(p_string("u32"));
 		}
+		else if (cond(equal_op(type_->name_->unqualified_(), p_string("code_point"))))
+		{
+			cpp_type_->Append_(p_string("cp"));
+		}
+		else if (cond(equal_op(type_->name_->unqualified_(), p_string("string"))))
+		{
+			cpp_type_->Append_(p_string("str"));
+		}
 		else if (cond(equal_op(type_->name_->unqualified_(), p_string("void"))))
 		{
 			cpp_type_->Append_(p_string("void"));
 		}
 		else
 		{
-			cpp_type_->Append_(p_string("p_"));
-			cpp_type_->Append_(type_->name_->unqualified_());
+			NOT_IMPLEMENTED_(type_->name_->unqualified_());
 		}
 	}
 	else
@@ -3821,7 +3828,7 @@ auto ::Emitter_::convert_type_name_(::Type_ const *_Nonnull const type_) -> ::Sy
 		}
 	}
 
-	if (cond(type_->type_parameters_->op_magnitude()->op_greater_than(p_int(0))))
+	if (cond(type_->type_parameters_->op_magnitude()->op_greater_than(i32(0))))
 	{
 		cpp_type_->Append_(p_string("<"));
 		bit first_ = bit_true;
@@ -3873,10 +3880,10 @@ auto ::Emitter_::convert_reference_type_(bit const mutable_binding_, ::Type_ con
 
 auto ::Emitter_::convert_type_(bit const mutable_binding_, ::Type_ const *_Nonnull type_, bit const optional_) -> p_string
 {
-	assert_(not_equal_op(type_, p_none), p_string(""));
+	assert_(not_equal_op(type_, none), p_string(""));
 	if (cond(bit_op(bit_arg(type_->is_primitive_) && bit_arg(equal_op(type_->name_->unqualified_(), p_string("optional"))))))
 	{
-		::Type_ const *_Nonnull const optional_type_ = type_->type_parameters_->op_Element(p_int(0));
+		::Type_ const *_Nonnull const optional_type_ = type_->type_parameters_->op_Element(i32(0));
 		if (cond(optional_type_->is_value_type_))
 		{
 			::System_::Text_::String_Builder_ *_Nonnull const cpp_type_ = (new ::System_::Text_::String_Builder_())->construct(p_string("p_optional<"));
@@ -3915,7 +3922,7 @@ auto ::Emitter_::convert_type_(bit const mutable_binding_, ::Type_ const *_Nonnu
 
 auto ::Emitter_::convert_type_(bit const mutable_binding_, ::Semantic_Node_ const *_Nonnull const type_node_) -> p_string
 {
-	assert_(not_equal_op(type_node_->referenced_type_, p_none), type_node_->get_text_());
+	assert_(not_equal_op(type_node_->referenced_type_, none), type_node_->get_text_());
 	return convert_type_(mutable_binding_, type_node_->referenced_type_, bit_false);
 }
 
@@ -3938,7 +3945,7 @@ auto ::Emitter_::convert_parameter_list_(::Semantic_Node_ const *_Nonnull const 
 		}
 
 		bit const mutable_binding_ = parameter_->has_child_(VarKeyword_);
-		::Semantic_Node_ const *_Nonnull const type_node_ = parameter_->children_->op_Element(parameter_->children_->op_magnitude()->op_subtract(p_int(1)));
+		::Semantic_Node_ const *_Nonnull const type_node_ = parameter_->children_->op_Element(parameter_->children_->op_magnitude()->op_subtract(i32(1)));
 		builder_->Append_(convert_type_(mutable_binding_, type_node_));
 		builder_->Append_(p_string(" "));
 		builder_->Append_(parameter_->first_child_(Identifier_)->get_text_());
@@ -3948,7 +3955,7 @@ auto ::Emitter_::convert_parameter_list_(::Semantic_Node_ const *_Nonnull const 
 			p_string type_string_;
 			if (cond(equal_op(type_node_->kind_, MutableType_)))
 			{
-				type_string_ = type_node_->children_->op_Element(p_int(0))->get_text_();
+				type_string_ = type_node_->children_->op_Element(i32(0))->get_text_();
 			}
 			else
 			{
@@ -3982,19 +3989,19 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	if (cond(equal_op(syntax_->kind_, NewExpression_)))
 	{
 		p_string constructor_name_ = p_string("construct");
-		::Semantic_Node_ const *_Nonnull type_node_ = syntax_->children_->op_Element(p_int(0));
+		::Semantic_Node_ const *_Nonnull type_node_ = syntax_->children_->op_Element(i32(0));
 		if (cond(equal_op(type_node_->kind_, QualifiedName_)))
 		{
-			::Semantic_Node_ const *_Nonnull const name_node_ = type_node_->children_->op_Element(p_int(1));
-			if (cond(bit_op(bit_arg(equal_op(name_node_->kind_, IdentifierName_)) && bit_arg(equal_op(name_node_->referenced_type_, p_none)))))
+			::Semantic_Node_ const *_Nonnull const name_node_ = type_node_->children_->op_Element(i32(1));
+			if (cond(bit_op(bit_arg(equal_op(name_node_->kind_, IdentifierName_)) && bit_arg(equal_op(name_node_->referenced_type_, none)))))
 			{
 				constructor_name_ = p_string("construct_").op_add(name_node_->get_text_());
-				type_node_ = type_node_->children_->op_Element(p_int(0));
+				type_node_ = type_node_->children_->op_Element(i32(0));
 			}
 		}
 
 		::Type_ const *_Nonnull const type_ = type_node_->referenced_type_;
-		assert_(not_equal_op(type_, p_none), type_node_->get_text_());
+		assert_(not_equal_op(type_, none), type_node_->get_text_());
 		if (cond(type_->is_value_type_))
 		{
 			builder_->Write_(convert_type_name_(type_)->ToString_());
@@ -4009,7 +4016,7 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 			builder_->Write_(constructor_name_);
 		}
 
-		::Semantic_Node_ const *_Nonnull const argumentList_ = syntax_->children_->op_Element(p_int(1));
+		::Semantic_Node_ const *_Nonnull const argumentList_ = syntax_->children_->op_Element(i32(1));
 		convert_expression_(argumentList_, builder_);
 	}
 	else if (cond(equal_op(syntax_->kind_, ArgumentList_)))
@@ -4038,23 +4045,23 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	else if (cond(equal_op(syntax_->kind_, NotExpression_)))
 	{
 		builder_->Write_(p_string("bit_not("));
-		convert_expression_(syntax_->children_->op_Element(p_int(1)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, MagnitudeExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(1)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(1)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(1)), builder_);
 		builder_->Write_(p_string("op_magnitude()"));
 	}
 	else if (cond(equal_op(syntax_->kind_, ParenthesizedExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(1)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
 	}
 	else if (cond(equal_op(syntax_->kind_, NegateExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(1)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(1)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(1)), builder_);
 		builder_->Write_(p_string("op_negate()"));
 	}
 	else if (cond(equal_op(syntax_->kind_, NoneLiteralExpression_)))
@@ -4075,7 +4082,7 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	}
 	else if (cond(equal_op(syntax_->kind_, CodePointLiteralExpression_)))
 	{
-		builder_->Write_(p_string("p_code_point(").op_add(syntax_->get_text_())->op_add(p_string(")")));
+		builder_->Write_(p_string("cp(").op_add(syntax_->get_text_())->op_add(p_string(")")));
 	}
 	else if (cond(equal_op(syntax_->kind_, IdentifierName_)))
 	{
@@ -4083,23 +4090,23 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 	}
 	else if (cond(equal_op(syntax_->kind_, StringLiteralExpression_)))
 	{
-		builder_->Write_(p_string("p_string(").op_add(syntax_->get_text_())->op_add(p_string(")")));
+		builder_->Write_(p_string("str(").op_add(syntax_->get_text_())->op_add(p_string(")")));
 	}
 	else if (cond(equal_op(syntax_->kind_, AssignmentExpression_)))
 	{
-		p_int const operator_ = syntax_->children_->op_Element(p_int(1))->kind_;
+		i32 const operator_ = syntax_->children_->op_Element(i32(1))->kind_;
 		if (cond(equal_op(operator_, Equals_)))
 		{
-			convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
+			convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 			builder_->Write_(p_string(" "));
-			builder_->Write_(syntax_->children_->op_Element(p_int(1))->get_text_());
+			builder_->Write_(syntax_->children_->op_Element(i32(1))->get_text_());
 			builder_->Write_(p_string(" "));
-			convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+			convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		}
 		else
 		{
-			convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-			convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
+			convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+			convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
 			builder_->Write_(p_string("op_"));
 			if (cond(equal_op(operator_, PlusEquals_)))
 			{
@@ -4115,31 +4122,31 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 			}
 
 			builder_->Write_(p_string("("));
-			convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+			convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 			builder_->Write_(p_string(")"));
 		}
 	}
 	else if (cond(equal_op(syntax_->kind_, EqualExpression_)))
 	{
 		builder_->Write_(p_string("equal_op("));
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string(", "));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, NotEqualExpression_)))
 	{
 		builder_->Write_(p_string("not_equal_op("));
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string(", "));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, ComparisonExpression_)))
 	{
-		p_int const operator_ = syntax_->children_->op_Element(p_int(1))->kind_;
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
+		i32 const operator_ = syntax_->children_->op_Element(i32(1))->kind_;
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string("op_"));
 		if (cond(equal_op(operator_, LessThan_)))
 		{
@@ -4163,82 +4170,82 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 		}
 
 		builder_->Write_(p_string("("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, AddExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string("op_add("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, SubtractExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string("op_subtract("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, MultiplyExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string("op_multiply("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, DivideExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string("op_divide("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, RemainderExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string("op_remainder("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, OrExpression_)))
 	{
 		builder_->Write_(p_string("bit_op(bit_arg("));
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string(") || bit_arg("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string("))"));
 	}
 	else if (cond(equal_op(syntax_->kind_, AndExpression_)))
 	{
 		builder_->Write_(p_string("bit_op(bit_arg("));
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string(") && bit_arg("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string("))"));
 	}
 	else if (cond(equal_op(syntax_->kind_, InvocationExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_expression_(syntax_->children_->op_Element(p_int(1)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
 	}
 	else if (cond(equal_op(syntax_->kind_, MemberAccessExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_expression_(syntax_->children_->op_Element(p_int(1)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
 	}
 	else if (cond(equal_op(syntax_->kind_, ElementAccessExpression_)))
 	{
-		convert_expression_(syntax_->children_->op_Element(p_int(0)), builder_);
-		convert_member_access_(syntax_->children_->op_Element(p_int(0)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
+		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
 		builder_->Write_(p_string("op_Element("));
-		convert_expression_(syntax_->children_->op_Element(p_int(2)), builder_);
+		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		builder_->Write_(p_string(")"));
 	}
 	else
@@ -4250,7 +4257,7 @@ auto ::Emitter_::convert_expression_(::Semantic_Node_ const *_Nonnull const synt
 auto ::Emitter_::convert_member_access_(::Semantic_Node_ const *_Nonnull const lhs_, ::Source_File_Builder_ *_Nonnull const builder_) -> void
 {
 	::Type_ const *_Nullable const type_ = lhs_->of_type_;
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(type_, p_none)) && bit_arg(type_->is_value_type_))) && bit_arg(bit_not(bit_op(bit_arg(bit_op(bit_arg(type_->is_primitive_) && bit_arg(equal_op(type_->name_->unqualified_(), p_string("optional"))))) && bit_arg(bit_not(type_->type_parameters_->op_Element(p_int(0))->is_value_type_))))))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(type_, none)) && bit_arg(type_->is_value_type_))) && bit_arg(bit_not(bit_op(bit_arg(bit_op(bit_arg(type_->is_primitive_) && bit_arg(equal_op(type_->name_->unqualified_(), p_string("optional"))))) && bit_arg(bit_not(type_->type_parameters_->op_Element(i32(0))->is_value_type_))))))))
 	{
 		builder_->Write_(p_string("."));
 	}
@@ -4266,21 +4273,21 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 	definitions_->StatementSeparatorLine_();
 	if (cond(equal_op(statement_->kind_, ReturnStatement_)))
 	{
-		if (cond(equal_op(statement_->children_->op_magnitude(), p_int(2))))
+		if (cond(equal_op(statement_->children_->op_magnitude(), i32(2))))
 		{
 			definitions_->WriteLine_(p_string("return;"));
 		}
 		else
 		{
 			definitions_->BeginLine_(p_string("return "));
-			convert_expression_(statement_->children_->op_Element(p_int(1)), definitions_);
+			convert_expression_(statement_->children_->op_Element(i32(1)), definitions_);
 			definitions_->EndLine_(p_string(";"));
 		}
 	}
 	else if (cond(equal_op(statement_->kind_, LoopStatement_)))
 	{
 		definitions_->WriteLine_(p_string("for (;;)"));
-		emit_statement_(statement_->children_->op_Element(p_int(1)));
+		emit_statement_(statement_->children_->op_Element(i32(1)));
 	}
 	else if (cond(equal_op(statement_->kind_, Block_)))
 	{
@@ -4295,9 +4302,9 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 	else if (cond(equal_op(statement_->kind_, WhileStatement_)))
 	{
 		definitions_->BeginLine_(p_string("while (cond("));
-		convert_expression_(statement_->children_->op_Element(p_int(1)), definitions_);
+		convert_expression_(statement_->children_->op_Element(i32(1)), definitions_);
 		definitions_->EndLine_(p_string("))"));
-		emit_statement_(statement_->children_->op_Element(p_int(2)));
+		emit_statement_(statement_->children_->op_Element(i32(2)));
 	}
 	else if (cond(equal_op(statement_->kind_, ForStatement_)))
 	{
@@ -4305,19 +4312,19 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 		::Semantic_Node_ const *_Nonnull const variable_declaration_ = statement_->first_child_(VariableDeclaration_);
 		bit const mutable_binding_ = variable_declaration_->has_child_(VarKeyword_);
 		p_string const name_ = variable_declaration_->first_child_(Identifier_)->get_text_();
-		::Semantic_Node_ const *_Nonnull const type_ = variable_declaration_->children_->op_Element(p_int(2));
+		::Semantic_Node_ const *_Nonnull const type_ = variable_declaration_->children_->op_Element(i32(2));
 		definitions_->Write_(convert_type_(mutable_binding_, type_)->op_add(p_string(" "))->op_add(name_)->op_add(p_string("_")));
 		definitions_->Write_(p_string(" : *("));
-		convert_expression_(statement_->children_->op_Element(p_int(3)), definitions_);
+		convert_expression_(statement_->children_->op_Element(i32(3)), definitions_);
 		definitions_->EndLine_(p_string("))"));
-		emit_statement_(statement_->children_->op_Element(p_int(4)));
+		emit_statement_(statement_->children_->op_Element(i32(4)));
 	}
 	else if (cond(equal_op(statement_->kind_, DoWhileStatement_)))
 	{
 		definitions_->WriteLine_(p_string("do"));
-		emit_statement_(statement_->children_->op_Element(p_int(1)));
+		emit_statement_(statement_->children_->op_Element(i32(1)));
 		definitions_->BeginLine_(p_string("while (cond("));
-		convert_expression_(statement_->children_->op_Element(p_int(3)), definitions_);
+		convert_expression_(statement_->children_->op_Element(i32(3)), definitions_);
 		definitions_->EndLine_(p_string("));"));
 	}
 	else if (cond(equal_op(statement_->kind_, IfStatement_)))
@@ -4327,21 +4334,21 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 		for (;;)
 		{
 			definitions_->Write_(p_string("if (cond("));
-			convert_expression_(if_statement_->children_->op_Element(p_int(1)), definitions_);
+			convert_expression_(if_statement_->children_->op_Element(i32(1)), definitions_);
 			definitions_->EndLine_(p_string("))"));
-			emit_statement_(if_statement_->children_->op_Element(p_int(2)));
+			emit_statement_(if_statement_->children_->op_Element(i32(2)));
 			::Semantic_Node_ const *_Nullable const elseClause_ = if_statement_->first_child_(ElseClause_);
-			if (cond(not_equal_op(elseClause_, p_none)))
+			if (cond(not_equal_op(elseClause_, none)))
 			{
 				if_statement_ = elseClause_->first_child_(IfStatement_);
-				if (cond(not_equal_op(if_statement_, p_none)))
+				if (cond(not_equal_op(if_statement_, none)))
 				{
 					definitions_->BeginLine_(p_string("else "));
 				}
 				else
 				{
 					definitions_->WriteLine_(p_string("else"));
-					emit_statement_(elseClause_->children_->op_Element(p_int(1)));
+					emit_statement_(elseClause_->children_->op_Element(i32(1)));
 					break;
 				}
 			}
@@ -4363,14 +4370,14 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 	{
 		::Semantic_Node_ const *_Nonnull const variable_declaration_ = statement_->first_child_(VariableDeclaration_);
 		p_string const variable_name_ = variable_declaration_->first_child_(Identifier_)->get_text_();
-		::Semantic_Node_ const *_Nonnull const variable_type_ = variable_declaration_->children_->op_Element(p_int(2));
+		::Semantic_Node_ const *_Nonnull const variable_type_ = variable_declaration_->children_->op_Element(i32(2));
 		bit const mutable_binding_ = variable_declaration_->has_child_(VarKeyword_);
 		definitions_->BeginLine_(convert_type_(mutable_binding_, variable_type_));
 		definitions_->Write_(p_string(" ").op_add(variable_name_)->op_add(p_string("_")));
-		if (cond(variable_declaration_->children_->op_magnitude()->op_greater_than(p_int(3))))
+		if (cond(variable_declaration_->children_->op_magnitude()->op_greater_than(i32(3))))
 		{
 			definitions_->Write_(p_string(" = "));
-			convert_expression_(variable_declaration_->children_->op_Element(p_int(3)), definitions_);
+			convert_expression_(variable_declaration_->children_->op_Element(i32(3)), definitions_);
 		}
 
 		definitions_->EndLine_(p_string(";"));
@@ -4378,7 +4385,7 @@ auto ::Emitter_::emit_statement_(::Semantic_Node_ const *_Nonnull const statemen
 	else if (cond(equal_op(statement_->kind_, ExpressionStatement_)))
 	{
 		definitions_->BeginLine_(p_string(""));
-		convert_expression_(statement_->children_->op_Element(p_int(0)), definitions_);
+		convert_expression_(statement_->children_->op_Element(i32(0)), definitions_);
 		definitions_->EndLine_(p_string(";"));
 	}
 	else
@@ -4426,7 +4433,7 @@ auto ::Emitter_::emit_constructor_body_(::Semantic_Node_ const *_Nonnull const b
 	definitions_->EndBlock_();
 }
 
-auto ::Emitter_::emit_access_modifer_(p_int const current_access_level_, p_int const access_modifer_) -> p_int
+auto ::Emitter_::emit_access_modifer_(i32 const current_access_level_, i32 const access_modifer_) -> i32
 {
 	auto self = this;
 	if (cond(not_equal_op(access_modifer_, current_access_level_)))
@@ -4453,17 +4460,17 @@ auto ::Emitter_::emit_access_modifer_(p_int const current_access_level_, p_int c
 	return access_modifer_;
 }
 
-auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, bit const is_value_type_, p_int const current_access_level_) -> p_int
+auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const member_, p_string const class_name_, bit const is_value_type_, i32 const current_access_level_) -> i32
 {
 	auto self = this;
-	p_int access_modifer_ = member_->access_modifier_()->kind_;
+	i32 access_modifer_ = member_->access_modifier_()->kind_;
 	access_modifer_ = emit_access_modifer_(current_access_level_, access_modifer_);
 	if (cond(equal_op(member_->kind_, ConstructorDeclaration_)))
 	{
 		p_string const parameters_ = convert_parameter_list_(member_->first_child_(ParameterList_));
 		p_string full_name_ = p_string("construct");
 		::Semantic_Node_ const *_Nullable const constructor_name_ = member_->first_child_(Identifier_);
-		if (cond(not_equal_op(constructor_name_, p_none)))
+		if (cond(not_equal_op(constructor_name_, none)))
 		{
 			full_name_ = p_string("construct_").op_add(constructor_name_->get_text_());
 		}
@@ -4489,7 +4496,7 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 	{
 		::Semantic_Node_ const *_Nonnull const variable_declaration_ = member_->first_child_(VariableDeclaration_);
 		p_string const field_name_ = variable_declaration_->first_child_(Identifier_)->get_text_();
-		::Semantic_Node_ const *_Nonnull const field_type_ = variable_declaration_->children_->op_Element(p_int(2));
+		::Semantic_Node_ const *_Nonnull const field_type_ = variable_declaration_->children_->op_Element(i32(2));
 		p_string const cpp_type_ = convert_type_(bit_true, field_type_);
 		class_declarations_->WriteLine_(cpp_type_.op_add(p_string(" "))->op_add(field_name_)->op_add(p_string("_;")));
 	}
@@ -4498,9 +4505,9 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 		p_string const method_name_ = member_->first_child_(Identifier_)->get_text_();
 		p_string const parameters_ = convert_parameter_list_(member_->first_child_(ParameterList_));
 		::Semantic_Node_ const *_Nullable const self_parameter_ = member_->first_child_(ParameterList_)->first_child_(SelfParameter_);
-		bit const is_associated_function_ = equal_op(self_parameter_, p_none);
+		bit const is_associated_function_ = equal_op(self_parameter_, none);
 		bit const mutable_self_ = bit_op(bit_arg(bit_not(is_associated_function_)) && bit_arg(self_parameter_->has_child_(MutableKeyword_)));
-		::Semantic_Node_ const *_Nonnull const return_type_node_ = member_->children_->op_Element(p_int(3));
+		::Semantic_Node_ const *_Nonnull const return_type_node_ = member_->children_->op_Element(i32(3));
 		p_string const cpp_type_ = convert_type_(bit_true, return_type_node_);
 		p_string static_modifier_ = p_string("");
 		if (cond(is_associated_function_))
@@ -4528,7 +4535,7 @@ auto ::Emitter_::emit_member_declaration_(::Semantic_Node_ const *_Nonnull const
 	return access_modifer_;
 }
 
-auto ::Emitter_::emit_default_constructor_(p_string const type_name_, bit const is_value_type_, p_int const current_access_level_) -> void
+auto ::Emitter_::emit_default_constructor_(p_string const type_name_, bit const is_value_type_, i32 const current_access_level_) -> void
 {
 	auto self = this;
 	emit_access_modifer_(current_access_level_, PublicKeyword_);
@@ -4562,12 +4569,12 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 	{
 		::Semantic_Node_ const *_Nonnull const variable_declaration_ = declaration_->first_child_(VariableDeclaration_);
 		p_string const variable_name_ = variable_declaration_->first_child_(Identifier_)->get_text_();
-		::Semantic_Node_ const *_Nonnull const variable_type_ = variable_declaration_->children_->op_Element(p_int(2));
+		::Semantic_Node_ const *_Nonnull const variable_type_ = variable_declaration_->children_->op_Element(i32(2));
 		bit const mutable_binding_ = variable_declaration_->has_child_(VarKeyword_);
 		p_string const cpp_type_ = convert_type_(mutable_binding_, variable_type_);
 		global_definitions_->BeginLine_(cpp_type_);
 		global_definitions_->Write_(p_string(" ").op_add(variable_name_)->op_add(p_string("_ = ")));
-		::Semantic_Node_ const *_Nonnull const expression_ = variable_declaration_->children_->op_Element(p_int(3));
+		::Semantic_Node_ const *_Nonnull const expression_ = variable_declaration_->children_->op_Element(i32(3));
 		convert_expression_(expression_, global_definitions_);
 		global_definitions_->EndLine_(p_string(";"));
 	}
@@ -4579,7 +4586,7 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		class_declarations_->WriteLine_(p_string("class ").op_add(class_name_)->op_add(p_string("_")));
 		class_declarations_->BeginBlock_();
 		class_declarations_->EndLine_(p_string("public:"));
-		p_int current_access_level_ = PublicKeyword_;
+		i32 current_access_level_ = PublicKeyword_;
 		bit has_constructors_ = bit_false;
 		for (::Semantic_Node_ const *_Nonnull const member_ : *(declaration_->members_()))
 		{
@@ -4606,7 +4613,7 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		class_declarations_->WriteLine_(struct_name_.op_add(p_string("_ const * operator->() const { return this; }")));
 		class_declarations_->WriteLine_(struct_name_.op_add(p_string("_ & operator* () { return *this; }")));
 		class_declarations_->WriteLine_(struct_name_.op_add(p_string("_ const & operator* () const { return *this; }")));
-		p_int current_access_level_ = PublicKeyword_;
+		i32 current_access_level_ = PublicKeyword_;
 		bit has_constructors_ = bit_false;
 		for (::Semantic_Node_ const *_Nonnull const member_ : *(declaration_->members_()))
 		{
@@ -4632,10 +4639,10 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		{
 			if (cond(equal_op(member_->kind_, EnumMemberDeclaration_)))
 			{
-				p_string const member_name_ = member_->children_->op_Element(p_int(0))->get_text_();
+				p_string const member_name_ = member_->children_->op_Element(i32(0))->get_text_();
 				class_declarations_->BeginLine_(member_name_.op_add(p_string("_")));
 				::Semantic_Node_ const *_Nullable const member_value_ = member_->first_child_(Number_);
-				if (cond(not_equal_op(member_value_, p_none)))
+				if (cond(not_equal_op(member_value_, none)))
 				{
 					class_declarations_->Write_(p_string(" = "));
 					class_declarations_->Write_(member_value_->get_text_());
@@ -4657,7 +4664,7 @@ auto ::Emitter_::emit_declaration_(::Semantic_Node_ const *_Nonnull const declar
 		}
 
 		p_string const parameters_ = convert_parameter_list_(declaration_->first_child_(ParameterList_), is_main_);
-		::Semantic_Node_ const *_Nonnull const return_type_node_ = declaration_->children_->op_Element(p_int(3));
+		::Semantic_Node_ const *_Nonnull const return_type_node_ = declaration_->children_->op_Element(i32(3));
 		p_string const cpp_type_ = convert_type_(bit_true, return_type_node_);
 		function_declarations_->WriteLine_(p_string("auto ").op_add(name_)->op_add(p_string("_"))->op_add(parameters_)->op_add(p_string(" -> "))->op_add(cpp_type_)->op_add(p_string(";")));
 		definitions_->ElementSeparatorLine_();
@@ -4719,14 +4726,14 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 	definitions_->BeginBlock_();
 	for (::Source_Text_ const *_Nonnull const resource_ : *(resources_))
 	{
-		definitions_->BeginLine_(p_string("resource_manager_->AddResource(p_string(\""));
+		definitions_->BeginLine_(p_string("resource_manager_->AddResource(str(\""));
 		definitions_->Write_(resource_->name_);
-		definitions_->Write_(p_string("\"), p_string(\""));
+		definitions_->Write_(p_string("\"), str(\""));
 		definitions_->Write_(resource_->Text_->Replace_(p_string("\\"), p_string("\\\\"))->Replace_(p_string("\n"), p_string("\\n"))->Replace_(p_string("\r"), p_string("\\r"))->Replace_(p_string("\""), p_string("\\\"")));
 		definitions_->EndLine_(p_string("\"));"));
 	}
 
-	if (cond(resources_->op_magnitude()->op_greater_than(p_int(0))))
+	if (cond(resources_->op_magnitude()->op_greater_than(i32(0))))
 	{
 		definitions_->EndLine_(p_string(""));
 	}
@@ -4770,7 +4777,7 @@ auto ::Emitter_::emit_entry_point_adapter_() -> void
 auto ::Name_::construct_global_namespace() -> ::Name_*
 {
 	::Name_* self = this;
-	self->package_ = p_none;
+	self->package_ = none;
 	self->kind_ = NamespaceName_;
 	self->segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
 	self->is_special_ = bit_false;
@@ -4780,7 +4787,7 @@ auto ::Name_::construct_global_namespace() -> ::Name_*
 auto ::Name_::construct_global_namespace(::Package_Name_ const *_Nonnull const package_) -> ::Name_*
 {
 	::Name_* self = this;
-	assert_(not_equal_op(package_, p_none), p_string(""));
+	assert_(not_equal_op(package_, none), p_string(""));
 	self->package_ = package_;
 	self->kind_ = NamespaceName_;
 	self->segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
@@ -4788,11 +4795,11 @@ auto ::Name_::construct_global_namespace(::Package_Name_ const *_Nonnull const p
 	return self;
 }
 
-auto ::Name_::construct(::Name_ const *_Nonnull const qualifier_, p_int const kind_, p_string const name_) -> ::Name_*
+auto ::Name_::construct(::Name_ const *_Nonnull const qualifier_, i32 const kind_, p_string const name_) -> ::Name_*
 {
 	::Name_* self = this;
-	assert_(not_equal_op(qualifier_, p_none), p_string(""));
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(not_equal_op(qualifier_, none), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
 	::System_::Collections_::List_<p_string> *_Nonnull const segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
@@ -4807,11 +4814,11 @@ auto ::Name_::construct(::Name_ const *_Nonnull const qualifier_, p_int const ki
 	return self;
 }
 
-auto ::Name_::construct(::Name_ const *_Nonnull const qualifier_, p_int const kind_, p_string const name_, bit const is_special_) -> ::Name_*
+auto ::Name_::construct(::Name_ const *_Nonnull const qualifier_, i32 const kind_, p_string const name_, bit const is_special_) -> ::Name_*
 {
 	::Name_* self = this;
-	assert_(not_equal_op(qualifier_, p_none), p_string(""));
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(not_equal_op(qualifier_, none), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
 	::System_::Collections_::List_<p_string> *_Nonnull const segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
@@ -4826,11 +4833,11 @@ auto ::Name_::construct(::Name_ const *_Nonnull const qualifier_, p_int const ki
 	return self;
 }
 
-auto ::Name_::construct_special(::Name_ const *_Nonnull const qualifier_, p_int const kind_, p_string const name_) -> ::Name_*
+auto ::Name_::construct_special(::Name_ const *_Nonnull const qualifier_, i32 const kind_, p_string const name_) -> ::Name_*
 {
 	::Name_* self = this;
-	assert_(not_equal_op(qualifier_, p_none), p_string(""));
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(not_equal_op(qualifier_, none), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
 	::System_::Collections_::List_<p_string> *_Nonnull const segments_ = (new ::System_::Collections_::List_<p_string>())->construct();
@@ -4845,7 +4852,7 @@ auto ::Name_::construct_special(::Name_ const *_Nonnull const qualifier_, p_int 
 	return self;
 }
 
-auto ::Name_::construct(::Package_Name_ const *_Nullable const package_, p_int const kind_, ::System_::Collections_::List_<p_string> const *_Nonnull const segments_, bit const is_special_) -> ::Name_*
+auto ::Name_::construct(::Package_Name_ const *_Nullable const package_, i32 const kind_, ::System_::Collections_::List_<p_string> const *_Nonnull const segments_, bit const is_special_) -> ::Name_*
 {
 	::Name_* self = this;
 	self->package_ = package_;
@@ -4858,19 +4865,19 @@ auto ::Name_::construct(::Package_Name_ const *_Nullable const package_, p_int c
 auto ::Name_::unqualified_() const -> p_string
 {
 	auto self = this;
-	if (cond(equal_op(segments_->op_magnitude(), p_int(0))))
+	if (cond(equal_op(segments_->op_magnitude(), i32(0))))
 	{
 		return p_string("");
 	}
 
-	return segments_->op_Element(segments_->op_magnitude()->op_subtract(p_int(1)));
+	return segments_->op_Element(segments_->op_magnitude()->op_subtract(i32(1)));
 }
 
 auto ::Name_::full_() const -> p_string
 {
 	auto self = this;
 	p_string name_ = p_string("");
-	if (cond(not_equal_op(package_, p_none)))
+	if (cond(not_equal_op(package_, none)))
 	{
 		name_ = package_->full_();
 	}
@@ -4895,12 +4902,12 @@ auto ::Name_::full_() const -> p_string
 auto ::Name_::is_qualified_with_(::Name_ const *_Nonnull const qualifier_) const -> bit
 {
 	auto self = this;
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(package_, p_none)) && bit_arg(not_equal_op(qualifier_->package_, p_none)))) && bit_arg(not_equal_op(package_->full_(), qualifier_->package_->full_())))) || bit_arg(segments_->op_magnitude()->op_less_than_or_equal(qualifier_->segments_->op_magnitude())))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(package_, none)) && bit_arg(not_equal_op(qualifier_->package_, none)))) && bit_arg(not_equal_op(package_->full_(), qualifier_->package_->full_())))) || bit_arg(segments_->op_magnitude()->op_less_than_or_equal(qualifier_->segments_->op_magnitude())))))
 	{
 		return bit_false;
 	}
 
-	p_int i_ = p_int(0);
+	i32 i_ = i32(0);
 	for (p_string const segment_ : *(qualifier_->segments_))
 	{
 		if (cond(not_equal_op(segment_, segments_->op_Element(i_))))
@@ -4908,7 +4915,7 @@ auto ::Name_::is_qualified_with_(::Name_ const *_Nonnull const qualifier_) const
 			return bit_false;
 		}
 
-		i_.op_add_assign(p_int(1));
+		i_.op_add_assign(i32(1));
 	}
 
 	return bit_true;
@@ -4917,18 +4924,18 @@ auto ::Name_::is_qualified_with_(::Name_ const *_Nonnull const qualifier_) const
 auto ::Name_::qualifier_is_(::Name_ const *_Nonnull const qualifier_) const -> bit
 {
 	auto self = this;
-	return bit_op(bit_arg(equal_op(qualifier_->segments_->op_magnitude()->op_add(p_int(1)), segments_->op_magnitude())) && bit_arg(is_qualified_with_(qualifier_)));
+	return bit_op(bit_arg(equal_op(qualifier_->segments_->op_magnitude()->op_add(i32(1)), segments_->op_magnitude())) && bit_arg(is_qualified_with_(qualifier_)));
 }
 
 auto ::Name_::names_(::Name_ const *_Nonnull const other_) const -> bit
 {
 	auto self = this;
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(package_, p_none)) && bit_arg(bit_op(bit_arg(equal_op(other_->package_, p_none)) || bit_arg(not_equal_op(package_->full_(), other_->package_->full_())))))) || bit_arg(not_equal_op(segments_->op_magnitude(), other_->segments_->op_magnitude())))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(package_, none)) && bit_arg(bit_op(bit_arg(equal_op(other_->package_, none)) || bit_arg(not_equal_op(package_->full_(), other_->package_->full_())))))) || bit_arg(not_equal_op(segments_->op_magnitude(), other_->segments_->op_magnitude())))))
 	{
 		return bit_false;
 	}
 
-	p_int i_ = p_int(0);
+	i32 i_ = i32(0);
 	for (p_string const segment_ : *(other_->segments_))
 	{
 		if (cond(not_equal_op(segment_, segments_->op_Element(i_))))
@@ -4936,7 +4943,7 @@ auto ::Name_::names_(::Name_ const *_Nonnull const other_) const -> bit
 			return bit_false;
 		}
 
-		i_.op_add_assign(p_int(1));
+		i_.op_add_assign(i32(1));
 	}
 
 	return bit_true;
@@ -4945,19 +4952,19 @@ auto ::Name_::names_(::Name_ const *_Nonnull const other_) const -> bit
 auto ::Name_::is_package_qualified_() const -> bit
 {
 	auto self = this;
-	return not_equal_op(package_, p_none);
+	return not_equal_op(package_, none);
 }
 
 auto ::Name_::remove_package_() const -> ::Name_ const *_Nonnull
 {
 	auto self = this;
-	if (cond(equal_op(package_, p_none)))
+	if (cond(equal_op(package_, none)))
 	{
 		return self;
 	}
 	else
 	{
-		return (new ::Name_())->construct(p_none, kind_, segments_, is_special_);
+		return (new ::Name_())->construct(none, kind_, segments_, is_special_);
 	}
 }
 
@@ -4983,7 +4990,7 @@ auto name_with_unspecified_package_names_itself_() -> void
 auto ::Package_Name_::construct(p_string const name_) -> ::Package_Name_*
 {
 	::Package_Name_* self = this;
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
 	self->unqualified_ = name_;
 	return self;
 }
@@ -4997,12 +5004,12 @@ auto ::Package_Name_::full_() const -> p_string
 auto ::Symbol_::construct_identifier(p_string const name_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
 	self->name_ = name_;
 	self->kind_ = IdentifierSymbol_;
 	self->is_special_name_ = bit_false;
-	self->of_type_ = p_none;
-	self->declares_type_ = p_none;
+	self->of_type_ = none;
+	self->declares_type_ = none;
 	self->declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
 	self->children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
 	return self;
@@ -5011,13 +5018,13 @@ auto ::Symbol_::construct_identifier(p_string const name_) -> ::Symbol_*
 auto ::Symbol_::construct_identifier(p_string const name_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const declarations_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
-	assert_(not_equal_op(declarations_, p_none), p_string("name=").op_add(name_));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
+	assert_(not_equal_op(declarations_, none), p_string("name=").op_add(name_));
 	self->name_ = name_;
 	self->kind_ = IdentifierSymbol_;
 	self->is_special_name_ = bit_false;
-	self->of_type_ = p_none;
-	self->declares_type_ = p_none;
+	self->of_type_ = none;
+	self->declares_type_ = none;
 	self->declarations_ = declarations_;
 	self->children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
 	return self;
@@ -5026,13 +5033,13 @@ auto ::Symbol_::construct_identifier(p_string const name_, ::System_::Collection
 auto ::Symbol_::construct_identifier(p_string const name_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
-	assert_(not_equal_op(children_, p_none), p_string("name=").op_add(name_));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
+	assert_(not_equal_op(children_, none), p_string("name=").op_add(name_));
 	self->name_ = name_;
 	self->kind_ = IdentifierSymbol_;
 	self->is_special_name_ = bit_false;
-	self->of_type_ = p_none;
-	self->declares_type_ = p_none;
+	self->of_type_ = none;
+	self->declares_type_ = none;
 	self->declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
 	self->children_ = children_;
 	return self;
@@ -5041,13 +5048,13 @@ auto ::Symbol_::construct_identifier(p_string const name_, ::System_::Collection
 auto ::Symbol_::construct_constructor(p_string const name_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const declarations_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
-	assert_(not_equal_op(declarations_, p_none), p_string("name=").op_add(name_));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
+	assert_(not_equal_op(declarations_, none), p_string("name=").op_add(name_));
 	self->name_ = name_;
 	self->kind_ = IdentifierSymbol_;
 	self->is_special_name_ = bit_true;
-	self->of_type_ = p_none;
-	self->declares_type_ = p_none;
+	self->of_type_ = none;
+	self->declares_type_ = none;
 	self->declarations_ = declarations_;
 	self->children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
 	return self;
@@ -5056,13 +5063,13 @@ auto ::Symbol_::construct_constructor(p_string const name_, ::System_::Collectio
 auto ::Symbol_::construct_package(p_string const name_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(name_.ByteLength_()->op_greater_than(p_int(0)), p_string(""));
-	assert_(not_equal_op(children_, p_none), p_string("name=").op_add(name_));
+	assert_(name_.ByteLength_()->op_greater_than(i32(0)), p_string(""));
+	assert_(not_equal_op(children_, none), p_string("name=").op_add(name_));
 	self->name_ = name_;
 	self->kind_ = PackageSymbol_;
 	self->is_special_name_ = bit_false;
-	self->of_type_ = p_none;
-	self->declares_type_ = p_none;
+	self->of_type_ = none;
+	self->declares_type_ = none;
 	self->declarations_ = (new ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull>())->construct();
 	self->children_ = children_;
 	return self;
@@ -5071,12 +5078,12 @@ auto ::Symbol_::construct_package(p_string const name_, ::System_::Collections_:
 auto ::Symbol_::construct_declaring(::Type_ const *_Nonnull const declares_type_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const declarations_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(not_equal_op(declares_type_, p_none), p_string(""));
-	assert_(not_equal_op(declarations_, p_none), p_string("name=").op_add(declares_type_->name_->unqualified_()));
-	assert_(not_equal_op(children_, p_none), p_string("name=").op_add(declares_type_->name_->unqualified_()));
+	assert_(not_equal_op(declares_type_, none), p_string(""));
+	assert_(not_equal_op(declarations_, none), p_string("name=").op_add(declares_type_->name_->unqualified_()));
+	assert_(not_equal_op(children_, none), p_string("name=").op_add(declares_type_->name_->unqualified_()));
 	self->name_ = declares_type_->name_->unqualified_();
 	self->is_special_name_ = declares_type_->name_->is_special_;
-	self->of_type_ = p_none;
+	self->of_type_ = none;
 	self->declares_type_ = declares_type_;
 	self->declarations_ = declarations_;
 	self->children_ = children_;
@@ -5086,19 +5093,19 @@ auto ::Symbol_::construct_declaring(::Type_ const *_Nonnull const declares_type_
 auto ::Symbol_::construct_of_type(p_string const name_, ::Type_ const *_Nonnull const of_type_, ::System_::Collections_::List_<::Semantic_Node_ const *_Nonnull> const *_Nonnull const declarations_, ::System_::Collections_::List_<::Symbol_ const *_Nonnull> const *_Nonnull const children_) -> ::Symbol_*
 {
 	::Symbol_* self = this;
-	assert_(not_equal_op(of_type_, p_none), p_string("name=").op_add(name_));
-	assert_(not_equal_op(declarations_, p_none), p_string("name=").op_add(name_));
-	assert_(not_equal_op(children_, p_none), p_string("name=").op_add(name_));
+	assert_(not_equal_op(of_type_, none), p_string("name=").op_add(name_));
+	assert_(not_equal_op(declarations_, none), p_string("name=").op_add(name_));
+	assert_(not_equal_op(children_, none), p_string("name=").op_add(name_));
 	self->name_ = name_;
 	self->is_special_name_ = bit_false;
 	self->of_type_ = of_type_;
-	self->declares_type_ = p_none;
+	self->declares_type_ = none;
 	self->declarations_ = declarations_;
 	self->children_ = children_;
 	return self;
 }
 
-auto ::Symbol_::get_(p_string const name_, p_int const kind_) const -> ::Symbol_ const *_Nullable
+auto ::Symbol_::get_(p_string const name_, i32 const kind_) const -> ::Symbol_ const *_Nullable
 {
 	auto self = this;
 	for (::Symbol_ const *_Nonnull const child_ : *(children_))
@@ -5109,7 +5116,7 @@ auto ::Symbol_::get_(p_string const name_, p_int const kind_) const -> ::Symbol_
 		}
 	}
 
-	return p_none;
+	return none;
 }
 
 auto unit_test_Symbol_() -> void
@@ -5122,13 +5129,13 @@ auto Package_symbol_children_can_be_found_by_name_and_kind_() -> void
 	::System_::Collections_::List_<::Symbol_ const *_Nonnull> *_Nonnull const children_ = (new ::System_::Collections_::List_<::Symbol_ const *_Nonnull>())->construct();
 	children_->add_((new ::Symbol_())->construct_identifier(p_string("child")));
 	::Symbol_ const *_Nonnull const package_with_children_ = (new ::Symbol_())->construct_package(p_string("package"), children_);
-	assert_(not_equal_op(package_with_children_->get_(p_string("child"), IdentifierSymbol_), p_none), p_string(""));
+	assert_(not_equal_op(package_with_children_->get_(p_string("child"), IdentifierSymbol_), none), p_string(""));
 }
 
-auto ::Type_::construct(p_int const kind_, ::Name_ const *_Nonnull const name_, bit const is_mutable_) -> ::Type_*
+auto ::Type_::construct(i32 const kind_, ::Name_ const *_Nonnull const name_, bit const is_mutable_) -> ::Type_*
 {
 	::Type_* self = this;
-	assert_(not_equal_op(name_, p_none), p_string(""));
+	assert_(not_equal_op(name_, none), p_string(""));
 	self->kind_ = kind_;
 	self->name_ = name_;
 	self->type_parameters_ = (new ::System_::Collections_::List_<::Type_ const *_Nonnull>())->construct();
@@ -5152,7 +5159,7 @@ auto ::Type_::construct_parameter(p_string const name_) -> ::Type_*
 	return self;
 }
 
-auto ::Type_::construct(p_int const kind_, ::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_) -> ::Type_*
+auto ::Type_::construct(i32 const kind_, ::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_) -> ::Type_*
 {
 	::Type_* self = this;
 	self->kind_ = kind_;
@@ -5207,8 +5214,8 @@ auto ::Type_::construct_namespace(::Name_ const *_Nonnull const name_) -> ::Type
 auto ::Type_::construct_generic(::Type_ const *_Nonnull const definition_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_arguments_) -> ::Type_*
 {
 	::Type_* self = this;
-	assert_(not_equal_op(definition_, p_none), p_string(""));
-	assert_(not_equal_op(type_arguments_, p_none), definition_->name_->full_());
+	assert_(not_equal_op(definition_, none), p_string(""));
+	assert_(not_equal_op(type_arguments_, none), definition_->name_->full_());
 	assert_(equal_op(definition_->type_parameters_->op_magnitude(), type_arguments_->op_magnitude()), definition_->name_->full_()->op_add(p_string(" "))->op_add(definition_->type_parameters_->op_magnitude())->op_add(p_string(" given "))->op_add(type_arguments_->op_magnitude()));
 	self->kind_ = definition_->kind_;
 	self->name_ = definition_->name_;
@@ -5220,7 +5227,7 @@ auto ::Type_::construct_generic(::Type_ const *_Nonnull const definition_, ::Sys
 	return self;
 }
 
-auto ::Type_::construct(p_int const kind_, ::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_) -> ::Type_*
+auto ::Type_::construct(i32 const kind_, ::Name_ const *_Nonnull const name_, ::System_::Collections_::List_<::Type_ const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_) -> ::Type_*
 {
 	::Type_* self = this;
 	self->kind_ = kind_;
@@ -5264,7 +5271,7 @@ auto ::Name_Subtable_::construct_global_namespace(::Name_Table_ const *_Nonnull 
 {
 	::Name_Subtable_* self = this;
 	self->name_table_ = name_table_;
-	self->parent_ = p_none;
+	self->parent_ = none;
 	self->name_ = (new ::Name_())->construct_global_namespace();
 	self->type_ = (new ::Type_())->construct_namespace(self->name_);
 	subtables_ = (new ::System_::Collections_::List_<::Name_Subtable_ *_Nonnull>())->construct();
@@ -5275,7 +5282,7 @@ auto ::Name_Subtable_::construct_global_namespace(::Name_Table_ const *_Nonnull 
 {
 	::Name_Subtable_* self = this;
 	self->name_table_ = name_table_;
-	self->parent_ = p_none;
+	self->parent_ = none;
 	self->name_ = (new ::Name_())->construct_global_namespace(package_name_);
 	self->type_ = (new ::Type_())->construct_namespace(self->name_);
 	subtables_ = (new ::System_::Collections_::List_<::Name_Subtable_ *_Nonnull>())->construct();
@@ -5299,7 +5306,7 @@ auto ::Name_Subtable_::add_(::Name_ const *_Nonnull const name_, ::Type_ const *
 	assert_(name_->is_qualified_with_(self->name_), p_string("\"").op_add(name_->full_())->op_add(p_string("\" is not a child of \""))->op_add(self->name_->full_())->op_add(p_string("\"")));
 	if (cond(name_->qualifier_is_(self->name_)))
 	{
-		if (cond(bit_op(bit_arg(bit_op(bit_arg(equal_op(self->name_->package_, p_none)) && bit_arg(not_equal_op(type_, p_none)))) && bit_arg(equal_op(type_->kind_, NamespaceType_)))))
+		if (cond(bit_op(bit_arg(bit_op(bit_arg(equal_op(self->name_->package_, none)) && bit_arg(not_equal_op(type_, none)))) && bit_arg(equal_op(type_->kind_, NamespaceType_)))))
 		{
 			subtables_->add_((new ::Name_Subtable_())->construct(self, name_->remove_package_(), type_->remove_package_()));
 		}
@@ -5320,7 +5327,7 @@ auto ::Name_Subtable_::add_(::Name_ const *_Nonnull const name_, ::Type_ const *
 		}
 	}
 
-	assert_(equal_op(name_->segments_->op_magnitude(), self->name_->segments_->op_magnitude()->op_add(p_int(1))), p_string("Can't add \"").op_add(name_->full_())->op_add(p_string("\" to \""))->op_add(self->name_->full_())->op_add(p_string("\"")));
+	assert_(equal_op(name_->segments_->op_magnitude(), self->name_->segments_->op_magnitude()->op_add(i32(1))), p_string("Can't add \"").op_add(name_->full_())->op_add(p_string("\" to \""))->op_add(self->name_->full_())->op_add(p_string("\"")));
 }
 
 auto ::Name_Subtable_::find_(p_string const name_) const -> ::Name_Subtable_ *_Nullable
@@ -5346,7 +5353,7 @@ auto ::Name_Subtable_::find_(p_string const name_, bit const is_special_) const 
 		}
 	}
 
-	return p_none;
+	return none;
 }
 
 auto ::Name_Subtable_::lookup_(p_string const name_) const -> ::Name_Subtable_ *_Nullable
@@ -5365,7 +5372,7 @@ auto ::Name_Subtable_::lookup_(p_string const name_, bit const is_special_) cons
 {
 	auto self = this;
 	::Name_Subtable_ *_Nullable subtable_ = find_(name_, is_special_);
-	if (cond(bit_op(bit_arg(equal_op(subtable_, p_none)) && bit_arg(not_equal_op(parent_, p_none)))))
+	if (cond(bit_op(bit_arg(equal_op(subtable_, none)) && bit_arg(not_equal_op(parent_, none)))))
 	{
 		subtable_ = parent_->lookup_(name_, is_special_);
 	}
@@ -5382,26 +5389,26 @@ auto ::Name_Subtable_::get_(::Name_ const *_Nonnull const name_) const -> ::Name
 	}
 	else if (cond(bit_not(name_->is_qualified_with_(self->name_))))
 	{
-		return p_none;
+		return none;
 	}
 
 	for (::Name_Subtable_ const *_Nonnull const subtable_ : *(subtables_))
 	{
 		::Name_Subtable_ const *_Nullable const value_ = subtable_->get_(name_);
-		if (cond(not_equal_op(value_, p_none)))
+		if (cond(not_equal_op(value_, none)))
 		{
 			return value_;
 		}
 	}
 
-	return p_none;
+	return none;
 }
 
 auto ::Name_Subtable_::bind_type_(::Type_ const *_Nonnull const type_) -> void
 {
 	auto self = this;
-	assert_(not_equal_op(type_, p_none), self->name_->full_());
-	if (cond(not_equal_op(self->type_, p_none)))
+	assert_(not_equal_op(type_, none), self->name_->full_());
+	if (cond(not_equal_op(self->type_, none)))
 	{
 		assert_(equal_op(self->type_->name_->full_(), type_->name_->full_()), self->name_->full_()->op_add(p_string(" currently `"))->op_add(self->type_->name_->full_())->op_add(p_string("` trying to set to `"))->op_add(type_->name_->full_())->op_add(p_string("`")));
 	}
@@ -5420,9 +5427,9 @@ auto global_namespace_contains_added_name_() -> void
 	::Name_Table_ const *_Nonnull const name_table_ = (new ::Name_Table_())->construct();
 	::Name_Subtable_ *_Nonnull const global_namespace_ = (new ::Name_Subtable_())->construct_global_namespace(name_table_);
 	::Name_ const *_Nonnull const test_name_ = (new ::Name_())->construct(global_namespace_->name_, TypeName_, p_string("test"));
-	global_namespace_->add_(test_name_, p_none);
-	assert_(not_equal_op(global_namespace_->find_(p_string("test")), p_none), p_string(""));
-	assert_(not_equal_op(global_namespace_->get_(test_name_), p_none), p_string(""));
+	global_namespace_->add_(test_name_, none);
+	assert_(not_equal_op(global_namespace_->find_(p_string("test")), none), p_string(""));
+	assert_(not_equal_op(global_namespace_->get_(test_name_), none), p_string(""));
 }
 
 auto namespace_contains_added_name_() -> void
@@ -5430,10 +5437,10 @@ auto namespace_contains_added_name_() -> void
 	::Name_Table_ const *_Nonnull const name_table_ = (new ::Name_Table_())->construct();
 	::Name_Subtable_ *_Nonnull const global_namespace_ = (new ::Name_Subtable_())->construct_global_namespace(name_table_);
 	::Name_ const *_Nonnull const namespace_name_ = (new ::Name_())->construct(global_namespace_->name_, NamespaceName_, p_string("namespace"));
-	global_namespace_->add_(namespace_name_, p_none);
-	global_namespace_->add_((new ::Name_())->construct(namespace_name_, TypeName_, p_string("test")), p_none);
+	global_namespace_->add_(namespace_name_, none);
+	global_namespace_->add_((new ::Name_())->construct(namespace_name_, TypeName_, p_string("test")), none);
 	::Name_Subtable_ const *_Nonnull const namespace_ = global_namespace_->find_(p_string("namespace"));
-	assert_(not_equal_op(namespace_->find_(p_string("test")), p_none), p_string(""));
+	assert_(not_equal_op(namespace_->find_(p_string("test")), none), p_string(""));
 }
 
 auto ::Name_Table_::construct() -> ::Name_Table_*
@@ -5456,7 +5463,7 @@ auto ::Name_Table_::add_(::Name_ const *_Nonnull const parent_, ::Symbol_ const 
 {
 	auto self = this;
 	::Name_ const *_Nonnull name_;
-	if (cond(not_equal_op(symbol_->declares_type_, p_none)))
+	if (cond(not_equal_op(symbol_->declares_type_, none)))
 	{
 		name_ = (new ::Name_())->construct(parent_, TypeName_, symbol_->name_, symbol_->is_special_name_);
 		add_(name_, symbol_->declares_type_);
@@ -5489,7 +5496,7 @@ auto ::Name_Table_::add_(::Name_ const *_Nonnull const name_, ::Type_ const *_No
 auto ::Name_Table_::get_(::Name_ const *_Nonnull const name_) const -> ::Name_Subtable_ const *_Nullable
 {
 	auto self = this;
-	if (cond(equal_op(name_->package_, p_none)))
+	if (cond(equal_op(name_->package_, none)))
 	{
 		return any_package_->get_(name_);
 	}
@@ -5502,7 +5509,7 @@ auto ::Name_Table_::get_(::Name_ const *_Nonnull const name_) const -> ::Name_Su
 		}
 	}
 
-	return p_none;
+	return none;
 }
 
 auto ::Name_Table_Builder_::build_(::Package_Name_ const *_Nonnull const package_name_, ::Syntax_Node_ const *_Nonnull const package_syntax_, ::System_::Collections_::List_<::Package_Reference_> const *_Nonnull const references_) const -> ::Name_Table_ const *_Nonnull
@@ -5566,7 +5573,7 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 	else if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, ClassDeclaration_)) || bit_arg(equal_op(syntax_->kind_, StructDeclaration_)))))
 	{
 		p_string const unqualified_name_ = syntax_->first_child_(Identifier_)->get_text_();
-		p_int type_kind_;
+		i32 type_kind_;
 		if (cond(equal_op(syntax_->kind_, ClassDeclaration_)))
 		{
 			type_kind_ = ReferenceType_;
@@ -5588,7 +5595,7 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 	{
 		p_string full_name_ = p_string("new");
 		::Syntax_Node_ const *_Nullable const constructor_name_ = syntax_->first_child_(Identifier_);
-		if (cond(not_equal_op(constructor_name_, p_none)))
+		if (cond(not_equal_op(constructor_name_, none)))
 		{
 			full_name_ = p_string("new_").op_add(constructor_name_->get_text_());
 		}
@@ -5596,14 +5603,14 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 		::Name_ const *_Nonnull const name_ = (new ::Name_())->construct_special(parent_, FunctionName_, full_name_);
 		add_function_(name_table_, name_, syntax_);
 		::Name_ const *_Nonnull const self_name_ = (new ::Name_())->construct_special(name_, VariableName_, p_string("self"));
-		::Type_ const *_Nonnull const self_type_ = p_none;
+		::Type_ const *_Nonnull const self_type_ = none;
 		name_table_->add_(self_name_, self_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, FieldDeclaration_)))
 	{
 		p_string const unqualified_name_ = syntax_->first_child_(VariableDeclaration_)->first_child_(Identifier_)->get_text_();
 		::Name_ const *_Nonnull const name_ = (new ::Name_())->construct(parent_, TypeName_, unqualified_name_);
-		::Type_ const *_Nullable const no_type_ = p_none;
+		::Type_ const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, EnumDeclaration_)))
@@ -5617,7 +5624,7 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 	{
 		p_string const unqualified_name_ = syntax_->first_child_(VariableDeclaration_)->first_child_(Identifier_)->get_text_();
 		::Name_ const *_Nonnull const name_ = (new ::Name_())->construct(parent_, TypeName_, unqualified_name_);
-		::Type_ const *_Nullable const no_type_ = p_none;
+		::Type_ const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, Block_)))
@@ -5635,7 +5642,7 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 	{
 		::Syntax_Node_ const *_Nonnull const identifier_ = syntax_->first_child_(VariableDeclaration_)->first_child_(Identifier_);
 		::Name_ const *_Nonnull const name_ = (new ::Name_())->construct(parent_, VariableName_, identifier_->get_text_());
-		::Type_ const *_Nullable const no_type_ = p_none;
+		::Type_ const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 		add_syntax_(name_table_, parent_, syntax_->first_child_(Block_));
 	}
@@ -5643,7 +5650,7 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 	{
 		add_syntax_(name_table_, parent_, syntax_->first_child_(Block_));
 		::Syntax_Node_ const *_Nullable const else_clause_ = syntax_->first_child_(ElseClause_);
-		if (cond(not_equal_op(else_clause_, p_none)))
+		if (cond(not_equal_op(else_clause_, none)))
 		{
 			add_syntax_(name_table_, parent_, else_clause_);
 		}
@@ -5651,7 +5658,7 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 	else if (cond(equal_op(syntax_->kind_, ElseClause_)))
 	{
 		::Syntax_Node_ const *_Nullable const block_ = syntax_->first_child_(Block_);
-		if (cond(not_equal_op(block_, p_none)))
+		if (cond(not_equal_op(block_, none)))
 		{
 			add_syntax_(name_table_, parent_, block_);
 		}
@@ -5664,20 +5671,20 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 	{
 		::Syntax_Node_ const *_Nonnull const identifier_ = syntax_->first_child_(VariableDeclaration_)->first_child_(Identifier_);
 		::Name_ const *_Nonnull const name_ = (new ::Name_())->construct(parent_, VariableName_, identifier_->get_text_());
-		::Type_ const *_Nullable const no_type_ = p_none;
+		::Type_ const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, Parameter_)))
 	{
 		::Syntax_Node_ const *_Nonnull const identifier_ = syntax_->first_child_(Identifier_);
 		::Name_ const *_Nonnull const name_ = (new ::Name_())->construct(parent_, VariableName_, identifier_->get_text_());
-		::Type_ const *_Nullable const no_type_ = p_none;
+		::Type_ const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, SelfParameter_)))
 	{
 		::Name_ const *_Nonnull const name_ = (new ::Name_())->construct_special(parent_, VariableName_, p_string("self"));
-		::Type_ const *_Nullable const no_type_ = p_none;
+		::Type_ const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
 	else if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(syntax_->kind_, ExpressionStatement_)) || bit_arg(equal_op(syntax_->kind_, ReturnStatement_)))) || bit_arg(equal_op(syntax_->kind_, BreakStatement_)))) || bit_arg(equal_op(syntax_->kind_, ContinueStatement_)))) || bit_arg(equal_op(syntax_->kind_, EndOfFileToken_)))))
@@ -5691,7 +5698,7 @@ auto ::Name_Table_Builder_::add_syntax_(::Name_Table_ *_Nonnull const name_table
 
 auto ::Name_Table_Builder_::add_function_(::Name_Table_ *_Nonnull const name_table_, ::Name_ const *_Nonnull const name_, ::Syntax_Node_ const *_Nonnull const function_) -> void
 {
-	::Type_ const *_Nullable const no_type_ = p_none;
+	::Type_ const *_Nullable const no_type_ = none;
 	name_table_->add_(name_, no_type_);
 	::Syntax_Node_ const *_Nonnull const parameters_ = function_->first_child_(ParameterList_);
 	for (::Syntax_Node_ const *_Nonnull const parameter_ : *(parameters_->parameters_()))
@@ -5718,16 +5725,16 @@ auto table_contains_referenced_child_names_() -> void
 	::System_::Collections_::List_<::Package_Reference_> *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>())->construct();
 	references_->add_(::Package_Reference_::construct(runtime_package_));
 	::Name_Table_Builder_ const *_Nonnull const name_table_builder_ = (new ::Name_Table_Builder_())->construct();
-	::Syntax_Node_ const *_Nonnull const package_syntax_ = (new ::Syntax_Node_())->construct(PackageNode_, p_none, p_int(0), p_int(0));
+	::Syntax_Node_ const *_Nonnull const package_syntax_ = (new ::Syntax_Node_())->construct(PackageNode_, none, i32(0), i32(0));
 	::Name_Table_ const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
 	::Name_Subtable_ const *_Nonnull const namespace_ = name_table_->any_package_->find_(p_string("System"));
-	assert_(not_equal_op(namespace_->find_(p_string("Console")), p_none), p_string(""));
+	assert_(not_equal_op(namespace_->find_(p_string("Console")), none), p_string(""));
 	::Name_ const *_Nonnull const system_namespace_name_ = (new ::Name_())->construct((new ::Name_())->construct_global_namespace(), NamespaceName_, p_string("System"));
-	assert_(not_equal_op(name_table_->get_(system_namespace_name_), p_none), p_string(""));
+	assert_(not_equal_op(name_table_->get_(system_namespace_name_), none), p_string(""));
 	::Name_ const *_Nonnull const console_namespace_name_ = (new ::Name_())->construct(system_namespace_name_, NamespaceName_, p_string("Console"));
-	assert_(not_equal_op(name_table_->get_(console_namespace_name_), p_none), p_string(""));
+	assert_(not_equal_op(name_table_->get_(console_namespace_name_), none), p_string(""));
 	::Name_ const *_Nonnull const console_class_name_ = (new ::Name_())->construct(console_namespace_name_, TypeName_, p_string("Console"));
-	assert_(not_equal_op(name_table_->get_(console_class_name_), p_none), p_string(""));
+	assert_(not_equal_op(name_table_->get_(console_class_name_), none), p_string(""));
 }
 
 auto can_get_root_namespace_from_name_() -> void
@@ -5737,10 +5744,10 @@ auto can_get_root_namespace_from_name_() -> void
 	::System_::Collections_::List_<::Package_Reference_> *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>())->construct();
 	references_->add_(::Package_Reference_::construct(runtime_package_));
 	::Name_Table_Builder_ const *_Nonnull const name_table_builder_ = (new ::Name_Table_Builder_())->construct();
-	::Syntax_Node_ const *_Nonnull const package_syntax_ = (new ::Syntax_Node_())->construct(PackageNode_, p_none, p_int(0), p_int(0));
+	::Syntax_Node_ const *_Nonnull const package_syntax_ = (new ::Syntax_Node_())->construct(PackageNode_, none, i32(0), i32(0));
 	::Name_Table_ const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
 	::Name_ const *_Nonnull const namespace_name_ = (new ::Name_())->construct((new ::Name_())->construct_global_namespace(), NamespaceName_, p_string("System"));
-	assert_(not_equal_op(name_table_->get_(namespace_name_), p_none), p_string(""));
+	assert_(not_equal_op(name_table_->get_(namespace_name_), none), p_string(""));
 }
 
 auto can_get_Console_class_from_name_without_package_() -> void
@@ -5750,12 +5757,12 @@ auto can_get_Console_class_from_name_without_package_() -> void
 	::System_::Collections_::List_<::Package_Reference_> *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>())->construct();
 	references_->add_(::Package_Reference_::construct(runtime_package_));
 	::Name_Table_Builder_ const *_Nonnull const name_table_builder_ = (new ::Name_Table_Builder_())->construct();
-	::Syntax_Node_ const *_Nonnull const package_syntax_ = (new ::Syntax_Node_())->construct(PackageNode_, p_none, p_int(0), p_int(0));
+	::Syntax_Node_ const *_Nonnull const package_syntax_ = (new ::Syntax_Node_())->construct(PackageNode_, none, i32(0), i32(0));
 	::Name_Table_ const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
 	::Name_ const *_Nonnull const system_namespace_name_ = (new ::Name_())->construct((new ::Name_())->construct_global_namespace(), NamespaceName_, p_string("System"));
 	::Name_ const *_Nonnull const console_namespace_name_ = (new ::Name_())->construct(system_namespace_name_, NamespaceName_, p_string("Console"));
 	::Name_ const *_Nonnull const console_class_name_ = (new ::Name_())->construct(console_namespace_name_, TypeName_, p_string("Console"));
-	assert_(not_equal_op(name_table_->get_(console_class_name_), p_none), p_string(""));
+	assert_(not_equal_op(name_table_->get_(console_class_name_), none), p_string(""));
 }
 
 auto can_get_Optional_class_from_name_with_package_() -> void
@@ -5765,14 +5772,14 @@ auto can_get_Optional_class_from_name_with_package_() -> void
 	::System_::Collections_::List_<::Package_Reference_> *_Nonnull const references_ = (new ::System_::Collections_::List_<::Package_Reference_>())->construct();
 	references_->add_(::Package_Reference_::construct(primitives_package_));
 	::Name_Table_Builder_ const *_Nonnull const name_table_builder_ = (new ::Name_Table_Builder_())->construct();
-	::Syntax_Node_ const *_Nonnull const package_syntax_ = (new ::Syntax_Node_())->construct(PackageNode_, p_none, p_int(0), p_int(0));
+	::Syntax_Node_ const *_Nonnull const package_syntax_ = (new ::Syntax_Node_())->construct(PackageNode_, none, i32(0), i32(0));
 	::Name_Table_ const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
 	::Package_Name_ const *_Nonnull const package_name_ = (new ::Package_Name_())->construct(p_string("$primitives"));
 	::Name_ const *_Nonnull const adamant_namespace_name_ = (new ::Name_())->construct((new ::Name_())->construct_global_namespace(), NamespaceName_, p_string("adamant"));
 	::Name_ const *_Nonnull const language_namespace_name_ = (new ::Name_())->construct(adamant_namespace_name_, NamespaceName_, p_string("language"));
-	assert_(not_equal_op(name_table_->get_(language_namespace_name_), p_none), p_string(""));
+	assert_(not_equal_op(name_table_->get_(language_namespace_name_), none), p_string(""));
 	::Name_ const *_Nonnull const optional_class_name_ = (new ::Name_())->construct(language_namespace_name_, TypeName_, p_string("optional"));
-	assert_(not_equal_op(name_table_->get_(optional_class_name_), p_none), p_string(""));
+	assert_(not_equal_op(name_table_->get_(optional_class_name_), none), p_string(""));
 }
 
 // Entry Point Adapter
@@ -5780,8 +5787,8 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		resource_manager_->AddResource(p_string("RuntimeLibrary.cpp"), p_string("#include \"RuntimeLibrary.hpp\"\n#include <map>\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\nu32 i32::AsUInt_() const\n{\n    if(this->value < 0)\n        throw std::range_error(\"Can't convert negative number to unsigned\");\n\n    return this->value;\n}\n\nchar p_code_point::CharValue() const\n{\n    if(this->raw_value > 0xFF)\n        throw std::range_error(\"Unicode char values not yet supported\");\n\n    return this->raw_value;\n}\n\np_string p_string::construct(p_code_point c, i32 repeat)\n{\n    p_string self;\n    self.Length = repeat.value;\n    char* buffer = new char[repeat.value];\n    for (int i = 0; i < repeat.value; i++)\n        buffer[i] = c.CharValue();\n\n    self.Buffer = buffer;\n    return self;\n}\n\np_string::p_string(const char* s)\n    : Length(std::strlen(s)), Buffer(s)\n{\n}\n\np_string::p_string(int length, const char* s)\n    : Length(length), Buffer(s)\n{\n}\n\nchar const * p_string::cstr() const\n{\n    auto buffer = new char[Length + 1];\n    std::memcpy(buffer, Buffer, Length);\n    buffer[Length] = 0;\n    return buffer;\n}\n\np_string::p_string(i32 other)\n    : Length(0), Buffer(0)\n{\n    char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator\n    int length = std::sprintf(buffer,\"%d\", other.value);\n    if(length <= 0) throw std::runtime_error(\"Could not convert int to string\");\n    Length = length;\n    Buffer = buffer;\n}\n\np_string::p_string(p_code_point other)\n    : Length(1), Buffer(new char[1] { other.CharValue() })\n{\n}\n\np_string::p_string(bit other)\n    : p_string(other.value ? \"true\" : \"false\")\n{\n}\n\np_string p_string::Substring_(i32 start, i32 length) const\n{\n    return p_string(length.value, Buffer + start.value);\n}\n\np_string p_string::Replace_(p_string oldValue, p_string newValue) const\n{\n    system_::Text_::String_Builder_ builder = system_::Text_::String_Builder_(); // TODO initialize capacity\n    int limit = Length - oldValue.Length + 1;\n    int lastIndex = 0;\n    // TODO the Substring calls in here are leaking memory\n    for(int i=0; i < limit; i++)\n        if (cond(equal_op(Substring_(i32(i), i32(oldValue.Length)), oldValue)))\n        {\n            builder.Append_(Substring_(i32(lastIndex), i32(i-lastIndex)));\n            builder.Append_(newValue);\n            i += oldValue.Length; // skip over the value we just matched\n            lastIndex = i;\n            i--; // we need i-- to offset the i++ that is about to happen\n        }\n\n    builder.Append_(Substring_(i32(lastIndex), i32(Length - lastIndex)));\n    return builder.ToString_();\n}\n\ni32 p_string::LastIndexOf_(p_code_point c) const\n{\n    for(int i = Length - 1; i >= 0; i--)\n        if(Buffer[i] == c.CharValue())\n            return i32(i);\n\n    return i32(-1); // TODO should return none\n}\n\ni32 p_string::index_of_(p_code_point c) const\n{\n    for(int i = 0; i < Length; i++)\n        if(Buffer[i] == c.CharValue())\n            return i32(i);\n\n    return i32(-1);\n}\n\np_string p_string::op_add(p_string const & value) const\n{\n    int newLength = Length + value.Length;\n    char* chars = new char[newLength];\n    size_t offset = sizeof(char) * Length;\n    std::memcpy(chars, Buffer, offset);\n    std::memcpy(chars + offset, value.Buffer, value.Length);\n    return p_string(newLength, chars);\n}\n\nauto equal_op(p_string lhs, p_string rhs) -> bit\n{\n    if (lhs.Length != rhs.Length)\n        return bit_false;\n\n    for (int i = 0; i < lhs.Length; i++)\n        if (lhs.Buffer[i] != rhs.Buffer[i])\n            return bit_false;\n\n    return bit_true;\n}\n\nbit p_string::op_less_than(p_string other) const\n{\n    char const* left = this->cstr();\n    char const* right = other.cstr();\n    bool result = std::strcmp(left, right) < 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbit p_string::op_less_than_or_equal(p_string other) const\n{\n    char const* left = this->cstr();\n    char const* right = other.cstr();\n    bool result = std::strcmp(left, right) <= 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbit p_string::op_greater_than(p_string other) const\n{\n    char const* left = this->cstr();\n    char const* right = other.cstr();\n    bool result = std::strcmp(left, right) > 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbit p_string::op_greater_than_or_equal(p_string other) const\n{\n    char const* left = this->cstr();\n    char const* right = other.cstr();\n    bool result = std::strcmp(left, right) >= 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbool operator < (p_string const & lhs, p_string const & rhs)\n{\n    char const* left = lhs.cstr();\n    char const* right = rhs.cstr();\n    bool result = std::strcmp(left, right) < 0;\n    delete[] left;\n    delete[] right;\n    return result;\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n\nstd::map<p_string, p_string> resourceValues;\n\np_string const & ResourceManager::GetString_(p_string resourceName)\n{\n    return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(p_string name, p_string value)\n{\n    resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nvoid debug_write_(p_string value)\n{\n    std::fprintf(stderr, \"%.*s\", value.Length, value.Buffer);\n}\nvoid debug_write_line_(p_string value)\n{\n    std::fprintf(stderr, \"%.*s\\n\", value.Length, value.Buffer);\n}\nvoid debug_write_line_()\n{\n    std::fprintf(stderr, \"\\n\");\n}\n\nnamespace system_\n{\n    namespace Console_\n    {\n        void Console_::Write_(p_string value)\n        {\n            std::printf(\"%.*s\", value.Length, value.Buffer);\n        }\n\n        void Console_::WriteLine_(p_string value)\n        {\n            std::printf(\"%.*s\\n\", value.Length, value.Buffer);\n        }\n\n        void Console_::WriteLine_()\n        {\n            std::printf(\"\\n\");\n        }\n\n        Arguments_::Arguments_(int argc, char const *const * argv)\n            : Count(argc-1)\n        {\n            args = new p_string[Count];\n            for (int i = 0; i < Count; i++)\n                args[i] = p_string(argv[i+1]);\n        }\n    }\n\n    namespace IO_\n    {\n        File_Reader_* File_Reader_::construct(const p_string& fileName)\n        {\n            std::FILE* foo;\n            auto fname = fileName.cstr();\n            file = std::fopen(fname, \"rb\");\n            delete[] fname;\n            return this;\n        }\n\n        p_string File_Reader_::ReadToEndSync_()\n        {\n            std::fseek(file, 0, SEEK_END);\n            auto length = std::ftell(file);\n            std::fseek(file, 0, SEEK_SET);\n            auto buffer = new char[length];\n            length = std::fread(buffer, sizeof(char), length, file);\n            return p_string(length, buffer);\n        }\n\n        void File_Reader_::Close_()\n        {\n            std::fclose(file);\n        }\n\n        File_Writer_* File_Writer_::construct(const p_string& fileName)\n        {\n            auto fname = fileName.cstr();\n            file = std::fopen(fname, \"wb\"); // TODO check error\n            delete[] fname;\n            return this;\n        }\n\n        void File_Writer_::Write_(const p_string& value)\n        {\n            std::fwrite(value.Buffer, sizeof(char), value.Length, file);\n        }\n\n        void File_Writer_::Close_()\n        {\n            std::fclose(file);\n        }\n    }\n\n    namespace Text_\n    {\n        void String_Builder_::ensure_capacity(int needed)\n        {\n            int new_capacity = capacity == 0 ? 128 : capacity;\n            while(new_capacity < needed)\n            {\n                new_capacity *= 2;\n            }\n\n            if(new_capacity > capacity)\n            {\n                char* new_buffer = new char[new_capacity];\n                if(length > 0)\n                    std::memcpy(new_buffer, buffer, length);\n\n                if(capacity > 0)\n                    delete[] buffer;\n\n                buffer = new_buffer;\n                capacity = new_capacity;\n            }\n        }\n\n        String_Builder_* String_Builder_::construct(p_string const & value)\n        {\n            ensure_capacity(value.Length);\n            std::memcpy(buffer, value.Buffer, value.Length);\n            length = value.Length;\n            return this;\n        }\n\n        String_Builder_ *_Nonnull String_Builder_::construct_with_capacity(i32 capacity)\n        {\n            ensure_capacity(capacity.value);\n            return this;\n        }\n\n        void String_Builder_::Append_(p_string const & value)\n        {\n            int new_length = length + value.Length;\n            ensure_capacity(new_length);\n            std::memcpy(buffer+length, value.Buffer, value.Length);\n            length = new_length;\n        }\n\n        void String_Builder_::Append_(String_Builder_ const * value)\n        {\n            int new_length = length + value->length;\n            ensure_capacity(new_length);\n            std::memcpy(buffer+length, value->buffer, value->length);\n            length = new_length;\n        }\n\n        void String_Builder_::AppendLine_(p_string const & value)\n        {\n            int new_length = length + value.Length + 1;\n            ensure_capacity(new_length);\n            std::memcpy(buffer+length, value.Buffer, value.Length);\n            buffer[new_length-1] = '\\n';\n            length = new_length;\n        }\n\n        void String_Builder_::AppendLine_()\n        {\n            int new_length = length + 1;\n            ensure_capacity(new_length);\n            buffer[new_length-1] = '\\n';\n            length = new_length;\n        }\n\n        void String_Builder_::Remove_(i32 start, i32 length)\n        {\n            if(start.value >= this->length)\n                throw std::runtime_error(\"String_Builder.Remove() start >= length\");\n\n            int end = start.value + length.value;\n            if(end > this->length) // greater than because end is one past the end of the remove\n                throw std::runtime_error(\"String_Builder.Remove() end > length\");\n\n            std::memmove(buffer+start.value, buffer+end, this->length-end);\n            this->length -= length.value;\n        }\n\n        void String_Builder_::Remove_(i32 start)\n        {\n            if(start.value >= length)\n                throw std::runtime_error(\"String_Builder.Remove() start >= length\");\n\n            length = start.value;\n        }\n\n        p_string String_Builder_::ToString_()\n        {\n            p_string result(length, buffer);\n            // give up ownership of buffer\n            buffer = 0;\n            length = 0;\n            capacity = 0;\n            return result;\n        }\n    }\n}\n"));
-		resource_manager_->AddResource(p_string("RuntimeLibrary.hpp"), p_string("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n#include <stdexcept>\n#include <string>\n\n// -----------------------------------------------------------------------------\n// Logical Operators\n// -----------------------------------------------------------------------------\n// Use special templates taking closures to support short circuit evaluation\n\n// TODO Based on the type of the values involved, either emit x.value() && y.value()\n// or compound expression ({ T _left = lhs; _left.op_false() ? _left : _left.op_and(rhs); })\n\ntemplate<typename T, typename F>\nT op_and(T const & lhs, F rhs)\n{\n    return lhs.op_false().value ? lhs : lhs.op_and(rhs());\n}\n\ntemplate<typename T, typename F>\nT op_or(T const & lhs, F rhs)\n{\n    return lhs.op_true().value ? lhs : lhs.op_or(rhs());\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\n// `bool`\nstruct bit\n{\n    bool value;\n};\n\n// `true`\nstatic const bit bit_true = { true };\n// `false`\nstatic const bit bit_false = { false };\n\n// Function used in conditions to make them take `bit`\ninline bool cond(bit cond) { return cond.value; }\n\n// Used by runtime for converting to bit\ninline bit bit_from(bool v) { return bit { v }; }\n\n// Wrap a bit operation that is bool based\ninline bit bit_op(bool v) { return bit { v }; }\n// Convert the arguments of a logical operation to bool\ninline bool bit_arg(bit v) { return v.value; }\ninline bit bit_not(bit v) { return bit { !v.value }; }\n\n// `never`\nstruct never\n{\n};\n\n// `never?`\nstruct o_never\n{\n    // TODO get rid of this conversion operator when compiler emits conversions\n    template<class T>\n    operator T*_Nullable() const { return static_cast<T*>(0); }\n};\n\nstatic const o_never none;\n\ntemplate<typename T>\nstruct p_optional final\n{\nprivate:\n    bool hasValue;\n    union\n    {\n        T data;\n    };\n\npublic:\n    // TODO make this constructor explicit\n    p_optional(T const & value) : data(value), hasValue(true) {}\n    // TODO get rid of this conversion operator when compiler emits conversions\n    p_optional(o_never none) : hasValue(false) {}\n    auto has_value() const -> bit { return bit_from(hasValue); }\n    auto value() const -> T { return data; }\n\n    T & operator->()\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T const & operator->() const\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T & operator* ()\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T const & operator* () const\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n};\n\nstruct u32;\n\nstruct i32\n{\npublic:\n    // Runtime Use Members\n    std::int32_t value;\n\n    explicit i32() = default;\n    explicit i32(std::int32_t value): value(value) {}\n\n    i32 *_Nonnull operator->() { return this; }\n    i32 const *_Nonnull operator->() const { return this; }\n    i32 & operator* () { return *this; }\n    i32 const & operator* () const { return *this; }\n\n    // Hack to support conversion of uint to int for now\n    i32(u32 value);\n\n    // Adamant Members\n    static auto construct() -> i32 { return i32(0); }\n    static auto copy(i32 const & other) -> i32 { return other; }\n    void op_add_assign(i32 other) { this->value += other.value; }\n    void op_subtract_assign(i32 other) { this->value -= other.value; }\n    bit op_less_than(i32 other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(i32 other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(i32 other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(i32 other) const { return bit_from(this->value >= other.value); }\n    i32 op_add(i32 other) const { return i32(this->value + other.value); }\n    i32 op_subtract(i32 other) const { return i32(this->value - other.value); }\n    i32 op_negate() const { return i32(-this->value); }\n    i32 op_multiply(i32 other) const { return i32(this->value * other.value); }\n    i32 op_divide(i32 other) const { return i32(this->value / other.value); }\n    i32 op_remainder(i32 other) const { return i32(this->value % other.value); }\n    i32 op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error(\"Can't take |int.Min|\"); return i32(this->value < 0 ? -this->value : this->value); }\n\n    // Hack because we don't support as correctly yet\n    u32 AsUInt_() const;\n};\n\nstruct u32\n{\npublic:\n    // Runtime Use Members\n    std::uint32_t value;\n\n    u32() = default;\n    u32(std::uint32_t value): value(value) {}\n\n    u32 *_Nonnull operator->() { return this; }\n    u32 const *_Nonnull operator->() const { return this; }\n    u32 & operator* () { return *this; }\n    u32 const & operator* () const { return *this; }\n\n    // Hack to support conversion of int to uint for now\n    u32(i32 value): value(value.value) {}\n\n    // Adamant Members\n    static auto construct() -> u32 { return 0; }\n    void op_add_assign(u32 other) { this->value += other.value; }\n    void op_subtract_assign(u32 other) { this->value -= other.value; }\n    bit op_less_than(u32 other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(u32 other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(u32 other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(u32 other) const { return bit_from(this->value >= other.value); }\n    u32 op_add(u32 other) const { return this->value + other.value; }\n    u32 op_subtract(u32 other) const { return this->value - other.value; }\n};\n\ninline i32::i32(u32 value)\n    : value(value.value)\n{\n}\n\nstruct p_code_point\n{\nprivate:\n    std::uint32_t raw_value;\n\npublic:\n    // Runtime Use Members\n    explicit p_code_point() = default;\n    explicit p_code_point(char value): raw_value(value) {}\n    char CharValue() const;\n    auto value() const -> std::uint32_t { return raw_value; }\n\n    p_code_point *_Nonnull operator->() { return this; }\n    p_code_point const *_Nonnull operator->() const { return this; }\n    p_code_point & operator* () { return *this; }\n    p_code_point const & operator* () const { return *this; }\n\n    // Adamant Members\n    static auto construct() -> p_code_point { return p_code_point('\\0'); }\n    // TODO: Not sure code_point should support these operations\n    bit op_less_than(p_code_point other) const { return bit_from(this->raw_value < other.raw_value); }\n    bit op_less_than_or_equal(p_code_point other) const { return bit_from(this->raw_value <= other.raw_value); }\n    bit op_greater_than(p_code_point other) const { return bit_from(this->raw_value > other.raw_value); }\n    bit op_greater_than_or_equal(p_code_point other) const { return bit_from(this->raw_value >= other.raw_value); }\n\n};\n\nstruct p_string\n{\npublic:\n    // Runtime Use Members\n    char const *_Nonnull Buffer;\n    int Length;\n\n    p_string() = default;\n    p_string(char const *_Nonnull s);\n    p_string(int length, char const *_Nonnull s);\n    char const *_Nonnull cstr() const;\n    p_string const *_Nonnull operator->() const { return this; }\n    p_string const & operator* () const { return *this; }\n\n    typedef char const *_Nonnull const_iterator;\n    const_iterator begin() const { return &Buffer[0]; }\n    const_iterator end() const { return &Buffer[Length]; }\n\n    // Hack to support conversion of int and code_point to strings for now\n    p_string(i32 other);\n    p_string(p_code_point other);\n    explicit p_string(bit other);\n\n    // Adamant Members\n    static auto construct() -> p_string { p_string self; self.Length = 0; self.Buffer = 0; return self; }\n    static auto construct(p_string value) -> p_string { return value; }\n    static auto construct(p_code_point c, i32 repeat) -> p_string;\n    // TODO ByteLength should be a property\n    i32 ByteLength_() const { return i32(Length); }\n\n    p_string Substring_(i32 start, i32 length) const;\n    p_string Substring_(i32 start) const { return Substring_(start, i32(Length-start.value)); }\n    p_string Replace_(p_string oldValue, p_string newValue) const;\n    i32 LastIndexOf_(p_code_point c) const;\n    i32 index_of_(p_code_point c) const;\n\n    // TODO check index bounds\n    p_code_point op_Element(i32 const index) const { return p_code_point(Buffer[index.value]); }\n    p_string op_add(p_string const & value) const;\n    p_string op_add(bit value) const { return this->op_add(p_string(value)); }\n    bit op_less_than(p_string other) const;\n    bit op_less_than_or_equal(p_string other) const;\n    bit op_greater_than(p_string other) const;\n    bit op_greater_than_or_equal(p_string other) const;\n};\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline auto equal_op(bit lhs, bit rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\ninline auto equal_op(p_optional<bit> lhs, p_optional<bit> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));\n    else\n        return bit_not(rhs.has_value());\n}\n\ninline auto equal_op(i32 lhs, i32 rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\ninline auto equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));\n    else\n        return bit_not(rhs.has_value());\n}\n\ninline auto equal_op(o_never lhs, o_never rhs) -> bit\n{\n    return bit_true;\n}\n\ninline auto equal_op(p_code_point lhs, p_code_point rhs) -> bit\n{\n    return bit_from(lhs.value() == rhs.value());\n}\n\nauto equal_op(p_string lhs, p_string rhs) -> bit;\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto equal_op(T const *_Nullable lhs, o_never rhs) -> bit\n{\n    return bit_from(lhs == 0);\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto equal_op(o_never lhs, T const *_Nullable rhs) -> bit\n{\n    return bit_from(0 == rhs);\n}\n\n// TODO Get rid of this ability\ntemplate<typename T>\ninline auto equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs) -> bit\n{\n    return bit_from(lhs == 0);\n}\n\ninline auto not_equal_op(i32 lhs, i32 rhs) -> bit\n{\n    return bit_from(lhs.value != rhs.value);\n}\ninline auto not_equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(bit_not(rhs.has_value())) || bit_arg(not_equal_op(lhs.value(), rhs.value())));\n    else\n        return rhs.has_value();\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(T lhs, T  rhs) -> bit\n{\n    return bit_not(equal_op(lhs, rhs));\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(T const *_Nullable lhs, o_never rhs) -> bit\n{\n    return bit_from(lhs != 0);\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(o_never lhs, T const *_Nullable rhs) -> bit\n{\n    return bit_from(0 != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\n// A placeholder function until we get proper exceptions implemented\n_Noreturn inline void THROW_EXCEPTION_(const p_string& value)\n{\n    throw std::runtime_error(value.cstr());\n}\n\n\ninline void assert(const bit condition, const p_string code, const p_string message, const p_string file, const std::int32_t line)\n{\n    if(!condition.value)\n        throw std::runtime_error(\n            p_string(\"Assertion failed: \").op_add(code).op_add(\", \").op_add(message)\n            .op_add(\", file \").op_add(file).op_add(\", line \").op_add(i32(line)).cstr());\n}\n\n#define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)\n\n\n_Noreturn inline void NOT_IMPLEMENTED(const p_string message, const p_string function, const p_string file, const std::int32_t line)\n{\n    throw std::runtime_error(\n        p_string(\"Function \").op_add(function)\n        .op_add(p_string(\" not yet implemented, \")).op_add(message).op_add(p_string(\", \")).op_add(file).op_add(p_string(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)\n\n\n_Noreturn inline void UNREACHABLE(const p_string function, const p_string file, const std::int32_t line)\n{\n    throw std::runtime_error(\n        p_string(\"Reached \\\"UNREACHABLE\\\" statement in function \").op_add(function)\n        .op_add(p_string(\", \")).op_add(file).op_add(p_string(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)\n\nclass ResourceManager\n{\npublic:\n    p_string const & GetString_(p_string resourceName);\n    void AddResource(p_string name, p_string value);\n};\n\nextern ResourceManager *_Nonnull const resource_manager_;\n\nvoid debug_write_(p_string value);\nvoid debug_write_line_(p_string value);\nvoid debug_write_line_();\n\nnamespace system_\n{\n    namespace Collections_\n    {\n        template<typename T>\n        class List_\n        {\n        private:\n            T *_Nonnull values;\n            int length;\n            int capacity;\n\n        public:\n            // Runtime Use Members\n            typedef T const *_Nonnull const_iterator;\n            const_iterator begin() const { return values; }\n            const_iterator end() const { return &values[length]; }\n\n            // Adamant Members\n            List_ *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }\n            void Add_(T value) { add_(value); }\n            void Clear_() { clear_(); }\n            void add_(T value);\n            void clear_() { length = 0; }\n            i32 op_magnitude() const { return i32(length); }\n            T const & op_Element(i32 const index) const;\n        };\n\n        template<typename T>\n        void List_<T>::add_(T value)\n        {\n            if(length >= capacity)\n            {\n                int newCapacity = capacity == 0 ? 16 : capacity * 2;\n                // Allocate uninitalized buffer (note `sizeof(char) == 1` always)\n                // Needed if T is a value type to avoid needing a default constructor\n                T* newValues = (T*)new char[newCapacity * sizeof(T)];\n                std::memcpy(newValues, values, length * sizeof(T));\n                values = newValues;\n                capacity = newCapacity;\n            }\n            values[length] = value;\n            length++;\n        }\n\n        template<typename T>\n        T const & List_<T>::op_Element(i32 const index) const\n        {\n            if(index.value < 0 || index.value >= length)\n                throw std::out_of_range(\"List index out of bounds\");\n            return values[index.value];\n        }\n    }\n\n    namespace Console_\n    {\n        class Console_\n        {\n        public:\n            void Write_(p_string value);\n            void WriteLine_(p_string value);\n            void WriteLine_();\n        };\n\n        class Arguments_\n        {\n        private:\n            p_string *_Nonnull args;\n        public:\n            // Runtime Use Members\n            typedef p_string const *_Nonnull const_iterator;\n\n            Arguments_(int argc, char const *_Nonnull const *_Nonnull argv);\n            const_iterator begin() const { return &args[0]; }\n            const_iterator end() const { return &args[Count]; }\n\n            const int Count;\n\n            // Adamant Members\n            i32 op_magnitude() const { return i32(Count); }\n            p_string const & op_Element(i32 const index) const\n            {\n                if(index.value < 0 || index.value >= Count)\n                    throw std::out_of_range(\"Argument index out of bounds\");\n                return args[index.value];\n            }\n        };\n    }\n\n    namespace IO_\n    {\n        class File_Reader_\n        {\n        private:\n            std::FILE *_Nonnull file;\n\n        public:\n            File_Reader_ *_Nonnull construct(const p_string& fileName);\n            p_string ReadToEndSync_();\n            void Close_();\n        };\n\n        class File_Writer_\n        {\n        private:\n            std::FILE *_Nonnull file;\n\n        public:\n            File_Writer_ *_Nonnull construct(const p_string& fileName);\n            void Write_(const p_string& value);\n            void Close_();\n        };\n    }\n\n    namespace Text_\n    {\n        class String_Builder_\n        {\n        private:\n            char *_Nullable buffer;\n            int capacity;\n            int length;\n            void ensure_capacity(int needed);\n        public:\n            // Runtime Use Members\n            String_Builder_(): buffer(0), capacity(0), length(0) { }\n\n            // Adamant Members\n            String_Builder_ *_Nonnull construct() { return this; }\n            String_Builder_ *_Nonnull construct(p_string const & value);\n            String_Builder_ *_Nonnull construct_with_capacity(i32 capacity);\n            // TODO byte_length_ should be a property\n            i32 byte_length_() const { return i32(length); }\n            void Append_(p_string const & value);\n            void Append_(String_Builder_ const *_Nonnull value);\n            void AppendLine_(p_string const& value);\n            void AppendLine_();\n            void Remove_(i32 start, i32 length);\n            void Remove_(i32 start);\n            p_string ToString_();\n        };\n    }\n}\n\nnamespace System_ = system_;\n"));
+		resource_manager_->AddResource(p_string("RuntimeLibrary.cpp"), p_string("#include \"RuntimeLibrary.hpp\"\n#include <map>\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\nu32 i32::AsUInt_() const\n{\n    if(this->value < 0)\n        throw std::range_error(\"Can't convert negative number to unsigned\");\n\n    return u32(this->value);\n}\n\nchar cp_to_char(cp v)\n{\n    if(v.value > 0xFF)\n        throw std::range_error(\"Unicode char values not yet supported\");\n\n    return v.value;\n}\n\nstr str::construct(cp c, i32 repeat)\n{\n    str self;\n    self.Length = repeat.value;\n    char* buffer = new char[repeat.value];\n    for (int i = 0; i < repeat.value; i++)\n        buffer[i] = cp_to_char(c);\n\n    self.Buffer = buffer;\n    return self;\n}\n\nstr::str(const char* s)\n    : Length(std::strlen(s)), Buffer(s)\n{\n}\n\nstr::str(int length, const char* s)\n    : Length(length), Buffer(s)\n{\n}\n\nchar const * str::cstr() const\n{\n    auto buffer = new char[Length + 1];\n    std::memcpy(buffer, Buffer, Length);\n    buffer[Length] = 0;\n    return buffer;\n}\n\nstr::str(i32 other)\n    : Length(0), Buffer(0)\n{\n    char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator\n    int length = std::sprintf(buffer,\"%d\", other.value);\n    if(length <= 0) throw std::runtime_error(\"Could not convert int to string\");\n    Length = length;\n    Buffer = buffer;\n}\n\nstr::str(cp other)\n    : Length(1), Buffer(new char[1] { cp_to_char(other) })\n{\n}\n\nstr::str(bit other)\n    : str(other.value ? \"true\" : \"false\")\n{\n}\n\nstr str::Substring_(i32 start, i32 length) const\n{\n    return str(length.value, Buffer + start.value);\n}\n\nstr str::Replace_(str oldValue, str newValue) const\n{\n    system_::Text_::String_Builder_ builder = system_::Text_::String_Builder_(); // TODO initialize capacity\n    int limit = Length - oldValue.Length + 1;\n    int lastIndex = 0;\n    // TODO the Substring calls in here are leaking memory\n    for(int i=0; i < limit; i++)\n        if (cond(equal_op(Substring_(i32(i), i32(oldValue.Length)), oldValue)))\n        {\n            builder.Append_(Substring_(i32(lastIndex), i32(i-lastIndex)));\n            builder.Append_(newValue);\n            i += oldValue.Length; // skip over the value we just matched\n            lastIndex = i;\n            i--; // we need i-- to offset the i++ that is about to happen\n        }\n\n    builder.Append_(Substring_(i32(lastIndex), i32(Length - lastIndex)));\n    return builder.ToString_();\n}\n\ni32 str::LastIndexOf_(cp c) const\n{\n    for(int i = Length - 1; i >= 0; i--)\n        if(Buffer[i] == cp_to_char(c))\n            return i32(i);\n\n    return i32(-1); // TODO should return none\n}\n\ni32 str::index_of_(cp c) const\n{\n    for(int i = 0; i < Length; i++)\n        if(Buffer[i] == cp_to_char(c))\n            return i32(i);\n\n    return i32(-1);\n}\n\nstr str::op_add(str const & value) const\n{\n    int newLength = Length + value.Length;\n    char* chars = new char[newLength];\n    size_t offset = sizeof(char) * Length;\n    std::memcpy(chars, Buffer, offset);\n    std::memcpy(chars + offset, value.Buffer, value.Length);\n    return str(newLength, chars);\n}\n\nauto equal_op(str lhs, str rhs) -> bit\n{\n    if (lhs.Length != rhs.Length)\n        return bit_false;\n\n    for (int i = 0; i < lhs.Length; i++)\n        if (lhs.Buffer[i] != rhs.Buffer[i])\n            return bit_false;\n\n    return bit_true;\n}\n\nbit str::op_less_than(str other) const\n{\n    char const* left = this->cstr();\n    char const* right = other.cstr();\n    bool result = std::strcmp(left, right) < 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbit str::op_less_than_or_equal(str other) const\n{\n    char const* left = this->cstr();\n    char const* right = other.cstr();\n    bool result = std::strcmp(left, right) <= 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbit str::op_greater_than(str other) const\n{\n    char const* left = this->cstr();\n    char const* right = other.cstr();\n    bool result = std::strcmp(left, right) > 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbit str::op_greater_than_or_equal(str other) const\n{\n    char const* left = this->cstr();\n    char const* right = other.cstr();\n    bool result = std::strcmp(left, right) >= 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbool operator < (str const & lhs, str const & rhs)\n{\n    char const* left = lhs.cstr();\n    char const* right = rhs.cstr();\n    bool result = std::strcmp(left, right) < 0;\n    delete[] left;\n    delete[] right;\n    return result;\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n\nstd::map<str, str> resourceValues;\n\nstr const & ResourceManager::GetString_(str resourceName)\n{\n    return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(str name, str value)\n{\n    resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nvoid debug_write_(str value)\n{\n    std::fprintf(stderr, \"%.*s\", value.Length, value.Buffer);\n}\nvoid debug_write_line_(str value)\n{\n    std::fprintf(stderr, \"%.*s\\n\", value.Length, value.Buffer);\n}\nvoid debug_write_line_()\n{\n    std::fprintf(stderr, \"\\n\");\n}\n\nnamespace system_\n{\n    namespace Console_\n    {\n        void Console_::Write_(str value)\n        {\n            std::printf(\"%.*s\", value.Length, value.Buffer);\n        }\n\n        void Console_::WriteLine_(str value)\n        {\n            std::printf(\"%.*s\\n\", value.Length, value.Buffer);\n        }\n\n        void Console_::WriteLine_()\n        {\n            std::printf(\"\\n\");\n        }\n\n        Arguments_::Arguments_(int argc, char const *const * argv)\n            : Count(argc-1)\n        {\n            args = new str[Count];\n            for (int i = 0; i < Count; i++)\n                args[i] = str(argv[i+1]);\n        }\n    }\n\n    namespace IO_\n    {\n        File_Reader_* File_Reader_::construct(const str& fileName)\n        {\n            std::FILE* foo;\n            auto fname = fileName.cstr();\n            file = std::fopen(fname, \"rb\");\n            delete[] fname;\n            return this;\n        }\n\n        str File_Reader_::ReadToEndSync_()\n        {\n            std::fseek(file, 0, SEEK_END);\n            auto length = std::ftell(file);\n            std::fseek(file, 0, SEEK_SET);\n            auto buffer = new char[length];\n            length = std::fread(buffer, sizeof(char), length, file);\n            return str(length, buffer);\n        }\n\n        void File_Reader_::Close_()\n        {\n            std::fclose(file);\n        }\n\n        File_Writer_* File_Writer_::construct(const str& fileName)\n        {\n            auto fname = fileName.cstr();\n            file = std::fopen(fname, \"wb\"); // TODO check error\n            delete[] fname;\n            return this;\n        }\n\n        void File_Writer_::Write_(const str& value)\n        {\n            std::fwrite(value.Buffer, sizeof(char), value.Length, file);\n        }\n\n        void File_Writer_::Close_()\n        {\n            std::fclose(file);\n        }\n    }\n\n    namespace Text_\n    {\n        void String_Builder_::ensure_capacity(int needed)\n        {\n            int new_capacity = capacity == 0 ? 128 : capacity;\n            while(new_capacity < needed)\n            {\n                new_capacity *= 2;\n            }\n\n            if(new_capacity > capacity)\n            {\n                char* new_buffer = new char[new_capacity];\n                if(length > 0)\n                    std::memcpy(new_buffer, buffer, length);\n\n                if(capacity > 0)\n                    delete[] buffer;\n\n                buffer = new_buffer;\n                capacity = new_capacity;\n            }\n        }\n\n        String_Builder_* String_Builder_::construct(str const & value)\n        {\n            ensure_capacity(value.Length);\n            std::memcpy(buffer, value.Buffer, value.Length);\n            length = value.Length;\n            return this;\n        }\n\n        String_Builder_ *_Nonnull String_Builder_::construct_with_capacity(i32 capacity)\n        {\n            ensure_capacity(capacity.value);\n            return this;\n        }\n\n        void String_Builder_::Append_(str const & value)\n        {\n            int new_length = length + value.Length;\n            ensure_capacity(new_length);\n            std::memcpy(buffer+length, value.Buffer, value.Length);\n            length = new_length;\n        }\n\n        void String_Builder_::Append_(String_Builder_ const * value)\n        {\n            int new_length = length + value->length;\n            ensure_capacity(new_length);\n            std::memcpy(buffer+length, value->buffer, value->length);\n            length = new_length;\n        }\n\n        void String_Builder_::AppendLine_(str const & value)\n        {\n            int new_length = length + value.Length + 1;\n            ensure_capacity(new_length);\n            std::memcpy(buffer+length, value.Buffer, value.Length);\n            buffer[new_length-1] = '\\n';\n            length = new_length;\n        }\n\n        void String_Builder_::AppendLine_()\n        {\n            int new_length = length + 1;\n            ensure_capacity(new_length);\n            buffer[new_length-1] = '\\n';\n            length = new_length;\n        }\n\n        void String_Builder_::Remove_(i32 start, i32 length)\n        {\n            if(start.value >= this->length)\n                throw std::runtime_error(\"String_Builder.Remove() start >= length\");\n\n            int end = start.value + length.value;\n            if(end > this->length) // greater than because end is one past the end of the remove\n                throw std::runtime_error(\"String_Builder.Remove() end > length\");\n\n            std::memmove(buffer+start.value, buffer+end, this->length-end);\n            this->length -= length.value;\n        }\n\n        void String_Builder_::Remove_(i32 start)\n        {\n            if(start.value >= length)\n                throw std::runtime_error(\"String_Builder.Remove() start >= length\");\n\n            length = start.value;\n        }\n\n        str String_Builder_::ToString_()\n        {\n            str result(length, buffer);\n            // give up ownership of buffer\n            buffer = 0;\n            length = 0;\n            capacity = 0;\n            return result;\n        }\n    }\n}\n"));
+		resource_manager_->AddResource(p_string("RuntimeLibrary.hpp"), p_string("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n#include <stdexcept>\n#include <string>\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\n// `bool`\nstruct bit\n{\n    bool value;\n};\n\n// `true`\nstatic const bit bit_true = { true };\n// `false`\nstatic const bit bit_false = { false };\n\n// Function used in conditions to make them take `bit`\ninline bool cond(bit cond) { return cond.value; }\n\n// Used by runtime for converting to bit\ninline bit bit_from(bool v) { return bit { v }; }\n\n// Wrap a bit operation that is bool based\ninline bit bit_op(bool v) { return bit { v }; }\n// Convert the arguments of a logical operation to bool\ninline bool bit_arg(bit v) { return v.value; }\ninline bit bit_not(bit v) { return bit { !v.value }; }\n\n// `never`\nstruct never\n{\n};\n\n// `never?`\nstruct o_never\n{\n    // TODO get rid of this conversion operator when compiler emits conversions\n    template<class T>\n    operator T*_Nullable() const { return static_cast<T*>(0); }\n};\n\nstatic const o_never none;\n\ntemplate<typename T>\nstruct p_optional final\n{\nprivate:\n    bool hasValue;\n    union\n    {\n        T data;\n    };\n\npublic:\n    // TODO make this constructor explicit\n    p_optional(T const & value) : data(value), hasValue(true) {}\n    // TODO get rid of this conversion operator when compiler emits conversions\n    p_optional(o_never none) : hasValue(false) {}\n    auto has_value() const -> bit { return bit_from(hasValue); }\n    auto value() const -> T { return data; }\n\n    T & operator->()\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T const & operator->() const\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T & operator* ()\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T const & operator* () const\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n};\n\nstruct u32;\n\n// `int`\nstruct i32\n{\n    // Runtime Use Members\n    std::int32_t value;\n\n    explicit i32() = default;\n    explicit i32(std::int32_t value): value(value) {}\n\n    i32 *_Nonnull operator->() { return this; }\n    i32 const *_Nonnull operator->() const { return this; }\n    i32 & operator* () { return *this; }\n    i32 const & operator* () const { return *this; }\n\n    // Hack to support conversion of uint to int for now\n    i32(u32 value);\n\n    // Adamant Members\n    static auto construct() -> i32 { return i32(0); }\n    static auto copy(i32 const & other) -> i32 { return other; }\n    void op_add_assign(i32 other) { this->value += other.value; }\n    void op_subtract_assign(i32 other) { this->value -= other.value; }\n    bit op_less_than(i32 other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(i32 other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(i32 other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(i32 other) const { return bit_from(this->value >= other.value); }\n    i32 op_add(i32 other) const { return i32(this->value + other.value); }\n    i32 op_subtract(i32 other) const { return i32(this->value - other.value); }\n    i32 op_negate() const { return i32(-this->value); }\n    i32 op_multiply(i32 other) const { return i32(this->value * other.value); }\n    i32 op_divide(i32 other) const { return i32(this->value / other.value); }\n    i32 op_remainder(i32 other) const { return i32(this->value % other.value); }\n    i32 op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error(\"Can't take |int.Min|\"); return i32(this->value < 0 ? -this->value : this->value); }\n\n    // Hack because we don't support as correctly yet\n    u32 AsUInt_() const;\n};\n\n// `uint`\nstruct u32\n{\n    // Runtime Use Members\n    std::uint32_t value;\n\n    explicit u32() = default;\n    explicit u32(std::uint32_t value): value(value) {}\n\n    u32 *_Nonnull operator->() { return this; }\n    u32 const *_Nonnull operator->() const { return this; }\n    u32 & operator* () { return *this; }\n    u32 const & operator* () const { return *this; }\n\n    // Hack to support conversion of int to uint for now\n    u32(i32 value): value(value.value) {}\n\n    // Adamant Members\n    static auto construct() -> u32 { return u32(0); }\n    void op_add_assign(u32 other) { this->value += other.value; }\n    void op_subtract_assign(u32 other) { this->value -= other.value; }\n    bit op_less_than(u32 other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(u32 other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(u32 other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(u32 other) const { return bit_from(this->value >= other.value); }\n    u32 op_add(u32 other) const { return u32(this->value + other.value); }\n    u32 op_subtract(u32 other) const { return u32(this->value - other.value); }\n};\n\ninline i32::i32(u32 value)\n    : value(value.value)\n{\n}\n\nstruct cp\n{\n    std::uint32_t value;\n\n    // Runtime Use Members\n    explicit cp() = default;\n    explicit cp(char value): value(value) {}\n\n    cp *_Nonnull operator->() { return this; }\n    cp const *_Nonnull operator->() const { return this; }\n    cp & operator* () { return *this; }\n    cp const & operator* () const { return *this; }\n\n    // Adamant Members\n    static auto construct() -> cp { return cp('\\0'); }\n    // TODO: Not sure code_point should support these operations\n    bit op_less_than(cp other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(cp other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(cp other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(cp other) const { return bit_from(this->value >= other.value); }\n};\n\nchar cp_to_char(cp v);\n\nstruct str\n{\npublic:\n    // Runtime Use Members\n    char const *_Nonnull Buffer;\n    int Length;\n\n    explicit str() = default;\n    explicit str(char const *_Nonnull s);\n    explicit str(int length, char const *_Nonnull s);\n    char const *_Nonnull cstr() const;\n    str const *_Nonnull operator->() const { return this; }\n    str const & operator* () const { return *this; }\n\n    typedef char const *_Nonnull const_iterator;\n    const_iterator begin() const { return &Buffer[0]; }\n    const_iterator end() const { return &Buffer[Length]; }\n\n    // Hack to support conversion of int and code_point to strings for now\n    str(i32 other);\n    str(cp other);\n    explicit str(bit other);\n\n    // Adamant Members\n    static auto construct() -> str { str self; self.Length = 0; self.Buffer = 0; return self; }\n    static auto construct(str value) -> str { return value; }\n    static auto construct(cp c, i32 repeat) -> str;\n    // TODO ByteLength should be a property\n    i32 ByteLength_() const { return i32(Length); }\n\n    str Substring_(i32 start, i32 length) const;\n    str Substring_(i32 start) const { return Substring_(start, i32(Length-start.value)); }\n    str Replace_(str oldValue, str newValue) const;\n    i32 LastIndexOf_(cp c) const;\n    i32 index_of_(cp c) const;\n\n    // TODO check index bounds\n    cp op_Element(i32 const index) const { return cp(Buffer[index.value]); }\n    str op_add(str const & value) const;\n    str op_add(bit value) const { return this->op_add(str(value)); }\n    bit op_less_than(str other) const;\n    bit op_less_than_or_equal(str other) const;\n    bit op_greater_than(str other) const;\n    bit op_greater_than_or_equal(str other) const;\n};\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline auto equal_op(bit lhs, bit rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\ninline auto equal_op(p_optional<bit> lhs, p_optional<bit> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));\n    else\n        return bit_not(rhs.has_value());\n}\n\ninline auto equal_op(i32 lhs, i32 rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\ninline auto equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));\n    else\n        return bit_not(rhs.has_value());\n}\n\ninline auto equal_op(o_never lhs, o_never rhs) -> bit\n{\n    return bit_true;\n}\n\ninline auto equal_op(cp lhs, cp rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\n\nauto equal_op(str lhs, str rhs) -> bit;\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto equal_op(T const *_Nullable lhs, o_never rhs) -> bit\n{\n    return bit_from(lhs == 0);\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto equal_op(o_never lhs, T const *_Nullable rhs) -> bit\n{\n    return bit_from(0 == rhs);\n}\n\n// TODO Get rid of this ability\ntemplate<typename T>\ninline auto equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs) -> bit\n{\n    return bit_from(lhs == 0);\n}\n\ninline auto not_equal_op(i32 lhs, i32 rhs) -> bit\n{\n    return bit_from(lhs.value != rhs.value);\n}\ninline auto not_equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(bit_not(rhs.has_value())) || bit_arg(not_equal_op(lhs.value(), rhs.value())));\n    else\n        return rhs.has_value();\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(T lhs, T  rhs) -> bit\n{\n    return bit_not(equal_op(lhs, rhs));\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(T const *_Nullable lhs, o_never rhs) -> bit\n{\n    return bit_from(lhs != 0);\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(o_never lhs, T const *_Nullable rhs) -> bit\n{\n    return bit_from(0 != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\n// A placeholder function until we get proper exceptions implemented\n_Noreturn inline void THROW_EXCEPTION_(const str& value)\n{\n    throw std::runtime_error(value.cstr());\n}\n\n\ninline void assert(const bit condition, char const *_Nonnull code, const str message, char const *_Nonnull file, const std::int32_t line)\n{\n    if(!condition.value)\n        throw std::runtime_error(\n            str(\"Assertion failed: \").op_add(str(code)).op_add(str(\", \")).op_add(message)\n            .op_add(str(\", file \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)\n\n\n_Noreturn inline void NOT_IMPLEMENTED(const str message, char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)\n{\n    throw std::runtime_error(\n        str(\"Function \").op_add(str(function))\n        .op_add(str(\" not yet implemented, \")).op_add(message).op_add(str(\", \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)\n\n\n_Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)\n{\n    throw std::runtime_error(\n        str(\"Reached \\\"UNREACHABLE\\\" statement in function \").op_add(str(function))\n        .op_add(str(\", \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)\n\nclass ResourceManager\n{\npublic:\n    str const & GetString_(str resourceName);\n    void AddResource(str name, str value);\n};\n\nextern ResourceManager *_Nonnull const resource_manager_;\n\nvoid debug_write_(str value);\nvoid debug_write_line_(str value);\nvoid debug_write_line_();\n\nnamespace system_\n{\n    namespace Collections_\n    {\n        template<typename T>\n        class List_\n        {\n        private:\n            T *_Nonnull values;\n            int length;\n            int capacity;\n\n        public:\n            // Runtime Use Members\n            typedef T const *_Nonnull const_iterator;\n            const_iterator begin() const { return values; }\n            const_iterator end() const { return &values[length]; }\n\n            // Adamant Members\n            List_ *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }\n            void Add_(T value) { add_(value); }\n            void Clear_() { clear_(); }\n            void add_(T value);\n            void clear_() { length = 0; }\n            i32 op_magnitude() const { return i32(length); }\n            T const & op_Element(i32 const index) const;\n        };\n\n        template<typename T>\n        void List_<T>::add_(T value)\n        {\n            if(length >= capacity)\n            {\n                int newCapacity = capacity == 0 ? 16 : capacity * 2;\n                // Allocate uninitalized buffer (note `sizeof(char) == 1` always)\n                // Needed if T is a value type to avoid needing a default constructor\n                T* newValues = (T*)new char[newCapacity * sizeof(T)];\n                std::memcpy(newValues, values, length * sizeof(T));\n                values = newValues;\n                capacity = newCapacity;\n            }\n            values[length] = value;\n            length++;\n        }\n\n        template<typename T>\n        T const & List_<T>::op_Element(i32 const index) const\n        {\n            if(index.value < 0 || index.value >= length)\n                throw std::out_of_range(\"List index out of bounds\");\n            return values[index.value];\n        }\n    }\n\n    namespace Console_\n    {\n        class Console_\n        {\n        public:\n            void Write_(str value);\n            void WriteLine_(str value);\n            void WriteLine_();\n        };\n\n        class Arguments_\n        {\n        private:\n            str *_Nonnull args;\n        public:\n            // Runtime Use Members\n            typedef str const *_Nonnull const_iterator;\n\n            Arguments_(int argc, char const *_Nonnull const *_Nonnull argv);\n            const_iterator begin() const { return &args[0]; }\n            const_iterator end() const { return &args[Count]; }\n\n            const int Count;\n\n            // Adamant Members\n            i32 op_magnitude() const { return i32(Count); }\n            str const & op_Element(i32 const index) const\n            {\n                if(index.value < 0 || index.value >= Count)\n                    throw std::out_of_range(\"Argument index out of bounds\");\n                return args[index.value];\n            }\n        };\n    }\n\n    namespace IO_\n    {\n        class File_Reader_\n        {\n        private:\n            std::FILE *_Nonnull file;\n\n        public:\n            File_Reader_ *_Nonnull construct(const str& fileName);\n            str ReadToEndSync_();\n            void Close_();\n        };\n\n        class File_Writer_\n        {\n        private:\n            std::FILE *_Nonnull file;\n\n        public:\n            File_Writer_ *_Nonnull construct(const str& fileName);\n            void Write_(const str& value);\n            void Close_();\n        };\n    }\n\n    namespace Text_\n    {\n        class String_Builder_\n        {\n        private:\n            char *_Nullable buffer;\n            int capacity;\n            int length;\n            void ensure_capacity(int needed);\n        public:\n            // Runtime Use Members\n            String_Builder_(): buffer(0), capacity(0), length(0) { }\n\n            // Adamant Members\n            String_Builder_ *_Nonnull construct() { return this; }\n            String_Builder_ *_Nonnull construct(str const & value);\n            String_Builder_ *_Nonnull construct_with_capacity(i32 capacity);\n            // TODO byte_length_ should be a property\n            i32 byte_length_() const { return i32(length); }\n            void Append_(str const & value);\n            void Append_(String_Builder_ const *_Nonnull value);\n            void AppendLine_(str const& value);\n            void AppendLine_();\n            void Remove_(i32 start, i32 length);\n            void Remove_(i32 start);\n            str ToString_();\n        };\n    }\n}\n\nnamespace System_ = system_;\n"));
 
 		return Main_(new ::System_::Console_::Console_(), new ::System_::Console_::Arguments_(argc, argv)).value;
 	}
