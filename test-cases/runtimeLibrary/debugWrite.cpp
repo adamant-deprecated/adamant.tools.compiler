@@ -13,10 +13,10 @@ auto main_() -> void;
 
 auto main_() -> void
 {
-	debug_write_(p_string("prefix: "));
-	debug_write_line_(p_string("value"));
+	debug_write_(str("prefix: "));
+	debug_write_line_(str("value"));
 	debug_write_line_();
-	debug_write_line_(p_string("eom"));
+	debug_write_line_(str("eom"));
 }
 
 // Entry Point Adapter

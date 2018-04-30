@@ -13,7 +13,7 @@ auto Main_() -> i32;
 
 auto Main_() -> i32
 {
-	p_string const s_ = p_string("abc");
+	str const s_ = str("abc");
 	return s_.index_of_(cp('c'));
 }
 

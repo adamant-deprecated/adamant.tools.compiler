@@ -11,18 +11,18 @@ auto Main_() -> void;
 class C_
 {
 public:
-	p_string name_;
+	str name_;
 	i32 kind_;
-	auto construct(p_string const name_) -> ::C_*;
-	auto construct_one(p_string const name_) -> ::C_*;
-	auto construct_two(p_string const name_) -> ::C_*;
+	auto construct(str const name_) -> ::C_*;
+	auto construct_one(str const name_) -> ::C_*;
+	auto construct_two(str const name_) -> ::C_*;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::C_::construct(p_string const name_) -> ::C_*
+auto ::C_::construct(str const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
@@ -30,7 +30,7 @@ auto ::C_::construct(p_string const name_) -> ::C_*
 	return self;
 }
 
-auto ::C_::construct_one(p_string const name_) -> ::C_*
+auto ::C_::construct_one(str const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
@@ -38,7 +38,7 @@ auto ::C_::construct_one(p_string const name_) -> ::C_*
 	return self;
 }
 
-auto ::C_::construct_two(p_string const name_) -> ::C_*
+auto ::C_::construct_two(str const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
@@ -48,9 +48,9 @@ auto ::C_::construct_two(p_string const name_) -> ::C_*
 
 auto Main_() -> void
 {
-	(new ::C_())->construct(p_string("0"));
-	(new ::C_())->construct_one(p_string("1"));
-	(new ::C_())->construct_two(p_string("2"));
+	(new ::C_())->construct(str("0"));
+	(new ::C_())->construct_one(str("1"));
+	(new ::C_())->construct_two(str("2"));
 }
 
 // Entry Point Adapter

@@ -139,15 +139,17 @@ public class Emitter
             {
                 cpp_type.Append("cp");
             }
+            else if type.name.unqualified() == "string"
+            {
+                cpp_type.Append("str");
+            }
             else if type.name.unqualified() == "void"
             {
                 cpp_type.Append("void");
             }
             else
             {
-                // `string`
-                cpp_type.Append("p_");
-                cpp_type.Append(type.name.unqualified());
+                NOT_IMPLEMENTED(type.name.unqualified());
             }
         }
         else
@@ -383,7 +385,7 @@ public class Emitter
         }
         else if syntax.kind == StringLiteralExpression
         {
-            builder.Write("p_string(" + syntax.get_text() + ")");
+            builder.Write("str(" + syntax.get_text() + ")");
         }
         else if syntax.kind == AssignmentExpression
         {
@@ -976,9 +978,9 @@ public class Emitter
 
         for let resource: Source_Text in resources
         {
-            definitions.BeginLine("resource_manager_->AddResource(p_string(\"");
+            definitions.BeginLine("resource_manager_->AddResource(str(\"");
             definitions.Write(resource.name);
-            definitions.Write("\"), p_string(\"");
+            definitions.Write("\"), str(\"");
             definitions.Write(resource.Text
                                     .Replace("\\", "\\\\")
                                     .Replace("\n", "\\n")

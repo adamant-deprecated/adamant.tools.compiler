@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_string s_ = p_string("\"\\");
+	str s_ = str("\"\\");
 	cp c_ = cp('\'');
 	c_ = cp('\\');
 }

@@ -15,23 +15,23 @@ public:
 	Test_ const * operator->() const { return this; }
 	Test_ & operator* () { return *this; }
 	Test_ const & operator* () const { return *this; }
-	p_string name_;
-	static auto construct(p_string const name_) -> ::Test_;
-	auto method_() const -> p_string;
+	str name_;
+	static auto construct(str const name_) -> ::Test_;
+	auto method_() const -> str;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::Test_::construct(p_string const name_) -> ::Test_
+auto ::Test_::construct(str const name_) -> ::Test_
 {
 	::Test_ self;
 	self->name_ = name_;
 	return self;
 }
 
-auto ::Test_::method_() const -> p_string
+auto ::Test_::method_() const -> str
 {
 	auto self = this;
 	return name_;
@@ -39,7 +39,7 @@ auto ::Test_::method_() const -> p_string
 
 auto Main_() -> void
 {
-	::Test_ const t_ = ::Test_::construct(p_string("Bob"));
+	::Test_ const t_ = ::Test_::construct(str("Bob"));
 	t_.method_();
 }
 

@@ -14,7 +14,7 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	cp result_;
-	result_ = p_string("hello").op_Element(i32(0));
+	result_ = str("hello").op_Element(i32(0));
 }
 
 // Entry Point Adapter

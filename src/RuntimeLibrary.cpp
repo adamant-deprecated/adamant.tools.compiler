@@ -21,9 +21,9 @@ char cp_to_char(cp v)
     return v.value;
 }
 
-p_string p_string::construct(cp c, i32 repeat)
+str str::construct(cp c, i32 repeat)
 {
-    p_string self;
+    str self;
     self.Length = repeat.value;
     char* buffer = new char[repeat.value];
     for (int i = 0; i < repeat.value; i++)
@@ -33,17 +33,17 @@ p_string p_string::construct(cp c, i32 repeat)
     return self;
 }
 
-p_string::p_string(const char* s)
+str::str(const char* s)
     : Length(std::strlen(s)), Buffer(s)
 {
 }
 
-p_string::p_string(int length, const char* s)
+str::str(int length, const char* s)
     : Length(length), Buffer(s)
 {
 }
 
-char const * p_string::cstr() const
+char const * str::cstr() const
 {
     auto buffer = new char[Length + 1];
     std::memcpy(buffer, Buffer, Length);
@@ -51,7 +51,7 @@ char const * p_string::cstr() const
     return buffer;
 }
 
-p_string::p_string(i32 other)
+str::str(i32 other)
     : Length(0), Buffer(0)
 {
     char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
@@ -61,22 +61,22 @@ p_string::p_string(i32 other)
     Buffer = buffer;
 }
 
-p_string::p_string(cp other)
+str::str(cp other)
     : Length(1), Buffer(new char[1] { cp_to_char(other) })
 {
 }
 
-p_string::p_string(bit other)
-    : p_string(other.value ? "true" : "false")
+str::str(bit other)
+    : str(other.value ? "true" : "false")
 {
 }
 
-p_string p_string::Substring_(i32 start, i32 length) const
+str str::Substring_(i32 start, i32 length) const
 {
-    return p_string(length.value, Buffer + start.value);
+    return str(length.value, Buffer + start.value);
 }
 
-p_string p_string::Replace_(p_string oldValue, p_string newValue) const
+str str::Replace_(str oldValue, str newValue) const
 {
     system_::Text_::String_Builder_ builder = system_::Text_::String_Builder_(); // TODO initialize capacity
     int limit = Length - oldValue.Length + 1;
@@ -96,7 +96,7 @@ p_string p_string::Replace_(p_string oldValue, p_string newValue) const
     return builder.ToString_();
 }
 
-i32 p_string::LastIndexOf_(cp c) const
+i32 str::LastIndexOf_(cp c) const
 {
     for(int i = Length - 1; i >= 0; i--)
         if(Buffer[i] == cp_to_char(c))
@@ -105,7 +105,7 @@ i32 p_string::LastIndexOf_(cp c) const
     return i32(-1); // TODO should return none
 }
 
-i32 p_string::index_of_(cp c) const
+i32 str::index_of_(cp c) const
 {
     for(int i = 0; i < Length; i++)
         if(Buffer[i] == cp_to_char(c))
@@ -114,17 +114,17 @@ i32 p_string::index_of_(cp c) const
     return i32(-1);
 }
 
-p_string p_string::op_add(p_string const & value) const
+str str::op_add(str const & value) const
 {
     int newLength = Length + value.Length;
     char* chars = new char[newLength];
     size_t offset = sizeof(char) * Length;
     std::memcpy(chars, Buffer, offset);
     std::memcpy(chars + offset, value.Buffer, value.Length);
-    return p_string(newLength, chars);
+    return str(newLength, chars);
 }
 
-auto equal_op(p_string lhs, p_string rhs) -> bit
+auto equal_op(str lhs, str rhs) -> bit
 {
     if (lhs.Length != rhs.Length)
         return bit_false;
@@ -136,7 +136,7 @@ auto equal_op(p_string lhs, p_string rhs) -> bit
     return bit_true;
 }
 
-bit p_string::op_less_than(p_string other) const
+bit str::op_less_than(str other) const
 {
     char const* left = this->cstr();
     char const* right = other.cstr();
@@ -146,7 +146,7 @@ bit p_string::op_less_than(p_string other) const
     return bit_from(result);
 }
 
-bit p_string::op_less_than_or_equal(p_string other) const
+bit str::op_less_than_or_equal(str other) const
 {
     char const* left = this->cstr();
     char const* right = other.cstr();
@@ -156,7 +156,7 @@ bit p_string::op_less_than_or_equal(p_string other) const
     return bit_from(result);
 }
 
-bit p_string::op_greater_than(p_string other) const
+bit str::op_greater_than(str other) const
 {
     char const* left = this->cstr();
     char const* right = other.cstr();
@@ -166,7 +166,7 @@ bit p_string::op_greater_than(p_string other) const
     return bit_from(result);
 }
 
-bit p_string::op_greater_than_or_equal(p_string other) const
+bit str::op_greater_than_or_equal(str other) const
 {
     char const* left = this->cstr();
     char const* right = other.cstr();
@@ -176,7 +176,7 @@ bit p_string::op_greater_than_or_equal(p_string other) const
     return bit_from(result);
 }
 
-bool operator < (p_string const & lhs, p_string const & rhs)
+bool operator < (str const & lhs, str const & rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -190,24 +190,24 @@ bool operator < (p_string const & lhs, p_string const & rhs)
 // Standard Library
 // -----------------------------------------------------------------------------
 
-std::map<p_string, p_string> resourceValues;
+std::map<str, str> resourceValues;
 
-p_string const & ResourceManager::GetString_(p_string resourceName)
+str const & ResourceManager::GetString_(str resourceName)
 {
     return resourceValues.at(resourceName);
 }
-void ResourceManager::AddResource(p_string name, p_string value)
+void ResourceManager::AddResource(str name, str value)
 {
     resourceValues.insert(std::make_pair(name, value));
 }
 
 ResourceManager *const resource_manager_ = new ResourceManager();
 
-void debug_write_(p_string value)
+void debug_write_(str value)
 {
     std::fprintf(stderr, "%.*s", value.Length, value.Buffer);
 }
-void debug_write_line_(p_string value)
+void debug_write_line_(str value)
 {
     std::fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
 }
@@ -220,12 +220,12 @@ namespace system_
 {
     namespace Console_
     {
-        void Console_::Write_(p_string value)
+        void Console_::Write_(str value)
         {
             std::printf("%.*s", value.Length, value.Buffer);
         }
 
-        void Console_::WriteLine_(p_string value)
+        void Console_::WriteLine_(str value)
         {
             std::printf("%.*s\n", value.Length, value.Buffer);
         }
@@ -238,15 +238,15 @@ namespace system_
         Arguments_::Arguments_(int argc, char const *const * argv)
             : Count(argc-1)
         {
-            args = new p_string[Count];
+            args = new str[Count];
             for (int i = 0; i < Count; i++)
-                args[i] = p_string(argv[i+1]);
+                args[i] = str(argv[i+1]);
         }
     }
 
     namespace IO_
     {
-        File_Reader_* File_Reader_::construct(const p_string& fileName)
+        File_Reader_* File_Reader_::construct(const str& fileName)
         {
             std::FILE* foo;
             auto fname = fileName.cstr();
@@ -255,14 +255,14 @@ namespace system_
             return this;
         }
 
-        p_string File_Reader_::ReadToEndSync_()
+        str File_Reader_::ReadToEndSync_()
         {
             std::fseek(file, 0, SEEK_END);
             auto length = std::ftell(file);
             std::fseek(file, 0, SEEK_SET);
             auto buffer = new char[length];
             length = std::fread(buffer, sizeof(char), length, file);
-            return p_string(length, buffer);
+            return str(length, buffer);
         }
 
         void File_Reader_::Close_()
@@ -270,7 +270,7 @@ namespace system_
             std::fclose(file);
         }
 
-        File_Writer_* File_Writer_::construct(const p_string& fileName)
+        File_Writer_* File_Writer_::construct(const str& fileName)
         {
             auto fname = fileName.cstr();
             file = std::fopen(fname, "wb"); // TODO check error
@@ -278,7 +278,7 @@ namespace system_
             return this;
         }
 
-        void File_Writer_::Write_(const p_string& value)
+        void File_Writer_::Write_(const str& value)
         {
             std::fwrite(value.Buffer, sizeof(char), value.Length, file);
         }
@@ -313,7 +313,7 @@ namespace system_
             }
         }
 
-        String_Builder_* String_Builder_::construct(p_string const & value)
+        String_Builder_* String_Builder_::construct(str const & value)
         {
             ensure_capacity(value.Length);
             std::memcpy(buffer, value.Buffer, value.Length);
@@ -327,7 +327,7 @@ namespace system_
             return this;
         }
 
-        void String_Builder_::Append_(p_string const & value)
+        void String_Builder_::Append_(str const & value)
         {
             int new_length = length + value.Length;
             ensure_capacity(new_length);
@@ -343,7 +343,7 @@ namespace system_
             length = new_length;
         }
 
-        void String_Builder_::AppendLine_(p_string const & value)
+        void String_Builder_::AppendLine_(str const & value)
         {
             int new_length = length + value.Length + 1;
             ensure_capacity(new_length);
@@ -381,9 +381,9 @@ namespace system_
             length = start.value;
         }
 
-        p_string String_Builder_::ToString_()
+        str String_Builder_::ToString_()
         {
-            p_string result(length, buffer);
+            str result(length, buffer);
             // give up ownership of buffer
             buffer = 0;
             length = 0;

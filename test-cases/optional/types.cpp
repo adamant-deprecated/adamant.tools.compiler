@@ -4,7 +4,7 @@
 class Test_;
 
 // Function Declarations
-auto Func_(p_optional<p_string> const x_, p_optional<u32> const y_) -> p_optional<i32>;
+auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>;
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
@@ -19,7 +19,7 @@ public:
 
 // Definitions
 
-auto Func_(p_optional<p_string> const x_, p_optional<u32> const y_) -> p_optional<i32>
+auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>
 {
 	p_optional<i32> const z_ = none;
 	::Test_ const *_Nullable const t_ = none;

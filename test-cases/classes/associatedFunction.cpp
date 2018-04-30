@@ -11,8 +11,8 @@ auto Main_() -> void;
 class C_
 {
 public:
-	auto method_() const -> p_string;
-	static auto function_() -> p_string;
+	auto method_() const -> str;
+	static auto function_() -> str;
 	auto construct() -> ::C_* { return this; }
 };
 
@@ -20,15 +20,15 @@ public:
 
 // Definitions
 
-auto ::C_::method_() const -> p_string
+auto ::C_::method_() const -> str
 {
 	auto self = this;
 	return function_();
 }
 
-auto ::C_::function_() -> p_string
+auto ::C_::function_() -> str
 {
-	return p_string("hello");
+	return str("hello");
 }
 
 auto Main_() -> void

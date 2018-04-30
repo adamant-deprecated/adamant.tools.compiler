@@ -20,16 +20,16 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 		{
 			if (cond(equal_op(x_.op_remainder(i32(5)), i32(0))))
 			{
-				console_->WriteLine_(p_string("FizzBuzz"));
+				console_->WriteLine_(str("FizzBuzz"));
 			}
 			else
 			{
-				console_->WriteLine_(p_string("Fizz"));
+				console_->WriteLine_(str("Fizz"));
 			}
 		}
 		else if (cond(equal_op(x_.op_remainder(i32(5)), i32(0))))
 		{
-			console_->WriteLine_(p_string("Buzz"));
+			console_->WriteLine_(str("Buzz"));
 		}
 		else
 		{
