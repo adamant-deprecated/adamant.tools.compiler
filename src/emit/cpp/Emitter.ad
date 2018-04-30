@@ -131,13 +131,17 @@ public class Emitter
             {
                 cpp_type.Append("i32");
             }
+            else if type.name.unqualified() == "uint"
+            {
+                cpp_type.Append("u32");
+            }
             else if type.name.unqualified() == "void"
             {
                 cpp_type.Append("void");
             }
             else
             {
-                // `string`, `code_point`, `uint`
+                // `string`, `code_point`
                 cpp_type.Append("p_");
                 cpp_type.Append(type.name.unqualified());
             }

@@ -13,7 +13,7 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_uint x_ = i32(1).AsUInt_()->op_add(i32(2).AsUInt_());
+	u32 x_ = i32(1).AsUInt_()->op_add(i32(2).AsUInt_());
 }
 
 // Entry Point Adapter

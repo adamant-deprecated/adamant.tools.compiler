@@ -109,7 +109,7 @@ public:
     }
 };
 
-struct p_uint;
+struct u32;
 
 struct i32
 {
@@ -117,8 +117,8 @@ public:
     // Runtime Use Members
     std::int32_t value;
 
-    i32() = default;
-    i32(std::int32_t value): value(value) {}
+    explicit i32() = default;
+    explicit i32(std::int32_t value): value(value) {}
 
     i32 *_Nonnull operator->() { return this; }
     i32 const *_Nonnull operator->() const { return this; }
@@ -126,10 +126,10 @@ public:
     i32 const & operator* () const { return *this; }
 
     // Hack to support conversion of uint to int for now
-    i32(p_uint value);
+    i32(u32 value);
 
     // Adamant Members
-    static auto construct() -> i32 { return 0; }
+    static auto construct() -> i32 { return i32(0); }
     static auto copy(i32 const & other) -> i32 { return other; }
     void op_add_assign(i32 other) { this->value += other.value; }
     void op_subtract_assign(i32 other) { this->value -= other.value; }
@@ -137,48 +137,48 @@ public:
     bit op_less_than_or_equal(i32 other) const { return bit_from(this->value <= other.value); }
     bit op_greater_than(i32 other) const { return bit_from(this->value > other.value); }
     bit op_greater_than_or_equal(i32 other) const { return bit_from(this->value >= other.value); }
-    i32 op_add(i32 other) const { return this->value + other.value; }
-    i32 op_subtract(i32 other) const { return this->value - other.value; }
-    i32 op_negate() const { return -this->value; }
-    i32 op_multiply(i32 other) const { return this->value * other.value; }
-    i32 op_divide(i32 other) const { return this->value / other.value; }
-    i32 op_remainder(i32 other) const { return this->value % other.value; }
-    i32 op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return this->value < 0 ? -this->value : this->value; }
+    i32 op_add(i32 other) const { return i32(this->value + other.value); }
+    i32 op_subtract(i32 other) const { return i32(this->value - other.value); }
+    i32 op_negate() const { return i32(-this->value); }
+    i32 op_multiply(i32 other) const { return i32(this->value * other.value); }
+    i32 op_divide(i32 other) const { return i32(this->value / other.value); }
+    i32 op_remainder(i32 other) const { return i32(this->value % other.value); }
+    i32 op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return i32(this->value < 0 ? -this->value : this->value); }
 
     // Hack because we don't support as correctly yet
-    p_uint AsUInt_() const;
+    u32 AsUInt_() const;
 };
 
-struct p_uint
+struct u32
 {
 public:
     // Runtime Use Members
     std::uint32_t value;
 
-    p_uint() = default;
-    p_uint(std::uint32_t value): value(value) {}
+    u32() = default;
+    u32(std::uint32_t value): value(value) {}
 
-    p_uint *_Nonnull operator->() { return this; }
-    p_uint const *_Nonnull operator->() const { return this; }
-    p_uint & operator* () { return *this; }
-    p_uint const & operator* () const { return *this; }
+    u32 *_Nonnull operator->() { return this; }
+    u32 const *_Nonnull operator->() const { return this; }
+    u32 & operator* () { return *this; }
+    u32 const & operator* () const { return *this; }
 
     // Hack to support conversion of int to uint for now
-    p_uint(i32 value): value(value.value) {}
+    u32(i32 value): value(value.value) {}
 
     // Adamant Members
-    static auto construct() -> p_uint { return 0; }
-    void op_add_assign(p_uint other) { this->value += other.value; }
-    void op_subtract_assign(p_uint other) { this->value -= other.value; }
-    bit op_less_than(p_uint other) const { return bit_from(this->value < other.value); }
-    bit op_less_than_or_equal(p_uint other) const { return bit_from(this->value <= other.value); }
-    bit op_greater_than(p_uint other) const { return bit_from(this->value > other.value); }
-    bit op_greater_than_or_equal(p_uint other) const { return bit_from(this->value >= other.value); }
-    p_uint op_add(p_uint other) const { return this->value + other.value; }
-    p_uint op_subtract(p_uint other) const { return this->value - other.value; }
+    static auto construct() -> u32 { return 0; }
+    void op_add_assign(u32 other) { this->value += other.value; }
+    void op_subtract_assign(u32 other) { this->value -= other.value; }
+    bit op_less_than(u32 other) const { return bit_from(this->value < other.value); }
+    bit op_less_than_or_equal(u32 other) const { return bit_from(this->value <= other.value); }
+    bit op_greater_than(u32 other) const { return bit_from(this->value > other.value); }
+    bit op_greater_than_or_equal(u32 other) const { return bit_from(this->value >= other.value); }
+    u32 op_add(u32 other) const { return this->value + other.value; }
+    u32 op_subtract(u32 other) const { return this->value - other.value; }
 };
 
-inline i32::i32(p_uint value)
+inline i32::i32(u32 value)
     : value(value.value)
 {
 }
@@ -238,10 +238,10 @@ public:
     static auto construct(p_string value) -> p_string { return value; }
     static auto construct(p_code_point c, i32 repeat) -> p_string;
     // TODO ByteLength should be a property
-    i32 ByteLength_() const { return Length; }
+    i32 ByteLength_() const { return i32(Length); }
 
     p_string Substring_(i32 start, i32 length) const;
-    p_string Substring_(i32 start) const { return Substring_(start, Length-start.value); }
+    p_string Substring_(i32 start) const { return Substring_(start, i32(Length-start.value)); }
     p_string Replace_(p_string oldValue, p_string newValue) const;
     i32 LastIndexOf_(p_code_point c) const;
     i32 index_of_(p_code_point c) const;
@@ -429,7 +429,7 @@ namespace system_
             void Clear_() { clear_(); }
             void add_(T value);
             void clear_() { length = 0; }
-            i32 op_magnitude() const { return length; }
+            i32 op_magnitude() const { return i32(length); }
             T const & op_Element(i32 const index) const;
         };
 
@@ -484,7 +484,7 @@ namespace system_
             const int Count;
 
             // Adamant Members
-            i32 op_magnitude() const { return Count; }
+            i32 op_magnitude() const { return i32(Count); }
             p_string const & op_Element(i32 const index) const
             {
                 if(index.value < 0 || index.value >= Count)
@@ -537,7 +537,7 @@ namespace system_
             String_Builder_ *_Nonnull construct(p_string const & value);
             String_Builder_ *_Nonnull construct_with_capacity(i32 capacity);
             // TODO byte_length_ should be a property
-            i32 byte_length_() const { return length; }
+            i32 byte_length_() const { return i32(length); }
             void Append_(p_string const & value);
             void Append_(String_Builder_ const *_Nonnull value);
             void AppendLine_(p_string const& value);

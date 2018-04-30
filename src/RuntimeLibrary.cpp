@@ -5,7 +5,7 @@
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-p_uint i32::AsUInt_() const
+u32 i32::AsUInt_() const
 {
     if(this->value < 0)
         throw std::range_error("Can't convert negative number to unsigned");
@@ -83,16 +83,16 @@ p_string p_string::Replace_(p_string oldValue, p_string newValue) const
     int lastIndex = 0;
     // TODO the Substring calls in here are leaking memory
     for(int i=0; i < limit; i++)
-        if (equal_op(Substring_(i, oldValue.Length), oldValue).value)
+        if (cond(equal_op(Substring_(i32(i), i32(oldValue.Length)), oldValue)))
         {
-            builder.Append_(Substring_(lastIndex, i-lastIndex));
+            builder.Append_(Substring_(i32(lastIndex), i32(i-lastIndex)));
             builder.Append_(newValue);
             i += oldValue.Length; // skip over the value we just matched
             lastIndex = i;
             i--; // we need i-- to offset the i++ that is about to happen
         }
 
-    builder.Append_(Substring_(lastIndex, Length - lastIndex));
+    builder.Append_(Substring_(i32(lastIndex), i32(Length - lastIndex)));
     return builder.ToString_();
 }
 
@@ -100,18 +100,18 @@ i32 p_string::LastIndexOf_(p_code_point c) const
 {
     for(int i = Length - 1; i >= 0; i--)
         if(Buffer[i] == c.CharValue())
-            return i;
+            return i32(i);
 
-    return -1; // TODO should return none
+    return i32(-1); // TODO should return none
 }
 
 i32 p_string::index_of_(p_code_point c) const
 {
     for(int i = 0; i < Length; i++)
         if(Buffer[i] == c.CharValue())
-            return i;
+            return i32(i);
 
-    return -1;
+    return i32(-1);
 }
 
 p_string p_string::op_add(p_string const & value) const
