@@ -29,41 +29,41 @@ public class Primitives_Package_Builder
         let global_namespace: Name = new Name.global_namespace(package_name);
         let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
 
-        symbols.Add(build_adamant_language_namespace(global_namespace));
-        symbols.Add(build_primitive("void", global_namespace));
-        symbols.Add(build_primitive("never", global_namespace));
+        symbols.add(build_adamant_language_namespace(global_namespace));
+        symbols.add(build_primitive("void", global_namespace));
+        symbols.add(build_primitive("never", global_namespace));
 
-        symbols.Add(build_primitive("bool", global_namespace));
-        symbols.Add(build_primitive("code_point", global_namespace));
-        symbols.Add(build_primitive("string", global_namespace));
+        symbols.add(build_primitive("bool", global_namespace));
+        symbols.add(build_primitive("code_point", global_namespace));
+        symbols.add(build_primitive("string", global_namespace));
 
-        symbols.Add(build_primitive("int8", global_namespace));
-        symbols.Add(build_primitive("int16", global_namespace));
-        symbols.Add(build_primitive("int", global_namespace));
-        symbols.Add(build_primitive("int64", global_namespace));
-        symbols.Add(build_primitive("int128", global_namespace));
+        symbols.add(build_primitive("int8", global_namespace));
+        symbols.add(build_primitive("int16", global_namespace));
+        symbols.add(build_primitive("int", global_namespace));
+        symbols.add(build_primitive("int64", global_namespace));
+        symbols.add(build_primitive("int128", global_namespace));
 
-        symbols.Add(build_primitive("byte", global_namespace));
-        symbols.Add(build_primitive("uint16", global_namespace));
-        symbols.Add(build_primitive("uint", global_namespace));
-        symbols.Add(build_primitive("uint64", global_namespace));
-        symbols.Add(build_primitive("uint128", global_namespace));
+        symbols.add(build_primitive("byte", global_namespace));
+        symbols.add(build_primitive("uint16", global_namespace));
+        symbols.add(build_primitive("uint", global_namespace));
+        symbols.add(build_primitive("uint64", global_namespace));
+        symbols.add(build_primitive("uint128", global_namespace));
 
-        symbols.Add(build_primitive("float32", global_namespace));
-        symbols.Add(build_primitive("float", global_namespace));
-        symbols.Add(build_primitive("float128", global_namespace));
+        symbols.add(build_primitive("float32", global_namespace));
+        symbols.add(build_primitive("float", global_namespace));
+        symbols.add(build_primitive("float128", global_namespace));
 
         build_fixed_point_primitives(symbols, 8, global_namespace);
         build_fixed_point_primitives(symbols, 16, global_namespace);
         build_fixed_point_primitives(symbols, 32, global_namespace);
         build_fixed_point_primitives(symbols, 64, global_namespace);
 
-        symbols.Add(build_primitive("decimal32", global_namespace));
-        symbols.Add(build_primitive("decimal", global_namespace));
-        symbols.Add(build_primitive("decimal128", global_namespace));
+        symbols.add(build_primitive("decimal32", global_namespace));
+        symbols.add(build_primitive("decimal", global_namespace));
+        symbols.add(build_primitive("decimal128", global_namespace));
 
-        symbols.Add(build_primitive("size", global_namespace));
-        symbols.Add(build_primitive("offset", global_namespace));
+        symbols.add(build_primitive("size", global_namespace));
+        symbols.add(build_primitive("offset", global_namespace));
 
         return symbols;
     }
@@ -107,8 +107,8 @@ public class Primitives_Package_Builder
         // TODO implement when language features make it easier
         // for let i: usize in 1..usize-1
         // {
-        // 	symbols.Add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
-        // 	symbols.Add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
+        // 	symbols.add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
+        // 	symbols.add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
         // }
     }
 }

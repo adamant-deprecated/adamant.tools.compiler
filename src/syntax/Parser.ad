@@ -12,7 +12,7 @@ public class Parser
         {
             let tokenStream: mut Token_Stream = lexer.analyze(source);
             let compilationUnitParser: mut Compilation_Unit_Parser = new Compilation_Unit_Parser(tokenStream);
-            children.Add(compilationUnitParser.Parse());
+            children.add(compilationUnitParser.Parse());
         }
         return new Syntax_Node(PackageNode, children);
     }

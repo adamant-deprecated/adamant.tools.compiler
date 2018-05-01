@@ -402,8 +402,6 @@ namespace system_
 
             // Adamant Members
             List_ *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
-            void Add_(T value) { add_(value); }
-            void Clear_() { clear_(); }
             void add_(T value);
             void clear_() { length = 0; }
             i32 op_magnitude() const { return i32(length); }

@@ -125,7 +125,7 @@ public class Semantic_Node
         {
             if child.kind == kind
             {
-                children.Add(child);
+                children.add(child);
             }
         }
         return children;
@@ -142,7 +142,7 @@ public class Semantic_Node
                 or child.kind == FieldDeclaration
                 or child.kind == MethodDeclaration
             {
-                members.Add(child);
+                members.add(child);
             }
         }
         return members;
@@ -158,7 +158,7 @@ public class Semantic_Node
             if child.kind =/= LeftBrace
                 and child.kind =/= RightBrace
             {
-                statements.Add(child);
+                statements.add(child);
             }
         }
         return statements;
@@ -174,7 +174,7 @@ public class Semantic_Node
             if child.kind == Parameter
                 or child.kind == SelfParameter
             {
-                parameters.Add(child);
+                parameters.add(child);
             }
         }
         return parameters;
@@ -210,7 +210,7 @@ public class Semantic_Node
 
     public add(mut self, diagnostic: Diagnostic) -> void
     {
-        node_diagnostics.Add(diagnostic);
+        node_diagnostics.add(diagnostic);
     }
 
     public diagnostics(self) -> System.Collections.List<Diagnostic>

@@ -14,8 +14,8 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	::System_::Collections_::List_<str> *_Nonnull const strings_ = (new ::System_::Collections_::List_<str>())->construct();
-	strings_->Add_(str("Hello"));
-	strings_->Add_(str("World!"));
+	strings_->add_(str("Hello"));
+	strings_->add_(str("World!"));
 	if (cond(not_equal_op(strings_->op_magnitude(), i32(2))))
 	{
 		console_->WriteLine_(str("List length not 2!"));
@@ -28,10 +28,10 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 	}
 
 	console_->WriteLine_();
-	strings_->Clear_();
+	strings_->clear_();
 	::System_::Collections_::List_<::System_::Text_::String_Builder_ *_Nonnull> *_Nonnull const builders_ = (new ::System_::Collections_::List_<::System_::Text_::String_Builder_ *_Nonnull>())->construct();
-	builders_->Add_((new ::System_::Text_::String_Builder_())->construct(str("sb[0]: ")));
-	builders_->Add_((new ::System_::Text_::String_Builder_())->construct(str("sb[1]: ")));
+	builders_->add_((new ::System_::Text_::String_Builder_())->construct(str("sb[0]: ")));
+	builders_->add_((new ::System_::Text_::String_Builder_())->construct(str("sb[1]: ")));
 	for (::System_::Text_::String_Builder_ *_Nonnull const sb_ : *(builders_))
 	{
 		sb_->Append_(str("value"));

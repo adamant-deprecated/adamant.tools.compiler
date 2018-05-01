@@ -73,12 +73,12 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
             }
             else
             {
-                sourceFilePaths.Add(arg);
+                sourceFilePaths.add(arg);
             }
         }
         else if argType == 1 // resource file
         {
-            resourceFilePaths.Add(arg);
+            resourceFilePaths.add(arg);
             argType = 0;
         }
         else if argType == 2 // output file
@@ -114,7 +114,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
             {
                 console.WriteLine("  " + resourceFilePath);
             }
-            resources.Add(read_source(resourceFilePath));
+            resources.add(read_source(resourceFilePath));
         }
     }
 
@@ -130,7 +130,7 @@ public Main(console: mut System.Console.Console, args: System.Console.Arguments)
         {
             console.WriteLine("  " + sourceFilePath);
         }
-        sources.Add(read_source(sourceFilePath));
+        sources.add(read_source(sourceFilePath));
     }
 
     let package: Package = compile(sources);

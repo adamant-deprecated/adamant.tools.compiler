@@ -43,9 +43,9 @@ public class Name
         let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
         for let segment: string in qualifier.segments
         {
-            segments.Add(segment);
+            segments.add(segment);
         }
-        segments.Add(name);
+        segments.add(name);
         self.segments = segments;
         self.is_special = false;
     }
@@ -59,9 +59,9 @@ public class Name
         let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
         for let segment: string in qualifier.segments
         {
-            segments.Add(segment);
+            segments.add(segment);
         }
-        segments.Add(name);
+        segments.add(name);
         self.segments = segments;
         self.is_special = is_special;
     }
@@ -75,9 +75,9 @@ public class Name
         let segments: mut System.Collections.List<string> = new System.Collections.List<string>();
         for let segment: string in qualifier.segments
         {
-            segments.Add(segment);
+            segments.add(segment);
         }
-        segments.Add(name);
+        segments.add(name);
         self.segments = segments;
         self.is_special = true;
     }
