@@ -111,6 +111,40 @@ public class Emitter
         return cpp_code.ToString();
     }
 
+    private convert_primitive_type_name(type: Type) -> string
+    {
+        let name: string = type.name.unqualified();
+        assert(type.is_primitive, name);
+        if name == "bool"
+        {
+            return "bit";
+        }
+        else if name == "int"
+        {
+            return "i32";
+        }
+        else if name == "uint"
+        {
+            return "u32";
+        }
+        else if name == "code_point"
+        {
+            return "cp";
+        }
+        else if name == "string"
+        {
+            return "str";
+        }
+        else if name == "void"
+        {
+            return "void";
+        }
+        else
+        {
+            NOT_IMPLEMENTED(type.name.unqualified());
+        }
+    }
+
     // Converts a type to C++
     private convert_type_name(type_node: Semantic_Node) -> mut System.Text.String_Builder
     {
@@ -123,34 +157,7 @@ public class Emitter
         let cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder();
         if type.is_primitive
         {
-            if type.name.unqualified() == "bool"
-            {
-                cpp_type.Append("bit");
-            }
-            else if type.name.unqualified() == "int"
-            {
-                cpp_type.Append("i32");
-            }
-            else if type.name.unqualified() == "uint"
-            {
-                cpp_type.Append("u32");
-            }
-            else if type.name.unqualified() == "code_point"
-            {
-                cpp_type.Append("cp");
-            }
-            else if type.name.unqualified() == "string"
-            {
-                cpp_type.Append("str");
-            }
-            else if type.name.unqualified() == "void"
-            {
-                cpp_type.Append("void");
-            }
-            else
-            {
-                NOT_IMPLEMENTED(type.name.unqualified());
-            }
+            cpp_type.Append(convert_primitive_type_name(type));
         }
         else
         {
@@ -438,33 +445,68 @@ public class Emitter
         }
         else if syntax.kind == ComparisonExpression
         {
+            // TODO assert the left and right types match
             let operator: int = syntax.children[1].kind;
-            convert_expression(syntax.children[0], builder);
-            convert_member_access(syntax.children[0], builder);
-            builder.Write("op_");
-            if operator == LessThan
+            let type: Type = syntax.children[0].of_type;
+            if type =/= none
             {
-                builder.Write("less_than");
-            }
-            else if operator == LessThanEquals
-            {
-                builder.Write("less_than_or_equal");
-            }
-            else if operator == GreaterThan
-            {
-                builder.Write("greater_than");
-            }
-            else if operator == GreaterThanEquals
-            {
-                builder.Write("greater_than_or_equal");
+                builder.Write(convert_primitive_type_name(type));
+                if operator == LessThan
+                {
+                    builder.Write("_less_than");
+                }
+                else if operator == LessThanEquals
+                {
+                    builder.Write("_less_than_or_equal");
+                }
+                else if operator == GreaterThan
+                {
+                    builder.Write("_greater_than");
+                }
+                else if operator == GreaterThanEquals
+                {
+                    builder.Write("_greater_than_or_equal");
+                }
+                else
+                {
+                    builder.Error("Unsupported comparison operator " + operator);
+                }
+                builder.Write("(");
+                convert_expression(syntax.children[0], builder);
+                builder.Write(", ");
+                convert_expression(syntax.children[2], builder);
+                builder.Write(")");
             }
             else
             {
-                builder.Error("Unsupported comparison operator " + operator);
+                // Old style comparison, method on lhs
+                convert_expression(syntax.children[0], builder);
+                convert_member_access(syntax.children[0], builder);
+                builder.Write("op_");
+                if operator == LessThan
+                {
+                    builder.Write("less_than");
+                }
+                else if operator == LessThanEquals
+                {
+                    builder.Write("less_than_or_equal");
+                }
+                else if operator == GreaterThan
+                {
+                    builder.Write("greater_than");
+                }
+                else if operator == GreaterThanEquals
+                {
+                    builder.Write("greater_than_or_equal");
+                }
+                else
+                {
+                    builder.Error("Unsupported comparison operator " + operator);
+                }
+                builder.Write("(");
+                convert_expression(syntax.children[2], builder);
+                builder.Write(")");
             }
-            builder.Write("(");
-            convert_expression(syntax.children[2], builder);
-            builder.Write(")");
         }
         else if syntax.kind == AddExpression
         {

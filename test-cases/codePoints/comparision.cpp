@@ -14,10 +14,10 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	bit x_;
-	x_ = cp('a').op_less_than(cp('b'));
-	x_ = cp('a').op_less_than_or_equal(cp('b'));
-	x_ = cp('a').op_greater_than(cp('b'));
-	x_ = cp('a').op_greater_than_or_equal(cp('b'));
+	x_ = cp_less_than(cp('a'), cp('b'));
+	x_ = cp_less_than_or_equal(cp('a'), cp('b'));
+	x_ = cp_greater_than(cp('a'), cp('b'));
+	x_ = cp_greater_than_or_equal(cp('a'), cp('b'));
 }
 
 // Entry Point Adapter

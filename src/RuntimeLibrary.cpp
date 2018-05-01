@@ -136,40 +136,37 @@ auto equal_op(str lhs, str rhs) -> bit
     return bit_true;
 }
 
-bit str::op_less_than(str other) const
+bit str_less_than(str lhs, str rhs)
 {
-    char const* left = this->cstr();
-    char const* right = other.cstr();
+    char const* left = lhs.cstr();
+    char const* right = rhs.cstr();
     bool result = std::strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
     return bit_from(result);
 }
-
-bit str::op_less_than_or_equal(str other) const
+bit str_less_than_or_equal(str lhs, str rhs)
 {
-    char const* left = this->cstr();
-    char const* right = other.cstr();
+    char const* left = lhs.cstr();
+    char const* right = rhs.cstr();
     bool result = std::strcmp(left, right) <= 0;
     delete[] left;
     delete[] right;
     return bit_from(result);
 }
-
-bit str::op_greater_than(str other) const
+bit str_greater_than(str lhs, str rhs)
 {
-    char const* left = this->cstr();
-    char const* right = other.cstr();
+    char const* left = lhs.cstr();
+    char const* right = rhs.cstr();
     bool result = std::strcmp(left, right) > 0;
     delete[] left;
     delete[] right;
     return bit_from(result);
 }
-
-bit str::op_greater_than_or_equal(str other) const
+bit str_greater_than_or_equal(str lhs, str rhs)
 {
-    char const* left = this->cstr();
-    char const* right = other.cstr();
+    char const* left = lhs.cstr();
+    char const* right = rhs.cstr();
     bool result = std::strcmp(left, right) >= 0;
     delete[] left;
     delete[] right;

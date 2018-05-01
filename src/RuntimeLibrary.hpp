@@ -129,6 +129,10 @@ struct i32
 };
 
 inline i32 i32_negate(i32 v) { return i32(-v.value); }
+inline bit i32_less_than(i32 lhs, i32 rhs) { return bit_from(lhs.value < rhs.value); }
+inline bit i32_less_than_or_equal(i32 lhs, i32 rhs) { return bit_from(lhs.value <= rhs.value); }
+inline bit i32_greater_than(i32 lhs, i32 rhs) { return bit_from(lhs.value > rhs.value); }
+inline bit i32_greater_than_or_equal(i32 lhs, i32 rhs) { return bit_from(lhs.value >= rhs.value); }
 
 // `uint`
 struct u32
@@ -159,6 +163,11 @@ struct u32
     u32 op_subtract(u32 other) const { return u32(this->value - other.value); }
 };
 
+inline bit u32_less_than(u32 lhs, u32 rhs) { return bit_from(lhs.value < rhs.value); }
+inline bit u32_less_than_or_equal(u32 lhs, u32 rhs) { return bit_from(lhs.value <= rhs.value); }
+inline bit u32_greater_than(u32 lhs, u32 rhs) { return bit_from(lhs.value > rhs.value); }
+inline bit u32_greater_than_or_equal(u32 lhs, u32 rhs) { return bit_from(lhs.value >= rhs.value); }
+
 inline i32::i32(u32 value)
     : value(value.value)
 {
@@ -179,14 +188,15 @@ struct cp
 
     // Adamant Members
     static auto construct() -> cp { return cp('\0'); }
-    // TODO: Not sure code_point should support these operations
-    bit op_less_than(cp other) const { return bit_from(this->value < other.value); }
-    bit op_less_than_or_equal(cp other) const { return bit_from(this->value <= other.value); }
-    bit op_greater_than(cp other) const { return bit_from(this->value > other.value); }
-    bit op_greater_than_or_equal(cp other) const { return bit_from(this->value >= other.value); }
 };
 
 char cp_to_char(cp v);
+
+// TODO: Not sure code_point should support comparision operations
+inline bit cp_less_than(cp lhs, cp rhs) { return bit_from(lhs.value < rhs.value); }
+inline bit cp_less_than_or_equal(cp lhs, cp rhs) { return bit_from(lhs.value <= rhs.value); }
+inline bit cp_greater_than(cp lhs, cp rhs) { return bit_from(lhs.value > rhs.value); }
+inline bit cp_greater_than_or_equal(cp lhs, cp rhs) { return bit_from(lhs.value >= rhs.value); }
 
 struct str
 {
@@ -227,11 +237,12 @@ struct str
     cp op_Element(i32 const index) const { return cp(Buffer[index.value]); }
     str op_add(str const & value) const;
     str op_add(bit value) const { return this->op_add(str(value)); }
-    bit op_less_than(str other) const;
-    bit op_less_than_or_equal(str other) const;
-    bit op_greater_than(str other) const;
-    bit op_greater_than_or_equal(str other) const;
 };
+
+bit str_less_than(str lhs, str rhs);
+bit str_less_than_or_equal(str lhs, str rhs);
+bit str_greater_than(str lhs, str rhs);
+bit str_greater_than_or_equal(str lhs, str rhs);
 
 // -----------------------------------------------------------------------------
 // Operators

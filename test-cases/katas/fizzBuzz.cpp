@@ -37,7 +37,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 		}
 
 		x_.op_add_assign(i32(1));
-		if (cond(x_.op_greater_than(i32(100))))
+		if (cond(i32_greater_than(x_, i32(100))))
 		{
 			break;
 		}
