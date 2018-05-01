@@ -354,9 +354,9 @@ public class Emitter
         }
         else if syntax.kind == NegateExpression
         {
+            builder.Write("i32_negate(");
             convert_expression(syntax.children[1], builder);
-            convert_member_access(syntax.children[1], builder);
-            builder.Write("op_negate()");
+            builder.Write(")");
         }
         else if syntax.kind == NoneLiteralExpression
         {

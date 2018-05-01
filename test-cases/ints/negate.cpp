@@ -14,7 +14,7 @@ auto Main_() -> void;
 auto Main_() -> void
 {
 	i32 x_ = i32(1);
-	i32 y_ = x_.op_negate();
+	i32 y_ = i32_negate(x_);
 }
 
 // Entry Point Adapter

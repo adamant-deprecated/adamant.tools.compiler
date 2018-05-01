@@ -119,7 +119,6 @@ struct i32
     bit op_greater_than_or_equal(i32 other) const { return bit_from(this->value >= other.value); }
     i32 op_add(i32 other) const { return i32(this->value + other.value); }
     i32 op_subtract(i32 other) const { return i32(this->value - other.value); }
-    i32 op_negate() const { return i32(-this->value); }
     i32 op_multiply(i32 other) const { return i32(this->value * other.value); }
     i32 op_divide(i32 other) const { return i32(this->value / other.value); }
     i32 op_remainder(i32 other) const { return i32(this->value % other.value); }
@@ -128,6 +127,8 @@ struct i32
     // Hack because we don't support as correctly yet
     u32 AsUInt_() const;
 };
+
+inline i32 i32_negate(i32 v) { return i32(-v.value); }
 
 // `uint`
 struct u32
@@ -189,7 +190,6 @@ char cp_to_char(cp v);
 
 struct str
 {
-public:
     // Runtime Use Members
     char const *_Nonnull Buffer;
     int Length;
