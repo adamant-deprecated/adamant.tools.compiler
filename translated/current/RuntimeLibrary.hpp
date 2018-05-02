@@ -119,7 +119,6 @@ struct i32
     bit op_greater_than_or_equal(i32 other) const { return bit_from(this->value >= other.value); }
     i32 op_add(i32 other) const { return i32(this->value + other.value); }
     i32 op_subtract(i32 other) const { return i32(this->value - other.value); }
-    i32 op_negate() const { return i32(-this->value); }
     i32 op_multiply(i32 other) const { return i32(this->value * other.value); }
     i32 op_divide(i32 other) const { return i32(this->value / other.value); }
     i32 op_remainder(i32 other) const { return i32(this->value % other.value); }
@@ -128,6 +127,12 @@ struct i32
     // Hack because we don't support as correctly yet
     u32 AsUInt_() const;
 };
+
+inline i32 i32_negate(i32 v) { return i32(-v.value); }
+inline bit i32_less_than(i32 lhs, i32 rhs) { return bit_from(lhs.value < rhs.value); }
+inline bit i32_less_than_or_equal(i32 lhs, i32 rhs) { return bit_from(lhs.value <= rhs.value); }
+inline bit i32_greater_than(i32 lhs, i32 rhs) { return bit_from(lhs.value > rhs.value); }
+inline bit i32_greater_than_or_equal(i32 lhs, i32 rhs) { return bit_from(lhs.value >= rhs.value); }
 
 // `uint`
 struct u32
@@ -158,6 +163,11 @@ struct u32
     u32 op_subtract(u32 other) const { return u32(this->value - other.value); }
 };
 
+inline bit u32_less_than(u32 lhs, u32 rhs) { return bit_from(lhs.value < rhs.value); }
+inline bit u32_less_than_or_equal(u32 lhs, u32 rhs) { return bit_from(lhs.value <= rhs.value); }
+inline bit u32_greater_than(u32 lhs, u32 rhs) { return bit_from(lhs.value > rhs.value); }
+inline bit u32_greater_than_or_equal(u32 lhs, u32 rhs) { return bit_from(lhs.value >= rhs.value); }
+
 inline i32::i32(u32 value)
     : value(value.value)
 {
@@ -178,18 +188,18 @@ struct cp
 
     // Adamant Members
     static auto construct() -> cp { return cp('\0'); }
-    // TODO: Not sure code_point should support these operations
-    bit op_less_than(cp other) const { return bit_from(this->value < other.value); }
-    bit op_less_than_or_equal(cp other) const { return bit_from(this->value <= other.value); }
-    bit op_greater_than(cp other) const { return bit_from(this->value > other.value); }
-    bit op_greater_than_or_equal(cp other) const { return bit_from(this->value >= other.value); }
 };
 
 char cp_to_char(cp v);
 
+// TODO: Not sure code_point should support comparision operations
+inline bit cp_less_than(cp lhs, cp rhs) { return bit_from(lhs.value < rhs.value); }
+inline bit cp_less_than_or_equal(cp lhs, cp rhs) { return bit_from(lhs.value <= rhs.value); }
+inline bit cp_greater_than(cp lhs, cp rhs) { return bit_from(lhs.value > rhs.value); }
+inline bit cp_greater_than_or_equal(cp lhs, cp rhs) { return bit_from(lhs.value >= rhs.value); }
+
 struct str
 {
-public:
     // Runtime Use Members
     char const *_Nonnull Buffer;
     int Length;
@@ -227,11 +237,12 @@ public:
     cp op_Element(i32 const index) const { return cp(Buffer[index.value]); }
     str op_add(str const & value) const;
     str op_add(bit value) const { return this->op_add(str(value)); }
-    bit op_less_than(str other) const;
-    bit op_less_than_or_equal(str other) const;
-    bit op_greater_than(str other) const;
-    bit op_greater_than_or_equal(str other) const;
 };
+
+bit str_less_than(str lhs, str rhs);
+bit str_less_than_or_equal(str lhs, str rhs);
+bit str_greater_than(str lhs, str rhs);
+bit str_greater_than_or_equal(str lhs, str rhs);
 
 // -----------------------------------------------------------------------------
 // Operators
@@ -402,8 +413,6 @@ namespace system_
 
             // Adamant Members
             List_ *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
-            void Add_(T value) { add_(value); }
-            void Clear_() { clear_(); }
             void add_(T value);
             void clear_() { length = 0; }
             i32 op_magnitude() const { return i32(length); }
