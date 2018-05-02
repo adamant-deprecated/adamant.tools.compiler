@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *_Nonnull;
+auto Func_(i32 x_, i32 const y_) -> ::System_::Text_::String_Builder_ *_Nonnull;
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
@@ -12,13 +12,13 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *_Nonnull
+auto Func_(i32 x_, i32 const y_) -> ::System_::Text_::String_Builder_ *_Nonnull
 {
-	x_.op_add_assign(p_int(1));
-	p_int const i_ = x_.op_add(p_int(2));
-	p_int j_ = y_.op_subtract(p_int(23));
+	x_.op_add_assign(i32(1));
+	i32 const i_ = x_.op_add(i32(2));
+	i32 j_ = y_.op_subtract(i32(23));
 	j_ = i_;
-	::System_::Text_::String_Builder_ *_Nonnull const stringA_ = (new ::System_::Text_::String_Builder_())->construct(p_string("Hello"));
+	::System_::Text_::String_Builder_ *_Nonnull const stringA_ = (new ::System_::Text_::String_Builder_())->construct(str("Hello"));
 	::System_::Text_::String_Builder_ const *_Nonnull stringB_;
 	stringB_ = stringA_;
 	return stringA_;
@@ -26,7 +26,7 @@ auto Func_(p_int x_, p_int const y_) -> ::System_::Text_::String_Builder_ *_Nonn
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
-	console_->WriteLine_(Func_(p_int(1), p_int(2))->ToString_());
+	console_->WriteLine_(Func_(i32(1), i32(2))->ToString_());
 }
 
 // Entry Point Adapter

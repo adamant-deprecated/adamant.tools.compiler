@@ -31,7 +31,7 @@ public class Source_Text
     {
         let length: int = ByteLength();
         let lineStarts: mut System.Collections.List<int> = new System.Collections.List<int>();
-        lineStarts.Add(0); // there is always the first line
+        lineStarts.add(0); // there is always the first line
 
         // performance critical
         var position: int = 0;
@@ -63,7 +63,7 @@ public class Source_Text
                 { continue; }
 
             // Already advanced position, so next line starts there
-            lineStarts.Add(position);
+            lineStarts.add(position);
         }
 
         return lineStarts;

@@ -11,23 +11,23 @@ auto Main_() -> void;
 class C_
 {
 public:
-	p_string name_;
-	auto construct(p_string const name_) -> ::C_*;
-	auto method_() const -> p_string;
+	str name_;
+	auto construct(str const name_) -> ::C_*;
+	auto method_() const -> str;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::C_::construct(p_string const name_) -> ::C_*
+auto ::C_::construct(str const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
 	return self;
 }
 
-auto ::C_::method_() const -> p_string
+auto ::C_::method_() const -> str
 {
 	auto self = this;
 	return name_;
@@ -35,7 +35,7 @@ auto ::C_::method_() const -> p_string
 
 auto Main_() -> void
 {
-	p_string const s_ = (new ::C_())->construct(p_string("Bob"))->method_();
+	str const s_ = (new ::C_())->construct(str("Bob"))->method_();
 }
 
 // Entry Point Adapter

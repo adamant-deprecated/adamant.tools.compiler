@@ -13,7 +13,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Co
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_, ::System_::Console_::Arguments_ const *_Nonnull const args_) -> void
 {
-	for (p_string const arg_ : *(args_))
+	for (str const arg_ : *(args_))
 	{
 		console_->WriteLine_(arg_);
 	}

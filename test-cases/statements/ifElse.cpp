@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> p_int;
+auto Main_() -> i32;
 
 // Class Declarations
 
@@ -11,15 +11,15 @@ auto Main_() -> p_int;
 
 // Definitions
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
-	if (p_bool(true).value)
+	if (cond(bit_true))
 	{
-		return p_int(0);
+		return i32(0);
 	}
 	else
 	{
-		return p_int(42);
+		return i32(42);
 	}
 }
 

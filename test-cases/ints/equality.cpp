@@ -13,9 +13,9 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_bool x_;
-	x_ = equal_op(p_int(1), p_int(2));
-	x_ = not_equal_op(p_int(1), p_int(2));
+	bit x_;
+	x_ = equal_op(i32(1), i32(2));
+	x_ = not_equal_op(i32(1), i32(2));
 }
 
 // Entry Point Adapter

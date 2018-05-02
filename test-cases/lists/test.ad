@@ -1,8 +1,8 @@
 public Main(console: mut System.Console.Console) -> void
 {
 	let strings: mut System.Collections.List<string> = new System.Collections.List<string>();
-	strings.Add("Hello");
-	strings.Add("World!");
+	strings.add("Hello");
+	strings.add("World!");
 
 	if |strings| =/= 2
 	{
@@ -16,11 +16,11 @@ public Main(console: mut System.Console.Console) -> void
 		console.WriteLine(s);
 	}
 	console.WriteLine();
-	strings.Clear();
+	strings.clear();
 
 	let builders: mut System.Collections.List<mut System.Text.String_Builder> = new System.Collections.List<mut System.Text.String_Builder>();
-	builders.Add(new System.Text.String_Builder("sb[0]: "));
-	builders.Add(new System.Text.String_Builder("sb[1]: "));
+	builders.add(new System.Text.String_Builder("sb[0]: "));
+	builders.add(new System.Text.String_Builder("sb[1]: "));
 	for let sb: mut System.Text.String_Builder in builders
 	{
 		sb.Append("value");

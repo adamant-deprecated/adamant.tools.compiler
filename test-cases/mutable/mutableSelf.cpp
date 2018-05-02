@@ -12,9 +12,9 @@ class Test_
 {
 public:
 private:
-	p_bool value_;
+	bit value_;
 public:
-	auto change_(p_bool const value_) -> void;
+	auto change_(bit const value_) -> void;
 	auto construct() -> ::Test_* { return this; }
 };
 
@@ -22,7 +22,7 @@ public:
 
 // Definitions
 
-auto ::Test_::change_(p_bool const value_) -> void
+auto ::Test_::change_(bit const value_) -> void
 {
 	auto self = this;
 	self->value_ = value_;
@@ -31,7 +31,7 @@ auto ::Test_::change_(p_bool const value_) -> void
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	::Test_ *_Nonnull const test_ = (new ::Test_())->construct();
-	test_->change_(p_bool(true));
+	test_->change_(bit_true);
 }
 
 // Entry Point Adapter

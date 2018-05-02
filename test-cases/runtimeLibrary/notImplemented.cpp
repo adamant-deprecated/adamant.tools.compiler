@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> p_int;
+auto main_() -> i32;
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ auto main_() -> p_int;
 
 // Definitions
 
-auto main_() -> p_int
+auto main_() -> i32
 {
-	NOT_IMPLEMENTED_(p_string("[Test Message]"));
+	NOT_IMPLEMENTED_(str("[Test Message]"));
 }
 
 // Entry Point Adapter

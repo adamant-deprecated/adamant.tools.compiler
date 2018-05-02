@@ -22,7 +22,7 @@ auto Main_() -> void
 {
 	::Test_ const *_Nonnull const a_ = (new ::Test_())->construct();
 	::Test_ const *_Nonnull const b_ = (new ::Test_())->construct();
-	p_bool x_;
+	bit x_;
 	x_ = equal_op(a_, b_);
 	x_ = not_equal_op(a_, b_);
 }

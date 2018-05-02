@@ -11,7 +11,7 @@ auto Main_() -> void;
 class Test_
 {
 public:
-	p_bool value_;
+	bit value_;
 	auto construct() -> ::Test_*;
 };
 
@@ -22,13 +22,13 @@ public:
 auto ::Test_::construct() -> ::Test_*
 {
 	::Test_* self = this;
-	value_ = p_bool(true);
+	value_ = bit_true;
 	return self;
 }
 
 auto Main_() -> void
 {
-	p_bool const value_ = (new ::Test_())->construct()->value_;
+	bit const value_ = (new ::Test_())->construct()->value_;
 }
 
 // Entry Point Adapter

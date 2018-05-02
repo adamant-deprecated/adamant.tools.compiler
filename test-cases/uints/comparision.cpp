@@ -13,11 +13,11 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_bool x_;
-	x_ = p_int(1).AsUInt_()->op_less_than(p_int(2).AsUInt_());
-	x_ = p_int(1).AsUInt_()->op_less_than_or_equal(p_int(2).AsUInt_());
-	x_ = p_int(1).AsUInt_()->op_greater_than(p_int(2).AsUInt_());
-	x_ = p_int(1).AsUInt_()->op_greater_than_or_equal(p_int(2).AsUInt_());
+	bit x_;
+	x_ = i32(1).as_uint_()->op_less_than(i32(2).as_uint_());
+	x_ = i32(1).as_uint_()->op_less_than_or_equal(i32(2).as_uint_());
+	x_ = i32(1).as_uint_()->op_greater_than(i32(2).as_uint_());
+	x_ = i32(1).as_uint_()->op_greater_than_or_equal(i32(2).as_uint_());
 }
 
 // Entry Point Adapter

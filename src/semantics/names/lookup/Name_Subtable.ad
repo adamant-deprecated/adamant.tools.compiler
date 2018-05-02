@@ -134,10 +134,16 @@ public /*mut*/ class Name_Subtable
         assert(type =/= none, self.name.full());
         if self.type =/= none
         {
-            // TODO this is a hack to allow multiple variables with the same name and type in a method
+            // TODO this prevents multiple variables with the same name and type in a method
             assert(self.type.name.full() == type.name.full(),
                 self.name.full()+" currently `"+self.type.name.full()+"` trying to set to `"+type.name.full()+"`");
         }
         self.type = type;
+    }
+
+    // TODO huge hack to recover mutability
+    public as_mut(self) -> mut Name_Subtable
+    {
+        return parent.find(name.unqualified(), name.is_special);
     }
 }

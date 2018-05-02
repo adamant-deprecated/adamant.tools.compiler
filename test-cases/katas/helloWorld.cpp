@@ -13,7 +13,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
-	console_->WriteLine_(p_string("Hello World!"));
+	console_->WriteLine_(str("Hello World!"));
 }
 
 // Entry Point Adapter

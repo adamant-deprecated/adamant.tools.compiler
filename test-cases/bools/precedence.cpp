@@ -13,10 +13,10 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_bool x_;
-	x_ = op_and(p_bool(true).op_not(), [&] { return p_bool(false); });
-	x_ = op_or(p_bool(true).op_not(), [&] { return p_bool(false); });
-	x_ = op_or(p_bool(false), [&] { return op_and(p_bool(true), [&] { return p_bool(true); }); });
+	bit x_;
+	x_ = bit_op(bit_arg(bit_not(bit_true)) && bit_arg(bit_false));
+	x_ = bit_op(bit_arg(bit_not(bit_true)) || bit_arg(bit_false));
+	x_ = bit_op(bit_arg(bit_false) || bit_arg(bit_op(bit_arg(bit_true) && bit_arg(bit_true))));
 }
 
 // Entry Point Adapter

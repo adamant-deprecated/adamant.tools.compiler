@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> p_int;
+auto Main_() -> i32;
 
 // Class Declarations
 
@@ -11,11 +11,11 @@ auto Main_() -> p_int;
 
 // Definitions
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
-	while (p_bool(true).value)
+	while (cond(bit_true))
 	{
-		return p_int(0);
+		return i32(0);
 	}
 
 	UNREACHABLE_();

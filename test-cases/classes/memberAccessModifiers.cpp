@@ -11,31 +11,31 @@ auto Main_() -> void;
 class C_
 {
 public:
-	p_string name_;
-	auto construct(p_string const name_) -> ::C_*;
-	auto method_() const -> p_string;
+	str name_;
+	auto construct(str const name_) -> ::C_*;
+	auto method_() const -> str;
 private:
-	auto double_name_() const -> p_string;
+	auto double_name_() const -> str;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::C_::construct(p_string const name_) -> ::C_*
+auto ::C_::construct(str const name_) -> ::C_*
 {
 	::C_* self = this;
 	self->name_ = name_;
 	return self;
 }
 
-auto ::C_::method_() const -> p_string
+auto ::C_::method_() const -> str
 {
 	auto self = this;
 	return double_name_();
 }
 
-auto ::C_::double_name_() const -> p_string
+auto ::C_::double_name_() const -> str
 {
 	auto self = this;
 	return name_.op_add(name_);
@@ -43,7 +43,7 @@ auto ::C_::double_name_() const -> p_string
 
 auto Main_() -> void
 {
-	::C_ const *_Nonnull const c_ = (new ::C_())->construct(p_string("Bob"));
+	::C_ const *_Nonnull const c_ = (new ::C_())->construct(str("Bob"));
 	c_->method_();
 }
 

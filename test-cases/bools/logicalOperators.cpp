@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto True_() -> p_bool;
+auto True_() -> bit;
 auto Main_() -> void;
 
 // Class Declarations
@@ -12,18 +12,18 @@ auto Main_() -> void;
 
 // Definitions
 
-auto True_() -> p_bool
+auto True_() -> bit
 {
-	return p_bool(true);
+	return bit_true;
 }
 
 auto Main_() -> void
 {
-	p_bool x_;
-	x_ = op_and(p_bool(true), [&] { return p_bool(false); });
-	x_ = op_or(p_bool(true), [&] { return p_bool(false); });
-	x_ = p_bool(true).op_not();
-	x_ = op_or(True_(), [&] { return True_(); });
+	bit x_;
+	x_ = bit_op(bit_arg(bit_true) && bit_arg(bit_false));
+	x_ = bit_op(bit_arg(bit_true) || bit_arg(bit_false));
+	x_ = bit_not(bit_true);
+	x_ = bit_op(bit_arg(True_()) || bit_arg(True_()));
 }
 
 // Entry Point Adapter

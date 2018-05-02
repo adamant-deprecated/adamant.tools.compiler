@@ -3,16 +3,16 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> p_int;
+auto Main_() -> i32;
 
 // Class Declarations
 
 // Global Definitions
-p_int const Result_ = p_int(42);
+i32 const Result_ = i32(42);
 
 // Definitions
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
 	return Result_;
 }

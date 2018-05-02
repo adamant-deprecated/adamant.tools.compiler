@@ -13,11 +13,11 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_bool x_;
-	x_ = p_int(1).op_less_than(p_int(2));
-	x_ = p_int(1).op_less_than_or_equal(p_int(2));
-	x_ = p_int(1).op_greater_than(p_int(2));
-	x_ = p_int(1).op_greater_than_or_equal(p_int(2));
+	bit x_;
+	x_ = i32_less_than(i32(1), i32(2));
+	x_ = i32_less_than_or_equal(i32(1), i32(2));
+	x_ = i32_greater_than(i32(1), i32(2));
+	x_ = i32_greater_than_or_equal(i32(1), i32(2));
 }
 
 // Entry Point Adapter

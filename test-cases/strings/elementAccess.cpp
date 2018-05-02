@@ -13,8 +13,8 @@ auto Main_() -> void;
 
 auto Main_() -> void
 {
-	p_code_point result_;
-	result_ = p_string("hello").op_Element(p_int(0));
+	cp result_;
+	result_ = str("hello").op_Element(i32(0));
 }
 
 // Entry Point Adapter

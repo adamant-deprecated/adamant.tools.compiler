@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> p_int;
+auto Main_() -> i32;
 
 // Class Declarations
 
@@ -11,10 +11,10 @@ auto Main_() -> p_int;
 
 // Definitions
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
-	::System_::Collections_::List_<p_int> const *_Nonnull const values_ = (new ::System_::Collections_::List_<p_int>())->construct();
-	return values_->op_Element(p_int(0));
+	::System_::Collections_::List_<i32> const *_Nonnull const values_ = (new ::System_::Collections_::List_<i32>())->construct();
+	return values_->op_Element(i32(0));
 }
 
 // Entry Point Adapter

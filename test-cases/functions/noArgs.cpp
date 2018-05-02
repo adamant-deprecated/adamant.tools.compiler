@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_() -> p_int;
-auto Main_() -> p_int;
+auto Func_() -> i32;
+auto Main_() -> i32;
 
 // Class Declarations
 
@@ -12,12 +12,12 @@ auto Main_() -> p_int;
 
 // Definitions
 
-auto Func_() -> p_int
+auto Func_() -> i32
 {
-	return p_int(42);
+	return i32(42);
 }
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
 	return Func_();
 }

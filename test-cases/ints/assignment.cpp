@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> p_int;
+auto Main_() -> i32;
 
 // Class Declarations
 
@@ -11,12 +11,12 @@ auto Main_() -> p_int;
 
 // Definitions
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
-	p_int result_;
-	result_ = p_int(40);
-	result_.op_add_assign(p_int(3));
-	result_.op_subtract_assign(p_int(1));
+	i32 result_;
+	result_ = i32(40);
+	result_.op_add_assign(i32(3));
+	result_.op_subtract_assign(i32(1));
 	return result_;
 }
 

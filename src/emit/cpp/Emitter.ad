@@ -1,3 +1,57 @@
+
+// Names starting or ending with underscores are reserved.
+// Names with 2 or more underscores in the middle, add one underscore.
+// Form compound names by joining with double underscore.
+// Prefix names with kind indicator.
+// Suffix names with number followed by parameters.
+//
+// # Primitives
+// Have no prefix, contain no underscores. Names chosen to avoid conflicts with C/C++
+// * cp: code point
+// * i32, u32: signed and unsigned int
+// * size, offset
+// * f32: float
+// * f16d16: fixed point
+// * str: string
+// * bit:  bool
+//
+// # Tuples
+// Have a prefix of `t__` and are followed by type parameters. For example:
+// t__2__i__i: is a pair of ints
+//
+// # Prefixes
+// The simple name prefixes are:
+// * t_ class/struct
+// * m_ method
+// * f_ function
+// * op_ operator
+// * c_ construct
+// * new_ new and construct
+//
+// # Combinable prefixes
+// Reference and optional types are formed by a sequence of letters in a prefix
+// * t: a type that isn't primitive (i.e. most types except primitives will have 't')
+// * r: reference (don't need to distinguish class/struct the type name says that)
+// * o: optional
+//
+// Examples:
+// * rt_Foo - reference to `Foo`
+// * or_i32: optional reference to a variable holding an int
+//
+// # Generic Type Parameters
+// The number of generic is appended after a double underscore (except for none)
+// * t_Foo__3 - number of type parameters
+//
+// # Function Parameter Types
+// Number of parameters is appended after double underscore, even for none.
+
+// Then arguments are listed, double underscore, number of segments followed by
+// name prefix (run together).  Primitives can be listed in place of the number
+// example: f_bar__3_s__0r_system__text__String_Builder__1__0i32__0string
+// example: f_bar__3__0i32__0r_system__text__String_Builder__0__string
+// f_bar__baz__3__1_i32__3r_system_text__String_Builder
+// first parameter doesn't need  double underscore or zero
+// additional abbreviations i=i32, u=u32 c=cp, b=bit
 public class Emitter
 {
     private let package: Package;
@@ -57,6 +111,40 @@ public class Emitter
         return cpp_code.ToString();
     }
 
+    private convert_primitive_type_name(type: Type) -> string
+    {
+        let name: string = type.name.unqualified();
+        assert(type.is_primitive, name);
+        if name == "bool"
+        {
+            return "bit";
+        }
+        else if name == "int"
+        {
+            return "i32";
+        }
+        else if name == "uint"
+        {
+            return "u32";
+        }
+        else if name == "code_point"
+        {
+            return "cp";
+        }
+        else if name == "string"
+        {
+            return "str";
+        }
+        else if name == "void"
+        {
+            return "void";
+        }
+        else
+        {
+            NOT_IMPLEMENTED(type.name.unqualified());
+        }
+    }
+
     // Converts a type to C++
     private convert_type_name(type_node: Semantic_Node) -> mut System.Text.String_Builder
     {
@@ -69,13 +157,7 @@ public class Emitter
         let cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder();
         if type.is_primitive
         {
-            if type.name.unqualified() =/= "void"
-            {
-                // `int`, `bool`, `string`, `code_point`, `uint`
-                cpp_type.Append("p_");
-            }
-            // else `void`
-            cpp_type.Append(type.name.unqualified());
+            cpp_type.Append(convert_primitive_type_name(type));
         }
         else
         {
@@ -262,9 +344,10 @@ public class Emitter
         }
         else if syntax.kind == NotExpression
         {
+            // TODO change to other functions based on argument type
+            builder.Write("bit_not(");
             convert_expression(syntax.children[1], builder);
-            convert_member_access(syntax.children[1], builder);
-            builder.Write("op_not()");
+            builder.Write(")");
         }
         else if syntax.kind == MagnitudeExpression
         {
@@ -278,13 +361,13 @@ public class Emitter
         }
         else if syntax.kind == NegateExpression
         {
+            builder.Write("i32_negate(");
             convert_expression(syntax.children[1], builder);
-            convert_member_access(syntax.children[1], builder);
-            builder.Write("op_negate()");
+            builder.Write(")");
         }
         else if syntax.kind == NoneLiteralExpression
         {
-            builder.Write("p_none");
+            builder.Write("none");
         }
         else if syntax.kind == SelfExpression
         {
@@ -292,16 +375,16 @@ public class Emitter
         }
         else if syntax.kind == NumericLiteralExpression
         {
-            builder.Write("p_int(" + syntax.get_text() + ")");
+            builder.Write("i32(" + syntax.get_text() + ")");
         }
         else if syntax.kind == TrueLiteralExpression
             or syntax.kind == FalseLiteralExpression
         {
-            builder.Write("p_bool(" + syntax.get_text() + ")");
+            builder.Write("bit_" + syntax.get_text());
         }
         else if syntax.kind == CodePointLiteralExpression
         {
-            builder.Write("p_code_point(" + syntax.get_text() + ")");
+            builder.Write("cp(" + syntax.get_text() + ")");
         }
         else if syntax.kind == IdentifierName
         {
@@ -309,7 +392,7 @@ public class Emitter
         }
         else if syntax.kind == StringLiteralExpression
         {
-            builder.Write("p_string(" + syntax.get_text() + ")");
+            builder.Write("str(" + syntax.get_text() + ")");
         }
         else if syntax.kind == AssignmentExpression
         {
@@ -362,33 +445,68 @@ public class Emitter
         }
         else if syntax.kind == ComparisonExpression
         {
+            // TODO assert the left and right types match
             let operator: int = syntax.children[1].kind;
-            convert_expression(syntax.children[0], builder);
-            convert_member_access(syntax.children[0], builder);
-            builder.Write("op_");
-            if operator == LessThan
+            let type: Type = syntax.children[0].of_type;
+            if type =/= none
             {
-                builder.Write("less_than");
-            }
-            else if operator == LessThanEquals
-            {
-                builder.Write("less_than_or_equal");
-            }
-            else if operator == GreaterThan
-            {
-                builder.Write("greater_than");
-            }
-            else if operator == GreaterThanEquals
-            {
-                builder.Write("greater_than_or_equal");
+                builder.Write(convert_primitive_type_name(type));
+                if operator == LessThan
+                {
+                    builder.Write("_less_than");
+                }
+                else if operator == LessThanEquals
+                {
+                    builder.Write("_less_than_or_equal");
+                }
+                else if operator == GreaterThan
+                {
+                    builder.Write("_greater_than");
+                }
+                else if operator == GreaterThanEquals
+                {
+                    builder.Write("_greater_than_or_equal");
+                }
+                else
+                {
+                    builder.Error("Unsupported comparison operator " + operator);
+                }
+                builder.Write("(");
+                convert_expression(syntax.children[0], builder);
+                builder.Write(", ");
+                convert_expression(syntax.children[2], builder);
+                builder.Write(")");
             }
             else
             {
-                builder.Error("Unsupported comparison operator " + operator);
+                // Old style comparison, method on lhs
+                convert_expression(syntax.children[0], builder);
+                convert_member_access(syntax.children[0], builder);
+                builder.Write("op_");
+                if operator == LessThan
+                {
+                    builder.Write("less_than");
+                }
+                else if operator == LessThanEquals
+                {
+                    builder.Write("less_than_or_equal");
+                }
+                else if operator == GreaterThan
+                {
+                    builder.Write("greater_than");
+                }
+                else if operator == GreaterThanEquals
+                {
+                    builder.Write("greater_than_or_equal");
+                }
+                else
+                {
+                    builder.Error("Unsupported comparison operator " + operator);
+                }
+                builder.Write("(");
+                convert_expression(syntax.children[2], builder);
+                builder.Write(")");
             }
-            builder.Write("(");
-            convert_expression(syntax.children[2], builder);
-            builder.Write(")");
         }
         else if syntax.kind == AddExpression
         {
@@ -432,21 +550,27 @@ public class Emitter
         }
         else if syntax.kind == OrExpression
         {
-            // TODO based on types decide how to translate
-            builder.Write("op_or(");
+            // TODO Based on the type of the values involved, either:
+            // * bit_op(bit_arg(lhs) || bit_arg(rhs))
+            // * ({ T _lhs = lhs; op_true(_lhs) ? _lhs : op_or(_lhs, rhs); })
+            // Note: that is a "compound expression"
+            builder.Write("bit_op(bit_arg(");
             convert_expression(syntax.children[0], builder);
-            builder.Write(", [&] { return ");
+            builder.Write(") || bit_arg(");
             convert_expression(syntax.children[2], builder);
-            builder.Write("; })");
+            builder.Write("))");
         }
         else if syntax.kind == AndExpression
         {
-            // TODO based on types decide how to translate
-            builder.Write("op_and(");
+            // TODO Based on the type of the values involved, either:
+            // * bit_op(bit_arg(lhs) && bit_arg(rhs))
+            // * ({ T _lhs = lhs; op_false(_lhs) ? _lhs : op_and(_lhs, rhs); })
+            // Note: that is a "compound expression"
+            builder.Write("bit_op(bit_arg(");
             convert_expression(syntax.children[0], builder);
-            builder.Write(", [&] { return ");
+            builder.Write(") && bit_arg(");
             convert_expression(syntax.children[2], builder);
-            builder.Write("; })");
+            builder.Write("))");
         }
         else if syntax.kind == InvocationExpression
         {
@@ -516,9 +640,9 @@ public class Emitter
         }
         else if statement.kind == WhileStatement
         {
-            definitions.BeginLine("while (");
+            definitions.BeginLine("while (cond(");
             convert_expression(statement.children[1], definitions);
-            definitions.EndLine(".value)"); // if the type isn't just bool, we need op_true() etc.
+            definitions.EndLine("))");
             emit_statement(statement.children[2]); // Block Statement
         }
         else if statement.kind == ForStatement
@@ -538,9 +662,9 @@ public class Emitter
         {
             definitions.WriteLine("do");
             emit_statement(statement.children[1]); // Block Statement
-            definitions.BeginLine("while (");
+            definitions.BeginLine("while (cond(");
             convert_expression(statement.children[3], definitions);
-            definitions.EndLine(".value);"); // if the type isn't just bool, we need op_true() etc.
+            definitions.EndLine("));");
         }
         else if statement.kind == IfStatement
         {
@@ -548,9 +672,9 @@ public class Emitter
             definitions.BeginLine("");
             loop
             {
-                definitions.Write("if (");
+                definitions.Write("if (cond(");
                 convert_expression(if_statement.children[1], definitions);
-                definitions.EndLine(".value)"); // if the type isn't just bool, we need op_true() etc.
+                definitions.EndLine("))");
                 emit_statement(if_statement.children[2]); // Block Statement
                 let elseClause: Semantic_Node? = if_statement.first_child(ElseClause);
                 if elseClause =/= none
@@ -896,9 +1020,9 @@ public class Emitter
 
         for let resource: Source_Text in resources
         {
-            definitions.BeginLine("resource_manager_->AddResource(p_string(\"");
+            definitions.BeginLine("resource_manager_->AddResource(str(\"");
             definitions.Write(resource.name);
-            definitions.Write("\"), p_string(\"");
+            definitions.Write("\"), str(\"");
             definitions.Write(resource.Text
                                     .Replace("\\", "\\\\")
                                     .Replace("\n", "\\n")

@@ -1,32 +1,54 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class Test_;
 
 // Function Declarations
-auto Main_() -> void;
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
-
-class Test_
-{
-public:
-	auto construct() -> ::Test_* { return this; }
-};
 
 // Global Definitions
 
 // Definitions
 
-auto Main_() -> void
+auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
-	p_int const v_ = p_int(0);
-	p_optional<p_int> const n_ = p_none;
-	p_bool x_;
-	x_ = equal_op(v_, n_);
-	x_ = not_equal_op(v_, n_);
-	x_ = equal_op(n_, v_);
-	x_ = not_equal_op(n_, v_);
+	i32 const v_ = i32(42);
+	p_optional<i32> const n_ = none;
+	bit r_;
+	r_ = equal_op(v_, n_);
+	console_->WriteLine_(str("v == n: ").op_add(r_));
+	r_ = equal_op(n_, v_);
+	console_->WriteLine_(str("n == v: ").op_add(r_));
+	r_ = equal_op(n_, n_);
+	console_->WriteLine_(str("n == v: ").op_add(r_));
+	r_ = equal_op(i32(42), none);
+	console_->WriteLine_(str("42 == none: ").op_add(r_));
+	r_ = equal_op(none, i32(42));
+	console_->WriteLine_(str("none == 42: ").op_add(r_));
+	r_ = equal_op(none, none);
+	console_->WriteLine_(str("none == none: ").op_add(r_));
+	r_ = not_equal_op(v_, n_);
+	console_->WriteLine_(str("v =/= n: ").op_add(r_));
+	r_ = not_equal_op(n_, v_);
+	console_->WriteLine_(str("n =/= v: ").op_add(r_));
+	r_ = not_equal_op(n_, n_);
+	console_->WriteLine_(str("n =/= v: ").op_add(r_));
+	r_ = not_equal_op(i32(42), none);
+	console_->WriteLine_(str("42 =/= none: ").op_add(r_));
+	r_ = not_equal_op(none, i32(42));
+	console_->WriteLine_(str("none =/= 42: ").op_add(r_));
+	r_ = not_equal_op(none, none);
+	console_->WriteLine_(str("none =/= none: ").op_add(r_));
+	::System_::Text_::String_Builder_ const *_Nullable const sb_ = none;
+	r_ = equal_op(sb_, none);
+	console_->WriteLine_(str("sb == none: ").op_add(r_));
+	r_ = equal_op(none, sb_);
+	console_->WriteLine_(str("none == sb: ").op_add(r_));
+	r_ = not_equal_op(sb_, none);
+	console_->WriteLine_(str("sb =/= none: ").op_add(r_));
+	r_ = not_equal_op(none, sb_);
+	console_->WriteLine_(str("none =/= sb: ").op_add(r_));
 }
 
 // Entry Point Adapter
@@ -34,7 +56,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		Main_(new ::System_::Console_::Console_());
 		return 0;
 	}
 	catch(std::exception &ex)

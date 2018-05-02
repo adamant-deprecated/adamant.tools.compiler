@@ -171,7 +171,7 @@ public class Syntax_Node
         start = child.start;
         byte_length = child.byte_length;
         let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
-        children.Add(child);
+        children.add(child);
         self.children = children;
         node_diagnostics = new System.Collections.List<Diagnostic>();
     }
@@ -217,7 +217,7 @@ public class Syntax_Node
 
     public add(self, diagnostic: Diagnostic) -> void
     {
-        node_diagnostics.Add(diagnostic);
+        node_diagnostics.add(diagnostic);
     }
 
     // We are returning ownership of the list, so they can mutate it if wanted
@@ -232,7 +232,7 @@ public class Syntax_Node
     {
         for let diagnostic: Diagnostic in node_diagnostics
         {
-            diagnostics.Add(diagnostic);
+            diagnostics.add(diagnostic);
         }
 
         for let child: Syntax_Node in children
@@ -252,7 +252,7 @@ public class Syntax_Node
                 or child.kind == FieldDeclaration
                 or child.kind == MethodDeclaration
             {
-                members.Add(child);
+                members.add(child);
             }
         }
         return members;
@@ -268,7 +268,7 @@ public class Syntax_Node
             if child.kind == Parameter
                 or child.kind == SelfParameter
             {
-                parameters.Add(child);
+                parameters.add(child);
             }
         }
         return parameters;
@@ -284,7 +284,7 @@ public class Syntax_Node
             if child.kind =/= LeftBrace
                 and child.kind =/= RightBrace
             {
-                statements.Add(child);
+                statements.add(child);
             }
         }
         return statements;

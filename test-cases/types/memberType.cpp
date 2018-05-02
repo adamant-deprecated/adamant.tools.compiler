@@ -4,7 +4,7 @@
 class Test_;
 
 // Function Declarations
-auto Main_() -> i32;
+auto Main_() -> void;
 
 // Class Declarations
 
@@ -22,14 +22,14 @@ public:
 auto ::Test_::construct() -> ::Test_*
 {
 	::Test_* self = this;
-	value_ = i32(0);
+	value_ = i32(1);
 	return self;
 }
 
-auto Main_() -> i32
+auto Main_() -> void
 {
 	::Test_ const *_Nonnull const t_ = (new ::Test_())->construct();
-	return t_->value_;
+	bit const b_ = i32_less_than(t_->value_, i32(5));
 }
 
 // Entry Point Adapter
@@ -37,7 +37,8 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return Main_().value;
+		Main_();
+		return 0;
 	}
 	catch(std::exception &ex)
 	{

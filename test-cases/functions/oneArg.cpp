@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Identity_(p_int const value_) -> p_int;
-auto Main_() -> p_int;
+auto Identity_(i32 const value_) -> i32;
+auto Main_() -> i32;
 
 // Class Declarations
 
@@ -12,14 +12,14 @@ auto Main_() -> p_int;
 
 // Definitions
 
-auto Identity_(p_int const value_) -> p_int
+auto Identity_(i32 const value_) -> i32
 {
 	return value_;
 }
 
-auto Main_() -> p_int
+auto Main_() -> i32
 {
-	return Identity_(p_int(42));
+	return Identity_(i32(42));
 }
 
 // Entry Point Adapter
