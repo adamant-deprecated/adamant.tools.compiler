@@ -2,8 +2,8 @@ public Main() -> void
 {
 	// TODO: Hack for convert to uint
 	var x: bool;
-	x = 1.AsUInt() < 2.AsUInt();
-	x = 1.AsUInt() <= 2.AsUInt();
-	x = 1.AsUInt() > 2.AsUInt();
-	x = 1.AsUInt() >= 2.AsUInt();
+	x = 1.as_uint() < 2.as_uint();
+	x = 1.as_uint() <= 2.as_uint();
+	x = 1.as_uint() > 2.as_uint();
+	x = 1.as_uint() >= 2.as_uint();
 }

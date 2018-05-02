@@ -125,7 +125,7 @@ struct i32
     i32 op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return i32(this->value < 0 ? -this->value : this->value); }
 
     // Hack because we don't support as correctly yet
-    u32 AsUInt_() const;
+    u32 as_uint_() const;
 };
 
 inline i32 i32_negate(i32 v) { return i32(-v.value); }
