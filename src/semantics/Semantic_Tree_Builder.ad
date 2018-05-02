@@ -19,7 +19,7 @@ public /*mut*/ class Semantic_Tree_Builder
         -> System.Collections.List<Compilation_Unit>
     {
         assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
-        // TODO remove below assertion once this if fixed
+        // TODO remove below assertion once this is fixed
         assert(name_table.any_package.lookup_special("string") =/= none, "name_table.any_package.name="+name_table.any_package.name.full());
 
         let compilation_units: mut System.Collections.List<Compilation_Unit> = new System.Collections.List<Compilation_Unit>();
@@ -156,12 +156,53 @@ public /*mut*/ class Semantic_Tree_Builder
         else if syntax.kind == MemberAccessExpression
         {
             // Before dot
-            children.add(build(syntax.children[0], name_table, scope));
+            let lhs: Semantic_Node = build(syntax.children[0], name_table, scope);
+            children.add(lhs);
             // After dot
-            // TODO bind member, need type of expression to left
-            children.add(new Semantic_Node.token(syntax.children[2]));
-            // TODO what about the expression type
-            return new Semantic_Node.concrete(syntax, children);
+            var rhs: mut Semantic_Node;
+            let member_name: Syntax_Node = syntax.children[2];
+            if lhs.of_type == none
+            {
+                rhs = new Semantic_Node.token(member_name);
+                // TODO poison this item or something, we don't know what it is
+            }
+            else
+            {
+                // debug_write_line("Getting scope for type name `"+lhs.of_type.name.full()+"`");
+                let access_scope: Name_Subtable = name_table.get(lhs.of_type.name);
+                let member_scope: Name_Subtable = access_scope.find(member_name.get_text());
+
+                if member_scope == none
+                {
+                    rhs = new Semantic_Node.token(member_name);
+                    // TODO this should be an error
+                    // add_resolution_error(rhs);
+                }
+                else
+                {
+                    let no_children: System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+                    if member_scope.type == none
+                    {
+                        // debug_write_line("Didn't find type for scope `"+member_scope.name.full()+"`");
+                        rhs = new Semantic_Node.token(member_name);
+                        // TODO this should be an error
+                        // add_could_not_determine_type_error(rhs);
+                    }
+                    else
+                    {
+                        rhs = new Semantic_Node.of_type(member_scope.type, member_name, no_children);
+                    }
+                }
+            }
+            children.add(rhs);
+            if rhs.of_type == none
+            {
+                return new Semantic_Node.concrete(syntax, children);
+            }
+            else
+            {
+                return new Semantic_Node.of_type(rhs.of_type, syntax, children);
+            }
         }
         else if syntax.kind == NewExpression
         {
@@ -171,8 +212,8 @@ public /*mut*/ class Semantic_Tree_Builder
         }
         else if syntax.kind == LocalDeclarationStatement
         {
-            let variable_declaration: Syntax_Node = syntax.first_child(VariableDeclaration);
-            children.add(build(variable_declaration, name_table, scope));
+            let variable_declaration_syntax: Syntax_Node = syntax.first_child(VariableDeclaration);
+            children.add(build(variable_declaration_syntax, name_table, scope));
             return new Semantic_Node.concrete(syntax, children);
         }
         else if syntax.kind == VariableDeclaration
@@ -186,8 +227,10 @@ public /*mut*/ class Semantic_Tree_Builder
             assert(type_node.referenced_type =/= none, type_node.get_text());
             let variable_scope: mut Name_Subtable = scope.lookup(identifier.get_text());
             assert(variable_scope =/= none, syntax.get_text());
-            // debug_write_line("Binding variable `"+identifier.get_text()+"` with type `"+type_node.referenced_type.name.full()+"`, scope `"+variable_scope.name.full()+"`");
+            // debug_write_line("Binding variable `"+identifier.get_text()+"` with type `"+type_node.referenced_type.name.full()+"`, full scope is `"+variable_scope.name.full()+"`");
             variable_scope.bind_type(type_node.referenced_type);
+            // Now we have to do the same binding in the specific package instead of the 'any' package
+            name_table.get(variable_scope.name).as_mut().bind_type(type_node.referenced_type);
             children.add(type_node);
             if |syntax.children| == 6
             {

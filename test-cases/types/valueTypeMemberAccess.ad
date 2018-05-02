@@ -1,5 +1,6 @@
 public Main() -> int
 {
-	let s: string = "abc";
-	return s.index_of('c');
+    let s: string = "abc";
+    // Demonstrates that this will translate to a member access without dereference
+    return s.index_of('c');
 }

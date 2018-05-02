@@ -1,0 +1,16 @@
+public class Test
+{
+    public let value: int;
+
+    public new()
+    {
+        value = 1;
+    }
+}
+
+public Main() -> void
+{
+    let t: Test = new Test();
+    // The type of t.value will be needed to figure out the correct comparison function
+    let b: bool = t.value < 5;
+}
