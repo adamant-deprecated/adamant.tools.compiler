@@ -42,7 +42,7 @@ public let Success: int = 0;
 public let UsageError: int = 64;
 public let DataError: int = 65;
 
-public Main(console: mut System.Console.Console, args: System.Console.Arguments) -> int
+public main(console: mut System.Console.Console, args: System.Console.Arguments) -> int
 {
     if |args| == 1 and args[0] == "--unit-test"
     {

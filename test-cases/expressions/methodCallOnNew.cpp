@@ -4,7 +4,7 @@
 class Test_;
 
 // Function Declarations
-auto Main_() -> void;
+auto main_() -> void;
 
 // Class Declarations
 
@@ -26,7 +26,7 @@ auto ::Test_::construct() -> ::Test_*
 	return self;
 }
 
-auto Main_() -> void
+auto main_() -> void
 {
 	bit const value_ = (new ::Test_())->construct()->value_;
 }
@@ -36,7 +36,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		main_();
 		return 0;
 	}
 	catch(std::exception &ex)

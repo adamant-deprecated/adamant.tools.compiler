@@ -4,7 +4,7 @@
 class Test_;
 
 // Function Declarations
-auto Main_() -> i32;
+auto main_() -> i32;
 
 // Class Declarations
 
@@ -26,7 +26,7 @@ auto ::Test_::construct() -> ::Test_*
 	return self;
 }
 
-auto Main_() -> i32
+auto main_() -> i32
 {
 	::Test_ const *_Nonnull const t_ = (new ::Test_())->construct();
 	return t_->value_;
@@ -37,7 +37,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return Main_().value;
+		return main_().value;
 	}
 	catch(std::exception &ex)
 	{

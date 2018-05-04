@@ -8,7 +8,7 @@ public class Test
     }
 }
 
-public Main(console: mut System.Console.Console) -> void
+public main(console: mut System.Console.Console) -> void
 {
     let test: mut Test = new Test();
     test.change(true);

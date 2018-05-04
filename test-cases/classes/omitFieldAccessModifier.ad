@@ -3,6 +3,6 @@ public class Test
 	let value: bool;
 }
 
-public Main() -> void
+public main() -> void
 {
 }

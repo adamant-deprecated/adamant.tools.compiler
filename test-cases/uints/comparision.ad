@@ -1,4 +1,4 @@
-public Main() -> void
+public main() -> void
 {
 	// TODO: Hack for convert to uint
 	var x: bool;

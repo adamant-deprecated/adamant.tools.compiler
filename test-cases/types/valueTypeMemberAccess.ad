@@ -1,4 +1,4 @@
-public Main() -> int
+public main() -> int
 {
     let s: string = "abc";
     // Demonstrates that this will translate to a member access without dereference

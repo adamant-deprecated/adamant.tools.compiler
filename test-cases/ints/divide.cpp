@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> void;
+auto main_() -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto Main_() -> void;
 
 // Definitions
 
-auto Main_() -> void
+auto main_() -> void
 {
 	i32 x_ = i32(2).op_divide(i32(1));
 }
@@ -21,7 +21,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		main_();
 		return 0;
 	}
 	catch(std::exception &ex)

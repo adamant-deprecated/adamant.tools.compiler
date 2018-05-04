@@ -2,7 +2,7 @@ public class Test
 {
 }
 
-public Main() -> void
+public main() -> void
 {
 	let a: Test = new Test();
 	let b: Test = new Test();

@@ -8,7 +8,7 @@ public class Test
     }
 }
 
-public Main() -> void
+public main() -> void
 {
     let t: Test = new Test();
     // The type of t.value will be needed to figure out the correct comparison function

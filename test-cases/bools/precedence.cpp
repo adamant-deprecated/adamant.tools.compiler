@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> void;
+auto main_() -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto Main_() -> void;
 
 // Definitions
 
-auto Main_() -> void
+auto main_() -> void
 {
 	bit x_;
 	x_ = bit_op(bit_arg(bit_not(bit_true)) && bit_arg(bit_false));
@@ -24,7 +24,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		main_();
 		return 0;
 	}
 	catch(std::exception &ex)

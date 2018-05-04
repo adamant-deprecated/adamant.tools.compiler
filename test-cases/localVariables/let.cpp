@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_() -> i32;
+auto main_() -> i32;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto Main_() -> i32;
 
 // Definitions
 
-auto Main_() -> i32
+auto main_() -> i32
 {
 	i32 const result_ = i32(42);
 	return result_;
@@ -22,7 +22,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return Main_().value;
+		return main_().value;
 	}
 	catch(std::exception &ex)
 	{

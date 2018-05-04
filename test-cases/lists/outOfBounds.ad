@@ -1,4 +1,4 @@
-public Main() -> int
+public main() -> int
 {
 	let values: System.Collections.List<int> = new System.Collections.List<int>();
 	return values[0];

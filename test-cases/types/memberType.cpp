@@ -4,7 +4,7 @@
 class Test_;
 
 // Function Declarations
-auto Main_() -> void;
+auto main_() -> void;
 
 // Class Declarations
 
@@ -26,7 +26,7 @@ auto ::Test_::construct() -> ::Test_*
 	return self;
 }
 
-auto Main_() -> void
+auto main_() -> void
 {
 	::Test_ const *_Nonnull const t_ = (new ::Test_())->construct();
 	bit const b_ = i32_less_than(t_->value_, i32(5));
@@ -37,7 +37,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		main_();
 		return 0;
 	}
 	catch(std::exception &ex)

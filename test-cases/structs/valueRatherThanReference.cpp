@@ -5,7 +5,7 @@ class Reference_Type_;
 struct Value_Type_;
 
 // Function Declarations
-auto Main_() -> void;
+auto main_() -> void;
 
 // Class Declarations
 
@@ -29,7 +29,7 @@ public:
 
 // Definitions
 
-auto Main_() -> void
+auto main_() -> void
 {
 	::Reference_Type_ const *_Nonnull const r_ = (new ::Reference_Type_())->construct();
 	::Value_Type_ const v_ = ::Value_Type_::construct();
@@ -40,7 +40,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		main_();
 		return 0;
 	}
 	catch(std::exception &ex)

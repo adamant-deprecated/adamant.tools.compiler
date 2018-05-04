@@ -1,4 +1,4 @@
-public Main() -> void
+public main() -> void
 {
 	var x: string = "Hello " + "World! " + 4 + 'c';
 }

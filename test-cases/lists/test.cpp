@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
+auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
+auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	::System_::Collections_::List_<str> *_Nonnull const strings_ = (new ::System_::Collections_::List_<str>())->construct();
 	strings_->add_(str("Hello"));
@@ -48,7 +48,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_(new ::System_::Console_::Console_());
+		main_(new ::System_::Console_::Console_());
 		return 0;
 	}
 	catch(std::exception &ex)

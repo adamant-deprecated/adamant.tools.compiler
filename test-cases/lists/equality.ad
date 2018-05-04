@@ -1,4 +1,4 @@
-public Main() -> void
+public main() -> void
 {
 	let values: System.Collections.List<int> = new System.Collections.List<int>();
 	values == values;

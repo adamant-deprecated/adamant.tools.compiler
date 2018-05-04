@@ -959,7 +959,7 @@ public class Emitter
         else if declaration.kind == FunctionDeclaration
         {
             let name: string = declaration.first_child(Identifier).get_text();
-            let is_main: bool = name == "Main" or name == "main";
+            let is_main: bool = name == "main";
             if is_main { main_function_name = name; }
             let parameters: string = convert_parameter_list(declaration.first_child(ParameterList), is_main);
             let return_type_node: Semantic_Node = declaration.children[3];

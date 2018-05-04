@@ -1,4 +1,4 @@
-public Main() -> void
+public main() -> void
 {
 	loop
 	{

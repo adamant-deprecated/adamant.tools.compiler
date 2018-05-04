@@ -1,4 +1,4 @@
-public Main(console: mut System.Console.Console) -> void
+public main(console: mut System.Console.Console) -> void
 {
 	let strings: mut System.Collections.List<string> = new System.Collections.List<string>();
 	strings.add("Hello");

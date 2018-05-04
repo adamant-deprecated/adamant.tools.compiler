@@ -9,7 +9,7 @@ public enum struct day_of_week
 	Saturday
 }
 
-public Main() -> void
+public main() -> void
 {
 	// TODO day_of_week.Tuesday doesn't work becuase it becomes day_of_week->Tuesday
 	//let d: day_of_week = day_of_week.Tuesday;

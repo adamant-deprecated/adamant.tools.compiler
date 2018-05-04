@@ -4,7 +4,7 @@
 
 // Function Declarations
 auto Func_(i32 x_, i32 const y_) -> ::System_::Text_::String_Builder_ *_Nonnull;
-auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
+auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -24,7 +24,7 @@ auto Func_(i32 x_, i32 const y_) -> ::System_::Text_::String_Builder_ *_Nonnull
 	return stringA_;
 }
 
-auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
+auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	console_->WriteLine_(Func_(i32(1), i32(2))->ToString_());
 }
@@ -34,7 +34,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_(new ::System_::Console_::Console_());
+		main_(new ::System_::Console_::Console_());
 		return 0;
 	}
 	catch(std::exception &ex)

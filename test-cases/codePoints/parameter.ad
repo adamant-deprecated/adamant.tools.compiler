@@ -3,7 +3,7 @@ public Identity(value: code_point) -> code_point
 	return value;
 }
 
-public Main() -> void
+public main() -> void
 {
 	Identity('a');
 }

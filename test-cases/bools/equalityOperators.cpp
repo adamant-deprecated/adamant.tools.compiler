@@ -4,7 +4,7 @@
 
 // Function Declarations
 auto True_() -> bit;
-auto Main_() -> void;
+auto main_() -> void;
 
 // Class Declarations
 
@@ -17,7 +17,7 @@ auto True_() -> bit
 	return bit_true;
 }
 
-auto Main_() -> void
+auto main_() -> void
 {
 	bit x_;
 	x_ = equal_op(bit_true, bit_false);
@@ -30,7 +30,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		main_();
 		return 0;
 	}
 	catch(std::exception &ex)

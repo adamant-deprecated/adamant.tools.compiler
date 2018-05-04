@@ -3,7 +3,7 @@ public Func(value: bool) -> bool
 	return false;
 }
 
-public Main() -> void
+public main() -> void
 {
 	Func(true);
 }

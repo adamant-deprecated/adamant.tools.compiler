@@ -5,7 +5,7 @@ class Test_;
 
 // Function Declarations
 auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>;
-auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
+auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -30,7 +30,7 @@ auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32
 	return none;
 }
 
-auto Main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
+auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 {
 	Func_(none, none);
 }
@@ -40,7 +40,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_(new ::System_::Console_::Console_());
+		main_(new ::System_::Console_::Console_());
 		return 0;
 	}
 	catch(std::exception &ex)

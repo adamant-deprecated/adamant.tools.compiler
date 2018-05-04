@@ -1,4 +1,4 @@
-public Main(console: mut System.Console.Console) -> void
+public main(console: mut System.Console.Console) -> void
 {
 	// TODO: switch to `for let x: int in 1 to 100` or whatever the syntax ends up being
 	var x: int = 1;

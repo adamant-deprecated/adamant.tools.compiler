@@ -8,7 +8,7 @@ public class Test
 	}
 }
 
-public Main() -> void
+public main() -> void
 {
 	let value: bool = new Test().value;
 }

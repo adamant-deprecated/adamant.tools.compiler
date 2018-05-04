@@ -3,7 +3,7 @@ public Func() -> int
 	return 42;
 }
 
-public Main() -> int
+public main() -> int
 {
 	return Func();
 }

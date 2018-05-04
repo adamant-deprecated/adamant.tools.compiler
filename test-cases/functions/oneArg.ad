@@ -3,7 +3,7 @@ public Identity(value: int) -> int
 	return value;
 }
 
-public Main() -> int
+public main() -> int
 {
 	return Identity(42);
 }

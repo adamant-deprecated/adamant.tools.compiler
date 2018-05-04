@@ -5,7 +5,7 @@ class Mutable_Object_;
 class immutable_object_;
 
 // Function Declarations
-auto Main_() -> void;
+auto main_() -> void;
 
 // Class Declarations
 
@@ -25,7 +25,7 @@ public:
 
 // Definitions
 
-auto Main_() -> void
+auto main_() -> void
 {
 	::Mutable_Object_ const *_Nonnull const m_ = (new ::Mutable_Object_())->construct();
 	::immutable_object_ const *_Nonnull const i_ = (new ::immutable_object_())->construct();
@@ -36,7 +36,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		main_();
 		return 0;
 	}
 	catch(std::exception &ex)

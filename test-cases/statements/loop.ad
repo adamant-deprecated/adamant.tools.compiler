@@ -1,4 +1,4 @@
-public Main() -> int
+public main() -> int
 {
 	loop
 	{

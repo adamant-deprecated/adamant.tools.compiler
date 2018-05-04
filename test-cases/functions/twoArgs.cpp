@@ -4,7 +4,7 @@
 
 // Function Declarations
 auto Func_(i32 const a_, i32 const b_) -> i32;
-auto Main_() -> i32;
+auto main_() -> i32;
 
 // Class Declarations
 
@@ -17,7 +17,7 @@ auto Func_(i32 const a_, i32 const b_) -> i32
 	return b_;
 }
 
-auto Main_() -> i32
+auto main_() -> i32
 {
 	return Func_(i32(0), i32(42));
 }
@@ -27,7 +27,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return Main_().value;
+		return main_().value;
 	}
 	catch(std::exception &ex)
 	{

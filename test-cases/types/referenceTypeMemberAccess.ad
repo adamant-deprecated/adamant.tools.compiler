@@ -8,7 +8,7 @@ public class Test
     }
 }
 
-public Main() -> int
+public main() -> int
 {
     let t: Test = new Test();
     // Demonstrates that this will be translated to include a pointer dereference

@@ -4,7 +4,7 @@
 class C_;
 
 // Function Declarations
-auto Main_() -> void;
+auto main_() -> void;
 
 // Class Declarations
 
@@ -33,7 +33,7 @@ auto ::C_::method_() const -> str
 	return name_;
 }
 
-auto Main_() -> void
+auto main_() -> void
 {
 	str const s_ = (new ::C_())->construct(str("Bob"))->method_();
 }
@@ -43,7 +43,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		Main_();
+		main_();
 		return 0;
 	}
 	catch(std::exception &ex)

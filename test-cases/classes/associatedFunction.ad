@@ -11,7 +11,7 @@ public class C
 	}
 }
 
-public Main() -> void
+public main() -> void
 {
 	let c: C = new C();
 	c.method();

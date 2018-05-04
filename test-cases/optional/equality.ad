@@ -1,4 +1,4 @@
-public Main(console: mut System.Console.Console) -> void
+public main(console: mut System.Console.Console) -> void
 {
 	let v: int = 42;
 	let n: int? = none;

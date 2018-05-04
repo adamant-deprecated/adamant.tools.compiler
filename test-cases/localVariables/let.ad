@@ -1,4 +1,4 @@
-public Main() -> int
+public main() -> int
 {
 	let result: int = 42;
 	return result;

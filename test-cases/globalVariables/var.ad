@@ -1,6 +1,6 @@
 public var Result: int = 42;
 
-public Main() -> int
+public main() -> int
 {
 	return Result;
 }

@@ -6,7 +6,7 @@ public struct Value_Type
 {
 }
 
-public Main() -> void
+public main() -> void
 {
 	let r: Reference_Type = new Reference_Type();
 	let v: Value_Type = new Value_Type();

@@ -22,7 +22,7 @@ public class C
 	}
 }
 
-public Main() -> void
+public main() -> void
 {
 	new C("0");
 	new C.one("1");

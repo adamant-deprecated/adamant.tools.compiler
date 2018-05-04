@@ -7,7 +7,7 @@ public class immutable_object
 {
 }
 
-public Main() -> void
+public main() -> void
 {
 	let m: Mutable_Object = new Mutable_Object();
 	let i: immutable_object = new immutable_object();

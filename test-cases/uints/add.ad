@@ -1,4 +1,4 @@
-public Main() -> void
+public main() -> void
 {
 	// TODO this is a hack, need constant expression conversion to allow this to work right
 	var x: uint = 1.as_uint() + 2.as_uint();
