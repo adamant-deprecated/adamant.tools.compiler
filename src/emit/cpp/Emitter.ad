@@ -1,5 +1,7 @@
 
-// Names starting or ending with underscores are reserved.
+// Names ending with underscores are reserved.
+// Names starting with underscore must be ignore/unused so we will never need to
+// construct composite names from them.
 // Names with 2 or more underscores in the middle, add one underscore.
 // Form compound names by joining with double underscore.
 // Prefix names with kind indicator.

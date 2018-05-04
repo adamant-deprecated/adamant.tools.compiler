@@ -1,0 +1,4 @@
+65
+2
+test-cases/lexing/identifiers.ad:3:9 Error:
+  Identifiers ending with underscore are reserved `x_`

@@ -1,0 +1,4 @@
+public main() -> void
+{
+    let x_: int = 5;
+}
