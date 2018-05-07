@@ -244,6 +244,19 @@ bit str_less_than_or_equal(str lhs, str rhs);
 bit str_greater_than(str lhs, str rhs);
 bit str_greater_than_or_equal(str lhs, str rhs);
 
+inline str new_str()
+{
+    return str::construct();
+}
+inline str new_str(str value)
+{
+    return str::construct(value);
+}
+inline str new_str(cp c, i32 repeat)
+{
+    return str::construct(c, repeat);
+}
+
 // -----------------------------------------------------------------------------
 // Operators
 // -----------------------------------------------------------------------------
@@ -443,6 +456,12 @@ T const & t_system__collections__List<T>::op_Element(i32 const index) const
     return values[index.value];
 }
 
+template<typename T>
+t_system__collections__List<T> *_Nonnull new_t_System__Collections__List()
+{
+    return (new t_system__collections__List<T>())->construct();
+}
+
 class t_system__console__Console
 {
 public:
@@ -492,6 +511,11 @@ public:
 
 typedef t_system__io__File_Reader t_System__IO__File_Reader;
 
+inline t_system__io__File_Reader *_Nonnull new_t_System__IO__File_Reader(const str& fileName)
+{
+    return (new t_system__io__File_Reader())->construct(fileName);
+}
+
 class t_system__io__File_Writer
 {
 private:
@@ -504,6 +528,11 @@ public:
 };
 
 typedef t_system__io__File_Writer t_System__IO__File_Writer;
+
+inline t_system__io__File_Writer *_Nonnull new_t_System__IO__File_Writer(const str& fileName)
+{
+    return (new t_system__io__File_Writer())->construct(fileName);
+}
 
 class t_system__text__String_Builder
 {
@@ -532,3 +561,18 @@ public:
 };
 
 typedef t_system__text__String_Builder t_System__Text__String_Builder;
+
+inline t_system__text__String_Builder *_Nonnull new_t_System__Text__String_Builder()
+{
+    return (new t_system__text__String_Builder())->construct();
+}
+
+inline t_system__text__String_Builder *_Nonnull new_t_System__Text__String_Builder(str const & value)
+{
+    return (new t_system__text__String_Builder())->construct(value);
+}
+
+inline t_system__text__String_Builder *_Nonnull new_t_System__Text__String_Builder__with_capacity(i32 capacity)
+{
+    return (new t_system__text__String_Builder())->construct_with_capacity(capacity);
+}
