@@ -33,7 +33,7 @@ public main(console: mut System.Console.Console) -> void
 	console.WriteLine("none =/= none: " + r);
 
     // Reference equal none
-    let sb: System.Text.String_Builder? = none;
+    let sb: system.text.String_Builder? = none;
     r = sb == none;
     console.WriteLine("sb == none: " + r);
     r = none == sb;

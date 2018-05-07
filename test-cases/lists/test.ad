@@ -1,6 +1,6 @@
 public main(console: mut System.Console.Console) -> void
 {
-	let strings: mut System.Collections.List<string> = new System.Collections.List<string>();
+	let strings: mut system.collections.List<string> = new system.collections.List<string>();
 	strings.add("Hello");
 	strings.add("World!");
 
@@ -18,14 +18,14 @@ public main(console: mut System.Console.Console) -> void
 	console.WriteLine();
 	strings.clear();
 
-	let builders: mut System.Collections.List<mut System.Text.String_Builder> = new System.Collections.List<mut System.Text.String_Builder>();
-	builders.add(new System.Text.String_Builder("sb[0]: "));
-	builders.add(new System.Text.String_Builder("sb[1]: "));
-	for let sb: mut System.Text.String_Builder in builders
+	let builders: mut system.collections.List<mut system.text.String_Builder> = new system.collections.List<mut system.text.String_Builder>();
+	builders.add(new system.text.String_Builder("sb[0]: "));
+	builders.add(new system.text.String_Builder("sb[1]: "));
+	for let sb: mut system.text.String_Builder in builders
 	{
 		sb.Append("value");
 	}
-	for let sb: mut System.Text.String_Builder in builders
+	for let sb: mut system.text.String_Builder in builders
 	{
 		console.WriteLine(sb.ToString());
 	}

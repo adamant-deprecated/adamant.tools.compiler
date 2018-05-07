@@ -40,7 +40,7 @@ auto main_(t_System__Console__Console *_Nonnull const console_) -> void
 	console_->WriteLine_(str("none =/= 42: ").op_add(r_));
 	r_ = not_equal_op(none, none);
 	console_->WriteLine_(str("none =/= none: ").op_add(r_));
-	t_System__Text__String_Builder const *_Nullable const sb_ = none;
+	t_system__text__String_Builder const *_Nullable const sb_ = none;
 	r_ = equal_op(sb_, none);
 	console_->WriteLine_(str("sb == none: ").op_add(r_));
 	r_ = equal_op(none, sb_);

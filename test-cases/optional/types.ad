@@ -6,8 +6,8 @@ public Func(x: string?, y: uint?) -> int?
 {
 	let z: int? = none;
 	let t: Test? = none;
-	let sb: mut System.Text.String_Builder? = none;
-	let l: System.Collections.List<int?> = new System.Collections.List<int?>();
+	let sb: mut system.text.String_Builder? = none;
+	let l: system.collections.List<int?> = new system.collections.List<int?>();
 	let m: mut Test? = none;
 	let d: int?? = none;
 	return none;

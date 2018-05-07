@@ -462,6 +462,12 @@ t_system__collections__List<T> *_Nonnull new_t_System__Collections__List()
     return (new t_system__collections__List<T>())->construct();
 }
 
+template<typename T>
+t_system__collections__List<T> *_Nonnull new_t_system__collections__List()
+{
+    return (new t_system__collections__List<T>())->construct();
+}
+
 class t_system__console__Console
 {
 public:
@@ -516,6 +522,11 @@ inline t_system__io__File_Reader *_Nonnull new_t_System__IO__File_Reader(const s
     return (new t_system__io__File_Reader())->construct(fileName);
 }
 
+inline t_system__io__File_Reader *_Nonnull new_t_system__io__File_Reader(const str& fileName)
+{
+    return (new t_system__io__File_Reader())->construct(fileName);
+}
+
 class t_system__io__File_Writer
 {
 private:
@@ -530,6 +541,11 @@ public:
 typedef t_system__io__File_Writer t_System__IO__File_Writer;
 
 inline t_system__io__File_Writer *_Nonnull new_t_System__IO__File_Writer(const str& fileName)
+{
+    return (new t_system__io__File_Writer())->construct(fileName);
+}
+
+inline t_system__io__File_Writer *_Nonnull new_t_system__io__File_Writer(const str& fileName)
 {
     return (new t_system__io__File_Writer())->construct(fileName);
 }
@@ -573,6 +589,22 @@ inline t_system__text__String_Builder *_Nonnull new_t_System__Text__String_Build
 }
 
 inline t_system__text__String_Builder *_Nonnull new_t_System__Text__String_Builder__with_capacity(i32 capacity)
+{
+    return (new t_system__text__String_Builder())->construct_with_capacity(capacity);
+}
+
+
+inline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder()
+{
+    return (new t_system__text__String_Builder())->construct();
+}
+
+inline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder(str const & value)
+{
+    return (new t_system__text__String_Builder())->construct(value);
+}
+
+inline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder__with_capacity(i32 capacity)
 {
     return (new t_system__text__String_Builder())->construct_with_capacity(capacity);
 }

@@ -1,5 +1,5 @@
 public main() -> int
 {
-	let values: System.Collections.List<int> = new System.Collections.List<int>();
+	let values: system.collections.List<int> = new system.collections.List<int>();
 	return values[0];
 }

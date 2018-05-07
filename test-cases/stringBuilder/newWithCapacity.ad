@@ -1,4 +1,4 @@
 public main() -> void
 {
-	new System.Text.String_Builder.with_capacity(1000);
+	new system.text.String_Builder.with_capacity(1000);
 }
