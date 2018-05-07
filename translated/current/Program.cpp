@@ -34,13 +34,13 @@ class t_Name_Table;
 class t_Name_Table_Builder;
 
 // Function Declarations
-auto compile_(t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Package const *_Nonnull;
-auto write_(t_System__Console__Console *_Nonnull const console_, t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_) -> void;
-auto has_errors_(t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_) -> bit;
-auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Console__Arguments const *_Nonnull const args_) -> i32;
+auto compile_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Package const *_Nonnull;
+auto write_(t_system__console__Console *_Nonnull const console_, t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_) -> void;
+auto has_errors_(t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_) -> bit;
+auto main_(t_system__console__Console *_Nonnull const console_, t_system__console__Arguments const *_Nonnull const args_) -> i32;
 auto read_source_(str const path_) -> t_Source_Text const *_Nonnull;
-auto run_unit_tests_(t_System__Console__Console *_Nonnull const console_) -> void;
-inline t_Line_Info *_Nonnull new_t_Line_Info(t_Source_Text const *_Nonnull const source_, t_System__Collections__List<i32> const *_Nonnull const lineStarts_);
+auto run_unit_tests_(t_system__console__Console *_Nonnull const console_) -> void;
+inline t_Line_Info *_Nonnull new_t_Line_Info(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const lineStarts_);
 inline t_Location *_Nonnull new_t_Location();
 inline t_Source_Text *_Nonnull new_t_Source_Text(str const package_, str const path_, str const text_);
 inline t_Text_Line *_Nonnull new_t_Text_Line(t_Source_Text const *_Nonnull const source_, i32 const start_, i32 const length_);
@@ -51,8 +51,8 @@ auto Text_Position_retains_given_offeset_line_and_column_() -> void;
 inline t_Text_Span *_Nonnull new_t_Text_Span(i32 const start_, i32 const length_);
 auto format_error_(str const message_) -> str;
 inline t_Source_File_Builder *_Nonnull new_t_Source_File_Builder();
-inline t_Compilation_Unit *_Nonnull new_t_Compilation_Unit(t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_);
-inline t_Package *_Nonnull new_t_Package(t_Package_Name const *_Nonnull const name_, t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_, t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_);
+inline t_Compilation_Unit *_Nonnull new_t_Compilation_Unit(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_);
+inline t_Package *_Nonnull new_t_Package(t_Package_Name const *_Nonnull const name_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_);
 inline t_Package_Reference new_t_Package_Reference(t_Package const *_Nonnull const package_);
 inline t_Package_Reference new_t_Package_Reference(str const name_, t_Package const *_Nonnull const package_);
 inline t_Primitives_Package_Builder *_Nonnull new_t_Primitives_Package_Builder();
@@ -65,17 +65,17 @@ auto Package_contains_the_string_type_() -> void;
 auto Package_contains_optional_type_() -> void;
 inline t_Runtime_Library_Package_Builder *_Nonnull new_t_Runtime_Library_Package_Builder();
 auto unit_test_Runtime_Library_Package_Builder_() -> void;
-auto Runtime_Library_Package_contains_System_package_() -> void;
-auto System_namespace_contains_Console_namespace_() -> void;
+auto Runtime_Library_Package_contains_system_package_() -> void;
+auto System_namespace_contains_console_namespace_() -> void;
 auto Console_namespace_contains_Console_class_() -> void;
-auto System_namespace_contains_Collections_namespace_() -> void;
+auto System_namespace_contains_collections_namespace_() -> void;
 auto Collections_namespace_contains_List_class_() -> void;
 inline t_Semantic_Analyzer *_Nonnull new_t_Semantic_Analyzer();
 inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__token(t_Syntax_Node const *_Nonnull const syntax_);
-inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__concrete(t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
-inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
-inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
-inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
+inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__concrete(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
+inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
+inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
+inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
 inline t_Semantic_Tree_Builder *_Nonnull new_t_Semantic_Tree_Builder();
 inline t_Symbol_Builder *_Nonnull new_t_Symbol_Builder();
 inline t_Compilation_Unit_Parser *_Nonnull new_t_Compilation_Unit_Parser(t_Token_Stream *_Nonnull const tokenStream_);
@@ -84,41 +84,41 @@ inline t_Parser *_Nonnull new_t_Parser();
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_);
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, bit const isMissing_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_);
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Syntax_Node const *_Nonnull const child_);
-inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_);
+inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_);
 auto new_syntax_node_missing_(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_) -> t_Syntax_Node const *_Nonnull;
 auto new_Syntax_Node_Skipped_(t_Syntax_Node const *_Nonnull const skipped_node_) -> t_Syntax_Node const *_Nonnull;
-auto new_Syntax_Node_Skipped_(t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node const *_Nonnull;
+auto new_Syntax_Node_Skipped_(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node const *_Nonnull;
 inline t_Token_Stream *_Nonnull new_t_Token_Stream(t_Source_Text const *_Nonnull const source_);
 inline t_Diagnostic *_Nonnull new_t_Diagnostic(i32 const level_, i32 const phase_, t_Source_Text const *_Nonnull const source_, t_Text_Span const *_Nonnull const span_, str const message_);
 inline t_Diagnostic_Info *_Nonnull new_t_Diagnostic_Info();
-inline t_Emitter *_Nonnull new_t_Emitter(t_Package const *_Nonnull const package_, t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_);
+inline t_Emitter *_Nonnull new_t_Emitter(t_Package const *_Nonnull const package_, t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_);
 inline t_Name *_Nonnull new_t_Name__global_namespace();
 inline t_Name *_Nonnull new_t_Name__global_namespace(t_Package_Name const *_Nonnull const package_);
 inline t_Name *_Nonnull new_t_Name(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_);
 inline t_Name *_Nonnull new_t_Name(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_, bit const is_special_);
 inline t_Name *_Nonnull new_t_Name__special(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_);
-inline t_Name *_Nonnull new_t_Name(t_Package_Name const *_Nullable const package_, i32 const kind_, t_System__Collections__List<str> const *_Nonnull const segments_, bit const is_special_);
+inline t_Name *_Nonnull new_t_Name(t_Package_Name const *_Nullable const package_, i32 const kind_, t_system__collections__List<str> const *_Nonnull const segments_, bit const is_special_);
 auto unit_test_Name_() -> void;
 auto name_with_unspecified_package_names_name_with_package_() -> void;
 auto name_with_unspecified_package_names_itself_() -> void;
 inline t_Package_Name *_Nonnull new_t_Package_Name(str const name_);
 inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_);
-inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_);
-inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
-inline t_Symbol *_Nonnull new_t_Symbol__constructor(str const name_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_);
-inline t_Symbol *_Nonnull new_t_Symbol__package(str const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
-inline t_Symbol *_Nonnull new_t_Symbol__declaring(t_Type const *_Nonnull const declares_type_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
-inline t_Symbol *_Nonnull new_t_Symbol__of_type(str const name_, t_Type const *_Nonnull const of_type_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
+inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_);
+inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
+inline t_Symbol *_Nonnull new_t_Symbol__constructor(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_);
+inline t_Symbol *_Nonnull new_t_Symbol__package(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
+inline t_Symbol *_Nonnull new_t_Symbol__declaring(t_Type const *_Nonnull const declares_type_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
+inline t_Symbol *_Nonnull new_t_Symbol__of_type(str const name_, t_Type const *_Nonnull const of_type_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
 auto unit_test_Symbol_() -> void;
 auto Package_symbol_children_can_be_found_by_name_and_kind_() -> void;
 inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, bit const is_mutable_);
 inline t_Type *_Nonnull new_t_Type__parameter(str const name_);
-inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_);
+inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_);
 inline t_Type *_Nonnull new_t_Type__primitive(t_Name const *_Nonnull const name_);
-inline t_Type *_Nonnull new_t_Type__primitive(t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_);
+inline t_Type *_Nonnull new_t_Type__primitive(t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_);
 inline t_Type *_Nonnull new_t_Type__namespace(t_Name const *_Nonnull const name_);
-inline t_Type *_Nonnull new_t_Type__generic(t_Type const *_Nonnull const definition_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_arguments_);
-inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_);
+inline t_Type *_Nonnull new_t_Type__generic(t_Type const *_Nonnull const definition_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_arguments_);
+inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_);
 inline t_Name_Subtable *_Nonnull new_t_Name_Subtable__global_namespace(t_Name_Table const *_Nonnull const name_table_);
 inline t_Name_Subtable *_Nonnull new_t_Name_Subtable__global_namespace(t_Name_Table const *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_);
 inline t_Name_Subtable *_Nonnull new_t_Name_Subtable(t_Name_Subtable const *_Nonnull const parent_, t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_);
@@ -140,9 +140,9 @@ class t_Line_Info
 public:
 private:
 	t_Source_Text const *_Nonnull source_;
-	t_System__Collections__List<i32> const *_Nonnull lineStarts_;
+	t_system__collections__List<i32> const *_Nonnull lineStarts_;
 public:
-	auto construct(t_Source_Text const *_Nonnull const source_, t_System__Collections__List<i32> const *_Nonnull const lineStarts_) -> t_Line_Info *_Nonnull;
+	auto construct(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const lineStarts_) -> t_Line_Info *_Nonnull;
 	auto Count_() const -> i32;
 	auto get_(i32 const lineNumber_) const -> t_Text_Line const *_Nonnull;
 	auto LineNumber_(i32 const offset_) const -> i32;
@@ -164,7 +164,7 @@ public:
 	t_Line_Info const *_Nonnull Lines_;
 	auto construct(str const package_, str const path_, str const text_) -> t_Source_Text *_Nonnull;
 private:
-	auto LineStarts_() const -> t_System__Collections__List<i32> const *_Nonnull;
+	auto LineStarts_() const -> t_system__collections__List<i32> const *_Nonnull;
 public:
 	auto ByteLength_() const -> i32;
 	auto PositionOfStart_(t_Text_Span const *_Nonnull const span_) const -> t_Text_Position const *_Nonnull;
@@ -203,8 +203,8 @@ class t_Source_File_Builder
 {
 public:
 private:
-	t_System__Text__String_Builder *_Nonnull code_;
-	t_System__Text__String_Builder *_Nonnull indent_;
+	t_system__text__String_Builder *_Nonnull code_;
+	t_system__text__String_Builder *_Nonnull indent_;
 	bit firstElement_;
 	bit afterBlock_;
 public:
@@ -228,20 +228,20 @@ class t_Compilation_Unit
 {
 public:
 	t_Syntax_Node const *_Nonnull syntax_;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull declarations_;
-	auto construct(t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Compilation_Unit *_Nonnull;
-	auto collect_diagnostics_(t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void;
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull declarations_;
+	auto construct(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Compilation_Unit *_Nonnull;
+	auto collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void;
 };
 
 class t_Package
 {
 public:
 	t_Package_Name const *_Nonnull name_;
-	t_System__Collections__List<t_Package_Reference> const *_Nonnull references_;
-	t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull compilation_units_;
+	t_system__collections__List<t_Package_Reference> const *_Nonnull references_;
+	t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull compilation_units_;
 	t_Symbol const *_Nonnull symbol_;
-	auto construct(t_Package_Name const *_Nonnull const name_, t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_, t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_) -> t_Package *_Nonnull;
-	auto all_diagnostics_() const -> t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull;
+	auto construct(t_Package_Name const *_Nonnull const name_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_) -> t_Package *_Nonnull;
+	auto all_diagnostics_() const -> t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull;
 };
 
 struct t_Package_Reference final
@@ -262,11 +262,11 @@ class t_Primitives_Package_Builder
 public:
 	auto build_() const -> t_Package const *_Nonnull;
 private:
-	auto build_primitive_symbols_(t_Package_Name const *_Nonnull const package_name_) const -> t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull;
+	auto build_primitive_symbols_(t_Package_Name const *_Nonnull const package_name_) const -> t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull;
 	static auto build_adamant_language_namespace_(t_Name const *_Nonnull const global_namespace_) -> t_Symbol const *_Nonnull;
 	static auto build_optional_(t_Name const *_Nonnull const language_namespace_) -> t_Symbol const *_Nonnull;
 	static auto build_primitive_(str const name_, t_Name const *_Nonnull const namespace_) -> t_Symbol const *_Nonnull;
-	static auto build_fixed_point_primitives_(t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_, i32 const bits_, t_Name const *_Nonnull const namespace_) -> void;
+	static auto build_fixed_point_primitives_(t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_, i32 const bits_, t_Name const *_Nonnull const namespace_) -> void;
 public:
 	auto construct() -> t_Primitives_Package_Builder *_Nonnull { return this; }
 };
@@ -276,13 +276,12 @@ class t_Runtime_Library_Package_Builder
 public:
 	auto build_() const -> t_Package const *_Nonnull;
 private:
-	auto build_symbols_(t_Package_Name const *_Nonnull const package_name_) const -> t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull;
-	auto build_old_symbols_(t_Name const *_Nonnull const global_namespace_, t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_) const -> void;
+	auto build_symbols_(t_Package_Name const *_Nonnull const package_name_) const -> t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull;
 	static auto build_function_(t_Name const *_Nonnull const name_) -> t_Symbol const *_Nonnull;
-	static auto build_namespace_(t_Name const *_Nonnull const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const symbols_) -> t_Symbol const *_Nonnull;
+	static auto build_namespace_(t_Name const *_Nonnull const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const symbols_) -> t_Symbol const *_Nonnull;
 	static auto build_class_(t_Name const *_Nonnull const namespace_, str const class_name_) -> t_Symbol const *_Nonnull;
-	static auto build_class_(t_Name const *_Nonnull const namespace_, str const class_name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol const *_Nonnull;
-	static auto build_generic_class_(t_Name const *_Nonnull const namespace_, str const class_name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_) -> t_Symbol const *_Nonnull;
+	static auto build_class_(t_Name const *_Nonnull const namespace_, str const class_name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol const *_Nonnull;
+	static auto build_generic_class_(t_Name const *_Nonnull const namespace_, str const class_name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_) -> t_Symbol const *_Nonnull;
 	static auto build_constructor_(str const name_) -> t_Symbol const *_Nonnull;
 public:
 	auto construct() -> t_Runtime_Library_Package_Builder *_Nonnull { return this; }
@@ -304,32 +303,32 @@ public:
 	t_Source_Text const *_Nonnull source_;
 	u32 start_;
 	u32 byte_length_;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull children_;
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull children_;
 private:
-	t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull node_diagnostics_;
+	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull node_diagnostics_;
 public:
 	t_Type const *_Nullable of_type_;
 	t_Type const *_Nullable converted_type_;
 	t_Type const *_Nullable declares_type_;
 	t_Type const *_Nullable referenced_type_;
 	auto construct_token(t_Syntax_Node const *_Nonnull const syntax_) -> t_Semantic_Node *_Nonnull;
-	auto construct_concrete(t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull;
-	auto construct_of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull;
-	auto construct_declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull;
-	auto construct_referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull;
+	auto construct_concrete(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull;
+	auto construct_of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull;
+	auto construct_declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull;
+	auto construct_referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull;
 	auto get_text_span_() const -> t_Text_Span const *_Nonnull;
 	auto get_text_() const -> str;
 	auto first_child_(i32 const kind_) const -> t_Semantic_Node const *_Nullable;
-	auto children_of_kind_(i32 const kind_) const -> t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull;
-	auto members_() const -> t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull;
-	auto statements_() const -> t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull;
-	auto parameters_() const -> t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull;
+	auto children_of_kind_(i32 const kind_) const -> t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull;
+	auto members_() const -> t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull;
+	auto statements_() const -> t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull;
+	auto parameters_() const -> t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull;
 	auto access_modifier_() const -> t_Semantic_Node const *_Nullable;
 	auto has_child_(i32 const kind_) const -> bit;
 	auto add_(t_Diagnostic const *_Nonnull const diagnostic_) -> void;
-	auto diagnostics_() const -> t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull;
+	auto diagnostics_() const -> t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull;
 public:
-	auto collect_diagnostics_(t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void;
+	auto collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void;
 };
 
 class t_Semantic_Tree_Builder
@@ -339,13 +338,13 @@ private:
 	t_Name const *_Nonnull optional_type_name_;
 public:
 	auto construct() -> t_Semantic_Tree_Builder *_Nonnull;
-	auto build_(t_Syntax_Node const *_Nonnull const package_syntax_, t_Name_Table const *_Nonnull const name_table_) const -> t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull;
+	auto build_(t_Syntax_Node const *_Nonnull const package_syntax_, t_Name_Table const *_Nonnull const name_table_) const -> t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull;
 private:
 	auto build_compilation_unit_(t_Syntax_Node const *_Nonnull const compilation_unit_syntax_, t_Name_Table const *_Nonnull const name_table_) const -> t_Compilation_Unit const *_Nonnull;
 	auto build_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_) const -> t_Semantic_Node const *_Nonnull;
 	auto build_parameters_(t_Syntax_Node const *_Nonnull const parameters_syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_) const -> t_Semantic_Node *_Nonnull;
 	auto build_type_name_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_) const -> t_Semantic_Node *_Nonnull;
-	auto build_type_arguments_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_) const -> t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull;
+	auto build_type_arguments_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_, t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_) const -> t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull;
 	auto build_constructor_name_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_) const -> t_Semantic_Node const *_Nonnull;
 	static auto add_resolution_error_(t_Semantic_Node *_Nonnull const node_) -> void;
 	static auto add_resolution_error_(t_Semantic_Node *_Nonnull const node_, t_Semantic_Node const *_Nonnull const qualifier_) -> void;
@@ -355,7 +354,7 @@ private:
 class t_Symbol_Builder
 {
 public:
-	static auto build_(t_Package_Name const *_Nonnull const package_name_, t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_) -> t_Symbol const *_Nonnull;
+	static auto build_(t_Package_Name const *_Nonnull const package_name_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_) -> t_Symbol const *_Nonnull;
 	auto construct() -> t_Symbol_Builder *_Nonnull { return this; }
 };
 
@@ -400,7 +399,7 @@ class t_Parser
 {
 public:
 	auto construct() -> t_Parser *_Nonnull;
-	auto ParsePackage_(t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) const -> t_Syntax_Node const *_Nonnull;
+	auto ParsePackage_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) const -> t_Syntax_Node const *_Nonnull;
 };
 
 class t_Syntax_Node
@@ -411,21 +410,21 @@ public:
 	t_Source_Text const *_Nonnull source_;
 	u32 start_;
 	u32 byte_length_;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull children_;
-	t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull node_diagnostics_;
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull children_;
+	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull node_diagnostics_;
 	auto construct(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_) -> t_Syntax_Node *_Nonnull;
 	auto construct(i32 const type_, bit const isMissing_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_) -> t_Syntax_Node *_Nonnull;
 	auto construct(i32 const type_, t_Syntax_Node const *_Nonnull const child_) -> t_Syntax_Node *_Nonnull;
-	auto construct(i32 const type_, t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_) -> t_Syntax_Node *_Nonnull;
+	auto construct(i32 const type_, t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_) -> t_Syntax_Node *_Nonnull;
 	auto get_text_() const -> str;
 	auto first_child_(i32 const type_) const -> t_Syntax_Node const *_Nullable;
 	auto has_child_(i32 const type_) const -> bit;
 	auto add_(t_Diagnostic const *_Nonnull const diagnostic_) const -> void;
-	auto all_diagnostics_() const -> t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull;
-	auto collect_diagnostics_(t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void;
-	auto members_() const -> t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
-	auto parameters_() const -> t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
-	auto statements_() const -> t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
+	auto all_diagnostics_() const -> t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull;
+	auto collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void;
+	auto members_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
+	auto parameters_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
+	auto statements_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
 	auto access_modifier_() const -> t_Syntax_Node const *_Nullable;
 };
 
@@ -435,7 +434,7 @@ public:
 	t_Source_Text const *_Nonnull source_;
 private:
 	u32 position_;
-	t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_;
+	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_;
 	bit endOfFile_;
 public:
 	auto construct(t_Source_Text const *_Nonnull const source_) -> t_Token_Stream *_Nonnull;
@@ -473,7 +472,7 @@ class t_Emitter
 public:
 private:
 	t_Package const *_Nonnull package_;
-	t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull resources_;
+	t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull resources_;
 	t_Source_File_Builder *_Nonnull type_declarations_;
 	t_Source_File_Builder *_Nonnull function_declarations_;
 	t_Source_File_Builder *_Nonnull class_declarations_;
@@ -484,14 +483,14 @@ private:
 	bit main_function_accepts_console_;
 	bit main_function_accepts_args_;
 public:
-	auto construct(t_Package const *_Nonnull const package_, t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_) -> t_Emitter *_Nonnull;
+	auto construct(t_Package const *_Nonnull const package_, t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_) -> t_Emitter *_Nonnull;
 	auto Emit_() -> str;
 private:
 	static auto mangle_name_(t_Name const *_Nonnull const name_) -> str;
 	static auto contains_multi_underscore_runs_(str const value_) -> bit;
 	static auto convert_primitive_type_name_(t_Type const *_Nonnull const type_) -> str;
-	static auto convert_type_name_(t_Semantic_Node const *_Nonnull const type_node_) -> t_System__Text__String_Builder *_Nonnull;
-	static auto convert_type_name_(t_Type const *_Nonnull const type_) -> t_System__Text__String_Builder *_Nonnull;
+	static auto convert_type_name_(t_Semantic_Node const *_Nonnull const type_node_) -> t_system__text__String_Builder *_Nonnull;
+	static auto convert_type_name_(t_Type const *_Nonnull const type_) -> t_system__text__String_Builder *_Nonnull;
 	static auto convert_reference_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const nullable_) -> str;
 	static auto convert_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const optional_) -> str;
 	static auto convert_type_(bit const mutable_binding_, t_Semantic_Node const *_Nonnull const type_node_) -> str;
@@ -516,14 +515,14 @@ class t_Name
 public:
 	t_Package_Name const *_Nullable package_;
 	i32 kind_;
-	t_System__Collections__List<str> const *_Nonnull segments_;
+	t_system__collections__List<str> const *_Nonnull segments_;
 	bit is_special_;
 	auto construct_global_namespace() -> t_Name *_Nonnull;
 	auto construct_global_namespace(t_Package_Name const *_Nonnull const package_) -> t_Name *_Nonnull;
 	auto construct(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_) -> t_Name *_Nonnull;
 	auto construct(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_, bit const is_special_) -> t_Name *_Nonnull;
 	auto construct_special(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_) -> t_Name *_Nonnull;
-	auto construct(t_Package_Name const *_Nullable const package_, i32 const kind_, t_System__Collections__List<str> const *_Nonnull const segments_, bit const is_special_) -> t_Name *_Nonnull;
+	auto construct(t_Package_Name const *_Nullable const package_, i32 const kind_, t_system__collections__List<str> const *_Nonnull const segments_, bit const is_special_) -> t_Name *_Nonnull;
 	auto unqualified_() const -> str;
 	auto full_() const -> str;
 	auto is_qualified_with_(t_Name const *_Nonnull const qualifier_) const -> bit;
@@ -549,15 +548,15 @@ public:
 	i32 kind_;
 	t_Type const *_Nonnull of_type_;
 	t_Type const *_Nonnull declares_type_;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull declarations_;
-	t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull children_;
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull declarations_;
+	t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull children_;
 	auto construct_identifier(str const name_) -> t_Symbol *_Nonnull;
-	auto construct_identifier(str const name_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Symbol *_Nonnull;
-	auto construct_identifier(str const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull;
-	auto construct_constructor(str const name_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Symbol *_Nonnull;
-	auto construct_package(str const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull;
-	auto construct_declaring(t_Type const *_Nonnull const declares_type_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull;
-	auto construct_of_type(str const name_, t_Type const *_Nonnull const of_type_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull;
+	auto construct_identifier(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Symbol *_Nonnull;
+	auto construct_identifier(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull;
+	auto construct_constructor(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Symbol *_Nonnull;
+	auto construct_package(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull;
+	auto construct_declaring(t_Type const *_Nonnull const declares_type_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull;
+	auto construct_of_type(str const name_, t_Type const *_Nonnull const of_type_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull;
 	auto get_(str const name_, i32 const kind_) const -> t_Symbol const *_Nullable;
 };
 
@@ -566,19 +565,19 @@ class t_Type
 public:
 	i32 kind_;
 	t_Name const *_Nonnull name_;
-	t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull type_parameters_;
+	t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull type_parameters_;
 	bit is_primitive_;
 	bit is_value_type_;
 	bit is_potentially_mutable_;
 	bit is_mutable_;
 	auto construct(i32 const kind_, t_Name const *_Nonnull const name_, bit const is_mutable_) -> t_Type *_Nonnull;
 	auto construct_parameter(str const name_) -> t_Type *_Nonnull;
-	auto construct(i32 const kind_, t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_) -> t_Type *_Nonnull;
+	auto construct(i32 const kind_, t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_) -> t_Type *_Nonnull;
 	auto construct_primitive(t_Name const *_Nonnull const name_) -> t_Type *_Nonnull;
-	auto construct_primitive(t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_) -> t_Type *_Nonnull;
+	auto construct_primitive(t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_) -> t_Type *_Nonnull;
 	auto construct_namespace(t_Name const *_Nonnull const name_) -> t_Type *_Nonnull;
-	auto construct_generic(t_Type const *_Nonnull const definition_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_arguments_) -> t_Type *_Nonnull;
-	auto construct(i32 const kind_, t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_) -> t_Type *_Nonnull;
+	auto construct_generic(t_Type const *_Nonnull const definition_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_arguments_) -> t_Type *_Nonnull;
+	auto construct(i32 const kind_, t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_) -> t_Type *_Nonnull;
 	auto make_mutable_() const -> t_Type const *_Nonnull;
 	auto make_immutable_() const -> t_Type const *_Nonnull;
 	auto remove_package_() const -> t_Type const *_Nonnull;
@@ -592,7 +591,7 @@ public:
 	t_Name const *_Nonnull name_;
 	t_Type const *_Nonnull type_;
 private:
-	t_System__Collections__List<t_Name_Subtable *_Nonnull> *_Nonnull subtables_;
+	t_system__collections__List<t_Name_Subtable *_Nonnull> *_Nonnull subtables_;
 public:
 	auto construct_global_namespace(t_Name_Table const *_Nonnull const name_table_) -> t_Name_Subtable *_Nonnull;
 	auto construct_global_namespace(t_Name_Table const *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_) -> t_Name_Subtable *_Nonnull;
@@ -618,7 +617,7 @@ class t_Name_Table
 public:
 	t_Name_Subtable *_Nonnull any_package_;
 private:
-	t_System__Collections__List<t_Name_Subtable *_Nonnull> *_Nonnull packages_;
+	t_system__collections__List<t_Name_Subtable *_Nonnull> *_Nonnull packages_;
 public:
 	auto construct() -> t_Name_Table *_Nonnull;
 	auto add_(t_Package_Name const *_Nonnull const package_name_) -> t_Name const *_Nonnull;
@@ -630,9 +629,9 @@ public:
 class t_Name_Table_Builder
 {
 public:
-	auto build_(t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_, t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_) const -> t_Name_Table const *_Nonnull;
+	auto build_(t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) const -> t_Name_Table const *_Nonnull;
 private:
-	static auto add_referenced_(t_Name_Table *_Nonnull const name_table_, t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_) -> void;
+	static auto add_referenced_(t_Name_Table *_Nonnull const name_table_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) -> void;
 	static auto add_symbol_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> void;
 	static auto add_package_(t_Name_Table *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_) -> void;
 	static auto add_compilation_unit_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const global_namespace_, t_Syntax_Node const *_Nonnull const compilation_unit_) -> void;
@@ -800,7 +799,7 @@ i32 const FunctionType_ = i32(5);
 
 // Definitions
 
-auto compile_(t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Package const *_Nonnull
+auto compile_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Package const *_Nonnull
 {
 	t_Parser const *_Nonnull const parser_ = new_t_Parser();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = parser_->ParsePackage_(sources_);
@@ -809,7 +808,7 @@ auto compile_(t_System__Collections__List<t_Source_Text const *_Nonnull> const *
 	return package_;
 }
 
-auto write_(t_System__Console__Console *_Nonnull const console_, t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_) -> void
+auto write_(t_system__console__Console *_Nonnull const console_, t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_) -> void
 {
 	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(diagnostics_))
 	{
@@ -833,7 +832,7 @@ auto write_(t_System__Console__Console *_Nonnull const console_, t_System__Colle
 	}
 }
 
-auto has_errors_(t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_) -> bit
+auto has_errors_(t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_) -> bit
 {
 	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(diagnostics_))
 	{
@@ -846,7 +845,7 @@ auto has_errors_(t_System__Collections__List<t_Diagnostic const *_Nonnull> const
 	return bit_false;
 }
 
-auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Console__Arguments const *_Nonnull const args_) -> i32
+auto main_(t_system__console__Console *_Nonnull const console_, t_system__console__Arguments const *_Nonnull const args_) -> i32
 {
 	if (cond(bit_op(bit_arg(equal_op(args_->op_magnitude(), i32(1))) && bit_arg(equal_op(args_->op_Element(i32(0)), str("--unit-test"))))))
 	{
@@ -854,8 +853,8 @@ auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Consol
 		return i32(0);
 	}
 
-	t_System__Collections__List<str> *_Nonnull const sourceFilePaths_ = new_t_System__Collections__List<str>();
-	t_System__Collections__List<str> *_Nonnull const resourceFilePaths_ = new_t_System__Collections__List<str>();
+	t_system__collections__List<str> *_Nonnull const sourceFilePaths_ = new_t_system__collections__List<str>();
+	t_system__collections__List<str> *_Nonnull const resourceFilePaths_ = new_t_system__collections__List<str>();
 	str outputFilePath_ = str("");
 	bit verbose_ = bit_false;
 	i32 argType_ = i32(0);
@@ -903,7 +902,7 @@ auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Consol
 		return UsageError_;
 	}
 
-	t_System__Collections__List<t_Source_Text const *_Nonnull> *_Nonnull const resources_ = new_t_System__Collections__List<t_Source_Text const *_Nonnull>();
+	t_system__collections__List<t_Source_Text const *_Nonnull> *_Nonnull const resources_ = new_t_system__collections__List<t_Source_Text const *_Nonnull>();
 	if (cond(resourceFilePaths_->op_magnitude()->op_greater_than(i32(0))))
 	{
 		if (cond(verbose_))
@@ -927,7 +926,7 @@ auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Consol
 		console_->WriteLine_(str("Compiling:"));
 	}
 
-	t_System__Collections__List<t_Source_Text const *_Nonnull> *_Nonnull const sources_ = new_t_System__Collections__List<t_Source_Text const *_Nonnull>();
+	t_system__collections__List<t_Source_Text const *_Nonnull> *_Nonnull const sources_ = new_t_system__collections__List<t_Source_Text const *_Nonnull>();
 	for (str const sourceFilePath_ : *(sourceFilePaths_))
 	{
 		if (cond(verbose_))
@@ -939,7 +938,7 @@ auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Consol
 	}
 
 	t_Package const *_Nonnull const package_ = compile_(sources_);
-	t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_ = package_->all_diagnostics_();
+	t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull const diagnostics_ = package_->all_diagnostics_();
 	write_(console_, diagnostics_);
 	if (cond(has_errors_(diagnostics_)))
 	{
@@ -954,7 +953,7 @@ auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Consol
 		console_->WriteLine_(outputFilePath_);
 	}
 
-	t_System__IO__File_Writer *_Nonnull const outputFile_ = new_t_System__IO__File_Writer(outputFilePath_);
+	t_system__io__File_Writer *_Nonnull const outputFile_ = new_t_system__io__File_Writer(outputFilePath_);
 	outputFile_->Write_(translated_);
 	outputFile_->Close_();
 	str outputDirPath_ = outputFilePath_;
@@ -976,10 +975,10 @@ auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Consol
 		console_->WriteLine_(outputDirPath_);
 	}
 
-	t_System__IO__File_Writer *_Nonnull resourceFile_ = new_t_System__IO__File_Writer(outputDirPath_.op_add(str("RuntimeLibrary.hpp")));
+	t_system__io__File_Writer *_Nonnull resourceFile_ = new_t_system__io__File_Writer(outputDirPath_.op_add(str("RuntimeLibrary.hpp")));
 	resourceFile_->Write_(resource_manager_->GetString_(str("RuntimeLibrary.hpp")));
 	resourceFile_->Close_();
-	resourceFile_ = new_t_System__IO__File_Writer(outputDirPath_.op_add(str("RuntimeLibrary.cpp")));
+	resourceFile_ = new_t_system__io__File_Writer(outputDirPath_.op_add(str("RuntimeLibrary.cpp")));
 	resourceFile_->Write_(resource_manager_->GetString_(str("RuntimeLibrary.cpp")));
 	resourceFile_->Close_();
 	return Success_;
@@ -987,13 +986,13 @@ auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Consol
 
 auto read_source_(str const path_) -> t_Source_Text const *_Nonnull
 {
-	t_System__IO__File_Reader *_Nonnull const file_ = new_t_System__IO__File_Reader(path_);
+	t_system__io__File_Reader *_Nonnull const file_ = new_t_system__io__File_Reader(path_);
 	str const contents_ = file_->ReadToEndSync_();
 	file_->Close_();
 	return new_t_Source_Text(str("<default>"), path_, contents_);
 }
 
-auto run_unit_tests_(t_System__Console__Console *_Nonnull const console_) -> void
+auto run_unit_tests_(t_system__console__Console *_Nonnull const console_) -> void
 {
 	console_->WriteLine_(str("Running Unit Tests..."));
 	unit_test_Text_Position_();
@@ -1005,7 +1004,7 @@ auto run_unit_tests_(t_System__Console__Console *_Nonnull const console_) -> voi
 	unit_test_Symbol_();
 }
 
-auto t_Line_Info::construct(t_Source_Text const *_Nonnull const source_, t_System__Collections__List<i32> const *_Nonnull const lineStarts_) -> t_Line_Info *_Nonnull
+auto t_Line_Info::construct(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const lineStarts_) -> t_Line_Info *_Nonnull
 {
 	t_Line_Info *_Nonnull self = this;
 	self->source_ = source_;
@@ -1013,7 +1012,7 @@ auto t_Line_Info::construct(t_Source_Text const *_Nonnull const source_, t_Syste
 	return self;
 }
 
-inline t_Line_Info *_Nonnull new_t_Line_Info(t_Source_Text const *_Nonnull const source_, t_System__Collections__List<i32> const *_Nonnull const lineStarts_)
+inline t_Line_Info *_Nonnull new_t_Line_Info(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const lineStarts_)
 {
 	return (new t_Line_Info())->construct(source_, lineStarts_);
 }
@@ -1098,11 +1097,11 @@ inline t_Source_Text *_Nonnull new_t_Source_Text(str const package_, str const p
 	return (new t_Source_Text())->construct(package_, path_, text_);
 }
 
-auto ::t_Source_Text::LineStarts_() const -> t_System__Collections__List<i32> const *_Nonnull
+auto ::t_Source_Text::LineStarts_() const -> t_system__collections__List<i32> const *_Nonnull
 {
 	auto self = this;
 	i32 const length_ = ByteLength_();
-	t_System__Collections__List<i32> *_Nonnull const lineStarts_ = new_t_System__Collections__List<i32>();
+	t_system__collections__List<i32> *_Nonnull const lineStarts_ = new_t_system__collections__List<i32>();
 	lineStarts_->add_(i32(0));
 	i32 position_ = i32(0);
 	while (cond(i32_less_than(position_, length_)))
@@ -1250,8 +1249,8 @@ auto format_error_(str const message_) -> str
 auto t_Source_File_Builder::construct() -> t_Source_File_Builder *_Nonnull
 {
 	t_Source_File_Builder *_Nonnull self = this;
-	code_ = new_t_System__Text__String_Builder();
-	indent_ = new_t_System__Text__String_Builder();
+	code_ = new_t_system__text__String_Builder();
+	indent_ = new_t_system__text__String_Builder();
 	firstElement_ = bit_true;
 	afterBlock_ = bit_true;
 	return self;
@@ -1365,7 +1364,7 @@ auto ::t_Source_File_Builder::ToString_() -> str
 	return code_->ToString_();
 }
 
-auto t_Compilation_Unit::construct(t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Compilation_Unit *_Nonnull
+auto t_Compilation_Unit::construct(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Compilation_Unit *_Nonnull
 {
 	t_Compilation_Unit *_Nonnull self = this;
 	self->syntax_ = syntax_;
@@ -1373,12 +1372,12 @@ auto t_Compilation_Unit::construct(t_Syntax_Node const *_Nonnull const syntax_, 
 	return self;
 }
 
-inline t_Compilation_Unit *_Nonnull new_t_Compilation_Unit(t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_)
+inline t_Compilation_Unit *_Nonnull new_t_Compilation_Unit(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_)
 {
 	return (new t_Compilation_Unit())->construct(syntax_, declarations_);
 }
 
-auto ::t_Compilation_Unit::collect_diagnostics_(t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void
+auto ::t_Compilation_Unit::collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void
 {
 	auto self = this;
 	syntax_->collect_diagnostics_(diagnostics_);
@@ -1388,7 +1387,7 @@ auto ::t_Compilation_Unit::collect_diagnostics_(t_System__Collections__List<t_Di
 	}
 }
 
-auto t_Package::construct(t_Package_Name const *_Nonnull const name_, t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_, t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_) -> t_Package *_Nonnull
+auto t_Package::construct(t_Package_Name const *_Nonnull const name_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_) -> t_Package *_Nonnull
 {
 	t_Package *_Nonnull self = this;
 	self->name_ = name_;
@@ -1398,15 +1397,15 @@ auto t_Package::construct(t_Package_Name const *_Nonnull const name_, t_System__
 	return self;
 }
 
-inline t_Package *_Nonnull new_t_Package(t_Package_Name const *_Nonnull const name_, t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_, t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_)
+inline t_Package *_Nonnull new_t_Package(t_Package_Name const *_Nonnull const name_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_)
 {
 	return (new t_Package())->construct(name_, references_, compilation_units_, symbol_);
 }
 
-auto ::t_Package::all_diagnostics_() const -> t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull
+auto ::t_Package::all_diagnostics_() const -> t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	for (t_Compilation_Unit const *_Nonnull const compilation_unit_ : *(compilation_units_))
 	{
 		compilation_unit_->collect_diagnostics_(diagnostics_);
@@ -1445,20 +1444,20 @@ auto ::t_Primitives_Package_Builder::build_() const -> t_Package const *_Nonnull
 {
 	auto self = this;
 	t_Package_Name const *_Nonnull const name_ = new_t_Package_Name(str("$primitives"));
-	t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_ = new_t_System__Collections__List<t_Package_Reference>();
-	t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_ = new_t_System__Collections__List<t_Compilation_Unit const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const primitive_symbols_ = build_primitive_symbols_(name_);
+	t_system__collections__List<t_Package_Reference> const *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
+	t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_ = new_t_system__collections__List<t_Compilation_Unit const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const primitive_symbols_ = build_primitive_symbols_(name_);
 	assert_(primitive_symbols_->op_magnitude()->op_greater_than(i32(0)), str("|primitive_symbols|=").op_add(primitive_symbols_->op_magnitude()));
 	t_Symbol const *_Nonnull const package_symbol_ = new_t_Symbol__package(name_->unqualified_, primitive_symbols_);
 	assert_(package_symbol_->children_->op_magnitude()->op_greater_than(i32(0)), str("|package_symbol.children|=").op_add(package_symbol_->children_->op_magnitude()));
 	return new_t_Package(name_, references_, compilation_units_, package_symbol_);
 }
 
-auto ::t_Primitives_Package_Builder::build_primitive_symbols_(t_Package_Name const *_Nonnull const package_name_) const -> t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull
+auto ::t_Primitives_Package_Builder::build_primitive_symbols_(t_Package_Name const *_Nonnull const package_name_) const -> t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull
 {
 	auto self = this;
 	t_Name const *_Nonnull const global_namespace_ = new_t_Name__global_namespace(package_name_);
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	symbols_->add_(build_adamant_language_namespace_(global_namespace_));
 	symbols_->add_(build_primitive_(str("void"), global_namespace_));
 	symbols_->add_(build_primitive_(str("never"), global_namespace_));
@@ -1494,9 +1493,9 @@ auto ::t_Primitives_Package_Builder::build_adamant_language_namespace_(t_Name co
 {
 	t_Name const *_Nonnull const adamant_namespace_ = new_t_Name(global_namespace_, NamespaceName_, str("adamant"));
 	t_Name const *_Nonnull const language_namespace_ = new_t_Name(adamant_namespace_, NamespaceName_, str("language"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const language_children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const language_children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	language_children_->add_(build_optional_(language_namespace_));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const adamant_children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const adamant_children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	adamant_children_->add_(new_t_Symbol__identifier(language_namespace_->unqualified_(), language_children_));
 	return new_t_Symbol__identifier(adamant_namespace_->unqualified_(), adamant_children_);
 }
@@ -1504,23 +1503,23 @@ auto ::t_Primitives_Package_Builder::build_adamant_language_namespace_(t_Name co
 auto ::t_Primitives_Package_Builder::build_optional_(t_Name const *_Nonnull const language_namespace_) -> t_Symbol const *_Nonnull
 {
 	t_Name const *_Nonnull const optional_name_ = new_t_Name(language_namespace_, TypeName_, str("optional"));
-	t_System__Collections__List<t_Type const *_Nonnull> *_Nonnull const type_parameters_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
+	t_system__collections__List<t_Type const *_Nonnull> *_Nonnull const type_parameters_ = new_t_system__collections__List<t_Type const *_Nonnull>();
 	type_parameters_->add_(new_t_Type(TypeParameterType_, new_t_Name(optional_name_, TypeParameterName_, str("T")), bit_true));
 	t_Type const *_Nonnull const type_ = new_t_Type__primitive(optional_name_, type_parameters_);
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return new_t_Symbol__declaring(type_, declarations_, children_);
 }
 
 auto ::t_Primitives_Package_Builder::build_primitive_(str const name_, t_Name const *_Nonnull const namespace_) -> t_Symbol const *_Nonnull
 {
 	t_Type const *_Nonnull const type_ = new_t_Type__primitive(new_t_Name__special(namespace_, TypeName_, name_));
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return new_t_Symbol__declaring(type_, declarations_, children_);
 }
 
-auto ::t_Primitives_Package_Builder::build_fixed_point_primitives_(t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_, i32 const bits_, t_Name const *_Nonnull const namespace_) -> void
+auto ::t_Primitives_Package_Builder::build_fixed_point_primitives_(t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_, i32 const bits_, t_Name const *_Nonnull const namespace_) -> void
 {
 }
 
@@ -1589,20 +1588,20 @@ auto ::t_Runtime_Library_Package_Builder::build_() const -> t_Package const *_No
 {
 	auto self = this;
 	t_Package_Name const *_Nonnull const name_ = new_t_Package_Name(str("$runtime"));
-	t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_ = new_t_System__Collections__List<t_Package_Reference>();
-	t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_ = new_t_System__Collections__List<t_Compilation_Unit const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = build_symbols_(name_);
+	t_system__collections__List<t_Package_Reference> const *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
+	t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_ = new_t_system__collections__List<t_Compilation_Unit const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = build_symbols_(name_);
 	assert_(symbols_->op_magnitude()->op_greater_than(i32(0)), str("|symbols|=").op_add(symbols_->op_magnitude()));
 	t_Symbol const *_Nonnull const package_symbol_ = new_t_Symbol__package(name_->unqualified_, symbols_);
 	assert_(package_symbol_->children_->op_magnitude()->op_greater_than(i32(0)), str("|package_symbol.children|=").op_add(package_symbol_->children_->op_magnitude()));
 	return new_t_Package(name_, references_, compilation_units_, package_symbol_);
 }
 
-auto ::t_Runtime_Library_Package_Builder::build_symbols_(t_Package_Name const *_Nonnull const package_name_) const -> t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull
+auto ::t_Runtime_Library_Package_Builder::build_symbols_(t_Package_Name const *_Nonnull const package_name_) const -> t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull
 {
 	auto self = this;
 	t_Name const *_Nonnull const global_namespace_ = new_t_Name__global_namespace(package_name_);
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	symbols_->add_(build_function_(new_t_Name(global_namespace_, FunctionName_, str("THROW_EXCEPTION"))));
 	symbols_->add_(build_function_(new_t_Name(global_namespace_, FunctionName_, str("NOT_IMPLEMENTED"))));
 	symbols_->add_(build_function_(new_t_Name(global_namespace_, FunctionName_, str("UNREACHABLE"))));
@@ -1610,28 +1609,27 @@ auto ::t_Runtime_Library_Package_Builder::build_symbols_(t_Package_Name const *_
 	symbols_->add_(build_function_(new_t_Name(global_namespace_, FunctionName_, str("debug_write"))));
 	symbols_->add_(build_function_(new_t_Name(global_namespace_, FunctionName_, str("debug_write_line"))));
 	symbols_->add_(build_function_(new_t_Name(global_namespace_, VariableName_, str("resource_manager"))));
-	build_old_symbols_(global_namespace_, symbols_);
 	t_Name const *_Nonnull const system_namespace_ = new_t_Name(global_namespace_, NamespaceName_, str("system"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const system_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const system_symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	t_Name const *_Nonnull const collections_namespace_ = new_t_Name(system_namespace_, NamespaceName_, str("collections"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const collections_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
-	t_System__Collections__List<t_Type const *_Nonnull> *_Nonnull const list_type_parameters_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const collections_symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Type const *_Nonnull> *_Nonnull const list_type_parameters_ = new_t_system__collections__List<t_Type const *_Nonnull>();
 	list_type_parameters_->add_(new_t_Type__parameter(str("T")));
 	collections_symbols_->add_(build_generic_class_(collections_namespace_, str("List"), list_type_parameters_));
 	system_symbols_->add_(build_namespace_(collections_namespace_, collections_symbols_));
 	t_Name const *_Nonnull const console_namespace_ = new_t_Name(system_namespace_, NamespaceName_, str("console"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const console_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const console_symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	console_symbols_->add_(build_class_(console_namespace_, str("Console")));
 	console_symbols_->add_(build_class_(console_namespace_, str("Arguments")));
 	system_symbols_->add_(build_namespace_(console_namespace_, console_symbols_));
 	t_Name const *_Nonnull const io_namespace_ = new_t_Name(system_namespace_, NamespaceName_, str("io"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const io_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const io_symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	io_symbols_->add_(build_class_(io_namespace_, str("File_Reader")));
 	io_symbols_->add_(build_class_(io_namespace_, str("File_Writer")));
 	system_symbols_->add_(build_namespace_(io_namespace_, io_symbols_));
 	t_Name const *_Nonnull const text_namespace_ = new_t_Name(system_namespace_, NamespaceName_, str("text"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const text_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const string_builder_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const text_symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const string_builder_symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	string_builder_symbols_->add_(build_constructor_(str("with_capacity")));
 	text_symbols_->add_(build_class_(text_namespace_, str("String_Builder"), string_builder_symbols_));
 	system_symbols_->add_(build_namespace_(text_namespace_, text_symbols_));
@@ -1639,78 +1637,48 @@ auto ::t_Runtime_Library_Package_Builder::build_symbols_(t_Package_Name const *_
 	return symbols_;
 }
 
-auto ::t_Runtime_Library_Package_Builder::build_old_symbols_(t_Name const *_Nonnull const global_namespace_, t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_) const -> void
-{
-	auto self = this;
-	t_Name const *_Nonnull const system_namespace_ = new_t_Name(global_namespace_, NamespaceName_, str("System"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const system_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
-	t_Name const *_Nonnull const collections_namespace_ = new_t_Name(system_namespace_, NamespaceName_, str("Collections"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const collections_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
-	t_System__Collections__List<t_Type const *_Nonnull> *_Nonnull const list_type_parameters_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
-	list_type_parameters_->add_(new_t_Type__parameter(str("T")));
-	collections_symbols_->add_(build_generic_class_(collections_namespace_, str("List"), list_type_parameters_));
-	system_symbols_->add_(build_namespace_(collections_namespace_, collections_symbols_));
-	t_Name const *_Nonnull const console_namespace_ = new_t_Name(system_namespace_, NamespaceName_, str("Console"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const console_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
-	console_symbols_->add_(build_class_(console_namespace_, str("Console")));
-	console_symbols_->add_(build_class_(console_namespace_, str("Arguments")));
-	system_symbols_->add_(build_namespace_(console_namespace_, console_symbols_));
-	t_Name const *_Nonnull const io_namespace_ = new_t_Name(system_namespace_, NamespaceName_, str("IO"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const io_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
-	io_symbols_->add_(build_class_(io_namespace_, str("File_Reader")));
-	io_symbols_->add_(build_class_(io_namespace_, str("File_Writer")));
-	system_symbols_->add_(build_namespace_(io_namespace_, io_symbols_));
-	t_Name const *_Nonnull const text_namespace_ = new_t_Name(system_namespace_, NamespaceName_, str("Text"));
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const text_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const string_builder_symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
-	string_builder_symbols_->add_(build_constructor_(str("with_capacity")));
-	text_symbols_->add_(build_class_(text_namespace_, str("String_Builder"), string_builder_symbols_));
-	system_symbols_->add_(build_namespace_(text_namespace_, text_symbols_));
-	symbols_->add_(build_namespace_(system_namespace_, system_symbols_));
-}
-
 auto ::t_Runtime_Library_Package_Builder::build_function_(t_Name const *_Nonnull const name_) -> t_Symbol const *_Nonnull
 {
 	t_Type const *_Nonnull const type_ = new_t_Type(FunctionType_, name_, bit_false);
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return new_t_Symbol__of_type(name_->unqualified_(), type_, declarations_, children_);
 }
 
-auto ::t_Runtime_Library_Package_Builder::build_namespace_(t_Name const *_Nonnull const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const symbols_) -> t_Symbol const *_Nonnull
+auto ::t_Runtime_Library_Package_Builder::build_namespace_(t_Name const *_Nonnull const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const symbols_) -> t_Symbol const *_Nonnull
 {
 	t_Type const *_Nonnull const type_ = new_t_Type__namespace(name_);
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	return new_t_Symbol__declaring(type_, declarations_, symbols_);
 }
 
 auto ::t_Runtime_Library_Package_Builder::build_class_(t_Name const *_Nonnull const namespace_, str const class_name_) -> t_Symbol const *_Nonnull
 {
 	t_Type const *_Nonnull const type_ = new_t_Type(ReferenceType_, new_t_Name(namespace_, TypeName_, class_name_), bit_true);
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return new_t_Symbol__declaring(type_, declarations_, children_);
 }
 
-auto ::t_Runtime_Library_Package_Builder::build_class_(t_Name const *_Nonnull const namespace_, str const class_name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol const *_Nonnull
+auto ::t_Runtime_Library_Package_Builder::build_class_(t_Name const *_Nonnull const namespace_, str const class_name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol const *_Nonnull
 {
 	t_Type const *_Nonnull const type_ = new_t_Type(ReferenceType_, new_t_Name(namespace_, TypeName_, class_name_), bit_true);
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	return new_t_Symbol__declaring(type_, declarations_, children_);
 }
 
-auto ::t_Runtime_Library_Package_Builder::build_generic_class_(t_Name const *_Nonnull const namespace_, str const class_name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_) -> t_Symbol const *_Nonnull
+auto ::t_Runtime_Library_Package_Builder::build_generic_class_(t_Name const *_Nonnull const namespace_, str const class_name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_) -> t_Symbol const *_Nonnull
 {
 	t_Type const *_Nonnull const type_ = new_t_Type(ReferenceType_, new_t_Name(namespace_, TypeName_, class_name_), type_parameters_, bit_true);
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
-	t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return new_t_Symbol__declaring(type_, declarations_, children_);
 }
 
 auto ::t_Runtime_Library_Package_Builder::build_constructor_(str const name_) -> t_Symbol const *_Nonnull
 {
 	str const constructor_name_ = str("new_").op_add(name_);
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	return new_t_Symbol__constructor(constructor_name_, declarations_);
 }
 
@@ -1721,46 +1689,46 @@ inline t_Runtime_Library_Package_Builder *_Nonnull new_t_Runtime_Library_Package
 
 auto unit_test_Runtime_Library_Package_Builder_() -> void
 {
-	Runtime_Library_Package_contains_System_package_();
-	System_namespace_contains_Console_namespace_();
+	Runtime_Library_Package_contains_system_package_();
+	System_namespace_contains_console_namespace_();
 	Console_namespace_contains_Console_class_();
-	System_namespace_contains_Collections_namespace_();
+	System_namespace_contains_collections_namespace_();
 	Collections_namespace_contains_List_class_();
 }
 
-auto Runtime_Library_Package_contains_System_package_() -> void
+auto Runtime_Library_Package_contains_system_package_() -> void
 {
 	t_Package const *_Nonnull const package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	assert_(not_equal_op(package_->symbol_->get_(str("System"), IdentifierSymbol_), none), str(""));
+	assert_(not_equal_op(package_->symbol_->get_(str("system"), IdentifierSymbol_), none), str(""));
 }
 
-auto System_namespace_contains_Console_namespace_() -> void
+auto System_namespace_contains_console_namespace_() -> void
 {
 	t_Package const *_Nonnull const package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	t_Symbol const *_Nonnull const system_namespace_ = package_->symbol_->get_(str("System"), IdentifierSymbol_);
-	assert_(not_equal_op(system_namespace_->get_(str("Console"), IdentifierSymbol_), none), str(""));
+	t_Symbol const *_Nonnull const system_namespace_ = package_->symbol_->get_(str("system"), IdentifierSymbol_);
+	assert_(not_equal_op(system_namespace_->get_(str("console"), IdentifierSymbol_), none), str(""));
 }
 
 auto Console_namespace_contains_Console_class_() -> void
 {
 	t_Package const *_Nonnull const package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	t_Symbol const *_Nonnull const system_namespace_ = package_->symbol_->get_(str("System"), IdentifierSymbol_);
-	t_Symbol const *_Nonnull const console_namespace_ = system_namespace_->get_(str("Console"), IdentifierSymbol_);
+	t_Symbol const *_Nonnull const system_namespace_ = package_->symbol_->get_(str("system"), IdentifierSymbol_);
+	t_Symbol const *_Nonnull const console_namespace_ = system_namespace_->get_(str("console"), IdentifierSymbol_);
 	assert_(not_equal_op(console_namespace_->get_(str("Console"), IdentifierSymbol_), none), str(""));
 }
 
-auto System_namespace_contains_Collections_namespace_() -> void
+auto System_namespace_contains_collections_namespace_() -> void
 {
 	t_Package const *_Nonnull const package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	t_Symbol const *_Nonnull const system_namespace_ = package_->symbol_->get_(str("System"), IdentifierSymbol_);
-	assert_(not_equal_op(system_namespace_->get_(str("Collections"), IdentifierSymbol_), none), str(""));
+	t_Symbol const *_Nonnull const system_namespace_ = package_->symbol_->get_(str("system"), IdentifierSymbol_);
+	assert_(not_equal_op(system_namespace_->get_(str("collections"), IdentifierSymbol_), none), str(""));
 }
 
 auto Collections_namespace_contains_List_class_() -> void
 {
 	t_Package const *_Nonnull const package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	t_Symbol const *_Nonnull const system_namespace_ = package_->symbol_->get_(str("System"), IdentifierSymbol_);
-	t_Symbol const *_Nonnull const console_namespace_ = system_namespace_->get_(str("Collections"), IdentifierSymbol_);
+	t_Symbol const *_Nonnull const system_namespace_ = package_->symbol_->get_(str("system"), IdentifierSymbol_);
+	t_Symbol const *_Nonnull const console_namespace_ = system_namespace_->get_(str("collections"), IdentifierSymbol_);
 	assert_(not_equal_op(console_namespace_->get_(str("List"), IdentifierSymbol_), none), str(""));
 }
 
@@ -1770,13 +1738,13 @@ auto ::t_Semantic_Analyzer::analyze_(t_Syntax_Node const *_Nonnull const package
 	t_Package_Name const *_Nonnull const name_ = new_t_Package_Name(str("default"));
 	t_Package const *_Nonnull const primitives_package_ = new_t_Primitives_Package_Builder()->build_();
 	t_Package const *_Nonnull const runtime_package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	t_System__Collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_System__Collections__List<t_Package_Reference>();
+	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(primitives_package_));
 	references_->add_(new_t_Package_Reference(runtime_package_));
 	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
 	t_Semantic_Tree_Builder const *_Nonnull const semantic_tree_builder_ = new_t_Semantic_Tree_Builder();
-	t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_ = semantic_tree_builder_->build_(package_syntax_, name_table_);
+	t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_ = semantic_tree_builder_->build_(package_syntax_, name_table_);
 	t_Symbol_Builder const *_Nonnull const symbol_builder_ = new_t_Symbol_Builder();
 	t_Symbol const *_Nonnull const package_symbol_ = symbol_builder_->build_(name_, compilation_units_);
 	t_Package const *_Nonnull const package_ = new_t_Package(name_, references_, compilation_units_, package_symbol_);
@@ -1798,8 +1766,8 @@ auto t_Semantic_Node::construct_token(t_Syntax_Node const *_Nonnull const syntax
 	self->source_ = syntax_->source_;
 	self->start_ = syntax_->start_;
 	self->byte_length_ = syntax_->byte_length_;
-	self->children_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
-	self->node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	self->children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	self->of_type_ = none;
 	self->converted_type_ = none;
 	self->declares_type_ = none;
@@ -1812,7 +1780,7 @@ inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__token(t_Syntax_Node const 
 	return (new t_Semantic_Node())->construct_token(syntax_);
 }
 
-auto t_Semantic_Node::construct_concrete(t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull
+auto t_Semantic_Node::construct_concrete(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull
 {
 	t_Semantic_Node *_Nonnull self = this;
 	assert_(not_equal_op(syntax_, none), str(""));
@@ -1823,7 +1791,7 @@ auto t_Semantic_Node::construct_concrete(t_Syntax_Node const *_Nonnull const syn
 	self->start_ = syntax_->start_;
 	self->byte_length_ = syntax_->byte_length_;
 	self->children_ = children_;
-	self->node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	self->of_type_ = none;
 	self->converted_type_ = none;
 	self->declares_type_ = none;
@@ -1831,12 +1799,12 @@ auto t_Semantic_Node::construct_concrete(t_Syntax_Node const *_Nonnull const syn
 	return self;
 }
 
-inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__concrete(t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_)
+inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__concrete(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Semantic_Node())->construct_concrete(syntax_, children_);
 }
 
-auto t_Semantic_Node::construct_of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull
+auto t_Semantic_Node::construct_of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull
 {
 	t_Semantic_Node *_Nonnull self = this;
 	assert_(not_equal_op(of_type_, none), str(""));
@@ -1848,7 +1816,7 @@ auto t_Semantic_Node::construct_of_type(t_Type const *_Nonnull const of_type_, t
 	self->start_ = syntax_->start_;
 	self->byte_length_ = syntax_->byte_length_;
 	self->children_ = children_;
-	self->node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	self->of_type_ = of_type_;
 	self->converted_type_ = of_type_;
 	self->declares_type_ = none;
@@ -1856,12 +1824,12 @@ auto t_Semantic_Node::construct_of_type(t_Type const *_Nonnull const of_type_, t
 	return self;
 }
 
-inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_)
+inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Semantic_Node())->construct_of_type(of_type_, syntax_, children_);
 }
 
-auto t_Semantic_Node::construct_declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull
+auto t_Semantic_Node::construct_declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull
 {
 	t_Semantic_Node *_Nonnull self = this;
 	assert_(not_equal_op(type_, none), str(""));
@@ -1873,7 +1841,7 @@ auto t_Semantic_Node::construct_declares_type(t_Type const *_Nonnull const type_
 	self->start_ = syntax_->start_;
 	self->byte_length_ = syntax_->byte_length_;
 	self->children_ = children_;
-	self->node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	self->of_type_ = of_type_;
 	self->converted_type_ = none;
 	self->declares_type_ = type_;
@@ -1881,12 +1849,12 @@ auto t_Semantic_Node::construct_declares_type(t_Type const *_Nonnull const type_
 	return self;
 }
 
-inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_)
+inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Semantic_Node())->construct_declares_type(type_, syntax_, children_);
 }
 
-auto t_Semantic_Node::construct_referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull
+auto t_Semantic_Node::construct_referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_) -> t_Semantic_Node *_Nonnull
 {
 	t_Semantic_Node *_Nonnull self = this;
 	assert_(not_equal_op(type_, none), str(""));
@@ -1898,7 +1866,7 @@ auto t_Semantic_Node::construct_referencing_type(t_Type const *_Nonnull const ty
 	self->start_ = syntax_->start_;
 	self->byte_length_ = syntax_->byte_length_;
 	self->children_ = children_;
-	self->node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	self->of_type_ = none;
 	self->converted_type_ = none;
 	self->declares_type_ = none;
@@ -1906,7 +1874,7 @@ auto t_Semantic_Node::construct_referencing_type(t_Type const *_Nonnull const ty
 	return self;
 }
 
-inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_)
+inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Semantic_Node())->construct_referencing_type(type_, syntax_, children_);
 }
@@ -1942,10 +1910,10 @@ auto ::t_Semantic_Node::first_child_(i32 const kind_) const -> t_Semantic_Node c
 	return none;
 }
 
-auto ::t_Semantic_Node::children_of_kind_(i32 const kind_) const -> t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull
+auto ::t_Semantic_Node::children_of_kind_(i32 const kind_) const -> t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	for (t_Semantic_Node const *_Nonnull const child_ : *(self->children_))
 	{
 		if (cond(equal_op(child_->kind_, kind_)))
@@ -1957,10 +1925,10 @@ auto ::t_Semantic_Node::children_of_kind_(i32 const kind_) const -> t_System__Co
 	return children_;
 }
 
-auto ::t_Semantic_Node::members_() const -> t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull
+auto ::t_Semantic_Node::members_() const -> t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const members_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const members_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	for (t_Semantic_Node const *_Nonnull const child_ : *(children_))
 	{
 		if (cond(bit_op(bit_arg(bit_op(bit_arg(equal_op(child_->kind_, ConstructorDeclaration_)) || bit_arg(equal_op(child_->kind_, FieldDeclaration_)))) || bit_arg(equal_op(child_->kind_, MethodDeclaration_)))))
@@ -1972,10 +1940,10 @@ auto ::t_Semantic_Node::members_() const -> t_System__Collections__List<t_Semant
 	return members_;
 }
 
-auto ::t_Semantic_Node::statements_() const -> t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull
+auto ::t_Semantic_Node::statements_() const -> t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const statements_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const statements_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	for (t_Semantic_Node const *_Nonnull const child_ : *(children_))
 	{
 		if (cond(bit_op(bit_arg(not_equal_op(child_->kind_, LeftBrace_)) && bit_arg(not_equal_op(child_->kind_, RightBrace_)))))
@@ -1987,10 +1955,10 @@ auto ::t_Semantic_Node::statements_() const -> t_System__Collections__List<t_Sem
 	return statements_;
 }
 
-auto ::t_Semantic_Node::parameters_() const -> t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull
+auto ::t_Semantic_Node::parameters_() const -> t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const parameters_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const parameters_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	for (t_Semantic_Node const *_Nonnull const child_ : *(children_))
 	{
 		if (cond(bit_op(bit_arg(equal_op(child_->kind_, Parameter_)) || bit_arg(equal_op(child_->kind_, SelfParameter_)))))
@@ -2036,13 +2004,13 @@ auto ::t_Semantic_Node::add_(t_Diagnostic const *_Nonnull const diagnostic_) -> 
 	node_diagnostics_->add_(diagnostic_);
 }
 
-auto ::t_Semantic_Node::diagnostics_() const -> t_System__Collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull
+auto ::t_Semantic_Node::diagnostics_() const -> t_system__collections__List<t_Diagnostic const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
 	return self->node_diagnostics_;
 }
 
-auto ::t_Semantic_Node::collect_diagnostics_(t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void
+auto ::t_Semantic_Node::collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void
 {
 	auto self = this;
 	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(node_diagnostics_))
@@ -2072,12 +2040,12 @@ inline t_Semantic_Tree_Builder *_Nonnull new_t_Semantic_Tree_Builder()
 	return (new t_Semantic_Tree_Builder())->construct();
 }
 
-auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const package_syntax_, t_Name_Table const *_Nonnull const name_table_) const -> t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull
+auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const package_syntax_, t_Name_Table const *_Nonnull const name_table_) const -> t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
 	assert_(equal_op(package_syntax_->kind_, PackageNode_), str("package_syntax.kind=").op_add(package_syntax_->kind_));
 	assert_(not_equal_op(name_table_->any_package_->lookup_special_(str("string")), none), str("name_table.any_package.name=").op_add(name_table_->any_package_->name_->full_()));
-	t_System__Collections__List<t_Compilation_Unit const *_Nonnull> *_Nonnull const compilation_units_ = new_t_System__Collections__List<t_Compilation_Unit const *_Nonnull>();
+	t_system__collections__List<t_Compilation_Unit const *_Nonnull> *_Nonnull const compilation_units_ = new_t_system__collections__List<t_Compilation_Unit const *_Nonnull>();
 	for (t_Syntax_Node const *_Nonnull const compilation_unit_syntax_ : *(package_syntax_->children_))
 	{
 		compilation_units_->add_(build_compilation_unit_(compilation_unit_syntax_, name_table_));
@@ -2091,7 +2059,7 @@ auto ::t_Semantic_Tree_Builder::build_compilation_unit_(t_Syntax_Node const *_No
 	auto self = this;
 	assert_(equal_op(compilation_unit_syntax_->kind_, CompilationUnit_), str("compilation_unit_syntax.kind=").op_add(compilation_unit_syntax_->kind_));
 	t_Name_Subtable const *_Nonnull const scope_ = none;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	for (t_Syntax_Node const *_Nonnull const declaration_syntax_ : *(compilation_unit_syntax_->children_))
 	{
 		declarations_->add_(build_(declaration_syntax_, name_table_, name_table_->any_package_));
@@ -2103,7 +2071,7 @@ auto ::t_Semantic_Tree_Builder::build_compilation_unit_(t_Syntax_Node const *_No
 auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_) const -> t_Semantic_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, FunctionDeclaration_)) || bit_arg(equal_op(syntax_->kind_, MethodDeclaration_)))))
 	{
 		children_->add_(build_(syntax_->access_modifier_(), name_table_, scope_));
@@ -2207,7 +2175,7 @@ auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const synta
 			}
 			else
 			{
-				t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const no_children_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+				t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const no_children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 				if (cond(equal_op(member_scope_->type_, none)))
 				{
 					rhs_ = new_t_Semantic_Node__token(member_name_);
@@ -2298,10 +2266,10 @@ auto ::t_Semantic_Tree_Builder::build_parameters_(t_Syntax_Node const *_Nonnull 
 {
 	auto self = this;
 	assert_(equal_op(parameters_syntax_->kind_, ParameterList_), str("parameters_syntax.kind=").op_add(parameters_syntax_->kind_));
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const parameters_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const parameters_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	for (t_Syntax_Node const *_Nonnull const parameter_ : *(parameters_syntax_->parameters_()))
 	{
-		t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+		t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 		if (cond(equal_op(parameter_->kind_, Parameter_)))
 		{
 			t_Syntax_Node const *_Nullable const var_syntax_ = parameter_->first_child_(VarKeyword_);
@@ -2342,7 +2310,7 @@ auto ::t_Semantic_Tree_Builder::build_parameters_(t_Syntax_Node const *_Nonnull 
 auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_) const -> t_Semantic_Node *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	if (cond(equal_op(syntax_->kind_, PredefinedType_)))
 	{
 		str const primitive_name_ = syntax_->children_->op_Element(i32(0))->get_text_();
@@ -2402,7 +2370,7 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 				}
 
 				t_Type const *_Nonnull const referenced_type_ = referenced_scope_->type_;
-				t_Semantic_Node const *_Nonnull const name_node_ = new_t_Semantic_Node__referencing_type(referenced_type_, name_syntax_, new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>());
+				t_Semantic_Node const *_Nonnull const name_node_ = new_t_Semantic_Node__referencing_type(referenced_type_, name_syntax_, new_t_system__collections__List<t_Semantic_Node const *_Nonnull>());
 				children_->add_(name_node_);
 				return new_t_Semantic_Node__referencing_type(referenced_type_, syntax_, children_);
 			}
@@ -2410,7 +2378,7 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 		else if (cond(equal_op(qualified_syntax_->kind_, GenericName_)))
 		{
 			t_Syntax_Node const *_Nonnull const name_syntax_ = qualified_syntax_->first_child_(IdentifierName_);
-			t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const generic_name_children_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+			t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const generic_name_children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 			if (cond(equal_op(qualifier_->referenced_type_, none)))
 			{
 				add_could_not_determine_type_error_(qualifier_);
@@ -2440,9 +2408,9 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 				}
 
 				t_Type const *_Nonnull const referenced_type_name_ = referenced_scope_->type_;
-				t_Semantic_Node const *_Nonnull const name_node_ = new_t_Semantic_Node__referencing_type(referenced_type_name_, name_syntax_, new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>());
+				t_Semantic_Node const *_Nonnull const name_node_ = new_t_Semantic_Node__referencing_type(referenced_type_name_, name_syntax_, new_t_system__collections__List<t_Semantic_Node const *_Nonnull>());
 				generic_name_children_->add_(name_node_);
-				t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_ = build_type_arguments_(qualified_syntax_, name_table_, scope_, generic_name_children_);
+				t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_ = build_type_arguments_(qualified_syntax_, name_table_, scope_, generic_name_children_);
 				t_Type const *_Nonnull const referenced_type_ = new_t_Type__generic(referenced_type_name_, type_parameters_);
 				t_Semantic_Node *_Nonnull const qualified_name_ = new_t_Semantic_Node__referencing_type(referenced_type_, qualified_syntax_, generic_name_children_);
 				children_->add_(qualified_name_);
@@ -2495,7 +2463,7 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 		t_Name_Subtable const *_Nullable const optional_type_scope_ = name_table_->get_(optional_type_name_);
 		assert_(not_equal_op(optional_type_scope_, none), str(""));
 		t_Type const *_Nonnull const optional_type_ = optional_type_scope_->type_;
-		t_System__Collections__List<t_Type const *_Nonnull> *_Nonnull const type_arguments_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
+		t_system__collections__List<t_Type const *_Nonnull> *_Nonnull const type_arguments_ = new_t_system__collections__List<t_Type const *_Nonnull>();
 		type_arguments_->add_(inner_type_->referenced_type_);
 		t_Type const *_Nonnull const type_ = new_t_Type__generic(optional_type_, type_arguments_);
 		return new_t_Semantic_Node__referencing_type(type_, syntax_, children_);
@@ -2507,10 +2475,10 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 	}
 }
 
-auto ::t_Semantic_Tree_Builder::build_type_arguments_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_) const -> t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull
+auto ::t_Semantic_Tree_Builder::build_type_arguments_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_, t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_) const -> t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Type const *_Nonnull> *_Nonnull const type_parameters_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
+	t_system__collections__List<t_Type const *_Nonnull> *_Nonnull const type_parameters_ = new_t_system__collections__List<t_Type const *_Nonnull>();
 	if (cond(equal_op(syntax_->kind_, IdentifierName_)))
 	{
 		return type_parameters_;
@@ -2543,7 +2511,7 @@ auto ::t_Semantic_Tree_Builder::build_constructor_name_(t_Syntax_Node const *_No
 	auto self = this;
 	if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, QualifiedName_)) && bit_arg(equal_op(syntax_->children_->op_Element(i32(2))->kind_, IdentifierName_)))))
 	{
-		t_System__Collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+		t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 		t_Semantic_Node const *_Nonnull const type_node_ = build_type_name_(syntax_->children_->op_Element(i32(0)), name_table_, scope_);
 		children_->add_(type_node_);
 		t_Syntax_Node const *_Nonnull const qualifier_ = syntax_->children_->op_Element(i32(0));
@@ -2577,9 +2545,9 @@ auto ::t_Semantic_Tree_Builder::add_could_not_determine_type_error_(t_Semantic_N
 	node_->add_(new_t_Diagnostic(FatalCompilationError_, Analysis_, node_->source_, node_->get_text_span_(), str("Could not determine type for `").op_add(node_->get_text_())->op_add(str("`"))));
 }
 
-auto ::t_Symbol_Builder::build_(t_Package_Name const *_Nonnull const package_name_, t_System__Collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_) -> t_Symbol const *_Nonnull
+auto ::t_Symbol_Builder::build_(t_Package_Name const *_Nonnull const package_name_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_) -> t_Symbol const *_Nonnull
 {
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return new_t_Symbol__package(package_name_->unqualified_, symbols_);
 }
 
@@ -2651,13 +2619,13 @@ auto ::t_Compilation_Unit_Parser::ParseTypeName_() -> t_Syntax_Node const *_Nonn
 		t_Syntax_Node const *_Nonnull type_ = new_t_Syntax_Node(IdentifierName_, ExpectToken_(Identifier_));
 		while (cond(equal_op(token_->kind_, Dot_)))
 		{
-			t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+			t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 			children_->add_(type_);
 			children_->add_(ExpectToken_(Dot_));
 			t_Syntax_Node const *_Nonnull const identifier_ = ExpectToken_(Identifier_);
 			if (cond(equal_op(token_->kind_, LessThan_)))
 			{
-				t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const genericNameChildren_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+				t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const genericNameChildren_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 				genericNameChildren_->add_(new_t_Syntax_Node(IdentifierName_, identifier_));
 				genericNameChildren_->add_(ExpectToken_(LessThan_));
 				genericNameChildren_->add_(ParseType_());
@@ -2679,7 +2647,7 @@ auto ::t_Compilation_Unit_Parser::ParseTypeName_() -> t_Syntax_Node const *_Nonn
 auto ::t_Compilation_Unit_Parser::ParseNonOptionalType_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	if (cond(equal_op(token_->kind_, MutableKeyword_)))
 	{
 		children_->add_(ExpectToken_(MutableKeyword_));
@@ -2699,7 +2667,7 @@ auto ::t_Compilation_Unit_Parser::ParseType_() -> t_Syntax_Node const *_Nonnull
 	t_Syntax_Node const *_Nonnull type_ = ParseNonOptionalType_();
 	while (cond(equal_op(token_->kind_, Question_)))
 	{
-		t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+		t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 		children_->add_(type_);
 		children_->add_(ExpectToken_(Question_));
 		type_ = new_t_Syntax_Node(ImmutableType_, new_t_Syntax_Node(OptionalType_, children_));
@@ -2711,7 +2679,7 @@ auto ::t_Compilation_Unit_Parser::ParseType_() -> t_Syntax_Node const *_Nonnull
 auto ::t_Compilation_Unit_Parser::ParseAtom_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	if (cond(equal_op(token_->kind_, NewKeyword_)))
 	{
 		children_->add_(ExpectToken_(NewKeyword_));
@@ -2804,7 +2772,7 @@ auto ::t_Compilation_Unit_Parser::ParseAtom_() -> t_Syntax_Node const *_Nonnull
 auto ::t_Compilation_Unit_Parser::ParseCallArguments_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	children_->add_(ExpectToken_(LeftParen_));
 	if (cond(not_equal_op(token_->kind_, RightParen_)))
 	{
@@ -2832,7 +2800,7 @@ auto ::t_Compilation_Unit_Parser::ParseExpression_(i32 const minPrecedence_) -> 
 	t_Syntax_Node const *_Nonnull expression_ = ParseAtom_();
 	for (;;)
 	{
-		t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+		t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 		children_->add_(expression_);
 		i32 precedence_;
 		bit leftAssociative_;
@@ -2971,7 +2939,7 @@ auto ::t_Compilation_Unit_Parser::ParseExpression_() -> t_Syntax_Node const *_No
 auto ::t_Compilation_Unit_Parser::ParseStatement_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	if (cond(equal_op(token_->kind_, ReturnKeyword_)))
 	{
 		children_->add_(ExpectToken_(ReturnKeyword_));
@@ -3058,13 +3026,13 @@ auto ::t_Compilation_Unit_Parser::ParseStatement_() -> t_Syntax_Node const *_Non
 auto ::t_Compilation_Unit_Parser::ParseIfStatement_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	children_->add_(ExpectToken_(IfKeyword_));
 	children_->add_(ParseExpression_());
 	children_->add_(ParseBlock_());
 	if (cond(equal_op(token_->kind_, ElseKeyword_)))
 	{
-		t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const elseChildren_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+		t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const elseChildren_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 		elseChildren_->add_(ExpectToken_(ElseKeyword_));
 		if (cond(equal_op(token_->kind_, IfKeyword_)))
 		{
@@ -3084,7 +3052,7 @@ auto ::t_Compilation_Unit_Parser::ParseIfStatement_() -> t_Syntax_Node const *_N
 auto ::t_Compilation_Unit_Parser::ParseVariableDeclaration_(bit const allowInitializer_) -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	if (cond(bit_op(bit_arg(equal_op(token_->kind_, LetKeyword_)) && bit_arg(not_equal_op(token_->kind_, VarKeyword_)))))
 	{
 		children_->add_(ExpectToken_(LetKeyword_));
@@ -3109,7 +3077,7 @@ auto ::t_Compilation_Unit_Parser::ParseVariableDeclaration_(bit const allowIniti
 auto ::t_Compilation_Unit_Parser::ParseBlock_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	children_->add_(ExpectToken_(LeftBrace_));
 	while (cond(bit_op(bit_arg(not_equal_op(token_->kind_, RightBrace_)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
 	{
@@ -3117,7 +3085,7 @@ auto ::t_Compilation_Unit_Parser::ParseBlock_() -> t_Syntax_Node const *_Nonnull
 		children_->add_(ParseStatement_());
 		if (cond(equal_op(token_, startToken_)))
 		{
-			t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const skipped_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+			t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const skipped_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 			while (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(token_->kind_, LeftBrace_)) && bit_arg(not_equal_op(token_->kind_, RightBrace_)))) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
 			{
 				i32 const currentTokenType_ = token_->kind_;
@@ -3139,13 +3107,13 @@ auto ::t_Compilation_Unit_Parser::ParseBlock_() -> t_Syntax_Node const *_Nonnull
 auto ::t_Compilation_Unit_Parser::ParseParameterList_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	children_->add_(ExpectToken_(LeftParen_));
 	if (cond(not_equal_op(token_->kind_, RightParen_)))
 	{
 		for (;;)
 		{
-			t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const parameterChildren_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+			t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const parameterChildren_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 			if (cond(bit_op(bit_arg(equal_op(token_->kind_, MutableKeyword_)) || bit_arg(equal_op(token_->kind_, SelfKeyword_)))))
 			{
 				if (cond(equal_op(token_->kind_, MutableKeyword_)))
@@ -3189,7 +3157,7 @@ auto ::t_Compilation_Unit_Parser::ParseParameterList_() -> t_Syntax_Node const *
 auto ::t_Compilation_Unit_Parser::ParseMemberDeclaration_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, PublicKeyword_)) || bit_arg(equal_op(token_->kind_, ProtectedKeyword_)))) || bit_arg(equal_op(token_->kind_, InternalKeyword_)))) || bit_arg(equal_op(token_->kind_, PrivateKeyword_)))))
 	{
 		children_->add_(AcceptToken_());
@@ -3230,7 +3198,7 @@ auto ::t_Compilation_Unit_Parser::ParseMemberDeclaration_() -> t_Syntax_Node con
 auto ::t_Compilation_Unit_Parser::ParseDeclaration_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, PublicKeyword_)) || bit_arg(equal_op(token_->kind_, ProtectedKeyword_)))) || bit_arg(equal_op(token_->kind_, InternalKeyword_)))) || bit_arg(equal_op(token_->kind_, PrivateKeyword_)))))
 	{
 		children_->add_(AcceptToken_());
@@ -3293,7 +3261,7 @@ auto ::t_Compilation_Unit_Parser::ParseDeclaration_() -> t_Syntax_Node const *_N
 		children_->add_(ExpectToken_(LeftBrace_));
 		while (cond(bit_op(bit_arg(not_equal_op(token_->kind_, RightBrace_)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
 		{
-			t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const memberChildren_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+			t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const memberChildren_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 			memberChildren_->add_(ExpectToken_(Identifier_));
 			if (cond(equal_op(token_->kind_, Equals_)))
 			{
@@ -3324,7 +3292,7 @@ auto ::t_Compilation_Unit_Parser::ParseDeclaration_() -> t_Syntax_Node const *_N
 auto ::t_Compilation_Unit_Parser::ParseCompilationUnit_() -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	while (cond(bit_op(bit_arg(not_equal_op(token_, none)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
 	{
 		t_Syntax_Node const *_Nonnull const startToken_ = token_;
@@ -3361,10 +3329,10 @@ inline t_Parser *_Nonnull new_t_Parser()
 	return (new t_Parser())->construct();
 }
 
-auto ::t_Parser::ParsePackage_(t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) const -> t_Syntax_Node const *_Nonnull
+auto ::t_Parser::ParsePackage_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) const -> t_Syntax_Node const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	t_Lexer const *_Nonnull const lexer_ = new_t_Lexer();
 	for (t_Source_Text const *_Nonnull const source_ : *(sources_))
 	{
@@ -3384,8 +3352,8 @@ auto t_Syntax_Node::construct(i32 const type_, t_Source_Text const *_Nonnull con
 	self->source_ = source_;
 	self->start_ = start_;
 	byte_length_ = length_;
-	self->children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
-	node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	self->children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
+	node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	return self;
 }
 
@@ -3402,8 +3370,8 @@ auto t_Syntax_Node::construct(i32 const type_, bit const isMissing_, t_Source_Te
 	self->source_ = source_;
 	self->start_ = start_;
 	byte_length_ = length_;
-	self->children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
-	node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	self->children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
+	node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	return self;
 }
 
@@ -3420,10 +3388,10 @@ auto t_Syntax_Node::construct(i32 const type_, t_Syntax_Node const *_Nonnull con
 	source_ = child_->source_;
 	start_ = child_->start_;
 	byte_length_ = child_->byte_length_;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	children_->add_(child_);
 	self->children_ = children_;
-	node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	return self;
 }
 
@@ -3432,7 +3400,7 @@ inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Syntax_Node 
 	return (new t_Syntax_Node())->construct(type_, child_);
 }
 
-auto t_Syntax_Node::construct(i32 const type_, t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_) -> t_Syntax_Node *_Nonnull
+auto t_Syntax_Node::construct(i32 const type_, t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_) -> t_Syntax_Node *_Nonnull
 {
 	t_Syntax_Node *_Nonnull self = this;
 	kind_ = type_;
@@ -3442,11 +3410,11 @@ auto t_Syntax_Node::construct(i32 const type_, t_System__Collections__List<t_Syn
 	t_Syntax_Node const *_Nonnull const lastChild_ = children_->op_Element(children_->op_magnitude()->op_subtract(i32(1)));
 	byte_length_ = lastChild_->start_.op_subtract(start_)->op_add(lastChild_->byte_length_);
 	self->children_ = children_;
-	node_diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	return self;
 }
 
-inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_)
+inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Syntax_Node())->construct(type_, children_);
 }
@@ -3491,15 +3459,15 @@ auto ::t_Syntax_Node::add_(t_Diagnostic const *_Nonnull const diagnostic_) const
 	node_diagnostics_->add_(diagnostic_);
 }
 
-auto ::t_Syntax_Node::all_diagnostics_() const -> t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull
+auto ::t_Syntax_Node::all_diagnostics_() const -> t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	collect_diagnostics_(diagnostics_);
 	return diagnostics_;
 }
 
-auto ::t_Syntax_Node::collect_diagnostics_(t_System__Collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void
+auto ::t_Syntax_Node::collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void
 {
 	auto self = this;
 	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(node_diagnostics_))
@@ -3513,10 +3481,10 @@ auto ::t_Syntax_Node::collect_diagnostics_(t_System__Collections__List<t_Diagnos
 	}
 }
 
-auto ::t_Syntax_Node::members_() const -> t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
+auto ::t_Syntax_Node::members_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const members_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const members_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
 	{
 		if (cond(bit_op(bit_arg(bit_op(bit_arg(equal_op(child_->kind_, ConstructorDeclaration_)) || bit_arg(equal_op(child_->kind_, FieldDeclaration_)))) || bit_arg(equal_op(child_->kind_, MethodDeclaration_)))))
@@ -3528,10 +3496,10 @@ auto ::t_Syntax_Node::members_() const -> t_System__Collections__List<t_Syntax_N
 	return members_;
 }
 
-auto ::t_Syntax_Node::parameters_() const -> t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
+auto ::t_Syntax_Node::parameters_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const parameters_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const parameters_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
 	{
 		if (cond(bit_op(bit_arg(equal_op(child_->kind_, Parameter_)) || bit_arg(equal_op(child_->kind_, SelfParameter_)))))
@@ -3543,10 +3511,10 @@ auto ::t_Syntax_Node::parameters_() const -> t_System__Collections__List<t_Synta
 	return parameters_;
 }
 
-auto ::t_Syntax_Node::statements_() const -> t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
+auto ::t_Syntax_Node::statements_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
 {
 	auto self = this;
-	t_System__Collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const statements_ = new_t_System__Collections__List<t_Syntax_Node const *_Nonnull>();
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const statements_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
 	{
 		if (cond(bit_op(bit_arg(not_equal_op(child_->kind_, LeftBrace_)) && bit_arg(not_equal_op(child_->kind_, RightBrace_)))))
@@ -3588,7 +3556,7 @@ auto new_Syntax_Node_Skipped_(t_Syntax_Node const *_Nonnull const skipped_node_)
 	return node_;
 }
 
-auto new_Syntax_Node_Skipped_(t_System__Collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node const *_Nonnull
+auto new_Syntax_Node_Skipped_(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node const *_Nonnull
 {
 	t_Syntax_Node *_Nonnull const node_ = new_t_Syntax_Node(SkippedTokens_, skipped_nodes_);
 	t_Text_Span const *_Nonnull const span_ = new_t_Text_Span(node_->start_, node_->byte_length_);
@@ -3601,7 +3569,7 @@ auto t_Token_Stream::construct(t_Source_Text const *_Nonnull const source_) -> t
 	t_Token_Stream *_Nonnull self = this;
 	self->source_ = source_;
 	position_ = i32(0);
-	diagnostics_ = new_t_System__Collections__List<t_Diagnostic const *_Nonnull>();
+	diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	endOfFile_ = bit_false;
 	return self;
 }
@@ -4055,7 +4023,7 @@ inline t_Diagnostic_Info *_Nonnull new_t_Diagnostic_Info()
 	return (new t_Diagnostic_Info())->construct();
 }
 
-auto t_Emitter::construct(t_Package const *_Nonnull const package_, t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_) -> t_Emitter *_Nonnull
+auto t_Emitter::construct(t_Package const *_Nonnull const package_, t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_) -> t_Emitter *_Nonnull
 {
 	t_Emitter *_Nonnull self = this;
 	self->package_ = package_;
@@ -4063,7 +4031,7 @@ auto t_Emitter::construct(t_Package const *_Nonnull const package_, t_System__Co
 	return self;
 }
 
-inline t_Emitter *_Nonnull new_t_Emitter(t_Package const *_Nonnull const package_, t_System__Collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_)
+inline t_Emitter *_Nonnull new_t_Emitter(t_Package const *_Nonnull const package_, t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_)
 {
 	return (new t_Emitter())->construct(package_, resources_);
 }
@@ -4087,7 +4055,7 @@ auto ::t_Emitter::Emit_() -> str
 
 	emit_entry_point_adapter_();
 	i32 const total_size_ = type_declarations_->byte_length_()->op_add(function_declarations_->byte_length_())->op_add(class_declarations_->byte_length_())->op_add(global_definitions_->byte_length_())->op_add(definitions_->byte_length_());
-	t_System__Text__String_Builder *_Nonnull const cpp_code_ = new_t_System__Text__String_Builder();
+	t_system__text__String_Builder *_Nonnull const cpp_code_ = new_t_system__text__String_Builder();
 	cpp_code_->Append_(type_declarations_->ToString_());
 	cpp_code_->Append_(function_declarations_->ToString_());
 	cpp_code_->Append_(class_declarations_->ToString_());
@@ -4098,7 +4066,7 @@ auto ::t_Emitter::Emit_() -> str
 
 auto ::t_Emitter::mangle_name_(t_Name const *_Nonnull const name_) -> str
 {
-	t_System__Text__String_Builder *_Nonnull const builder_ = new_t_System__Text__String_Builder();
+	t_system__text__String_Builder *_Nonnull const builder_ = new_t_system__text__String_Builder();
 	if (cond(equal_op(name_->kind_, TypeName_)))
 	{
 		builder_->Append_(str("t_"));
@@ -4217,15 +4185,15 @@ auto ::t_Emitter::convert_primitive_type_name_(t_Type const *_Nonnull const type
 	}
 }
 
-auto ::t_Emitter::convert_type_name_(t_Semantic_Node const *_Nonnull const type_node_) -> t_System__Text__String_Builder *_Nonnull
+auto ::t_Emitter::convert_type_name_(t_Semantic_Node const *_Nonnull const type_node_) -> t_system__text__String_Builder *_Nonnull
 {
 	assert_(not_equal_op(type_node_->referenced_type_, none), type_node_->get_text_());
 	return convert_type_name_(type_node_->referenced_type_);
 }
 
-auto ::t_Emitter::convert_type_name_(t_Type const *_Nonnull const type_) -> t_System__Text__String_Builder *_Nonnull
+auto ::t_Emitter::convert_type_name_(t_Type const *_Nonnull const type_) -> t_system__text__String_Builder *_Nonnull
 {
-	t_System__Text__String_Builder *_Nonnull const cpp_type_ = new_t_System__Text__String_Builder();
+	t_system__text__String_Builder *_Nonnull const cpp_type_ = new_t_system__text__String_Builder();
 	if (cond(type_->is_primitive_))
 	{
 		cpp_type_->Append_(convert_primitive_type_name_(type_));
@@ -4261,7 +4229,7 @@ auto ::t_Emitter::convert_type_name_(t_Type const *_Nonnull const type_) -> t_Sy
 
 auto ::t_Emitter::convert_reference_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const nullable_) -> str
 {
-	t_System__Text__String_Builder *_Nonnull const cpp_type_ = convert_type_name_(type_);
+	t_system__text__String_Builder *_Nonnull const cpp_type_ = convert_type_name_(type_);
 	if (cond(bit_not(type_->is_mutable_)))
 	{
 		cpp_type_->Append_(str(" const"));
@@ -4293,7 +4261,7 @@ auto ::t_Emitter::convert_type_(bit const mutable_binding_, t_Type const *_Nonnu
 		t_Type const *_Nonnull const optional_type_ = type_->type_parameters_->op_Element(i32(0));
 		if (cond(optional_type_->is_value_type_))
 		{
-			t_System__Text__String_Builder *_Nonnull const cpp_type_ = new_t_System__Text__String_Builder(str("p_optional<"));
+			t_system__text__String_Builder *_Nonnull const cpp_type_ = new_t_system__text__String_Builder(str("p_optional<"));
 			cpp_type_->Append_(convert_type_(bit_true, optional_type_, bit_true));
 			cpp_type_->Append_(str(">"));
 			if (cond(bit_op(bit_arg(bit_not(mutable_binding_)) && bit_arg(bit_not(type_->is_mutable_)))))
@@ -4312,7 +4280,7 @@ auto ::t_Emitter::convert_type_(bit const mutable_binding_, t_Type const *_Nonnu
 	{
 		if (cond(type_->is_value_type_))
 		{
-			t_System__Text__String_Builder *_Nonnull const cpp_type_ = convert_type_name_(type_);
+			t_system__text__String_Builder *_Nonnull const cpp_type_ = convert_type_name_(type_);
 			if (cond(bit_op(bit_arg(bit_not(mutable_binding_)) && bit_arg(bit_not(type_->is_mutable_)))))
 			{
 				cpp_type_->Append_(str(" const"));
@@ -4337,7 +4305,7 @@ auto ::t_Emitter::convert_parameter_list_(t_Semantic_Node const *_Nonnull const 
 {
 	auto self = this;
 	assert_(equal_op(parameters_->kind_, ParameterList_), str("parameters.kind=").op_add(parameters_->kind_));
-	t_System__Text__String_Builder *_Nonnull const builder_ = new_t_System__Text__String_Builder();
+	t_system__text__String_Builder *_Nonnull const builder_ = new_t_system__text__String_Builder();
 	builder_->Append_(str("("));
 	bit first_parameter_ = bit_true;
 	for (t_Semantic_Node const *_Nonnull const parameter_ : *(parameters_->children_of_kind_(Parameter_)))
@@ -4369,12 +4337,12 @@ auto ::t_Emitter::convert_parameter_list_(t_Semantic_Node const *_Nonnull const 
 				type_string_ = type_node_->get_text_();
 			}
 
-			if (cond(bit_op(bit_arg(equal_op(type_string_, str("system.console.Console"))) || bit_arg(equal_op(type_string_, str("System.Console.Console"))))))
+			if (cond(equal_op(type_string_, str("system.console.Console"))))
 			{
 				main_function_accepts_console_ = bit_true;
 			}
 
-			if (cond(bit_op(bit_arg(equal_op(type_string_, str("system.console.Arguments"))) || bit_arg(equal_op(type_string_, str("System.Console.Arguments"))))))
+			if (cond(equal_op(type_string_, str("system.console.Arguments"))))
 			{
 				main_function_accepts_args_ = bit_true;
 			}
@@ -5225,7 +5193,7 @@ auto ::t_Emitter::emit_entry_point_adapter_() -> void
 		definitions_->EndLine_(str(""));
 	}
 
-	t_System__Text__String_Builder *_Nonnull const args_ = new_t_System__Text__String_Builder();
+	t_system__text__String_Builder *_Nonnull const args_ = new_t_system__text__String_Builder();
 	if (cond(main_function_accepts_console_))
 	{
 		args_->Append_(str("new t_system__console__Console()"));
@@ -5266,7 +5234,7 @@ auto t_Name::construct_global_namespace() -> t_Name *_Nonnull
 	t_Name *_Nonnull self = this;
 	self->package_ = none;
 	self->kind_ = NamespaceName_;
-	self->segments_ = new_t_System__Collections__List<str>();
+	self->segments_ = new_t_system__collections__List<str>();
 	self->is_special_ = bit_false;
 	return self;
 }
@@ -5282,7 +5250,7 @@ auto t_Name::construct_global_namespace(t_Package_Name const *_Nonnull const pac
 	assert_(not_equal_op(package_, none), str(""));
 	self->package_ = package_;
 	self->kind_ = NamespaceName_;
-	self->segments_ = new_t_System__Collections__List<str>();
+	self->segments_ = new_t_system__collections__List<str>();
 	self->is_special_ = bit_false;
 	return self;
 }
@@ -5299,7 +5267,7 @@ auto t_Name::construct(t_Name const *_Nonnull const qualifier_, i32 const kind_,
 	assert_(name_.ByteLength_()->op_greater_than(i32(0)), str(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
-	t_System__Collections__List<str> *_Nonnull const segments_ = new_t_System__Collections__List<str>();
+	t_system__collections__List<str> *_Nonnull const segments_ = new_t_system__collections__List<str>();
 	for (str const segment_ : *(qualifier_->segments_))
 	{
 		segments_->add_(segment_);
@@ -5323,7 +5291,7 @@ auto t_Name::construct(t_Name const *_Nonnull const qualifier_, i32 const kind_,
 	assert_(name_.ByteLength_()->op_greater_than(i32(0)), str(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
-	t_System__Collections__List<str> *_Nonnull const segments_ = new_t_System__Collections__List<str>();
+	t_system__collections__List<str> *_Nonnull const segments_ = new_t_system__collections__List<str>();
 	for (str const segment_ : *(qualifier_->segments_))
 	{
 		segments_->add_(segment_);
@@ -5347,7 +5315,7 @@ auto t_Name::construct_special(t_Name const *_Nonnull const qualifier_, i32 cons
 	assert_(name_.ByteLength_()->op_greater_than(i32(0)), str(""));
 	self->package_ = qualifier_->package_;
 	self->kind_ = kind_;
-	t_System__Collections__List<str> *_Nonnull const segments_ = new_t_System__Collections__List<str>();
+	t_system__collections__List<str> *_Nonnull const segments_ = new_t_system__collections__List<str>();
 	for (str const segment_ : *(qualifier_->segments_))
 	{
 		segments_->add_(segment_);
@@ -5364,7 +5332,7 @@ inline t_Name *_Nonnull new_t_Name__special(t_Name const *_Nonnull const qualifi
 	return (new t_Name())->construct_special(qualifier_, kind_, name_);
 }
 
-auto t_Name::construct(t_Package_Name const *_Nullable const package_, i32 const kind_, t_System__Collections__List<str> const *_Nonnull const segments_, bit const is_special_) -> t_Name *_Nonnull
+auto t_Name::construct(t_Package_Name const *_Nullable const package_, i32 const kind_, t_system__collections__List<str> const *_Nonnull const segments_, bit const is_special_) -> t_Name *_Nonnull
 {
 	t_Name *_Nonnull self = this;
 	self->package_ = package_;
@@ -5374,7 +5342,7 @@ auto t_Name::construct(t_Package_Name const *_Nullable const package_, i32 const
 	return self;
 }
 
-inline t_Name *_Nonnull new_t_Name(t_Package_Name const *_Nullable const package_, i32 const kind_, t_System__Collections__List<str> const *_Nonnull const segments_, bit const is_special_)
+inline t_Name *_Nonnull new_t_Name(t_Package_Name const *_Nullable const package_, i32 const kind_, t_system__collections__List<str> const *_Nonnull const segments_, bit const is_special_)
 {
 	return (new t_Name())->construct(package_, kind_, segments_, is_special_);
 }
@@ -5532,8 +5500,8 @@ auto t_Symbol::construct_identifier(str const name_) -> t_Symbol *_Nonnull
 	self->is_special_name_ = bit_false;
 	self->of_type_ = none;
 	self->declares_type_ = none;
-	self->declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
-	self->children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	self->declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
+	self->children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return self;
 }
 
@@ -5542,7 +5510,7 @@ inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_)
 	return (new t_Symbol())->construct_identifier(name_);
 }
 
-auto t_Symbol::construct_identifier(str const name_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Symbol *_Nonnull
+auto t_Symbol::construct_identifier(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Symbol *_Nonnull
 {
 	t_Symbol *_Nonnull self = this;
 	assert_(name_.ByteLength_()->op_greater_than(i32(0)), str(""));
@@ -5553,16 +5521,16 @@ auto t_Symbol::construct_identifier(str const name_, t_System__Collections__List
 	self->of_type_ = none;
 	self->declares_type_ = none;
 	self->declarations_ = declarations_;
-	self->children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	self->children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return self;
 }
 
-inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_)
+inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_)
 {
 	return (new t_Symbol())->construct_identifier(name_, declarations_);
 }
 
-auto t_Symbol::construct_identifier(str const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull
+auto t_Symbol::construct_identifier(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull
 {
 	t_Symbol *_Nonnull self = this;
 	assert_(name_.ByteLength_()->op_greater_than(i32(0)), str(""));
@@ -5572,17 +5540,17 @@ auto t_Symbol::construct_identifier(str const name_, t_System__Collections__List
 	self->is_special_name_ = bit_false;
 	self->of_type_ = none;
 	self->declares_type_ = none;
-	self->declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	self->declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	self->children_ = children_;
 	return self;
 }
 
-inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_)
+inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Symbol())->construct_identifier(name_, children_);
 }
 
-auto t_Symbol::construct_constructor(str const name_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Symbol *_Nonnull
+auto t_Symbol::construct_constructor(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Symbol *_Nonnull
 {
 	t_Symbol *_Nonnull self = this;
 	assert_(name_.ByteLength_()->op_greater_than(i32(0)), str(""));
@@ -5593,16 +5561,16 @@ auto t_Symbol::construct_constructor(str const name_, t_System__Collections__Lis
 	self->of_type_ = none;
 	self->declares_type_ = none;
 	self->declarations_ = declarations_;
-	self->children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	self->children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return self;
 }
 
-inline t_Symbol *_Nonnull new_t_Symbol__constructor(str const name_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_)
+inline t_Symbol *_Nonnull new_t_Symbol__constructor(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_)
 {
 	return (new t_Symbol())->construct_constructor(name_, declarations_);
 }
 
-auto t_Symbol::construct_package(str const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull
+auto t_Symbol::construct_package(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull
 {
 	t_Symbol *_Nonnull self = this;
 	assert_(name_.ByteLength_()->op_greater_than(i32(0)), str(""));
@@ -5612,17 +5580,17 @@ auto t_Symbol::construct_package(str const name_, t_System__Collections__List<t_
 	self->is_special_name_ = bit_false;
 	self->of_type_ = none;
 	self->declares_type_ = none;
-	self->declarations_ = new_t_System__Collections__List<t_Semantic_Node const *_Nonnull>();
+	self->declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	self->children_ = children_;
 	return self;
 }
 
-inline t_Symbol *_Nonnull new_t_Symbol__package(str const name_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_)
+inline t_Symbol *_Nonnull new_t_Symbol__package(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Symbol())->construct_package(name_, children_);
 }
 
-auto t_Symbol::construct_declaring(t_Type const *_Nonnull const declares_type_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull
+auto t_Symbol::construct_declaring(t_Type const *_Nonnull const declares_type_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull
 {
 	t_Symbol *_Nonnull self = this;
 	assert_(not_equal_op(declares_type_, none), str(""));
@@ -5637,12 +5605,12 @@ auto t_Symbol::construct_declaring(t_Type const *_Nonnull const declares_type_, 
 	return self;
 }
 
-inline t_Symbol *_Nonnull new_t_Symbol__declaring(t_Type const *_Nonnull const declares_type_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_)
+inline t_Symbol *_Nonnull new_t_Symbol__declaring(t_Type const *_Nonnull const declares_type_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Symbol())->construct_declaring(declares_type_, declarations_, children_);
 }
 
-auto t_Symbol::construct_of_type(str const name_, t_Type const *_Nonnull const of_type_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull
+auto t_Symbol::construct_of_type(str const name_, t_Type const *_Nonnull const of_type_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_) -> t_Symbol *_Nonnull
 {
 	t_Symbol *_Nonnull self = this;
 	assert_(not_equal_op(of_type_, none), str("name=").op_add(name_));
@@ -5657,7 +5625,7 @@ auto t_Symbol::construct_of_type(str const name_, t_Type const *_Nonnull const o
 	return self;
 }
 
-inline t_Symbol *_Nonnull new_t_Symbol__of_type(str const name_, t_Type const *_Nonnull const of_type_, t_System__Collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_System__Collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_)
+inline t_Symbol *_Nonnull new_t_Symbol__of_type(str const name_, t_Type const *_Nonnull const of_type_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_)
 {
 	return (new t_Symbol())->construct_of_type(name_, of_type_, declarations_, children_);
 }
@@ -5683,7 +5651,7 @@ auto unit_test_Symbol_() -> void
 
 auto Package_symbol_children_can_be_found_by_name_and_kind_() -> void
 {
-	t_System__Collections__List<t_Symbol const *_Nonnull> *_Nonnull const children_ = new_t_System__Collections__List<t_Symbol const *_Nonnull>();
+	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	children_->add_(new_t_Symbol__identifier(str("child")));
 	t_Symbol const *_Nonnull const package_with_children_ = new_t_Symbol__package(str("package"), children_);
 	assert_(not_equal_op(package_with_children_->get_(str("child"), IdentifierSymbol_), none), str(""));
@@ -5695,7 +5663,7 @@ auto t_Type::construct(i32 const kind_, t_Name const *_Nonnull const name_, bit 
 	assert_(not_equal_op(name_, none), str(""));
 	self->kind_ = kind_;
 	self->name_ = name_;
-	self->type_parameters_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
+	self->type_parameters_ = new_t_system__collections__List<t_Type const *_Nonnull>();
 	self->is_primitive_ = bit_false;
 	self->is_value_type_ = equal_op(kind_, ValueType_);
 	self->is_potentially_mutable_ = is_mutable_;
@@ -5713,7 +5681,7 @@ auto t_Type::construct_parameter(str const name_) -> t_Type *_Nonnull
 	t_Type *_Nonnull self = this;
 	self->kind_ = TypeParameterType_;
 	self->name_ = new_t_Name(new_t_Name__global_namespace(), TypeParameterName_, name_);
-	self->type_parameters_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
+	self->type_parameters_ = new_t_system__collections__List<t_Type const *_Nonnull>();
 	self->is_primitive_ = bit_false;
 	self->is_value_type_ = bit_false;
 	self->is_potentially_mutable_ = bit_true;
@@ -5726,7 +5694,7 @@ inline t_Type *_Nonnull new_t_Type__parameter(str const name_)
 	return (new t_Type())->construct_parameter(name_);
 }
 
-auto t_Type::construct(i32 const kind_, t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_) -> t_Type *_Nonnull
+auto t_Type::construct(i32 const kind_, t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_) -> t_Type *_Nonnull
 {
 	t_Type *_Nonnull self = this;
 	self->kind_ = kind_;
@@ -5739,7 +5707,7 @@ auto t_Type::construct(i32 const kind_, t_Name const *_Nonnull const name_, t_Sy
 	return self;
 }
 
-inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_)
+inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_mutable_)
 {
 	return (new t_Type())->construct(kind_, name_, type_parameters_, is_mutable_);
 }
@@ -5749,7 +5717,7 @@ auto t_Type::construct_primitive(t_Name const *_Nonnull const name_) -> t_Type *
 	t_Type *_Nonnull self = this;
 	self->kind_ = ValueType_;
 	self->name_ = name_;
-	self->type_parameters_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
+	self->type_parameters_ = new_t_system__collections__List<t_Type const *_Nonnull>();
 	self->is_primitive_ = bit_true;
 	self->is_value_type_ = bit_true;
 	self->is_potentially_mutable_ = bit_false;
@@ -5762,7 +5730,7 @@ inline t_Type *_Nonnull new_t_Type__primitive(t_Name const *_Nonnull const name_
 	return (new t_Type())->construct_primitive(name_);
 }
 
-auto t_Type::construct_primitive(t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_) -> t_Type *_Nonnull
+auto t_Type::construct_primitive(t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_) -> t_Type *_Nonnull
 {
 	t_Type *_Nonnull self = this;
 	self->kind_ = ValueType_;
@@ -5775,7 +5743,7 @@ auto t_Type::construct_primitive(t_Name const *_Nonnull const name_, t_System__C
 	return self;
 }
 
-inline t_Type *_Nonnull new_t_Type__primitive(t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_)
+inline t_Type *_Nonnull new_t_Type__primitive(t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_)
 {
 	return (new t_Type())->construct_primitive(name_, type_parameters_);
 }
@@ -5786,7 +5754,7 @@ auto t_Type::construct_namespace(t_Name const *_Nonnull const name_) -> t_Type *
 	self->kind_ = NamespaceType_;
 	self->name_ = name_;
 	self->is_primitive_ = bit_false;
-	self->type_parameters_ = new_t_System__Collections__List<t_Type const *_Nonnull>();
+	self->type_parameters_ = new_t_system__collections__List<t_Type const *_Nonnull>();
 	self->is_value_type_ = bit_true;
 	self->is_potentially_mutable_ = bit_false;
 	self->is_mutable_ = bit_false;
@@ -5798,7 +5766,7 @@ inline t_Type *_Nonnull new_t_Type__namespace(t_Name const *_Nonnull const name_
 	return (new t_Type())->construct_namespace(name_);
 }
 
-auto t_Type::construct_generic(t_Type const *_Nonnull const definition_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_arguments_) -> t_Type *_Nonnull
+auto t_Type::construct_generic(t_Type const *_Nonnull const definition_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_arguments_) -> t_Type *_Nonnull
 {
 	t_Type *_Nonnull self = this;
 	assert_(not_equal_op(definition_, none), str(""));
@@ -5814,12 +5782,12 @@ auto t_Type::construct_generic(t_Type const *_Nonnull const definition_, t_Syste
 	return self;
 }
 
-inline t_Type *_Nonnull new_t_Type__generic(t_Type const *_Nonnull const definition_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_arguments_)
+inline t_Type *_Nonnull new_t_Type__generic(t_Type const *_Nonnull const definition_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_arguments_)
 {
 	return (new t_Type())->construct_generic(definition_, type_arguments_);
 }
 
-auto t_Type::construct(i32 const kind_, t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_) -> t_Type *_Nonnull
+auto t_Type::construct(i32 const kind_, t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_) -> t_Type *_Nonnull
 {
 	t_Type *_Nonnull self = this;
 	self->kind_ = kind_;
@@ -5832,7 +5800,7 @@ auto t_Type::construct(i32 const kind_, t_Name const *_Nonnull const name_, t_Sy
 	return self;
 }
 
-inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, t_System__Collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_)
+inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const name_, t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull const type_parameters_, bit const is_primitive_, bit const is_potentially_mutable_, bit const is_mutable_)
 {
 	return (new t_Type())->construct(kind_, name_, type_parameters_, is_primitive_, is_potentially_mutable_, is_mutable_);
 }
@@ -5871,7 +5839,7 @@ auto t_Name_Subtable::construct_global_namespace(t_Name_Table const *_Nonnull co
 	self->parent_ = none;
 	self->name_ = new_t_Name__global_namespace();
 	self->type_ = new_t_Type__namespace(self->name_);
-	subtables_ = new_t_System__Collections__List<t_Name_Subtable *_Nonnull>();
+	subtables_ = new_t_system__collections__List<t_Name_Subtable *_Nonnull>();
 	return self;
 }
 
@@ -5887,7 +5855,7 @@ auto t_Name_Subtable::construct_global_namespace(t_Name_Table const *_Nonnull co
 	self->parent_ = none;
 	self->name_ = new_t_Name__global_namespace(package_name_);
 	self->type_ = new_t_Type__namespace(self->name_);
-	subtables_ = new_t_System__Collections__List<t_Name_Subtable *_Nonnull>();
+	subtables_ = new_t_system__collections__List<t_Name_Subtable *_Nonnull>();
 	return self;
 }
 
@@ -5903,7 +5871,7 @@ auto t_Name_Subtable::construct(t_Name_Subtable const *_Nonnull const parent_, t
 	self->parent_ = parent_;
 	self->name_ = name_;
 	self->type_ = type_;
-	subtables_ = new_t_System__Collections__List<t_Name_Subtable *_Nonnull>();
+	subtables_ = new_t_system__collections__List<t_Name_Subtable *_Nonnull>();
 	return self;
 }
 
@@ -6065,7 +6033,7 @@ auto t_Name_Table::construct() -> t_Name_Table *_Nonnull
 {
 	t_Name_Table *_Nonnull self = this;
 	self->any_package_ = new_t_Name_Subtable__global_namespace(self);
-	self->packages_ = new_t_System__Collections__List<t_Name_Subtable *_Nonnull>();
+	self->packages_ = new_t_system__collections__List<t_Name_Subtable *_Nonnull>();
 	return self;
 }
 
@@ -6135,7 +6103,7 @@ auto ::t_Name_Table::get_(t_Name const *_Nonnull const name_) const -> t_Name_Su
 	return none;
 }
 
-auto ::t_Name_Table_Builder::build_(t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_, t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_) const -> t_Name_Table const *_Nonnull
+auto ::t_Name_Table_Builder::build_(t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) const -> t_Name_Table const *_Nonnull
 {
 	auto self = this;
 	assert_(equal_op(package_syntax_->kind_, PackageNode_), str("package_syntax.kind=").op_add(package_syntax_->kind_));
@@ -6145,7 +6113,7 @@ auto ::t_Name_Table_Builder::build_(t_Package_Name const *_Nonnull const package
 	return name_table_;
 }
 
-auto ::t_Name_Table_Builder::add_referenced_(t_Name_Table *_Nonnull const name_table_, t_System__Collections__List<t_Package_Reference> const *_Nonnull const references_) -> void
+auto ::t_Name_Table_Builder::add_referenced_(t_Name_Table *_Nonnull const name_table_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) -> void
 {
 	for (t_Package_Reference const reference_ : *(references_))
 	{
@@ -6350,16 +6318,16 @@ auto table_contains_referenced_child_names_() -> void
 {
 	t_Package_Name const *_Nonnull const name_ = new_t_Package_Name(str("default"));
 	t_Package const *_Nonnull const runtime_package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	t_System__Collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_System__Collections__List<t_Package_Reference>();
+	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(runtime_package_));
 	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = new_t_Syntax_Node(PackageNode_, none, i32(0), i32(0));
 	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
-	t_Name_Subtable const *_Nonnull const namespace_ = name_table_->any_package_->find_(str("System"));
-	assert_(not_equal_op(namespace_->find_(str("Console")), none), str(""));
-	t_Name const *_Nonnull const system_namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("System"));
+	t_Name_Subtable const *_Nonnull const namespace_ = name_table_->any_package_->find_(str("system"));
+	assert_(not_equal_op(namespace_->find_(str("console")), none), str(""));
+	t_Name const *_Nonnull const system_namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("system"));
 	assert_(not_equal_op(name_table_->get_(system_namespace_name_), none), str(""));
-	t_Name const *_Nonnull const console_namespace_name_ = new_t_Name(system_namespace_name_, NamespaceName_, str("Console"));
+	t_Name const *_Nonnull const console_namespace_name_ = new_t_Name(system_namespace_name_, NamespaceName_, str("console"));
 	assert_(not_equal_op(name_table_->get_(console_namespace_name_), none), str(""));
 	t_Name const *_Nonnull const console_class_name_ = new_t_Name(console_namespace_name_, TypeName_, str("Console"));
 	assert_(not_equal_op(name_table_->get_(console_class_name_), none), str(""));
@@ -6369,12 +6337,12 @@ auto can_get_root_namespace_from_name_() -> void
 {
 	t_Package_Name const *_Nonnull const name_ = new_t_Package_Name(str("default"));
 	t_Package const *_Nonnull const runtime_package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	t_System__Collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_System__Collections__List<t_Package_Reference>();
+	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(runtime_package_));
 	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = new_t_Syntax_Node(PackageNode_, none, i32(0), i32(0));
 	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
-	t_Name const *_Nonnull const namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("System"));
+	t_Name const *_Nonnull const namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("system"));
 	assert_(not_equal_op(name_table_->get_(namespace_name_), none), str(""));
 }
 
@@ -6382,13 +6350,13 @@ auto can_get_Console_class_from_name_without_package_() -> void
 {
 	t_Package_Name const *_Nonnull const name_ = new_t_Package_Name(str("default"));
 	t_Package const *_Nonnull const runtime_package_ = new_t_Runtime_Library_Package_Builder()->build_();
-	t_System__Collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_System__Collections__List<t_Package_Reference>();
+	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(runtime_package_));
 	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = new_t_Syntax_Node(PackageNode_, none, i32(0), i32(0));
 	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
-	t_Name const *_Nonnull const system_namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("System"));
-	t_Name const *_Nonnull const console_namespace_name_ = new_t_Name(system_namespace_name_, NamespaceName_, str("Console"));
+	t_Name const *_Nonnull const system_namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("system"));
+	t_Name const *_Nonnull const console_namespace_name_ = new_t_Name(system_namespace_name_, NamespaceName_, str("console"));
 	t_Name const *_Nonnull const console_class_name_ = new_t_Name(console_namespace_name_, TypeName_, str("Console"));
 	assert_(not_equal_op(name_table_->get_(console_class_name_), none), str(""));
 }
@@ -6397,7 +6365,7 @@ auto can_get_Optional_class_from_name_with_package_() -> void
 {
 	t_Package_Name const *_Nonnull const name_ = new_t_Package_Name(str("default"));
 	t_Package const *_Nonnull const primitives_package_ = new_t_Primitives_Package_Builder()->build_();
-	t_System__Collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_System__Collections__List<t_Package_Reference>();
+	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(primitives_package_));
 	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = new_t_Syntax_Node(PackageNode_, none, i32(0), i32(0));
@@ -6416,7 +6384,7 @@ std::int32_t main(int argc, char const *const * argv)
 	try
 	{
 		resource_manager_->AddResource(str("RuntimeLibrary.cpp"), str("#include \"RuntimeLibrary.hpp\"\n#include <map>\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\nu32 i32::as_uint_() const\n{\n    if(this->value < 0)\n        throw std::range_error(\"Can't convert negative number to unsigned\");\n\n    return u32(this->value);\n}\n\nchar cp_to_char(cp v)\n{\n    if(v.value > 0xFF)\n        throw std::range_error(\"Unicode char values not yet supported\");\n\n    return v.value;\n}\n\nstr str::construct(cp c, i32 repeat)\n{\n    str self;\n    self.Length = repeat.value;\n    char* buffer = new char[repeat.value];\n    for (int i = 0; i < repeat.value; i++)\n        buffer[i] = cp_to_char(c);\n\n    self.Buffer = buffer;\n    return self;\n}\n\nstr::str(const char* s)\n    : Length(std::strlen(s)), Buffer(s)\n{\n}\n\nstr::str(int length, const char* s)\n    : Length(length), Buffer(s)\n{\n}\n\nchar const * str::cstr() const\n{\n    auto buffer = new char[Length + 1];\n    std::memcpy(buffer, Buffer, Length);\n    buffer[Length] = 0;\n    return buffer;\n}\n\nstr::str(i32 other)\n    : Length(0), Buffer(0)\n{\n    char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator\n    int length = std::sprintf(buffer,\"%d\", other.value);\n    if(length <= 0) throw std::runtime_error(\"Could not convert int to string\");\n    Length = length;\n    Buffer = buffer;\n}\n\nstr::str(cp other)\n    : Length(1), Buffer(new char[1] { cp_to_char(other) })\n{\n}\n\nstr::str(bit other)\n    : str(other.value ? \"true\" : \"false\")\n{\n}\n\nstr str::Substring_(i32 start, i32 length) const\n{\n    return str(length.value, Buffer + start.value);\n}\n\nstr str::Replace_(str oldValue, str newValue) const\n{\n    t_system__text__String_Builder builder = t_system__text__String_Builder(); // TODO initialize capacity\n    int limit = Length - oldValue.Length + 1;\n    int lastIndex = 0;\n    // TODO the Substring calls in here are leaking memory\n    for(int i=0; i < limit; i++)\n        if (cond(equal_op(Substring_(i32(i), i32(oldValue.Length)), oldValue)))\n        {\n            builder.Append_(Substring_(i32(lastIndex), i32(i-lastIndex)));\n            builder.Append_(newValue);\n            i += oldValue.Length; // skip over the value we just matched\n            lastIndex = i;\n            i--; // we need i-- to offset the i++ that is about to happen\n        }\n\n    builder.Append_(Substring_(i32(lastIndex), i32(Length - lastIndex)));\n    return builder.ToString_();\n}\n\ni32 str::LastIndexOf_(cp c) const\n{\n    for(int i = Length - 1; i >= 0; i--)\n        if(Buffer[i] == cp_to_char(c))\n            return i32(i);\n\n    return i32(-1); // TODO should return none\n}\n\ni32 str::index_of_(cp c) const\n{\n    for(int i = 0; i < Length; i++)\n        if(Buffer[i] == cp_to_char(c))\n            return i32(i);\n\n    return i32(-1);\n}\n\nstr str::op_add(str const & value) const\n{\n    int newLength = Length + value.Length;\n    char* chars = new char[newLength];\n    size_t offset = sizeof(char) * Length;\n    std::memcpy(chars, Buffer, offset);\n    std::memcpy(chars + offset, value.Buffer, value.Length);\n    return str(newLength, chars);\n}\n\nauto equal_op(str lhs, str rhs) -> bit\n{\n    if (lhs.Length != rhs.Length)\n        return bit_false;\n\n    for (int i = 0; i < lhs.Length; i++)\n        if (lhs.Buffer[i] != rhs.Buffer[i])\n            return bit_false;\n\n    return bit_true;\n}\n\nbit str_less_than(str lhs, str rhs)\n{\n    char const* left = lhs.cstr();\n    char const* right = rhs.cstr();\n    bool result = std::strcmp(left, right) < 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\nbit str_less_than_or_equal(str lhs, str rhs)\n{\n    char const* left = lhs.cstr();\n    char const* right = rhs.cstr();\n    bool result = std::strcmp(left, right) <= 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\nbit str_greater_than(str lhs, str rhs)\n{\n    char const* left = lhs.cstr();\n    char const* right = rhs.cstr();\n    bool result = std::strcmp(left, right) > 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\nbit str_greater_than_or_equal(str lhs, str rhs)\n{\n    char const* left = lhs.cstr();\n    char const* right = rhs.cstr();\n    bool result = std::strcmp(left, right) >= 0;\n    delete[] left;\n    delete[] right;\n    return bit_from(result);\n}\n\nbool operator < (str const & lhs, str const & rhs)\n{\n    char const* left = lhs.cstr();\n    char const* right = rhs.cstr();\n    bool result = std::strcmp(left, right) < 0;\n    delete[] left;\n    delete[] right;\n    return result;\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n\nstd::map<str, str> resourceValues;\n\nstr const & ResourceManager::GetString_(str resourceName)\n{\n    return resourceValues.at(resourceName);\n}\nvoid ResourceManager::AddResource(str name, str value)\n{\n    resourceValues.insert(std::make_pair(name, value));\n}\n\nResourceManager *const resource_manager_ = new ResourceManager();\n\nvoid debug_write_(str value)\n{\n    std::fprintf(stderr, \"%.*s\", value.Length, value.Buffer);\n}\nvoid debug_write_line_(str value)\n{\n    std::fprintf(stderr, \"%.*s\\n\", value.Length, value.Buffer);\n}\nvoid debug_write_line_()\n{\n    std::fprintf(stderr, \"\\n\");\n}\n\nvoid t_system__console__Console::Write_(str value)\n{\n    std::printf(\"%.*s\", value.Length, value.Buffer);\n}\n\nvoid t_system__console__Console::WriteLine_(str value)\n{\n    std::printf(\"%.*s\\n\", value.Length, value.Buffer);\n}\n\nvoid t_system__console__Console::WriteLine_()\n{\n    std::printf(\"\\n\");\n}\n\nt_system__console__Arguments::t_system__console__Arguments(int argc, char const *const * argv)\n    : Count(argc-1)\n{\n    args = new str[Count];\n    for (int i = 0; i < Count; i++)\n        args[i] = str(argv[i+1]);\n}\n\nt_system__io__File_Reader *_Nonnull t_system__io__File_Reader::construct(const str& fileName)\n{\n    std::FILE* foo;\n    auto fname = fileName.cstr();\n    file = std::fopen(fname, \"rb\");\n    delete[] fname;\n    return this;\n}\n\nstr t_system__io__File_Reader::ReadToEndSync_()\n{\n    std::fseek(file, 0, SEEK_END);\n    auto length = std::ftell(file);\n    std::fseek(file, 0, SEEK_SET);\n    auto buffer = new char[length];\n    length = std::fread(buffer, sizeof(char), length, file);\n    return str(length, buffer);\n}\n\nvoid t_system__io__File_Reader::Close_()\n{\n    std::fclose(file);\n}\n\nt_system__io__File_Writer *_Nonnull t_system__io__File_Writer::construct(const str& fileName)\n{\n    auto fname = fileName.cstr();\n    file = std::fopen(fname, \"wb\"); // TODO check error\n    delete[] fname;\n    return this;\n}\n\nvoid t_system__io__File_Writer::Write_(const str& value)\n{\n    std::fwrite(value.Buffer, sizeof(char), value.Length, file);\n}\n\nvoid t_system__io__File_Writer::Close_()\n{\n    std::fclose(file);\n}\n\nvoid t_system__text__String_Builder::ensure_capacity(int needed)\n{\n    int new_capacity = capacity == 0 ? 128 : capacity;\n    while(new_capacity < needed)\n    {\n        new_capacity *= 2;\n    }\n\n    if(new_capacity > capacity)\n    {\n        char* new_buffer = new char[new_capacity];\n        if(length > 0)\n            std::memcpy(new_buffer, buffer, length);\n\n        if(capacity > 0)\n            delete[] buffer;\n\n        buffer = new_buffer;\n        capacity = new_capacity;\n    }\n}\n\nt_system__text__String_Builder *_Nonnull t_system__text__String_Builder::construct(str const & value)\n{\n    ensure_capacity(value.Length);\n    std::memcpy(buffer, value.Buffer, value.Length);\n    length = value.Length;\n    return this;\n}\n\nt_system__text__String_Builder *_Nonnull t_system__text__String_Builder::construct_with_capacity(i32 capacity)\n{\n    ensure_capacity(capacity.value);\n    return this;\n}\n\nvoid t_system__text__String_Builder::Append_(str const & value)\n{\n    int new_length = length + value.Length;\n    ensure_capacity(new_length);\n    std::memcpy(buffer+length, value.Buffer, value.Length);\n    length = new_length;\n}\n\nvoid t_system__text__String_Builder::Append_(t_system__text__String_Builder const *_Nonnull value)\n{\n    int new_length = length + value->length;\n    ensure_capacity(new_length);\n    std::memcpy(buffer+length, value->buffer, value->length);\n    length = new_length;\n}\n\nvoid t_system__text__String_Builder::AppendLine_(str const & value)\n{\n    int new_length = length + value.Length + 1;\n    ensure_capacity(new_length);\n    std::memcpy(buffer+length, value.Buffer, value.Length);\n    buffer[new_length-1] = '\\n';\n    length = new_length;\n}\n\nvoid t_system__text__String_Builder::AppendLine_()\n{\n    int new_length = length + 1;\n    ensure_capacity(new_length);\n    buffer[new_length-1] = '\\n';\n    length = new_length;\n}\n\nvoid t_system__text__String_Builder::Remove_(i32 start, i32 length)\n{\n    if(start.value >= this->length)\n        throw std::runtime_error(\"String_Builder.Remove() start >= length\");\n\n    int end = start.value + length.value;\n    if(end > this->length) // greater than because end is one past the end of the remove\n        throw std::runtime_error(\"String_Builder.Remove() end > length\");\n\n    std::memmove(buffer+start.value, buffer+end, this->length-end);\n    this->length -= length.value;\n}\n\nvoid t_system__text__String_Builder::Remove_(i32 start)\n{\n    if(start.value >= length)\n        throw std::runtime_error(\"String_Builder.Remove() start >= length\");\n\n    length = start.value;\n}\n\nstr t_system__text__String_Builder::ToString_()\n{\n    str result(length, buffer);\n    // give up ownership of buffer\n    buffer = 0;\n    length = 0;\n    capacity = 0;\n    return result;\n}\n"));
-		resource_manager_->AddResource(str("RuntimeLibrary.hpp"), str("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n#include <stdexcept>\n#include <string>\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\n// `bool`\nstruct bit\n{\n    bool value;\n};\n\n// `true`\nstatic const bit bit_true = { true };\n// `false`\nstatic const bit bit_false = { false };\n\n// Function used in conditions to make them take `bit`\ninline bool cond(bit cond) { return cond.value; }\n\n// Used by runtime for converting to bit\ninline bit bit_from(bool v) { return bit { v }; }\n\n// Wrap a bit operation that is bool based\ninline bit bit_op(bool v) { return bit { v }; }\n// Convert the arguments of a logical operation to bool\ninline bool bit_arg(bit v) { return v.value; }\ninline bit bit_not(bit v) { return bit { !v.value }; }\n\n// `never`\nstruct never\n{\n};\n\n// `never?`\nstruct o_never\n{\n    // TODO get rid of this conversion operator when compiler emits conversions\n    template<class T>\n    operator T*_Nullable() const { return static_cast<T*>(0); }\n};\n\nstatic const o_never none;\n\ntemplate<typename T>\nstruct p_optional final\n{\nprivate:\n    bool hasValue;\n    union\n    {\n        T data;\n    };\n\npublic:\n    // TODO make this constructor explicit\n    p_optional(T const & value) : data(value), hasValue(true) {}\n    // TODO get rid of this conversion operator when compiler emits conversions\n    p_optional(o_never none) : hasValue(false) {}\n    auto has_value() const -> bit { return bit_from(hasValue); }\n    auto value() const -> T { return data; }\n\n    T & operator->()\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T const & operator->() const\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T & operator* ()\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T const & operator* () const\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n};\n\nstruct u32;\n\n// `int`\nstruct i32\n{\n    // Runtime Use Members\n    std::int32_t value;\n\n    explicit i32() = default;\n    explicit i32(std::int32_t value): value(value) {}\n\n    i32 *_Nonnull operator->() { return this; }\n    i32 const *_Nonnull operator->() const { return this; }\n    i32 & operator* () { return *this; }\n    i32 const & operator* () const { return *this; }\n\n    // Hack to support conversion of uint to int for now\n    i32(u32 value);\n\n    // Adamant Members\n    static auto construct() -> i32 { return i32(0); }\n    static auto copy(i32 const & other) -> i32 { return other; }\n    void op_add_assign(i32 other) { this->value += other.value; }\n    void op_subtract_assign(i32 other) { this->value -= other.value; }\n    bit op_less_than(i32 other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(i32 other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(i32 other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(i32 other) const { return bit_from(this->value >= other.value); }\n    i32 op_add(i32 other) const { return i32(this->value + other.value); }\n    i32 op_subtract(i32 other) const { return i32(this->value - other.value); }\n    i32 op_multiply(i32 other) const { return i32(this->value * other.value); }\n    i32 op_divide(i32 other) const { return i32(this->value / other.value); }\n    i32 op_remainder(i32 other) const { return i32(this->value % other.value); }\n    i32 op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error(\"Can't take |int.Min|\"); return i32(this->value < 0 ? -this->value : this->value); }\n\n    // Hack because we don't support as correctly yet\n    u32 as_uint_() const;\n};\n\ninline i32 i32_negate(i32 v) { return i32(-v.value); }\ninline bit i32_less_than(i32 lhs, i32 rhs) { return bit_from(lhs.value < rhs.value); }\ninline bit i32_less_than_or_equal(i32 lhs, i32 rhs) { return bit_from(lhs.value <= rhs.value); }\ninline bit i32_greater_than(i32 lhs, i32 rhs) { return bit_from(lhs.value > rhs.value); }\ninline bit i32_greater_than_or_equal(i32 lhs, i32 rhs) { return bit_from(lhs.value >= rhs.value); }\n\n// `uint`\nstruct u32\n{\n    // Runtime Use Members\n    std::uint32_t value;\n\n    explicit u32() = default;\n    explicit u32(std::uint32_t value): value(value) {}\n\n    u32 *_Nonnull operator->() { return this; }\n    u32 const *_Nonnull operator->() const { return this; }\n    u32 & operator* () { return *this; }\n    u32 const & operator* () const { return *this; }\n\n    // Hack to support conversion of int to uint for now\n    u32(i32 value): value(value.value) {}\n\n    // Adamant Members\n    static auto construct() -> u32 { return u32(0); }\n    void op_add_assign(u32 other) { this->value += other.value; }\n    void op_subtract_assign(u32 other) { this->value -= other.value; }\n    bit op_less_than(u32 other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(u32 other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(u32 other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(u32 other) const { return bit_from(this->value >= other.value); }\n    u32 op_add(u32 other) const { return u32(this->value + other.value); }\n    u32 op_subtract(u32 other) const { return u32(this->value - other.value); }\n};\n\ninline bit u32_less_than(u32 lhs, u32 rhs) { return bit_from(lhs.value < rhs.value); }\ninline bit u32_less_than_or_equal(u32 lhs, u32 rhs) { return bit_from(lhs.value <= rhs.value); }\ninline bit u32_greater_than(u32 lhs, u32 rhs) { return bit_from(lhs.value > rhs.value); }\ninline bit u32_greater_than_or_equal(u32 lhs, u32 rhs) { return bit_from(lhs.value >= rhs.value); }\n\ninline i32::i32(u32 value)\n    : value(value.value)\n{\n}\n\nstruct cp\n{\n    std::uint32_t value;\n\n    // Runtime Use Members\n    explicit cp() = default;\n    explicit cp(char value): value(value) {}\n\n    cp *_Nonnull operator->() { return this; }\n    cp const *_Nonnull operator->() const { return this; }\n    cp & operator* () { return *this; }\n    cp const & operator* () const { return *this; }\n\n    // Adamant Members\n    static auto construct() -> cp { return cp('\\0'); }\n};\n\nchar cp_to_char(cp v);\n\n// TODO: Not sure code_point should support comparision operations\ninline bit cp_less_than(cp lhs, cp rhs) { return bit_from(lhs.value < rhs.value); }\ninline bit cp_less_than_or_equal(cp lhs, cp rhs) { return bit_from(lhs.value <= rhs.value); }\ninline bit cp_greater_than(cp lhs, cp rhs) { return bit_from(lhs.value > rhs.value); }\ninline bit cp_greater_than_or_equal(cp lhs, cp rhs) { return bit_from(lhs.value >= rhs.value); }\n\nstruct str\n{\n    // Runtime Use Members\n    char const *_Nonnull Buffer;\n    int Length;\n\n    explicit str() = default;\n    explicit str(char const *_Nonnull s);\n    explicit str(int length, char const *_Nonnull s);\n    char const *_Nonnull cstr() const;\n    str const *_Nonnull operator->() const { return this; }\n    str const & operator* () const { return *this; }\n\n    typedef char const *_Nonnull const_iterator;\n    const_iterator begin() const { return &Buffer[0]; }\n    const_iterator end() const { return &Buffer[Length]; }\n\n    // Hack to support conversion of int and code_point to strings for now\n    str(i32 other);\n    str(cp other);\n    explicit str(bit other);\n\n    // Adamant Members\n    static auto construct() -> str { str self; self.Length = 0; self.Buffer = 0; return self; }\n    static auto construct(str value) -> str { return value; }\n    static auto construct(cp c, i32 repeat) -> str;\n    // TODO ByteLength should be a property\n    i32 ByteLength_() const { return i32(Length); }\n\n    str Substring_(i32 start, i32 length) const;\n    str Substring_(i32 start) const { return Substring_(start, i32(Length-start.value)); }\n    str Replace_(str oldValue, str newValue) const;\n    i32 LastIndexOf_(cp c) const;\n    i32 index_of_(cp c) const;\n\n    // TODO check index bounds\n    cp op_Element(i32 const index) const { return cp(Buffer[index.value]); }\n    str op_add(str const & value) const;\n    str op_add(bit value) const { return this->op_add(str(value)); }\n};\n\nbit str_less_than(str lhs, str rhs);\nbit str_less_than_or_equal(str lhs, str rhs);\nbit str_greater_than(str lhs, str rhs);\nbit str_greater_than_or_equal(str lhs, str rhs);\n\ninline str new_str()\n{\n    return str::construct();\n}\ninline str new_str(str value)\n{\n    return str::construct(value);\n}\ninline str new_str(cp c, i32 repeat)\n{\n    return str::construct(c, repeat);\n}\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline auto equal_op(bit lhs, bit rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\ninline auto equal_op(p_optional<bit> lhs, p_optional<bit> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));\n    else\n        return bit_not(rhs.has_value());\n}\n\ninline auto equal_op(i32 lhs, i32 rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\ninline auto equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));\n    else\n        return bit_not(rhs.has_value());\n}\n\ninline auto equal_op(o_never lhs, o_never rhs) -> bit\n{\n    return bit_true;\n}\n\ninline auto equal_op(cp lhs, cp rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\n\nauto equal_op(str lhs, str rhs) -> bit;\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto equal_op(T const *_Nullable lhs, o_never rhs) -> bit\n{\n    return bit_from(lhs == 0);\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto equal_op(o_never lhs, T const *_Nullable rhs) -> bit\n{\n    return bit_from(0 == rhs);\n}\n\n// TODO Get rid of this ability\ntemplate<typename T>\ninline auto equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs) -> bit\n{\n    return bit_from(lhs == 0);\n}\n\ninline auto not_equal_op(i32 lhs, i32 rhs) -> bit\n{\n    return bit_from(lhs.value != rhs.value);\n}\ninline auto not_equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(bit_not(rhs.has_value())) || bit_arg(not_equal_op(lhs.value(), rhs.value())));\n    else\n        return rhs.has_value();\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(T lhs, T  rhs) -> bit\n{\n    return bit_not(equal_op(lhs, rhs));\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(T const *_Nullable lhs, o_never rhs) -> bit\n{\n    return bit_from(lhs != 0);\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(o_never lhs, T const *_Nullable rhs) -> bit\n{\n    return bit_from(0 != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\n// A placeholder function until we get proper exceptions implemented\n_Noreturn inline void THROW_EXCEPTION_(const str& value)\n{\n    throw std::runtime_error(value.cstr());\n}\n\n\ninline void assert(const bit condition, char const *_Nonnull code, const str message, char const *_Nonnull file, const std::int32_t line)\n{\n    if(!condition.value)\n        throw std::runtime_error(\n            str(\"Assertion failed: \").op_add(str(code)).op_add(str(\", \")).op_add(message)\n            .op_add(str(\", file \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)\n\n\n_Noreturn inline void NOT_IMPLEMENTED(const str message, char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)\n{\n    throw std::runtime_error(\n        str(\"Function \").op_add(str(function))\n        .op_add(str(\" not yet implemented, \")).op_add(message).op_add(str(\", \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)\n\n\n_Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)\n{\n    throw std::runtime_error(\n        str(\"Reached \\\"UNREACHABLE\\\" statement in function \").op_add(str(function))\n        .op_add(str(\", \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)\n\nclass ResourceManager\n{\npublic:\n    str const & GetString_(str resourceName);\n    void AddResource(str name, str value);\n};\n\nextern ResourceManager *_Nonnull const resource_manager_;\n\nvoid debug_write_(str value);\nvoid debug_write_line_(str value);\nvoid debug_write_line_();\n\ntemplate<typename T>\nclass t_system__collections__List\n{\nprivate:\n    T *_Nonnull values;\n    int length;\n    int capacity;\n\npublic:\n    // Runtime Use Members\n    typedef T const *_Nonnull const_iterator;\n    const_iterator begin() const { return values; }\n    const_iterator end() const { return &values[length]; }\n\n    // Adamant Members\n    t_system__collections__List *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }\n    void add_(T value);\n    void clear_() { length = 0; }\n    i32 op_magnitude() const { return i32(length); }\n    T const & op_Element(i32 const index) const;\n};\n\ntemplate<typename T>\nusing t_System__Collections__List = t_system__collections__List<T>;\n\ntemplate<typename T>\nvoid t_system__collections__List<T>::add_(T value)\n{\n    if(length >= capacity)\n    {\n        int newCapacity = capacity == 0 ? 16 : capacity * 2;\n        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        T* newValues = (T*)new char[newCapacity * sizeof(T)];\n        std::memcpy(newValues, values, length * sizeof(T));\n        values = newValues;\n        capacity = newCapacity;\n    }\n    values[length] = value;\n    length++;\n}\n\ntemplate<typename T>\nT const & t_system__collections__List<T>::op_Element(i32 const index) const\n{\n    if(index.value < 0 || index.value >= length)\n        throw std::out_of_range(\"List index out of bounds\");\n    return values[index.value];\n}\n\ntemplate<typename T>\nt_system__collections__List<T> *_Nonnull new_t_System__Collections__List()\n{\n    return (new t_system__collections__List<T>())->construct();\n}\n\ntemplate<typename T>\nt_system__collections__List<T> *_Nonnull new_t_system__collections__List()\n{\n    return (new t_system__collections__List<T>())->construct();\n}\n\nclass t_system__console__Console\n{\npublic:\n    void Write_(str value);\n    void WriteLine_(str value);\n    void WriteLine_();\n};\n\ntypedef t_system__console__Console t_System__Console__Console;\n\nclass t_system__console__Arguments\n{\nprivate:\n    str *_Nonnull args;\npublic:\n    // Runtime Use Members\n    typedef str const *_Nonnull const_iterator;\n\n    t_system__console__Arguments(int argc, char const *_Nonnull const *_Nonnull argv);\n    const_iterator begin() const { return &args[0]; }\n    const_iterator end() const { return &args[Count]; }\n\n    const int Count;\n\n    // Adamant Members\n    i32 op_magnitude() const { return i32(Count); }\n    str const & op_Element(i32 const index) const\n    {\n        if(index.value < 0 || index.value >= Count)\n            throw std::out_of_range(\"Argument index out of bounds\");\n        return args[index.value];\n    }\n};\n\ntypedef t_system__console__Arguments t_System__Console__Arguments;\n\nclass t_system__io__File_Reader\n{\nprivate:\n    std::FILE *_Nonnull file;\n\npublic:\n    t_system__io__File_Reader *_Nonnull construct(const str& fileName);\n    str ReadToEndSync_();\n    void Close_();\n};\n\ntypedef t_system__io__File_Reader t_System__IO__File_Reader;\n\ninline t_system__io__File_Reader *_Nonnull new_t_System__IO__File_Reader(const str& fileName)\n{\n    return (new t_system__io__File_Reader())->construct(fileName);\n}\n\ninline t_system__io__File_Reader *_Nonnull new_t_system__io__File_Reader(const str& fileName)\n{\n    return (new t_system__io__File_Reader())->construct(fileName);\n}\n\nclass t_system__io__File_Writer\n{\nprivate:\n    std::FILE *_Nonnull file;\n\npublic:\n    t_system__io__File_Writer *_Nonnull construct(const str& fileName);\n    void Write_(const str& value);\n    void Close_();\n};\n\ntypedef t_system__io__File_Writer t_System__IO__File_Writer;\n\ninline t_system__io__File_Writer *_Nonnull new_t_System__IO__File_Writer(const str& fileName)\n{\n    return (new t_system__io__File_Writer())->construct(fileName);\n}\n\ninline t_system__io__File_Writer *_Nonnull new_t_system__io__File_Writer(const str& fileName)\n{\n    return (new t_system__io__File_Writer())->construct(fileName);\n}\n\nclass t_system__text__String_Builder\n{\nprivate:\n    char *_Nullable buffer;\n    int capacity;\n    int length;\n    void ensure_capacity(int needed);\npublic:\n    // Runtime Use Members\n    t_system__text__String_Builder(): buffer(0), capacity(0), length(0) { }\n\n    // Adamant Members\n    t_system__text__String_Builder *_Nonnull construct() { return this; }\n    t_system__text__String_Builder *_Nonnull construct(str const & value);\n    t_system__text__String_Builder *_Nonnull construct_with_capacity(i32 capacity);\n    // TODO byte_length_ should be a property\n    i32 byte_length_() const { return i32(length); }\n    void Append_(str const & value);\n    void Append_(t_system__text__String_Builder const *_Nonnull value);\n    void AppendLine_(str const& value);\n    void AppendLine_();\n    void Remove_(i32 start, i32 length);\n    void Remove_(i32 start);\n    str ToString_();\n};\n\ntypedef t_system__text__String_Builder t_System__Text__String_Builder;\n\ninline t_system__text__String_Builder *_Nonnull new_t_System__Text__String_Builder()\n{\n    return (new t_system__text__String_Builder())->construct();\n}\n\ninline t_system__text__String_Builder *_Nonnull new_t_System__Text__String_Builder(str const & value)\n{\n    return (new t_system__text__String_Builder())->construct(value);\n}\n\ninline t_system__text__String_Builder *_Nonnull new_t_System__Text__String_Builder__with_capacity(i32 capacity)\n{\n    return (new t_system__text__String_Builder())->construct_with_capacity(capacity);\n}\n\n\ninline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder()\n{\n    return (new t_system__text__String_Builder())->construct();\n}\n\ninline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder(str const & value)\n{\n    return (new t_system__text__String_Builder())->construct(value);\n}\n\ninline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder__with_capacity(i32 capacity)\n{\n    return (new t_system__text__String_Builder())->construct_with_capacity(capacity);\n}\n"));
+		resource_manager_->AddResource(str("RuntimeLibrary.hpp"), str("// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n#define _CRT_SECURE_NO_WARNINGS\n#include <cstring>\n#include <cstdio>\n#include <cstdint>\n#include <stdexcept>\n#include <string>\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\n// `bool`\nstruct bit\n{\n    bool value;\n};\n\n// `true`\nstatic const bit bit_true = { true };\n// `false`\nstatic const bit bit_false = { false };\n\n// Function used in conditions to make them take `bit`\ninline bool cond(bit cond) { return cond.value; }\n\n// Used by runtime for converting to bit\ninline bit bit_from(bool v) { return bit { v }; }\n\n// Wrap a bit operation that is bool based\ninline bit bit_op(bool v) { return bit { v }; }\n// Convert the arguments of a logical operation to bool\ninline bool bit_arg(bit v) { return v.value; }\ninline bit bit_not(bit v) { return bit { !v.value }; }\n\n// `never`\nstruct never\n{\n};\n\n// `never?`\nstruct o_never\n{\n    // TODO get rid of this conversion operator when compiler emits conversions\n    template<class T>\n    operator T*_Nullable() const { return static_cast<T*>(0); }\n};\n\nstatic const o_never none;\n\ntemplate<typename T>\nstruct p_optional final\n{\nprivate:\n    bool hasValue;\n    union\n    {\n        T data;\n    };\n\npublic:\n    // TODO make this constructor explicit\n    p_optional(T const & value) : data(value), hasValue(true) {}\n    // TODO get rid of this conversion operator when compiler emits conversions\n    p_optional(o_never none) : hasValue(false) {}\n    auto has_value() const -> bit { return bit_from(hasValue); }\n    auto value() const -> T { return data; }\n\n    T & operator->()\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T const & operator->() const\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T & operator* ()\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n    T const & operator* () const\n    {\n        if(!hasValue) throw std::runtime_error(\"Access to `none` Optional value\");\n        return data;\n    }\n};\n\nstruct u32;\n\n// `int`\nstruct i32\n{\n    // Runtime Use Members\n    std::int32_t value;\n\n    explicit i32() = default;\n    explicit i32(std::int32_t value): value(value) {}\n\n    i32 *_Nonnull operator->() { return this; }\n    i32 const *_Nonnull operator->() const { return this; }\n    i32 & operator* () { return *this; }\n    i32 const & operator* () const { return *this; }\n\n    // Hack to support conversion of uint to int for now\n    i32(u32 value);\n\n    // Adamant Members\n    static auto construct() -> i32 { return i32(0); }\n    static auto copy(i32 const & other) -> i32 { return other; }\n    void op_add_assign(i32 other) { this->value += other.value; }\n    void op_subtract_assign(i32 other) { this->value -= other.value; }\n    bit op_less_than(i32 other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(i32 other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(i32 other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(i32 other) const { return bit_from(this->value >= other.value); }\n    i32 op_add(i32 other) const { return i32(this->value + other.value); }\n    i32 op_subtract(i32 other) const { return i32(this->value - other.value); }\n    i32 op_multiply(i32 other) const { return i32(this->value * other.value); }\n    i32 op_divide(i32 other) const { return i32(this->value / other.value); }\n    i32 op_remainder(i32 other) const { return i32(this->value % other.value); }\n    i32 op_magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error(\"Can't take |int.Min|\"); return i32(this->value < 0 ? -this->value : this->value); }\n\n    // Hack because we don't support as correctly yet\n    u32 as_uint_() const;\n};\n\ninline i32 i32_negate(i32 v) { return i32(-v.value); }\ninline bit i32_less_than(i32 lhs, i32 rhs) { return bit_from(lhs.value < rhs.value); }\ninline bit i32_less_than_or_equal(i32 lhs, i32 rhs) { return bit_from(lhs.value <= rhs.value); }\ninline bit i32_greater_than(i32 lhs, i32 rhs) { return bit_from(lhs.value > rhs.value); }\ninline bit i32_greater_than_or_equal(i32 lhs, i32 rhs) { return bit_from(lhs.value >= rhs.value); }\n\n// `uint`\nstruct u32\n{\n    // Runtime Use Members\n    std::uint32_t value;\n\n    explicit u32() = default;\n    explicit u32(std::uint32_t value): value(value) {}\n\n    u32 *_Nonnull operator->() { return this; }\n    u32 const *_Nonnull operator->() const { return this; }\n    u32 & operator* () { return *this; }\n    u32 const & operator* () const { return *this; }\n\n    // Hack to support conversion of int to uint for now\n    u32(i32 value): value(value.value) {}\n\n    // Adamant Members\n    static auto construct() -> u32 { return u32(0); }\n    void op_add_assign(u32 other) { this->value += other.value; }\n    void op_subtract_assign(u32 other) { this->value -= other.value; }\n    bit op_less_than(u32 other) const { return bit_from(this->value < other.value); }\n    bit op_less_than_or_equal(u32 other) const { return bit_from(this->value <= other.value); }\n    bit op_greater_than(u32 other) const { return bit_from(this->value > other.value); }\n    bit op_greater_than_or_equal(u32 other) const { return bit_from(this->value >= other.value); }\n    u32 op_add(u32 other) const { return u32(this->value + other.value); }\n    u32 op_subtract(u32 other) const { return u32(this->value - other.value); }\n};\n\ninline bit u32_less_than(u32 lhs, u32 rhs) { return bit_from(lhs.value < rhs.value); }\ninline bit u32_less_than_or_equal(u32 lhs, u32 rhs) { return bit_from(lhs.value <= rhs.value); }\ninline bit u32_greater_than(u32 lhs, u32 rhs) { return bit_from(lhs.value > rhs.value); }\ninline bit u32_greater_than_or_equal(u32 lhs, u32 rhs) { return bit_from(lhs.value >= rhs.value); }\n\ninline i32::i32(u32 value)\n    : value(value.value)\n{\n}\n\nstruct cp\n{\n    std::uint32_t value;\n\n    // Runtime Use Members\n    explicit cp() = default;\n    explicit cp(char value): value(value) {}\n\n    cp *_Nonnull operator->() { return this; }\n    cp const *_Nonnull operator->() const { return this; }\n    cp & operator* () { return *this; }\n    cp const & operator* () const { return *this; }\n\n    // Adamant Members\n    static auto construct() -> cp { return cp('\\0'); }\n};\n\nchar cp_to_char(cp v);\n\n// TODO: Not sure code_point should support comparision operations\ninline bit cp_less_than(cp lhs, cp rhs) { return bit_from(lhs.value < rhs.value); }\ninline bit cp_less_than_or_equal(cp lhs, cp rhs) { return bit_from(lhs.value <= rhs.value); }\ninline bit cp_greater_than(cp lhs, cp rhs) { return bit_from(lhs.value > rhs.value); }\ninline bit cp_greater_than_or_equal(cp lhs, cp rhs) { return bit_from(lhs.value >= rhs.value); }\n\nstruct str\n{\n    // Runtime Use Members\n    char const *_Nonnull Buffer;\n    int Length;\n\n    explicit str() = default;\n    explicit str(char const *_Nonnull s);\n    explicit str(int length, char const *_Nonnull s);\n    char const *_Nonnull cstr() const;\n    str const *_Nonnull operator->() const { return this; }\n    str const & operator* () const { return *this; }\n\n    typedef char const *_Nonnull const_iterator;\n    const_iterator begin() const { return &Buffer[0]; }\n    const_iterator end() const { return &Buffer[Length]; }\n\n    // Hack to support conversion of int and code_point to strings for now\n    str(i32 other);\n    str(cp other);\n    explicit str(bit other);\n\n    // Adamant Members\n    static auto construct() -> str { str self; self.Length = 0; self.Buffer = 0; return self; }\n    static auto construct(str value) -> str { return value; }\n    static auto construct(cp c, i32 repeat) -> str;\n    // TODO ByteLength should be a property\n    i32 ByteLength_() const { return i32(Length); }\n\n    str Substring_(i32 start, i32 length) const;\n    str Substring_(i32 start) const { return Substring_(start, i32(Length-start.value)); }\n    str Replace_(str oldValue, str newValue) const;\n    i32 LastIndexOf_(cp c) const;\n    i32 index_of_(cp c) const;\n\n    // TODO check index bounds\n    cp op_Element(i32 const index) const { return cp(Buffer[index.value]); }\n    str op_add(str const & value) const;\n    str op_add(bit value) const { return this->op_add(str(value)); }\n};\n\nbit str_less_than(str lhs, str rhs);\nbit str_less_than_or_equal(str lhs, str rhs);\nbit str_greater_than(str lhs, str rhs);\nbit str_greater_than_or_equal(str lhs, str rhs);\n\ninline str new_str()\n{\n    return str::construct();\n}\ninline str new_str(str value)\n{\n    return str::construct(value);\n}\ninline str new_str(cp c, i32 repeat)\n{\n    return str::construct(c, repeat);\n}\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline auto equal_op(bit lhs, bit rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\ninline auto equal_op(p_optional<bit> lhs, p_optional<bit> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));\n    else\n        return bit_not(rhs.has_value());\n}\n\ninline auto equal_op(i32 lhs, i32 rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\ninline auto equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(rhs.has_value()) && bit_arg(equal_op(lhs.value(), rhs.value())));\n    else\n        return bit_not(rhs.has_value());\n}\n\ninline auto equal_op(o_never lhs, o_never rhs) -> bit\n{\n    return bit_true;\n}\n\ninline auto equal_op(cp lhs, cp rhs) -> bit\n{\n    return bit_from(lhs.value == rhs.value);\n}\n\nauto equal_op(str lhs, str rhs) -> bit;\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto equal_op(T const *_Nullable lhs, o_never rhs) -> bit\n{\n    return bit_from(lhs == 0);\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto equal_op(o_never lhs, T const *_Nullable rhs) -> bit\n{\n    return bit_from(0 == rhs);\n}\n\n// TODO Get rid of this ability\ntemplate<typename T>\ninline auto equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs) -> bit\n{\n    return bit_from(lhs == 0);\n}\n\ninline auto not_equal_op(i32 lhs, i32 rhs) -> bit\n{\n    return bit_from(lhs.value != rhs.value);\n}\ninline auto not_equal_op(p_optional<i32> lhs, p_optional<i32> rhs) -> bit\n{\n    if(lhs.has_value().value)\n        return bit_op(bit_arg(bit_not(rhs.has_value())) || bit_arg(not_equal_op(lhs.value(), rhs.value())));\n    else\n        return rhs.has_value();\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(T lhs, T  rhs) -> bit\n{\n    return bit_not(equal_op(lhs, rhs));\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(T const *_Nullable lhs, o_never rhs) -> bit\n{\n    return bit_from(lhs != 0);\n}\n\n// TODO implement this without templates\ntemplate<typename T>\ninline auto not_equal_op(o_never lhs, T const *_Nullable rhs) -> bit\n{\n    return bit_from(0 != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\n// A placeholder function until we get proper exceptions implemented\n_Noreturn inline void THROW_EXCEPTION_(const str& value)\n{\n    throw std::runtime_error(value.cstr());\n}\n\n\ninline void assert(const bit condition, char const *_Nonnull code, const str message, char const *_Nonnull file, const std::int32_t line)\n{\n    if(!condition.value)\n        throw std::runtime_error(\n            str(\"Assertion failed: \").op_add(str(code)).op_add(str(\", \")).op_add(message)\n            .op_add(str(\", file \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)\n\n\n_Noreturn inline void NOT_IMPLEMENTED(const str message, char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)\n{\n    throw std::runtime_error(\n        str(\"Function \").op_add(str(function))\n        .op_add(str(\" not yet implemented, \")).op_add(message).op_add(str(\", \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)\n\n\n_Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)\n{\n    throw std::runtime_error(\n        str(\"Reached \\\"UNREACHABLE\\\" statement in function \").op_add(str(function))\n        .op_add(str(\", \")).op_add(str(file)).op_add(str(\", line \")).op_add(i32(line)).cstr());\n}\n\n#define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)\n\nclass ResourceManager\n{\npublic:\n    str const & GetString_(str resourceName);\n    void AddResource(str name, str value);\n};\n\nextern ResourceManager *_Nonnull const resource_manager_;\n\nvoid debug_write_(str value);\nvoid debug_write_line_(str value);\nvoid debug_write_line_();\n\ntemplate<typename T>\nclass t_system__collections__List\n{\nprivate:\n    T *_Nonnull values;\n    int length;\n    int capacity;\n\npublic:\n    // Runtime Use Members\n    typedef T const *_Nonnull const_iterator;\n    const_iterator begin() const { return values; }\n    const_iterator end() const { return &values[length]; }\n\n    // Adamant Members\n    t_system__collections__List *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }\n    void add_(T value);\n    void clear_() { length = 0; }\n    i32 op_magnitude() const { return i32(length); }\n    T const & op_Element(i32 const index) const;\n};\n\ntemplate<typename T>\nvoid t_system__collections__List<T>::add_(T value)\n{\n    if(length >= capacity)\n    {\n        int newCapacity = capacity == 0 ? 16 : capacity * 2;\n        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        T* newValues = (T*)new char[newCapacity * sizeof(T)];\n        std::memcpy(newValues, values, length * sizeof(T));\n        values = newValues;\n        capacity = newCapacity;\n    }\n    values[length] = value;\n    length++;\n}\n\ntemplate<typename T>\nT const & t_system__collections__List<T>::op_Element(i32 const index) const\n{\n    if(index.value < 0 || index.value >= length)\n        throw std::out_of_range(\"List index out of bounds\");\n    return values[index.value];\n}\n\ntemplate<typename T>\nt_system__collections__List<T> *_Nonnull new_t_system__collections__List()\n{\n    return (new t_system__collections__List<T>())->construct();\n}\n\nclass t_system__console__Console\n{\npublic:\n    void Write_(str value);\n    void WriteLine_(str value);\n    void WriteLine_();\n};\n\nclass t_system__console__Arguments\n{\nprivate:\n    str *_Nonnull args;\npublic:\n    // Runtime Use Members\n    typedef str const *_Nonnull const_iterator;\n\n    t_system__console__Arguments(int argc, char const *_Nonnull const *_Nonnull argv);\n    const_iterator begin() const { return &args[0]; }\n    const_iterator end() const { return &args[Count]; }\n\n    const int Count;\n\n    // Adamant Members\n    i32 op_magnitude() const { return i32(Count); }\n    str const & op_Element(i32 const index) const\n    {\n        if(index.value < 0 || index.value >= Count)\n            throw std::out_of_range(\"Argument index out of bounds\");\n        return args[index.value];\n    }\n};\n\nclass t_system__io__File_Reader\n{\nprivate:\n    std::FILE *_Nonnull file;\n\npublic:\n    t_system__io__File_Reader *_Nonnull construct(const str& fileName);\n    str ReadToEndSync_();\n    void Close_();\n};\n\ninline t_system__io__File_Reader *_Nonnull new_t_system__io__File_Reader(const str& fileName)\n{\n    return (new t_system__io__File_Reader())->construct(fileName);\n}\n\nclass t_system__io__File_Writer\n{\nprivate:\n    std::FILE *_Nonnull file;\n\npublic:\n    t_system__io__File_Writer *_Nonnull construct(const str& fileName);\n    void Write_(const str& value);\n    void Close_();\n};\n\ninline t_system__io__File_Writer *_Nonnull new_t_system__io__File_Writer(const str& fileName)\n{\n    return (new t_system__io__File_Writer())->construct(fileName);\n}\n\nclass t_system__text__String_Builder\n{\nprivate:\n    char *_Nullable buffer;\n    int capacity;\n    int length;\n    void ensure_capacity(int needed);\npublic:\n    // Runtime Use Members\n    t_system__text__String_Builder(): buffer(0), capacity(0), length(0) { }\n\n    // Adamant Members\n    t_system__text__String_Builder *_Nonnull construct() { return this; }\n    t_system__text__String_Builder *_Nonnull construct(str const & value);\n    t_system__text__String_Builder *_Nonnull construct_with_capacity(i32 capacity);\n    // TODO byte_length_ should be a property\n    i32 byte_length_() const { return i32(length); }\n    void Append_(str const & value);\n    void Append_(t_system__text__String_Builder const *_Nonnull value);\n    void AppendLine_(str const& value);\n    void AppendLine_();\n    void Remove_(i32 start, i32 length);\n    void Remove_(i32 start);\n    str ToString_();\n};\n\ninline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder()\n{\n    return (new t_system__text__String_Builder())->construct();\n}\n\ninline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder(str const & value)\n{\n    return (new t_system__text__String_Builder())->construct(value);\n}\n\ninline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder__with_capacity(i32 capacity)\n{\n    return (new t_system__text__String_Builder())->construct_with_capacity(capacity);\n}\n"));
 
 		return main_(new t_system__console__Console(), new t_system__console__Arguments(argc, argv)).value;
 	}
