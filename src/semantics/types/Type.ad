@@ -3,7 +3,7 @@ public class Type
 {
     public let kind: int;
     public let name: Name;
-    public let type_parameters: System.Collections.List<Type>;
+    public let type_parameters: system.collections.List<Type>;
     public let is_primitive: bool;
     public let is_value_type: bool;
     public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
@@ -16,7 +16,7 @@ public class Type
         assert(name =/= none, "");
         self.kind = kind;
         self.name = name;
-        self.type_parameters = new System.Collections.List<Type>();
+        self.type_parameters = new system.collections.List<Type>();
         self.is_primitive = false;
         self.is_value_type = kind == ValueType;
         self.is_potentially_mutable = is_mutable;
@@ -27,14 +27,14 @@ public class Type
     {
         self.kind = TypeParameterType;
         self.name = new Name(new Name.global_namespace(), TypeParameterName, name);
-        self.type_parameters = new System.Collections.List<Type>();
+        self.type_parameters = new system.collections.List<Type>();
         self.is_primitive = false;
         self.is_value_type = false;
         self.is_potentially_mutable = true;
         self.is_mutable = false;
     }
 
-    public new(kind: int, name: Name, type_parameters: System.Collections.List<Type>, is_mutable: bool)
+    public new(kind: int, name: Name, type_parameters: system.collections.List<Type>, is_mutable: bool)
     {
         self.kind = kind;
         self.name = name;
@@ -49,14 +49,14 @@ public class Type
     {
         self.kind = ValueType;
         self.name = name;
-        self.type_parameters = new System.Collections.List<Type>();
+        self.type_parameters = new system.collections.List<Type>();
         self.is_primitive = true;
         self.is_value_type = true;
         self.is_potentially_mutable = false;
         self.is_mutable = false;
     }
 
-    public new primitive(name: Name, type_parameters: System.Collections.List<Type>)
+    public new primitive(name: Name, type_parameters: system.collections.List<Type>)
     {
         self.kind = ValueType;
         self.name = name;
@@ -72,14 +72,14 @@ public class Type
         self.kind = NamespaceType;
         self.name = name;
         self.is_primitive = false;
-        self.type_parameters = new System.Collections.List<Type>();
+        self.type_parameters = new system.collections.List<Type>();
         // TODO value type don't make sense for namespaces
         self.is_value_type = true;
         self.is_potentially_mutable = false;
         self.is_mutable = false;
     }
 
-    public new generic(definition: Type, type_arguments: System.Collections.List<Type>)
+    public new generic(definition: Type, type_arguments: system.collections.List<Type>)
     {
         assert(definition =/= none, "");
         assert(type_arguments =/= none, definition.name.full());
@@ -93,7 +93,7 @@ public class Type
         self.is_potentially_mutable = definition.is_potentially_mutable;
         self.is_mutable = definition.is_mutable;
     }
-    private new(kind: int, name: Name, type_parameters: System.Collections.List<Type>, is_primitive: bool, is_potentially_mutable: bool, is_mutable: bool)
+    private new(kind: int, name: Name, type_parameters: system.collections.List<Type>, is_primitive: bool, is_potentially_mutable: bool, is_mutable: bool)
     {
         self.kind = kind;
         self.name = name;

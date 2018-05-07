@@ -11,8 +11,8 @@ public class Semantic_Node
     public let source: Source_Text;
     public let start: uint;
     public let byte_length: uint;
-    public let children: System.Collections.List<Semantic_Node>;
-    private let node_diagnostics: mut System.Collections.List<Diagnostic>;
+    public let children: system.collections.List<Semantic_Node>;
+    private let node_diagnostics: mut system.collections.List<Diagnostic>;
 
     /// The type of an expression (or variable) before any implicit conversions
     public let of_type: Type?;
@@ -35,8 +35,8 @@ public class Semantic_Node
         self.source = syntax.source;
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
-        self.children = new System.Collections.List<Semantic_Node>();
-        self.node_diagnostics = new System.Collections.List<Diagnostic>();
+        self.children = new system.collections.List<Semantic_Node>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
@@ -44,7 +44,7 @@ public class Semantic_Node
     }
 
     /// Construct a concrete mirror of a `Syntax_Node`
-    public new concrete(syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
+    public new concrete(syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
         assert(syntax =/= none, "");
         self.syntax = syntax;
@@ -54,14 +54,14 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = new System.Collections.List<Diagnostic>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
         self.referenced_type = none;
     }
 
-    public new of_type(of_type: Type, syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
+    public new of_type(of_type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
         assert(of_type =/= none, "");
         assert(syntax =/= none, "");
@@ -72,14 +72,14 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = new System.Collections.List<Diagnostic>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = of_type;
         self.converted_type = of_type;
         self.declares_type = none;
         self.referenced_type = none;
     }
 
-    public new declares_type(type: Type, syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
+    public new declares_type(type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
         assert(type =/= none, "");
         assert(syntax =/= none, "");
@@ -90,14 +90,14 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = new System.Collections.List<Diagnostic>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = of_type;
         self.converted_type = none;
         self.declares_type = type;
         self.referenced_type = none;
     }
 
-    public new referencing_type(type: Type, syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
+    public new referencing_type(type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
         assert(type =/= none, "");
         assert(syntax =/= none, "");
@@ -108,7 +108,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = new System.Collections.List<Diagnostic>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
@@ -136,9 +136,9 @@ public class Semantic_Node
         return none;
     }
 
-    public children_of_kind(self, kind: int) -> System.Collections.List<Semantic_Node>
+    public children_of_kind(self, kind: int) -> system.collections.List<Semantic_Node>
     {
-        let children: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
         for let child: Semantic_Node in self.children
         {
             if child.kind == kind
@@ -150,9 +150,9 @@ public class Semantic_Node
     }
 
     // TODO this should only be on things like class, struct that have members
-    public members(self) -> System.Collections.List<Semantic_Node>
+    public members(self) -> system.collections.List<Semantic_Node>
     {
-        let members: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let members: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
         for let child: Semantic_Node in children
         {
             // TODO fix this to a more reliable means of telling what should be visited
@@ -167,9 +167,9 @@ public class Semantic_Node
     }
 
     // TODO this should only be on things like block
-    public statements(self) -> System.Collections.List<Semantic_Node>
+    public statements(self) -> system.collections.List<Semantic_Node>
     {
-        let statements: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let statements: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
         for let child: Semantic_Node in children
         {
             // TODO fix this to a more reliable means of telling what should be visited
@@ -183,9 +183,9 @@ public class Semantic_Node
     }
 
     // TODO this should only be on things like parameter list and function
-    public parameters(self) -> System.Collections.List<Semantic_Node>
+    public parameters(self) -> system.collections.List<Semantic_Node>
     {
-        let parameters: mut System.Collections.List<Semantic_Node> = new System.Collections.List<Semantic_Node>();
+        let parameters: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
         for let child: Semantic_Node in children
         {
             // TODO fix this to a more reliable means of telling what should be visited
@@ -231,12 +231,12 @@ public class Semantic_Node
         node_diagnostics.add(diagnostic);
     }
 
-    public diagnostics(self) -> System.Collections.List<Diagnostic>
+    public diagnostics(self) -> system.collections.List<Diagnostic>
     {
         return self.node_diagnostics;
     }
 
-    protected collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+    protected collect_diagnostics(self, diagnostics: mut system.collections.List<Diagnostic>) -> void
     {
         for let diagnostic: Diagnostic in node_diagnostics
         {

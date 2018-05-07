@@ -1,14 +1,14 @@
 public class Source_File_Builder
 {
-    private let code: mut System.Text.String_Builder;
-    private let indent: mut System.Text.String_Builder; // TODO expose length as IndentDepth
+    private let code: mut system.text.String_Builder;
+    private let indent: mut system.text.String_Builder; // TODO expose length as IndentDepth
     private var firstElement: bool; // TODO expose public getter
     private var afterBlock: bool; // TODO expose public getter
 
     public new()
     {
-        code = new System.Text.String_Builder();
-        indent = new System.Text.String_Builder();
+        code = new system.text.String_Builder();
+        indent = new system.text.String_Builder();
         firstElement = true;
         afterBlock = true;
     }

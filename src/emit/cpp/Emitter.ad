@@ -60,7 +60,7 @@
 public class Emitter
 {
     private let package: Package;
-    private let resources: System.Collections.List<Source_Text>;
+    private let resources: system.collections.List<Source_Text>;
     // TODO fix casing on these field names
     private var type_declarations: mut Source_File_Builder;
     private var function_declarations: mut Source_File_Builder;
@@ -74,7 +74,7 @@ public class Emitter
     private var main_function_accepts_console: bool;
     private var main_function_accepts_args: bool;
 
-    public new(package: Package, resources: System.Collections.List<Source_Text>)
+    public new(package: Package, resources: system.collections.List<Source_Text>)
     {
         self.package = package;
         self.resources = resources;
@@ -107,7 +107,7 @@ public class Emitter
             + class_declarations.byte_length()
             + global_definitions.byte_length()
             + definitions.byte_length();
-        let cpp_code: mut System.Text.String_Builder = new System.Text.String_Builder()/*.with_capacity(total_size)*/;
+        let cpp_code: mut system.text.String_Builder = new system.text.String_Builder()/*.with_capacity(total_size)*/;
         cpp_code.Append(type_declarations.ToString());
         cpp_code.Append(function_declarations.ToString());
         cpp_code.Append(class_declarations.ToString());
@@ -120,7 +120,7 @@ public class Emitter
     private mangle_name(name: Name) -> string
     {
         // TODO what about name.is_special == true?
-        let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
+        let builder: mut system.text.String_Builder = new system.text.String_Builder();
         if name.kind == TypeName
             { builder.Append("t_"); }
         else if name.kind == FunctionName
@@ -220,15 +220,15 @@ public class Emitter
     }
 
     // Converts a type to C++
-    private convert_type_name(type_node: Semantic_Node) -> mut System.Text.String_Builder
+    private convert_type_name(type_node: Semantic_Node) -> mut system.text.String_Builder
     {
         assert(type_node.referenced_type =/= none, type_node.get_text());
         return convert_type_name(type_node.referenced_type);
     }
 
-    private convert_type_name(type: Type) -> mut System.Text.String_Builder
+    private convert_type_name(type: Type) -> mut system.text.String_Builder
     {
-        let cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder();
+        let cpp_type: mut system.text.String_Builder = new system.text.String_Builder();
         if type.is_primitive
         {
             cpp_type.Append(convert_primitive_type_name(type));
@@ -255,7 +255,7 @@ public class Emitter
 
     private convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
     {
-        let cpp_type: mut System.Text.String_Builder = convert_type_name(type);
+        let cpp_type: mut system.text.String_Builder = convert_type_name(type);
         if not type.is_mutable { cpp_type.Append(" const"); }
         cpp_type.Append(" *");
         if nullable
@@ -277,7 +277,7 @@ public class Emitter
             if optional_type.is_value_type
             {
                 // optional<T> is a const struct
-                let cpp_type: mut System.Text.String_Builder = new System.Text.String_Builder("p_optional<");
+                let cpp_type: mut system.text.String_Builder = new system.text.String_Builder("p_optional<");
                 cpp_type.Append(convert_type(true, optional_type, true));
                 cpp_type.Append(">");
                 if not mutable_binding and not type.is_mutable
@@ -293,7 +293,7 @@ public class Emitter
         {
             if type.is_value_type
             {
-                let cpp_type: mut System.Text.String_Builder = convert_type_name(type);
+                let cpp_type: mut system.text.String_Builder = convert_type_name(type);
                 if not mutable_binding and not type.is_mutable
                     { cpp_type.Append(" const"); }
                 return cpp_type.ToString();
@@ -314,7 +314,7 @@ public class Emitter
     private convert_parameter_list(mut self, parameters: Semantic_Node, is_main_function: bool) -> string
     {
         assert(parameters.kind == ParameterList, "parameters.kind=" + parameters.kind);
-        let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
+        let builder: mut system.text.String_Builder = new system.text.String_Builder();
         builder.Append("(");
         var first_parameter: bool = true;
         for let parameter: Semantic_Node in parameters.children_of_kind(Parameter)
@@ -339,10 +339,8 @@ public class Emitter
                 else
                     { type_string = type_node.get_text(); }
                 if type_string == "system.console.Console"
-                    or type_string == "System.Console.Console"
                     { main_function_accepts_console = true; }
                 if type_string == "system.console.Arguments"
-                    or type_string == "System.Console.Arguments"
                     { main_function_accepts_args = true; }
             }
         }
@@ -1140,7 +1138,7 @@ public class Emitter
         }
 
         // TODO should be `new mut`
-        let args: mut System.Text.String_Builder = new System.Text.String_Builder();
+        let args: mut system.text.String_Builder = new system.text.String_Builder();
         if main_function_accepts_console
             { args.Append("new t_system__console__Console()"); }
         if main_function_accepts_args

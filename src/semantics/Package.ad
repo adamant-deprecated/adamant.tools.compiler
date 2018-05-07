@@ -2,15 +2,15 @@
 public class Package
 {
     public let name: Package_Name;
-    public let references: System.Collections.List<Package_Reference>;
-    public let compilation_units: System.Collections.List<Compilation_Unit>;
+    public let references: system.collections.List<Package_Reference>;
+    public let compilation_units: system.collections.List<Compilation_Unit>;
     public let symbol: Symbol;
 
     // TODO constructor not adequately encapsulated to enforce invariants
     public new(
         name: Package_Name,
-        references: System.Collections.List<Package_Reference>,
-        compilation_units: System.Collections.List<Compilation_Unit>,
+        references: system.collections.List<Package_Reference>,
+        compilation_units: system.collections.List<Compilation_Unit>,
         symbol: Symbol)
     {
         self.name = name;
@@ -19,9 +19,9 @@ public class Package
         self.symbol = symbol;
     }
 
-    public all_diagnostics(self) -> System.Collections.List<Diagnostic>
+    public all_diagnostics(self) -> system.collections.List<Diagnostic>
     {
-        var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+        var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
         for let compilation_unit: Compilation_Unit in compilation_units
         {
             compilation_unit.collect_diagnostics(diagnostics);

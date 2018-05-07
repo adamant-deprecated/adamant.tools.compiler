@@ -4,7 +4,7 @@ public class Name_Table_Builder
     public build(self,
         package_name: Package_Name,
         package_syntax: Syntax_Node,
-        references: System.Collections.List<Package_Reference>)
+        references: system.collections.List<Package_Reference>)
         -> Name_Table
     {
         assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
@@ -16,7 +16,7 @@ public class Name_Table_Builder
 
     private add_referenced(
         name_table: mut Name_Table,
-        references: System.Collections.List<Package_Reference>)
+        references: system.collections.List<Package_Reference>)
         -> void
     {
         for let reference: Package_Reference in references

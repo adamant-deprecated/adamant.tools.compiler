@@ -2,12 +2,12 @@
 public /*mut*/ class Name_Table
 {
     public let any_package: mut Name_Subtable;
-    private let packages: mut System.Collections.List<mut Name_Subtable>;
+    private let packages: mut system.collections.List<mut Name_Subtable>;
 
     public new()
     {
         self.any_package = new Name_Subtable.global_namespace(self);
-        self.packages = new System.Collections.List<mut Name_Subtable>();
+        self.packages = new system.collections.List<mut Name_Subtable>();
     }
 
     /// Adds a `Package_Binding_Declaration` for the named package

@@ -8,9 +8,9 @@ public class Symbol
     public let of_type: Type; // for variables and parameters, the type of the value they represent
     public let declares_type: Type; // for class/struct/enum symbols, the type being declared
     // TODO declarations should be immutable
-    public let declarations: System.Collections.List<Semantic_Node>;
+    public let declarations: system.collections.List<Semantic_Node>;
     // TODO children should be immutable
-    public let children: System.Collections.List<Symbol>;
+    public let children: system.collections.List<Symbol>;
 
     public new identifier(name: string)
     {
@@ -20,11 +20,11 @@ public class Symbol
         self.is_special_name = false;
         self.of_type = none;
         self.declares_type = none;
-        self.declarations = new System.Collections.List<Semantic_Node>();
-        self.children = new System.Collections.List<Symbol>();
+        self.declarations = new system.collections.List<Semantic_Node>();
+        self.children = new system.collections.List<Symbol>();
     }
 
-    public new identifier(name: string, declarations: System.Collections.List<Semantic_Node>)
+    public new identifier(name: string, declarations: system.collections.List<Semantic_Node>)
     {
         assert(name.ByteLength() > 0, "");
         assert(declarations =/= none, "name="+name);
@@ -34,10 +34,10 @@ public class Symbol
         self.of_type = none;
         self.declares_type = none;
         self.declarations = declarations;
-        self.children = new System.Collections.List<Symbol>();
+        self.children = new system.collections.List<Symbol>();
     }
 
-    public new identifier(name: string, children: System.Collections.List<Symbol>)
+    public new identifier(name: string, children: system.collections.List<Symbol>)
     {
         assert(name.ByteLength() > 0, "");
         assert(children =/= none, "name="+name);
@@ -46,11 +46,11 @@ public class Symbol
         self.is_special_name = false;
         self.of_type = none;
         self.declares_type = none;
-        self.declarations = new System.Collections.List<Semantic_Node>();
+        self.declarations = new system.collections.List<Semantic_Node>();
         self.children = children;
     }
 
-    public new constructor(name: string, declarations: System.Collections.List<Semantic_Node>)
+    public new constructor(name: string, declarations: system.collections.List<Semantic_Node>)
     {
         assert(name.ByteLength() > 0, "");
         assert(declarations =/= none, "name="+name);
@@ -60,10 +60,10 @@ public class Symbol
         self.of_type = none;
         self.declares_type = none;
         self.declarations = declarations;
-        self.children = new System.Collections.List<Symbol>();
+        self.children = new system.collections.List<Symbol>();
     }
 
-    public new package(name: string, children: System.Collections.List<Symbol>)
+    public new package(name: string, children: system.collections.List<Symbol>)
     {
         assert(name.ByteLength() > 0, "");
         assert(children =/= none, "name="+name);
@@ -72,14 +72,14 @@ public class Symbol
         self.is_special_name = false;
         self.of_type = none;
         self.declares_type = none;
-        self.declarations = new System.Collections.List<Semantic_Node>();
+        self.declarations = new system.collections.List<Semantic_Node>();
         self.children = children;
     }
 
     public new declaring(
         declares_type: Type,
-        declarations: System.Collections.List<Semantic_Node>,
-        children: System.Collections.List<Symbol>)
+        declarations: system.collections.List<Semantic_Node>,
+        children: system.collections.List<Symbol>)
     {
         assert(declares_type =/= none, "");
         assert(declarations =/= none, "name="+declares_type.name.unqualified());
@@ -95,8 +95,8 @@ public class Symbol
     public new of_type(
         name: string,
         of_type: Type,
-        declarations: System.Collections.List<Semantic_Node>,
-        children: System.Collections.List<Symbol>)
+        declarations: system.collections.List<Semantic_Node>,
+        children: system.collections.List<Symbol>)
     {
         assert(of_type =/= none, "name="+name);
         assert(declarations =/= none, "name="+name);

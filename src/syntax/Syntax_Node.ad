@@ -138,8 +138,8 @@ public class Syntax_Node
     public let source: Source_Text;
     public let start: uint;
     public let byte_length: uint; // TODO is this ByteLength?
-    public let children: System.Collections.List<Syntax_Node>;
-    public let node_diagnostics: mut System.Collections.List<Diagnostic>;
+    public let children: system.collections.List<Syntax_Node>;
+    public let node_diagnostics: mut system.collections.List<Diagnostic>;
 
     public new(type: int, source: Source_Text, start: uint, length: uint)
     {
@@ -148,8 +148,8 @@ public class Syntax_Node
         self.source = source;
         self.start = start;
         byte_length = length;
-        self.children = new System.Collections.List<Syntax_Node>();
-        node_diagnostics = new System.Collections.List<Diagnostic>();
+        self.children = new system.collections.List<Syntax_Node>();
+        node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     public new(type: int, isMissing: bool, source: Source_Text, start: uint, length: uint)
@@ -159,8 +159,8 @@ public class Syntax_Node
         self.source = source;
         self.start = start;
         byte_length = length;
-        self.children = new System.Collections.List<Syntax_Node>();
-        node_diagnostics = new System.Collections.List<Diagnostic>();
+        self.children = new system.collections.List<Syntax_Node>();
+        node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     public new(type: int, child: Syntax_Node)
@@ -170,14 +170,14 @@ public class Syntax_Node
         source = child.source;
         start = child.start;
         byte_length = child.byte_length;
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         children.add(child);
         self.children = children;
-        node_diagnostics = new System.Collections.List<Diagnostic>();
+        node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     // TODO we want to take ownership of the child list
-    public new(type: int, children: System.Collections.List<Syntax_Node>)
+    public new(type: int, children: system.collections.List<Syntax_Node>)
     {
         kind = type;
         is_missing = false;
@@ -187,7 +187,7 @@ public class Syntax_Node
         let lastChild: Syntax_Node = children[|children| - 1];
         byte_length = lastChild.start - start + lastChild.byte_length;
         self.children = children;
-        node_diagnostics = new System.Collections.List<Diagnostic>();
+        node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     public get_text(self) -> string
@@ -221,14 +221,14 @@ public class Syntax_Node
     }
 
     // We are returning ownership of the list, so they can mutate it if wanted
-    public all_diagnostics(self) -> mut System.Collections.List<Diagnostic>
+    public all_diagnostics(self) -> mut system.collections.List<Diagnostic>
     {
-        var diagnostics: mut System.Collections.List<Diagnostic> = new System.Collections.List<Diagnostic>();
+        var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
         collect_diagnostics(diagnostics);
         return diagnostics;
     }
 
-    public collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+    public collect_diagnostics(self, diagnostics: mut system.collections.List<Diagnostic>) -> void
     {
         for let diagnostic: Diagnostic in node_diagnostics
         {
@@ -242,9 +242,9 @@ public class Syntax_Node
     }
 
     // TODO this should only be on things like class, struct that have members
-    public members(self) -> System.Collections.List<Syntax_Node>
+    public members(self) -> system.collections.List<Syntax_Node>
     {
-        let members: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let members: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         for let child: Syntax_Node in children
         {
             // TODO fix this to a more reliable means of telling what should be visited
@@ -259,9 +259,9 @@ public class Syntax_Node
     }
 
     // TODO this should only be on things like parameter list and function
-    public parameters(self) -> System.Collections.List<Syntax_Node>
+    public parameters(self) -> system.collections.List<Syntax_Node>
     {
-        let parameters: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let parameters: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         for let child: Syntax_Node in children
         {
             // TODO fix this to a more reliable means of telling what should be visited
@@ -275,9 +275,9 @@ public class Syntax_Node
     }
 
     // TODO this should only be on things like block
-    public statements(self) -> System.Collections.List<Syntax_Node>
+    public statements(self) -> system.collections.List<Syntax_Node>
     {
-        let statements: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let statements: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         for let child: Syntax_Node in children
         {
             // TODO fix this to a more reliable means of telling what should be visited
@@ -326,7 +326,7 @@ public new_Syntax_Node_Skipped(skipped_node: Syntax_Node) -> Syntax_Node
 }
 
 // TODO make this a named constructor
-public new_Syntax_Node_Skipped(skipped_nodes: System.Collections.List<Syntax_Node>) -> Syntax_Node
+public new_Syntax_Node_Skipped(skipped_nodes: system.collections.List<Syntax_Node>) -> Syntax_Node
 {
     let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped_nodes);
     let span: Text_Span = new Text_Span(node.start, node.byte_length);

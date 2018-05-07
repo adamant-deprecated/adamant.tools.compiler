@@ -1,4 +1,4 @@
-public compile(sources: System.Collections.List<Source_Text>) -> Package
+public compile(sources: system.collections.List<Source_Text>) -> Package
 {
     let parser: Parser = new Parser();
     let package_syntax: Syntax_Node = parser.ParsePackage(sources);
@@ -7,7 +7,7 @@ public compile(sources: System.Collections.List<Source_Text>) -> Package
     return package;
 }
 
-public write(console: mut System.Console.Console, diagnostics: System.Collections.List<Diagnostic>) -> void
+public write(console: mut system.console.Console, diagnostics: system.collections.List<Diagnostic>) -> void
 {
     for let diagnostic: Diagnostic in diagnostics
     {
@@ -25,7 +25,7 @@ public write(console: mut System.Console.Console, diagnostics: System.Collection
     }
 }
 
-public has_errors(diagnostics: System.Collections.List<Diagnostic>) -> bool
+public has_errors(diagnostics: system.collections.List<Diagnostic>) -> bool
 {
     for let diagnostic: Diagnostic in diagnostics
     {
@@ -42,7 +42,7 @@ public let Success: int = 0;
 public let UsageError: int = 64;
 public let DataError: int = 65;
 
-public main(console: mut System.Console.Console, args: System.Console.Arguments) -> int
+public main(console: mut system.console.Console, args: system.console.Arguments) -> int
 {
     if |args| == 1 and args[0] == "--unit-test"
     {
@@ -50,8 +50,8 @@ public main(console: mut System.Console.Console, args: System.Console.Arguments)
         return 0;
     }
 
-    let sourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
-    let resourceFilePaths: mut System.Collections.List<string> = new System.Collections.List<string>();
+    let sourceFilePaths: mut system.collections.List<string> = new system.collections.List<string>();
+    let resourceFilePaths: mut system.collections.List<string> = new system.collections.List<string>();
     var outputFilePath: string = "";
     var verbose: bool = false;
     var argType: int = 0; // 0=source file, 1=resource file, 2=output file
@@ -101,7 +101,7 @@ public main(console: mut System.Console.Console, args: System.Console.Arguments)
     }
 
     // Read Resources
-    let resources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
+    let resources: mut system.collections.List<Source_Text> = new system.collections.List<Source_Text>();
     if |resourceFilePaths| > 0
     {
         if verbose
@@ -123,7 +123,7 @@ public main(console: mut System.Console.Console, args: System.Console.Arguments)
     {
         console.WriteLine("Compiling:");
     }
-    let sources: mut System.Collections.List<Source_Text> = new System.Collections.List<Source_Text>();
+    let sources: mut system.collections.List<Source_Text> = new system.collections.List<Source_Text>();
     for let sourceFilePath: string in sourceFilePaths
     {
         if(verbose)
@@ -135,7 +135,7 @@ public main(console: mut System.Console.Console, args: System.Console.Arguments)
 
     let package: Package = compile(sources);
 
-    let diagnostics: System.Collections.List<Diagnostic> = package.all_diagnostics();
+    let diagnostics: system.collections.List<Diagnostic> = package.all_diagnostics();
     write(console, diagnostics);
 
     if has_errors(diagnostics)
@@ -153,7 +153,7 @@ public main(console: mut System.Console.Console, args: System.Console.Arguments)
         console.WriteLine(outputFilePath);
     }
     // TODO should be `new mut`
-    let outputFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputFilePath);
+    let outputFile: mut system.io.File_Writer = new system.io.File_Writer(outputFilePath);
     outputFile.Write(translated);
     outputFile.Close();
 
@@ -170,10 +170,10 @@ public main(console: mut System.Console.Console, args: System.Console.Arguments)
         console.Write("Outputting RuntimeLibrary to: ");
         console.WriteLine(outputDirPath);
     }
-    var resourceFile: mut System.IO.File_Writer = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.hpp");
+    var resourceFile: mut system.io.File_Writer = new system.io.File_Writer(outputDirPath+"RuntimeLibrary.hpp");
     resourceFile.Write(resource_manager.GetString("RuntimeLibrary.hpp"));
     resourceFile.Close();
-    resourceFile = new System.IO.File_Writer(outputDirPath+"RuntimeLibrary.cpp");
+    resourceFile = new system.io.File_Writer(outputDirPath+"RuntimeLibrary.cpp");
     resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
     resourceFile.Close();
 
@@ -183,7 +183,7 @@ public main(console: mut System.Console.Console, args: System.Console.Arguments)
 public read_source(path: string) -> Source_Text
 {
     // TODO should be `mut new` or `new mut`, whichever is decided to be the correct syntax
-    let file: mut System.IO.File_Reader = new System.IO.File_Reader(path);
+    let file: mut system.io.File_Reader = new system.io.File_Reader(path);
     let contents: string = file.ReadToEndSync();
     file.Close(); // TODO this should automatically be handled
     return new Source_Text("<default>", path, contents);

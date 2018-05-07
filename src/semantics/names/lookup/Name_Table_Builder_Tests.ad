@@ -10,18 +10,18 @@ public table_contains_referenced_child_names() -> void
 {
     let name: Package_Name = new Package_Name("default");
     let runtime_package: Package = new Runtime_Library_Package_Builder().build();
-    let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+    let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     references.add(new Package_Reference(runtime_package));
 
     let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
     let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
-    let namespace: Name_Subtable = name_table.any_package.find("System");
-    assert(namespace.find("Console") =/= none, "");
+    let namespace: Name_Subtable = name_table.any_package.find("system");
+    assert(namespace.find("console") =/= none, "");
 
-    let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "System");
+    let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
     assert(name_table.get(system_namespace_name) =/= none, "");
-    let console_namespace_name: Name = new Name(system_namespace_name, NamespaceName, "Console");
+    let console_namespace_name: Name = new Name(system_namespace_name, NamespaceName, "console");
     assert(name_table.get(console_namespace_name) =/= none, "");
     let console_class_name: Name = new Name(console_namespace_name, TypeName, "Console");
     assert(name_table.get(console_class_name) =/= none, "");
@@ -31,13 +31,13 @@ public can_get_root_namespace_from_name() -> void
 {
     let name: Package_Name = new Package_Name("default");
     let runtime_package: Package = new Runtime_Library_Package_Builder().build();
-    let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+    let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     references.add(new Package_Reference(runtime_package));
 
     let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
     let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
-    let namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "System");
+    let namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
     assert(name_table.get(namespace_name) =/= none, "");
 }
 
@@ -45,15 +45,15 @@ public can_get_Console_class_from_name_without_package() -> void
 {
     let name: Package_Name = new Package_Name("default");
     let runtime_package: Package = new Runtime_Library_Package_Builder().build();
-    let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+    let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     references.add(new Package_Reference(runtime_package));
 
     let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
     let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
 
-    let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "System");
-    let console_namespace_name: Name = new Name(system_namespace_name, NamespaceName, "Console");
+    let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
+    let console_namespace_name: Name = new Name(system_namespace_name, NamespaceName, "console");
     let console_class_name: Name = new Name(console_namespace_name, TypeName, "Console");
     assert(name_table.get(console_class_name) =/= none, "");
 }
@@ -62,7 +62,7 @@ public can_get_Optional_class_from_name_with_package() -> void
 {
     let name: Package_Name = new Package_Name("default");
     let primitives_package: Package = new Primitives_Package_Builder().build();
-    let references: mut System.Collections.List<Package_Reference> = new System.Collections.List<Package_Reference>();
+    let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     references.add(new Package_Reference(primitives_package));
 
     let name_table_builder: Name_Table_Builder = new Name_Table_Builder();

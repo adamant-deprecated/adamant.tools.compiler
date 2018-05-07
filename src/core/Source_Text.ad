@@ -27,10 +27,10 @@ public class Source_Text
         Lines = new Line_Info(self, LineStarts());
     }
 
-    private LineStarts(self) -> System.Collections.List<int>
+    private LineStarts(self) -> system.collections.List<int>
     {
         let length: int = ByteLength();
-        let lineStarts: mut System.Collections.List<int> = new System.Collections.List<int>();
+        let lineStarts: mut system.collections.List<int> = new system.collections.List<int>();
         lineStarts.add(0); // there is always the first line
 
         // performance critical

@@ -4,7 +4,7 @@ public /*mut*/ class Name_Subtable
     public let parent: Name_Subtable?; // TODO this should point at the package binding scope?
     public let name: Name;
     public var type: Type;
-    private let subtables: mut System.Collections.List<mut Name_Subtable>;
+    private let subtables: mut system.collections.List<mut Name_Subtable>;
 
     public new global_namespace(name_table: Name_Table)
     {
@@ -13,7 +13,7 @@ public /*mut*/ class Name_Subtable
         self.parent = none;
         self.name = new Name.global_namespace();
         self.type = new Type.namespace(self.name);
-        subtables = new System.Collections.List<mut Name_Subtable>();
+        subtables = new system.collections.List<mut Name_Subtable>();
     }
 
     public new global_namespace(name_table: Name_Table, package_name: Package_Name)
@@ -23,7 +23,7 @@ public /*mut*/ class Name_Subtable
         self.parent = none;
         self.name = new Name.global_namespace(package_name);
         self.type = new Type.namespace(self.name);
-        subtables = new System.Collections.List<mut Name_Subtable>();
+        subtables = new system.collections.List<mut Name_Subtable>();
     }
 
     private new(parent: Name_Subtable, name: Name, type: Type)
@@ -34,7 +34,7 @@ public /*mut*/ class Name_Subtable
         self.parent = parent;
         self.name = name;
         self.type = type;
-        subtables = new System.Collections.List<mut Name_Subtable>();
+        subtables = new system.collections.List<mut Name_Subtable>();
     }
 
     public add(mut self, name: Name, type: Type) -> void

@@ -2,14 +2,14 @@ public class Token_Stream
 {
     public let source: Source_Text;
     private var position: uint;
-    private let diagnostics: mut System.Collections.List<Diagnostic>;
+    private let diagnostics: mut system.collections.List<Diagnostic>;
     private var endOfFile: bool;
 
     public new(source: Source_Text)
     {
         self.source = source;
         position = 0; // TODO have to assign this zero for now because we don't have default values working
-        diagnostics = new System.Collections.List<Diagnostic>();
+        diagnostics = new system.collections.List<Diagnostic>();
         endOfFile = false; // TODO implement auto initialize so this doesn't have to be initialized
     }
 

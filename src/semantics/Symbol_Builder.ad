@@ -3,10 +3,10 @@ public class Symbol_Builder
 {
     public build(
         package_name: Package_Name,
-        compilation_units: System.Collections.List<Compilation_Unit>)
+        compilation_units: system.collections.List<Compilation_Unit>)
         -> Symbol
     {
-        let symbols: mut System.Collections.List<Symbol> = new System.Collections.List<Symbol>();
+        let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
 
         return new Symbol.package(package_name.unqualified, symbols);
     }

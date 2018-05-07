@@ -69,14 +69,14 @@ public class Compilation_Unit_Parser
 
             while token.kind == Dot
             {
-                let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+                let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
                 children.add(type);
                 children.add(ExpectToken(Dot));
                 let identifier: Syntax_Node = ExpectToken(Identifier);
                 if token.kind == LessThan
                 {
                     // Generic Name
-                    let genericNameChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+                    let genericNameChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
                     genericNameChildren.add(new Syntax_Node(IdentifierName, identifier));
                     genericNameChildren.add(ExpectToken(LessThan));
                     genericNameChildren.add(ParseType());
@@ -98,7 +98,7 @@ public class Compilation_Unit_Parser
 
     private ParseNonOptionalType(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
 
         if token.kind == MutableKeyword
         {
@@ -120,7 +120,7 @@ public class Compilation_Unit_Parser
 
         while token.kind == Question
         {
-            let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+            let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
             children.add(type);
             children.add(ExpectToken(Question));
             type = new Syntax_Node(ImmutableType, new Syntax_Node(OptionalType, children));
@@ -132,7 +132,7 @@ public class Compilation_Unit_Parser
     // An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
     private ParseAtom(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
 
         // This should be a match on the token type
         if token.kind == NewKeyword
@@ -217,7 +217,7 @@ public class Compilation_Unit_Parser
 
     private ParseCallArguments(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         children.add(ExpectToken(LeftParen));
         if token.kind =/= RightParen
         {
@@ -250,7 +250,7 @@ public class Compilation_Unit_Parser
 
         loop
         {
-            let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+            let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
             children.add(expression);
 
             var precedence: int;
@@ -401,7 +401,7 @@ public class Compilation_Unit_Parser
 
     private ParseStatement(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
 
         if token.kind == ReturnKeyword
         {
@@ -479,14 +479,14 @@ public class Compilation_Unit_Parser
 
     private ParseIfStatement(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
 
         children.add(ExpectToken(IfKeyword));
         children.add(ParseExpression());
         children.add(ParseBlock());
         if token.kind == ElseKeyword
         {
-            let elseChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+            let elseChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
             elseChildren.add(ExpectToken(ElseKeyword));
             if token.kind == IfKeyword
                 { elseChildren.add(ParseIfStatement()); }
@@ -500,7 +500,7 @@ public class Compilation_Unit_Parser
 
     private ParseVariableDeclaration(mut self, allowInitializer: bool) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
 
         if token.kind == LetKeyword and token.kind =/= VarKeyword
             { children.add(ExpectToken(LetKeyword)); }
@@ -522,7 +522,7 @@ public class Compilation_Unit_Parser
 
     private ParseBlock(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         children.add(ExpectToken(LeftBrace));
         while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
         {
@@ -532,7 +532,7 @@ public class Compilation_Unit_Parser
             {
                 // We have not advanced at all when trying to parse a statement.
                 // Better skip some tokens to get unstuck
-                let skipped: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+                let skipped: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
                 while token.kind =/= LeftBrace
                     and token.kind =/= RightBrace
                     and token.kind =/= EndOfFileToken
@@ -552,14 +552,14 @@ public class Compilation_Unit_Parser
 
     private ParseParameterList(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         children.add(ExpectToken(LeftParen));
 
         if token.kind =/= RightParen
         {
             loop
             {
-                let parameterChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+                let parameterChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
                 if token.kind == MutableKeyword
                     or token.kind == SelfKeyword
                 {
@@ -594,7 +594,7 @@ public class Compilation_Unit_Parser
 
     private ParseMemberDeclaration(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
 
         if token.kind == PublicKeyword
             or token.kind == ProtectedKeyword
@@ -639,7 +639,7 @@ public class Compilation_Unit_Parser
 
     private ParseDeclaration(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
 
         if token.kind == PublicKeyword
             or token.kind == ProtectedKeyword
@@ -711,7 +711,7 @@ public class Compilation_Unit_Parser
 
             while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
             {
-                let memberChildren: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+                let memberChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
                 memberChildren.add(ExpectToken(Identifier));
                 if token.kind == Equals
                 {
@@ -740,7 +740,7 @@ public class Compilation_Unit_Parser
 
     private ParseCompilationUnit(mut self) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         while token =/= none and token.kind =/= EndOfFileToken
         {
             let startToken: Syntax_Node = token;

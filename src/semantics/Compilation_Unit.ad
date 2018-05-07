@@ -3,15 +3,15 @@ public class Compilation_Unit
 {
     // TODO Package_Location
     public let syntax: Syntax_Node;
-    public let declarations: System.Collections.List<Semantic_Node>;
+    public let declarations: system.collections.List<Semantic_Node>;
 
-    public new(syntax: Syntax_Node, declarations: System.Collections.List<Semantic_Node>)
+    public new(syntax: Syntax_Node, declarations: system.collections.List<Semantic_Node>)
     {
         self.syntax = syntax;
         self.declarations = declarations;
     }
 
-    public collect_diagnostics(self, diagnostics: mut System.Collections.List<Diagnostic>) -> void
+    public collect_diagnostics(self, diagnostics: mut system.collections.List<Diagnostic>) -> void
     {
         syntax.collect_diagnostics(diagnostics);
         for let declaration: Semantic_Node in declarations

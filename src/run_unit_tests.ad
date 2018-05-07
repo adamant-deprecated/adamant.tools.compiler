@@ -1,4 +1,4 @@
-public run_unit_tests(console: mut System.Console.Console) -> void
+public run_unit_tests(console: mut system.console.Console) -> void
 {
     console.WriteLine("Running Unit Tests...");
 

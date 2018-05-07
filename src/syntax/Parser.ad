@@ -4,9 +4,9 @@ public class Parser
     {
     }
 
-    public ParsePackage(self, sources: System.Collections.List<Source_Text>) -> Syntax_Node
+    public ParsePackage(self, sources: system.collections.List<Source_Text>) -> Syntax_Node
     {
-        let children: mut System.Collections.List<Syntax_Node> = new System.Collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         let lexer: Lexer = new Lexer();
         for let source: Source_Text in sources
         {

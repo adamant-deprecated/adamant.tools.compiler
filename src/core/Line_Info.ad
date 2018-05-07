@@ -1,9 +1,9 @@
 public class Line_Info
 {
     private let source: Source_Text;
-    private let lineStarts: System.Collections.List<int>;
+    private let lineStarts: system.collections.List<int>;
 
-    public new(source: Source_Text, lineStarts: System.Collections.List<int>)
+    public new(source: Source_Text, lineStarts: system.collections.List<int>)
     {
         self.source = source;
         self.lineStarts = lineStarts;
