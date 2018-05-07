@@ -4,6 +4,7 @@
 class t_Test;
 
 // Function Declarations
+inline t_Test *_Nonnull new_t_Test();
 auto main_() -> i32;
 
 // Class Declarations
@@ -12,23 +13,28 @@ class t_Test
 {
 public:
 	i32 value_;
-	auto construct() -> ::t_Test*;
+	auto construct() -> t_Test *_Nonnull;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::t_Test::construct() -> ::t_Test*
+auto t_Test::construct() -> t_Test *_Nonnull
 {
-	::t_Test* self = this;
+	t_Test *_Nonnull self = this;
 	value_ = i32(0);
 	return self;
 }
 
+inline t_Test *_Nonnull new_t_Test()
+{
+	return (new t_Test())->construct();
+}
+
 auto main_() -> i32
 {
-	t_Test const *_Nonnull const t_ = (new t_Test())->construct();
+	t_Test const *_Nonnull const t_ = new_t_Test();
 	return t_->value_;
 }
 

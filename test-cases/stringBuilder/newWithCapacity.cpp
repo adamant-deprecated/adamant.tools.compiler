@@ -13,7 +13,7 @@ auto main_() -> void;
 
 auto main_() -> void
 {
-	(new t_System__Text__String_Builder())->construct_with_capacity(i32(1000));
+	new_t_System__Text__String_Builder__with_capacity(i32(1000));
 }
 
 // Entry Point Adapter

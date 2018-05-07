@@ -13,7 +13,7 @@ auto main_() -> void;
 
 auto main_() -> void
 {
-	t_System__Collections__List<i32> const *_Nonnull const values_ = (new t_System__Collections__List<i32>())->construct();
+	t_System__Collections__List<i32> const *_Nonnull const values_ = new_t_System__Collections__List<i32>();
 	equal_op(values_, values_);
 	not_equal_op(values_, values_);
 }

@@ -13,7 +13,7 @@ auto main_() -> void;
 
 auto main_() -> void
 {
-	str::construct(str("foo"));
+	new_str(str("foo"));
 }
 
 // Entry Point Adapter

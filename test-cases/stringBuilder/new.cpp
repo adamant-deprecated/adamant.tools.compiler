@@ -13,7 +13,7 @@ auto main_() -> void;
 
 auto main_() -> void
 {
-	(new t_System__Text__String_Builder())->construct();
+	new_t_System__Text__String_Builder();
 }
 
 // Entry Point Adapter

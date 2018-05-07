@@ -13,7 +13,7 @@ auto main_() -> i32;
 
 auto main_() -> i32
 {
-	t_System__Collections__List<i32> const *_Nonnull const values_ = (new t_System__Collections__List<i32>())->construct();
+	t_System__Collections__List<i32> const *_Nonnull const values_ = new_t_System__Collections__List<i32>();
 	return values_->op_Element(i32(0));
 }
 

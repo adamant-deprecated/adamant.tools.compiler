@@ -4,6 +4,7 @@
 class t_Test;
 
 // Function Declarations
+inline t_Test *_Nonnull new_t_Test();
 auto main_() -> void;
 
 // Class Declarations
@@ -12,23 +13,28 @@ class t_Test
 {
 public:
 	bit value_;
-	auto construct() -> ::t_Test*;
+	auto construct() -> t_Test *_Nonnull;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::t_Test::construct() -> ::t_Test*
+auto t_Test::construct() -> t_Test *_Nonnull
 {
-	::t_Test* self = this;
+	t_Test *_Nonnull self = this;
 	value_ = bit_true;
 	return self;
 }
 
+inline t_Test *_Nonnull new_t_Test()
+{
+	return (new t_Test())->construct();
+}
+
 auto main_() -> void
 {
-	bit const value_ = (new t_Test())->construct()->value_;
+	bit const value_ = new_t_Test()->value_;
 }
 
 // Entry Point Adapter

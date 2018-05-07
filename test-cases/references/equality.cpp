@@ -4,6 +4,7 @@
 class t_Test;
 
 // Function Declarations
+inline t_Test *_Nonnull new_t_Test();
 auto main_() -> void;
 
 // Class Declarations
@@ -11,17 +12,22 @@ auto main_() -> void;
 class t_Test
 {
 public:
-	auto construct() -> ::t_Test* { return this; }
+	auto construct() -> t_Test *_Nonnull { return this; }
 };
 
 // Global Definitions
 
 // Definitions
 
+inline t_Test *_Nonnull new_t_Test()
+{
+	return (new t_Test())->construct();
+}
+
 auto main_() -> void
 {
-	t_Test const *_Nonnull const a_ = (new t_Test())->construct();
-	t_Test const *_Nonnull const b_ = (new t_Test())->construct();
+	t_Test const *_Nonnull const a_ = new_t_Test();
+	t_Test const *_Nonnull const b_ = new_t_Test();
 	bit x_;
 	x_ = equal_op(a_, b_);
 	x_ = not_equal_op(a_, b_);

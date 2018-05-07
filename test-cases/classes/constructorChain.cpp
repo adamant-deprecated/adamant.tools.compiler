@@ -4,6 +4,7 @@
 class t_C;
 
 // Function Declarations
+inline t_C *_Nonnull new_t_C(str const name_);
 auto main_() -> void;
 
 // Class Declarations
@@ -12,7 +13,7 @@ class t_C
 {
 public:
 	str name_;
-	auto construct(str const name_) -> ::t_C*;
+	auto construct(str const name_) -> t_C *_Nonnull;
 	auto method_() const -> str;
 };
 
@@ -20,11 +21,16 @@ public:
 
 // Definitions
 
-auto ::t_C::construct(str const name_) -> ::t_C*
+auto t_C::construct(str const name_) -> t_C *_Nonnull
 {
-	::t_C* self = this;
+	t_C *_Nonnull self = this;
 	self->name_ = name_;
 	return self;
+}
+
+inline t_C *_Nonnull new_t_C(str const name_)
+{
+	return (new t_C())->construct(name_);
 }
 
 auto ::t_C::method_() const -> str
@@ -35,7 +41,7 @@ auto ::t_C::method_() const -> str
 
 auto main_() -> void
 {
-	str const s_ = (new t_C())->construct(str("Bob"))->method_();
+	str const s_ = new_t_C(str("Bob"))->method_();
 }
 
 // Entry Point Adapter

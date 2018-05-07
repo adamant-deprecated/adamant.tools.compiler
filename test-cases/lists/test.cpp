@@ -13,7 +13,7 @@ auto main_(t_System__Console__Console *_Nonnull const console_) -> void;
 
 auto main_(t_System__Console__Console *_Nonnull const console_) -> void
 {
-	t_System__Collections__List<str> *_Nonnull const strings_ = (new t_System__Collections__List<str>())->construct();
+	t_System__Collections__List<str> *_Nonnull const strings_ = new_t_System__Collections__List<str>();
 	strings_->add_(str("Hello"));
 	strings_->add_(str("World!"));
 	if (cond(not_equal_op(strings_->op_magnitude(), i32(2))))
@@ -29,9 +29,9 @@ auto main_(t_System__Console__Console *_Nonnull const console_) -> void
 
 	console_->WriteLine_();
 	strings_->clear_();
-	t_System__Collections__List<t_System__Text__String_Builder *_Nonnull> *_Nonnull const builders_ = (new t_System__Collections__List<t_System__Text__String_Builder *_Nonnull>())->construct();
-	builders_->add_((new t_System__Text__String_Builder())->construct(str("sb[0]: ")));
-	builders_->add_((new t_System__Text__String_Builder())->construct(str("sb[1]: ")));
+	t_System__Collections__List<t_System__Text__String_Builder *_Nonnull> *_Nonnull const builders_ = new_t_System__Collections__List<t_System__Text__String_Builder *_Nonnull>();
+	builders_->add_(new_t_System__Text__String_Builder(str("sb[0]: ")));
+	builders_->add_(new_t_System__Text__String_Builder(str("sb[1]: ")));
 	for (t_System__Text__String_Builder *_Nonnull const sb_ : *(builders_))
 	{
 		sb_->Append_(str("value"));
