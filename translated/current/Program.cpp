@@ -4369,12 +4369,12 @@ auto ::t_Emitter::convert_parameter_list_(t_Semantic_Node const *_Nonnull const 
 				type_string_ = type_node_->get_text_();
 			}
 
-			if (cond(equal_op(type_string_, str("System.Console.Console"))))
+			if (cond(bit_op(bit_arg(equal_op(type_string_, str("system.console.Console"))) || bit_arg(equal_op(type_string_, str("System.Console.Console"))))))
 			{
 				main_function_accepts_console_ = bit_true;
 			}
 
-			if (cond(equal_op(type_string_, str("System.Console.Arguments"))))
+			if (cond(bit_op(bit_arg(equal_op(type_string_, str("system.console.Arguments"))) || bit_arg(equal_op(type_string_, str("System.Console.Arguments"))))))
 			{
 				main_function_accepts_args_ = bit_true;
 			}
