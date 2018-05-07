@@ -4,7 +4,7 @@
 
 // Function Declarations
 auto Func_(i32 x_, i32 const y_) -> t_system__text__String_Builder *_Nonnull;
-auto main_(t_System__Console__Console *_Nonnull const console_) -> void;
+auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -24,7 +24,7 @@ auto Func_(i32 x_, i32 const y_) -> t_system__text__String_Builder *_Nonnull
 	return stringA_;
 }
 
-auto main_(t_System__Console__Console *_Nonnull const console_) -> void
+auto main_(t_system__console__Console *_Nonnull const console_) -> void
 {
 	console_->WriteLine_(Func_(i32(1), i32(2))->ToString_());
 }

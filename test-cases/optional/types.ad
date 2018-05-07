@@ -13,7 +13,7 @@ public Func(x: string?, y: uint?) -> int?
 	return none;
 }
 
-public main(console: mut System.Console.Console) -> void
+public main(console: mut system.console.Console) -> void
 {
 	Func(none, none);
 }

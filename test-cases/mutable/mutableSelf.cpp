@@ -5,7 +5,7 @@ class t_Test;
 
 // Function Declarations
 inline t_Test *_Nonnull new_t_Test();
-auto main_(t_System__Console__Console *_Nonnull const console_) -> void;
+auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -34,7 +34,7 @@ inline t_Test *_Nonnull new_t_Test()
 	return (new t_Test())->construct();
 }
 
-auto main_(t_System__Console__Console *_Nonnull const console_) -> void
+auto main_(t_system__console__Console *_Nonnull const console_) -> void
 {
 	t_Test *_Nonnull const test_ = new_t_Test();
 	test_->change_(bit_true);

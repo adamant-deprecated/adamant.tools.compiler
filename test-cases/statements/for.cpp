@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Console__Arguments const *_Nonnull const args_) -> void;
+auto main_(t_system__console__Console *_Nonnull const console_, t_system__console__Arguments const *_Nonnull const args_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Consol
 
 // Definitions
 
-auto main_(t_System__Console__Console *_Nonnull const console_, t_System__Console__Arguments const *_Nonnull const args_) -> void
+auto main_(t_system__console__Console *_Nonnull const console_, t_system__console__Arguments const *_Nonnull const args_) -> void
 {
 	for (str const arg_ : *(args_))
 	{

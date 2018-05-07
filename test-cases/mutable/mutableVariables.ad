@@ -10,7 +10,7 @@ public Func(var x: int, y: int) -> mut system.text.String_Builder
     return stringA;
 }
 
-public main(console: mut System.Console.Console) -> void
+public main(console: mut system.console.Console) -> void
 {
     console.WriteLine(Func(1, 2).ToString());
 }

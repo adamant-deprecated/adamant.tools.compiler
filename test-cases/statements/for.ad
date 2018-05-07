@@ -1,4 +1,4 @@
-public main(console: mut System.Console.Console, args: System.Console.Arguments) -> void
+public main(console: mut system.console.Console, args: system.console.Arguments) -> void
 {
 	for let arg: string in args
 	{

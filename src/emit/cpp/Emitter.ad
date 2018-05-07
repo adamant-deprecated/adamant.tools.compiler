@@ -338,9 +338,11 @@ public class Emitter
                     { type_string = type_node.children[0].get_text(); }
                 else
                     { type_string = type_node.get_text(); }
-                if type_string == "System.Console.Console"
+                if type_string == "system.console.Console"
+                    or type_string == "System.Console.Console"
                     { main_function_accepts_console = true; }
-                if type_string == "System.Console.Arguments"
+                if type_string == "system.console.Arguments"
+                    or type_string == "System.Console.Arguments"
                     { main_function_accepts_args = true; }
             }
         }

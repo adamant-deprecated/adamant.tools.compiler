@@ -6,7 +6,7 @@ class t_Test;
 // Function Declarations
 inline t_Test *_Nonnull new_t_Test();
 auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>;
-auto main_(t_System__Console__Console *_Nonnull const console_) -> void;
+auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -36,7 +36,7 @@ auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32
 	return none;
 }
 
-auto main_(t_System__Console__Console *_Nonnull const console_) -> void
+auto main_(t_system__console__Console *_Nonnull const console_) -> void
 {
 	Func_(none, none);
 }
