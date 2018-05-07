@@ -1,34 +1,34 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class Test_;
+class t_Test;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-class Test_
+class t_Test
 {
 public:
 	i32 value_;
-	auto construct() -> ::Test_*;
+	auto construct() -> ::t_Test*;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::Test_::construct() -> ::Test_*
+auto ::t_Test::construct() -> ::t_Test*
 {
-	::Test_* self = this;
+	::t_Test* self = this;
 	value_ = i32(1);
 	return self;
 }
 
 auto main_() -> void
 {
-	::Test_ const *_Nonnull const t_ = (new ::Test_())->construct();
+	t_Test const *_Nonnull const t_ = (new t_Test())->construct();
 	bit const b_ = i32_less_than(t_->value_, i32(5));
 }
 

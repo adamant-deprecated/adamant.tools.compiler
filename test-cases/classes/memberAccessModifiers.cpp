@@ -1,18 +1,18 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class C_;
+class t_C;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-class C_
+class t_C
 {
 public:
 	str name_;
-	auto construct(str const name_) -> ::C_*;
+	auto construct(str const name_) -> ::t_C*;
 	auto method_() const -> str;
 private:
 	auto double_name_() const -> str;
@@ -22,20 +22,20 @@ private:
 
 // Definitions
 
-auto ::C_::construct(str const name_) -> ::C_*
+auto ::t_C::construct(str const name_) -> ::t_C*
 {
-	::C_* self = this;
+	::t_C* self = this;
 	self->name_ = name_;
 	return self;
 }
 
-auto ::C_::method_() const -> str
+auto ::t_C::method_() const -> str
 {
 	auto self = this;
 	return double_name_();
 }
 
-auto ::C_::double_name_() const -> str
+auto ::t_C::double_name_() const -> str
 {
 	auto self = this;
 	return name_.op_add(name_);
@@ -43,7 +43,7 @@ auto ::C_::double_name_() const -> str
 
 auto main_() -> void
 {
-	::C_ const *_Nonnull const c_ = (new ::C_())->construct(str("Bob"));
+	t_C const *_Nonnull const c_ = (new t_C())->construct(str("Bob"));
 	c_->method_();
 }
 

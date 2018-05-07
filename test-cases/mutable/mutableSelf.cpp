@@ -1,36 +1,36 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class Test_;
+class t_Test;
 
 // Function Declarations
-auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
+auto main_(t_System__Console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
-class Test_
+class t_Test
 {
 public:
 private:
 	bit value_;
 public:
 	auto change_(bit const value_) -> void;
-	auto construct() -> ::Test_* { return this; }
+	auto construct() -> ::t_Test* { return this; }
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::Test_::change_(bit const value_) -> void
+auto ::t_Test::change_(bit const value_) -> void
 {
 	auto self = this;
 	self->value_ = value_;
 }
 
-auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
+auto main_(t_System__Console__Console *_Nonnull const console_) -> void
 {
-	::Test_ *_Nonnull const test_ = (new ::Test_())->construct();
+	t_Test *_Nonnull const test_ = (new t_Test())->construct();
 	test_->change_(bit_true);
 }
 
@@ -39,7 +39,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new ::System_::Console_::Console_());
+		main_(new t_system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

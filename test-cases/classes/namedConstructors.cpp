@@ -1,46 +1,46 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class C_;
+class t_C;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-class C_
+class t_C
 {
 public:
 	str name_;
 	i32 kind_;
-	auto construct(str const name_) -> ::C_*;
-	auto construct_one(str const name_) -> ::C_*;
-	auto construct_two(str const name_) -> ::C_*;
+	auto construct(str const name_) -> ::t_C*;
+	auto construct_one(str const name_) -> ::t_C*;
+	auto construct_two(str const name_) -> ::t_C*;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::C_::construct(str const name_) -> ::C_*
+auto ::t_C::construct(str const name_) -> ::t_C*
 {
-	::C_* self = this;
+	::t_C* self = this;
 	self->name_ = name_;
 	self->kind_ = i32(0);
 	return self;
 }
 
-auto ::C_::construct_one(str const name_) -> ::C_*
+auto ::t_C::construct_one(str const name_) -> ::t_C*
 {
-	::C_* self = this;
+	::t_C* self = this;
 	self->name_ = name_;
 	self->kind_ = i32(1);
 	return self;
 }
 
-auto ::C_::construct_two(str const name_) -> ::C_*
+auto ::t_C::construct_two(str const name_) -> ::t_C*
 {
-	::C_* self = this;
+	::t_C* self = this;
 	self->name_ = name_;
 	self->kind_ = i32(2);
 	return self;
@@ -48,9 +48,9 @@ auto ::C_::construct_two(str const name_) -> ::C_*
 
 auto main_() -> void
 {
-	(new ::C_())->construct(str("0"));
-	(new ::C_())->construct_one(str("1"));
-	(new ::C_())->construct_two(str("2"));
+	(new t_C())->construct(str("0"));
+	(new t_C())->construct_one(str("1"));
+	(new t_C())->construct_two(str("2"));
 }
 
 // Entry Point Adapter

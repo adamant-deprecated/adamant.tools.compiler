@@ -1,7 +1,7 @@
 
 // Names ending with underscores are reserved.
 // Names starting with underscore must be ignore/unused so we will never need to
-// construct composite names from them.
+// construct composite names from them. (they will just be varibles)
 // Names with 2 or more underscores in the middle, add one underscore.
 // Form compound names by joining with double underscore.
 // Prefix names with kind indicator.
@@ -18,8 +18,10 @@
 // * bit:  bool
 //
 // # Tuples
-// Have a prefix of `t__` and are followed by type parameters. For example:
-// t__2__i__i: is a pair of ints
+// Have a prefix of `t_` and are followed by type parameters. For example:
+// t_2__i__i: is a pair of ints
+// This marks them as types and doesn't conflict with any other types because
+// their name can't start with a number.
 //
 // # Prefixes
 // The simple name prefixes are:
@@ -29,6 +31,7 @@
 // * op_ operator
 // * c_ construct
 // * new_ new and construct
+// * v_ variable (needed to avoid creating a variable that conflicts with another name)
 //
 // # Combinable prefixes
 // Reference and optional types are formed by a sequence of letters in a prefix
@@ -113,6 +116,75 @@ public class Emitter
         return cpp_code.ToString();
     }
 
+    // TODO implement and use mangle_name(name: Name)
+    private mangle_name(name: Name) -> string
+    {
+        // TODO what about name.is_special == true?
+        let builder: mut System.Text.String_Builder = new System.Text.String_Builder();
+        if name.kind == TypeName
+            { builder.Append("t_"); }
+        else if name.kind == FunctionName
+            { builder.Append("f_"); }
+        else if name.kind == VariableName
+            { builder.Append("v_"); }
+
+        var first_segment: bool = true;
+        for let segment: string in name.segments
+        {
+            if first_segment
+                { first_segment = false; }
+            else
+                { builder.Append("__"); }
+
+            if not contains_multi_underscore_runs(segment)
+                { builder.Append(segment); }
+            else
+            {
+                // Due to limitations with strings and loops, do the equivalent
+                // of a for loop
+                var underscores: int = 0;
+                var i: int = 0;
+                while i < segment.ByteLength()
+                {
+                    if segment[i] == '_'
+                        { underscores += 1; }
+                    else if underscores > 0
+                    {
+                        if underscores >= 2
+                        {
+                            builder.Append("_");
+                        }
+                        underscores = 0;
+                    }
+                    builder.Append(new string(segment[i], 1)); // really bad memory use
+                    i += 1;
+                }
+            }
+        }
+        return builder.ToString();
+    }
+
+    private contains_multi_underscore_runs(value: string) -> bool
+    {
+        // Due to limitations with strings and loops, do the equivalent
+        // of a for loop
+        var i: int = 0;
+        var last_char_underscore: bool = false;
+        while i < value.ByteLength()
+        {
+            if value[i] == '_'
+            {
+                if last_char_underscore
+                    { return true; }
+                last_char_underscore = true;
+            }
+            else
+                { last_char_underscore = false; }
+            i += 1;
+        }
+        return false;
+    }
+
     private convert_primitive_type_name(type: Type) -> string
     {
         let name: string = type.name.unqualified();
@@ -163,12 +235,7 @@ public class Emitter
         }
         else
         {
-            for let segment: string in type.name.segments
-            {
-                cpp_type.Append("::");
-                cpp_type.Append(segment);
-                cpp_type.Append("_");
-            }
+            cpp_type.Append(mangle_name(type.name));
         }
 
         if |type.type_parameters| > 0
@@ -804,7 +871,7 @@ public class Emitter
             let constructor_name: Semantic_Node? = member.first_child(Identifier);
             if constructor_name =/= none
                 { full_name = "construct_" + constructor_name.get_text(); }
-            var return_type: string = "::" + class_name + "_";
+            var return_type: string = "::" + class_name;
             if not is_value_type
                 { return_type = return_type + "*"; }
             // Write out the declaration for C++ so we can call functions defined after others
@@ -812,7 +879,7 @@ public class Emitter
             if is_value_type { class_declarations.Write("static "); }
             class_declarations.EndLine("auto " + full_name + parameters + " -> " + return_type + ";");
             definitions.ElementSeparatorLine();
-            definitions.WriteLine("auto ::" + class_name + "_::" + full_name + parameters + " -> " + return_type);
+            definitions.WriteLine("auto ::" + class_name + "::" + full_name + parameters + " -> " + return_type);
             emit_constructor_body(member.first_child(Block), return_type, is_value_type);
         }
         else if member.kind == FieldDeclaration
@@ -840,7 +907,7 @@ public class Emitter
                 { constModifier = "const "; }
             class_declarations.WriteLine(static_modifier + "auto " + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type + ";");
             definitions.ElementSeparatorLine();
-            definitions.WriteLine("auto ::" + class_name + "_::" + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type);
+            definitions.WriteLine("auto ::" + class_name + "::" + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type);
             let block: Semantic_Node = member.first_child(Block);
             emit_method_body(block, is_associated_function);
         }
@@ -856,7 +923,7 @@ public class Emitter
     {
         emit_access_modifer(current_access_level, PublicKeyword);
 
-        var return_type: string = "::" + type_name + "_";
+        var return_type: string = "::" + type_name;
         if not is_value_type
             { return_type = return_type + "*"; }
         // Write out the declaration for C++ so we can call functions defined after others
@@ -864,7 +931,7 @@ public class Emitter
         if is_value_type { class_declarations.Write("static "); }
         class_declarations.Write("auto construct() -> " + return_type);
         if is_value_type
-            { class_declarations.EndLine(" { return " + type_name + "_(); }"); }
+            { class_declarations.EndLine(" { return " + type_name + "(); }"); }
         else
             { class_declarations.EndLine(" { return this; }"); }
     }
@@ -886,10 +953,12 @@ public class Emitter
         }
         else if declaration.kind == ClassDeclaration
         {
-            let class_name: string = declaration.first_child(Identifier).get_text();
-            type_declarations.WriteLine("class " + class_name + "_;");
+            let declared_type: Type = declaration.declares_type;
+            assert(declared_type =/= none, declaration.first_child(Identifier).get_text());
+            let class_name: string = mangle_name(declared_type.name);
+            type_declarations.WriteLine("class " + class_name + ";");
             class_declarations.ElementSeparatorLine();
-            class_declarations.WriteLine("class " + class_name + "_");
+            class_declarations.WriteLine("class " + class_name);
             class_declarations.BeginBlock();
             class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
             var current_access_level: int = PublicKeyword;
@@ -907,18 +976,20 @@ public class Emitter
         }
         else if declaration.kind == StructDeclaration
         {
-            let struct_name: string = declaration.first_child(Identifier).get_text();
-            type_declarations.WriteLine("struct " + struct_name + "_;");
+            let declared_type: Type = declaration.declares_type;
+            assert(declared_type =/= none, declaration.first_child(Identifier).get_text());
+            let struct_name: string = mangle_name(declared_type.name);
+            type_declarations.WriteLine("struct " + struct_name + ";");
             class_declarations.ElementSeparatorLine();
-            class_declarations.WriteLine("struct " + struct_name + "_ final");
+            class_declarations.WriteLine("struct " + struct_name + " final");
             class_declarations.BeginBlock();
             class_declarations.EndLine("public:"); // Assume we aren't nested, avoid the indent
             // Write out arrow and dereference operators for using value types like reference types
             // TODO Emit correct code to use value types as value types rather than reference types and drop this code
-            class_declarations.WriteLine(struct_name + "_ * operator->() { return this; }");
-            class_declarations.WriteLine(struct_name + "_ const * operator->() const { return this; }");
-            class_declarations.WriteLine(struct_name + "_ & operator* () { return *this; }");
-            class_declarations.WriteLine(struct_name + "_ const & operator* () const { return *this; }");
+            class_declarations.WriteLine(struct_name + " * operator->() { return this; }");
+            class_declarations.WriteLine(struct_name + " const * operator->() const { return this; }");
+            class_declarations.WriteLine(struct_name + " & operator* () { return *this; }");
+            class_declarations.WriteLine(struct_name + " const & operator* () const { return *this; }");
             var current_access_level: int = PublicKeyword;
             var has_constructors: bool = false;
             for let member: Semantic_Node in declaration.members()
@@ -1040,12 +1111,12 @@ public class Emitter
         // TODO should be `new mut`
         let args: mut System.Text.String_Builder = new System.Text.String_Builder();
         if main_function_accepts_console
-            { args.Append("new ::System_::Console_::Console_()"); }
+            { args.Append("new t_system__console__Console()"); }
         if main_function_accepts_args
         {
             if main_function_accepts_console
                 { args.Append(", "); }
-            args.Append("new ::System_::Console_::Arguments_(argc, argv)");
+            args.Append("new t_system__console__Arguments(argc, argv)");
         }
 
         if main_function_return_type == "void"

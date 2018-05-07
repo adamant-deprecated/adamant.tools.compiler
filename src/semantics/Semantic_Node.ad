@@ -79,6 +79,24 @@ public class Semantic_Node
         self.referenced_type = none;
     }
 
+    public new declares_type(type: Type, syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
+    {
+        assert(type =/= none, "");
+        assert(syntax =/= none, "");
+        self.syntax = syntax;
+        self.kind = syntax.kind;
+        self.is_missing = syntax.is_missing;
+        self.source = syntax.source;
+        self.start = syntax.start;
+        self.byte_length = syntax.byte_length;
+        self.children = children;
+        self.node_diagnostics = new System.Collections.List<Diagnostic>();
+        self.of_type = of_type;
+        self.converted_type = none;
+        self.declares_type = type;
+        self.referenced_type = none;
+    }
+
     public new referencing_type(type: Type, syntax: Syntax_Node, children: System.Collections.List<Semantic_Node>)
     {
         assert(type =/= none, "");

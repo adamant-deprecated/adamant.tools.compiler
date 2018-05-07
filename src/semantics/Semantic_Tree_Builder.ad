@@ -98,7 +98,7 @@ public /*mut*/ class Semantic_Tree_Builder
             }
 
             // TODO what about the class/struct type?
-            return new Semantic_Node.concrete(syntax, children);
+            return new Semantic_Node.declares_type(type_scope.type, syntax, children);
         }
         else if syntax.kind == ConstructorDeclaration
         {

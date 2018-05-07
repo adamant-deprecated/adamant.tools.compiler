@@ -1,22 +1,22 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-struct Test_;
+struct t_Test;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-struct Test_ final
+struct t_Test final
 {
 public:
-	Test_ * operator->() { return this; }
-	Test_ const * operator->() const { return this; }
-	Test_ & operator* () { return *this; }
-	Test_ const & operator* () const { return *this; }
+	t_Test * operator->() { return this; }
+	t_Test const * operator->() const { return this; }
+	t_Test & operator* () { return *this; }
+	t_Test const & operator* () const { return *this; }
 	str name_;
-	static auto construct(str const name_) -> ::Test_;
+	static auto construct(str const name_) -> ::t_Test;
 	auto method_() const -> str;
 };
 
@@ -24,14 +24,14 @@ public:
 
 // Definitions
 
-auto ::Test_::construct(str const name_) -> ::Test_
+auto ::t_Test::construct(str const name_) -> ::t_Test
 {
-	::Test_ self;
+	::t_Test self;
 	self->name_ = name_;
 	return self;
 }
 
-auto ::Test_::method_() const -> str
+auto ::t_Test::method_() const -> str
 {
 	auto self = this;
 	return name_;
@@ -39,7 +39,7 @@ auto ::Test_::method_() const -> str
 
 auto main_() -> void
 {
-	::Test_ const t_ = ::Test_::construct(str("Bob"));
+	t_Test const t_ = t_Test::construct(str("Bob"));
 	t_.method_();
 }
 

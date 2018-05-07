@@ -1,39 +1,39 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class C_;
+class t_C;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-class C_
+class t_C
 {
 public:
 	auto method_() const -> str;
 	static auto function_() -> str;
-	auto construct() -> ::C_* { return this; }
+	auto construct() -> ::t_C* { return this; }
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::C_::method_() const -> str
+auto ::t_C::method_() const -> str
 {
 	auto self = this;
 	return function_();
 }
 
-auto ::C_::function_() -> str
+auto ::t_C::function_() -> str
 {
 	return str("hello");
 }
 
 auto main_() -> void
 {
-	::C_ const *_Nonnull const c_ = (new ::C_())->construct();
+	t_C const *_Nonnull const c_ = (new t_C())->construct();
 	c_->method_();
 }
 

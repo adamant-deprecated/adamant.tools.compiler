@@ -1,17 +1,17 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class Test_;
+class t_Test;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-class Test_
+class t_Test
 {
 public:
-	auto construct() -> ::Test_* { return this; }
+	auto construct() -> ::t_Test* { return this; }
 };
 
 // Global Definitions
@@ -20,8 +20,8 @@ public:
 
 auto main_() -> void
 {
-	::Test_ const *_Nonnull const a_ = (new ::Test_())->construct();
-	::Test_ const *_Nonnull const b_ = (new ::Test_())->construct();
+	t_Test const *_Nonnull const a_ = (new t_Test())->construct();
+	t_Test const *_Nonnull const b_ = (new t_Test())->construct();
 	bit x_;
 	x_ = equal_op(a_, b_);
 	x_ = not_equal_op(a_, b_);

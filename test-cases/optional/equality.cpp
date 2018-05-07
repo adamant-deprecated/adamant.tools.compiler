@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
+auto main_(t_System__Console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
+auto main_(t_System__Console__Console *_Nonnull const console_) -> void
 {
 	i32 const v_ = i32(42);
 	p_optional<i32> const n_ = none;
@@ -40,7 +40,7 @@ auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 	console_->WriteLine_(str("none =/= 42: ").op_add(r_));
 	r_ = not_equal_op(none, none);
 	console_->WriteLine_(str("none =/= none: ").op_add(r_));
-	::System_::Text_::String_Builder_ const *_Nullable const sb_ = none;
+	t_System__Text__String_Builder const *_Nullable const sb_ = none;
 	r_ = equal_op(sb_, none);
 	console_->WriteLine_(str("sb == none: ").op_add(r_));
 	r_ = equal_op(none, sb_);
@@ -56,7 +56,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new ::System_::Console_::Console_());
+		main_(new t_system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

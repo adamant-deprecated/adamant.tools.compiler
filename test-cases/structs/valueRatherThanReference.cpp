@@ -1,28 +1,28 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class Reference_Type_;
-struct Value_Type_;
+class t_Reference_Type;
+struct t_Value_Type;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-class Reference_Type_
+class t_Reference_Type
 {
 public:
-	auto construct() -> ::Reference_Type_* { return this; }
+	auto construct() -> ::t_Reference_Type* { return this; }
 };
 
-struct Value_Type_ final
+struct t_Value_Type final
 {
 public:
-	Value_Type_ * operator->() { return this; }
-	Value_Type_ const * operator->() const { return this; }
-	Value_Type_ & operator* () { return *this; }
-	Value_Type_ const & operator* () const { return *this; }
-	static auto construct() -> ::Value_Type_ { return Value_Type_(); }
+	t_Value_Type * operator->() { return this; }
+	t_Value_Type const * operator->() const { return this; }
+	t_Value_Type & operator* () { return *this; }
+	t_Value_Type const & operator* () const { return *this; }
+	static auto construct() -> ::t_Value_Type { return t_Value_Type(); }
 };
 
 // Global Definitions
@@ -31,8 +31,8 @@ public:
 
 auto main_() -> void
 {
-	::Reference_Type_ const *_Nonnull const r_ = (new ::Reference_Type_())->construct();
-	::Value_Type_ const v_ = ::Value_Type_::construct();
+	t_Reference_Type const *_Nonnull const r_ = (new t_Reference_Type())->construct();
+	t_Value_Type const v_ = t_Value_Type::construct();
 }
 
 // Entry Point Adapter

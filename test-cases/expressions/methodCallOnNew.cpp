@@ -1,34 +1,34 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class Test_;
+class t_Test;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-class Test_
+class t_Test
 {
 public:
 	bit value_;
-	auto construct() -> ::Test_*;
+	auto construct() -> ::t_Test*;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::Test_::construct() -> ::Test_*
+auto ::t_Test::construct() -> ::t_Test*
 {
-	::Test_* self = this;
+	::t_Test* self = this;
 	value_ = bit_true;
 	return self;
 }
 
 auto main_() -> void
 {
-	bit const value_ = (new ::Test_())->construct()->value_;
+	bit const value_ = (new t_Test())->construct()->value_;
 }
 
 // Entry Point Adapter

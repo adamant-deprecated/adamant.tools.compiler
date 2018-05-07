@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
+auto main_(t_System__Console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
+auto main_(t_System__Console__Console *_Nonnull const console_) -> void
 {
 	i32 x_ = i32(1);
 	for (;;)
@@ -49,7 +49,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new ::System_::Console_::Console_());
+		main_(new t_system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

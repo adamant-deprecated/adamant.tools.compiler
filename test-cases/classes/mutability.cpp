@@ -1,24 +1,24 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class Mutable_Object_;
-class immutable_object_;
+class t_Mutable_Object;
+class t_immutable_object;
 
 // Function Declarations
 auto main_() -> void;
 
 // Class Declarations
 
-class Mutable_Object_
+class t_Mutable_Object
 {
 public:
-	auto construct() -> ::Mutable_Object_* { return this; }
+	auto construct() -> ::t_Mutable_Object* { return this; }
 };
 
-class immutable_object_
+class t_immutable_object
 {
 public:
-	auto construct() -> ::immutable_object_* { return this; }
+	auto construct() -> ::t_immutable_object* { return this; }
 };
 
 // Global Definitions
@@ -27,8 +27,8 @@ public:
 
 auto main_() -> void
 {
-	::Mutable_Object_ const *_Nonnull const m_ = (new ::Mutable_Object_())->construct();
-	::immutable_object_ const *_Nonnull const i_ = (new ::immutable_object_())->construct();
+	t_Mutable_Object const *_Nonnull const m_ = (new t_Mutable_Object())->construct();
+	t_immutable_object const *_Nonnull const i_ = (new t_immutable_object())->construct();
 }
 
 // Entry Point Adapter

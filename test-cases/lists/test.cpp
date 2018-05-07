@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
+auto main_(t_System__Console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
+auto main_(t_System__Console__Console *_Nonnull const console_) -> void
 {
-	::System_::Collections_::List_<str> *_Nonnull const strings_ = (new ::System_::Collections_::List_<str>())->construct();
+	t_System__Collections__List<str> *_Nonnull const strings_ = (new t_System__Collections__List<str>())->construct();
 	strings_->add_(str("Hello"));
 	strings_->add_(str("World!"));
 	if (cond(not_equal_op(strings_->op_magnitude(), i32(2))))
@@ -29,15 +29,15 @@ auto main_(::System_::Console_::Console_ *_Nonnull const console_) -> void
 
 	console_->WriteLine_();
 	strings_->clear_();
-	::System_::Collections_::List_<::System_::Text_::String_Builder_ *_Nonnull> *_Nonnull const builders_ = (new ::System_::Collections_::List_<::System_::Text_::String_Builder_ *_Nonnull>())->construct();
-	builders_->add_((new ::System_::Text_::String_Builder_())->construct(str("sb[0]: ")));
-	builders_->add_((new ::System_::Text_::String_Builder_())->construct(str("sb[1]: ")));
-	for (::System_::Text_::String_Builder_ *_Nonnull const sb_ : *(builders_))
+	t_System__Collections__List<t_System__Text__String_Builder *_Nonnull> *_Nonnull const builders_ = (new t_System__Collections__List<t_System__Text__String_Builder *_Nonnull>())->construct();
+	builders_->add_((new t_System__Text__String_Builder())->construct(str("sb[0]: ")));
+	builders_->add_((new t_System__Text__String_Builder())->construct(str("sb[1]: ")));
+	for (t_System__Text__String_Builder *_Nonnull const sb_ : *(builders_))
 	{
 		sb_->Append_(str("value"));
 	}
 
-	for (::System_::Text_::String_Builder_ *_Nonnull const sb_ : *(builders_))
+	for (t_System__Text__String_Builder *_Nonnull const sb_ : *(builders_))
 	{
 		console_->WriteLine_(sb_->ToString_());
 	}
@@ -48,7 +48,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new ::System_::Console_::Console_());
+		main_(new t_system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

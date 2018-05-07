@@ -78,7 +78,7 @@ str str::Substring_(i32 start, i32 length) const
 
 str str::Replace_(str oldValue, str newValue) const
 {
-    system_::Text_::String_Builder_ builder = system_::Text_::String_Builder_(); // TODO initialize capacity
+    t_system__text__String_Builder builder = t_system__text__String_Builder(); // TODO initialize capacity
     int limit = Length - oldValue.Length + 1;
     int lastIndex = 0;
     // TODO the Substring calls in here are leaking memory
@@ -213,179 +213,167 @@ void debug_write_line_()
     std::fprintf(stderr, "\n");
 }
 
-namespace system_
+void t_system__console__Console::Write_(str value)
 {
-    namespace Console_
+    std::printf("%.*s", value.Length, value.Buffer);
+}
+
+void t_system__console__Console::WriteLine_(str value)
+{
+    std::printf("%.*s\n", value.Length, value.Buffer);
+}
+
+void t_system__console__Console::WriteLine_()
+{
+    std::printf("\n");
+}
+
+t_system__console__Arguments::t_system__console__Arguments(int argc, char const *const * argv)
+    : Count(argc-1)
+{
+    args = new str[Count];
+    for (int i = 0; i < Count; i++)
+        args[i] = str(argv[i+1]);
+}
+
+t_system__io__File_Reader *_Nonnull t_system__io__File_Reader::construct(const str& fileName)
+{
+    std::FILE* foo;
+    auto fname = fileName.cstr();
+    file = std::fopen(fname, "rb");
+    delete[] fname;
+    return this;
+}
+
+str t_system__io__File_Reader::ReadToEndSync_()
+{
+    std::fseek(file, 0, SEEK_END);
+    auto length = std::ftell(file);
+    std::fseek(file, 0, SEEK_SET);
+    auto buffer = new char[length];
+    length = std::fread(buffer, sizeof(char), length, file);
+    return str(length, buffer);
+}
+
+void t_system__io__File_Reader::Close_()
+{
+    std::fclose(file);
+}
+
+t_system__io__File_Writer *_Nonnull t_system__io__File_Writer::construct(const str& fileName)
+{
+    auto fname = fileName.cstr();
+    file = std::fopen(fname, "wb"); // TODO check error
+    delete[] fname;
+    return this;
+}
+
+void t_system__io__File_Writer::Write_(const str& value)
+{
+    std::fwrite(value.Buffer, sizeof(char), value.Length, file);
+}
+
+void t_system__io__File_Writer::Close_()
+{
+    std::fclose(file);
+}
+
+void t_system__text__String_Builder::ensure_capacity(int needed)
+{
+    int new_capacity = capacity == 0 ? 128 : capacity;
+    while(new_capacity < needed)
     {
-        void Console_::Write_(str value)
-        {
-            std::printf("%.*s", value.Length, value.Buffer);
-        }
-
-        void Console_::WriteLine_(str value)
-        {
-            std::printf("%.*s\n", value.Length, value.Buffer);
-        }
-
-        void Console_::WriteLine_()
-        {
-            std::printf("\n");
-        }
-
-        Arguments_::Arguments_(int argc, char const *const * argv)
-            : Count(argc-1)
-        {
-            args = new str[Count];
-            for (int i = 0; i < Count; i++)
-                args[i] = str(argv[i+1]);
-        }
+        new_capacity *= 2;
     }
 
-    namespace IO_
+    if(new_capacity > capacity)
     {
-        File_Reader_* File_Reader_::construct(const str& fileName)
-        {
-            std::FILE* foo;
-            auto fname = fileName.cstr();
-            file = std::fopen(fname, "rb");
-            delete[] fname;
-            return this;
-        }
+        char* new_buffer = new char[new_capacity];
+        if(length > 0)
+            std::memcpy(new_buffer, buffer, length);
 
-        str File_Reader_::ReadToEndSync_()
-        {
-            std::fseek(file, 0, SEEK_END);
-            auto length = std::ftell(file);
-            std::fseek(file, 0, SEEK_SET);
-            auto buffer = new char[length];
-            length = std::fread(buffer, sizeof(char), length, file);
-            return str(length, buffer);
-        }
+        if(capacity > 0)
+            delete[] buffer;
 
-        void File_Reader_::Close_()
-        {
-            std::fclose(file);
-        }
-
-        File_Writer_* File_Writer_::construct(const str& fileName)
-        {
-            auto fname = fileName.cstr();
-            file = std::fopen(fname, "wb"); // TODO check error
-            delete[] fname;
-            return this;
-        }
-
-        void File_Writer_::Write_(const str& value)
-        {
-            std::fwrite(value.Buffer, sizeof(char), value.Length, file);
-        }
-
-        void File_Writer_::Close_()
-        {
-            std::fclose(file);
-        }
+        buffer = new_buffer;
+        capacity = new_capacity;
     }
+}
 
-    namespace Text_
-    {
-        void String_Builder_::ensure_capacity(int needed)
-        {
-            int new_capacity = capacity == 0 ? 128 : capacity;
-            while(new_capacity < needed)
-            {
-                new_capacity *= 2;
-            }
+t_system__text__String_Builder *_Nonnull t_system__text__String_Builder::construct(str const & value)
+{
+    ensure_capacity(value.Length);
+    std::memcpy(buffer, value.Buffer, value.Length);
+    length = value.Length;
+    return this;
+}
 
-            if(new_capacity > capacity)
-            {
-                char* new_buffer = new char[new_capacity];
-                if(length > 0)
-                    std::memcpy(new_buffer, buffer, length);
+t_system__text__String_Builder *_Nonnull t_system__text__String_Builder::construct_with_capacity(i32 capacity)
+{
+    ensure_capacity(capacity.value);
+    return this;
+}
 
-                if(capacity > 0)
-                    delete[] buffer;
+void t_system__text__String_Builder::Append_(str const & value)
+{
+    int new_length = length + value.Length;
+    ensure_capacity(new_length);
+    std::memcpy(buffer+length, value.Buffer, value.Length);
+    length = new_length;
+}
 
-                buffer = new_buffer;
-                capacity = new_capacity;
-            }
-        }
+void t_system__text__String_Builder::Append_(t_system__text__String_Builder const *_Nonnull value)
+{
+    int new_length = length + value->length;
+    ensure_capacity(new_length);
+    std::memcpy(buffer+length, value->buffer, value->length);
+    length = new_length;
+}
 
-        String_Builder_* String_Builder_::construct(str const & value)
-        {
-            ensure_capacity(value.Length);
-            std::memcpy(buffer, value.Buffer, value.Length);
-            length = value.Length;
-            return this;
-        }
+void t_system__text__String_Builder::AppendLine_(str const & value)
+{
+    int new_length = length + value.Length + 1;
+    ensure_capacity(new_length);
+    std::memcpy(buffer+length, value.Buffer, value.Length);
+    buffer[new_length-1] = '\n';
+    length = new_length;
+}
 
-        String_Builder_ *_Nonnull String_Builder_::construct_with_capacity(i32 capacity)
-        {
-            ensure_capacity(capacity.value);
-            return this;
-        }
+void t_system__text__String_Builder::AppendLine_()
+{
+    int new_length = length + 1;
+    ensure_capacity(new_length);
+    buffer[new_length-1] = '\n';
+    length = new_length;
+}
 
-        void String_Builder_::Append_(str const & value)
-        {
-            int new_length = length + value.Length;
-            ensure_capacity(new_length);
-            std::memcpy(buffer+length, value.Buffer, value.Length);
-            length = new_length;
-        }
+void t_system__text__String_Builder::Remove_(i32 start, i32 length)
+{
+    if(start.value >= this->length)
+        throw std::runtime_error("String_Builder.Remove() start >= length");
 
-        void String_Builder_::Append_(String_Builder_ const * value)
-        {
-            int new_length = length + value->length;
-            ensure_capacity(new_length);
-            std::memcpy(buffer+length, value->buffer, value->length);
-            length = new_length;
-        }
+    int end = start.value + length.value;
+    if(end > this->length) // greater than because end is one past the end of the remove
+        throw std::runtime_error("String_Builder.Remove() end > length");
 
-        void String_Builder_::AppendLine_(str const & value)
-        {
-            int new_length = length + value.Length + 1;
-            ensure_capacity(new_length);
-            std::memcpy(buffer+length, value.Buffer, value.Length);
-            buffer[new_length-1] = '\n';
-            length = new_length;
-        }
+    std::memmove(buffer+start.value, buffer+end, this->length-end);
+    this->length -= length.value;
+}
 
-        void String_Builder_::AppendLine_()
-        {
-            int new_length = length + 1;
-            ensure_capacity(new_length);
-            buffer[new_length-1] = '\n';
-            length = new_length;
-        }
+void t_system__text__String_Builder::Remove_(i32 start)
+{
+    if(start.value >= length)
+        throw std::runtime_error("String_Builder.Remove() start >= length");
 
-        void String_Builder_::Remove_(i32 start, i32 length)
-        {
-            if(start.value >= this->length)
-                throw std::runtime_error("String_Builder.Remove() start >= length");
+    length = start.value;
+}
 
-            int end = start.value + length.value;
-            if(end > this->length) // greater than because end is one past the end of the remove
-                throw std::runtime_error("String_Builder.Remove() end > length");
-
-            std::memmove(buffer+start.value, buffer+end, this->length-end);
-            this->length -= length.value;
-        }
-
-        void String_Builder_::Remove_(i32 start)
-        {
-            if(start.value >= length)
-                throw std::runtime_error("String_Builder.Remove() start >= length");
-
-            length = start.value;
-        }
-
-        str String_Builder_::ToString_()
-        {
-            str result(length, buffer);
-            // give up ownership of buffer
-            buffer = 0;
-            length = 0;
-            capacity = 0;
-            return result;
-        }
-    }
+str t_system__text__String_Builder::ToString_()
+{
+    str result(length, buffer);
+    // give up ownership of buffer
+    buffer = 0;
+    length = 0;
+    capacity = 0;
+    return result;
 }
