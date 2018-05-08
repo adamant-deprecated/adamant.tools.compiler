@@ -1,10 +1,10 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class t_Line_Info;
 class t_Location;
 class t_Source_Text;
 class t_Text_Line;
+class t_Text_Lines;
 class t_Text_Position;
 class t_Text_Span;
 class t_Source_File_Builder;
@@ -40,12 +40,15 @@ auto has_errors_(t_system__collections__List<t_Diagnostic const *_Nonnull> const
 auto main_(t_system__console__Console *_Nonnull const console_, t_system__console__Arguments const *_Nonnull const args_) -> i32;
 auto read_source_(str const path_) -> t_Source_Text const *_Nonnull;
 auto run_unit_tests_(t_system__console__Console *_Nonnull const console_) -> void;
-inline t_Line_Info *_Nonnull new_t_Line_Info(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const lineStarts_);
 inline t_Location *_Nonnull new_t_Location();
 inline t_Source_Text *_Nonnull new_t_Source_Text(str const package_, str const path_, str const text_);
 inline t_Text_Line *_Nonnull new_t_Text_Line(t_Source_Text const *_Nonnull const source_, i32 const start_, i32 const length_);
 inline t_Text_Line *_Nonnull new_t_Text_Line__spanning(t_Source_Text const *_Nonnull const source_, i32 const start_, i32 const end_);
-inline t_Text_Position *_Nonnull new_t_Text_Position(i32 const offset_, i32 const line_, i32 const column_);
+inline t_Text_Lines *_Nonnull new_t_Text_Lines(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const start_of_line_);
+auto line_count_(t_Text_Lines const *_Nonnull const lines_) -> i32;
+auto get_line_(t_Text_Lines const *_Nonnull const lines_, i32 const line_number_) -> t_Text_Line const *_Nonnull;
+auto line_containing_offset_(t_Text_Lines const *_Nonnull const lines_, i32 const character_offset_) -> i32;
+inline t_Text_Position *_Nonnull new_t_Text_Position(i32 const character_offset_, i32 const line_, i32 const column_);
 auto unit_test_Text_Position_() -> void;
 auto Text_Position_retains_given_offeset_line_and_column_() -> void;
 inline t_Text_Span *_Nonnull new_t_Text_Span(i32 const start_, i32 const length_);
@@ -135,19 +138,6 @@ auto can_get_Optional_class_from_name_with_package_() -> void;
 
 // Class Declarations
 
-class t_Line_Info
-{
-public:
-private:
-	t_Source_Text const *_Nonnull source_;
-	t_system__collections__List<i32> const *_Nonnull lineStarts_;
-public:
-	auto construct(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const lineStarts_) -> t_Line_Info *_Nonnull;
-	auto Count_() const -> i32;
-	auto get_(i32 const lineNumber_) const -> t_Text_Line const *_Nonnull;
-	auto LineNumber_(i32 const offset_) const -> i32;
-};
-
 class t_Location
 {
 public:
@@ -161,7 +151,7 @@ public:
 	str Path_;
 	str name_;
 	str Text_;
-	t_Line_Info const *_Nonnull Lines_;
+	t_Text_Lines const *_Nonnull Lines_;
 	auto construct(str const package_, str const path_, str const text_) -> t_Source_Text *_Nonnull;
 private:
 	auto LineStarts_() const -> t_system__collections__List<i32> const *_Nonnull;
@@ -178,16 +168,23 @@ public:
 	i32 byte_length_;
 	auto construct(t_Source_Text const *_Nonnull const source_, i32 const start_, i32 const length_) -> t_Text_Line *_Nonnull;
 	auto construct_spanning(t_Source_Text const *_Nonnull const source_, i32 const start_, i32 const end_) -> t_Text_Line *_Nonnull;
-	auto End_() const -> i32;
+};
+
+class t_Text_Lines
+{
+public:
+	t_Source_Text const *_Nonnull source_;
+	t_system__collections__List<i32> const *_Nonnull start_of_line_;
+	auto construct(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const start_of_line_) -> t_Text_Lines *_Nonnull;
 };
 
 class t_Text_Position
 {
 public:
-	i32 Offset_;
-	i32 Line_;
-	i32 Column_;
-	auto construct(i32 const offset_, i32 const line_, i32 const column_) -> t_Text_Position *_Nonnull;
+	i32 character_offset_;
+	i32 line_;
+	i32 column_;
+	auto construct(i32 const character_offset_, i32 const line_, i32 const column_) -> t_Text_Position *_Nonnull;
 };
 
 class t_Text_Span
@@ -196,7 +193,6 @@ public:
 	i32 start_;
 	i32 byte_length_;
 	auto construct(i32 const start_, i32 const length_) -> t_Text_Span *_Nonnull;
-	auto End_() const -> i32;
 };
 
 class t_Source_File_Builder
@@ -827,7 +823,7 @@ auto write_(t_system__console__Console *_Nonnull const console_, t_system__colle
 			severity_ = str("Error");
 		}
 
-		console_->WriteLine_(diagnostic_->source_->Path_->op_add(str(":"))->op_add(position_->Line_)->op_add(str(":"))->op_add(position_->Column_)->op_add(str(" "))->op_add(severity_)->op_add(str(":")));
+		console_->WriteLine_(diagnostic_->source_->Path_->op_add(str(":"))->op_add(position_->line_)->op_add(str(":"))->op_add(position_->column_)->op_add(str(" "))->op_add(severity_)->op_add(str(":")));
 		console_->WriteLine_(str("  ").op_add(diagnostic_->Message_));
 	}
 }
@@ -1004,65 +1000,6 @@ auto run_unit_tests_(t_system__console__Console *_Nonnull const console_) -> voi
 	unit_test_Symbol_();
 }
 
-auto t_Line_Info::construct(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const lineStarts_) -> t_Line_Info *_Nonnull
-{
-	t_Line_Info *_Nonnull self = this;
-	self->source_ = source_;
-	self->lineStarts_ = lineStarts_;
-	return self;
-}
-
-inline t_Line_Info *_Nonnull new_t_Line_Info(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const lineStarts_)
-{
-	return (new t_Line_Info())->construct(source_, lineStarts_);
-}
-
-auto ::t_Line_Info::Count_() const -> i32
-{
-	auto self = this;
-	return lineStarts_->op_magnitude();
-}
-
-auto ::t_Line_Info::get_(i32 const lineNumber_) const -> t_Text_Line const *_Nonnull
-{
-	auto self = this;
-	i32 const index_ = lineNumber_.op_subtract(i32(1));
-	i32 const start_ = lineStarts_->op_Element(index_);
-	if (cond(equal_op(index_, lineStarts_->op_magnitude()->op_subtract(i32(1)))))
-	{
-		return new_t_Text_Line__spanning(source_, start_, source_->ByteLength_());
-	}
-
-	i32 const end_ = lineStarts_->op_Element(index_.op_add(i32(1)));
-	return new_t_Text_Line__spanning(source_, start_, end_);
-}
-
-auto ::t_Line_Info::LineNumber_(i32 const offset_) const -> i32
-{
-	auto self = this;
-	i32 left_ = i32(0);
-	i32 right_ = lineStarts_->op_magnitude()->op_subtract(i32(1));
-	while (cond(i32_less_than_or_equal(left_, right_)))
-	{
-		i32 const mid_ = left_.op_add(right_.op_subtract(left_)->op_divide(i32(2)));
-		i32 const midLineStart_ = lineStarts_->op_Element(mid_);
-		if (cond(i32_less_than(midLineStart_, offset_)))
-		{
-			left_ = mid_.op_add(i32(1));
-		}
-		else if (cond(i32_greater_than(midLineStart_, offset_)))
-		{
-			right_ = mid_.op_subtract(i32(1));
-		}
-		else
-		{
-			return mid_.op_add(i32(1));
-		}
-	}
-
-	return left_;
-}
-
 inline t_Location *_Nonnull new_t_Location()
 {
 	return (new t_Location())->construct();
@@ -1088,7 +1025,7 @@ auto t_Source_Text::construct(str const package_, str const path_, str const tex
 
 	self->name_ = name_;
 	Text_ = text_;
-	Lines_ = new_t_Line_Info(self, LineStarts_());
+	Lines_ = new_t_Text_Lines(self, LineStarts_());
 	return self;
 }
 
@@ -1143,12 +1080,12 @@ auto ::t_Source_Text::ByteLength_() const -> i32
 auto ::t_Source_Text::PositionOfStart_(t_Text_Span const *_Nonnull const span_) const -> t_Text_Position const *_Nonnull
 {
 	auto self = this;
-	i32 const offset_ = span_->start_;
-	i32 const lineNumber_ = Lines_->LineNumber_(offset_);
-	i32 const lineStart_ = Lines_->get_(lineNumber_)->start_;
-	i32 column_ = offset_.op_subtract(lineStart_)->op_add(i32(1));
-	i32 i_ = lineStart_;
-	while (cond(i32_less_than(i_, offset_)))
+	i32 const char_offset_ = span_->start_;
+	i32 const line_number_ = line_containing_offset_(Lines_, char_offset_);
+	i32 const line_start_ = get_line_(Lines_, line_number_)->start_;
+	i32 column_ = char_offset_.op_subtract(line_start_)->op_add(i32(1));
+	i32 i_ = line_start_;
+	while (cond(i32_less_than(i_, char_offset_)))
 	{
 		if (cond(equal_op(Text_.op_Element(i_), cp('\t'))))
 		{
@@ -1158,7 +1095,7 @@ auto ::t_Source_Text::PositionOfStart_(t_Text_Span const *_Nonnull const span_) 
 		i_.op_add_assign(i32(1));
 	}
 
-	return new_t_Text_Position(offset_, lineNumber_, column_);
+	return new_t_Text_Position(char_offset_, line_number_, column_);
 }
 
 auto t_Text_Line::construct(t_Source_Text const *_Nonnull const source_, i32 const start_, i32 const length_) -> t_Text_Line *_Nonnull
@@ -1189,24 +1126,78 @@ inline t_Text_Line *_Nonnull new_t_Text_Line__spanning(t_Source_Text const *_Non
 	return (new t_Text_Line())->construct_spanning(source_, start_, end_);
 }
 
-auto ::t_Text_Line::End_() const -> i32
+auto t_Text_Lines::construct(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const start_of_line_) -> t_Text_Lines *_Nonnull
 {
-	auto self = this;
-	return start_.op_add(byte_length_);
-}
-
-auto t_Text_Position::construct(i32 const offset_, i32 const line_, i32 const column_) -> t_Text_Position *_Nonnull
-{
-	t_Text_Position *_Nonnull self = this;
-	Offset_ = offset_;
-	Line_ = line_;
-	Column_ = column_;
+	t_Text_Lines *_Nonnull self = this;
+	self->source_ = source_;
+	self->start_of_line_ = start_of_line_;
 	return self;
 }
 
-inline t_Text_Position *_Nonnull new_t_Text_Position(i32 const offset_, i32 const line_, i32 const column_)
+inline t_Text_Lines *_Nonnull new_t_Text_Lines(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const start_of_line_)
 {
-	return (new t_Text_Position())->construct(offset_, line_, column_);
+	return (new t_Text_Lines())->construct(source_, start_of_line_);
+}
+
+auto line_count_(t_Text_Lines const *_Nonnull const lines_) -> i32
+{
+	return lines_->start_of_line_->op_magnitude();
+}
+
+auto get_line_(t_Text_Lines const *_Nonnull const lines_, i32 const line_number_) -> t_Text_Line const *_Nonnull
+{
+	assert_(i32_greater_than(line_number_, i32(0)), str("line ").op_add(line_number_));
+	assert_(i32_less_than_or_equal(line_number_, line_count_(lines_)), str("line ").op_add(line_number_));
+	i32 const line_index_ = line_number_.op_subtract(i32(1));
+	i32 const line_start_ = lines_->start_of_line_->op_Element(line_index_);
+	if (cond(equal_op(line_index_, line_count_(lines_)->op_subtract(i32(1)))))
+	{
+		return new_t_Text_Line__spanning(lines_->source_, line_start_, lines_->source_->ByteLength_());
+	}
+
+	i32 const line_end_ = lines_->start_of_line_->op_Element(line_index_.op_add(i32(1)));
+	return new_t_Text_Line__spanning(lines_->source_, line_start_, line_end_);
+}
+
+auto line_containing_offset_(t_Text_Lines const *_Nonnull const lines_, i32 const character_offset_) -> i32
+{
+	assert_(i32_greater_than_or_equal(character_offset_, i32(0)), str("offset ").op_add(character_offset_));
+	assert_(i32_less_than_or_equal(character_offset_, lines_->source_->ByteLength_()), str("offset ").op_add(character_offset_)->op_add(str(" source length "))->op_add(lines_->source_->ByteLength_()));
+	i32 left_ = i32(0);
+	i32 right_ = line_count_(lines_)->op_subtract(i32(1));
+	while (cond(i32_less_than_or_equal(left_, right_)))
+	{
+		i32 const mid_ = left_.op_add(right_.op_subtract(left_)->op_divide(i32(2)));
+		i32 const mid_line_start_ = lines_->start_of_line_->op_Element(mid_);
+		if (cond(i32_less_than(mid_line_start_, character_offset_)))
+		{
+			left_ = mid_.op_add(i32(1));
+		}
+		else if (cond(i32_greater_than(mid_line_start_, character_offset_)))
+		{
+			right_ = mid_.op_subtract(i32(1));
+		}
+		else
+		{
+			return mid_.op_add(i32(1));
+		}
+	}
+
+	return left_;
+}
+
+auto t_Text_Position::construct(i32 const character_offset_, i32 const line_, i32 const column_) -> t_Text_Position *_Nonnull
+{
+	t_Text_Position *_Nonnull self = this;
+	self->character_offset_ = character_offset_;
+	self->line_ = line_;
+	self->column_ = column_;
+	return self;
+}
+
+inline t_Text_Position *_Nonnull new_t_Text_Position(i32 const character_offset_, i32 const line_, i32 const column_)
+{
+	return (new t_Text_Position())->construct(character_offset_, line_, column_);
 }
 
 auto unit_test_Text_Position_() -> void
@@ -1217,28 +1208,22 @@ auto unit_test_Text_Position_() -> void
 auto Text_Position_retains_given_offeset_line_and_column_() -> void
 {
 	t_Text_Position const *_Nonnull const position_ = new_t_Text_Position(i32(23), i32(2), i32(5));
-	assert_(equal_op(position_->Offset_, i32(23)), str(""));
-	assert_(equal_op(position_->Line_, i32(2)), str(""));
-	assert_(equal_op(position_->Column_, i32(5)), str(""));
+	assert_(equal_op(position_->character_offset_, i32(23)), str(""));
+	assert_(equal_op(position_->line_, i32(2)), str(""));
+	assert_(equal_op(position_->column_, i32(5)), str(""));
 }
 
 auto t_Text_Span::construct(i32 const start_, i32 const length_) -> t_Text_Span *_Nonnull
 {
 	t_Text_Span *_Nonnull self = this;
 	self->start_ = start_;
-	byte_length_ = length_;
+	self->byte_length_ = length_;
 	return self;
 }
 
 inline t_Text_Span *_Nonnull new_t_Text_Span(i32 const start_, i32 const length_)
 {
 	return (new t_Text_Span())->construct(start_, length_);
-}
-
-auto ::t_Text_Span::End_() const -> i32
-{
-	auto self = this;
-	return start_.op_add(byte_length_);
 }
 
 auto format_error_(str const message_) -> str
