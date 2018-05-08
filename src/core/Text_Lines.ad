@@ -1,0 +1,58 @@
+public class Text_Lines
+{
+    public let source: Source_Text;
+    public let start_of_line: system.collections.List<int>;
+
+    public new(source: Source_Text, start_of_line: system.collections.List<int>)
+    {
+        self.source = source;
+        self.start_of_line = start_of_line;
+    }
+}
+
+public line_count(lines: Text_Lines) -> int
+{
+    return |lines.start_of_line|;
+}
+
+public get_line(lines: Text_Lines, line_number: int) -> Text_Line
+{
+    let line_index: int = line_number - 1; // line_number is one based
+    let line_start: int = lines.start_of_line[line_index];
+    if line_index == line_count(lines) - 1 // last line
+        { return new Text_Line.spanning(lines.source, line_start, lines.source.ByteLength()); }
+
+    let line_end: int = lines.start_of_line[line_index + 1];
+    return new Text_Line.spanning(lines.source, line_start, line_end);
+}
+
+public line_containing_offset(lines: Text_Lines, character_offset: int) -> int
+{
+    // binary search for the line
+    var left: int = 0;
+    var right: int = line_count(lines) - 1;
+    while left <= right
+    {
+        let mid: int = left + (right - left) / 2; // avoids overflow compared to (left + right) / 2
+
+        let mid_line_start: int = lines.start_of_line[mid];
+        if mid_line_start < character_offset
+        {
+            // If offset greater, ignore left half
+            left = mid + 1;
+        }
+        else if mid_line_start > character_offset
+        {
+            // If offset is smaller, ignore right half
+            right = mid - 1;
+        }
+        else // Neither greater than nor less than means equal
+        {
+            return mid + 1; // Line number is one based
+        }
+    }
+
+    // Now `lines.start_of_line[left] > character_offset`, so `left - 1` is the line we want.
+    // However, line number is one based, so we would add one, so just `left`
+    return left;
+}

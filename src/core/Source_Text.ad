@@ -6,7 +6,7 @@ public class Source_Text
     public let Path: string; // TODO use a path object?
     public let name: string;
     public let Text: string;
-    public let Lines: Line_Info;
+    public let Lines: Text_Lines;
 
     public new(package: string, path: string, text: string)
     {
@@ -24,7 +24,7 @@ public class Source_Text
 
         self.name = name;
         Text = text;
-        Lines = new Line_Info(self, LineStarts());
+        Lines = new Text_Lines(self, LineStarts());
     }
 
     private LineStarts(self) -> system.collections.List<int>
@@ -76,22 +76,22 @@ public class Source_Text
 
     public PositionOfStart(self, span: Text_Span) -> Text_Position
     {
-        let offset: int = span.start;
-        let lineNumber: int = Lines.LineNumber(offset);
-        let lineStart: int = Lines.get(lineNumber).start;
+        let char_offset: int = span.start;
+        let line_number: int = line_containing_offset(Lines, char_offset);
+        let line_start: int = get_line(Lines, line_number).start;
 
         // TODO handle Unicode
-        var column: int = offset - lineStart + 1; // column is one based
+        var column: int = char_offset - line_start + 1; // column is one based
         // Account for tabs being multiple columns
         // TODO switch to a for loop when we have range expressions
-        var i: int = lineStart;
-        while(i < offset)
+        var i: int = line_start;
+        while(i < char_offset)
         {
             if Text[i] == '\t'
                 { column += 3; } // tabs are 4 columns, but the character was already counted as 1
             i += 1;
         }
 
-        return new Text_Position(offset, lineNumber, column);
+        return new Text_Position(char_offset, line_number, column);
     }
 }
