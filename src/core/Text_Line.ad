@@ -17,10 +17,4 @@ public class Text_Line
         self.start = start;
         self.byte_length = end - start;
     }
-
-    // TODO get Property
-    public End(self) -> int
-    {
-        return start + byte_length;
-    }
 }

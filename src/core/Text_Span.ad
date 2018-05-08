@@ -9,12 +9,6 @@ public class Text_Span
     public new(start: int, length: int)
     {
         self.start = start;
-        byte_length = length;
-    }
-
-    // TODO get Property
-    public End(self) -> int
-    {
-        return start + byte_length;
+        self.byte_length = length;
     }
 }

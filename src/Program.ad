@@ -20,7 +20,7 @@ public write(console: mut system.console.Console, diagnostics: system.collection
         else
             { severity = "Error"; }
 
-        console.WriteLine(diagnostic.source.Path+":"+position.Line+":"+position.Column+" "+severity+":");
+        console.WriteLine(diagnostic.source.Path+":"+position.line+":"+position.column+" "+severity+":");
         console.WriteLine("  "+diagnostic.Message);
     }
 }
