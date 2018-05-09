@@ -1,758 +1,757 @@
 public class Compilation_Unit_Parser
 {
-    private let tokenStream: mut Token_Stream;
-    private var token: Syntax_Node?;
-    private var compilationUnit: Syntax_Node?;
+    public let tokenStream: mut Token_Stream;
+    public var token: Syntax_Node?;
+    public var compilationUnit: Syntax_Node?;
 
     public new(tokenStream: mut Token_Stream)
     {
         self.tokenStream = tokenStream;
         self.compilationUnit = none; // TODO We currently don't auto-initialize members
     }
+}
 
-    public Parse(mut self) -> Syntax_Node
+public parse(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    if parser.compilationUnit == none
     {
-        if compilationUnit == none
-        {
-            token = tokenStream.GetNextToken();
-            compilationUnit = ParseCompilationUnit();
-        }
-        return compilationUnit;
+        parser.token = parser.tokenStream.GetNextToken();
+        parser.compilationUnit = parse_compilation_unit(parser);
+    }
+    return parser.compilationUnit;
+}
+
+// ----------------------------------------------------------------------------
+// token Handling
+// ----------------------------------------------------------------------------
+
+public accept_token(parser: mut Compilation_Unit_Parser) -> Syntax_Node?
+{
+    let node: Syntax_Node? = parser.token;
+    parser.token = parser.tokenStream.GetNextToken();
+    return node;
+}
+
+public expect_token(parser: mut Compilation_Unit_Parser, tokenType: int) -> Syntax_Node
+{
+    if parser.token == none
+    {
+        return new_syntax_node_missing(tokenType, parser.tokenStream.source, source_byte_length(parser.tokenStream.source));
     }
 
-    // ----------------------------------------------------------------------------
-    // token Handling
-    // ----------------------------------------------------------------------------
-
-    private AcceptToken(mut self) -> Syntax_Node?
+    if parser.token == none or parser.token.kind =/= tokenType
     {
-        let node: Syntax_Node? = token;
-        token = tokenStream.GetNextToken();
-        return node;
+        return new_syntax_node_missing(tokenType, parser.tokenStream.source, parser.token.start);
     }
 
-    private ExpectToken(mut self, tokenType: int) -> Syntax_Node
+    let node: Syntax_Node? = parser.token;
+    parser.token = parser.tokenStream.GetNextToken();
+    return node;
+}
+
+// ----------------------------------------------------------------------------
+// Parser
+// ----------------------------------------------------------------------------
+
+public parse_type_name(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    if parser.token.kind == CodePoint
+        or parser.token.kind == String
+        or parser.token.kind == Int
+        or parser.token.kind == Bool
+        or parser.token.kind == Void
+        or parser.token.kind == UnsignedInt
     {
-        if token == none
-        {
-            return new_syntax_node_missing(tokenType, tokenStream.source, source_byte_length(tokenStream.source));
-        }
-
-        if token == none or token.kind =/= tokenType
-        {
-            return new_syntax_node_missing(tokenType, tokenStream.source, token.start);
-        }
-
-        let node: Syntax_Node? = token;
-        token = tokenStream.GetNextToken();
-        return node;
+        return new Syntax_Node(PredefinedType, accept_token(parser));
     }
-
-    // ----------------------------------------------------------------------------
-    // Parser
-    // ----------------------------------------------------------------------------
-
-    private ParseTypeName(mut self) -> Syntax_Node
+    else
     {
-        if token.kind == CodePoint
-            or token.kind == String
-            or token.kind == Int
-            or token.kind == Bool
-            or token.kind == Void
-            or token.kind == UnsignedInt
-        {
-            return new Syntax_Node(PredefinedType, AcceptToken());
-        }
-        else
-        {
-            var type: Syntax_Node = new Syntax_Node(IdentifierName, ExpectToken(Identifier));
+        var type: Syntax_Node = new Syntax_Node(IdentifierName, expect_token(parser, Identifier));
 
-            while token.kind == Dot
-            {
-                let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-                children.add(type);
-                children.add(ExpectToken(Dot));
-                let identifier: Syntax_Node = ExpectToken(Identifier);
-                if token.kind == LessThan
-                {
-                    // Generic Name
-                    let genericNameChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-                    genericNameChildren.add(new Syntax_Node(IdentifierName, identifier));
-                    genericNameChildren.add(ExpectToken(LessThan));
-                    genericNameChildren.add(ParseType());
-                    // TODO support multiple type arguments
-                    genericNameChildren.add(ExpectToken(GreaterThan));
-                    children.add(new Syntax_Node(GenericName, genericNameChildren));
-                }
-                else
-                {
-                    children.add(new Syntax_Node(IdentifierName, identifier));
-                }
-
-                type = new Syntax_Node(QualifiedName, children);
-            }
-
-            return type;
-        }
-    }
-
-    private ParseNonOptionalType(mut self) -> Syntax_Node
-    {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-
-        if token.kind == MutableKeyword
-        {
-
-            children.add(ExpectToken(MutableKeyword));
-            children.add(ParseTypeName());
-            return new Syntax_Node(MutableType, children);
-        }
-        else
-        {
-            children.add(ParseTypeName());
-            return new Syntax_Node(ImmutableType, children);
-        }
-    }
-
-    private ParseType(mut self) -> Syntax_Node
-    {
-        var type: Syntax_Node = ParseNonOptionalType();
-
-        while token.kind == Question
+        while parser.token.kind == Dot
         {
             let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
             children.add(type);
-            children.add(ExpectToken(Question));
-            type = new Syntax_Node(ImmutableType, new Syntax_Node(OptionalType, children));
+            children.add(expect_token(parser, Dot));
+            let identifier: Syntax_Node = expect_token(parser, Identifier);
+            if parser.token.kind == LessThan
+            {
+                // Generic Name
+                let genericNameChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+                genericNameChildren.add(new Syntax_Node(IdentifierName, identifier));
+                genericNameChildren.add(expect_token(parser, LessThan));
+                genericNameChildren.add(parse_type(parser));
+                // TODO support multiple type arguments
+                genericNameChildren.add(expect_token(parser, GreaterThan));
+                children.add(new Syntax_Node(GenericName, genericNameChildren));
+            }
+            else
+            {
+                children.add(new Syntax_Node(IdentifierName, identifier));
+            }
+
+            type = new Syntax_Node(QualifiedName, children);
         }
 
         return type;
     }
+}
 
-    // An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
-    private ParseAtom(mut self) -> Syntax_Node
+public parse_non_optional_type(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+
+    if parser.token.kind == MutableKeyword
+    {
+        children.add(expect_token(parser, MutableKeyword));
+        children.add(parse_type_name(parser));
+        return new Syntax_Node(MutableType, children);
+    }
+    else
+    {
+        children.add(parse_type_name(parser));
+        return new Syntax_Node(ImmutableType, children);
+    }
+}
+
+public parse_type(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    var type: Syntax_Node = parse_non_optional_type(parser);
+
+    while parser.token.kind == Question
     {
         let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-
-        // This should be a match on the token type
-        if token.kind == NewKeyword
-        {
-            // Constructor Call
-            children.add(ExpectToken(NewKeyword));
-            children.add(ParseTypeName());
-            children.add(ParseCallArguments());
-            return new Syntax_Node(NewExpression, children);
-        }
-        if token.kind == NotOperator
-        {
-            children.add(ExpectToken(NotOperator));
-            children.add(ParseExpression(8));
-            return new Syntax_Node(NotExpression, children);
-        }
-        if token.kind == LeftParen
-        {
-            children.add(ExpectToken(LeftParen));
-            children.add(ParseExpression());
-            children.add(ExpectToken(RightParen));
-            return new Syntax_Node(ParenthesizedExpression, children);
-        }
-        if token.kind == Pipe
-        {
-            children.add(ExpectToken(Pipe));
-            children.add(ParseExpression());
-            children.add(ExpectToken(Pipe));
-            return new Syntax_Node(MagnitudeExpression, children);
-        }
-        if token.kind == Minus
-        {
-            // Unary Minus
-            children.add(ExpectToken(Minus));
-            children.add(ParseExpression(8));
-            return new Syntax_Node(NegateExpression, children);
-        }
-        if token.kind == NoneKeyword
-        {
-            children.add(ExpectToken(NoneKeyword));
-            return new Syntax_Node(NoneLiteralExpression, children);
-        }
-        if token.kind == SelfKeyword
-        {
-            children.add(ExpectToken(SelfKeyword));
-            return new Syntax_Node(SelfExpression, children);
-        }
-        if token.kind == TrueKeyword
-        {
-            children.add(ExpectToken(TrueKeyword));
-            return new Syntax_Node(TrueLiteralExpression, children);
-        }
-        if token.kind == FalseKeyword
-        {
-            children.add(ExpectToken(FalseKeyword));
-            return new Syntax_Node(FalseLiteralExpression, children);
-        }
-        if token.kind == Number
-        {
-            children.add(ExpectToken(Number));
-            return new Syntax_Node(NumericLiteralExpression, children);
-        }
-        if token.kind == Identifier
-        {
-            children.add(ExpectToken(Identifier));
-            return new Syntax_Node(IdentifierName, children);
-        }
-        if token.kind == StringLiteral
-        {
-            children.add(ExpectToken(StringLiteral));
-            return new Syntax_Node(StringLiteralExpression, children);
-        }
-        if token.kind == CodePointLiteral
-        {
-            children.add(ExpectToken(CodePointLiteral));
-            return new Syntax_Node(CodePointLiteralExpression, children);
-        }
-
-        // Missing an atom, assume it should have been an identifier
-        return new Syntax_Node(IdentifierName, ExpectToken(Identifier));
+        children.add(type);
+        children.add(expect_token(parser, Question));
+        type = new Syntax_Node(ImmutableType, new Syntax_Node(OptionalType, children));
     }
 
-    private ParseCallArguments(mut self) -> Syntax_Node
+    return type;
+}
+
+// An Atom is the unit of an expression that occurs between infix operators, i.e. an identifier, literal, group, or new
+public parse_atom(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+
+    // This should be a match on the token type
+    if parser.token.kind == NewKeyword
     {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        children.add(ExpectToken(LeftParen));
-        if token.kind =/= RightParen
-        {
-            loop
-            {
-                children.add(ParseExpression());
-                if token.kind == Comma
-                    { children.add(ExpectToken(Comma)); }
-                else
-                    { break; }
-            }
-        }
-        children.add(ExpectToken(RightParen));
-        return new Syntax_Node(ArgumentList, children);
+        // Constructor Call
+        children.add(expect_token(parser, NewKeyword));
+        children.add(parse_type_name(parser));
+        children.add(parse_call_arguments(parser));
+        return new Syntax_Node(NewExpression, children);
+    }
+    if parser.token.kind == NotOperator
+    {
+        children.add(expect_token(parser, NotOperator));
+        children.add(parse_expression(parser, 8));
+        return new Syntax_Node(NotExpression, children);
+    }
+    if parser.token.kind == LeftParen
+    {
+        children.add(expect_token(parser, LeftParen));
+        children.add(parse_expression(parser));
+        children.add(expect_token(parser, RightParen));
+        return new Syntax_Node(ParenthesizedExpression, children);
+    }
+    if parser.token.kind == Pipe
+    {
+        children.add(expect_token(parser, Pipe));
+        children.add(parse_expression(parser));
+        children.add(expect_token(parser, Pipe));
+        return new Syntax_Node(MagnitudeExpression, children);
+    }
+    if parser.token.kind == Minus
+    {
+        // Unary Minus
+        children.add(expect_token(parser, Minus));
+        children.add(parse_expression(parser, 8));
+        return new Syntax_Node(NegateExpression, children);
+    }
+    if parser.token.kind == NoneKeyword
+    {
+        children.add(expect_token(parser, NoneKeyword));
+        return new Syntax_Node(NoneLiteralExpression, children);
+    }
+    if parser.token.kind == SelfKeyword
+    {
+        children.add(expect_token(parser, SelfKeyword));
+        return new Syntax_Node(SelfExpression, children);
+    }
+    if parser.token.kind == TrueKeyword
+    {
+        children.add(expect_token(parser, TrueKeyword));
+        return new Syntax_Node(TrueLiteralExpression, children);
+    }
+    if parser.token.kind == FalseKeyword
+    {
+        children.add(expect_token(parser, FalseKeyword));
+        return new Syntax_Node(FalseLiteralExpression, children);
+    }
+    if parser.token.kind == Number
+    {
+        children.add(expect_token(parser, Number));
+        return new Syntax_Node(NumericLiteralExpression, children);
+    }
+    if parser.token.kind == Identifier
+    {
+        children.add(expect_token(parser, Identifier));
+        return new Syntax_Node(IdentifierName, children);
+    }
+    if parser.token.kind == StringLiteral
+    {
+        children.add(expect_token(parser, StringLiteral));
+        return new Syntax_Node(StringLiteralExpression, children);
+    }
+    if parser.token.kind == CodePointLiteral
+    {
+        children.add(expect_token(parser, CodePointLiteral));
+        return new Syntax_Node(CodePointLiteralExpression, children);
     }
 
-    // Operator Precedence
-    // 1 Assignment: = += -=
-    // 2 Logical Or: or
-    // 3 Logical And: and
-    // 4 Equality: == =/=
-    // 5 Relational: < <= > >=
-    // 6 Additive: + -
-    // 7 Multiplicative: * / %
-    // 8 Unary: - not
-    // 9 Primary: f() . []
-    private ParseExpression(mut self, minPrecedence: int) -> Syntax_Node
-    {
-        var expression: Syntax_Node = ParseAtom();
+    // Missing an atom, assume it should have been an identifier
+    return new Syntax_Node(IdentifierName, expect_token(parser, Identifier));
+}
 
+public parse_call_arguments(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    children.add(expect_token(parser, LeftParen));
+    if parser.token.kind =/= RightParen
+    {
         loop
         {
-            let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-            children.add(expression);
-
-            var precedence: int;
-            var leftAssociative: bool;
-            var suffixOperator: bool = false;
-            var expressionType: int;
-            if (token.kind == Equals or token.kind == PlusEquals or token.kind == MinusEquals) and minPrecedence <= 1
-            {
-                // Assignment
-                precedence = 1;
-                leftAssociative = false;
-                children.add(AcceptToken());
-                expressionType = AssignmentExpression;
-            }
-            else if token.kind == OrKeyword and minPrecedence <= 2
-            {
-                // logical or
-                precedence = 2;
-                leftAssociative = true;
-                children.add(ExpectToken(OrKeyword));
-                expressionType = OrExpression;
-            }
-            else if token.kind == AndKeyword and minPrecedence <= 3
-            {
-                // logical and
-                precedence = 3;
-                leftAssociative = true;
-                children.add(ExpectToken(AndKeyword));
-                expressionType = AndExpression;
-            }
-            else if token.kind == EqualsEquals and minPrecedence <= 4
-            {
-                // equal
-                precedence = 4;
-                leftAssociative = true;
-                children.add(ExpectToken(EqualsEquals));
-                expressionType = EqualExpression;
-            }
-            else if token.kind == EqualsSlashEquals and minPrecedence <= 4
-            {
-                // not equal
-                precedence = 4;
-                leftAssociative = true;
-                children.add(ExpectToken(EqualsSlashEquals));
-                expressionType = NotEqualExpression;
-            }
-            else if (token.kind == LessThan or token.kind == LessThanEquals or token.kind == GreaterThan or token.kind == GreaterThanEquals) and minPrecedence <= 5
-            {
-                // relational operators
-                precedence = 5;
-                leftAssociative = true;
-                children.add(AcceptToken());
-                expressionType = ComparisonExpression;
-            }
-            else if token.kind == Plus and minPrecedence <= 6
-            {
-                // Additive
-                precedence = 6;
-                leftAssociative = true;
-                children.add(ExpectToken(Plus));
-                expressionType = AddExpression;
-            }
-            else if token.kind == Minus and minPrecedence <= 6
-            {
-                // Additive
-                precedence = 6;
-                leftAssociative = true;
-                children.add(ExpectToken(Minus));
-                expressionType = SubtractExpression;
-            }
-            else if token.kind == Asterisk and minPrecedence <= 7
-            {
-                // Multiplicative
-                precedence = 7;
-                leftAssociative = true;
-                children.add(ExpectToken(Asterisk));
-                expressionType = MultiplyExpression;
-            }
-            else if token.kind == Slash and minPrecedence <= 7
-            {
-                // Multiplicative
-                precedence = 7;
-                leftAssociative = true;
-                children.add(ExpectToken(Slash));
-                expressionType = DivideExpression;
-            }
-            else if token.kind == Percent and minPrecedence <= 7
-            {
-                // Multiplicative
-                precedence = 7;
-                leftAssociative = true;
-                children.add(ExpectToken(Percent));
-                expressionType = RemainderExpression;
-            }
-            else if token.kind == LeftParen and minPrecedence <= 9
-            {
-                // Invocation Expression
-                precedence = 9;
-                leftAssociative = true;
-                suffixOperator = true;
-
-                children.add(ParseCallArguments());
-                expressionType = InvocationExpression;
-            }
-            else if token.kind == Dot and minPrecedence <= 9
-            {
-                // Member Access
-                precedence = 9;
-                leftAssociative = true;
-                children.add(ExpectToken(Dot));
-                expressionType = MemberAccessExpression;
-            }
-            else if token.kind == LeftBracket and minPrecedence <= 9
-            {
-                // Element Access
-                precedence = 9;
-                leftAssociative = true;
-                suffixOperator = true;
-
-                children.add(ExpectToken(LeftBracket));
-                children.add(ParseExpression());
-                children.add(ExpectToken(RightBracket));
-                expressionType = ElementAccessExpression;
-            }
+            children.add(parse_expression(parser));
+            if parser.token.kind == Comma
+                { children.add(expect_token(parser, Comma)); }
             else
-            {
-                return expression;
-            }
-
-            if not suffixOperator
-            {
-                if leftAssociative
-                    { precedence += 1; }
-                children.add(ParseExpression(precedence));
-                expression = new Syntax_Node(expressionType, children);
-            }
-            else
-            {
-                expression = new Syntax_Node(expressionType, children);
-            }
+                { break; }
         }
     }
+    children.add(expect_token(parser, RightParen));
+    return new Syntax_Node(ArgumentList, children);
+}
 
-    private ParseExpression(mut self) -> Syntax_Node
-    {
-        return ParseExpression(1);
-    }
+// Operator Precedence
+// 1 Assignment: = += -=
+// 2 Logical Or: or
+// 3 Logical And: and
+// 4 Equality: == =/=
+// 5 Relational: < <= > >=
+// 6 Additive: + -
+// 7 Multiplicative: * / %
+// 8 Unary: - not
+// 9 Primary: f() . []
+public parse_expression(parser: mut Compilation_Unit_Parser, minPrecedence: int) -> Syntax_Node
+{
+    var expression: Syntax_Node = parse_atom(parser);
 
-    private ParseStatement(mut self) -> Syntax_Node
+    loop
     {
         let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+        children.add(expression);
 
-        if token.kind == ReturnKeyword
+        var precedence: int;
+        var leftAssociative: bool;
+        var suffixOperator: bool = false;
+        var expressionType: int;
+        if (parser.token.kind == Equals or parser.token.kind == PlusEquals or parser.token.kind == MinusEquals) and minPrecedence <= 1
         {
-            children.add(ExpectToken(ReturnKeyword));
-            if token.kind =/= Semicolon
-            {
-                children.add(ParseExpression());
-            }
-            children.add(ExpectToken(Semicolon));
-            return new Syntax_Node(ReturnStatement, children);
+            // Assignment
+            precedence = 1;
+            leftAssociative = false;
+            children.add(accept_token(parser));
+            expressionType = AssignmentExpression;
         }
-        if token.kind == LoopKeyword
+        else if parser.token.kind == OrKeyword and minPrecedence <= 2
         {
-            children.add(ExpectToken(LoopKeyword));
-            children.add(ParseBlock());
-            return new Syntax_Node(LoopStatement, children);
+            // logical or
+            precedence = 2;
+            leftAssociative = true;
+            children.add(expect_token(parser, OrKeyword));
+            expressionType = OrExpression;
         }
-        if token.kind == WhileKeyword
+        else if parser.token.kind == AndKeyword and minPrecedence <= 3
         {
-            children.add(ExpectToken(WhileKeyword));
-            children.add(ParseExpression());
-            children.add(ParseBlock());
-            return new Syntax_Node(WhileStatement, children);
+            // logical and
+            precedence = 3;
+            leftAssociative = true;
+            children.add(expect_token(parser, AndKeyword));
+            expressionType = AndExpression;
         }
-        if token.kind == ForKeyword
+        else if parser.token.kind == EqualsEquals and minPrecedence <= 4
         {
-            children.add(ExpectToken(ForKeyword));
-            children.add(ParseVariableDeclaration(false));
-            children.add(ExpectToken(InKeyword));
-            children.add(ParseExpression());
-            children.add(ParseBlock());
-            return new Syntax_Node(ForStatement, children);
+            // equal
+            precedence = 4;
+            leftAssociative = true;
+            children.add(expect_token(parser, EqualsEquals));
+            expressionType = EqualExpression;
         }
-        if token.kind == DoKeyword
+        else if parser.token.kind == EqualsSlashEquals and minPrecedence <= 4
         {
-            children.add(ExpectToken(DoKeyword));
-            children.add(ParseBlock());
-            children.add(ExpectToken(WhileKeyword));
-            children.add(ParseExpression());
-            children.add(ExpectToken(Semicolon));
-            return new Syntax_Node(DoWhileStatement, children);
+            // not equal
+            precedence = 4;
+            leftAssociative = true;
+            children.add(expect_token(parser, EqualsSlashEquals));
+            expressionType = NotEqualExpression;
         }
-        if token.kind == IfKeyword
+        else if (parser.token.kind == LessThan or parser.token.kind == LessThanEquals or parser.token.kind == GreaterThan or parser.token.kind == GreaterThanEquals) and minPrecedence <= 5
         {
-            return ParseIfStatement();
+            // relational operators
+            precedence = 5;
+            leftAssociative = true;
+            children.add(accept_token(parser));
+            expressionType = ComparisonExpression;
         }
-        if token.kind == BreakKeyword
+        else if parser.token.kind == Plus and minPrecedence <= 6
         {
-            children.add(ExpectToken(BreakKeyword));
-            children.add(ExpectToken(Semicolon));
-            return new Syntax_Node(BreakStatement, children);
+            // Additive
+            precedence = 6;
+            leftAssociative = true;
+            children.add(expect_token(parser, Plus));
+            expressionType = AddExpression;
         }
-        if token.kind == ContinueKeyword
+        else if parser.token.kind == Minus and minPrecedence <= 6
         {
-            children.add(ExpectToken(ContinueKeyword));
-            children.add(ExpectToken(Semicolon));
-            return new Syntax_Node(ContinueStatement, children);
+            // Additive
+            precedence = 6;
+            leftAssociative = true;
+            children.add(expect_token(parser, Minus));
+            expressionType = SubtractExpression;
         }
-        if token.kind == VarKeyword or token.kind == LetKeyword
+        else if parser.token.kind == Asterisk and minPrecedence <= 7
         {
-            children.add(ParseVariableDeclaration(true));
-            children.add(ExpectToken(Semicolon));
-            return new Syntax_Node(LocalDeclarationStatement, children);
+            // Multiplicative
+            precedence = 7;
+            leftAssociative = true;
+            children.add(expect_token(parser, Asterisk));
+            expressionType = MultiplyExpression;
         }
-        if token.kind == LeftBrace
+        else if parser.token.kind == Slash and minPrecedence <= 7
         {
-            return ParseBlock();
+            // Multiplicative
+            precedence = 7;
+            leftAssociative = true;
+            children.add(expect_token(parser, Slash));
+            expressionType = DivideExpression;
         }
+        else if parser.token.kind == Percent and minPrecedence <= 7
+        {
+            // Multiplicative
+            precedence = 7;
+            leftAssociative = true;
+            children.add(expect_token(parser, Percent));
+            expressionType = RemainderExpression;
+        }
+        else if parser.token.kind == LeftParen and minPrecedence <= 9
+        {
+            // Invocation Expression
+            precedence = 9;
+            leftAssociative = true;
+            suffixOperator = true;
 
-        // Assume it is an expression statement
-        children.add(ParseExpression());
-        children.add(ExpectToken(Semicolon));
-        return new Syntax_Node(ExpressionStatement, children);
-    }
-
-    private ParseIfStatement(mut self) -> Syntax_Node
-    {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-
-        children.add(ExpectToken(IfKeyword));
-        children.add(ParseExpression());
-        children.add(ParseBlock());
-        if token.kind == ElseKeyword
-        {
-            let elseChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-            elseChildren.add(ExpectToken(ElseKeyword));
-            if token.kind == IfKeyword
-                { elseChildren.add(ParseIfStatement()); }
-            else
-                { elseChildren.add(ParseBlock());}
-            children.add(new Syntax_Node(ElseClause, elseChildren));
+            children.add(parse_call_arguments(parser));
+            expressionType = InvocationExpression;
         }
+        else if parser.token.kind == Dot and minPrecedence <= 9
+        {
+            // Member Access
+            precedence = 9;
+            leftAssociative = true;
+            children.add(expect_token(parser, Dot));
+            expressionType = MemberAccessExpression;
+        }
+        else if parser.token.kind == LeftBracket and minPrecedence <= 9
+        {
+            // Element Access
+            precedence = 9;
+            leftAssociative = true;
+            suffixOperator = true;
 
-        return new Syntax_Node(IfStatement, children);
-    }
-
-    private ParseVariableDeclaration(mut self, allowInitializer: bool) -> Syntax_Node
-    {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-
-        if token.kind == LetKeyword and token.kind =/= VarKeyword
-            { children.add(ExpectToken(LetKeyword)); }
+            children.add(expect_token(parser, LeftBracket));
+            children.add(parse_expression(parser));
+            children.add(expect_token(parser, RightBracket));
+            expressionType = ElementAccessExpression;
+        }
         else
-            { children.add(ExpectToken(VarKeyword)); }
-
-        children.add(ExpectToken(Identifier));
-        children.add(ExpectToken(Colon));
-        children.add(ParseType());
-
-        if allowInitializer and token.kind == Equals
         {
-            children.add(ExpectToken(Equals));
-            children.add(ParseExpression());
+            return expression;
         }
 
-        return new Syntax_Node(VariableDeclaration, children);
-    }
-
-    private ParseBlock(mut self) -> Syntax_Node
-    {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        children.add(ExpectToken(LeftBrace));
-        while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
+        if not suffixOperator
         {
-            let startToken: Syntax_Node = token;
-            children.add(ParseStatement());
-            if token == startToken
-            {
-                // We have not advanced at all when trying to parse a statement.
-                // Better skip some tokens to get unstuck
-                let skipped: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-                while token.kind =/= LeftBrace
-                    and token.kind =/= RightBrace
-                    and token.kind =/= EndOfFileToken
-                {
-                    let currentTokenType: int = token.kind;
-                    skipped.add(AcceptToken());
-                    // If we hit a semicolon, assume that was the end of the statement
-                    if currentTokenType == Semicolon
-                        { break; }
-                }
-                children.add(new_Syntax_Node_Skipped(skipped));
-            }
+            if leftAssociative
+                { precedence += 1; }
+            children.add(parse_expression(parser, precedence));
+            expression = new Syntax_Node(expressionType, children);
         }
-        children.add(ExpectToken(RightBrace));
-        return new Syntax_Node(Block, children);
+        else
+        {
+            expression = new Syntax_Node(expressionType, children);
+        }
+    }
+}
+
+public parse_expression(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    return parse_expression(parser, 1);
+}
+
+public parse_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+
+    if parser.token.kind == ReturnKeyword
+    {
+        children.add(expect_token(parser, ReturnKeyword));
+        if parser.token.kind =/= Semicolon
+        {
+            children.add(parse_expression(parser));
+        }
+        children.add(expect_token(parser, Semicolon));
+        return new Syntax_Node(ReturnStatement, children);
+    }
+    if parser.token.kind == LoopKeyword
+    {
+        children.add(expect_token(parser, LoopKeyword));
+        children.add(parse_block(parser));
+        return new Syntax_Node(LoopStatement, children);
+    }
+    if parser.token.kind == WhileKeyword
+    {
+        children.add(expect_token(parser, WhileKeyword));
+        children.add(parse_expression(parser));
+        children.add(parse_block(parser));
+        return new Syntax_Node(WhileStatement, children);
+    }
+    if parser.token.kind == ForKeyword
+    {
+        children.add(expect_token(parser, ForKeyword));
+        children.add(parse_variable_declaration(parser, false));
+        children.add(expect_token(parser, InKeyword));
+        children.add(parse_expression(parser));
+        children.add(parse_block(parser));
+        return new Syntax_Node(ForStatement, children);
+    }
+    if parser.token.kind == DoKeyword
+    {
+        children.add(expect_token(parser, DoKeyword));
+        children.add(parse_block(parser));
+        children.add(expect_token(parser, WhileKeyword));
+        children.add(parse_expression(parser));
+        children.add(expect_token(parser, Semicolon));
+        return new Syntax_Node(DoWhileStatement, children);
+    }
+    if parser.token.kind == IfKeyword
+    {
+        return parse_if_statement(parser);
+    }
+    if parser.token.kind == BreakKeyword
+    {
+        children.add(expect_token(parser, BreakKeyword));
+        children.add(expect_token(parser, Semicolon));
+        return new Syntax_Node(BreakStatement, children);
+    }
+    if parser.token.kind == ContinueKeyword
+    {
+        children.add(expect_token(parser, ContinueKeyword));
+        children.add(expect_token(parser, Semicolon));
+        return new Syntax_Node(ContinueStatement, children);
+    }
+    if parser.token.kind == VarKeyword or parser.token.kind == LetKeyword
+    {
+        children.add(parse_variable_declaration(parser, true));
+        children.add(expect_token(parser, Semicolon));
+        return new Syntax_Node(LocalDeclarationStatement, children);
+    }
+    if parser.token.kind == LeftBrace
+    {
+        return parse_block(parser);
     }
 
-    private ParseParameterList(mut self) -> Syntax_Node
+    // Assume it is an expression statement
+    children.add(parse_expression(parser));
+    children.add(expect_token(parser, Semicolon));
+    return new Syntax_Node(ExpressionStatement, children);
+}
+
+public parse_if_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+
+    children.add(expect_token(parser, IfKeyword));
+    children.add(parse_expression(parser));
+    children.add(parse_block(parser));
+    if parser.token.kind == ElseKeyword
     {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        children.add(ExpectToken(LeftParen));
+        let elseChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+        elseChildren.add(expect_token(parser, ElseKeyword));
+        if parser.token.kind == IfKeyword
+            { elseChildren.add(parse_if_statement(parser)); }
+        else
+            { elseChildren.add(parse_block(parser));}
+        children.add(new Syntax_Node(ElseClause, elseChildren));
+    }
 
-        if token.kind =/= RightParen
+    return new Syntax_Node(IfStatement, children);
+}
+
+public parse_variable_declaration(parser: mut Compilation_Unit_Parser, allowInitializer: bool) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+
+    if parser.token.kind == LetKeyword and parser.token.kind =/= VarKeyword
+        { children.add(expect_token(parser, LetKeyword)); }
+    else
+        { children.add(expect_token(parser, VarKeyword)); }
+
+    children.add(expect_token(parser, Identifier));
+    children.add(expect_token(parser, Colon));
+    children.add(parse_type(parser));
+
+    if allowInitializer and parser.token.kind == Equals
+    {
+        children.add(expect_token(parser, Equals));
+        children.add(parse_expression(parser));
+    }
+
+    return new Syntax_Node(VariableDeclaration, children);
+}
+
+public parse_block(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    children.add(expect_token(parser, LeftBrace));
+    while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
+    {
+        let startToken: Syntax_Node = parser.token;
+        children.add(parse_statement(parser));
+        if parser.token == startToken
         {
-            loop
+            // We have not advanced at all when trying to parse a statement.
+            // Better skip some tokens to get unstuck
+            let skipped: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+            while parser.token.kind =/= LeftBrace
+                and parser.token.kind =/= RightBrace
+                and parser.token.kind =/= EndOfFileToken
             {
-                let parameterChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-                if token.kind == MutableKeyword
-                    or token.kind == SelfKeyword
-                {
-                    // SelfParameter
-                    if token.kind == MutableKeyword
-                        { parameterChildren.add(ExpectToken(MutableKeyword)); }
-
-                    parameterChildren.add(ExpectToken(SelfKeyword));
-                    children.add(new Syntax_Node(SelfParameter, parameterChildren));
-                }
-                else
-                {
-                    let mutableBinding: bool = token.kind == VarKeyword;
-                    if token.kind == VarKeyword
-                        { parameterChildren.add(ExpectToken(VarKeyword)); }
-                    parameterChildren.add(ExpectToken(Identifier));
-                    parameterChildren.add(ExpectToken(Colon));
-                    let type: Syntax_Node = ParseType();
-                    parameterChildren.add(type);
-                    children.add(new Syntax_Node(Parameter, parameterChildren));
-                }
-
-                if token.kind == Comma
-                    { children.add(ExpectToken(Comma)); }
-                else
+                let currentTokenType: int = parser.token.kind;
+                skipped.add(accept_token(parser));
+                // If we hit a semicolon, assume that was the end of the statement
+                if currentTokenType == Semicolon
                     { break; }
             }
+            children.add(new_Syntax_Node_Skipped(skipped));
         }
-        children.add(ExpectToken(RightParen));
-        return new Syntax_Node(ParameterList, children);
     }
+    children.add(expect_token(parser, RightBrace));
+    return new Syntax_Node(Block, children);
+}
 
-    private ParseMemberDeclaration(mut self) -> Syntax_Node
+public parse_parameter_list(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    children.add(expect_token(parser, LeftParen));
+
+    if parser.token.kind =/= RightParen
     {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-
-        if token.kind == PublicKeyword
-            or token.kind == ProtectedKeyword
-            or token.kind == InternalKeyword
-            or token.kind == PrivateKeyword
+        loop
         {
-            children.add(AcceptToken());
-        }
-        else
-        {
-            // Really we expect an access modifier
-            children.add(ExpectToken(PublicKeyword));
-        }
+            let parameterChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+            if parser.token.kind == MutableKeyword
+                or parser.token.kind == SelfKeyword
+            {
+                // SelfParameter
+                if parser.token.kind == MutableKeyword
+                    { parameterChildren.add(expect_token(parser, MutableKeyword)); }
 
-        if token.kind == NewKeyword
-        {
-            // Constructor
-            children.add(ExpectToken(NewKeyword));
-            if token.kind == Identifier
-                { children.add(ExpectToken(Identifier)); }
-            children.add(ParseParameterList());
-            children.add(ParseBlock());
-            return new Syntax_Node(ConstructorDeclaration, children);
-        }
+                parameterChildren.add(expect_token(parser, SelfKeyword));
+                children.add(new Syntax_Node(SelfParameter, parameterChildren));
+            }
+            else
+            {
+                let mutableBinding: bool = parser.token.kind == VarKeyword;
+                if parser.token.kind == VarKeyword
+                    { parameterChildren.add(expect_token(parser, VarKeyword)); }
+                parameterChildren.add(expect_token(parser, Identifier));
+                parameterChildren.add(expect_token(parser, Colon));
+                let type: Syntax_Node = parse_type(parser);
+                parameterChildren.add(type);
+                children.add(new Syntax_Node(Parameter, parameterChildren));
+            }
 
-        if token.kind == VarKeyword
-            or token.kind == LetKeyword
-        {
-            children.add(ParseVariableDeclaration(false));
-            children.add(ExpectToken(Semicolon));
-            return new Syntax_Node(FieldDeclaration, children);
+            if parser.token.kind == Comma
+                { children.add(expect_token(parser, Comma)); }
+            else
+                { break; }
         }
-
-        // Method Declaration
-        children.add(ExpectToken(Identifier));
-        children.add(ParseParameterList());
-        children.add(ExpectToken(Arrow));
-        children.add(ParseType());
-        children.add(ParseBlock());
-        return new Syntax_Node(MethodDeclaration, children);
     }
+    children.add(expect_token(parser, RightParen));
+    return new Syntax_Node(ParameterList, children);
+}
 
-    private ParseDeclaration(mut self) -> Syntax_Node
+public parse_member_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+
+    if parser.token.kind == PublicKeyword
+        or parser.token.kind == ProtectedKeyword
+        or parser.token.kind == InternalKeyword
+        or parser.token.kind == PrivateKeyword
     {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-
-        if token.kind == PublicKeyword
-            or token.kind == ProtectedKeyword
-            or token.kind == InternalKeyword
-            or token.kind == PrivateKeyword
-        {
-            children.add(AcceptToken());
-        }
-        else
-        {
-            // TODO Really we expect an access modifier
-            children.add(ExpectToken(PublicKeyword));
-        }
-
-        if token.kind == VarKeyword
-            or token.kind == LetKeyword
-        {
-            children.add(ParseVariableDeclaration(true));
-            children.add(ExpectToken(Semicolon));
-            return new Syntax_Node(GlobalDeclaration, children);
-        }
-
-        if token.kind == ClassKeyword
-        {
-            children.add(ExpectToken(ClassKeyword));
-            children.add(ExpectToken(Identifier));
-            children.add(ExpectToken(LeftBrace));
-            while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
-            {
-                let startToken: Syntax_Node = token;
-                children.add(ParseMemberDeclaration());
-                if token == startToken
-                {
-                    // We have not advanced at all when trying to parse a member.
-                    // Skip a token to try to see if we can find the start of a member.
-                    children.add(new_Syntax_Node_Skipped(AcceptToken()));
-                }
-            }
-            children.add(ExpectToken(RightBrace));
-            return new Syntax_Node(ClassDeclaration, children);
-        }
-
-        if token.kind == StructKeyword
-        {
-            children.add(ExpectToken(StructKeyword));
-            children.add(ExpectToken(Identifier));
-            children.add(ExpectToken(LeftBrace));
-            while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
-            {
-                let startToken: Syntax_Node = token;
-                children.add(ParseMemberDeclaration());
-                if token == startToken
-                {
-                    // We have not advanced at all when trying to parse a member.
-                    // Skip a token to try to see if we can find the start of a member.
-                    children.add(new_Syntax_Node_Skipped(AcceptToken()));
-                }
-            }
-            children.add(ExpectToken(RightBrace));
-            return new Syntax_Node(StructDeclaration, children);
-        }
-
-        if token.kind == EnumKeyword
-        {
-            children.add(ExpectToken(EnumKeyword));
-            children.add(ExpectToken(StructKeyword));
-            children.add(ExpectToken(Identifier));
-            children.add(ExpectToken(LeftBrace));
-
-            while token.kind =/= RightBrace and token.kind =/= EndOfFileToken
-            {
-                let memberChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-                memberChildren.add(ExpectToken(Identifier));
-                if token.kind == Equals
-                {
-                    memberChildren.add(ExpectToken(Equals));
-                    memberChildren.add(ExpectToken(Number));
-                }
-                if token.kind =/= RightBrace
-                {
-                    memberChildren.add(ExpectToken(Comma));
-                }
-                children.add(new Syntax_Node(EnumMemberDeclaration, memberChildren));
-            }
-
-            children.add(ExpectToken(RightBrace));
-            return new Syntax_Node(EnumDeclaration, children);
-        }
-
-        // Function Declaration
-        children.add(ExpectToken(Identifier));
-        children.add(ParseParameterList());
-        children.add(ExpectToken(Arrow));
-        children.add(ParseType());
-        children.add(ParseBlock());
-        return new Syntax_Node(FunctionDeclaration, children);
+        children.add(accept_token(parser));
     }
-
-    private ParseCompilationUnit(mut self) -> Syntax_Node
+    else
     {
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        while token =/= none and token.kind =/= EndOfFileToken
+        // Really we expect an access modifier
+        children.add(expect_token(parser, PublicKeyword));
+    }
+
+    if parser.token.kind == NewKeyword
+    {
+        // Constructor
+        children.add(expect_token(parser, NewKeyword));
+        if parser.token.kind == Identifier
+            { children.add(expect_token(parser, Identifier)); }
+        children.add(parse_parameter_list(parser));
+        children.add(parse_block(parser));
+        return new Syntax_Node(ConstructorDeclaration, children);
+    }
+
+    if parser.token.kind == VarKeyword
+        or parser.token.kind == LetKeyword
+    {
+        children.add(parse_variable_declaration(parser, false));
+        children.add(expect_token(parser, Semicolon));
+        return new Syntax_Node(FieldDeclaration, children);
+    }
+
+    // Method Declaration
+    children.add(expect_token(parser, Identifier));
+    children.add(parse_parameter_list(parser));
+    children.add(expect_token(parser, Arrow));
+    children.add(parse_type(parser));
+    children.add(parse_block(parser));
+    return new Syntax_Node(MethodDeclaration, children);
+}
+
+public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+
+    if parser.token.kind == PublicKeyword
+        or parser.token.kind == ProtectedKeyword
+        or parser.token.kind == InternalKeyword
+        or parser.token.kind == PrivateKeyword
+    {
+        children.add(accept_token(parser));
+    }
+    else
+    {
+        // TODO Really we expect an access modifier
+        children.add(expect_token(parser, PublicKeyword));
+    }
+
+    if parser.token.kind == VarKeyword
+        or parser.token.kind == LetKeyword
+    {
+        children.add(parse_variable_declaration(parser, true));
+        children.add(expect_token(parser, Semicolon));
+        return new Syntax_Node(GlobalDeclaration, children);
+    }
+
+    if parser.token.kind == ClassKeyword
+    {
+        children.add(expect_token(parser, ClassKeyword));
+        children.add(expect_token(parser, Identifier));
+        children.add(expect_token(parser, LeftBrace));
+        while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
         {
-            let startToken: Syntax_Node = token;
-            children.add(ParseDeclaration());
-            if token == startToken
+            let startToken: Syntax_Node = parser.token;
+            children.add(parse_member_declaration(parser));
+            if parser.token == startToken
             {
-                // We have not advanced at all when trying to parse a declaration.
-                // Skip a token to try to see if we can find the start of a declaration.
-                children.add(new_Syntax_Node_Skipped(AcceptToken()));
+                // We have not advanced at all when trying to parse a member.
+                // Skip a token to try to see if we can find the start of a member.
+                children.add(new_Syntax_Node_Skipped(accept_token(parser)));
             }
         }
-        children.add(ExpectToken(EndOfFileToken));
-        return new Syntax_Node(CompilationUnit, children);
+        children.add(expect_token(parser, RightBrace));
+        return new Syntax_Node(ClassDeclaration, children);
     }
+
+    if parser.token.kind == StructKeyword
+    {
+        children.add(expect_token(parser, StructKeyword));
+        children.add(expect_token(parser, Identifier));
+        children.add(expect_token(parser, LeftBrace));
+        while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
+        {
+            let startToken: Syntax_Node = parser.token;
+            children.add(parse_member_declaration(parser));
+            if parser.token == startToken
+            {
+                // We have not advanced at all when trying to parse a member.
+                // Skip a token to try to see if we can find the start of a member.
+                children.add(new_Syntax_Node_Skipped(accept_token(parser)));
+            }
+        }
+        children.add(expect_token(parser, RightBrace));
+        return new Syntax_Node(StructDeclaration, children);
+    }
+
+    if parser.token.kind == EnumKeyword
+    {
+        children.add(expect_token(parser, EnumKeyword));
+        children.add(expect_token(parser, StructKeyword));
+        children.add(expect_token(parser, Identifier));
+        children.add(expect_token(parser, LeftBrace));
+
+        while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
+        {
+            let memberChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+            memberChildren.add(expect_token(parser, Identifier));
+            if parser.token.kind == Equals
+            {
+                memberChildren.add(expect_token(parser, Equals));
+                memberChildren.add(expect_token(parser, Number));
+            }
+            if parser.token.kind =/= RightBrace
+            {
+                memberChildren.add(expect_token(parser, Comma));
+            }
+            children.add(new Syntax_Node(EnumMemberDeclaration, memberChildren));
+        }
+
+        children.add(expect_token(parser, RightBrace));
+        return new Syntax_Node(EnumDeclaration, children);
+    }
+
+    // Function Declaration
+    children.add(expect_token(parser, Identifier));
+    children.add(parse_parameter_list(parser));
+    children.add(expect_token(parser, Arrow));
+    children.add(parse_type(parser));
+    children.add(parse_block(parser));
+    return new Syntax_Node(FunctionDeclaration, children);
+}
+
+public parse_compilation_unit(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    while parser.token =/= none and parser.token.kind =/= EndOfFileToken
+    {
+        let startToken: Syntax_Node = parser.token;
+        children.add(parse_declaration(parser));
+        if parser.token == startToken
+        {
+            // We have not advanced at all when trying to parse a declaration.
+            // Skip a token to try to see if we can find the start of a declaration.
+            children.add(new_Syntax_Node_Skipped(accept_token(parser)));
+        }
+    }
+    children.add(expect_token(parser, EndOfFileToken));
+    return new Syntax_Node(CompilationUnit, children);
 }
