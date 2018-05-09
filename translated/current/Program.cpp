@@ -1,7 +1,6 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class t_Location;
 class t_Source_Text;
 class t_Text_Line;
 class t_Text_Lines;
@@ -18,12 +17,9 @@ class t_Semantic_Node;
 class t_Semantic_Tree_Builder;
 class t_Symbol_Builder;
 class t_Compilation_Unit_Parser;
-class t_Lexer;
-class t_Parser;
 class t_Syntax_Node;
 class t_Token_Stream;
 class t_Diagnostic;
-class t_Diagnostic_Info;
 class t_Emitter;
 class t_Name;
 class t_Package_Name;
@@ -40,8 +36,10 @@ auto has_errors_(t_system__collections__List<t_Diagnostic const *_Nonnull> const
 auto main_(t_system__console__Console *_Nonnull const console_, t_system__console__Arguments const *_Nonnull const args_) -> i32;
 auto read_source_(str const path_) -> t_Source_Text const *_Nonnull;
 auto run_unit_tests_(t_system__console__Console *_Nonnull const console_) -> void;
-inline t_Location *_Nonnull new_t_Location();
 inline t_Source_Text *_Nonnull new_t_Source_Text(str const package_, str const path_, str const text_);
+auto line_starts_(str const text_) -> t_system__collections__List<i32> const *_Nonnull;
+auto source_byte_length_(t_Source_Text const *_Nonnull const source_) -> i32;
+auto position_of_start_(t_Source_Text const *_Nonnull const source_, t_Text_Span const *_Nonnull const span_) -> t_Text_Position const *_Nonnull;
 inline t_Text_Line *_Nonnull new_t_Text_Line(t_Source_Text const *_Nonnull const source_, i32 const start_, i32 const length_);
 inline t_Text_Line *_Nonnull new_t_Text_Line__spanning(t_Source_Text const *_Nonnull const source_, i32 const start_, i32 const end_);
 inline t_Text_Lines *_Nonnull new_t_Text_Lines(t_Source_Text const *_Nonnull const source_, t_system__collections__List<i32> const *_Nonnull const start_of_line_);
@@ -81,9 +79,27 @@ inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__declares_type(t_Type const
 inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
 inline t_Semantic_Tree_Builder *_Nonnull new_t_Semantic_Tree_Builder();
 inline t_Symbol_Builder *_Nonnull new_t_Symbol_Builder();
-inline t_Compilation_Unit_Parser *_Nonnull new_t_Compilation_Unit_Parser(t_Token_Stream *_Nonnull const tokenStream_);
-inline t_Lexer *_Nonnull new_t_Lexer();
-inline t_Parser *_Nonnull new_t_Parser();
+inline t_Compilation_Unit_Parser *_Nonnull new_t_Compilation_Unit_Parser(t_Token_Stream *_Nonnull const token_stream_);
+auto parse_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto accept_token_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nullable;
+auto expect_token_(t_Compilation_Unit_Parser *_Nonnull const parser_, i32 const tokenType_) -> t_Syntax_Node const *_Nonnull;
+auto parse_type_name_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_non_optional_type_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_type_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_atom_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_call_arguments_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_expression_(t_Compilation_Unit_Parser *_Nonnull const parser_, i32 const minPrecedence_) -> t_Syntax_Node const *_Nonnull;
+auto parse_expression_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_statement_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_if_statement_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_variable_declaration_(t_Compilation_Unit_Parser *_Nonnull const parser_, bit const allowInitializer_) -> t_Syntax_Node const *_Nonnull;
+auto parse_block_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_parameter_list_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_member_declaration_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_declaration_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto parse_compilation_unit_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
+auto lexically_analyze_(t_Source_Text const *_Nonnull const source_) -> t_Token_Stream *_Nonnull;
+auto parse_package_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Syntax_Node const *_Nonnull;
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_);
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, bit const isMissing_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_);
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Syntax_Node const *_Nonnull const child_);
@@ -92,8 +108,15 @@ auto new_syntax_node_missing_(i32 const type_, t_Source_Text const *_Nonnull con
 auto new_Syntax_Node_Skipped_(t_Syntax_Node const *_Nonnull const skipped_node_) -> t_Syntax_Node const *_Nonnull;
 auto new_Syntax_Node_Skipped_(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node const *_Nonnull;
 inline t_Token_Stream *_Nonnull new_t_Token_Stream(t_Source_Text const *_Nonnull const source_);
+auto next_token_(t_Token_Stream *_Nonnull const tokens_) -> t_Syntax_Node const *_Nullable;
+auto end_of_file_token_(t_Token_Stream *_Nonnull const tokens_) -> t_Syntax_Node const *_Nullable;
+auto new_identifier_or_keyword_token_(t_Token_Stream *_Nonnull const tokens_, u32 const end_) -> t_Syntax_Node const *_Nonnull;
+auto new_operator_token_(t_Token_Stream *_Nonnull const tokens_, i32 const type_) -> t_Syntax_Node const *_Nonnull;
+auto new_operator_token_(t_Token_Stream *_Nonnull const tokens_, i32 const type_, u32 const length_) -> t_Syntax_Node const *_Nonnull;
+auto new_token_(t_Token_Stream *_Nonnull const tokens_, i32 const type_, u32 const end_) -> t_Syntax_Node const *_Nonnull;
+auto is_identifier_char_(cp const c_) -> bit;
+auto is_number_char_(cp const c_) -> bit;
 inline t_Diagnostic *_Nonnull new_t_Diagnostic(i32 const level_, i32 const phase_, t_Source_Text const *_Nonnull const source_, t_Text_Span const *_Nonnull const span_, str const message_);
-inline t_Diagnostic_Info *_Nonnull new_t_Diagnostic_Info();
 inline t_Emitter *_Nonnull new_t_Emitter(t_Package const *_Nonnull const package_, t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_);
 inline t_Name *_Nonnull new_t_Name__global_namespace();
 inline t_Name *_Nonnull new_t_Name__global_namespace(t_Package_Name const *_Nonnull const package_);
@@ -138,26 +161,15 @@ auto can_get_Optional_class_from_name_with_package_() -> void;
 
 // Class Declarations
 
-class t_Location
-{
-public:
-	auto construct() -> t_Location *_Nonnull { return this; }
-};
-
 class t_Source_Text
 {
 public:
-	str Package_;
-	str Path_;
+	str package_;
+	str path_;
 	str name_;
-	str Text_;
-	t_Text_Lines const *_Nonnull Lines_;
+	str text_;
+	t_Text_Lines const *_Nonnull lines_;
 	auto construct(str const package_, str const path_, str const text_) -> t_Source_Text *_Nonnull;
-private:
-	auto LineStarts_() const -> t_system__collections__List<i32> const *_Nonnull;
-public:
-	auto ByteLength_() const -> i32;
-	auto PositionOfStart_(t_Text_Span const *_Nonnull const span_) const -> t_Text_Position const *_Nonnull;
 };
 
 class t_Text_Line
@@ -357,45 +369,10 @@ public:
 class t_Compilation_Unit_Parser
 {
 public:
-private:
-	t_Token_Stream *_Nonnull tokenStream_;
+	t_Token_Stream *_Nonnull token_stream_;
 	t_Syntax_Node const *_Nullable token_;
-	t_Syntax_Node const *_Nullable compilationUnit_;
-public:
-	auto construct(t_Token_Stream *_Nonnull const tokenStream_) -> t_Compilation_Unit_Parser *_Nonnull;
-	auto Parse_() -> t_Syntax_Node const *_Nonnull;
-private:
-	auto AcceptToken_() -> t_Syntax_Node const *_Nullable;
-	auto ExpectToken_(i32 const tokenType_) -> t_Syntax_Node const *_Nonnull;
-	auto ParseTypeName_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseNonOptionalType_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseType_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseAtom_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseCallArguments_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseExpression_(i32 const minPrecedence_) -> t_Syntax_Node const *_Nonnull;
-	auto ParseExpression_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseStatement_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseIfStatement_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseVariableDeclaration_(bit const allowInitializer_) -> t_Syntax_Node const *_Nonnull;
-	auto ParseBlock_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseParameterList_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseMemberDeclaration_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseDeclaration_() -> t_Syntax_Node const *_Nonnull;
-	auto ParseCompilationUnit_() -> t_Syntax_Node const *_Nonnull;
-};
-
-class t_Lexer
-{
-public:
-	auto analyze_(t_Source_Text const *_Nonnull const source_) const -> t_Token_Stream *_Nonnull;
-	auto construct() -> t_Lexer *_Nonnull { return this; }
-};
-
-class t_Parser
-{
-public:
-	auto construct() -> t_Parser *_Nonnull;
-	auto ParsePackage_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) const -> t_Syntax_Node const *_Nonnull;
+	t_Syntax_Node const *_Nullable compilation_unit_;
+	auto construct(t_Token_Stream *_Nonnull const token_stream_) -> t_Compilation_Unit_Parser *_Nonnull;
 };
 
 class t_Syntax_Node
@@ -428,39 +405,22 @@ class t_Token_Stream
 {
 public:
 	t_Source_Text const *_Nonnull source_;
-private:
 	u32 position_;
 	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_;
-	bit endOfFile_;
-public:
+	bit end_of_file_;
 	auto construct(t_Source_Text const *_Nonnull const source_) -> t_Token_Stream *_Nonnull;
-	auto GetNextToken_() -> t_Syntax_Node const *_Nullable;
-private:
-	auto EndOfFile_() -> t_Syntax_Node const *_Nullable;
-	auto NewIdentifierOrKeyword_(u32 const end_) -> t_Syntax_Node const *_Nonnull;
-	auto NewOperator_(i32 const type_) -> t_Syntax_Node const *_Nonnull;
-	auto NewOperator_(i32 const type_, u32 const length_) -> t_Syntax_Node const *_Nonnull;
-	auto NewToken_(i32 const type_, u32 const end_) -> t_Syntax_Node const *_Nonnull;
-	static auto IsIdentifierChar_(cp const c_) -> bit;
-	static auto IsNumberChar_(cp const c_) -> bit;
 };
 
 class t_Diagnostic
 {
 public:
-	i32 Level_;
-	i32 Phase_;
+	i32 level_;
+	i32 phase_;
 	t_Source_Text const *_Nonnull source_;
-	t_Text_Span const *_Nonnull Span_;
-	t_Text_Position const *_Nonnull Position_;
-	str Message_;
+	t_Text_Span const *_Nonnull span_;
+	t_Text_Position const *_Nonnull position_;
+	str message_;
 	auto construct(i32 const level_, i32 const phase_, t_Source_Text const *_Nonnull const source_, t_Text_Span const *_Nonnull const span_, str const message_) -> t_Diagnostic *_Nonnull;
-};
-
-class t_Diagnostic_Info
-{
-public:
-	auto construct() -> t_Diagnostic_Info *_Nonnull { return this; }
 };
 
 class t_Emitter
@@ -797,8 +757,7 @@ i32 const FunctionType_ = i32(5);
 
 auto compile_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Package const *_Nonnull
 {
-	t_Parser const *_Nonnull const parser_ = new_t_Parser();
-	t_Syntax_Node const *_Nonnull const package_syntax_ = parser_->ParsePackage_(sources_);
+	t_Syntax_Node const *_Nonnull const package_syntax_ = parse_package_(sources_);
 	t_Semantic_Analyzer const *_Nonnull const semantic_analyzer_ = new_t_Semantic_Analyzer();
 	t_Package const *_Nonnull const package_ = semantic_analyzer_->analyze_(package_syntax_);
 	return package_;
@@ -808,13 +767,13 @@ auto write_(t_system__console__Console *_Nonnull const console_, t_system__colle
 {
 	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(diagnostics_))
 	{
-		t_Text_Position const *_Nonnull const position_ = diagnostic_->Position_;
+		t_Text_Position const *_Nonnull const position_ = diagnostic_->position_;
 		str severity_;
-		if (cond(equal_op(diagnostic_->Level_, Info_)))
+		if (cond(equal_op(diagnostic_->level_, Info_)))
 		{
 			severity_ = str("Informational");
 		}
-		else if (cond(equal_op(diagnostic_->Level_, Warning_)))
+		else if (cond(equal_op(diagnostic_->level_, Warning_)))
 		{
 			severity_ = str("Warning");
 		}
@@ -823,8 +782,8 @@ auto write_(t_system__console__Console *_Nonnull const console_, t_system__colle
 			severity_ = str("Error");
 		}
 
-		console_->WriteLine_(diagnostic_->source_->Path_->op_add(str(":"))->op_add(position_->line_)->op_add(str(":"))->op_add(position_->column_)->op_add(str(" "))->op_add(severity_)->op_add(str(":")));
-		console_->WriteLine_(str("  ").op_add(diagnostic_->Message_));
+		console_->WriteLine_(diagnostic_->source_->path_->op_add(str(":"))->op_add(position_->line_)->op_add(str(":"))->op_add(position_->column_)->op_add(str(" "))->op_add(severity_)->op_add(str(":")));
+		console_->WriteLine_(str("  ").op_add(diagnostic_->message_));
 	}
 }
 
@@ -832,7 +791,7 @@ auto has_errors_(t_system__collections__List<t_Diagnostic const *_Nonnull> const
 {
 	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(diagnostics_))
 	{
-		if (cond(diagnostic_->Level_->op_greater_than_or_equal(CompilationError_)))
+		if (cond(diagnostic_->level_->op_greater_than_or_equal(CompilationError_)))
 		{
 			return bit_true;
 		}
@@ -1000,16 +959,11 @@ auto run_unit_tests_(t_system__console__Console *_Nonnull const console_) -> voi
 	unit_test_Symbol_();
 }
 
-inline t_Location *_Nonnull new_t_Location()
-{
-	return (new t_Location())->construct();
-}
-
 auto t_Source_Text::construct(str const package_, str const path_, str const text_) -> t_Source_Text *_Nonnull
 {
 	t_Source_Text *_Nonnull self = this;
-	Package_ = package_;
-	Path_ = path_;
+	self->package_ = package_;
+	self->path_ = path_;
 	str name_ = path_;
 	i32 index_ = name_.LastIndexOf_(cp('/'));
 	if (cond(not_equal_op(index_, i32_negate(i32(1)))))
@@ -1024,8 +978,8 @@ auto t_Source_Text::construct(str const package_, str const path_, str const tex
 	}
 
 	self->name_ = name_;
-	Text_ = text_;
-	Lines_ = new_t_Text_Lines(self, LineStarts_());
+	self->text_ = text_;
+	self->lines_ = new_t_Text_Lines(self, line_starts_(text_));
 	return self;
 }
 
@@ -1034,16 +988,15 @@ inline t_Source_Text *_Nonnull new_t_Source_Text(str const package_, str const p
 	return (new t_Source_Text())->construct(package_, path_, text_);
 }
 
-auto ::t_Source_Text::LineStarts_() const -> t_system__collections__List<i32> const *_Nonnull
+auto line_starts_(str const text_) -> t_system__collections__List<i32> const *_Nonnull
 {
-	auto self = this;
-	i32 const length_ = ByteLength_();
-	t_system__collections__List<i32> *_Nonnull const lineStarts_ = new_t_system__collections__List<i32>();
-	lineStarts_->add_(i32(0));
+	i32 const length_ = text_.ByteLength_();
+	t_system__collections__List<i32> *_Nonnull const starting_positions_ = new_t_system__collections__List<i32>();
+	starting_positions_->add_(i32(0));
 	i32 position_ = i32(0);
 	while (cond(i32_less_than(position_, length_)))
 	{
-		cp const c_ = Text_.op_Element(position_);
+		cp const c_ = text_.op_Element(position_);
 		position_.op_add_assign(i32(1));
 		if (cond(bit_op(bit_arg(cp_greater_than(c_, cp('\r'))) && bit_arg(cp_less_than_or_equal(c_, cp('\x7F'))))))
 		{
@@ -1052,7 +1005,7 @@ auto ::t_Source_Text::LineStarts_() const -> t_system__collections__List<i32> co
 
 		if (cond(equal_op(c_, cp('\r'))))
 		{
-			if (cond(bit_op(bit_arg(i32_less_than(position_, length_)) && bit_arg(equal_op(Text_.op_Element(position_), cp('\n'))))))
+			if (cond(bit_op(bit_arg(i32_less_than(position_, length_)) && bit_arg(equal_op(text_.op_Element(position_), cp('\n'))))))
 			{
 				position_.op_add_assign(i32(1));
 			}
@@ -1065,29 +1018,27 @@ auto ::t_Source_Text::LineStarts_() const -> t_system__collections__List<i32> co
 			continue;
 		}
 
-		lineStarts_->add_(position_);
+		starting_positions_->add_(position_);
 	}
 
-	return lineStarts_;
+	return starting_positions_;
 }
 
-auto ::t_Source_Text::ByteLength_() const -> i32
+auto source_byte_length_(t_Source_Text const *_Nonnull const source_) -> i32
 {
-	auto self = this;
-	return Text_.ByteLength_();
+	return source_->text_.ByteLength_();
 }
 
-auto ::t_Source_Text::PositionOfStart_(t_Text_Span const *_Nonnull const span_) const -> t_Text_Position const *_Nonnull
+auto position_of_start_(t_Source_Text const *_Nonnull const source_, t_Text_Span const *_Nonnull const span_) -> t_Text_Position const *_Nonnull
 {
-	auto self = this;
 	i32 const char_offset_ = span_->start_;
-	i32 const line_number_ = line_containing_offset_(Lines_, char_offset_);
-	i32 const line_start_ = get_line_(Lines_, line_number_)->start_;
+	i32 const line_number_ = line_containing_offset_(source_->lines_, char_offset_);
+	i32 const line_start_ = get_line_(source_->lines_, line_number_)->start_;
 	i32 column_ = char_offset_.op_subtract(line_start_)->op_add(i32(1));
 	i32 i_ = line_start_;
 	while (cond(i32_less_than(i_, char_offset_)))
 	{
-		if (cond(equal_op(Text_.op_Element(i_), cp('\t'))))
+		if (cond(equal_op(source_->text_.op_Element(i_), cp('\t'))))
 		{
 			column_.op_add_assign(i32(3));
 		}
@@ -1152,7 +1103,7 @@ auto get_line_(t_Text_Lines const *_Nonnull const lines_, i32 const line_number_
 	i32 const line_start_ = lines_->start_of_line_->op_Element(line_index_);
 	if (cond(equal_op(line_index_, line_count_(lines_)->op_subtract(i32(1)))))
 	{
-		return new_t_Text_Line__spanning(lines_->source_, line_start_, lines_->source_->ByteLength_());
+		return new_t_Text_Line__spanning(lines_->source_, line_start_, source_byte_length_(lines_->source_));
 	}
 
 	i32 const line_end_ = lines_->start_of_line_->op_Element(line_index_.op_add(i32(1)));
@@ -1162,7 +1113,7 @@ auto get_line_(t_Text_Lines const *_Nonnull const lines_, i32 const line_number_
 auto line_containing_offset_(t_Text_Lines const *_Nonnull const lines_, i32 const character_offset_) -> i32
 {
 	assert_(i32_greater_than_or_equal(character_offset_, i32(0)), str("offset ").op_add(character_offset_));
-	assert_(i32_less_than_or_equal(character_offset_, lines_->source_->ByteLength_()), str("offset ").op_add(character_offset_)->op_add(str(" source length "))->op_add(lines_->source_->ByteLength_()));
+	assert_(i32_less_than_or_equal(character_offset_, source_byte_length_(lines_->source_)), str("offset ").op_add(character_offset_)->op_add(str(" source length "))->op_add(source_byte_length_(lines_->source_)));
 	i32 left_ = i32(0);
 	i32 right_ = line_count_(lines_)->op_subtract(i32(1));
 	while (cond(i32_less_than_or_equal(left_, right_)))
@@ -1878,7 +1829,7 @@ auto ::t_Semantic_Node::get_text_() const -> str
 		return str("$No Source$");
 	}
 
-	return source_->Text_.Substring_(start_, byte_length_);
+	return source_->text_.Substring_(start_, byte_length_);
 }
 
 auto ::t_Semantic_Node::first_child_(i32 const kind_) const -> t_Semantic_Node const *_Nullable
@@ -2541,80 +2492,76 @@ inline t_Symbol_Builder *_Nonnull new_t_Symbol_Builder()
 	return (new t_Symbol_Builder())->construct();
 }
 
-auto t_Compilation_Unit_Parser::construct(t_Token_Stream *_Nonnull const tokenStream_) -> t_Compilation_Unit_Parser *_Nonnull
+auto t_Compilation_Unit_Parser::construct(t_Token_Stream *_Nonnull const token_stream_) -> t_Compilation_Unit_Parser *_Nonnull
 {
 	t_Compilation_Unit_Parser *_Nonnull self = this;
-	self->tokenStream_ = tokenStream_;
-	self->compilationUnit_ = none;
+	self->token_stream_ = token_stream_;
+	self->compilation_unit_ = none;
 	return self;
 }
 
-inline t_Compilation_Unit_Parser *_Nonnull new_t_Compilation_Unit_Parser(t_Token_Stream *_Nonnull const tokenStream_)
+inline t_Compilation_Unit_Parser *_Nonnull new_t_Compilation_Unit_Parser(t_Token_Stream *_Nonnull const token_stream_)
 {
-	return (new t_Compilation_Unit_Parser())->construct(tokenStream_);
+	return (new t_Compilation_Unit_Parser())->construct(token_stream_);
 }
 
-auto ::t_Compilation_Unit_Parser::Parse_() -> t_Syntax_Node const *_Nonnull
+auto parse_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	if (cond(equal_op(compilationUnit_, none)))
+	if (cond(equal_op(parser_->compilation_unit_, none)))
 	{
-		token_ = tokenStream_->GetNextToken_();
-		compilationUnit_ = ParseCompilationUnit_();
+		parser_->token_ = next_token_(parser_->token_stream_);
+		parser_->compilation_unit_ = parse_compilation_unit_(parser_);
 	}
 
-	return compilationUnit_;
+	return parser_->compilation_unit_;
 }
 
-auto ::t_Compilation_Unit_Parser::AcceptToken_() -> t_Syntax_Node const *_Nullable
+auto accept_token_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nullable
 {
-	auto self = this;
-	t_Syntax_Node const *_Nullable const node_ = token_;
-	token_ = tokenStream_->GetNextToken_();
+	t_Syntax_Node const *_Nullable const node_ = parser_->token_;
+	parser_->token_ = next_token_(parser_->token_stream_);
 	return node_;
 }
 
-auto ::t_Compilation_Unit_Parser::ExpectToken_(i32 const tokenType_) -> t_Syntax_Node const *_Nonnull
+auto expect_token_(t_Compilation_Unit_Parser *_Nonnull const parser_, i32 const tokenType_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	if (cond(equal_op(token_, none)))
+	if (cond(equal_op(parser_->token_, none)))
 	{
-		return new_syntax_node_missing_(tokenType_, tokenStream_->source_, tokenStream_->source_->ByteLength_());
+		return new_syntax_node_missing_(tokenType_, parser_->token_stream_->source_, source_byte_length_(parser_->token_stream_->source_));
 	}
 
-	if (cond(bit_op(bit_arg(equal_op(token_, none)) || bit_arg(not_equal_op(token_->kind_, tokenType_)))))
+	if (cond(bit_op(bit_arg(equal_op(parser_->token_, none)) || bit_arg(not_equal_op(parser_->token_->kind_, tokenType_)))))
 	{
-		return new_syntax_node_missing_(tokenType_, tokenStream_->source_, token_->start_);
+		return new_syntax_node_missing_(tokenType_, parser_->token_stream_->source_, parser_->token_->start_);
 	}
 
-	t_Syntax_Node const *_Nullable const node_ = token_;
-	token_ = tokenStream_->GetNextToken_();
+	t_Syntax_Node const *_Nullable const node_ = parser_->token_;
+	parser_->token_ = next_token_(parser_->token_stream_);
 	return node_;
 }
 
-auto ::t_Compilation_Unit_Parser::ParseTypeName_() -> t_Syntax_Node const *_Nonnull
+auto parse_type_name_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, CodePoint_)) || bit_arg(equal_op(token_->kind_, String_)))) || bit_arg(equal_op(token_->kind_, Int_)))) || bit_arg(equal_op(token_->kind_, Bool_)))) || bit_arg(equal_op(token_->kind_, Void_)))) || bit_arg(equal_op(token_->kind_, UnsignedInt_)))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(parser_->token_->kind_, CodePoint_)) || bit_arg(equal_op(parser_->token_->kind_, String_)))) || bit_arg(equal_op(parser_->token_->kind_, Int_)))) || bit_arg(equal_op(parser_->token_->kind_, Bool_)))) || bit_arg(equal_op(parser_->token_->kind_, Void_)))) || bit_arg(equal_op(parser_->token_->kind_, UnsignedInt_)))))
 	{
-		return new_t_Syntax_Node(PredefinedType_, AcceptToken_());
+		return new_t_Syntax_Node(PredefinedType_, accept_token_(parser_));
 	}
 	else
 	{
-		t_Syntax_Node const *_Nonnull type_ = new_t_Syntax_Node(IdentifierName_, ExpectToken_(Identifier_));
-		while (cond(equal_op(token_->kind_, Dot_)))
+		t_Syntax_Node const *_Nonnull type_ = new_t_Syntax_Node(IdentifierName_, expect_token_(parser_, Identifier_));
+		while (cond(equal_op(parser_->token_->kind_, Dot_)))
 		{
 			t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 			children_->add_(type_);
-			children_->add_(ExpectToken_(Dot_));
-			t_Syntax_Node const *_Nonnull const identifier_ = ExpectToken_(Identifier_);
-			if (cond(equal_op(token_->kind_, LessThan_)))
+			children_->add_(expect_token_(parser_, Dot_));
+			t_Syntax_Node const *_Nonnull const identifier_ = expect_token_(parser_, Identifier_);
+			if (cond(equal_op(parser_->token_->kind_, LessThan_)))
 			{
 				t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const genericNameChildren_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 				genericNameChildren_->add_(new_t_Syntax_Node(IdentifierName_, identifier_));
-				genericNameChildren_->add_(ExpectToken_(LessThan_));
-				genericNameChildren_->add_(ParseType_());
-				genericNameChildren_->add_(ExpectToken_(GreaterThan_));
+				genericNameChildren_->add_(expect_token_(parser_, LessThan_));
+				genericNameChildren_->add_(parse_type_(parser_));
+				genericNameChildren_->add_(expect_token_(parser_, GreaterThan_));
 				children_->add_(new_t_Syntax_Node(GenericName_, genericNameChildren_));
 			}
 			else
@@ -2629,144 +2576,140 @@ auto ::t_Compilation_Unit_Parser::ParseTypeName_() -> t_Syntax_Node const *_Nonn
 	}
 }
 
-auto ::t_Compilation_Unit_Parser::ParseNonOptionalType_() -> t_Syntax_Node const *_Nonnull
+auto parse_non_optional_type_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	if (cond(equal_op(token_->kind_, MutableKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, MutableKeyword_)))
 	{
-		children_->add_(ExpectToken_(MutableKeyword_));
-		children_->add_(ParseTypeName_());
+		children_->add_(expect_token_(parser_, MutableKeyword_));
+		children_->add_(parse_type_name_(parser_));
 		return new_t_Syntax_Node(MutableType_, children_);
 	}
 	else
 	{
-		children_->add_(ParseTypeName_());
+		children_->add_(parse_type_name_(parser_));
 		return new_t_Syntax_Node(ImmutableType_, children_);
 	}
 }
 
-auto ::t_Compilation_Unit_Parser::ParseType_() -> t_Syntax_Node const *_Nonnull
+auto parse_type_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	t_Syntax_Node const *_Nonnull type_ = ParseNonOptionalType_();
-	while (cond(equal_op(token_->kind_, Question_)))
+	t_Syntax_Node const *_Nonnull type_ = parse_non_optional_type_(parser_);
+	while (cond(equal_op(parser_->token_->kind_, Question_)))
 	{
 		t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 		children_->add_(type_);
-		children_->add_(ExpectToken_(Question_));
+		children_->add_(expect_token_(parser_, Question_));
 		type_ = new_t_Syntax_Node(ImmutableType_, new_t_Syntax_Node(OptionalType_, children_));
 	}
 
 	return type_;
 }
 
-auto ::t_Compilation_Unit_Parser::ParseAtom_() -> t_Syntax_Node const *_Nonnull
+auto parse_atom_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	if (cond(equal_op(token_->kind_, NewKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, NewKeyword_)))
 	{
-		children_->add_(ExpectToken_(NewKeyword_));
-		children_->add_(ParseTypeName_());
-		children_->add_(ParseCallArguments_());
+		children_->add_(expect_token_(parser_, NewKeyword_));
+		children_->add_(parse_type_name_(parser_));
+		children_->add_(parse_call_arguments_(parser_));
 		return new_t_Syntax_Node(NewExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, NotOperator_)))
+	if (cond(equal_op(parser_->token_->kind_, NotOperator_)))
 	{
-		children_->add_(ExpectToken_(NotOperator_));
-		children_->add_(ParseExpression_(i32(8)));
+		children_->add_(expect_token_(parser_, NotOperator_));
+		children_->add_(parse_expression_(parser_, i32(8)));
 		return new_t_Syntax_Node(NotExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, LeftParen_)))
+	if (cond(equal_op(parser_->token_->kind_, LeftParen_)))
 	{
-		children_->add_(ExpectToken_(LeftParen_));
-		children_->add_(ParseExpression_());
-		children_->add_(ExpectToken_(RightParen_));
+		children_->add_(expect_token_(parser_, LeftParen_));
+		children_->add_(parse_expression_(parser_));
+		children_->add_(expect_token_(parser_, RightParen_));
 		return new_t_Syntax_Node(ParenthesizedExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, Pipe_)))
+	if (cond(equal_op(parser_->token_->kind_, Pipe_)))
 	{
-		children_->add_(ExpectToken_(Pipe_));
-		children_->add_(ParseExpression_());
-		children_->add_(ExpectToken_(Pipe_));
+		children_->add_(expect_token_(parser_, Pipe_));
+		children_->add_(parse_expression_(parser_));
+		children_->add_(expect_token_(parser_, Pipe_));
 		return new_t_Syntax_Node(MagnitudeExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, Minus_)))
+	if (cond(equal_op(parser_->token_->kind_, Minus_)))
 	{
-		children_->add_(ExpectToken_(Minus_));
-		children_->add_(ParseExpression_(i32(8)));
+		children_->add_(expect_token_(parser_, Minus_));
+		children_->add_(parse_expression_(parser_, i32(8)));
 		return new_t_Syntax_Node(NegateExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, NoneKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, NoneKeyword_)))
 	{
-		children_->add_(ExpectToken_(NoneKeyword_));
+		children_->add_(expect_token_(parser_, NoneKeyword_));
 		return new_t_Syntax_Node(NoneLiteralExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, SelfKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, SelfKeyword_)))
 	{
-		children_->add_(ExpectToken_(SelfKeyword_));
+		children_->add_(expect_token_(parser_, SelfKeyword_));
 		return new_t_Syntax_Node(SelfExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, TrueKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, TrueKeyword_)))
 	{
-		children_->add_(ExpectToken_(TrueKeyword_));
+		children_->add_(expect_token_(parser_, TrueKeyword_));
 		return new_t_Syntax_Node(TrueLiteralExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, FalseKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, FalseKeyword_)))
 	{
-		children_->add_(ExpectToken_(FalseKeyword_));
+		children_->add_(expect_token_(parser_, FalseKeyword_));
 		return new_t_Syntax_Node(FalseLiteralExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, Number_)))
+	if (cond(equal_op(parser_->token_->kind_, Number_)))
 	{
-		children_->add_(ExpectToken_(Number_));
+		children_->add_(expect_token_(parser_, Number_));
 		return new_t_Syntax_Node(NumericLiteralExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, Identifier_)))
+	if (cond(equal_op(parser_->token_->kind_, Identifier_)))
 	{
-		children_->add_(ExpectToken_(Identifier_));
+		children_->add_(expect_token_(parser_, Identifier_));
 		return new_t_Syntax_Node(IdentifierName_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, StringLiteral_)))
+	if (cond(equal_op(parser_->token_->kind_, StringLiteral_)))
 	{
-		children_->add_(ExpectToken_(StringLiteral_));
+		children_->add_(expect_token_(parser_, StringLiteral_));
 		return new_t_Syntax_Node(StringLiteralExpression_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, CodePointLiteral_)))
+	if (cond(equal_op(parser_->token_->kind_, CodePointLiteral_)))
 	{
-		children_->add_(ExpectToken_(CodePointLiteral_));
+		children_->add_(expect_token_(parser_, CodePointLiteral_));
 		return new_t_Syntax_Node(CodePointLiteralExpression_, children_);
 	}
 
-	return new_t_Syntax_Node(IdentifierName_, ExpectToken_(Identifier_));
+	return new_t_Syntax_Node(IdentifierName_, expect_token_(parser_, Identifier_));
 }
 
-auto ::t_Compilation_Unit_Parser::ParseCallArguments_() -> t_Syntax_Node const *_Nonnull
+auto parse_call_arguments_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	children_->add_(ExpectToken_(LeftParen_));
-	if (cond(not_equal_op(token_->kind_, RightParen_)))
+	children_->add_(expect_token_(parser_, LeftParen_));
+	if (cond(not_equal_op(parser_->token_->kind_, RightParen_)))
 	{
 		for (;;)
 		{
-			children_->add_(ParseExpression_());
-			if (cond(equal_op(token_->kind_, Comma_)))
+			children_->add_(parse_expression_(parser_));
+			if (cond(equal_op(parser_->token_->kind_, Comma_)))
 			{
-				children_->add_(ExpectToken_(Comma_));
+				children_->add_(expect_token_(parser_, Comma_));
 			}
 			else
 			{
@@ -2775,14 +2718,13 @@ auto ::t_Compilation_Unit_Parser::ParseCallArguments_() -> t_Syntax_Node const *
 		}
 	}
 
-	children_->add_(ExpectToken_(RightParen_));
+	children_->add_(expect_token_(parser_, RightParen_));
 	return new_t_Syntax_Node(ArgumentList_, children_);
 }
 
-auto ::t_Compilation_Unit_Parser::ParseExpression_(i32 const minPrecedence_) -> t_Syntax_Node const *_Nonnull
+auto parse_expression_(t_Compilation_Unit_Parser *_Nonnull const parser_, i32 const minPrecedence_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	t_Syntax_Node const *_Nonnull expression_ = ParseAtom_();
+	t_Syntax_Node const *_Nonnull expression_ = parse_atom_(parser_);
 	for (;;)
 	{
 		t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
@@ -2791,106 +2733,106 @@ auto ::t_Compilation_Unit_Parser::ParseExpression_(i32 const minPrecedence_) -> 
 		bit leftAssociative_;
 		bit suffixOperator_ = bit_false;
 		i32 expressionType_;
-		if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, Equals_)) || bit_arg(equal_op(token_->kind_, PlusEquals_)))) || bit_arg(equal_op(token_->kind_, MinusEquals_)))) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(1))))))
+		if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(parser_->token_->kind_, Equals_)) || bit_arg(equal_op(parser_->token_->kind_, PlusEquals_)))) || bit_arg(equal_op(parser_->token_->kind_, MinusEquals_)))) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(1))))))
 		{
 			precedence_ = i32(1);
 			leftAssociative_ = bit_false;
-			children_->add_(AcceptToken_());
+			children_->add_(accept_token_(parser_));
 			expressionType_ = AssignmentExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, OrKeyword_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(2))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, OrKeyword_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(2))))))
 		{
 			precedence_ = i32(2);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(OrKeyword_));
+			children_->add_(expect_token_(parser_, OrKeyword_));
 			expressionType_ = OrExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, AndKeyword_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(3))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, AndKeyword_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(3))))))
 		{
 			precedence_ = i32(3);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(AndKeyword_));
+			children_->add_(expect_token_(parser_, AndKeyword_));
 			expressionType_ = AndExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, EqualsEquals_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(4))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, EqualsEquals_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(4))))))
 		{
 			precedence_ = i32(4);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(EqualsEquals_));
+			children_->add_(expect_token_(parser_, EqualsEquals_));
 			expressionType_ = EqualExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, EqualsSlashEquals_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(4))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, EqualsSlashEquals_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(4))))))
 		{
 			precedence_ = i32(4);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(EqualsSlashEquals_));
+			children_->add_(expect_token_(parser_, EqualsSlashEquals_));
 			expressionType_ = NotEqualExpression_;
 		}
-		else if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, LessThan_)) || bit_arg(equal_op(token_->kind_, LessThanEquals_)))) || bit_arg(equal_op(token_->kind_, GreaterThan_)))) || bit_arg(equal_op(token_->kind_, GreaterThanEquals_)))) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(5))))))
+		else if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(parser_->token_->kind_, LessThan_)) || bit_arg(equal_op(parser_->token_->kind_, LessThanEquals_)))) || bit_arg(equal_op(parser_->token_->kind_, GreaterThan_)))) || bit_arg(equal_op(parser_->token_->kind_, GreaterThanEquals_)))) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(5))))))
 		{
 			precedence_ = i32(5);
 			leftAssociative_ = bit_true;
-			children_->add_(AcceptToken_());
+			children_->add_(accept_token_(parser_));
 			expressionType_ = ComparisonExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Plus_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(6))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, Plus_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(6))))))
 		{
 			precedence_ = i32(6);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(Plus_));
+			children_->add_(expect_token_(parser_, Plus_));
 			expressionType_ = AddExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Minus_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(6))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, Minus_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(6))))))
 		{
 			precedence_ = i32(6);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(Minus_));
+			children_->add_(expect_token_(parser_, Minus_));
 			expressionType_ = SubtractExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Asterisk_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(7))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, Asterisk_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(7))))))
 		{
 			precedence_ = i32(7);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(Asterisk_));
+			children_->add_(expect_token_(parser_, Asterisk_));
 			expressionType_ = MultiplyExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Slash_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(7))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, Slash_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(7))))))
 		{
 			precedence_ = i32(7);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(Slash_));
+			children_->add_(expect_token_(parser_, Slash_));
 			expressionType_ = DivideExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Percent_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(7))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, Percent_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(7))))))
 		{
 			precedence_ = i32(7);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(Percent_));
+			children_->add_(expect_token_(parser_, Percent_));
 			expressionType_ = RemainderExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, LeftParen_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(9))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, LeftParen_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(9))))))
 		{
 			precedence_ = i32(9);
 			leftAssociative_ = bit_true;
 			suffixOperator_ = bit_true;
-			children_->add_(ParseCallArguments_());
+			children_->add_(parse_call_arguments_(parser_));
 			expressionType_ = InvocationExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, Dot_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(9))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, Dot_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(9))))))
 		{
 			precedence_ = i32(9);
 			leftAssociative_ = bit_true;
-			children_->add_(ExpectToken_(Dot_));
+			children_->add_(expect_token_(parser_, Dot_));
 			expressionType_ = MemberAccessExpression_;
 		}
-		else if (cond(bit_op(bit_arg(equal_op(token_->kind_, LeftBracket_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(9))))))
+		else if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, LeftBracket_)) && bit_arg(i32_less_than_or_equal(minPrecedence_, i32(9))))))
 		{
 			precedence_ = i32(9);
 			leftAssociative_ = bit_true;
 			suffixOperator_ = bit_true;
-			children_->add_(ExpectToken_(LeftBracket_));
-			children_->add_(ParseExpression_());
-			children_->add_(ExpectToken_(RightBracket_));
+			children_->add_(expect_token_(parser_, LeftBracket_));
+			children_->add_(parse_expression_(parser_));
+			children_->add_(expect_token_(parser_, RightBracket_));
 			expressionType_ = ElementAccessExpression_;
 		}
 		else
@@ -2905,7 +2847,7 @@ auto ::t_Compilation_Unit_Parser::ParseExpression_(i32 const minPrecedence_) -> 
 				precedence_.op_add_assign(i32(1));
 			}
 
-			children_->add_(ParseExpression_(precedence_));
+			children_->add_(parse_expression_(parser_, precedence_));
 			expression_ = new_t_Syntax_Node(expressionType_, children_);
 		}
 		else
@@ -2915,117 +2857,114 @@ auto ::t_Compilation_Unit_Parser::ParseExpression_(i32 const minPrecedence_) -> 
 	}
 }
 
-auto ::t_Compilation_Unit_Parser::ParseExpression_() -> t_Syntax_Node const *_Nonnull
+auto parse_expression_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	return ParseExpression_(i32(1));
+	return parse_expression_(parser_, i32(1));
 }
 
-auto ::t_Compilation_Unit_Parser::ParseStatement_() -> t_Syntax_Node const *_Nonnull
+auto parse_statement_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	if (cond(equal_op(token_->kind_, ReturnKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, ReturnKeyword_)))
 	{
-		children_->add_(ExpectToken_(ReturnKeyword_));
-		if (cond(not_equal_op(token_->kind_, Semicolon_)))
+		children_->add_(expect_token_(parser_, ReturnKeyword_));
+		if (cond(not_equal_op(parser_->token_->kind_, Semicolon_)))
 		{
-			children_->add_(ParseExpression_());
+			children_->add_(parse_expression_(parser_));
 		}
 
-		children_->add_(ExpectToken_(Semicolon_));
+		children_->add_(expect_token_(parser_, Semicolon_));
 		return new_t_Syntax_Node(ReturnStatement_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, LoopKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, LoopKeyword_)))
 	{
-		children_->add_(ExpectToken_(LoopKeyword_));
-		children_->add_(ParseBlock_());
+		children_->add_(expect_token_(parser_, LoopKeyword_));
+		children_->add_(parse_block_(parser_));
 		return new_t_Syntax_Node(LoopStatement_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, WhileKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, WhileKeyword_)))
 	{
-		children_->add_(ExpectToken_(WhileKeyword_));
-		children_->add_(ParseExpression_());
-		children_->add_(ParseBlock_());
+		children_->add_(expect_token_(parser_, WhileKeyword_));
+		children_->add_(parse_expression_(parser_));
+		children_->add_(parse_block_(parser_));
 		return new_t_Syntax_Node(WhileStatement_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, ForKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, ForKeyword_)))
 	{
-		children_->add_(ExpectToken_(ForKeyword_));
-		children_->add_(ParseVariableDeclaration_(bit_false));
-		children_->add_(ExpectToken_(InKeyword_));
-		children_->add_(ParseExpression_());
-		children_->add_(ParseBlock_());
+		children_->add_(expect_token_(parser_, ForKeyword_));
+		children_->add_(parse_variable_declaration_(parser_, bit_false));
+		children_->add_(expect_token_(parser_, InKeyword_));
+		children_->add_(parse_expression_(parser_));
+		children_->add_(parse_block_(parser_));
 		return new_t_Syntax_Node(ForStatement_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, DoKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, DoKeyword_)))
 	{
-		children_->add_(ExpectToken_(DoKeyword_));
-		children_->add_(ParseBlock_());
-		children_->add_(ExpectToken_(WhileKeyword_));
-		children_->add_(ParseExpression_());
-		children_->add_(ExpectToken_(Semicolon_));
+		children_->add_(expect_token_(parser_, DoKeyword_));
+		children_->add_(parse_block_(parser_));
+		children_->add_(expect_token_(parser_, WhileKeyword_));
+		children_->add_(parse_expression_(parser_));
+		children_->add_(expect_token_(parser_, Semicolon_));
 		return new_t_Syntax_Node(DoWhileStatement_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, IfKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, IfKeyword_)))
 	{
-		return ParseIfStatement_();
+		return parse_if_statement_(parser_);
 	}
 
-	if (cond(equal_op(token_->kind_, BreakKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, BreakKeyword_)))
 	{
-		children_->add_(ExpectToken_(BreakKeyword_));
-		children_->add_(ExpectToken_(Semicolon_));
+		children_->add_(expect_token_(parser_, BreakKeyword_));
+		children_->add_(expect_token_(parser_, Semicolon_));
 		return new_t_Syntax_Node(BreakStatement_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, ContinueKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, ContinueKeyword_)))
 	{
-		children_->add_(ExpectToken_(ContinueKeyword_));
-		children_->add_(ExpectToken_(Semicolon_));
+		children_->add_(expect_token_(parser_, ContinueKeyword_));
+		children_->add_(expect_token_(parser_, Semicolon_));
 		return new_t_Syntax_Node(ContinueStatement_, children_);
 	}
 
-	if (cond(bit_op(bit_arg(equal_op(token_->kind_, VarKeyword_)) || bit_arg(equal_op(token_->kind_, LetKeyword_)))))
+	if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, VarKeyword_)) || bit_arg(equal_op(parser_->token_->kind_, LetKeyword_)))))
 	{
-		children_->add_(ParseVariableDeclaration_(bit_true));
-		children_->add_(ExpectToken_(Semicolon_));
+		children_->add_(parse_variable_declaration_(parser_, bit_true));
+		children_->add_(expect_token_(parser_, Semicolon_));
 		return new_t_Syntax_Node(LocalDeclarationStatement_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, LeftBrace_)))
+	if (cond(equal_op(parser_->token_->kind_, LeftBrace_)))
 	{
-		return ParseBlock_();
+		return parse_block_(parser_);
 	}
 
-	children_->add_(ParseExpression_());
-	children_->add_(ExpectToken_(Semicolon_));
+	children_->add_(parse_expression_(parser_));
+	children_->add_(expect_token_(parser_, Semicolon_));
 	return new_t_Syntax_Node(ExpressionStatement_, children_);
 }
 
-auto ::t_Compilation_Unit_Parser::ParseIfStatement_() -> t_Syntax_Node const *_Nonnull
+auto parse_if_statement_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	children_->add_(ExpectToken_(IfKeyword_));
-	children_->add_(ParseExpression_());
-	children_->add_(ParseBlock_());
-	if (cond(equal_op(token_->kind_, ElseKeyword_)))
+	children_->add_(expect_token_(parser_, IfKeyword_));
+	children_->add_(parse_expression_(parser_));
+	children_->add_(parse_block_(parser_));
+	if (cond(equal_op(parser_->token_->kind_, ElseKeyword_)))
 	{
 		t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const elseChildren_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-		elseChildren_->add_(ExpectToken_(ElseKeyword_));
-		if (cond(equal_op(token_->kind_, IfKeyword_)))
+		elseChildren_->add_(expect_token_(parser_, ElseKeyword_));
+		if (cond(equal_op(parser_->token_->kind_, IfKeyword_)))
 		{
-			elseChildren_->add_(ParseIfStatement_());
+			elseChildren_->add_(parse_if_statement_(parser_));
 		}
 		else
 		{
-			elseChildren_->add_(ParseBlock_());
+			elseChildren_->add_(parse_block_(parser_));
 		}
 
 		children_->add_(new_t_Syntax_Node(ElseClause_, elseChildren_));
@@ -3034,47 +2973,45 @@ auto ::t_Compilation_Unit_Parser::ParseIfStatement_() -> t_Syntax_Node const *_N
 	return new_t_Syntax_Node(IfStatement_, children_);
 }
 
-auto ::t_Compilation_Unit_Parser::ParseVariableDeclaration_(bit const allowInitializer_) -> t_Syntax_Node const *_Nonnull
+auto parse_variable_declaration_(t_Compilation_Unit_Parser *_Nonnull const parser_, bit const allowInitializer_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	if (cond(bit_op(bit_arg(equal_op(token_->kind_, LetKeyword_)) && bit_arg(not_equal_op(token_->kind_, VarKeyword_)))))
+	if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, LetKeyword_)) && bit_arg(not_equal_op(parser_->token_->kind_, VarKeyword_)))))
 	{
-		children_->add_(ExpectToken_(LetKeyword_));
+		children_->add_(expect_token_(parser_, LetKeyword_));
 	}
 	else
 	{
-		children_->add_(ExpectToken_(VarKeyword_));
+		children_->add_(expect_token_(parser_, VarKeyword_));
 	}
 
-	children_->add_(ExpectToken_(Identifier_));
-	children_->add_(ExpectToken_(Colon_));
-	children_->add_(ParseType_());
-	if (cond(bit_op(bit_arg(allowInitializer_) && bit_arg(equal_op(token_->kind_, Equals_)))))
+	children_->add_(expect_token_(parser_, Identifier_));
+	children_->add_(expect_token_(parser_, Colon_));
+	children_->add_(parse_type_(parser_));
+	if (cond(bit_op(bit_arg(allowInitializer_) && bit_arg(equal_op(parser_->token_->kind_, Equals_)))))
 	{
-		children_->add_(ExpectToken_(Equals_));
-		children_->add_(ParseExpression_());
+		children_->add_(expect_token_(parser_, Equals_));
+		children_->add_(parse_expression_(parser_));
 	}
 
 	return new_t_Syntax_Node(VariableDeclaration_, children_);
 }
 
-auto ::t_Compilation_Unit_Parser::ParseBlock_() -> t_Syntax_Node const *_Nonnull
+auto parse_block_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	children_->add_(ExpectToken_(LeftBrace_));
-	while (cond(bit_op(bit_arg(not_equal_op(token_->kind_, RightBrace_)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
+	children_->add_(expect_token_(parser_, LeftBrace_));
+	while (cond(bit_op(bit_arg(not_equal_op(parser_->token_->kind_, RightBrace_)) && bit_arg(not_equal_op(parser_->token_->kind_, EndOfFileToken_)))))
 	{
-		t_Syntax_Node const *_Nonnull const startToken_ = token_;
-		children_->add_(ParseStatement_());
-		if (cond(equal_op(token_, startToken_)))
+		t_Syntax_Node const *_Nonnull const startToken_ = parser_->token_;
+		children_->add_(parse_statement_(parser_));
+		if (cond(equal_op(parser_->token_, startToken_)))
 		{
 			t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const skipped_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-			while (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(token_->kind_, LeftBrace_)) && bit_arg(not_equal_op(token_->kind_, RightBrace_)))) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
+			while (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(parser_->token_->kind_, LeftBrace_)) && bit_arg(not_equal_op(parser_->token_->kind_, RightBrace_)))) && bit_arg(not_equal_op(parser_->token_->kind_, EndOfFileToken_)))))
 			{
-				i32 const currentTokenType_ = token_->kind_;
-				skipped_->add_(AcceptToken_());
+				i32 const currentTokenType_ = parser_->token_->kind_;
+				skipped_->add_(accept_token_(parser_));
 				if (cond(equal_op(currentTokenType_, Semicolon_)))
 				{
 					break;
@@ -3085,48 +3022,47 @@ auto ::t_Compilation_Unit_Parser::ParseBlock_() -> t_Syntax_Node const *_Nonnull
 		}
 	}
 
-	children_->add_(ExpectToken_(RightBrace_));
+	children_->add_(expect_token_(parser_, RightBrace_));
 	return new_t_Syntax_Node(Block_, children_);
 }
 
-auto ::t_Compilation_Unit_Parser::ParseParameterList_() -> t_Syntax_Node const *_Nonnull
+auto parse_parameter_list_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	children_->add_(ExpectToken_(LeftParen_));
-	if (cond(not_equal_op(token_->kind_, RightParen_)))
+	children_->add_(expect_token_(parser_, LeftParen_));
+	if (cond(not_equal_op(parser_->token_->kind_, RightParen_)))
 	{
 		for (;;)
 		{
 			t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const parameterChildren_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-			if (cond(bit_op(bit_arg(equal_op(token_->kind_, MutableKeyword_)) || bit_arg(equal_op(token_->kind_, SelfKeyword_)))))
+			if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, MutableKeyword_)) || bit_arg(equal_op(parser_->token_->kind_, SelfKeyword_)))))
 			{
-				if (cond(equal_op(token_->kind_, MutableKeyword_)))
+				if (cond(equal_op(parser_->token_->kind_, MutableKeyword_)))
 				{
-					parameterChildren_->add_(ExpectToken_(MutableKeyword_));
+					parameterChildren_->add_(expect_token_(parser_, MutableKeyword_));
 				}
 
-				parameterChildren_->add_(ExpectToken_(SelfKeyword_));
+				parameterChildren_->add_(expect_token_(parser_, SelfKeyword_));
 				children_->add_(new_t_Syntax_Node(SelfParameter_, parameterChildren_));
 			}
 			else
 			{
-				bit const mutableBinding_ = equal_op(token_->kind_, VarKeyword_);
-				if (cond(equal_op(token_->kind_, VarKeyword_)))
+				bit const mutableBinding_ = equal_op(parser_->token_->kind_, VarKeyword_);
+				if (cond(equal_op(parser_->token_->kind_, VarKeyword_)))
 				{
-					parameterChildren_->add_(ExpectToken_(VarKeyword_));
+					parameterChildren_->add_(expect_token_(parser_, VarKeyword_));
 				}
 
-				parameterChildren_->add_(ExpectToken_(Identifier_));
-				parameterChildren_->add_(ExpectToken_(Colon_));
-				t_Syntax_Node const *_Nonnull const type_ = ParseType_();
+				parameterChildren_->add_(expect_token_(parser_, Identifier_));
+				parameterChildren_->add_(expect_token_(parser_, Colon_));
+				t_Syntax_Node const *_Nonnull const type_ = parse_type_(parser_);
 				parameterChildren_->add_(type_);
 				children_->add_(new_t_Syntax_Node(Parameter_, parameterChildren_));
 			}
 
-			if (cond(equal_op(token_->kind_, Comma_)))
+			if (cond(equal_op(parser_->token_->kind_, Comma_)))
 			{
-				children_->add_(ExpectToken_(Comma_));
+				children_->add_(expect_token_(parser_, Comma_));
 			}
 			else
 			{
@@ -3135,195 +3071,173 @@ auto ::t_Compilation_Unit_Parser::ParseParameterList_() -> t_Syntax_Node const *
 		}
 	}
 
-	children_->add_(ExpectToken_(RightParen_));
+	children_->add_(expect_token_(parser_, RightParen_));
 	return new_t_Syntax_Node(ParameterList_, children_);
 }
 
-auto ::t_Compilation_Unit_Parser::ParseMemberDeclaration_() -> t_Syntax_Node const *_Nonnull
+auto parse_member_declaration_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, PublicKeyword_)) || bit_arg(equal_op(token_->kind_, ProtectedKeyword_)))) || bit_arg(equal_op(token_->kind_, InternalKeyword_)))) || bit_arg(equal_op(token_->kind_, PrivateKeyword_)))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(parser_->token_->kind_, PublicKeyword_)) || bit_arg(equal_op(parser_->token_->kind_, ProtectedKeyword_)))) || bit_arg(equal_op(parser_->token_->kind_, InternalKeyword_)))) || bit_arg(equal_op(parser_->token_->kind_, PrivateKeyword_)))))
 	{
-		children_->add_(AcceptToken_());
+		children_->add_(accept_token_(parser_));
 	}
 	else
 	{
-		children_->add_(ExpectToken_(PublicKeyword_));
+		children_->add_(expect_token_(parser_, PublicKeyword_));
 	}
 
-	if (cond(equal_op(token_->kind_, NewKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, NewKeyword_)))
 	{
-		children_->add_(ExpectToken_(NewKeyword_));
-		if (cond(equal_op(token_->kind_, Identifier_)))
+		children_->add_(expect_token_(parser_, NewKeyword_));
+		if (cond(equal_op(parser_->token_->kind_, Identifier_)))
 		{
-			children_->add_(ExpectToken_(Identifier_));
+			children_->add_(expect_token_(parser_, Identifier_));
 		}
 
-		children_->add_(ParseParameterList_());
-		children_->add_(ParseBlock_());
+		children_->add_(parse_parameter_list_(parser_));
+		children_->add_(parse_block_(parser_));
 		return new_t_Syntax_Node(ConstructorDeclaration_, children_);
 	}
 
-	if (cond(bit_op(bit_arg(equal_op(token_->kind_, VarKeyword_)) || bit_arg(equal_op(token_->kind_, LetKeyword_)))))
+	if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, VarKeyword_)) || bit_arg(equal_op(parser_->token_->kind_, LetKeyword_)))))
 	{
-		children_->add_(ParseVariableDeclaration_(bit_false));
-		children_->add_(ExpectToken_(Semicolon_));
+		children_->add_(parse_variable_declaration_(parser_, bit_false));
+		children_->add_(expect_token_(parser_, Semicolon_));
 		return new_t_Syntax_Node(FieldDeclaration_, children_);
 	}
 
-	children_->add_(ExpectToken_(Identifier_));
-	children_->add_(ParseParameterList_());
-	children_->add_(ExpectToken_(Arrow_));
-	children_->add_(ParseType_());
-	children_->add_(ParseBlock_());
+	children_->add_(expect_token_(parser_, Identifier_));
+	children_->add_(parse_parameter_list_(parser_));
+	children_->add_(expect_token_(parser_, Arrow_));
+	children_->add_(parse_type_(parser_));
+	children_->add_(parse_block_(parser_));
 	return new_t_Syntax_Node(MethodDeclaration_, children_);
 }
 
-auto ::t_Compilation_Unit_Parser::ParseDeclaration_() -> t_Syntax_Node const *_Nonnull
+auto parse_declaration_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(token_->kind_, PublicKeyword_)) || bit_arg(equal_op(token_->kind_, ProtectedKeyword_)))) || bit_arg(equal_op(token_->kind_, InternalKeyword_)))) || bit_arg(equal_op(token_->kind_, PrivateKeyword_)))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(parser_->token_->kind_, PublicKeyword_)) || bit_arg(equal_op(parser_->token_->kind_, ProtectedKeyword_)))) || bit_arg(equal_op(parser_->token_->kind_, InternalKeyword_)))) || bit_arg(equal_op(parser_->token_->kind_, PrivateKeyword_)))))
 	{
-		children_->add_(AcceptToken_());
+		children_->add_(accept_token_(parser_));
 	}
 	else
 	{
-		children_->add_(ExpectToken_(PublicKeyword_));
+		children_->add_(expect_token_(parser_, PublicKeyword_));
 	}
 
-	if (cond(bit_op(bit_arg(equal_op(token_->kind_, VarKeyword_)) || bit_arg(equal_op(token_->kind_, LetKeyword_)))))
+	if (cond(bit_op(bit_arg(equal_op(parser_->token_->kind_, VarKeyword_)) || bit_arg(equal_op(parser_->token_->kind_, LetKeyword_)))))
 	{
-		children_->add_(ParseVariableDeclaration_(bit_true));
-		children_->add_(ExpectToken_(Semicolon_));
+		children_->add_(parse_variable_declaration_(parser_, bit_true));
+		children_->add_(expect_token_(parser_, Semicolon_));
 		return new_t_Syntax_Node(GlobalDeclaration_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, ClassKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, ClassKeyword_)))
 	{
-		children_->add_(ExpectToken_(ClassKeyword_));
-		children_->add_(ExpectToken_(Identifier_));
-		children_->add_(ExpectToken_(LeftBrace_));
-		while (cond(bit_op(bit_arg(not_equal_op(token_->kind_, RightBrace_)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
+		children_->add_(expect_token_(parser_, ClassKeyword_));
+		children_->add_(expect_token_(parser_, Identifier_));
+		children_->add_(expect_token_(parser_, LeftBrace_));
+		while (cond(bit_op(bit_arg(not_equal_op(parser_->token_->kind_, RightBrace_)) && bit_arg(not_equal_op(parser_->token_->kind_, EndOfFileToken_)))))
 		{
-			t_Syntax_Node const *_Nonnull const startToken_ = token_;
-			children_->add_(ParseMemberDeclaration_());
-			if (cond(equal_op(token_, startToken_)))
+			t_Syntax_Node const *_Nonnull const startToken_ = parser_->token_;
+			children_->add_(parse_member_declaration_(parser_));
+			if (cond(equal_op(parser_->token_, startToken_)))
 			{
-				children_->add_(new_Syntax_Node_Skipped_(AcceptToken_()));
+				children_->add_(new_Syntax_Node_Skipped_(accept_token_(parser_)));
 			}
 		}
 
-		children_->add_(ExpectToken_(RightBrace_));
+		children_->add_(expect_token_(parser_, RightBrace_));
 		return new_t_Syntax_Node(ClassDeclaration_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, StructKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, StructKeyword_)))
 	{
-		children_->add_(ExpectToken_(StructKeyword_));
-		children_->add_(ExpectToken_(Identifier_));
-		children_->add_(ExpectToken_(LeftBrace_));
-		while (cond(bit_op(bit_arg(not_equal_op(token_->kind_, RightBrace_)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
+		children_->add_(expect_token_(parser_, StructKeyword_));
+		children_->add_(expect_token_(parser_, Identifier_));
+		children_->add_(expect_token_(parser_, LeftBrace_));
+		while (cond(bit_op(bit_arg(not_equal_op(parser_->token_->kind_, RightBrace_)) && bit_arg(not_equal_op(parser_->token_->kind_, EndOfFileToken_)))))
 		{
-			t_Syntax_Node const *_Nonnull const startToken_ = token_;
-			children_->add_(ParseMemberDeclaration_());
-			if (cond(equal_op(token_, startToken_)))
+			t_Syntax_Node const *_Nonnull const startToken_ = parser_->token_;
+			children_->add_(parse_member_declaration_(parser_));
+			if (cond(equal_op(parser_->token_, startToken_)))
 			{
-				children_->add_(new_Syntax_Node_Skipped_(AcceptToken_()));
+				children_->add_(new_Syntax_Node_Skipped_(accept_token_(parser_)));
 			}
 		}
 
-		children_->add_(ExpectToken_(RightBrace_));
+		children_->add_(expect_token_(parser_, RightBrace_));
 		return new_t_Syntax_Node(StructDeclaration_, children_);
 	}
 
-	if (cond(equal_op(token_->kind_, EnumKeyword_)))
+	if (cond(equal_op(parser_->token_->kind_, EnumKeyword_)))
 	{
-		children_->add_(ExpectToken_(EnumKeyword_));
-		children_->add_(ExpectToken_(StructKeyword_));
-		children_->add_(ExpectToken_(Identifier_));
-		children_->add_(ExpectToken_(LeftBrace_));
-		while (cond(bit_op(bit_arg(not_equal_op(token_->kind_, RightBrace_)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
+		children_->add_(expect_token_(parser_, EnumKeyword_));
+		children_->add_(expect_token_(parser_, StructKeyword_));
+		children_->add_(expect_token_(parser_, Identifier_));
+		children_->add_(expect_token_(parser_, LeftBrace_));
+		while (cond(bit_op(bit_arg(not_equal_op(parser_->token_->kind_, RightBrace_)) && bit_arg(not_equal_op(parser_->token_->kind_, EndOfFileToken_)))))
 		{
 			t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const memberChildren_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-			memberChildren_->add_(ExpectToken_(Identifier_));
-			if (cond(equal_op(token_->kind_, Equals_)))
+			memberChildren_->add_(expect_token_(parser_, Identifier_));
+			if (cond(equal_op(parser_->token_->kind_, Equals_)))
 			{
-				memberChildren_->add_(ExpectToken_(Equals_));
-				memberChildren_->add_(ExpectToken_(Number_));
+				memberChildren_->add_(expect_token_(parser_, Equals_));
+				memberChildren_->add_(expect_token_(parser_, Number_));
 			}
 
-			if (cond(not_equal_op(token_->kind_, RightBrace_)))
+			if (cond(not_equal_op(parser_->token_->kind_, RightBrace_)))
 			{
-				memberChildren_->add_(ExpectToken_(Comma_));
+				memberChildren_->add_(expect_token_(parser_, Comma_));
 			}
 
 			children_->add_(new_t_Syntax_Node(EnumMemberDeclaration_, memberChildren_));
 		}
 
-		children_->add_(ExpectToken_(RightBrace_));
+		children_->add_(expect_token_(parser_, RightBrace_));
 		return new_t_Syntax_Node(EnumDeclaration_, children_);
 	}
 
-	children_->add_(ExpectToken_(Identifier_));
-	children_->add_(ParseParameterList_());
-	children_->add_(ExpectToken_(Arrow_));
-	children_->add_(ParseType_());
-	children_->add_(ParseBlock_());
+	children_->add_(expect_token_(parser_, Identifier_));
+	children_->add_(parse_parameter_list_(parser_));
+	children_->add_(expect_token_(parser_, Arrow_));
+	children_->add_(parse_type_(parser_));
+	children_->add_(parse_block_(parser_));
 	return new_t_Syntax_Node(FunctionDeclaration_, children_);
 }
 
-auto ::t_Compilation_Unit_Parser::ParseCompilationUnit_() -> t_Syntax_Node const *_Nonnull
+auto parse_compilation_unit_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	while (cond(bit_op(bit_arg(not_equal_op(token_, none)) && bit_arg(not_equal_op(token_->kind_, EndOfFileToken_)))))
+	while (cond(bit_op(bit_arg(not_equal_op(parser_->token_, none)) && bit_arg(not_equal_op(parser_->token_->kind_, EndOfFileToken_)))))
 	{
-		t_Syntax_Node const *_Nonnull const startToken_ = token_;
-		children_->add_(ParseDeclaration_());
-		if (cond(equal_op(token_, startToken_)))
+		t_Syntax_Node const *_Nonnull const startToken_ = parser_->token_;
+		children_->add_(parse_declaration_(parser_));
+		if (cond(equal_op(parser_->token_, startToken_)))
 		{
-			children_->add_(new_Syntax_Node_Skipped_(AcceptToken_()));
+			children_->add_(new_Syntax_Node_Skipped_(accept_token_(parser_)));
 		}
 	}
 
-	children_->add_(ExpectToken_(EndOfFileToken_));
+	children_->add_(expect_token_(parser_, EndOfFileToken_));
 	return new_t_Syntax_Node(CompilationUnit_, children_);
 }
 
-auto ::t_Lexer::analyze_(t_Source_Text const *_Nonnull const source_) const -> t_Token_Stream *_Nonnull
+auto lexically_analyze_(t_Source_Text const *_Nonnull const source_) -> t_Token_Stream *_Nonnull
 {
-	auto self = this;
 	return new_t_Token_Stream(source_);
 }
 
-inline t_Lexer *_Nonnull new_t_Lexer()
+auto parse_package_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Syntax_Node const *_Nonnull
 {
-	return (new t_Lexer())->construct();
-}
-
-auto t_Parser::construct() -> t_Parser *_Nonnull
-{
-	t_Parser *_Nonnull self = this;
-	return self;
-}
-
-inline t_Parser *_Nonnull new_t_Parser()
-{
-	return (new t_Parser())->construct();
-}
-
-auto ::t_Parser::ParsePackage_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) const -> t_Syntax_Node const *_Nonnull
-{
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	t_Lexer const *_Nonnull const lexer_ = new_t_Lexer();
 	for (t_Source_Text const *_Nonnull const source_ : *(sources_))
 	{
-		t_Token_Stream *_Nonnull const tokenStream_ = lexer_->analyze_(source_);
-		t_Compilation_Unit_Parser *_Nonnull const compilationUnitParser_ = new_t_Compilation_Unit_Parser(tokenStream_);
-		children_->add_(compilationUnitParser_->Parse_());
+		t_Token_Stream *_Nonnull const token_stream_ = lexically_analyze_(source_);
+		t_Compilation_Unit_Parser *_Nonnull const compilation_unit_parser_ = new_t_Compilation_Unit_Parser(token_stream_);
+		children_->add_(parse_(compilation_unit_parser_));
 	}
 
 	return new_t_Syntax_Node(PackageNode_, children_);
@@ -3332,13 +3246,13 @@ auto ::t_Parser::ParsePackage_(t_system__collections__List<t_Source_Text const *
 auto t_Syntax_Node::construct(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_) -> t_Syntax_Node *_Nonnull
 {
 	t_Syntax_Node *_Nonnull self = this;
-	kind_ = type_;
-	is_missing_ = bit_false;
+	self->kind_ = type_;
+	self->is_missing_ = bit_false;
 	self->source_ = source_;
 	self->start_ = start_;
-	byte_length_ = length_;
+	self->byte_length_ = length_;
 	self->children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	return self;
 }
 
@@ -3350,13 +3264,13 @@ inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Source_Text 
 auto t_Syntax_Node::construct(i32 const type_, bit const isMissing_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_) -> t_Syntax_Node *_Nonnull
 {
 	t_Syntax_Node *_Nonnull self = this;
-	kind_ = type_;
-	is_missing_ = isMissing_;
+	self->kind_ = type_;
+	self->is_missing_ = isMissing_;
 	self->source_ = source_;
 	self->start_ = start_;
-	byte_length_ = length_;
+	self->byte_length_ = length_;
 	self->children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	return self;
 }
 
@@ -3368,15 +3282,15 @@ inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, bit const isMi
 auto t_Syntax_Node::construct(i32 const type_, t_Syntax_Node const *_Nonnull const child_) -> t_Syntax_Node *_Nonnull
 {
 	t_Syntax_Node *_Nonnull self = this;
-	kind_ = type_;
-	is_missing_ = child_->is_missing_;
-	source_ = child_->source_;
-	start_ = child_->start_;
-	byte_length_ = child_->byte_length_;
+	self->kind_ = type_;
+	self->is_missing_ = child_->is_missing_;
+	self->source_ = child_->source_;
+	self->start_ = child_->start_;
+	self->byte_length_ = child_->byte_length_;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
 	children_->add_(child_);
 	self->children_ = children_;
-	node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	return self;
 }
 
@@ -3388,14 +3302,14 @@ inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Syntax_Node 
 auto t_Syntax_Node::construct(i32 const type_, t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_) -> t_Syntax_Node *_Nonnull
 {
 	t_Syntax_Node *_Nonnull self = this;
-	kind_ = type_;
-	is_missing_ = bit_false;
-	source_ = children_->op_Element(i32(0))->source_;
-	start_ = children_->op_Element(i32(0))->start_;
+	self->kind_ = type_;
+	self->is_missing_ = bit_false;
+	self->source_ = children_->op_Element(i32(0))->source_;
+	self->start_ = children_->op_Element(i32(0))->start_;
 	t_Syntax_Node const *_Nonnull const lastChild_ = children_->op_Element(children_->op_magnitude()->op_subtract(i32(1)));
-	byte_length_ = lastChild_->start_.op_subtract(start_)->op_add(lastChild_->byte_length_);
+	self->byte_length_ = lastChild_->start_.op_subtract(start_)->op_add(lastChild_->byte_length_);
 	self->children_ = children_;
-	node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
 	return self;
 }
 
@@ -3407,7 +3321,7 @@ inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_system__coll
 auto ::t_Syntax_Node::get_text_() const -> str
 {
 	auto self = this;
-	return source_->Text_.Substring_(start_, byte_length_);
+	return source_->text_.Substring_(start_, byte_length_);
 }
 
 auto ::t_Syntax_Node::first_child_(i32 const type_) const -> t_Syntax_Node const *_Nullable
@@ -3553,9 +3467,9 @@ auto t_Token_Stream::construct(t_Source_Text const *_Nonnull const source_) -> t
 {
 	t_Token_Stream *_Nonnull self = this;
 	self->source_ = source_;
-	position_ = i32(0);
-	diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
-	endOfFile_ = bit_false;
+	self->position_ = i32(0);
+	self->diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
+	self->end_of_file_ = bit_false;
 	return self;
 }
 
@@ -3564,238 +3478,235 @@ inline t_Token_Stream *_Nonnull new_t_Token_Stream(t_Source_Text const *_Nonnull
 	return (new t_Token_Stream())->construct(source_);
 }
 
-auto ::t_Token_Stream::GetNextToken_() -> t_Syntax_Node const *_Nullable
+auto next_token_(t_Token_Stream *_Nonnull const tokens_) -> t_Syntax_Node const *_Nullable
 {
-	auto self = this;
-	if (cond(u32_greater_than_or_equal(position_, source_->ByteLength_())))
+	if (cond(u32_greater_than_or_equal(tokens_->position_, source_byte_length_(tokens_->source_))))
 	{
-		return EndOfFile_();
+		return end_of_file_token_(tokens_);
 	}
 
 	u32 end_ = i32_negate(i32(1));
-	while (cond(u32_less_than(position_, source_->ByteLength_())))
+	while (cond(u32_less_than(tokens_->position_, source_byte_length_(tokens_->source_))))
 	{
-		cp const curChar_ = source_->Text_.op_Element(position_);
+		cp const curChar_ = tokens_->source_->text_.op_Element(tokens_->position_);
 		if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(curChar_, cp(' '))) || bit_arg(equal_op(curChar_, cp('\t'))))) || bit_arg(equal_op(curChar_, cp('\n'))))) || bit_arg(equal_op(curChar_, cp('\r'))))))
 		{
-			position_.op_add_assign(i32(1));
+			tokens_->position_.op_add_assign(i32(1));
 			continue;
 		}
 		else if (cond(equal_op(curChar_, cp('{'))))
 		{
-			return NewOperator_(LeftBrace_);
+			return new_operator_token_(tokens_, LeftBrace_);
 		}
 		else if (cond(equal_op(curChar_, cp('}'))))
 		{
-			return NewOperator_(RightBrace_);
+			return new_operator_token_(tokens_, RightBrace_);
 		}
 		else if (cond(equal_op(curChar_, cp('('))))
 		{
-			return NewOperator_(LeftParen_);
+			return new_operator_token_(tokens_, LeftParen_);
 		}
 		else if (cond(equal_op(curChar_, cp(')'))))
 		{
-			return NewOperator_(RightParen_);
+			return new_operator_token_(tokens_, RightParen_);
 		}
 		else if (cond(equal_op(curChar_, cp(';'))))
 		{
-			return NewOperator_(Semicolon_);
+			return new_operator_token_(tokens_, Semicolon_);
 		}
 		else if (cond(equal_op(curChar_, cp(','))))
 		{
-			return NewOperator_(Comma_);
+			return new_operator_token_(tokens_, Comma_);
 		}
 		else if (cond(equal_op(curChar_, cp('.'))))
 		{
-			return NewOperator_(Dot_);
+			return new_operator_token_(tokens_, Dot_);
 		}
 		else if (cond(equal_op(curChar_, cp(':'))))
 		{
-			return NewOperator_(Colon_);
+			return new_operator_token_(tokens_, Colon_);
 		}
 		else if (cond(equal_op(curChar_, cp('['))))
 		{
-			return NewOperator_(LeftBracket_);
+			return new_operator_token_(tokens_, LeftBracket_);
 		}
 		else if (cond(equal_op(curChar_, cp(']'))))
 		{
-			return NewOperator_(RightBracket_);
+			return new_operator_token_(tokens_, RightBracket_);
 		}
 		else if (cond(equal_op(curChar_, cp('?'))))
 		{
-			return NewOperator_(Question_);
+			return new_operator_token_(tokens_, Question_);
 		}
 		else if (cond(equal_op(curChar_, cp('|'))))
 		{
-			return NewOperator_(Pipe_);
+			return new_operator_token_(tokens_, Pipe_);
 		}
 		else if (cond(equal_op(curChar_, cp('*'))))
 		{
-			return NewOperator_(Asterisk_);
+			return new_operator_token_(tokens_, Asterisk_);
 		}
 		else if (cond(equal_op(curChar_, cp('='))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('='))))))
+			if (cond(bit_op(bit_arg(tokens_->position_.op_add(i32(1))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('='))))))
 			{
-				return NewOperator_(EqualsEquals_, i32(2));
+				return new_operator_token_(tokens_, EqualsEquals_, i32(2));
 			}
 
-			if (cond(bit_op(bit_arg(bit_op(bit_arg(position_.op_add(i32(2))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('/'))))) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(2))), cp('='))))))
+			if (cond(bit_op(bit_arg(bit_op(bit_arg(tokens_->position_.op_add(i32(2))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('/'))))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(2))), cp('='))))))
 			{
-				return NewOperator_(EqualsSlashEquals_, i32(3));
+				return new_operator_token_(tokens_, EqualsSlashEquals_, i32(3));
 			}
 
-			return NewOperator_(Equals_);
+			return new_operator_token_(tokens_, Equals_);
 		}
 		else if (cond(equal_op(curChar_, cp('+'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('='))))))
+			if (cond(bit_op(bit_arg(tokens_->position_.op_add(i32(1))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('='))))))
 			{
-				return NewOperator_(PlusEquals_, i32(2));
+				return new_operator_token_(tokens_, PlusEquals_, i32(2));
 			}
 
-			return NewOperator_(Plus_);
+			return new_operator_token_(tokens_, Plus_);
 		}
 		else if (cond(equal_op(curChar_, cp('-'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('>'))))))
+			if (cond(bit_op(bit_arg(tokens_->position_.op_add(i32(1))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('>'))))))
 			{
-				return NewOperator_(Arrow_, i32(2));
+				return new_operator_token_(tokens_, Arrow_, i32(2));
 			}
 
-			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('='))))))
+			if (cond(bit_op(bit_arg(tokens_->position_.op_add(i32(1))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('='))))))
 			{
-				return NewOperator_(MinusEquals_, i32(2));
+				return new_operator_token_(tokens_, MinusEquals_, i32(2));
 			}
 
-			return NewOperator_(Minus_);
+			return new_operator_token_(tokens_, Minus_);
 		}
 		else if (cond(equal_op(curChar_, cp('/'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('/'))))))
+			if (cond(bit_op(bit_arg(tokens_->position_.op_add(i32(1))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('/'))))))
 			{
-				while (cond(bit_op(bit_arg(bit_op(bit_arg(u32_less_than(position_, source_->ByteLength_())) && bit_arg(not_equal_op(source_->Text_.op_Element(position_), cp('\r'))))) && bit_arg(not_equal_op(source_->Text_.op_Element(position_), cp('\n'))))))
+				while (cond(bit_op(bit_arg(bit_op(bit_arg(u32_less_than(tokens_->position_, source_byte_length_(tokens_->source_))) && bit_arg(not_equal_op(tokens_->source_->text_.op_Element(tokens_->position_), cp('\r'))))) && bit_arg(not_equal_op(tokens_->source_->text_.op_Element(tokens_->position_), cp('\n'))))))
 				{
-					position_.op_add_assign(i32(1));
+					tokens_->position_.op_add_assign(i32(1));
 				}
 
 				continue;
 			}
 
-			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('*'))))))
+			if (cond(bit_op(bit_arg(tokens_->position_.op_add(i32(1))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('*'))))))
 			{
-				position_.op_add_assign(i32(2));
+				tokens_->position_.op_add_assign(i32(2));
 				bit lastCharStar_ = bit_false;
-				while (cond(bit_op(bit_arg(u32_less_than(position_, source_->ByteLength_())) && bit_arg(bit_not(bit_op(bit_arg(lastCharStar_) && bit_arg(equal_op(source_->Text_.op_Element(position_), cp('/')))))))))
+				while (cond(bit_op(bit_arg(u32_less_than(tokens_->position_, source_byte_length_(tokens_->source_))) && bit_arg(bit_not(bit_op(bit_arg(lastCharStar_) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_), cp('/')))))))))
 				{
-					lastCharStar_ = equal_op(source_->Text_.op_Element(position_), cp('*'));
-					position_.op_add_assign(i32(1));
+					lastCharStar_ = equal_op(tokens_->source_->text_.op_Element(tokens_->position_), cp('*'));
+					tokens_->position_.op_add_assign(i32(1));
 				}
 
-				position_.op_add_assign(i32(1));
+				tokens_->position_.op_add_assign(i32(1));
 				continue;
 			}
 
-			return NewOperator_(Slash_);
+			return new_operator_token_(tokens_, Slash_);
 		}
 		else if (cond(equal_op(curChar_, cp('%'))))
 		{
-			return NewOperator_(Percent_);
+			return new_operator_token_(tokens_, Percent_);
 		}
 		else if (cond(equal_op(curChar_, cp('<'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('='))))))
+			if (cond(bit_op(bit_arg(tokens_->position_.op_add(i32(1))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('='))))))
 			{
-				return NewOperator_(LessThanEquals_, i32(2));
+				return new_operator_token_(tokens_, LessThanEquals_, i32(2));
 			}
 
-			return NewOperator_(LessThan_);
+			return new_operator_token_(tokens_, LessThan_);
 		}
 		else if (cond(equal_op(curChar_, cp('>'))))
 		{
-			if (cond(bit_op(bit_arg(position_.op_add(i32(1))->op_less_than(source_->ByteLength_())) && bit_arg(equal_op(source_->Text_.op_Element(position_.op_add(i32(1))), cp('='))))))
+			if (cond(bit_op(bit_arg(tokens_->position_.op_add(i32(1))->op_less_than(source_byte_length_(tokens_->source_))) && bit_arg(equal_op(tokens_->source_->text_.op_Element(tokens_->position_.op_add(i32(1))), cp('='))))))
 			{
-				return NewOperator_(GreaterThanEquals_, i32(2));
+				return new_operator_token_(tokens_, GreaterThanEquals_, i32(2));
 			}
 
-			return NewOperator_(GreaterThan_);
+			return new_operator_token_(tokens_, GreaterThan_);
 		}
 		else if (cond(equal_op(curChar_, cp('"'))))
 		{
-			end_ = position_.op_add(i32(1));
+			end_ = tokens_->position_.op_add(i32(1));
 			bit escaped_ = bit_false;
-			while (cond(bit_op(bit_arg(u32_less_than(end_, source_->ByteLength_())) && bit_arg(bit_op(bit_arg(not_equal_op(source_->Text_.op_Element(end_), cp('"'))) || bit_arg(escaped_))))))
+			while (cond(bit_op(bit_arg(u32_less_than(end_, source_byte_length_(tokens_->source_))) && bit_arg(bit_op(bit_arg(not_equal_op(tokens_->source_->text_.op_Element(end_), cp('"'))) || bit_arg(escaped_))))))
 			{
-				escaped_ = bit_op(bit_arg(equal_op(source_->Text_.op_Element(end_), cp('\\'))) && bit_arg(bit_not(escaped_)));
+				escaped_ = bit_op(bit_arg(equal_op(tokens_->source_->text_.op_Element(end_), cp('\\'))) && bit_arg(bit_not(escaped_)));
 				end_.op_add_assign(i32(1));
 			}
 
 			end_.op_add_assign(i32(1));
-			return NewToken_(StringLiteral_, end_);
+			return new_token_(tokens_, StringLiteral_, end_);
 		}
 		else if (cond(equal_op(curChar_, cp('\''))))
 		{
-			end_ = position_.op_add(i32(1));
+			end_ = tokens_->position_.op_add(i32(1));
 			bit escaped_ = bit_false;
-			while (cond(bit_op(bit_arg(u32_less_than(end_, source_->ByteLength_())) && bit_arg(bit_op(bit_arg(not_equal_op(source_->Text_.op_Element(end_), cp('\''))) || bit_arg(escaped_))))))
+			while (cond(bit_op(bit_arg(u32_less_than(end_, source_byte_length_(tokens_->source_))) && bit_arg(bit_op(bit_arg(not_equal_op(tokens_->source_->text_.op_Element(end_), cp('\''))) || bit_arg(escaped_))))))
 			{
-				escaped_ = bit_op(bit_arg(equal_op(source_->Text_.op_Element(end_), cp('\\'))) && bit_arg(bit_not(escaped_)));
+				escaped_ = bit_op(bit_arg(equal_op(tokens_->source_->text_.op_Element(end_), cp('\\'))) && bit_arg(bit_not(escaped_)));
 				end_.op_add_assign(i32(1));
 			}
 
 			end_.op_add_assign(i32(1));
-			return NewToken_(CodePointLiteral_, end_);
+			return new_token_(tokens_, CodePointLiteral_, end_);
 		}
 		else
 		{
-			if (cond(IsIdentifierChar_(curChar_)))
+			if (cond(is_identifier_char_(curChar_)))
 			{
-				end_ = position_.op_add(i32(1));
-				while (cond(IsIdentifierChar_(source_->Text_.op_Element(end_))))
+				end_ = tokens_->position_.op_add(i32(1));
+				while (cond(is_identifier_char_(tokens_->source_->text_.op_Element(end_))))
 				{
 					end_.op_add_assign(i32(1));
 				}
 
-				return NewIdentifierOrKeyword_(end_);
+				return new_identifier_or_keyword_token_(tokens_, end_);
 			}
 
-			if (cond(IsNumberChar_(curChar_)))
+			if (cond(is_number_char_(curChar_)))
 			{
-				end_ = position_.op_add(i32(1));
-				while (cond(IsNumberChar_(source_->Text_.op_Element(end_))))
+				end_ = tokens_->position_.op_add(i32(1));
+				while (cond(is_number_char_(tokens_->source_->text_.op_Element(end_))))
 				{
 					end_.op_add_assign(i32(1));
 				}
 
-				return NewToken_(Number_, end_);
+				return new_token_(tokens_, Number_, end_);
 			}
 
-			t_Text_Span const *_Nonnull diagnosticSpan_ = new_t_Text_Span(position_, i32(1));
-			diagnostics_->add_(new_t_Diagnostic(CompilationError_, Lexing_, source_, diagnosticSpan_, str("Invalid character `").op_add(curChar_)->op_add(str("`"))));
-			position_ = end_;
+			t_Text_Span const *_Nonnull diagnosticSpan_ = new_t_Text_Span(tokens_->position_, i32(1));
+			tokens_->diagnostics_->add_(new_t_Diagnostic(CompilationError_, Lexing_, tokens_->source_, diagnosticSpan_, str("Invalid character `").op_add(curChar_)->op_add(str("`"))));
+			tokens_->position_ = end_;
 		}
 	}
 
-	return EndOfFile_();
+	return end_of_file_token_(tokens_);
 }
 
-auto ::t_Token_Stream::EndOfFile_() -> t_Syntax_Node const *_Nullable
+auto end_of_file_token_(t_Token_Stream *_Nonnull const tokens_) -> t_Syntax_Node const *_Nullable
 {
-	auto self = this;
-	if (cond(endOfFile_))
+	if (cond(tokens_->end_of_file_))
 	{
 		return none;
 	}
 
-	endOfFile_ = bit_true;
-	return NewToken_(EndOfFileToken_, position_);
+	tokens_->end_of_file_ = bit_true;
+	return new_token_(tokens_, EndOfFileToken_, tokens_->position_);
 }
 
-auto ::t_Token_Stream::NewIdentifierOrKeyword_(u32 const end_) -> t_Syntax_Node const *_Nonnull
+auto new_identifier_or_keyword_token_(t_Token_Stream *_Nonnull const tokens_, u32 const end_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	u32 const length_ = end_.op_subtract(position_);
-	str const value_ = source_->Text_.Substring_(position_, length_);
+	u32 const length_ = end_.op_subtract(tokens_->position_);
+	str const value_ = tokens_->source_->text_.Substring_(tokens_->position_, length_);
 	i32 type_;
 	if (cond(equal_op(value_, str("new"))))
 	{
@@ -3942,46 +3853,43 @@ auto ::t_Token_Stream::NewIdentifierOrKeyword_(u32 const end_) -> t_Syntax_Node 
 		type_ = Identifier_;
 		if (cond(bit_op(bit_arg(value_.ByteLength_()->op_greater_than(i32(1))) && bit_arg(equal_op(value_.op_Element(value_.ByteLength_()->op_subtract(i32(1))), cp('_'))))))
 		{
-			t_Text_Span const *_Nonnull diagnosticSpan_ = new_t_Text_Span(position_, end_.op_subtract(position_));
-			diagnostics_->add_(new_t_Diagnostic(CompilationError_, Lexing_, source_, diagnosticSpan_, str("Identifiers ending with underscore are reserved `").op_add(value_)->op_add(str("`"))));
+			t_Text_Span const *_Nonnull diagnosticSpan_ = new_t_Text_Span(tokens_->position_, end_.op_subtract(tokens_->position_));
+			tokens_->diagnostics_->add_(new_t_Diagnostic(CompilationError_, Lexing_, tokens_->source_, diagnosticSpan_, str("Identifiers ending with underscore are reserved `").op_add(value_)->op_add(str("`"))));
 		}
 	}
 
-	return NewToken_(type_, end_);
+	return new_token_(tokens_, type_, end_);
 }
 
-auto ::t_Token_Stream::NewOperator_(i32 const type_) -> t_Syntax_Node const *_Nonnull
+auto new_operator_token_(t_Token_Stream *_Nonnull const tokens_, i32 const type_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	return NewToken_(type_, position_.op_add(i32(1)));
+	return new_token_(tokens_, type_, tokens_->position_.op_add(i32(1)));
 }
 
-auto ::t_Token_Stream::NewOperator_(i32 const type_, u32 const length_) -> t_Syntax_Node const *_Nonnull
+auto new_operator_token_(t_Token_Stream *_Nonnull const tokens_, i32 const type_, u32 const length_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	return NewToken_(type_, position_.op_add(length_));
+	return new_token_(tokens_, type_, tokens_->position_.op_add(length_));
 }
 
-auto ::t_Token_Stream::NewToken_(i32 const type_, u32 const end_) -> t_Syntax_Node const *_Nonnull
+auto new_token_(t_Token_Stream *_Nonnull const tokens_, i32 const type_, u32 const end_) -> t_Syntax_Node const *_Nonnull
 {
-	auto self = this;
-	t_Syntax_Node *_Nonnull const token_ = new_t_Syntax_Node(type_, source_, position_, end_.op_subtract(position_));
-	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(diagnostics_))
+	t_Syntax_Node *_Nonnull const token_ = new_t_Syntax_Node(type_, tokens_->source_, tokens_->position_, end_.op_subtract(tokens_->position_));
+	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(tokens_->diagnostics_))
 	{
 		token_->add_(diagnostic_);
 	}
 
-	diagnostics_->clear_();
-	position_ = end_;
+	tokens_->diagnostics_->clear_();
+	tokens_->position_ = end_;
 	return token_;
 }
 
-auto ::t_Token_Stream::IsIdentifierChar_(cp const c_) -> bit
+auto is_identifier_char_(cp const c_) -> bit
 {
 	return bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(cp_greater_than_or_equal(c_, cp('a'))) && bit_arg(cp_less_than_or_equal(c_, cp('z'))))) || bit_arg(bit_op(bit_arg(cp_greater_than_or_equal(c_, cp('A'))) && bit_arg(cp_less_than_or_equal(c_, cp('Z'))))))) || bit_arg(equal_op(c_, cp('_'))));
 }
 
-auto ::t_Token_Stream::IsNumberChar_(cp const c_) -> bit
+auto is_number_char_(cp const c_) -> bit
 {
 	return bit_op(bit_arg(cp_greater_than_or_equal(c_, cp('0'))) && bit_arg(cp_less_than_or_equal(c_, cp('9'))));
 }
@@ -3989,23 +3897,18 @@ auto ::t_Token_Stream::IsNumberChar_(cp const c_) -> bit
 auto t_Diagnostic::construct(i32 const level_, i32 const phase_, t_Source_Text const *_Nonnull const source_, t_Text_Span const *_Nonnull const span_, str const message_) -> t_Diagnostic *_Nonnull
 {
 	t_Diagnostic *_Nonnull self = this;
-	Level_ = level_;
-	Phase_ = phase_;
+	self->level_ = level_;
+	self->phase_ = phase_;
 	self->source_ = source_;
-	Span_ = span_;
-	Position_ = source_->PositionOfStart_(span_);
-	Message_ = message_;
+	self->span_ = span_;
+	self->position_ = position_of_start_(source_, span_);
+	self->message_ = message_;
 	return self;
 }
 
 inline t_Diagnostic *_Nonnull new_t_Diagnostic(i32 const level_, i32 const phase_, t_Source_Text const *_Nonnull const source_, t_Text_Span const *_Nonnull const span_, str const message_)
 {
 	return (new t_Diagnostic())->construct(level_, phase_, source_, span_, message_);
-}
-
-inline t_Diagnostic_Info *_Nonnull new_t_Diagnostic_Info()
-{
-	return (new t_Diagnostic_Info())->construct();
 }
 
 auto t_Emitter::construct(t_Package const *_Nonnull const package_, t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_) -> t_Emitter *_Nonnull
@@ -5169,7 +5072,7 @@ auto ::t_Emitter::emit_entry_point_adapter_() -> void
 		definitions_->BeginLine_(str("resource_manager_->AddResource(str(\""));
 		definitions_->Write_(resource_->name_);
 		definitions_->Write_(str("\"), str(\""));
-		definitions_->Write_(resource_->Text_.Replace_(str("\\"), str("\\\\"))->Replace_(str("\n"), str("\\n"))->Replace_(str("\r"), str("\\r"))->Replace_(str("\""), str("\\\"")));
+		definitions_->Write_(resource_->text_.Replace_(str("\\"), str("\\\\"))->Replace_(str("\n"), str("\\n"))->Replace_(str("\r"), str("\\r"))->Replace_(str("\""), str("\\\"")));
 		definitions_->EndLine_(str("\"));"));
 	}
 
