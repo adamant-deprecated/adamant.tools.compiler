@@ -1,24 +1,24 @@
 public class Compilation_Unit_Parser
 {
-    public let tokenStream: mut Token_Stream;
+    public let token_stream: mut Token_Stream;
     public var token: Syntax_Node?;
-    public var compilationUnit: Syntax_Node?;
+    public var compilation_unit: Syntax_Node?;
 
-    public new(tokenStream: mut Token_Stream)
+    public new(token_stream: mut Token_Stream)
     {
-        self.tokenStream = tokenStream;
-        self.compilationUnit = none; // TODO We currently don't auto-initialize members
+        self.token_stream = token_stream;
+        self.compilation_unit = none; // TODO We currently don't auto-initialize members
     }
 }
 
 public parse(parser: mut Compilation_Unit_Parser) -> Syntax_Node
 {
-    if parser.compilationUnit == none
+    if parser.compilation_unit == none
     {
-        parser.token = parser.tokenStream.GetNextToken();
-        parser.compilationUnit = parse_compilation_unit(parser);
+        parser.token = next_token(parser.token_stream);
+        parser.compilation_unit = parse_compilation_unit(parser);
     }
-    return parser.compilationUnit;
+    return parser.compilation_unit;
 }
 
 // ----------------------------------------------------------------------------
@@ -28,7 +28,7 @@ public parse(parser: mut Compilation_Unit_Parser) -> Syntax_Node
 public accept_token(parser: mut Compilation_Unit_Parser) -> Syntax_Node?
 {
     let node: Syntax_Node? = parser.token;
-    parser.token = parser.tokenStream.GetNextToken();
+    parser.token = next_token(parser.token_stream);
     return node;
 }
 
@@ -36,16 +36,16 @@ public expect_token(parser: mut Compilation_Unit_Parser, tokenType: int) -> Synt
 {
     if parser.token == none
     {
-        return new_syntax_node_missing(tokenType, parser.tokenStream.source, source_byte_length(parser.tokenStream.source));
+        return new_syntax_node_missing(tokenType, parser.token_stream.source, source_byte_length(parser.token_stream.source));
     }
 
     if parser.token == none or parser.token.kind =/= tokenType
     {
-        return new_syntax_node_missing(tokenType, parser.tokenStream.source, parser.token.start);
+        return new_syntax_node_missing(tokenType, parser.token_stream.source, parser.token.start);
     }
 
     let node: Syntax_Node? = parser.token;
-    parser.token = parser.tokenStream.GetNextToken();
+    parser.token = next_token(parser.token_stream);
     return node;
 }
 

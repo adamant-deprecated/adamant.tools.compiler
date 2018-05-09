@@ -1,350 +1,350 @@
 public class Token_Stream
 {
     public let source: Source_Text;
-    private var position: uint;
-    private let diagnostics: mut system.collections.List<Diagnostic>;
-    private var endOfFile: bool;
+    public var position: uint;
+    public let diagnostics: mut system.collections.List<Diagnostic>;
+    public var end_of_file: bool;
 
     public new(source: Source_Text)
     {
         self.source = source;
         self.position = 0; // TODO have to assign this zero for now because we don't have default values working
         self.diagnostics = new system.collections.List<Diagnostic>();
-        self.endOfFile = false; // TODO implement auto initialize so this doesn't have to be initialized
+        self.end_of_file = false; // TODO implement auto initialize so this doesn't have to be initialized
+    }
+}
+
+public next_token(tokens: mut Token_Stream) -> Syntax_Node?
+{
+    if tokens.position >= source_byte_length(tokens.source)
+    {
+        return end_of_file_token(tokens);
     }
 
-    public GetNextToken(mut self) -> Syntax_Node?
+    var end: uint = -1;
+    while tokens.position < source_byte_length(tokens.source)
     {
-        if position >= source_byte_length(source)
+        let curChar: code_point = tokens.source.text[tokens.position];
+        if curChar == ' '
+            or curChar == '\t'
+            or curChar == '\n'
+            or curChar == '\r'
         {
-            return EndOfFile();
+            tokens.position += 1;
+            continue;
         }
-
-        var end: uint = -1;
-        while position < source_byte_length(source)
+        else if curChar == '{'
+            { return new_operator_token(tokens, LeftBrace); }
+        else if curChar == '}'
+            { return new_operator_token(tokens, RightBrace); }
+        else if curChar == '('
+            { return new_operator_token(tokens, LeftParen); }
+        else if curChar == ')'
+            { return new_operator_token(tokens, RightParen); }
+        else if curChar == ';'
+            { return new_operator_token(tokens, Semicolon); }
+        else if curChar == ','
+            { return new_operator_token(tokens, Comma); }
+        else if curChar == '.'
+            { return new_operator_token(tokens, Dot); }
+        else if curChar == ':'
+            { return new_operator_token(tokens, Colon); }
+        else if curChar == '['
+            { return new_operator_token(tokens, LeftBracket); }
+        else if curChar == ']'
+            { return new_operator_token(tokens, RightBracket); }
+        else if curChar == '?'
+            { return new_operator_token(tokens, Question); }
+        else if curChar == '|'
+            { return new_operator_token(tokens, Pipe); }
+        else if curChar == '*'
+            { return new_operator_token(tokens, Asterisk); }
+        else if curChar == '='
         {
-            let curChar: code_point = source.text[position];
-            if curChar == ' '
-                or curChar == '\t'
-                or curChar == '\n'
-                or curChar == '\r'
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
             {
-                position += 1;
+                // it is `==`
+                return new_operator_token(tokens, EqualsEquals, 2);
+            }
+
+            if tokens.position + 2 < source_byte_length(tokens.source)
+                and tokens.source.text[tokens.position + 1] == '/'
+                and tokens.source.text[tokens.position + 2] == '='
+            {
+                // it is `=/=`
+                return new_operator_token(tokens, EqualsSlashEquals, 3);
+            }
+
+            // it is `=`
+            return new_operator_token(tokens, Equals);
+        }
+        else if curChar == '+'
+        {
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
+            {
+                // it is `+=`
+                return new_operator_token(tokens, PlusEquals, 2);
+            }
+
+            // it is `+`
+            return new_operator_token(tokens, Plus);
+        }
+        else if curChar == '-'
+        {
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '>'
+            {
+                // it is `->`
+                return new_operator_token(tokens, Arrow, 2);
+            }
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
+            {
+                // it is `-=`
+                return new_operator_token(tokens, MinusEquals, 2);
+            }
+            // it is `-`
+            return new_operator_token(tokens, Minus);
+        }
+        else if curChar == '/'
+        {
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '/'
+            {
+                // it is a line comment `//`
+                while tokens.position < source_byte_length(tokens.source) and tokens.source.text[tokens.position] =/= '\r' and tokens.source.text[tokens.position] =/= '\n'
+                {
+                    tokens.position += 1;
+                }
+
                 continue;
             }
-            else if curChar == '{'
-                { return NewOperator(LeftBrace); }
-            else if curChar == '}'
-                { return NewOperator(RightBrace); }
-            else if curChar == '('
-                { return NewOperator(LeftParen); }
-            else if curChar == ')'
-                { return NewOperator(RightParen); }
-            else if curChar == ';'
-                { return NewOperator(Semicolon); }
-            else if curChar == ','
-                { return NewOperator(Comma); }
-            else if curChar == '.'
-                { return NewOperator(Dot); }
-            else if curChar == ':'
-                { return NewOperator(Colon); }
-            else if curChar == '['
-                { return NewOperator(LeftBracket); }
-            else if curChar == ']'
-                { return NewOperator(RightBracket); }
-            else if curChar == '?'
-                { return NewOperator(Question); }
-            else if curChar == '|'
-                { return NewOperator(Pipe); }
-            else if curChar == '*'
-                { return NewOperator(Asterisk); }
-            else if curChar == '='
+
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '*'
             {
-                if position + 1 < source_byte_length(source) and source.text[position + 1] == '='
+                // it is a block comment `/*`
+                tokens.position += 2; // move past the start
+                var lastCharStar: bool = false;
+                while tokens.position < source_byte_length(tokens.source) and not (lastCharStar and tokens.source.text[tokens.position] == '/')
                 {
-                    // it is `==`
-                    return NewOperator(EqualsEquals, 2);
+                    lastCharStar = tokens.source.text[tokens.position] == '*';
+                    tokens.position += 1;
                 }
 
-                if position + 2 < source_byte_length(source)
-                    and source.text[position + 1] == '/'
-                    and source.text[position + 2] == '='
-                {
-                    // it is `=/=`
-                    return NewOperator(EqualsSlashEquals, 3);
-                }
-
-                // it is `=`
-                return NewOperator(Equals);
+                tokens.position += 1; // move past the final '/'
+                continue;
             }
-            else if curChar == '+'
-            {
-                if position + 1 < source_byte_length(source) and source.text[position + 1] == '='
-                {
-                    // it is `+=`
-                    return NewOperator(PlusEquals, 2);
-                }
 
-                // it is `+`
-                return NewOperator(Plus);
-            }
-            else if curChar == '-'
-            {
-                if position + 1 < source_byte_length(source) and source.text[position + 1] == '>'
-                {
-                    // it is `->`
-                    return NewOperator(Arrow, 2);
-                }
-                if position + 1 < source_byte_length(source) and source.text[position + 1] == '='
-                {
-                    // it is `-=`
-                    return NewOperator(MinusEquals, 2);
-                }
-                // it is `-`
-                return NewOperator(Minus);
-            }
-            else if curChar == '/'
-            {
-                if position + 1 < source_byte_length(source) and source.text[position + 1] == '/'
-                {
-                    // it is a line comment `//`
-                    while position < source_byte_length(source) and source.text[position] =/= '\r' and source.text[position] =/= '\n'
-                    {
-                        position += 1;
-                    }
-
-                    continue;
-                }
-
-                if position + 1 < source_byte_length(source) and source.text[position + 1] == '*'
-                {
-                    // it is a block comment `/*`
-                    position += 2; // move past the start
-                    var lastCharStar: bool = false;
-                    while position < source_byte_length(source) and not (lastCharStar and source.text[position] == '/')
-                    {
-                        lastCharStar = source.text[position] == '*';
-                        position += 1;
-                    }
-
-                    position += 1; // move past the final '/'
-                    continue;
-                }
-
-                // it is `/`
-                return NewOperator(Slash);
-            }
-            else if curChar == '%'
-                { return NewOperator(Percent); }
-            else if curChar == '<'
-            {
-                if position + 1 < source_byte_length(source) and source.text[position + 1] == '='
-                {
-                    // it is `<=`
-                    return NewOperator(LessThanEquals, 2);
-                }
-                // it is `<`
-                return NewOperator(LessThan);
-            }
-            else if curChar == '>'
-            {
-                if position + 1 < source_byte_length(source) and source.text[position + 1] == '='
-                {
-                    // it is `>=`
-                    return NewOperator(GreaterThanEquals, 2);
-                }
-                // it is `>`
-                return NewOperator(GreaterThan);
-            }
-            else if curChar == '"'
-            {
-                end = position + 1;
-                var escaped: bool = false;
-                while end < source_byte_length(source) and (source.text[end] =/= '"' or escaped)
-                {
-                    escaped = source.text[end] == '\\' and not escaped;
-                    end += 1;
-                }
-
-                end += 1; // To include the close quote
-                return NewToken(StringLiteral, end);
-            }
-            else if curChar == '\''
-            {
-                end = position + 1;
-                var escaped: bool = false;
-                while end < source_byte_length(source) and (source.text[end] =/= '\'' or escaped)
-                {
-                    escaped = source.text[end] == '\\' and not escaped;
-                    end += 1;
-                }
-
-                end += 1; // To include the close quote
-                return NewToken(CodePointLiteral, end);
-            }
-            else
-            {
-                if IsIdentifierChar(curChar)
-                {
-                    end = position + 1;
-                    while IsIdentifierChar(source.text[end])
-                    {
-                        end += 1;
-                    }
-                    return NewIdentifierOrKeyword(end);
-                }
-                if IsNumberChar(curChar)
-                {
-                    end = position + 1;
-                    while IsNumberChar(source.text[end])
-                    {
-                        end += 1;
-                    }
-                    return NewToken(Number, end);
-                }
-
-                // Add an error to the next token
-                var diagnosticSpan: Text_Span = new Text_Span(position, 1);
-                diagnostics.add(new Diagnostic(CompilationError, Lexing, source, diagnosticSpan, "Invalid character `" + curChar + "`"));
-                // Skip past the character and continue lexing
-                position = end;
-            }
+            // it is `/`
+            return new_operator_token(tokens, Slash);
         }
+        else if curChar == '%'
+            { return new_operator_token(tokens, Percent); }
+        else if curChar == '<'
+        {
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
+            {
+                // it is `<=`
+                return new_operator_token(tokens, LessThanEquals, 2);
+            }
+            // it is `<`
+            return new_operator_token(tokens, LessThan);
+        }
+        else if curChar == '>'
+        {
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
+            {
+                // it is `>=`
+                return new_operator_token(tokens, GreaterThanEquals, 2);
+            }
+            // it is `>`
+            return new_operator_token(tokens, GreaterThan);
+        }
+        else if curChar == '"'
+        {
+            end = tokens.position + 1;
+            var escaped: bool = false;
+            while end < source_byte_length(tokens.source) and (tokens.source.text[end] =/= '"' or escaped)
+            {
+                escaped = tokens.source.text[end] == '\\' and not escaped;
+                end += 1;
+            }
 
-        return EndOfFile();
-    }
+            end += 1; // To include the close quote
+            return new_token(tokens, StringLiteral, end);
+        }
+        else if curChar == '\''
+        {
+            end = tokens.position + 1;
+            var escaped: bool = false;
+            while end < source_byte_length(tokens.source) and (tokens.source.text[end] =/= '\'' or escaped)
+            {
+                escaped = tokens.source.text[end] == '\\' and not escaped;
+                end += 1;
+            }
 
-    private EndOfFile(mut self) -> Syntax_Node?
-    {
-        if endOfFile
-            { return none; }
-
-        // Mark that we have returned the end of file token
-        endOfFile = true;
-        // The end of file token provides something to attach any final errors to
-        return NewToken(EndOfFileToken, position);
-    }
-
-    private NewIdentifierOrKeyword(mut self, end: uint) -> Syntax_Node
-    {
-        let length: uint = end-position;
-        let value: string = source.text.Substring(position, length);
-        var type: int;
-        if value == "new"
-            { type = NewKeyword; }
-        else if value == "not"
-            { type = NotOperator; }
-        else if value == "null"
-            { type = NullReservedWord; }
-        else if value == "self"
-            { type = SelfKeyword; }
-        else if value == "true"
-            { type = TrueKeyword; }
-        else if value == "false"
-            { type = FalseKeyword; }
-        else if value == "mut"
-            { type = MutableKeyword; }
-        else if value == "code_point"
-            { type = CodePoint; }
-        else if value == "string"
-            { type = String; }
-        else if value == "int"
-            { type = Int; }
-        else if value == "bool"
-            { type = Bool; }
-        else if value == "void"
-            { type = Void; }
-        else if value == "uint"
-            { type = UnsignedInt; }
-        else if value == "var"
-            { type = VarKeyword; }
-        else if value == "and"
-            { type = AndKeyword; }
-        else if value == "or"
-            { type = OrKeyword; }
-        else if value == "return"
-            { type = ReturnKeyword; }
-        else if value == "loop"
-            { type = LoopKeyword; }
-        else if value == "while"
-            { type = WhileKeyword; }
-        else if value == "for"
-            { type = ForKeyword; }
-        else if value == "let"
-            { type = LetKeyword; }
-        else if value == "in"
-            { type = InKeyword; }
-        else if value == "do"
-            { type = DoKeyword; }
-        else if value == "if"
-            { type = IfKeyword; }
-        else if value == "else"
-            { type = ElseKeyword; }
-        else if value == "break"
-            { type = BreakKeyword; }
-        else if value == "continue"
-            { type = ContinueKeyword; }
-        else if value == "private"
-            { type = PrivateKeyword; }
-        else if value == "protected"
-            { type = ProtectedKeyword; }
-        else if value == "public"
-            { type = PublicKeyword; }
-        else if value == "internal"
-            { type = InternalKeyword; }
-        else if value == "class"
-            { type = ClassKeyword; }
-        else if value == "enum"
-            { type = EnumKeyword; }
-        else if value == "struct"
-            { type = StructKeyword; }
-        else if value == "none"
-            { type = NoneKeyword; }
+            end += 1; // To include the close quote
+            return new_token(tokens, CodePointLiteral, end);
+        }
         else
         {
-            type = Identifier;
-            if value.ByteLength() > 1 and value[value.ByteLength()-1] == '_'
+            if is_identifier_char(curChar)
             {
-                var diagnosticSpan: Text_Span = new Text_Span(position, end - position);
-                diagnostics.add(new Diagnostic(CompilationError, Lexing, source, diagnosticSpan,
-                    "Identifiers ending with underscore are reserved `"+value+"`"));
+                end = tokens.position + 1;
+                while is_identifier_char(tokens.source.text[end])
+                {
+                    end += 1;
+                }
+                return new_identifier_or_keyword_token(tokens, end);
             }
+            if is_number_char(curChar)
+            {
+                end = tokens.position + 1;
+                while is_number_char(tokens.source.text[end])
+                {
+                    end += 1;
+                }
+                return new_token(tokens, Number, end);
+            }
+
+            // Add an error to the next token
+            var diagnosticSpan: Text_Span = new Text_Span(tokens.position, 1);
+            tokens.diagnostics.add(new Diagnostic(CompilationError, Lexing, tokens.source, diagnosticSpan, "Invalid character `" + curChar + "`"));
+            // Skip past the character and continue lexing
+            tokens.position = end;
         }
-
-        return NewToken(type, end);
     }
 
-    private NewOperator(mut self, type: int) -> Syntax_Node
-    {
-        return NewToken(type, position + 1);
-    }
+    return end_of_file_token(tokens);
+}
 
-    private NewOperator(mut self, type: int, length: uint) -> Syntax_Node
-    {
-        return NewToken(type, position + length);
-    }
+public end_of_file_token(tokens: mut Token_Stream) -> Syntax_Node?
+{
+    if tokens.end_of_file
+        { return none; }
 
-    private NewToken(mut self, type: int, end: uint) -> Syntax_Node
-    {
-        let token: mut Syntax_Node = new Syntax_Node(type, source, position, end - position);
+    // Mark that we have returned the end of file token
+    tokens.end_of_file = true;
+    // The end of file token provides something to attach any final errors to
+    return new_token(tokens, EndOfFileToken, tokens.position);
+}
 
-        for let diagnostic: Diagnostic in diagnostics
+public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: uint) -> Syntax_Node
+{
+    let length: uint = end-tokens.position;
+    let value: string = tokens.source.text.Substring(tokens.position, length);
+    var type: int;
+    if value == "new"
+        { type = NewKeyword; }
+    else if value == "not"
+        { type = NotOperator; }
+    else if value == "null"
+        { type = NullReservedWord; }
+    else if value == "self"
+        { type = SelfKeyword; }
+    else if value == "true"
+        { type = TrueKeyword; }
+    else if value == "false"
+        { type = FalseKeyword; }
+    else if value == "mut"
+        { type = MutableKeyword; }
+    else if value == "code_point"
+        { type = CodePoint; }
+    else if value == "string"
+        { type = String; }
+    else if value == "int"
+        { type = Int; }
+    else if value == "bool"
+        { type = Bool; }
+    else if value == "void"
+        { type = Void; }
+    else if value == "uint"
+        { type = UnsignedInt; }
+    else if value == "var"
+        { type = VarKeyword; }
+    else if value == "and"
+        { type = AndKeyword; }
+    else if value == "or"
+        { type = OrKeyword; }
+    else if value == "return"
+        { type = ReturnKeyword; }
+    else if value == "loop"
+        { type = LoopKeyword; }
+    else if value == "while"
+        { type = WhileKeyword; }
+    else if value == "for"
+        { type = ForKeyword; }
+    else if value == "let"
+        { type = LetKeyword; }
+    else if value == "in"
+        { type = InKeyword; }
+    else if value == "do"
+        { type = DoKeyword; }
+    else if value == "if"
+        { type = IfKeyword; }
+    else if value == "else"
+        { type = ElseKeyword; }
+    else if value == "break"
+        { type = BreakKeyword; }
+    else if value == "continue"
+        { type = ContinueKeyword; }
+    else if value == "private"
+        { type = PrivateKeyword; }
+    else if value == "protected"
+        { type = ProtectedKeyword; }
+    else if value == "public"
+        { type = PublicKeyword; }
+    else if value == "internal"
+        { type = InternalKeyword; }
+    else if value == "class"
+        { type = ClassKeyword; }
+    else if value == "enum"
+        { type = EnumKeyword; }
+    else if value == "struct"
+        { type = StructKeyword; }
+    else if value == "none"
+        { type = NoneKeyword; }
+    else
+    {
+        type = Identifier;
+        if value.ByteLength() > 1 and value[value.ByteLength()-1] == '_'
         {
-            token.add(diagnostic);
+            var diagnosticSpan: Text_Span = new Text_Span(tokens.position, end - tokens.position);
+            tokens.diagnostics.add(new Diagnostic(CompilationError, Lexing, tokens.source, diagnosticSpan,
+                "Identifiers ending with underscore are reserved `"+value+"`"));
         }
-        diagnostics.clear();
-
-        position = end;
-        return token;
     }
 
-    private IsIdentifierChar(c: code_point) -> bool
+    return new_token(tokens, type, end);
+}
+
+public new_operator_token(tokens: mut Token_Stream, type: int) -> Syntax_Node
+{
+    return new_token(tokens, type, tokens.position + 1);
+}
+
+public new_operator_token(tokens: mut Token_Stream, type: int, length: uint) -> Syntax_Node
+{
+    return new_token(tokens, type, tokens.position + length);
+}
+
+public new_token(tokens: mut Token_Stream, type: int, end: uint) -> Syntax_Node
+{
+    let token: mut Syntax_Node = new Syntax_Node(type, tokens.source, tokens.position, end - tokens.position);
+
+    for let diagnostic: Diagnostic in tokens.diagnostics
     {
-        return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
+        token.add(diagnostic);
     }
+    tokens.diagnostics.clear();
 
-    private IsNumberChar(c: code_point) -> bool
-    {
-        return c >= '0' and c <= '9';
-    }
+    tokens.position = end;
+    return token;
+}
+
+public is_identifier_char(c: code_point) -> bool
+{
+    return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
+}
+
+public is_number_char(c: code_point) -> bool
+{
+    return c >= '0' and c <= '9';
 }
