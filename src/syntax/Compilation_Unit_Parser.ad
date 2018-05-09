@@ -35,7 +35,7 @@ public class Compilation_Unit_Parser
     {
         if token == none
         {
-            return new_syntax_node_missing(tokenType, tokenStream.source, tokenStream.source.ByteLength());
+            return new_syntax_node_missing(tokenType, tokenStream.source, source_byte_length(tokenStream.source));
         }
 
         if token == none or token.kind =/= tokenType

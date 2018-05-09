@@ -1125,7 +1125,7 @@ public class Emitter
             definitions.BeginLine("resource_manager_->AddResource(str(\"");
             definitions.Write(resource.name);
             definitions.Write("\"), str(\"");
-            definitions.Write(resource.Text
+            definitions.Write(resource.text
                                     .Replace("\\", "\\\\")
                                     .Replace("\n", "\\n")
                                     .Replace("\r", "\\r")

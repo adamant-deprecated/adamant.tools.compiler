@@ -192,7 +192,7 @@ public class Syntax_Node
 
     public get_text(self) -> string
     {
-        return source.Text.Substring(start, byte_length);
+        return source.text.Substring(start, byte_length);
     }
 
     public first_child(self, type: int) -> Syntax_Node?

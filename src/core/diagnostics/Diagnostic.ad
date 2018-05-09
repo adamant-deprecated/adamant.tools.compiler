@@ -11,11 +11,11 @@ public class Diagnostic
 
     public new(level: int, phase: int, source: Source_Text, span: Text_Span, message: string)
     {
-        Level = level;
-        Phase = phase;
+        self.Level = level;
+        self.Phase = phase;
         self.source = source;
-        Span = span;
-        Position = source.PositionOfStart(span);
-        Message = message;
+        self.Span = span;
+        self.Position = position_of_start(source, span);
+        self.Message = message;
     }
 }

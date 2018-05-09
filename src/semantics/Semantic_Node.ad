@@ -123,7 +123,7 @@ public class Semantic_Node
     public get_text(self) -> string
     {
         if source == none { return "$No Source$"; }
-        return source.Text.Substring(start, byte_length);
+        return source.text.Substring(start, byte_length);
     }
 
     public first_child(self, kind: int) -> Semantic_Node?
