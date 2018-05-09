@@ -11,17 +11,17 @@ public write(console: mut system.console.Console, diagnostics: system.collection
 {
     for let diagnostic: Diagnostic in diagnostics
     {
-        let position: Text_Position = diagnostic.Position;
+        let position: Text_Position = diagnostic.position;
         var severity: string;
-        if diagnostic.Level == Info
+        if diagnostic.level == Info
             { severity = "Informational"; }
-        else if diagnostic.Level == Warning
+        else if diagnostic.level == Warning
             { severity = "Warning"; }
         else
             { severity = "Error"; }
 
         console.WriteLine(diagnostic.source.path+":"+position.line+":"+position.column+" "+severity+":");
-        console.WriteLine("  "+diagnostic.Message);
+        console.WriteLine("  "+diagnostic.message);
     }
 }
 
@@ -29,7 +29,7 @@ public has_errors(diagnostics: system.collections.List<Diagnostic>) -> bool
 {
     for let diagnostic: Diagnostic in diagnostics
     {
-        if diagnostic.Level >= CompilationError
+        if diagnostic.level >= CompilationError
         {
             return true;
         }

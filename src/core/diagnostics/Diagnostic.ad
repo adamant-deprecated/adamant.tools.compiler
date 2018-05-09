@@ -2,20 +2,20 @@
 /// TODO implement in terms of `Diagnostic_Info`
 public class Diagnostic
 {
-    public let Level: int;
-    public let Phase: int;
+    public let level: int;
+    public let phase: int;
     public let source: Source_Text;
-    public let Span: Text_Span;
-    public let Position: Text_Position;
-    public let Message: string;
+    public let span: Text_Span;
+    public let position: Text_Position;
+    public let message: string;
 
     public new(level: int, phase: int, source: Source_Text, span: Text_Span, message: string)
     {
-        self.Level = level;
-        self.Phase = phase;
+        self.level = level;
+        self.phase = phase;
         self.source = source;
-        self.Span = span;
-        self.Position = position_of_start(source, span);
-        self.Message = message;
+        self.span = span;
+        self.position = position_of_start(source, span);
+        self.message = message;
     }
 }
