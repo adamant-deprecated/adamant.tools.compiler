@@ -1,136 +1,3 @@
-// Note, a lot of these names should say Token
-public let SkippedTokens: int = -1;
-public let EndOfFileToken: int = 0;
-public let LeftBrace: int = 1; // `{`
-public let RightBrace: int = 2; // `}`
-public let LeftParen: int = 3; // `(`
-public let RightParen: int = 4; // `)`
-public let Semicolon: int = 5; // `;`
-public let Comma: int = 6; // `,`
-public let Dot: int = 7; // `.`
-public let Colon: int = 8; // `:`
-public let LeftBracket: int = 9; // `[`
-public let RightBracket: int = 10; // `]`
-public let Question: int = 11; // `?`
-public let EqualsEquals: int = 12; // `==`
-public let Equals: int = 13; // `=`
-public let PlusEquals: int = 14; // `+=`
-public let Plus: int = 15; // `+`
-public let Arrow: int = 16; // `->`
-public let MinusEquals: int = 17; // `-=`
-public let Minus: int = 18; // `-`
-public let Slash: int = 19; // `/`
-public let EqualsSlashEquals: int = 20; // `=/=`
-public let LessThanEquals: int = 21; // `<=`
-public let LessThan: int = 22; // `<`
-public let GreaterThanEquals: int = 23; // `>=`
-public let GreaterThan: int = 24; // `>`
-public let StringLiteral: int = 25;
-public let CodePointLiteral: int = 26;
-public let Identifier: int = 27;
-public let Number: int = 28;
-public let NewKeyword: int = 29; // `new`
-public let NotOperator: int = 30; // `not`
-public let NullReservedWord: int = 31; // `null`
-public let SelfKeyword: int = 32; // `self`
-public let TrueKeyword: int = 33; // `true`
-public let FalseKeyword: int = 34; // `false`
-public let IdentifierName: int = 35; // A name that is just an Identifier
-public let GenericName: int = 36; // An identifier with type arguments
-public let QualifiedName: int = 37; // A name that is qualified by a name and a dot
-public let PackageQualifiedName: int = 38; // IdentifierName::Name
-public let MutableKeyword: int = 39; // `mut`
-public let OptionalType: int = 40; // `⧼Type⧽?`
-public let PredefinedType: int = 41;
-public let CodePoint: int = 42; // `code_point`
-public let String: int = 43; // `string`
-public let Int: int = 44; // `int`
-public let Bool: int = 45; // `bool`
-public let Void: int = 46; // `void`
-public let UnsignedInt: int = 47; // `uint`
-public let ParameterList: int = 48; // `(Parameter, ⧼...⧽)` may include a SelfParameter
-public let Parameter: int = 49; // `⧼VarKeyword⧽ ⧼Identifier⧽: ⧼Type⧽` A parameter in a ParameterList
-public let SelfParameter: int = 50; // `self` or `mut self`
-public let VarKeyword: int = 51; // `var`
-public let MutableType: int = 52; // `mut ⧼Type⧽`
-public let NewExpression: int = 53; // `new ⧼Type⧽⧼ParameterList⧽`
-public let ArgumentList: int = 54; // `(⧼Expression⧽, ⧼...⧽)` may include a SelfParameter
-public let NotExpression: int = 55; // `not ⧼Expression⧽`
-public let ParenthesizedExpression: int = 56; // `(⧼Expression⧽)`
-public let NoneLiteralExpression: int = 57; // `none`
-public let SelfExpression: int = 58; // `self`
-public let TrueLiteralExpression: int = 59; // `true`
-public let FalseLiteralExpression: int = 60; // `false`
-public let StringLiteralExpression: int = 61;
-public let CodePointLiteralExpression: int = 62;
-public let NumericLiteralExpression: int = 63;
-public let AssignmentExpression: int = 64;
-public let OrExpression: int = 65;
-public let AndExpression: int = 66;
-public let EqualExpression: int = 67;
-public let NotEqualExpression: int = 68;
-public let AndKeyword: int = 69; // `and`
-public let OrKeyword: int = 70; // `or`
-public let ComparisonExpression: int = 71;
-public let AddExpression: int = 72;
-public let SubtractExpression: int = 73;
-public let InvocationExpression: int = 74;
-public let MemberAccessExpression: int = 75;
-public let ElementAccessExpression: int = 76;
-public let NegateExpression: int = 77; // `-⧼Expression⧽`
-public let ReturnKeyword: int = 78; // `return`
-public let ReturnStatement: int = 79; // `return ⧼Expression⧽;` or `return;`
-public let LoopKeyword: int = 80; // `loop`
-public let LoopStatement: int = 81; // `loop ⧼Block⧽`
-public let Block: int = 82; // `{ ⧼Statement⧽ ⧼...⧽ }`
-public let WhileKeyword: int = 83; // `while`
-public let WhileStatement: int = 84; // `while ⧼Expression⧽ ⧼Block⧽`
-public let ForKeyword: int = 85; // `for`
-public let ForStatement: int = 86; // `for  ⧼Block⧽`
-public let LetKeyword: int = 87; // `let`
-public let VariableDeclaration: int = 88; // `⧼LetKeyword|VarKeyword⧽ ⧼Identifier⧽ = ⧼Expression⧽`
-public let LocalDeclarationStatement: int = 89; // `⧼VariableDeclaration⧽;`
-public let InKeyword: int = 90; // `in`
-public let DoKeyword: int = 91; // `do`
-public let DoWhileStatement: int = 92; // `do ⧼Block⧽ while ⧼Expression⧽;`
-public let IfKeyword: int = 93; // `if`
-public let ElseKeyword: int = 94; // `else`
-public let IfStatement: int = 95; // `if ⧼Expression⧽ ⧼Block⧽ ⧼ElseClause?⧽`
-public let ElseClause: int = 96; // `else ⧼Block⧽` or `else ⧼IfStatement⧽`
-public let BreakKeyword: int = 97; // `break`
-public let BreakStatement: int = 98; // `break;`
-public let ContinueKeyword: int = 99; // `continue`
-public let ContinueStatement: int = 100; // `continue;`
-public let ExpressionStatement: int = 101; // `⧼Expression⧽;`
-public let PublicKeyword: int = 102; // `public`
-public let ProtectedKeyword: int = 103; // `protected`
-public let InternalKeyword: int = 104; // `internal`
-public let PrivateKeyword: int = 105; // `private`
-public let ConstructorDeclaration: int = 106;
-public let FieldDeclaration: int = 107;
-public let MethodDeclaration: int = 108;
-public let GlobalDeclaration: int = 109;
-public let ClassKeyword: int = 110; // `class`
-public let ClassDeclaration: int = 111;
-public let EnumKeyword: int = 112; // `enum`
-public let StructKeyword: int = 113; // `struct`
-public let EnumDeclaration: int = 114;
-public let EnumMemberDeclaration: int = 115;
-public let FunctionDeclaration: int = 116;
-public let CompilationUnit: int = 117;
-public let PackageNode: int = 118;
-public let Percent: int = 119; // `⧼Expression⧽ % ⧼Expression⧽`
-public let RemainderExpression: int = 120;
-public let Pipe: int = 121; // `|`
-public let MagnitudeExpression: int = 122; // `|⧼Expression⧽|`
-public let Asterisk: int = 123; // `*`
-public let MultiplyExpression: int = 124; // `⧼Expression⧽ * ⧼Expression⧽`
-public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`
-public let NoneKeyword: int = 126; // `none`
-public let StructDeclaration: int = 127;
-public let ImmutableType: int = 128; // `⧼Type⧽` without `mut` before it
-public let NamespaceDeclaration: int = 129;
-
 public class Syntax_Node
 {
     public let kind: int;
@@ -143,51 +10,51 @@ public class Syntax_Node
 
     public new(type: int, source: Source_Text, start: uint, length: uint)
     {
-        kind = type;
-        is_missing = false;
+        self.kind = type;
+        self.is_missing = false;
         self.source = source;
         self.start = start;
-        byte_length = length;
+        self.byte_length = length;
         self.children = new system.collections.List<Syntax_Node>();
-        node_diagnostics = new system.collections.List<Diagnostic>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     public new(type: int, isMissing: bool, source: Source_Text, start: uint, length: uint)
     {
-        kind = type;
-        is_missing = isMissing;
+        self.kind = type;
+        self.is_missing = isMissing;
         self.source = source;
         self.start = start;
-        byte_length = length;
+        self.byte_length = length;
         self.children = new system.collections.List<Syntax_Node>();
-        node_diagnostics = new system.collections.List<Diagnostic>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     public new(type: int, child: Syntax_Node)
     {
-        kind = type;
-        is_missing = child.is_missing;
-        source = child.source;
-        start = child.start;
-        byte_length = child.byte_length;
+        self.kind = type;
+        self.is_missing = child.is_missing;
+        self.source = child.source;
+        self.start = child.start;
+        self.byte_length = child.byte_length;
         let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         children.add(child);
         self.children = children;
-        node_diagnostics = new system.collections.List<Diagnostic>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     // TODO we want to take ownership of the child list
     public new(type: int, children: system.collections.List<Syntax_Node>)
     {
-        kind = type;
-        is_missing = false;
+        self.kind = type;
+        self.is_missing = false;
         // TODO enforce that list is not empty, for now we rely on `children[0]` failing
-        source = children[0].source;
-        start = children[0].start;
+        self.source = children[0].source;
+        self.start = children[0].start;
         let lastChild: Syntax_Node = children[|children| - 1];
-        byte_length = lastChild.start - start + lastChild.byte_length;
+        self.byte_length = lastChild.start - start + lastChild.byte_length;
         self.children = children;
-        node_diagnostics = new system.collections.List<Diagnostic>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     public get_text(self) -> string
