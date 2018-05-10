@@ -1,13 +1,10 @@
 /// Builds up the tree of symbols used to find what names reference in a semantic tree
-public class Symbol_Builder
+public build_symbols(
+    package_name: Package_Name,
+    compilation_units: system.collections.List<Compilation_Unit>)
+    -> Symbol
 {
-    public build(
-        package_name: Package_Name,
-        compilation_units: system.collections.List<Compilation_Unit>)
-        -> Symbol
-    {
-        let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
 
-        return new Symbol.package(package_name.unqualified, symbols);
-    }
+    return new Symbol.package(package_name.unqualified, symbols);
 }
