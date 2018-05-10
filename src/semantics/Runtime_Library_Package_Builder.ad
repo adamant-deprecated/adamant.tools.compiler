@@ -1,124 +1,121 @@
-public class Runtime_Library_Package_Builder
+public build_runtime_library_package(self) -> Package
 {
-    public build(self) -> Package
-    {
-        // The runtime library package has the special name `$runtime` to distinguish
-        // it from all normal packages since dollar is invalid in a package name.
-        let name: Package_Name = new Package_Name("$runtime");
+    // The runtime library package has the special name `$runtime` to distinguish
+    // it from all normal packages since dollar is invalid in a package name.
+    let name: Package_Name = new Package_Name("$runtime");
 
-        // No referenced packages
-        let references: system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
+    // No referenced packages
+    let references: system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
 
-        // The runtime package has no compilation units because it has no source
-        let compilation_units: system.collections.List<Compilation_Unit> = new system.collections.List<Compilation_Unit>();
+    // The runtime package has no compilation units because it has no source
+    let compilation_units: system.collections.List<Compilation_Unit> = new system.collections.List<Compilation_Unit>();
 
-        let symbols: mut system.collections.List<Symbol> = build_symbols(name);
-        assert(|symbols| > 0, "|symbols|=" + |symbols|);
+    let symbols: mut system.collections.List<Symbol> = build_runtime_library_symbols(name);
+    assert(|symbols| > 0, "|symbols|=" + |symbols|);
 
-        let package_symbol: Symbol = new Symbol.package(name.unqualified, symbols);
-        assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
+    let package_symbol: Symbol = new Symbol.package(name.unqualified, symbols);
+    assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
 
-        return new Package(name, references, compilation_units, package_symbol);
-    }
+    return new Package(name, references, compilation_units, package_symbol);
+}
 
-    private build_symbols(self, package_name: Package_Name) -> mut system.collections.List<Symbol>
-    {
-        let global_namespace: Name = new Name.global_namespace(package_name);
-        let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+public build_runtime_library_symbols(self, package_name: Package_Name) -> mut system.collections.List<Symbol>
+{
+    let global_namespace: Name = new Name.global_namespace(package_name);
+    let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
 
-        // global symbols
-        symbols.add(build_function(new Name(global_namespace, FunctionName, "THROW_EXCEPTION")));
-        symbols.add(build_function(new Name(global_namespace, FunctionName, "NOT_IMPLEMENTED")));
-        symbols.add(build_function(new Name(global_namespace, FunctionName, "UNREACHABLE")));
-        symbols.add(build_function(new Name(global_namespace, FunctionName, "assert")));
-        symbols.add(build_function(new Name(global_namespace, FunctionName, "debug_write")));
-        symbols.add(build_function(new Name(global_namespace, FunctionName, "debug_write_line")));
+    // global symbols
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "THROW_EXCEPTION")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "NOT_IMPLEMENTED")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "UNREACHABLE")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "assert")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "debug_write")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "debug_write_line")));
 
-        // TODO this is actually a global variable
-        symbols.add(build_function(new Name(global_namespace, VariableName, "resource_manager")));
+    // TODO this is actually a global variable
+    symbols.add(build_function_symbol(new Name(global_namespace, VariableName, "resource_manager")));
 
-        // system
-        let system_namespace: Name = new Name(global_namespace, NamespaceName, "system");
-        let system_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    // system
+    let system_namespace: Name = new Name(global_namespace, NamespaceName, "system");
+    let system_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
 
-        // system.collections
-        let collections_namespace: Name = new Name(system_namespace, NamespaceName, "collections");
-        let collections_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-        let list_type_parameters: mut system.collections.List<Type> = new system.collections.List<Type>();
-        list_type_parameters.add(new Type.parameter("T"));
-        collections_symbols.add(build_generic_class(collections_namespace, "List", list_type_parameters));
-        system_symbols.add(build_namespace(collections_namespace, collections_symbols));
+    // system.collections
+    let collections_namespace: Name = new Name(system_namespace, NamespaceName, "collections");
+    let collections_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    let list_type_parameters: mut system.collections.List<Type> = new system.collections.List<Type>();
+    list_type_parameters.add(new Type.parameter("T"));
+    collections_symbols.add(build_generic_class_symbol(collections_namespace, "List", list_type_parameters));
+    system_symbols.add(build_namespace_symbol(collections_namespace, collections_symbols));
 
-        // system.console
-        let console_namespace: Name = new Name(system_namespace, NamespaceName, "console");
-        let console_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-        console_symbols.add(build_class(console_namespace, "Console"));
-        console_symbols.add(build_class(console_namespace, "Arguments"));
-        system_symbols.add(build_namespace(console_namespace, console_symbols));
+    // system.console
+    let console_namespace: Name = new Name(system_namespace, NamespaceName, "console");
+    let console_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    console_symbols.add(build_class_symbol(console_namespace, "Console"));
+    console_symbols.add(build_class_symbol(console_namespace, "Arguments"));
+    system_symbols.add(build_namespace_symbol(console_namespace, console_symbols));
 
-        // system.io
-        let io_namespace: Name = new Name(system_namespace, NamespaceName, "io");
-        let io_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-        io_symbols.add(build_class(io_namespace, "File_Reader"));
-        io_symbols.add(build_class(io_namespace, "File_Writer"));
-        system_symbols.add(build_namespace(io_namespace, io_symbols));
+    // system.io
+    let io_namespace: Name = new Name(system_namespace, NamespaceName, "io");
+    let io_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    io_symbols.add(build_class_symbol(io_namespace, "File_Reader"));
+    io_symbols.add(build_class_symbol(io_namespace, "File_Writer"));
+    system_symbols.add(build_namespace_symbol(io_namespace, io_symbols));
 
-        // system.text
-        let text_namespace: Name = new Name(system_namespace, NamespaceName, "text");
-        let text_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-        let string_builder_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-        string_builder_symbols.add(build_constructor("with_capacity"));
-        text_symbols.add(build_class(text_namespace, "String_Builder", string_builder_symbols));
-        system_symbols.add(build_namespace(text_namespace, text_symbols));
+    // system.text
+    let text_namespace: Name = new Name(system_namespace, NamespaceName, "text");
+    let text_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    let string_builder_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    string_builder_symbols.add(build_constructor_symbol("with_capacity"));
+    text_symbols.add(build_class_symbol(text_namespace, "String_Builder", string_builder_symbols));
+    system_symbols.add(build_namespace_symbol(text_namespace, text_symbols));
 
-        symbols.add(build_namespace(system_namespace, system_symbols));
+    symbols.add(build_namespace_symbol(system_namespace, system_symbols));
 
-        return symbols;
-    }
+    return symbols;
+}
 
-    private build_function(name: Name) -> Symbol
-    {
-        // TODO this should be a function type
-        let type: Type = new Type(FunctionType, name, false);
-        let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
-        return new Symbol.of_type(name.unqualified(), type, declarations, children);
-    }
+public build_function_symbol(name: Name) -> Symbol
+{
+    // TODO this should be a function type
+    let type: Type = new Type(FunctionType, name, false);
+    let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    return new Symbol.of_type(name.unqualified(), type, declarations, children);
+}
 
-    private build_namespace(name: Name, symbols: system.collections.List<Symbol>) -> Symbol
-    {
-        let type: Type = new Type.namespace(name);
-        let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        return new Symbol.declaring(type, declarations, symbols);
-    }
+public build_namespace_symbol(name: Name, symbols: system.collections.List<Symbol>) -> Symbol
+{
+    let type: Type = new Type.namespace(name);
+    let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    return new Symbol.declaring(type, declarations, symbols);
+}
 
-    private build_class(namespace: Name, class_name: string) -> Symbol
-    {
-        let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
-        let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
-        return new Symbol.declaring(type, declarations, children);
-    }
+public build_class_symbol(namespace: Name, class_name: string) -> Symbol
+{
+    let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
+    let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    return new Symbol.declaring(type, declarations, children);
+}
 
-    private build_class(namespace: Name, class_name: string, children: system.collections.List<Symbol>) -> Symbol
-    {
-        let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
-        let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        return new Symbol.declaring(type, declarations, children);
-    }
+public build_class_symbol(namespace: Name, class_name: string, children: system.collections.List<Symbol>) -> Symbol
+{
+    let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
+    let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    return new Symbol.declaring(type, declarations, children);
+}
 
-    private build_generic_class(namespace: Name, class_name: string, type_parameters: system.collections.List<Type>) -> Symbol
-    {
-        let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), type_parameters, true);
-        let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
-        return new Symbol.declaring(type, declarations, children);
-    }
+public build_generic_class_symbol(namespace: Name, class_name: string, type_parameters: system.collections.List<Type>) -> Symbol
+{
+    let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), type_parameters, true);
+    let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    return new Symbol.declaring(type, declarations, children);
+}
 
-    private build_constructor(name: string) -> Symbol
-    {
-        let constructor_name: string = "new_" + name;
-        let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        return new Symbol.constructor(constructor_name, declarations);
-    }
+public build_constructor_symbol(name: string) -> Symbol
+{
+    let constructor_name: string = "new_" + name;
+    let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    return new Symbol.constructor(constructor_name, declarations);
 }

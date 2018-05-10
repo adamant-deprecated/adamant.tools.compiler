@@ -7,7 +7,7 @@ public run_unit_tests(console: mut system.console.Console) -> void
 
     // semantics
     unit_test_build_primitives_package();
-    unit_test_Runtime_Library_Package_Builder();
+    unit_test_build_runtime_library_package();
 
     // semantics.names
     unit_test_Name();
