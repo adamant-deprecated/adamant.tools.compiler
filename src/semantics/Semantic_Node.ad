@@ -12,7 +12,7 @@ public class Semantic_Node
     public let start: uint;
     public let byte_length: uint;
     public let children: system.collections.List<Semantic_Node>;
-    private let node_diagnostics: mut system.collections.List<Diagnostic>;
+    public let node_diagnostics: mut system.collections.List<Diagnostic>;
 
     /// The type of an expression (or variable) before any implicit conversions
     public let of_type: Type?;
@@ -114,138 +114,138 @@ public class Semantic_Node
         self.declares_type = none;
         self.referenced_type = type;
     }
+}
 
-    public get_text_span(self) -> Text_Span
+public get_text_span(node: Semantic_Node) -> Text_Span
+{
+    return new Text_Span(node.start, node.byte_length);
+}
+
+public get_text(node: Semantic_Node) -> string
+{
+    if node.source == none { return "$No Source$"; }
+    return node.source.text.Substring(node.start, node.byte_length);
+}
+
+public first_child(node: Semantic_Node, kind: int) -> Semantic_Node?
+{
+    for let child: Semantic_Node in node.children
     {
-        return new Text_Span(start, byte_length);
+        if child.kind == kind
+            { return child; }
     }
+    return none;
+}
 
-    public get_text(self) -> string
+public children_of_kind(node: Semantic_Node, kind: int) -> system.collections.List<Semantic_Node>
+{
+    let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    for let child: Semantic_Node in node.children
     {
-        if source == none { return "$No Source$"; }
-        return source.text.Substring(start, byte_length);
-    }
-
-    public first_child(self, kind: int) -> Semantic_Node?
-    {
-        for let child: Semantic_Node in children
+        if child.kind == kind
         {
-            if child.kind == kind
-                { return child; }
+            children.add(child);
         }
-        return none;
     }
+    return children;
+}
 
-    public children_of_kind(self, kind: int) -> system.collections.List<Semantic_Node>
+// TODO this should only be on things like class, struct that have members
+public node_members(node: Semantic_Node) -> system.collections.List<Semantic_Node>
+{
+    let members: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    for let child: Semantic_Node in node.children
     {
-        let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        for let child: Semantic_Node in self.children
+        // TODO fix this to a more reliable means of telling what should be visited
+        if child.kind == ConstructorDeclaration
+            or child.kind == FieldDeclaration
+            or child.kind == MethodDeclaration
         {
-            if child.kind == kind
-            {
-                children.add(child);
-            }
+            members.add(child);
         }
-        return children;
     }
+    return members;
+}
 
-    // TODO this should only be on things like class, struct that have members
-    public members(self) -> system.collections.List<Semantic_Node>
+// TODO this should only be on things like block
+public node_statements(node: Semantic_Node) -> system.collections.List<Semantic_Node>
+{
+    let statements: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    for let child: Semantic_Node in node.children
     {
-        let members: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        for let child: Semantic_Node in children
+        // TODO fix this to a more reliable means of telling what should be visited
+        if child.kind =/= LeftBrace
+            and child.kind =/= RightBrace
         {
-            // TODO fix this to a more reliable means of telling what should be visited
-            if child.kind == ConstructorDeclaration
-                or child.kind == FieldDeclaration
-                or child.kind == MethodDeclaration
-            {
-                members.add(child);
-            }
+            statements.add(child);
         }
-        return members;
     }
+    return statements;
+}
 
-    // TODO this should only be on things like block
-    public statements(self) -> system.collections.List<Semantic_Node>
+// TODO this should only be on things like parameter list and function
+public node_parameters(node: Semantic_Node) -> system.collections.List<Semantic_Node>
+{
+    let parameters: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
+    for let child: Semantic_Node in node.children
     {
-        let statements: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        for let child: Semantic_Node in children
+        // TODO fix this to a more reliable means of telling what should be visited
+        if child.kind == Parameter
+            or child.kind == SelfParameter
         {
-            // TODO fix this to a more reliable means of telling what should be visited
-            if child.kind =/= LeftBrace
-                and child.kind =/= RightBrace
-            {
-                statements.add(child);
-            }
+            parameters.add(child);
         }
-        return statements;
     }
+    return parameters;
+}
 
-    // TODO this should only be on things like parameter list and function
-    public parameters(self) -> system.collections.List<Semantic_Node>
+// TODO this should only be on things with access modifiers
+public node_access_modifier(node: Semantic_Node) -> Semantic_Node?
+{
+    for let child: Semantic_Node in node.children
     {
-        let parameters: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        for let child: Semantic_Node in children
+        // TODO fix this to a more reliable means of telling what should be visited
+        if child.kind == PublicKeyword
+            or child.kind == ProtectedKeyword
+            or child.kind == PrivateKeyword
+            or child.kind == InternalKeyword
         {
-            // TODO fix this to a more reliable means of telling what should be visited
-            if child.kind == Parameter
-                or child.kind == SelfParameter
-            {
-                parameters.add(child);
-            }
+            return child;
         }
-        return parameters;
     }
 
-    // TODO this should only be on things with access modifiers
-    public access_modifier(self) -> Semantic_Node?
-    {
-        for let child: Semantic_Node in children
-        {
-            // TODO fix this to a more reliable means of telling what should be visited
-            if child.kind == PublicKeyword
-                or child.kind == ProtectedKeyword
-                or child.kind == PrivateKeyword
-                or child.kind == InternalKeyword
-            {
-                return child;
-            }
-        }
+    return none;
+}
 
-        return none;
+public node_has_child(node: Semantic_Node, kind: int) -> bool
+{
+    for let child: Semantic_Node in node.children
+    {
+        if child.kind == kind
+            { return true; }
+    }
+    return false;
+}
+
+public add_diagnostic(node: mut Semantic_Node, diagnostic: Diagnostic) -> void
+{
+    node.node_diagnostics.add(diagnostic);
+}
+
+public diagnostics(node: Semantic_Node) -> system.collections.List<Diagnostic>
+{
+    return node.node_diagnostics;
+}
+
+public collect_diagnostics(node: Semantic_Node, diagnostics: mut system.collections.List<Diagnostic>) -> void
+{
+    for let diagnostic: Diagnostic in node.node_diagnostics
+    {
+        diagnostics.add(diagnostic);
     }
 
-    public has_child(self, kind: int) -> bool
+    for let child: Semantic_Node in node.children
     {
-        for let child: Semantic_Node in children
-        {
-            if child.kind == kind
-                { return true; }
-        }
-        return false;
-    }
-
-    public add(mut self, diagnostic: Diagnostic) -> void
-    {
-        node_diagnostics.add(diagnostic);
-    }
-
-    public diagnostics(self) -> system.collections.List<Diagnostic>
-    {
-        return self.node_diagnostics;
-    }
-
-    protected collect_diagnostics(self, diagnostics: mut system.collections.List<Diagnostic>) -> void
-    {
-        for let diagnostic: Diagnostic in node_diagnostics
-        {
-            diagnostics.add(diagnostic);
-        }
-
-        for let child: Semantic_Node in children
-        {
-            child.collect_diagnostics(diagnostics);
-        }
+        collect_diagnostics(child, diagnostics);
     }
 }

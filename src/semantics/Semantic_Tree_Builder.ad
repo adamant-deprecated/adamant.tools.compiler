@@ -63,13 +63,13 @@ public build_semantic_node(
         or syntax.kind == MethodDeclaration
     {
         children.add(build_semantic_node(builder, access_modifier(syntax), name_table, scope));
-        let function_name: Syntax_Node = first_child(syntax, Identifier);
+        let function_name: Syntax_Node = first_child_syntax(syntax, Identifier);
         children.add(build_semantic_node(builder, function_name, name_table, scope));
 
         let function_scope: mut Name_Subtable = scope.find(get_text(function_name));
         assert(function_scope =/= none, "get_text(function_name)="+get_text(function_name));
 
-        let parameters: Syntax_Node = first_child(syntax, ParameterList);
+        let parameters: Syntax_Node = first_child_syntax(syntax, ParameterList);
         // TODO it is really only the parameters that are in this scope, the types aren't
         children.add(build_parameters_semantic_node(builder, parameters, name_table, function_scope));
 
@@ -79,7 +79,7 @@ public build_semantic_node(
         let function_type: Type = new Type(FunctionType, function_scope.name, false);
         // debug_write_line("Binding function `"+get_text(function_name)+"` with type `"+function_type.name.full()+"`, scope `"+function_scope.name.full()+"`");
         function_scope.bind_type(function_type);
-        let body: Syntax_Node = first_child(syntax, Block);
+        let body: Syntax_Node = first_child_syntax(syntax, Block);
         if body =/= none
         {
             children.add(build_semantic_node(builder, body, name_table, function_scope));
@@ -91,7 +91,7 @@ public build_semantic_node(
     else if syntax.kind == ClassDeclaration
         or syntax.kind == StructDeclaration
     {
-        let type_name: Syntax_Node = first_child(syntax, Identifier);
+        let type_name: Syntax_Node = first_child_syntax(syntax, Identifier);
         children.add(build_semantic_node(builder, type_name, name_table, scope));
         let type_scope: Name_Subtable = scope.find(get_text(type_name));
         assert(type_scope =/= none, "get_text(type_name)="+get_text(type_name));
@@ -108,7 +108,7 @@ public build_semantic_node(
     {
         children.add(build_semantic_node(builder, access_modifier(syntax), name_table, scope));
         var full_name: string = "new";
-        let constructor_name: Syntax_Node? = first_child(syntax, Identifier);
+        let constructor_name: Syntax_Node? = first_child_syntax(syntax, Identifier);
         if constructor_name =/= none
         {
             full_name = "new_" + get_text(constructor_name);
@@ -118,11 +118,11 @@ public build_semantic_node(
         let constructor_scope: Name_Subtable = scope.find_special(full_name);
         assert(constructor_scope =/= none, "full_name="+full_name);
 
-        let parameters: Syntax_Node = first_child(syntax, ParameterList);
+        let parameters: Syntax_Node = first_child_syntax(syntax, ParameterList);
         // TODO it is really only the parameters that are in this scope, the types aren't
         children.add(build_parameters_semantic_node(builder, parameters, name_table, constructor_scope));
 
-        let body: Syntax_Node = first_child(syntax, Block);
+        let body: Syntax_Node = first_child_syntax(syntax, Block);
         if body =/= none
         {
             children.add(build_semantic_node(builder, body, name_table, constructor_scope));
@@ -211,12 +211,12 @@ public build_semantic_node(
     else if syntax.kind == NewExpression
     {
         children.add(build_constructor_name_semantic_node(builder, syntax.children[1], name_table, scope)); // Type
-        children.add(build_semantic_node(builder, first_child(syntax, ArgumentList), name_table, scope)); // Call Arguments
+        children.add(build_semantic_node(builder, first_child_syntax(syntax, ArgumentList), name_table, scope)); // Call Arguments
         return new Semantic_Node.concrete(syntax, children);
     }
     else if syntax.kind == LocalDeclarationStatement
     {
-        let variable_declaration_syntax: Syntax_Node = first_child(syntax, VariableDeclaration);
+        let variable_declaration_syntax: Syntax_Node = first_child_syntax(syntax, VariableDeclaration);
         children.add(build_semantic_node(builder, variable_declaration_syntax, name_table, scope));
         return new Semantic_Node.concrete(syntax, children);
     }
@@ -224,11 +224,11 @@ public build_semantic_node(
     {
         let binding_syntax: Syntax_Node = syntax.children[0]; // i.e. `let` or `var`
         children.add(new Semantic_Node.token(binding_syntax));
-        let identifier: Syntax_Node = first_child(syntax, Identifier);
+        let identifier: Syntax_Node = first_child_syntax(syntax, Identifier);
         children.add(new Semantic_Node.token(identifier));
         let type_syntax: Syntax_Node = syntax.children[3];
         let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
-        assert(type_node.referenced_type =/= none, type_node.get_text());
+        assert(type_node.referenced_type =/= none, get_text(type_node));
         let variable_scope: mut Name_Subtable = scope.lookup(get_text(identifier));
         assert(variable_scope =/= none, get_text(syntax));
         // debug_write_line("Binding variable `"+get_text(identifier)+"` with type `"+type_node.referenced_type.name.full()+"`, full scope is `"+variable_scope.name.full()+"`");
@@ -296,10 +296,10 @@ public build_parameters_semantic_node(
         let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
         if parameter.kind == Parameter
         {
-            let var_syntax: Syntax_Node? = first_child(parameter, VarKeyword);
+            let var_syntax: Syntax_Node? = first_child_syntax(parameter, VarKeyword);
             if var_syntax =/= none
                 { children.add(new Semantic_Node.token(var_syntax)); }
-            let identifier: Syntax_Node = first_child(parameter, Identifier);
+            let identifier: Syntax_Node = first_child_syntax(parameter, Identifier);
             children.add(new Semantic_Node.token(identifier));
             // Because a parameter can have `var` at the beginning, the position of the type isn't constant
             let type_syntax: Syntax_Node = parameter.children[|parameter.children| - 1];
@@ -408,7 +408,7 @@ public build_type_name_semantic_node(
         }
         else if qualified_syntax.kind == GenericName
         {
-            let name_syntax: Syntax_Node = first_child(qualified_syntax, IdentifierName);
+            let name_syntax: Syntax_Node = first_child_syntax(qualified_syntax, IdentifierName);
             let generic_name_children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
 
             if qualifier.referenced_type == none
@@ -566,7 +566,7 @@ public build_constructor_name_semantic_node(
         let name: Syntax_Node = syntax.children[2];
         let constructor_name: string = "new_" + get_text(name);
         let referenced_type: Type = type_node.referenced_type;
-        assert(referenced_type =/= none, "no referenced type for `"+type_node.get_text()+"`");
+        assert(referenced_type =/= none, "no referenced type for `"+get_text(type_node)+"`");
         let constructor_scope: Name_Subtable? = name_table.get(referenced_type.name).lookup_special(constructor_name);
         if constructor_scope =/= none
         {
@@ -581,15 +581,15 @@ public build_constructor_name_semantic_node(
 
 public add_resolution_error(node: mut Semantic_Node) -> void
 {
-    node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "`"));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not resolve name `" + get_text(node) + "`"));
 }
 
 public add_resolution_error(node: mut Semantic_Node, qualifier: Semantic_Node) -> void
 {
-    node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not resolve name `" + node.get_text() + "` because qualifier `" + qualifier.get_text() +"` could not be resolved."));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not resolve name `" + get_text(node) + "` because qualifier `" + get_text(qualifier) +"` could not be resolved."));
 }
 
 public add_could_not_determine_type_error(node: mut Semantic_Node) -> void
 {
-    node.add(new Diagnostic(FatalCompilationError, Analysis, node.source, node.get_text_span(), "Could not determine type for `" + node.get_text() + "`"));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not determine type for `" + get_text(node) + "`"));
 }

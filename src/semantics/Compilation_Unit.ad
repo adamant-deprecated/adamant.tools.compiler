@@ -17,6 +17,6 @@ public collect_diagnostics(compilation_unit: Compilation_Unit, diagnostics: mut 
     collect_syntax_diagnostics(compilation_unit.syntax, diagnostics);
     for let declaration: Semantic_Node in compilation_unit.declarations
     {
-        declaration.collect_diagnostics(diagnostics);
+        collect_diagnostics(declaration, diagnostics);
     }
 }

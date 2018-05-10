@@ -106,7 +106,7 @@ public get_text(syntax: Syntax_Node) -> string
     return syntax.source.text.Substring(syntax.start, syntax.byte_length);
 }
 
-public first_child(syntax: Syntax_Node, type: int) -> Syntax_Node?
+public first_child_syntax(syntax: Syntax_Node, type: int) -> Syntax_Node?
 {
     for let child: Syntax_Node in syntax.children
     {

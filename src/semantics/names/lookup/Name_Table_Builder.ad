@@ -76,13 +76,13 @@ public class Name_Table_Builder
         if syntax.kind == FunctionDeclaration
             or syntax.kind == MethodDeclaration
         {
-            let name: Name = new Name(parent, FunctionName, get_text(first_child(syntax, Identifier)));
+            let name: Name = new Name(parent, FunctionName, get_text(first_child_syntax(syntax, Identifier)));
             add_function(name_table, name, syntax);
         }
         else if syntax.kind == ClassDeclaration
             or syntax.kind == StructDeclaration
         {
-            let unqualified_name: string = get_text(first_child(syntax, Identifier));
+            let unqualified_name: string = get_text(first_child_syntax(syntax, Identifier));
             var type_kind: int;
             if syntax.kind == ClassDeclaration
                 { type_kind = ReferenceType; }
@@ -99,7 +99,7 @@ public class Name_Table_Builder
         else if syntax.kind == ConstructorDeclaration
         {
             var full_name: string = "new";
-            let constructor_name: Syntax_Node? = first_child(syntax, Identifier);
+            let constructor_name: Syntax_Node? = first_child_syntax(syntax, Identifier);
             if constructor_name =/= none
                 { full_name = "new_" + get_text(constructor_name); }
             let name: Name = new Name.special(parent, FunctionName, full_name);
@@ -113,14 +113,14 @@ public class Name_Table_Builder
         }
         else if syntax.kind == FieldDeclaration
         {
-            let unqualified_name: string = get_text(first_child(first_child(syntax, VariableDeclaration), Identifier));
+            let unqualified_name: string = get_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
             let name: Name = new Name(parent, TypeName, unqualified_name);
             let no_type: Type? = none; // we don't have a type for functions yet
             name_table.add(name, no_type);
         }
         else if syntax.kind == EnumDeclaration
         {
-            let unqualified_name: string = get_text(first_child(syntax, Identifier));
+            let unqualified_name: string = get_text(first_child_syntax(syntax, Identifier));
             let name: Name = new Name(parent, TypeName, unqualified_name);
             let type: Type = new Type(ReferenceType, name, true);
             name_table.add(name, type);
@@ -128,7 +128,7 @@ public class Name_Table_Builder
         }
         else if syntax.kind == GlobalDeclaration
         {
-            let unqualified_name: string = get_text(first_child(first_child(syntax, VariableDeclaration), Identifier));
+            let unqualified_name: string = get_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
             let name: Name = new Name(parent, TypeName, unqualified_name);
             let no_type: Type? = none; // we don't have a type for functions yet
             name_table.add(name, no_type);
@@ -144,20 +144,20 @@ public class Name_Table_Builder
             or syntax.kind == WhileStatement
             or syntax.kind == DoWhileStatement
         {
-            add_syntax(name_table, parent, first_child(syntax, Block));
+            add_syntax(name_table, parent, first_child_syntax(syntax, Block));
         }
         else if syntax.kind == ForStatement
         {
-            let identifier: Syntax_Node = first_child(first_child(syntax, VariableDeclaration), Identifier);
+            let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
             let name: Name = new Name(parent, VariableName, get_text(identifier));
             let no_type: Type? = none; // Haven't bound the type yet
             name_table.add(name, no_type); // need variable to avoid ambiguity about types
-            add_syntax(name_table, parent, first_child(syntax, Block));
+            add_syntax(name_table, parent, first_child_syntax(syntax, Block));
         }
         else if syntax.kind == IfStatement
         {
-            add_syntax(name_table, parent, first_child(syntax, Block));
-            let else_clause: Syntax_Node? = first_child(syntax, ElseClause);
+            add_syntax(name_table, parent, first_child_syntax(syntax, Block));
+            let else_clause: Syntax_Node? = first_child_syntax(syntax, ElseClause);
             if else_clause =/= none
             {
                 add_syntax(name_table, parent, else_clause);
@@ -166,26 +166,26 @@ public class Name_Table_Builder
         else if syntax.kind == ElseClause
         {
             // This might be a good place for some kind of coalesce operator
-            let block: Syntax_Node? = first_child(syntax, Block);
+            let block: Syntax_Node? = first_child_syntax(syntax, Block);
             if block =/= none
             {
                 add_syntax(name_table, parent, block);
             }
             else
             {
-                add_syntax(name_table, parent, first_child(syntax, IfStatement));
+                add_syntax(name_table, parent, first_child_syntax(syntax, IfStatement));
             }
         }
         else if syntax.kind == LocalDeclarationStatement
         {
-            let identifier: Syntax_Node = first_child(first_child(syntax, VariableDeclaration), Identifier);
+            let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
             let name: Name = new Name(parent, VariableName, get_text(identifier));
             let no_type: Type? = none; // Haven't bound the type yet
             name_table.add(name, no_type); // need variable to avoid ambiguity about types
         }
         else if syntax.kind == Parameter
         {
-            let identifier: Syntax_Node = first_child(syntax, Identifier);
+            let identifier: Syntax_Node = first_child_syntax(syntax, Identifier);
             let name: Name = new Name(parent, VariableName, get_text(identifier));
             let no_type: Type? = none; // Haven't bound the type yet
             name_table.add(name, no_type); // need variable to avoid ambiguity about types
@@ -219,13 +219,13 @@ public class Name_Table_Builder
         let no_type: Type? = none; // we don't have a type for functions yet
         name_table.add(name, no_type); // ambiguous unless we type the variable first
 
-        let parameters_syntax: Syntax_Node = first_child(function, ParameterList);
+        let parameters_syntax: Syntax_Node = first_child_syntax(function, ParameterList);
         for let parameter: Syntax_Node in parameters(parameters_syntax)
         {
             add_syntax(name_table, name, parameter);
         }
 
-        let body: Syntax_Node = first_child(function, Block);
+        let body: Syntax_Node = first_child_syntax(function, Block);
         add_syntax(name_table, name, body);
     }
 }
