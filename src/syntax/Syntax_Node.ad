@@ -99,121 +99,120 @@ public class Syntax_Node
         let span: Text_Span = new Text_Span(self.start, self.byte_length);
         self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + |skipped_nodes| + " unexpected token(s)"));
     }
+}
 
-    public get_text(self) -> string
+public get_text(syntax: Syntax_Node) -> string
+{
+    return syntax.source.text.Substring(syntax.start, syntax.byte_length);
+}
+
+public first_child(syntax: Syntax_Node, type: int) -> Syntax_Node?
+{
+    for let child: Syntax_Node in syntax.children
     {
-        return source.text.Substring(start, byte_length);
+        if child.kind == type
+            { return child; }
+    }
+    return none;
+}
+
+public has_child(syntax: Syntax_Node, type: int) -> bool
+{
+    for let child: Syntax_Node in syntax.children
+    {
+        if child.kind == type
+            { return true; }
+    }
+    return false;
+}
+
+public add(syntax: Syntax_Node, diagnostic: Diagnostic) -> void
+{
+    syntax.node_diagnostics.add(diagnostic);
+}
+
+// We are returning ownership of the list, so they can mutate it if wanted
+public all_diagnostics(syntax: Syntax_Node) -> mut system.collections.List<Diagnostic>
+{
+    var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
+    collect_syntax_diagnostics(syntax, diagnostics);
+    return diagnostics;
+}
+
+public collect_syntax_diagnostics(syntax: Syntax_Node, diagnostics: mut system.collections.List<Diagnostic>) -> void
+{
+    for let diagnostic: Diagnostic in syntax.node_diagnostics
+    {
+        diagnostics.add(diagnostic);
     }
 
-    public first_child(self, type: int) -> Syntax_Node?
+    for let child: Syntax_Node in syntax.children
     {
-        for let child: Syntax_Node in children
-        {
-            if child.kind == type
-                { return child; }
-        }
-        return none;
-    }
-
-    public has_child(self, type: int) -> bool
-    {
-        for let child: Syntax_Node in children
-        {
-            if child.kind == type
-                { return true; }
-        }
-        return false;
-    }
-
-    public add(self, diagnostic: Diagnostic) -> void
-    {
-        node_diagnostics.add(diagnostic);
-    }
-
-    // We are returning ownership of the list, so they can mutate it if wanted
-    public all_diagnostics(self) -> mut system.collections.List<Diagnostic>
-    {
-        var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
-        collect_diagnostics(diagnostics);
-        return diagnostics;
-    }
-
-    public collect_diagnostics(self, diagnostics: mut system.collections.List<Diagnostic>) -> void
-    {
-        for let diagnostic: Diagnostic in node_diagnostics
-        {
-            diagnostics.add(diagnostic);
-        }
-
-        for let child: Syntax_Node in children
-        {
-            child.collect_diagnostics(diagnostics);
-        }
-    }
-
-    // TODO this should only be on things like class, struct that have members
-    public members(self) -> system.collections.List<Syntax_Node>
-    {
-        let members: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        for let child: Syntax_Node in children
-        {
-            // TODO fix this to a more reliable means of telling what should be visited
-            if child.kind == ConstructorDeclaration
-                or child.kind == FieldDeclaration
-                or child.kind == MethodDeclaration
-            {
-                members.add(child);
-            }
-        }
-        return members;
-    }
-
-    // TODO this should only be on things like parameter list and function
-    public parameters(self) -> system.collections.List<Syntax_Node>
-    {
-        let parameters: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        for let child: Syntax_Node in children
-        {
-            // TODO fix this to a more reliable means of telling what should be visited
-            if child.kind == Parameter
-                or child.kind == SelfParameter
-            {
-                parameters.add(child);
-            }
-        }
-        return parameters;
-    }
-
-    // TODO this should only be on things like block
-    public statements(self) -> system.collections.List<Syntax_Node>
-    {
-        let statements: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        for let child: Syntax_Node in children
-        {
-            // TODO fix this to a more reliable means of telling what should be visited
-            if child.kind =/= LeftBrace
-                and child.kind =/= RightBrace
-            {
-                statements.add(child);
-            }
-        }
-        return statements;
-    }
-
-    // TODO this should only be on things that would have access modifiers
-    public access_modifier(self) -> Syntax_Node?
-    {
-        for let child: Syntax_Node in children
-        {
-            if child.kind == PublicKeyword
-                or child.kind == ProtectedKeyword
-                or child.kind == InternalKeyword
-                or child.kind == PrivateKeyword
-            {
-                return child;
-            }
-        }
-        return none;
+        collect_syntax_diagnostics(child, diagnostics);
     }
 }
 
+// TODO this should only be on things like class, struct that have members
+public members(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
+{
+    let members: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    for let child: Syntax_Node in syntax.children
+    {
+        // TODO fix this to a more reliable means of telling what should be visited
+        if child.kind == ConstructorDeclaration
+            or child.kind == FieldDeclaration
+            or child.kind == MethodDeclaration
+        {
+            members.add(child);
+        }
+    }
+    return members;
+}
+
+// TODO this should only be on things like parameter list and function
+public parameters(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
+{
+    let parameters: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    for let child: Syntax_Node in syntax.children
+    {
+        // TODO fix this to a more reliable means of telling what should be visited
+        if child.kind == Parameter
+            or child.kind == SelfParameter
+        {
+            parameters.add(child);
+        }
+    }
+    return parameters;
+}
+
+// TODO this should only be on things like block
+public statements(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
+{
+    let statements: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    for let child: Syntax_Node in syntax.children
+    {
+        // TODO fix this to a more reliable means of telling what should be visited
+        if child.kind =/= LeftBrace
+            and child.kind =/= RightBrace
+        {
+            statements.add(child);
+        }
+    }
+    return statements;
+}
+
+// TODO this should only be on things that would have access modifiers
+public access_modifier(syntax: Syntax_Node) -> Syntax_Node?
+{
+    for let child: Syntax_Node in syntax.children
+    {
+        if child.kind == PublicKeyword
+            or child.kind == ProtectedKeyword
+            or child.kind == InternalKeyword
+            or child.kind == PrivateKeyword
+        {
+            return child;
+        }
+    }
+    return none;
+}

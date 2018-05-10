@@ -13,7 +13,7 @@ public class Compilation_Unit
 
     public collect_diagnostics(self, diagnostics: mut system.collections.List<Diagnostic>) -> void
     {
-        syntax.collect_diagnostics(diagnostics);
+        collect_syntax_diagnostics(syntax, diagnostics);
         for let declaration: Semantic_Node in declarations
         {
             declaration.collect_diagnostics(diagnostics);

@@ -331,7 +331,7 @@ public new_token(tokens: mut Token_Stream, type: int, end: uint) -> Syntax_Node
 
     for let diagnostic: Diagnostic in tokens.diagnostics
     {
-        token.add(diagnostic);
+        add(token, diagnostic);
     }
     tokens.diagnostics.clear();
 
