@@ -12,10 +12,8 @@ class t_Package;
 struct t_Package_Reference;
 class t_Primitives_Package_Builder;
 class t_Runtime_Library_Package_Builder;
-class t_Semantic_Analyzer;
 class t_Semantic_Node;
 class t_Semantic_Tree_Builder;
-class t_Symbol_Builder;
 class t_Compilation_Unit_Parser;
 class t_Syntax_Node;
 class t_Token_Stream;
@@ -71,14 +69,14 @@ auto System_namespace_contains_console_namespace_() -> void;
 auto Console_namespace_contains_Console_class_() -> void;
 auto System_namespace_contains_collections_namespace_() -> void;
 auto Collections_namespace_contains_List_class_() -> void;
-inline t_Semantic_Analyzer *_Nonnull new_t_Semantic_Analyzer();
+auto analyze_semantics_(t_Syntax_Node const *_Nonnull const package_syntax_) -> t_Package const *_Nonnull;
 inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__token(t_Syntax_Node const *_Nonnull const syntax_);
 inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__concrete(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
 inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__of_type(t_Type const *_Nonnull const of_type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
 inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__declares_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
 inline t_Semantic_Node *_Nonnull new_t_Semantic_Node__referencing_type(t_Type const *_Nonnull const type_, t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const children_);
 inline t_Semantic_Tree_Builder *_Nonnull new_t_Semantic_Tree_Builder();
-inline t_Symbol_Builder *_Nonnull new_t_Symbol_Builder();
+auto build_symbols_(t_Package_Name const *_Nonnull const package_name_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_) -> t_Symbol const *_Nonnull;
 inline t_Compilation_Unit_Parser *_Nonnull new_t_Compilation_Unit_Parser(t_Token_Stream *_Nonnull const token_stream_);
 auto parse_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nonnull;
 auto accept_token_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax_Node const *_Nullable;
@@ -104,9 +102,19 @@ inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Source_Text 
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, bit const isMissing_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_);
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_Syntax_Node const *_Nonnull const child_);
 inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_);
-auto new_syntax_node_missing_(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_) -> t_Syntax_Node const *_Nonnull;
-auto new_Syntax_Node_Skipped_(t_Syntax_Node const *_Nonnull const skipped_node_) -> t_Syntax_Node const *_Nonnull;
-auto new_Syntax_Node_Skipped_(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node const *_Nonnull;
+inline t_Syntax_Node *_Nonnull new_t_Syntax_Node__missing(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_);
+inline t_Syntax_Node *_Nonnull new_t_Syntax_Node__skipped(t_Syntax_Node const *_Nonnull const skipped_node_);
+inline t_Syntax_Node *_Nonnull new_t_Syntax_Node__skipped(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_);
+auto get_text_(t_Syntax_Node const *_Nonnull const syntax_) -> str;
+auto first_child_(t_Syntax_Node const *_Nonnull const syntax_, i32 const type_) -> t_Syntax_Node const *_Nullable;
+auto has_child_(t_Syntax_Node const *_Nonnull const syntax_, i32 const type_) -> bit;
+auto add_(t_Syntax_Node const *_Nonnull const syntax_, t_Diagnostic const *_Nonnull const diagnostic_) -> void;
+auto all_diagnostics_(t_Syntax_Node const *_Nonnull const syntax_) -> t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull;
+auto collect_syntax_diagnostics_(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) -> void;
+auto members_(t_Syntax_Node const *_Nonnull const syntax_) -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
+auto parameters_(t_Syntax_Node const *_Nonnull const syntax_) -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
+auto statements_(t_Syntax_Node const *_Nonnull const syntax_) -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
+auto access_modifier_(t_Syntax_Node const *_Nonnull const syntax_) -> t_Syntax_Node const *_Nullable;
 inline t_Token_Stream *_Nonnull new_t_Token_Stream(t_Source_Text const *_Nonnull const source_);
 auto next_token_(t_Token_Stream *_Nonnull const tokens_) -> t_Syntax_Node const *_Nullable;
 auto end_of_file_token_(t_Token_Stream *_Nonnull const tokens_) -> t_Syntax_Node const *_Nullable;
@@ -295,13 +303,6 @@ public:
 	auto construct() -> t_Runtime_Library_Package_Builder *_Nonnull { return this; }
 };
 
-class t_Semantic_Analyzer
-{
-public:
-	static auto analyze_(t_Syntax_Node const *_Nonnull const package_syntax_) -> t_Package const *_Nonnull;
-	auto construct() -> t_Semantic_Analyzer *_Nonnull { return this; }
-};
-
 class t_Semantic_Node
 {
 public:
@@ -359,13 +360,6 @@ private:
 	static auto add_could_not_determine_type_error_(t_Semantic_Node *_Nonnull const node_) -> void;
 };
 
-class t_Symbol_Builder
-{
-public:
-	static auto build_(t_Package_Name const *_Nonnull const package_name_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_) -> t_Symbol const *_Nonnull;
-	auto construct() -> t_Symbol_Builder *_Nonnull { return this; }
-};
-
 class t_Compilation_Unit_Parser
 {
 public:
@@ -389,16 +383,9 @@ public:
 	auto construct(i32 const type_, bit const isMissing_, t_Source_Text const *_Nonnull const source_, u32 const start_, u32 const length_) -> t_Syntax_Node *_Nonnull;
 	auto construct(i32 const type_, t_Syntax_Node const *_Nonnull const child_) -> t_Syntax_Node *_Nonnull;
 	auto construct(i32 const type_, t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const children_) -> t_Syntax_Node *_Nonnull;
-	auto get_text_() const -> str;
-	auto first_child_(i32 const type_) const -> t_Syntax_Node const *_Nullable;
-	auto has_child_(i32 const type_) const -> bit;
-	auto add_(t_Diagnostic const *_Nonnull const diagnostic_) const -> void;
-	auto all_diagnostics_() const -> t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull;
-	auto collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void;
-	auto members_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
-	auto parameters_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
-	auto statements_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull;
-	auto access_modifier_() const -> t_Syntax_Node const *_Nullable;
+	auto construct_missing(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_) -> t_Syntax_Node *_Nonnull;
+	auto construct_skipped(t_Syntax_Node const *_Nonnull const skipped_node_) -> t_Syntax_Node *_Nonnull;
+	auto construct_skipped(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node *_Nonnull;
 };
 
 class t_Token_Stream
@@ -758,8 +745,7 @@ i32 const FunctionType_ = i32(5);
 auto compile_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Package const *_Nonnull
 {
 	t_Syntax_Node const *_Nonnull const package_syntax_ = parse_package_(sources_);
-	t_Semantic_Analyzer const *_Nonnull const semantic_analyzer_ = new_t_Semantic_Analyzer();
-	t_Package const *_Nonnull const package_ = semantic_analyzer_->analyze_(package_syntax_);
+	t_Package const *_Nonnull const package_ = analyze_semantics_(package_syntax_);
 	return package_;
 }
 
@@ -1316,7 +1302,7 @@ inline t_Compilation_Unit *_Nonnull new_t_Compilation_Unit(t_Syntax_Node const *
 auto ::t_Compilation_Unit::collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void
 {
 	auto self = this;
-	syntax_->collect_diagnostics_(diagnostics_);
+	collect_syntax_diagnostics_(syntax_, diagnostics_);
 	for (t_Semantic_Node const *_Nonnull const declaration_ : *(declarations_))
 	{
 		declaration_->collect_diagnostics_(diagnostics_);
@@ -1668,7 +1654,7 @@ auto Collections_namespace_contains_List_class_() -> void
 	assert_(not_equal_op(console_namespace_->get_(str("List"), IdentifierSymbol_), none), str(""));
 }
 
-auto ::t_Semantic_Analyzer::analyze_(t_Syntax_Node const *_Nonnull const package_syntax_) -> t_Package const *_Nonnull
+auto analyze_semantics_(t_Syntax_Node const *_Nonnull const package_syntax_) -> t_Package const *_Nonnull
 {
 	assert_(equal_op(package_syntax_->kind_, PackageNode_), str("package_syntax.kind=").op_add(package_syntax_->kind_));
 	t_Package_Name const *_Nonnull const name_ = new_t_Package_Name(str("default"));
@@ -1681,15 +1667,9 @@ auto ::t_Semantic_Analyzer::analyze_(t_Syntax_Node const *_Nonnull const package
 	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
 	t_Semantic_Tree_Builder const *_Nonnull const semantic_tree_builder_ = new_t_Semantic_Tree_Builder();
 	t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_ = semantic_tree_builder_->build_(package_syntax_, name_table_);
-	t_Symbol_Builder const *_Nonnull const symbol_builder_ = new_t_Symbol_Builder();
-	t_Symbol const *_Nonnull const package_symbol_ = symbol_builder_->build_(name_, compilation_units_);
+	t_Symbol const *_Nonnull const package_symbol_ = build_symbols_(name_, compilation_units_);
 	t_Package const *_Nonnull const package_ = new_t_Package(name_, references_, compilation_units_, package_symbol_);
 	return package_;
-}
-
-inline t_Semantic_Analyzer *_Nonnull new_t_Semantic_Analyzer()
-{
-	return (new t_Semantic_Analyzer())->construct();
 }
 
 auto t_Semantic_Node::construct_token(t_Syntax_Node const *_Nonnull const syntax_) -> t_Semantic_Node *_Nonnull
@@ -2010,18 +1990,18 @@ auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const synta
 	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, FunctionDeclaration_)) || bit_arg(equal_op(syntax_->kind_, MethodDeclaration_)))))
 	{
-		children_->add_(build_(syntax_->access_modifier_(), name_table_, scope_));
-		t_Syntax_Node const *_Nonnull const function_name_ = syntax_->first_child_(Identifier_);
+		children_->add_(build_(access_modifier_(syntax_), name_table_, scope_));
+		t_Syntax_Node const *_Nonnull const function_name_ = first_child_(syntax_, Identifier_);
 		children_->add_(build_(function_name_, name_table_, scope_));
-		t_Name_Subtable *_Nonnull const function_scope_ = scope_->find_(function_name_->get_text_());
-		assert_(not_equal_op(function_scope_, none), str("function_name.get_text()=").op_add(function_name_->get_text_()));
-		t_Syntax_Node const *_Nonnull const parameters_ = syntax_->first_child_(ParameterList_);
+		t_Name_Subtable *_Nonnull const function_scope_ = scope_->find_(get_text_(function_name_));
+		assert_(not_equal_op(function_scope_, none), str("get_text(function_name)=").op_add(get_text_(function_name_)));
+		t_Syntax_Node const *_Nonnull const parameters_ = first_child_(syntax_, ParameterList_);
 		children_->add_(build_parameters_(parameters_, name_table_, function_scope_));
 		t_Syntax_Node const *_Nonnull const return_type_ = syntax_->children_->op_Element(i32(4));
 		children_->add_(build_type_name_(return_type_, name_table_, scope_));
 		t_Type const *_Nonnull const function_type_ = new_t_Type(FunctionType_, function_scope_->name_, bit_false);
 		function_scope_->bind_type_(function_type_);
-		t_Syntax_Node const *_Nonnull const body_ = syntax_->first_child_(Block_);
+		t_Syntax_Node const *_Nonnull const body_ = first_child_(syntax_, Block_);
 		if (cond(not_equal_op(body_, none)))
 		{
 			children_->add_(build_(body_, name_table_, function_scope_));
@@ -2031,11 +2011,11 @@ auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const synta
 	}
 	else if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, ClassDeclaration_)) || bit_arg(equal_op(syntax_->kind_, StructDeclaration_)))))
 	{
-		t_Syntax_Node const *_Nonnull const type_name_ = syntax_->first_child_(Identifier_);
+		t_Syntax_Node const *_Nonnull const type_name_ = first_child_(syntax_, Identifier_);
 		children_->add_(build_(type_name_, name_table_, scope_));
-		t_Name_Subtable const *_Nonnull const type_scope_ = scope_->find_(type_name_->get_text_());
-		assert_(not_equal_op(type_scope_, none), str("type_name.get_text()=").op_add(type_name_->get_text_()));
-		for (t_Syntax_Node const *_Nonnull const member_ : *(syntax_->members_()))
+		t_Name_Subtable const *_Nonnull const type_scope_ = scope_->find_(get_text_(type_name_));
+		assert_(not_equal_op(type_scope_, none), str("get_text(type_name)=").op_add(get_text_(type_name_)));
+		for (t_Syntax_Node const *_Nonnull const member_ : *(members_(syntax_)))
 		{
 			children_->add_(build_(member_, name_table_, type_scope_));
 		}
@@ -2044,20 +2024,20 @@ auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const synta
 	}
 	else if (cond(equal_op(syntax_->kind_, ConstructorDeclaration_)))
 	{
-		children_->add_(build_(syntax_->access_modifier_(), name_table_, scope_));
+		children_->add_(build_(access_modifier_(syntax_), name_table_, scope_));
 		str full_name_ = str("new");
-		t_Syntax_Node const *_Nullable const constructor_name_ = syntax_->first_child_(Identifier_);
+		t_Syntax_Node const *_Nullable const constructor_name_ = first_child_(syntax_, Identifier_);
 		if (cond(not_equal_op(constructor_name_, none)))
 		{
-			full_name_ = str("new_").op_add(constructor_name_->get_text_());
+			full_name_ = str("new_").op_add(get_text_(constructor_name_));
 			children_->add_(new_t_Semantic_Node__token(constructor_name_));
 		}
 
 		t_Name_Subtable const *_Nonnull const constructor_scope_ = scope_->find_special_(full_name_);
 		assert_(not_equal_op(constructor_scope_, none), str("full_name=").op_add(full_name_));
-		t_Syntax_Node const *_Nonnull const parameters_ = syntax_->first_child_(ParameterList_);
+		t_Syntax_Node const *_Nonnull const parameters_ = first_child_(syntax_, ParameterList_);
 		children_->add_(build_parameters_(parameters_, name_table_, constructor_scope_));
-		t_Syntax_Node const *_Nonnull const body_ = syntax_->first_child_(Block_);
+		t_Syntax_Node const *_Nonnull const body_ = first_child_(syntax_, Block_);
 		if (cond(not_equal_op(body_, none)))
 		{
 			children_->add_(build_(body_, name_table_, constructor_scope_));
@@ -2067,7 +2047,7 @@ auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const synta
 	}
 	else if (cond(equal_op(syntax_->kind_, IdentifierName_)))
 	{
-		t_Name_Subtable const *_Nonnull const name_scope_ = scope_->lookup_(syntax_->get_text_());
+		t_Name_Subtable const *_Nonnull const name_scope_ = scope_->lookup_(get_text_(syntax_));
 		if (cond(equal_op(name_scope_, none)))
 		{
 			t_Semantic_Node *_Nonnull const node_ = new_t_Semantic_Node__token(syntax_);
@@ -2104,7 +2084,7 @@ auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const synta
 		else
 		{
 			t_Name_Subtable const *_Nonnull const access_scope_ = name_table_->get_(lhs_->of_type_->name_);
-			t_Name_Subtable const *_Nonnull const member_scope_ = access_scope_->find_(member_name_->get_text_());
+			t_Name_Subtable const *_Nonnull const member_scope_ = access_scope_->find_(get_text_(member_name_));
 			if (cond(equal_op(member_scope_, none)))
 			{
 				rhs_ = new_t_Semantic_Node__token(member_name_);
@@ -2136,12 +2116,12 @@ auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const synta
 	else if (cond(equal_op(syntax_->kind_, NewExpression_)))
 	{
 		children_->add_(build_constructor_name_(syntax_->children_->op_Element(i32(1)), name_table_, scope_));
-		children_->add_(build_(syntax_->first_child_(ArgumentList_), name_table_, scope_));
+		children_->add_(build_(first_child_(syntax_, ArgumentList_), name_table_, scope_));
 		return new_t_Semantic_Node__concrete(syntax_, children_);
 	}
 	else if (cond(equal_op(syntax_->kind_, LocalDeclarationStatement_)))
 	{
-		t_Syntax_Node const *_Nonnull const variable_declaration_syntax_ = syntax_->first_child_(VariableDeclaration_);
+		t_Syntax_Node const *_Nonnull const variable_declaration_syntax_ = first_child_(syntax_, VariableDeclaration_);
 		children_->add_(build_(variable_declaration_syntax_, name_table_, scope_));
 		return new_t_Semantic_Node__concrete(syntax_, children_);
 	}
@@ -2149,13 +2129,13 @@ auto ::t_Semantic_Tree_Builder::build_(t_Syntax_Node const *_Nonnull const synta
 	{
 		t_Syntax_Node const *_Nonnull const binding_syntax_ = syntax_->children_->op_Element(i32(0));
 		children_->add_(new_t_Semantic_Node__token(binding_syntax_));
-		t_Syntax_Node const *_Nonnull const identifier_ = syntax_->first_child_(Identifier_);
+		t_Syntax_Node const *_Nonnull const identifier_ = first_child_(syntax_, Identifier_);
 		children_->add_(new_t_Semantic_Node__token(identifier_));
 		t_Syntax_Node const *_Nonnull const type_syntax_ = syntax_->children_->op_Element(i32(3));
 		t_Semantic_Node const *_Nonnull const type_node_ = build_type_name_(type_syntax_, name_table_, scope_);
 		assert_(not_equal_op(type_node_->referenced_type_, none), type_node_->get_text_());
-		t_Name_Subtable *_Nonnull const variable_scope_ = scope_->lookup_(identifier_->get_text_());
-		assert_(not_equal_op(variable_scope_, none), syntax_->get_text_());
+		t_Name_Subtable *_Nonnull const variable_scope_ = scope_->lookup_(get_text_(identifier_));
+		assert_(not_equal_op(variable_scope_, none), get_text_(syntax_));
 		variable_scope_->bind_type_(type_node_->referenced_type_);
 		name_table_->get_(variable_scope_->name_)->as_mut_()->bind_type_(type_node_->referenced_type_);
 		children_->add_(type_node_);
@@ -2202,28 +2182,28 @@ auto ::t_Semantic_Tree_Builder::build_parameters_(t_Syntax_Node const *_Nonnull 
 {
 	auto self = this;
 	assert_(equal_op(parameters_syntax_->kind_, ParameterList_), str("parameters_syntax.kind=").op_add(parameters_syntax_->kind_));
-	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const parameters_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
-	for (t_Syntax_Node const *_Nonnull const parameter_ : *(parameters_syntax_->parameters_()))
+	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const parameter_nodes_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
+	for (t_Syntax_Node const *_Nonnull const parameter_ : *(parameters_(parameters_syntax_)))
 	{
 		t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 		if (cond(equal_op(parameter_->kind_, Parameter_)))
 		{
-			t_Syntax_Node const *_Nullable const var_syntax_ = parameter_->first_child_(VarKeyword_);
+			t_Syntax_Node const *_Nullable const var_syntax_ = first_child_(parameter_, VarKeyword_);
 			if (cond(not_equal_op(var_syntax_, none)))
 			{
 				children_->add_(new_t_Semantic_Node__token(var_syntax_));
 			}
 
-			t_Syntax_Node const *_Nonnull const identifier_ = parameter_->first_child_(Identifier_);
+			t_Syntax_Node const *_Nonnull const identifier_ = first_child_(parameter_, Identifier_);
 			children_->add_(new_t_Semantic_Node__token(identifier_));
 			t_Syntax_Node const *_Nonnull const type_syntax_ = parameter_->children_->op_Element(parameter_->children_->op_magnitude()->op_subtract(i32(1)));
 			t_Semantic_Node const *_Nonnull const type_node_ = build_type_name_(type_syntax_, name_table_, scope_);
-			assert_(not_equal_op(type_node_->referenced_type_, none), parameter_->get_text_());
+			assert_(not_equal_op(type_node_->referenced_type_, none), get_text_(parameter_));
 			children_->add_(type_node_);
-			t_Name_Subtable *_Nonnull const parameter_scope_ = scope_->lookup_(identifier_->get_text_());
-			assert_(not_equal_op(parameter_scope_, none), identifier_->get_text_());
+			t_Name_Subtable *_Nonnull const parameter_scope_ = scope_->lookup_(get_text_(identifier_));
+			assert_(not_equal_op(parameter_scope_, none), get_text_(identifier_));
 			parameter_scope_->bind_type_(type_node_->referenced_type_);
-			parameters_->add_(new_t_Semantic_Node__of_type(type_node_->referenced_type_, parameter_, children_));
+			parameter_nodes_->add_(new_t_Semantic_Node__of_type(type_node_->referenced_type_, parameter_, children_));
 		}
 		else if (cond(equal_op(parameter_->kind_, SelfParameter_)))
 		{
@@ -2232,7 +2212,7 @@ auto ::t_Semantic_Tree_Builder::build_parameters_(t_Syntax_Node const *_Nonnull 
 				children_->add_(new_t_Semantic_Node__token(child_syntax_));
 			}
 
-			parameters_->add_(new_t_Semantic_Node__concrete(parameter_, children_));
+			parameter_nodes_->add_(new_t_Semantic_Node__concrete(parameter_, children_));
 		}
 		else
 		{
@@ -2240,7 +2220,7 @@ auto ::t_Semantic_Tree_Builder::build_parameters_(t_Syntax_Node const *_Nonnull 
 		}
 	}
 
-	return new_t_Semantic_Node__concrete(parameters_syntax_, parameters_);
+	return new_t_Semantic_Node__concrete(parameters_syntax_, parameter_nodes_);
 }
 
 auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull const syntax_, t_Name_Table const *_Nonnull const name_table_, t_Name_Subtable const *_Nonnull const scope_) const -> t_Semantic_Node *_Nonnull
@@ -2249,7 +2229,7 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 	t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	if (cond(equal_op(syntax_->kind_, PredefinedType_)))
 	{
-		str const primitive_name_ = syntax_->children_->op_Element(i32(0))->get_text_();
+		str const primitive_name_ = get_text_(syntax_->children_->op_Element(i32(0)));
 		t_Name_Subtable const *_Nullable const primitive_entry_ = scope_->lookup_special_(primitive_name_);
 		assert_(not_equal_op(primitive_entry_, none), str("No entry for primitive `").op_add(primitive_name_)->op_add(str("`")));
 		return new_t_Semantic_Node__referencing_type(primitive_entry_->type_, syntax_, children_);
@@ -2261,7 +2241,7 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 			return new_t_Semantic_Node__token(syntax_);
 		}
 
-		str const name_ = syntax_->get_text_();
+		str const name_ = get_text_(syntax_);
 		t_Name_Subtable const *_Nullable const entry_ = scope_->lookup_(name_);
 		if (cond(equal_op(entry_, none)))
 		{
@@ -2296,7 +2276,7 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 				t_Type const *_Nonnull const containing_type_ = qualifier_->referenced_type_;
 				t_Name_Subtable const *_Nonnull const containing_scope_ = name_table_->get_(containing_type_->name_);
 				assert_(not_equal_op(containing_scope_, none), containing_type_->name_->full_());
-				t_Name_Subtable const *_Nonnull const referenced_scope_ = containing_scope_->find_(name_syntax_->get_text_());
+				t_Name_Subtable const *_Nonnull const referenced_scope_ = containing_scope_->find_(get_text_(name_syntax_));
 				if (cond(equal_op(referenced_scope_, none)))
 				{
 					t_Semantic_Node *_Nonnull const name_node_ = new_t_Semantic_Node__token(name_syntax_);
@@ -2313,7 +2293,7 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 		}
 		else if (cond(equal_op(qualified_syntax_->kind_, GenericName_)))
 		{
-			t_Syntax_Node const *_Nonnull const name_syntax_ = qualified_syntax_->first_child_(IdentifierName_);
+			t_Syntax_Node const *_Nonnull const name_syntax_ = first_child_(qualified_syntax_, IdentifierName_);
 			t_system__collections__List<t_Semantic_Node const *_Nonnull> *_Nonnull const generic_name_children_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 			if (cond(equal_op(qualifier_->referenced_type_, none)))
 			{
@@ -2331,7 +2311,7 @@ auto ::t_Semantic_Tree_Builder::build_type_name_(t_Syntax_Node const *_Nonnull c
 				t_Type const *_Nonnull const containing_type_ = qualifier_->referenced_type_;
 				t_Name_Subtable const *_Nonnull const containing_scope_ = name_table_->get_(containing_type_->name_);
 				assert_(not_equal_op(containing_scope_, none), containing_type_->name_->full_());
-				t_Name_Subtable const *_Nonnull const referenced_scope_ = containing_scope_->find_(name_syntax_->get_text_());
+				t_Name_Subtable const *_Nonnull const referenced_scope_ = containing_scope_->find_(get_text_(name_syntax_));
 				if (cond(equal_op(referenced_scope_, none)))
 				{
 					t_Semantic_Node *_Nonnull const name_node_ = new_t_Semantic_Node__token(name_syntax_);
@@ -2452,7 +2432,7 @@ auto ::t_Semantic_Tree_Builder::build_constructor_name_(t_Syntax_Node const *_No
 		children_->add_(type_node_);
 		t_Syntax_Node const *_Nonnull const qualifier_ = syntax_->children_->op_Element(i32(0));
 		t_Syntax_Node const *_Nonnull const name_ = syntax_->children_->op_Element(i32(2));
-		str const constructor_name_ = str("new_").op_add(name_->get_text_());
+		str const constructor_name_ = str("new_").op_add(get_text_(name_));
 		t_Type const *_Nonnull const referenced_type_ = type_node_->referenced_type_;
 		assert_(not_equal_op(referenced_type_, none), str("no referenced type for `").op_add(type_node_->get_text_())->op_add(str("`")));
 		t_Name_Subtable const *_Nullable const constructor_scope_ = name_table_->get_(referenced_type_->name_)->lookup_special_(constructor_name_);
@@ -2481,15 +2461,10 @@ auto ::t_Semantic_Tree_Builder::add_could_not_determine_type_error_(t_Semantic_N
 	node_->add_(new_t_Diagnostic(FatalCompilationError_, Analysis_, node_->source_, node_->get_text_span_(), str("Could not determine type for `").op_add(node_->get_text_())->op_add(str("`"))));
 }
 
-auto ::t_Symbol_Builder::build_(t_Package_Name const *_Nonnull const package_name_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_) -> t_Symbol const *_Nonnull
+auto build_symbols_(t_Package_Name const *_Nonnull const package_name_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_) -> t_Symbol const *_Nonnull
 {
 	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const symbols_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	return new_t_Symbol__package(package_name_->unqualified_, symbols_);
-}
-
-inline t_Symbol_Builder *_Nonnull new_t_Symbol_Builder()
-{
-	return (new t_Symbol_Builder())->construct();
 }
 
 auto t_Compilation_Unit_Parser::construct(t_Token_Stream *_Nonnull const token_stream_) -> t_Compilation_Unit_Parser *_Nonnull
@@ -2527,12 +2502,12 @@ auto expect_token_(t_Compilation_Unit_Parser *_Nonnull const parser_, i32 const 
 {
 	if (cond(equal_op(parser_->token_, none)))
 	{
-		return new_syntax_node_missing_(tokenType_, parser_->token_stream_->source_, source_byte_length_(parser_->token_stream_->source_));
+		return new_t_Syntax_Node__missing(tokenType_, parser_->token_stream_->source_, source_byte_length_(parser_->token_stream_->source_));
 	}
 
 	if (cond(bit_op(bit_arg(equal_op(parser_->token_, none)) || bit_arg(not_equal_op(parser_->token_->kind_, tokenType_)))))
 	{
-		return new_syntax_node_missing_(tokenType_, parser_->token_stream_->source_, parser_->token_->start_);
+		return new_t_Syntax_Node__missing(tokenType_, parser_->token_stream_->source_, parser_->token_->start_);
 	}
 
 	t_Syntax_Node const *_Nullable const node_ = parser_->token_;
@@ -3018,7 +2993,7 @@ auto parse_block_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_Syntax
 				}
 			}
 
-			children_->add_(new_Syntax_Node_Skipped_(skipped_));
+			children_->add_(new_t_Syntax_Node__skipped(skipped_));
 		}
 	}
 
@@ -3145,7 +3120,7 @@ auto parse_declaration_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_
 			children_->add_(parse_member_declaration_(parser_));
 			if (cond(equal_op(parser_->token_, startToken_)))
 			{
-				children_->add_(new_Syntax_Node_Skipped_(accept_token_(parser_)));
+				children_->add_(new_t_Syntax_Node__skipped(accept_token_(parser_)));
 			}
 		}
 
@@ -3164,7 +3139,7 @@ auto parse_declaration_(t_Compilation_Unit_Parser *_Nonnull const parser_) -> t_
 			children_->add_(parse_member_declaration_(parser_));
 			if (cond(equal_op(parser_->token_, startToken_)))
 			{
-				children_->add_(new_Syntax_Node_Skipped_(accept_token_(parser_)));
+				children_->add_(new_t_Syntax_Node__skipped(accept_token_(parser_)));
 			}
 		}
 
@@ -3217,7 +3192,7 @@ auto parse_compilation_unit_(t_Compilation_Unit_Parser *_Nonnull const parser_) 
 		children_->add_(parse_declaration_(parser_));
 		if (cond(equal_op(parser_->token_, startToken_)))
 		{
-			children_->add_(new_Syntax_Node_Skipped_(accept_token_(parser_)));
+			children_->add_(new_t_Syntax_Node__skipped(accept_token_(parser_)));
 		}
 	}
 
@@ -3318,16 +3293,77 @@ inline t_Syntax_Node *_Nonnull new_t_Syntax_Node(i32 const type_, t_system__coll
 	return (new t_Syntax_Node())->construct(type_, children_);
 }
 
-auto ::t_Syntax_Node::get_text_() const -> str
+auto t_Syntax_Node::construct_missing(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_) -> t_Syntax_Node *_Nonnull
 {
-	auto self = this;
-	return source_->text_.Substring_(start_, byte_length_);
+	t_Syntax_Node *_Nonnull self = this;
+	self->kind_ = type_;
+	self->is_missing_ = bit_true;
+	self->source_ = source_;
+	self->start_ = start_;
+	self->byte_length_ = i32(0);
+	self->children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
+	t_Text_Span const *_Nonnull const span_ = new_t_Text_Span(start_, i32(0));
+	self->node_diagnostics_->add_(new_t_Diagnostic(CompilationError_, Parsing_, source_, span_, str("Missing token of type ").op_add(type_)));
+	return self;
 }
 
-auto ::t_Syntax_Node::first_child_(i32 const type_) const -> t_Syntax_Node const *_Nullable
+inline t_Syntax_Node *_Nonnull new_t_Syntax_Node__missing(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_)
 {
-	auto self = this;
-	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
+	return (new t_Syntax_Node())->construct_missing(type_, source_, start_);
+}
+
+auto t_Syntax_Node::construct_skipped(t_Syntax_Node const *_Nonnull const skipped_node_) -> t_Syntax_Node *_Nonnull
+{
+	t_Syntax_Node *_Nonnull self = this;
+	self->kind_ = SkippedTokens_;
+	self->is_missing_ = skipped_node_->is_missing_;
+	self->source_ = skipped_node_->source_;
+	self->start_ = skipped_node_->start_;
+	self->byte_length_ = skipped_node_->byte_length_;
+	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const children_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
+	children_->add_(skipped_node_);
+	self->children_ = children_;
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
+	t_Text_Span const *_Nonnull const span_ = new_t_Text_Span(skipped_node_->start_, skipped_node_->byte_length_);
+	self->node_diagnostics_->add_(new_t_Diagnostic(CompilationError_, Parsing_, skipped_node_->source_, span_, str("Skipped unexpected token of type ").op_add(skipped_node_->kind_)));
+	return self;
+}
+
+inline t_Syntax_Node *_Nonnull new_t_Syntax_Node__skipped(t_Syntax_Node const *_Nonnull const skipped_node_)
+{
+	return (new t_Syntax_Node())->construct_skipped(skipped_node_);
+}
+
+auto t_Syntax_Node::construct_skipped(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node *_Nonnull
+{
+	t_Syntax_Node *_Nonnull self = this;
+	self->kind_ = SkippedTokens_;
+	self->is_missing_ = bit_false;
+	self->source_ = skipped_nodes_->op_Element(i32(0))->source_;
+	self->start_ = skipped_nodes_->op_Element(i32(0))->start_;
+	t_Syntax_Node const *_Nonnull const lastChild_ = skipped_nodes_->op_Element(skipped_nodes_->op_magnitude()->op_subtract(i32(1)));
+	self->byte_length_ = lastChild_->start_.op_subtract(start_)->op_add(lastChild_->byte_length_);
+	self->children_ = children_;
+	self->node_diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
+	t_Text_Span const *_Nonnull const span_ = new_t_Text_Span(self->start_, self->byte_length_);
+	self->node_diagnostics_->add_(new_t_Diagnostic(CompilationError_, Parsing_, self->source_, span_, str("Skipped ").op_add(skipped_nodes_->op_magnitude())->op_add(str(" unexpected token(s)"))));
+	return self;
+}
+
+inline t_Syntax_Node *_Nonnull new_t_Syntax_Node__skipped(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_)
+{
+	return (new t_Syntax_Node())->construct_skipped(skipped_nodes_);
+}
+
+auto get_text_(t_Syntax_Node const *_Nonnull const syntax_) -> str
+{
+	return syntax_->source_->text_.Substring_(syntax_->start_, syntax_->byte_length_);
+}
+
+auto first_child_(t_Syntax_Node const *_Nonnull const syntax_, i32 const type_) -> t_Syntax_Node const *_Nullable
+{
+	for (t_Syntax_Node const *_Nonnull const child_ : *(syntax_->children_))
 	{
 		if (cond(equal_op(child_->kind_, type_)))
 		{
@@ -3338,10 +3374,9 @@ auto ::t_Syntax_Node::first_child_(i32 const type_) const -> t_Syntax_Node const
 	return none;
 }
 
-auto ::t_Syntax_Node::has_child_(i32 const type_) const -> bit
+auto has_child_(t_Syntax_Node const *_Nonnull const syntax_, i32 const type_) -> bit
 {
-	auto self = this;
-	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
+	for (t_Syntax_Node const *_Nonnull const child_ : *(syntax_->children_))
 	{
 		if (cond(equal_op(child_->kind_, type_)))
 		{
@@ -3352,39 +3387,35 @@ auto ::t_Syntax_Node::has_child_(i32 const type_) const -> bit
 	return bit_false;
 }
 
-auto ::t_Syntax_Node::add_(t_Diagnostic const *_Nonnull const diagnostic_) const -> void
+auto add_(t_Syntax_Node const *_Nonnull const syntax_, t_Diagnostic const *_Nonnull const diagnostic_) -> void
 {
-	auto self = this;
-	node_diagnostics_->add_(diagnostic_);
+	syntax_->node_diagnostics_->add_(diagnostic_);
 }
 
-auto ::t_Syntax_Node::all_diagnostics_() const -> t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull
+auto all_diagnostics_(t_Syntax_Node const *_Nonnull const syntax_) -> t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_ = new_t_system__collections__List<t_Diagnostic const *_Nonnull>();
-	collect_diagnostics_(diagnostics_);
+	collect_syntax_diagnostics_(syntax_, diagnostics_);
 	return diagnostics_;
 }
 
-auto ::t_Syntax_Node::collect_diagnostics_(t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) const -> void
+auto collect_syntax_diagnostics_(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) -> void
 {
-	auto self = this;
-	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(node_diagnostics_))
+	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(syntax_->node_diagnostics_))
 	{
 		diagnostics_->add_(diagnostic_);
 	}
 
-	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
+	for (t_Syntax_Node const *_Nonnull const child_ : *(syntax_->children_))
 	{
-		child_->collect_diagnostics_(diagnostics_);
+		collect_syntax_diagnostics_(child_, diagnostics_);
 	}
 }
 
-auto ::t_Syntax_Node::members_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
+auto members_(t_Syntax_Node const *_Nonnull const syntax_) -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const members_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
+	for (t_Syntax_Node const *_Nonnull const child_ : *(syntax_->children_))
 	{
 		if (cond(bit_op(bit_arg(bit_op(bit_arg(equal_op(child_->kind_, ConstructorDeclaration_)) || bit_arg(equal_op(child_->kind_, FieldDeclaration_)))) || bit_arg(equal_op(child_->kind_, MethodDeclaration_)))))
 		{
@@ -3395,11 +3426,10 @@ auto ::t_Syntax_Node::members_() const -> t_system__collections__List<t_Syntax_N
 	return members_;
 }
 
-auto ::t_Syntax_Node::parameters_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
+auto parameters_(t_Syntax_Node const *_Nonnull const syntax_) -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const parameters_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
+	for (t_Syntax_Node const *_Nonnull const child_ : *(syntax_->children_))
 	{
 		if (cond(bit_op(bit_arg(equal_op(child_->kind_, Parameter_)) || bit_arg(equal_op(child_->kind_, SelfParameter_)))))
 		{
@@ -3410,11 +3440,10 @@ auto ::t_Syntax_Node::parameters_() const -> t_system__collections__List<t_Synta
 	return parameters_;
 }
 
-auto ::t_Syntax_Node::statements_() const -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
+auto statements_(t_Syntax_Node const *_Nonnull const syntax_) -> t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull
 {
-	auto self = this;
 	t_system__collections__List<t_Syntax_Node const *_Nonnull> *_Nonnull const statements_ = new_t_system__collections__List<t_Syntax_Node const *_Nonnull>();
-	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
+	for (t_Syntax_Node const *_Nonnull const child_ : *(syntax_->children_))
 	{
 		if (cond(bit_op(bit_arg(not_equal_op(child_->kind_, LeftBrace_)) && bit_arg(not_equal_op(child_->kind_, RightBrace_)))))
 		{
@@ -3425,10 +3454,9 @@ auto ::t_Syntax_Node::statements_() const -> t_system__collections__List<t_Synta
 	return statements_;
 }
 
-auto ::t_Syntax_Node::access_modifier_() const -> t_Syntax_Node const *_Nullable
+auto access_modifier_(t_Syntax_Node const *_Nonnull const syntax_) -> t_Syntax_Node const *_Nullable
 {
-	auto self = this;
-	for (t_Syntax_Node const *_Nonnull const child_ : *(children_))
+	for (t_Syntax_Node const *_Nonnull const child_ : *(syntax_->children_))
 	{
 		if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(child_->kind_, PublicKeyword_)) || bit_arg(equal_op(child_->kind_, ProtectedKeyword_)))) || bit_arg(equal_op(child_->kind_, InternalKeyword_)))) || bit_arg(equal_op(child_->kind_, PrivateKeyword_)))))
 		{
@@ -3437,30 +3465,6 @@ auto ::t_Syntax_Node::access_modifier_() const -> t_Syntax_Node const *_Nullable
 	}
 
 	return none;
-}
-
-auto new_syntax_node_missing_(i32 const type_, t_Source_Text const *_Nonnull const source_, u32 const start_) -> t_Syntax_Node const *_Nonnull
-{
-	t_Syntax_Node *_Nonnull const node_ = new_t_Syntax_Node(type_, bit_true, source_, start_, i32(0));
-	t_Text_Span const *_Nonnull const span_ = new_t_Text_Span(start_, i32(0));
-	node_->add_(new_t_Diagnostic(CompilationError_, Parsing_, source_, span_, str("Missing token of type ").op_add(type_)));
-	return node_;
-}
-
-auto new_Syntax_Node_Skipped_(t_Syntax_Node const *_Nonnull const skipped_node_) -> t_Syntax_Node const *_Nonnull
-{
-	t_Syntax_Node *_Nonnull const node_ = new_t_Syntax_Node(SkippedTokens_, skipped_node_);
-	t_Text_Span const *_Nonnull const span_ = new_t_Text_Span(skipped_node_->start_, skipped_node_->byte_length_);
-	node_->add_(new_t_Diagnostic(CompilationError_, Parsing_, skipped_node_->source_, span_, str("Skipped unexpected token of type ").op_add(skipped_node_->kind_)));
-	return node_;
-}
-
-auto new_Syntax_Node_Skipped_(t_system__collections__List<t_Syntax_Node const *_Nonnull> const *_Nonnull const skipped_nodes_) -> t_Syntax_Node const *_Nonnull
-{
-	t_Syntax_Node *_Nonnull const node_ = new_t_Syntax_Node(SkippedTokens_, skipped_nodes_);
-	t_Text_Span const *_Nonnull const span_ = new_t_Text_Span(node_->start_, node_->byte_length_);
-	node_->add_(new_t_Diagnostic(CompilationError_, Parsing_, node_->source_, span_, str("Skipped ").op_add(skipped_nodes_->op_magnitude())->op_add(str(" unexpected token(s)"))));
-	return node_;
 }
 
 auto t_Token_Stream::construct(t_Source_Text const *_Nonnull const source_) -> t_Token_Stream *_Nonnull
@@ -3876,7 +3880,7 @@ auto new_token_(t_Token_Stream *_Nonnull const tokens_, i32 const type_, u32 con
 	t_Syntax_Node *_Nonnull const token_ = new_t_Syntax_Node(type_, tokens_->source_, tokens_->position_, end_.op_subtract(tokens_->position_));
 	for (t_Diagnostic const *_Nonnull const diagnostic_ : *(tokens_->diagnostics_))
 	{
-		token_->add_(diagnostic_);
+		add_(token_, diagnostic_);
 	}
 
 	tokens_->diagnostics_->clear_();
@@ -6046,12 +6050,12 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 {
 	if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, FunctionDeclaration_)) || bit_arg(equal_op(syntax_->kind_, MethodDeclaration_)))))
 	{
-		t_Name const *_Nonnull const name_ = new_t_Name(parent_, FunctionName_, syntax_->first_child_(Identifier_)->get_text_());
+		t_Name const *_Nonnull const name_ = new_t_Name(parent_, FunctionName_, get_text_(first_child_(syntax_, Identifier_)));
 		add_function_(name_table_, name_, syntax_);
 	}
 	else if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, ClassDeclaration_)) || bit_arg(equal_op(syntax_->kind_, StructDeclaration_)))))
 	{
-		str const unqualified_name_ = syntax_->first_child_(Identifier_)->get_text_();
+		str const unqualified_name_ = get_text_(first_child_(syntax_, Identifier_));
 		i32 type_kind_;
 		if (cond(equal_op(syntax_->kind_, ClassDeclaration_)))
 		{
@@ -6065,7 +6069,7 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, TypeName_, unqualified_name_);
 		t_Type const *_Nonnull const type_ = new_t_Type(type_kind_, name_, bit_true);
 		name_table_->add_(name_, type_);
-		for (t_Syntax_Node const *_Nonnull const member_ : *(syntax_->members_()))
+		for (t_Syntax_Node const *_Nonnull const member_ : *(members_(syntax_)))
 		{
 			add_syntax_(name_table_, name_, member_);
 		}
@@ -6073,10 +6077,10 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 	else if (cond(equal_op(syntax_->kind_, ConstructorDeclaration_)))
 	{
 		str full_name_ = str("new");
-		t_Syntax_Node const *_Nullable const constructor_name_ = syntax_->first_child_(Identifier_);
+		t_Syntax_Node const *_Nullable const constructor_name_ = first_child_(syntax_, Identifier_);
 		if (cond(not_equal_op(constructor_name_, none)))
 		{
-			full_name_ = str("new_").op_add(constructor_name_->get_text_());
+			full_name_ = str("new_").op_add(get_text_(constructor_name_));
 		}
 
 		t_Name const *_Nonnull const name_ = new_t_Name__special(parent_, FunctionName_, full_name_);
@@ -6087,48 +6091,48 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 	}
 	else if (cond(equal_op(syntax_->kind_, FieldDeclaration_)))
 	{
-		str const unqualified_name_ = syntax_->first_child_(VariableDeclaration_)->first_child_(Identifier_)->get_text_();
+		str const unqualified_name_ = get_text_(first_child_(first_child_(syntax_, VariableDeclaration_), Identifier_));
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, TypeName_, unqualified_name_);
 		t_Type const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, EnumDeclaration_)))
 	{
-		str const unqualified_name_ = syntax_->first_child_(Identifier_)->get_text_();
+		str const unqualified_name_ = get_text_(first_child_(syntax_, Identifier_));
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, TypeName_, unqualified_name_);
 		t_Type const *_Nonnull const type_ = new_t_Type(ReferenceType_, name_, bit_true);
 		name_table_->add_(name_, type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, GlobalDeclaration_)))
 	{
-		str const unqualified_name_ = syntax_->first_child_(VariableDeclaration_)->first_child_(Identifier_)->get_text_();
+		str const unqualified_name_ = get_text_(first_child_(first_child_(syntax_, VariableDeclaration_), Identifier_));
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, TypeName_, unqualified_name_);
 		t_Type const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, Block_)))
 	{
-		for (t_Syntax_Node const *_Nonnull const statement_ : *(syntax_->statements_()))
+		for (t_Syntax_Node const *_Nonnull const statement_ : *(statements_(syntax_)))
 		{
 			add_syntax_(name_table_, parent_, statement_);
 		}
 	}
 	else if (cond(bit_op(bit_arg(bit_op(bit_arg(equal_op(syntax_->kind_, LoopStatement_)) || bit_arg(equal_op(syntax_->kind_, WhileStatement_)))) || bit_arg(equal_op(syntax_->kind_, DoWhileStatement_)))))
 	{
-		add_syntax_(name_table_, parent_, syntax_->first_child_(Block_));
+		add_syntax_(name_table_, parent_, first_child_(syntax_, Block_));
 	}
 	else if (cond(equal_op(syntax_->kind_, ForStatement_)))
 	{
-		t_Syntax_Node const *_Nonnull const identifier_ = syntax_->first_child_(VariableDeclaration_)->first_child_(Identifier_);
-		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, identifier_->get_text_());
+		t_Syntax_Node const *_Nonnull const identifier_ = first_child_(first_child_(syntax_, VariableDeclaration_), Identifier_);
+		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, get_text_(identifier_));
 		t_Type const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
-		add_syntax_(name_table_, parent_, syntax_->first_child_(Block_));
+		add_syntax_(name_table_, parent_, first_child_(syntax_, Block_));
 	}
 	else if (cond(equal_op(syntax_->kind_, IfStatement_)))
 	{
-		add_syntax_(name_table_, parent_, syntax_->first_child_(Block_));
-		t_Syntax_Node const *_Nullable const else_clause_ = syntax_->first_child_(ElseClause_);
+		add_syntax_(name_table_, parent_, first_child_(syntax_, Block_));
+		t_Syntax_Node const *_Nullable const else_clause_ = first_child_(syntax_, ElseClause_);
 		if (cond(not_equal_op(else_clause_, none)))
 		{
 			add_syntax_(name_table_, parent_, else_clause_);
@@ -6136,27 +6140,27 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 	}
 	else if (cond(equal_op(syntax_->kind_, ElseClause_)))
 	{
-		t_Syntax_Node const *_Nullable const block_ = syntax_->first_child_(Block_);
+		t_Syntax_Node const *_Nullable const block_ = first_child_(syntax_, Block_);
 		if (cond(not_equal_op(block_, none)))
 		{
 			add_syntax_(name_table_, parent_, block_);
 		}
 		else
 		{
-			add_syntax_(name_table_, parent_, syntax_->first_child_(IfStatement_));
+			add_syntax_(name_table_, parent_, first_child_(syntax_, IfStatement_));
 		}
 	}
 	else if (cond(equal_op(syntax_->kind_, LocalDeclarationStatement_)))
 	{
-		t_Syntax_Node const *_Nonnull const identifier_ = syntax_->first_child_(VariableDeclaration_)->first_child_(Identifier_);
-		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, identifier_->get_text_());
+		t_Syntax_Node const *_Nonnull const identifier_ = first_child_(first_child_(syntax_, VariableDeclaration_), Identifier_);
+		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, get_text_(identifier_));
 		t_Type const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, Parameter_)))
 	{
-		t_Syntax_Node const *_Nonnull const identifier_ = syntax_->first_child_(Identifier_);
-		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, identifier_->get_text_());
+		t_Syntax_Node const *_Nonnull const identifier_ = first_child_(syntax_, Identifier_);
+		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, get_text_(identifier_));
 		t_Type const *_Nullable const no_type_ = none;
 		name_table_->add_(name_, no_type_);
 	}
@@ -6179,13 +6183,13 @@ auto ::t_Name_Table_Builder::add_function_(t_Name_Table *_Nonnull const name_tab
 {
 	t_Type const *_Nullable const no_type_ = none;
 	name_table_->add_(name_, no_type_);
-	t_Syntax_Node const *_Nonnull const parameters_ = function_->first_child_(ParameterList_);
-	for (t_Syntax_Node const *_Nonnull const parameter_ : *(parameters_->parameters_()))
+	t_Syntax_Node const *_Nonnull const parameters_syntax_ = first_child_(function_, ParameterList_);
+	for (t_Syntax_Node const *_Nonnull const parameter_ : *(parameters_(parameters_syntax_)))
 	{
 		add_syntax_(name_table_, name_, parameter_);
 	}
 
-	t_Syntax_Node const *_Nonnull const body_ = function_->first_child_(Block_);
+	t_Syntax_Node const *_Nonnull const body_ = first_child_(function_, Block_);
 	add_syntax_(name_table_, name_, body_);
 }
 
