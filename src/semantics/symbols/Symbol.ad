@@ -108,17 +108,17 @@ public class Symbol
         self.declarations = declarations;
         self.children = children;
     }
+}
 
-    // TODO change to operator []
-    public get(self, name: string, kind: int) -> Symbol?
+// TODO change to operator []
+public get_child(symbol: Symbol, name: string, kind: int) -> Symbol?
+{
+    for let child: Symbol in symbol.children
     {
-        for let child: Symbol in children
+        if child.name == name and child.kind == kind
         {
-            if child.name == name and child.kind == kind
-            {
-                return child;
-            }
+            return child;
         }
-        return none;
     }
+    return none;
 }
