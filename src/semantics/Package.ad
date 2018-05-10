@@ -18,14 +18,14 @@ public class Package
         self.compilation_units = compilation_units;
         self.symbol = symbol;
     }
+}
 
-    public all_diagnostics(self) -> system.collections.List<Diagnostic>
+public all_diagnostics(package: Package) -> system.collections.List<Diagnostic>
+{
+    var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
+    for let compilation_unit: Compilation_Unit in package.compilation_units
     {
-        var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
-        for let compilation_unit: Compilation_Unit in compilation_units
-        {
-            collect_diagnostics(compilation_unit, diagnostics);
-        }
-        return diagnostics;
+        collect_diagnostics(compilation_unit, diagnostics);
     }
+    return diagnostics;
 }

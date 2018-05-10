@@ -133,7 +133,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
 
     let package: Package = compile(sources);
 
-    let diagnostics: system.collections.List<Diagnostic> = package.all_diagnostics();
+    let diagnostics: system.collections.List<Diagnostic> = all_diagnostics(package);
     write(console, diagnostics);
 
     if has_errors(diagnostics)
