@@ -6,7 +6,7 @@ public run_unit_tests(console: mut system.console.Console) -> void
     unit_test_Text_Position();
 
     // semantics
-    unit_test_Primitives_Package_Builder();
+    unit_test_build_primitives_package();
     unit_test_Runtime_Library_Package_Builder();
 
     // semantics.names

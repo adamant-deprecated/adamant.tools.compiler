@@ -61,7 +61,7 @@ public can_get_Console_class_from_name_without_package() -> void
 public can_get_Optional_class_from_name_with_package() -> void
 {
     let name: Package_Name = new Package_Name("default");
-    let primitives_package: Package = new Primitives_Package_Builder().build();
+    let primitives_package: Package = build_primitives_package();
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     references.add(new Package_Reference(primitives_package));
 

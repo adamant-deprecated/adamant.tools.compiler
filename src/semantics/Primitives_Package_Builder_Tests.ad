@@ -1,4 +1,4 @@
-public unit_test_Primitives_Package_Builder() -> void
+public unit_test_build_primitives_package() -> void
 {
     Package_name_is_dollar_primitives();
     Package_has_no_references_or_compilation_units();
@@ -10,21 +10,21 @@ public unit_test_Primitives_Package_Builder() -> void
 
 public Package_name_is_dollar_primitives() -> void
 {
-    let package: Package = new Primitives_Package_Builder().build();
+    let package: Package = build_primitives_package();
     let name: Package_Name = package.name;
     assert(name.unqualified == "$primitives", "");
 }
 
 public Package_has_no_references_or_compilation_units() -> void
 {
-    let package: Package = new Primitives_Package_Builder().build();
+    let package: Package = build_primitives_package();
     assert(|package.references| == 0, "");
     assert(|package.compilation_units| == 0, "");
 }
 
 public Package_symbol_has_package_name() -> void
 {
-    let package: Package = new Primitives_Package_Builder().build();
+    let package: Package = build_primitives_package();
     let symbol: Symbol = package.symbol;
     assert(symbol.kind == PackageSymbol, "");
     assert(symbol.name == package.name.unqualified, "");
@@ -32,20 +32,20 @@ public Package_symbol_has_package_name() -> void
 
 public Package_symbol_has_children() -> void
 {
-    let package: Package = new Primitives_Package_Builder().build();
+    let package: Package = build_primitives_package();
     assert(|package.symbol.children| > 0, "");
 }
 
 public Package_contains_the_string_type() -> void
 {
-    let package: Package = new Primitives_Package_Builder().build();
+    let package: Package = build_primitives_package();
     let string_symbol: Symbol = package.symbol.get("string", IdentifierSymbol);
     assert(string_symbol =/= none, "");
 }
 
 public Package_contains_optional_type() -> void
 {
-    let package: Package = new Primitives_Package_Builder().build();
+    let package: Package = build_primitives_package();
     let adamant_symbol: Symbol? = package.symbol.get("adamant", IdentifierSymbol);
     assert(adamant_symbol =/= none, "");
     let langauge_symbol: Symbol? = adamant_symbol.get("language", IdentifierSymbol);

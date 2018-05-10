@@ -4,7 +4,7 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
 
     // Hard code a stand-in package-name for now
     let name: Package_Name = new Package_Name("default");
-    let primitives_package: Package = new Primitives_Package_Builder().build();
+    let primitives_package: Package = build_primitives_package();
     let runtime_package: Package = new Runtime_Library_Package_Builder().build();
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     references.add(new Package_Reference(primitives_package));
