@@ -44,7 +44,7 @@ public /*mut*/ class Name_Subtable
         {
             if self.name.package == none and type =/= none and type.kind == NamespaceType
             {
-                subtables.add(new Name_Subtable(self, name.remove_package(), type.remove_package()));
+                subtables.add(new Name_Subtable(self, name.remove_package(), remove_type_package(type)));
             }
             else
             {

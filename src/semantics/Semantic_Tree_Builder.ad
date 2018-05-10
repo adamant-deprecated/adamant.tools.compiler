@@ -469,7 +469,7 @@ public build_type_name_semantic_node(
             add_could_not_determine_type_error(inner_type);
             return new Semantic_Node.concrete(syntax, children);
         }
-        let type: Type = inner_type.referenced_type.make_mutable();
+        let type: Type = make_mutable_type(inner_type.referenced_type);
         return new Semantic_Node.referencing_type(type, syntax, children);
     }
     else if syntax.kind == ImmutableType
@@ -481,7 +481,7 @@ public build_type_name_semantic_node(
             add_could_not_determine_type_error(inner_type);
             return new Semantic_Node.concrete(syntax, children);
         }
-        let type: Type = inner_type.referenced_type.make_immutable();
+        let type: Type = make_immutable_type(inner_type.referenced_type);
         return new Semantic_Node.referencing_type(type, syntax, children);
     }
     else if syntax.kind == OptionalType

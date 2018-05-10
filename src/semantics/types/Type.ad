@@ -93,7 +93,8 @@ public class Type
         self.is_potentially_mutable = definition.is_potentially_mutable;
         self.is_mutable = definition.is_mutable;
     }
-    private new(kind: int, name: Name, type_parameters: system.collections.List<Type>, is_primitive: bool, is_potentially_mutable: bool, is_mutable: bool)
+
+    public new(kind: int, name: Name, type_parameters: system.collections.List<Type>, is_primitive: bool, is_potentially_mutable: bool, is_mutable: bool)
     {
         self.kind = kind;
         self.name = name;
@@ -103,24 +104,29 @@ public class Type
         self.is_potentially_mutable = is_potentially_mutable;
         self.is_mutable = is_mutable;
     }
+}
 
-    public make_mutable(self) -> Type
-    {
-        assert(is_potentially_mutable, "self.name="+name.full());
-        return new Type(kind, name, type_parameters, is_primitive, is_potentially_mutable, true);
-    }
+public make_mutable_type(type: Type) -> Type
+{
+    assert(type.is_potentially_mutable, "self.name="+type.name.full());
+    return new Type(type.kind, type.name, type.type_parameters, type.is_primitive, type.is_potentially_mutable, true);
+}
 
-    public make_immutable(self) -> Type
-    {
-        return new Type(kind, name, type_parameters, is_primitive, is_potentially_mutable, false);
-    }
+public make_immutable_type(type: Type) -> Type
+{
+    return new Type(type.kind, type.name, type.type_parameters, type.is_primitive, type.is_potentially_mutable, false);
+}
 
-    public remove_package(self) -> Type
-    {
-        assert(kind == NamespaceType, "kind=" + kind);
-        if name.is_package_qualified()
-            { return new Type(kind, name.remove_package(), type_parameters, is_primitive, is_potentially_mutable, is_mutable); }
-        else
-            { return self; }
-    }
+public remove_type_package(type: Type) -> Type
+{
+    assert(type.kind == NamespaceType, "kind=" + type.kind);
+    if type.name.is_package_qualified()
+        { return new Type(type.kind,
+                        type.name.remove_package(),
+                        type.type_parameters,
+                        type.is_primitive,
+                        type.is_potentially_mutable,
+                        type.is_mutable); }
+    else
+        { return type; }
 }
