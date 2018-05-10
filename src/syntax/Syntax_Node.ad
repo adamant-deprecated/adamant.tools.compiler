@@ -57,6 +57,49 @@ public class Syntax_Node
         self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
+    public new missing(type: int, source: Source_Text, start: uint)
+    {
+        self.kind = type;
+        self.is_missing = true;
+        self.source = source;
+        self.start = start;
+        self.byte_length = 0;
+        self.children = new system.collections.List<Syntax_Node>();
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        let span: Text_Span = new Text_Span(start, 0);
+        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
+    }
+
+    public new skipped(skipped_node: Syntax_Node)
+    {
+        self.kind = SkippedTokens;
+        self.is_missing = skipped_node.is_missing;
+        self.source = skipped_node.source;
+        self.start = skipped_node.start;
+        self.byte_length = skipped_node.byte_length;
+        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+        children.add(skipped_node);
+        self.children = children;
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        let span: Text_Span = new Text_Span(skipped_node.start, skipped_node.byte_length);
+        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + skipped_node.kind));
+    }
+
+    public new skipped(skipped_nodes: system.collections.List<Syntax_Node>)
+    {
+        self.kind = SkippedTokens;
+        self.is_missing = false;
+        // TODO enforce that list is not empty, for now we rely on `children[0]` failing
+        self.source = skipped_nodes[0].source;
+        self.start = skipped_nodes[0].start;
+        let lastChild: Syntax_Node = skipped_nodes[|skipped_nodes| - 1];
+        self.byte_length = lastChild.start - start + lastChild.byte_length;
+        self.children = children;
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        let span: Text_Span = new Text_Span(self.start, self.byte_length);
+        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + |skipped_nodes| + " unexpected token(s)"));
+    }
+
     public get_text(self) -> string
     {
         return source.text.Substring(start, byte_length);
@@ -174,29 +217,3 @@ public class Syntax_Node
     }
 }
 
-// TODO make this a named constructor
-public new_syntax_node_missing(type: int, source: Source_Text, start: uint) -> Syntax_Node
-{
-    let node: mut Syntax_Node = new Syntax_Node(type, true, source, start, 0);
-    let span: Text_Span = new Text_Span(start, 0);
-    node.add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
-    return node;
-}
-
-// TODO make this a named constructor
-public new_Syntax_Node_Skipped(skipped_node: Syntax_Node) -> Syntax_Node
-{
-    let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped_node);
-    let span: Text_Span = new Text_Span(skipped_node.start, skipped_node.byte_length);
-    node.add(new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + skipped_node.kind));
-    return node;
-}
-
-// TODO make this a named constructor
-public new_Syntax_Node_Skipped(skipped_nodes: system.collections.List<Syntax_Node>) -> Syntax_Node
-{
-    let node: mut Syntax_Node = new Syntax_Node(SkippedTokens, skipped_nodes);
-    let span: Text_Span = new Text_Span(node.start, node.byte_length);
-    node.add(new Diagnostic(CompilationError, Parsing, node.source, span, "Skipped " + |skipped_nodes| + " unexpected token(s)"));
-    return node;
-}

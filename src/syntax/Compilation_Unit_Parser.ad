@@ -36,12 +36,12 @@ public expect_token(parser: mut Compilation_Unit_Parser, tokenType: int) -> Synt
 {
     if parser.token == none
     {
-        return new_syntax_node_missing(tokenType, parser.token_stream.source, source_byte_length(parser.token_stream.source));
+        return new Syntax_Node.missing(tokenType, parser.token_stream.source, source_byte_length(parser.token_stream.source));
     }
 
     if parser.token == none or parser.token.kind =/= tokenType
     {
-        return new_syntax_node_missing(tokenType, parser.token_stream.source, parser.token.start);
+        return new Syntax_Node.missing(tokenType, parser.token_stream.source, parser.token.start);
     }
 
     let node: Syntax_Node? = parser.token;
@@ -543,7 +543,7 @@ public parse_block(parser: mut Compilation_Unit_Parser) -> Syntax_Node
                 if currentTokenType == Semicolon
                     { break; }
             }
-            children.add(new_Syntax_Node_Skipped(skipped));
+            children.add(new Syntax_Node.skipped(skipped));
         }
     }
     children.add(expect_token(parser, RightBrace));
@@ -675,7 +675,7 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             {
                 // We have not advanced at all when trying to parse a member.
                 // Skip a token to try to see if we can find the start of a member.
-                children.add(new_Syntax_Node_Skipped(accept_token(parser)));
+                children.add(new Syntax_Node.skipped(accept_token(parser)));
             }
         }
         children.add(expect_token(parser, RightBrace));
@@ -695,7 +695,7 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             {
                 // We have not advanced at all when trying to parse a member.
                 // Skip a token to try to see if we can find the start of a member.
-                children.add(new_Syntax_Node_Skipped(accept_token(parser)));
+                children.add(new Syntax_Node.skipped(accept_token(parser)));
             }
         }
         children.add(expect_token(parser, RightBrace));
@@ -749,7 +749,7 @@ public parse_compilation_unit(parser: mut Compilation_Unit_Parser) -> Syntax_Nod
         {
             // We have not advanced at all when trying to parse a declaration.
             // Skip a token to try to see if we can find the start of a declaration.
-            children.add(new_Syntax_Node_Skipped(accept_token(parser)));
+            children.add(new Syntax_Node.skipped(accept_token(parser)));
         }
     }
     children.add(expect_token(parser, EndOfFileToken));
