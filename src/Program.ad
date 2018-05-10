@@ -1,8 +1,7 @@
 public compile(sources: system.collections.List<Source_Text>) -> Package
 {
     let package_syntax: Syntax_Node = parse_package(sources);
-    let semantic_analyzer: Semantic_Analyzer = new Semantic_Analyzer();
-    let package: Package = semantic_analyzer.analyze(package_syntax);
+    let package: Package = analyze_semantics(package_syntax);
     return package;
 }
 
