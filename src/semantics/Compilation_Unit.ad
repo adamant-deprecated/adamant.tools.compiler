@@ -10,13 +10,13 @@ public class Compilation_Unit
         self.syntax = syntax;
         self.declarations = declarations;
     }
+}
 
-    public collect_diagnostics(self, diagnostics: mut system.collections.List<Diagnostic>) -> void
+public collect_diagnostics(compilation_unit: Compilation_Unit, diagnostics: mut system.collections.List<Diagnostic>) -> void
+{
+    collect_syntax_diagnostics(compilation_unit.syntax, diagnostics);
+    for let declaration: Semantic_Node in compilation_unit.declarations
     {
-        collect_syntax_diagnostics(syntax, diagnostics);
-        for let declaration: Semantic_Node in declarations
-        {
-            declaration.collect_diagnostics(diagnostics);
-        }
+        declaration.collect_diagnostics(diagnostics);
     }
 }

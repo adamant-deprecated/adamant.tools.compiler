@@ -24,7 +24,7 @@ public class Package
         var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
         for let compilation_unit: Compilation_Unit in compilation_units
         {
-            compilation_unit.collect_diagnostics(diagnostics);
+            collect_diagnostics(compilation_unit, diagnostics);
         }
         return diagnostics;
     }
