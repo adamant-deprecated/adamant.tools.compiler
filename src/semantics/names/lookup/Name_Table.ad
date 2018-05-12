@@ -42,13 +42,13 @@ public /*mut*/ class Name_Table
         any_package.add(name, type);
         for let package: mut Name_Subtable in packages
         {
-            if name.is_qualified_with(package.name)
+            if is_qualified_by(name, package.name)
             {
                 package.add(name, type);
                 return;
             }
         }
-        THROW_EXCEPTION("Can't add name \""+name.full()+"\" because package doesn't exist in table.");
+        THROW_EXCEPTION("Can't add name \""+full_name(name)+"\" because package doesn't exist in table.");
     }
 
     public get(self, name: Name) -> Name_Subtable?
@@ -61,7 +61,7 @@ public /*mut*/ class Name_Table
 
         for let package: Name_Subtable in packages
         {
-            if name.is_qualified_with(package.name)
+            if is_qualified_by(name, package.name)
             {
                 return package.get(name);
             }

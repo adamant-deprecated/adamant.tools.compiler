@@ -82,7 +82,7 @@ public class Name
         self.is_special = true;
     }
 
-    private new(
+    public new(
         package: Package_Name?,
         kind: int,
         segments: system.collections.List<string>,
@@ -93,96 +93,96 @@ public class Name
         self.segments = segments;
         self.is_special = is_special;
     }
+}
 
-    public unqualified(self) -> string
+public unqualified_name(name: Name) -> string
+{
+    if |name.segments|==0 { return ""; }
+    return name.segments[|name.segments| - 1];
+}
+
+public full_name(name: Name) -> string
+{
+    var result: string = "";
+    if name.package =/= none
+        { result = full_name(name.package); }
+
+    result = result + "::";
+    // TODO need string join
+    var first: bool = true;
+    for let segment: string in name.segments
     {
-        if |segments|==0 { return ""; }
-        return segments[|segments| - 1];
-    }
-
-    public full(self) -> string
-    {
-        var name: string = "";
-        if package =/= none
-            { name = package.full(); }
-
-        name = name + "::";
-        // TODO need string join
-        var first: bool = true;
-        for let segment: string in segments
+        if first
         {
-            if first
-            {
-                first = false;
-                name = name + segment;
-                continue;
-            }
-            // TODO correctly format names with special chars etc.
-            name = name + "." + segment;
+            first = false;
+            result = result + segment;
+            continue;
         }
-        return name;
+        // TODO correctly format names with special chars etc.
+        result = result + "." + segment;
     }
+    return result;
+}
 
-    /// Whether the qualifier is the qualifier of some name qualifying this name
-    // TODO this method name doesn't make it clear that the package could be unspecified
-    public is_qualified_with(self, qualifier: Name) -> bool
+/// Whether the qualifier is the qualifier of some name qualifying this name
+// TODO this method name doesn't make it clear that the package could be unspecified
+public is_qualified_by(name: Name, qualifier: Name) -> bool
+{
+    if (name.package =/= none
+        and qualifier.package =/= none
+        and full_name(name.package) =/= full_name(qualifier.package))
+        or |name.segments| <= |qualifier.segments|
+        { return false; }
+
+    var i: int = 0;
+    for let segment: string in qualifier.segments
     {
-        if (package =/= none
-            and qualifier.package =/= none
-            and package.full() =/= qualifier.package.full())
-            or |segments| <= |qualifier.segments|
-            { return false; }
+        if segment =/= name.segments[i]
+            { return false;}
 
-        var i: int = 0;
-        for let segment: string in qualifier.segments
-        {
-            if segment =/= segments[i]
-                { return false;}
-
-            i += 1;
-        }
-        return true;
+        i += 1;
     }
+    return true;
+}
 
-    /// Whether the qualifier is the immediate qualifier of this name
-    // TODO this method name doesn't make it clear that the package could be unspecified
-    public qualifier_is(self, qualifier: Name) -> bool
+/// Whether the qualifier is the immediate qualifier of this name
+// TODO this method name doesn't make it clear that the package could be unspecified
+public qualifier_is(name: Name, qualifier: Name) -> bool
+{
+    return |qualifier.segments|+1 == |name.segments|
+        and is_qualified_by(name, qualifier);
+}
+
+// TODO this name is a little confusing, it is like equal except for the package
+public names(name: Name, other: Name) -> bool
+{
+    if (name.package =/= none
+        and (other.package == none or full_name(name.package) =/= full_name(other.package)))
+        or |name.segments| =/= |other.segments|
     {
-        return |qualifier.segments|+1 == |segments|
-            and is_qualified_with(qualifier);
+        return false;
     }
 
-    // TODO this name is a little confusing, it is like equal except for the package
-    public names(self, other: Name) -> bool
+    var i: int = 0;
+    for let segment: string in other.segments
     {
-        if (package =/= none
-            and (other.package == none or package.full() =/= other.package.full()))
-            or |segments| =/= |other.segments|
-        {
-            return false;
-        }
+        if segment =/= name.segments[i]
+            { return false;}
 
-        var i: int = 0;
-        for let segment: string in other.segments
-        {
-            if segment =/= segments[i]
-                { return false;}
-
-            i += 1;
-        }
-        return true;
+        i += 1;
     }
+    return true;
+}
 
-    public is_package_qualified(self) -> bool
-    {
-        return package =/= none;
-    }
+public is_package_qualified(name: Name) -> bool
+{
+    return name.package =/= none;
+}
 
-    public remove_package(self) -> Name
-    {
-        if package == none
-            { return self; }
-        else
-            { return new Name(none, kind, segments, is_special); }
-    }
+public remove_package(name: Name) -> Name
+{
+    if name.package == none
+        { return name; }
+    else
+        { return new Name(none, name.kind, name.segments, name.is_special); }
 }

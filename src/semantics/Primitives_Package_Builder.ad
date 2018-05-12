@@ -73,8 +73,8 @@ public build_adamant_language_namespace_symbol(global_namespace: Name) -> Symbol
     let language_children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
     language_children.add(build_optional_type_symbol(language_namespace));
     let adamant_children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    adamant_children.add(new Symbol.identifier(language_namespace.unqualified(), language_children));
-    return new Symbol.identifier(adamant_namespace.unqualified(), adamant_children);
+    adamant_children.add(new Symbol.identifier(unqualified_name(language_namespace), language_children));
+    return new Symbol.identifier(unqualified_name(adamant_namespace), adamant_children);
 }
 
 public build_optional_type_symbol(language_namespace: Name) -> Symbol

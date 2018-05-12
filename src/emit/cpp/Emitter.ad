@@ -187,7 +187,7 @@ public class Emitter
 
     private convert_primitive_type_name(type: Type) -> string
     {
-        let name: string = type.name.unqualified();
+        let name: string = unqualified_name(type.name);
         assert(type.is_primitive, name);
         if name == "bool"
         {
@@ -215,7 +215,7 @@ public class Emitter
         }
         else
         {
-            NOT_IMPLEMENTED(type.name.unqualified());
+            NOT_IMPLEMENTED(unqualified_name(type.name));
         }
     }
 
@@ -271,7 +271,7 @@ public class Emitter
     {
         assert(type =/= none, "");
 
-        if type.is_primitive and type.name.unqualified() == "optional"
+        if type.is_primitive and unqualified_name(type.name) == "optional"
         {
             let optional_type: Type = type.type_parameters[0];
             if optional_type.is_value_type
@@ -661,7 +661,7 @@ public class Emitter
         let type: Type? = lhs.of_type;
         if type =/= none and type.is_value_type // TODO eventually, we shouldn't need to check if the type is null
             and not (type.is_primitive // optional reference types are still pointers
-                    and type.name.unqualified() == "optional"
+                    and unqualified_name(type.name) == "optional"
                     and not type.type_parameters[0].is_value_type)
             { builder.Write("."); }
         else

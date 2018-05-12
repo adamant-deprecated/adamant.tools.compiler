@@ -82,9 +82,9 @@ public class Symbol
         children: system.collections.List<Symbol>)
     {
         assert(declares_type =/= none, "");
-        assert(declarations =/= none, "name="+declares_type.name.unqualified());
-        assert(children =/= none, "name="+declares_type.name.unqualified());
-        self.name = declares_type.name.unqualified();
+        assert(declarations =/= none, "name="+unqualified_name(declares_type.name));
+        assert(children =/= none, "name="+unqualified_name(declares_type.name));
+        self.name = unqualified_name(declares_type.name);
         self.is_special_name = declares_type.name.is_special;
         self.of_type = none;
         self.declares_type = declares_type;

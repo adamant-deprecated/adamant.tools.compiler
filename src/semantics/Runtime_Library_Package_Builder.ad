@@ -80,7 +80,7 @@ public build_function_symbol(name: Name) -> Symbol
     let type: Type = new Type(FunctionType, name, false);
     let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    return new Symbol.of_type(name.unqualified(), type, declarations, children);
+    return new Symbol.of_type(unqualified_name(name), type, declarations, children);
 }
 
 public build_namespace_symbol(name: Name, symbols: system.collections.List<Symbol>) -> Symbol

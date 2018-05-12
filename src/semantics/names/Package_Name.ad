@@ -11,10 +11,10 @@ public class Package_Name
         assert(name.ByteLength() > 0, "");
         self.unqualified = name;
     }
+}
 
-    // TODO get
-    public full(self) -> string
-    {
-        return unqualified;
-    }
+// TODO getter
+public full_name(package_name: Package_Name) -> string
+{
+    return package_name.unqualified;
 }

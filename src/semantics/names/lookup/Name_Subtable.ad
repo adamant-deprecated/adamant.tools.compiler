@@ -39,12 +39,12 @@ public /*mut*/ class Name_Subtable
 
     public add(mut self, name: Name, type: Type) -> void
     {
-        assert(name.is_qualified_with(self.name), "\""+name.full()+"\" is not a child of \""+self.name.full()+"\"");
-        if name.qualifier_is(self.name)
+        assert(is_qualified_by(name, self.name), "\""+full_name(name)+"\" is not a child of \""+full_name(self.name)+"\"");
+        if qualifier_is(name, self.name)
         {
             if self.name.package == none and type =/= none and type.kind == NamespaceType
             {
-                subtables.add(new Name_Subtable(self, name.remove_package(), remove_type_package(type)));
+                subtables.add(new Name_Subtable(self, remove_package(name), remove_type_package(type)));
             }
             else
             {
@@ -55,7 +55,7 @@ public /*mut*/ class Name_Subtable
 
         for let subtable: mut Name_Subtable in subtables
         {
-            if name.is_qualified_with(subtable.name)
+            if is_qualified_by(name, subtable.name)
             {
                 subtable.add(name, type);
                 return;
@@ -63,7 +63,7 @@ public /*mut*/ class Name_Subtable
         }
 
         // TODO this assert is wrong
-        assert(|name.segments| == |self.name.segments| + 1, "Can't add \""+name.full()+"\" to \""+self.name.full()+"\"");
+        assert(|name.segments| == |self.name.segments| + 1, "Can't add \""+full_name(name)+"\" to \""+full_name(self.name)+"\"");
     }
 
     /// Get a child name
@@ -81,7 +81,7 @@ public /*mut*/ class Name_Subtable
     {
         for let subtable: mut Name_Subtable in subtables
         {
-            if subtable.name.unqualified() == name
+            if unqualified_name(subtable.name) == name
                 and subtable.name.is_special == is_special
                 { return subtable; }
         }
@@ -110,11 +110,11 @@ public /*mut*/ class Name_Subtable
 
     public get(self, name: Name) -> Name_Subtable?
     {
-        if name.names(self.name)
+        if names(name, self.name)
         {
             return self;
         }
-        else if not name.is_qualified_with(self.name)
+        else if not is_qualified_by(name, self.name)
         {
             return none;
         }
@@ -131,12 +131,12 @@ public /*mut*/ class Name_Subtable
 
     public bind_type(mut self, type: Type) -> void
     {
-        assert(type =/= none, self.name.full());
+        assert(type =/= none, full_name(self.name));
         if self.type =/= none
         {
             // TODO this prevents multiple variables with the same name and type in a method
-            assert(self.type.name.full() == type.name.full(),
-                self.name.full()+" currently `"+self.type.name.full()+"` trying to set to `"+type.name.full()+"`");
+            assert(full_name(self.type.name) == full_name(type.name),
+                full_name(self.name)+" currently `"+full_name(self.type.name)+"` trying to set to `"+full_name(type.name)+"`");
         }
         self.type = type;
     }
@@ -144,6 +144,6 @@ public /*mut*/ class Name_Subtable
     // TODO huge hack to recover mutability
     public as_mut(self) -> mut Name_Subtable
     {
-        return parent.find(name.unqualified(), name.is_special);
+        return parent.find(unqualified_name(name), name.is_special);
     }
 }

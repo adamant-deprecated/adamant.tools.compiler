@@ -82,9 +82,9 @@ public class Type
     public new generic(definition: Type, type_arguments: system.collections.List<Type>)
     {
         assert(definition =/= none, "");
-        assert(type_arguments =/= none, definition.name.full());
+        assert(type_arguments =/= none, full_name(definition.name));
         assert(|definition.type_parameters| == |type_arguments|,
-            definition.name.full()+" "+|definition.type_parameters|+" given "+|type_arguments|);
+            full_name(definition.name)+" "+|definition.type_parameters|+" given "+|type_arguments|);
         self.kind = definition.kind;
         self.name = definition.name;
         self.type_parameters = type_arguments;
@@ -108,7 +108,7 @@ public class Type
 
 public make_mutable_type(type: Type) -> Type
 {
-    assert(type.is_potentially_mutable, "self.name="+type.name.full());
+    assert(type.is_potentially_mutable, "self.name="+full_name(type.name));
     return new Type(type.kind, type.name, type.type_parameters, type.is_primitive, type.is_potentially_mutable, true);
 }
 
@@ -120,9 +120,9 @@ public make_immutable_type(type: Type) -> Type
 public remove_type_package(type: Type) -> Type
 {
     assert(type.kind == NamespaceType, "kind=" + type.kind);
-    if type.name.is_package_qualified()
+    if is_package_qualified(type.name)
         { return new Type(type.kind,
-                        type.name.remove_package(),
+                        remove_package(type.name),
                         type.type_parameters,
                         type.is_primitive,
                         type.is_potentially_mutable,
