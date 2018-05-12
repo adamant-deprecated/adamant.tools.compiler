@@ -4,7 +4,7 @@ public /*mut*/ class Name_Subtable
     public let parent: Name_Subtable?; // TODO this should point at the package binding scope?
     public let name: Name;
     public var type: Type;
-    private let subtables: mut system.collections.List<mut Name_Subtable>;
+    public let subtables: mut system.collections.List<mut Name_Subtable>;
 
     public new global_namespace(name_table: Name_Table)
     {
@@ -26,7 +26,7 @@ public /*mut*/ class Name_Subtable
         subtables = new system.collections.List<mut Name_Subtable>();
     }
 
-    private new(parent: Name_Subtable, name: Name, type: Type)
+    public new(parent: Name_Subtable, name: Name, type: Type)
     {
         // assert(parent.name.package == name.package);
         // assert parent name contains us
@@ -36,114 +36,114 @@ public /*mut*/ class Name_Subtable
         self.type = type;
         subtables = new system.collections.List<mut Name_Subtable>();
     }
+}
 
-    public add(mut self, name: Name, type: Type) -> void
+public add_subtable(scope: mut Name_Subtable, name: Name, type: Type) -> void
+{
+    assert(is_qualified_by(name, scope.name), "\""+full_name(name)+"\" is not a child of \""+full_name(scope.name)+"\"");
+    if qualifier_is(name, scope.name)
     {
-        assert(is_qualified_by(name, self.name), "\""+full_name(name)+"\" is not a child of \""+full_name(self.name)+"\"");
-        if qualifier_is(name, self.name)
+        if scope.name.package == none and type =/= none and type.kind == NamespaceType
         {
-            if self.name.package == none and type =/= none and type.kind == NamespaceType
-            {
-                subtables.add(new Name_Subtable(self, remove_package(name), remove_type_package(type)));
-            }
-            else
-            {
-                subtables.add(new Name_Subtable(self, name, type));
-            }
+            scope.subtables.add(new Name_Subtable(scope, remove_package(name), remove_type_package(type)));
+        }
+        else
+        {
+            scope.subtables.add(new Name_Subtable(scope, name, type));
+        }
+        return;
+    }
+
+    for let subtable: mut Name_Subtable in scope.subtables
+    {
+        if is_qualified_by(name, subtable.name)
+        {
+            add_subtable(subtable, name, type);
             return;
         }
-
-        for let subtable: mut Name_Subtable in subtables
-        {
-            if is_qualified_by(name, subtable.name)
-            {
-                subtable.add(name, type);
-                return;
-            }
-        }
-
-        // TODO this assert is wrong
-        assert(|name.segments| == |self.name.segments| + 1, "Can't add \""+full_name(name)+"\" to \""+full_name(self.name)+"\"");
     }
 
-    /// Get a child name
-    public find(self, name: string) -> mut Name_Subtable?
-    {
-        return find(name, false);
-    }
+    // TODO this assert is wrong
+    assert(|name.segments| == |scope.name.segments| + 1, "Can't add \""+full_name(name)+"\" to \""+full_name(scope.name)+"\"");
+}
 
-    public find_special(self, name: string) -> mut Name_Subtable?
-    {
-        return find(name, true);
-    }
+/// Get a child name
+public find(scope: Name_Subtable, name: string) -> mut Name_Subtable?
+{
+    return find(scope, name, false);
+}
 
-    private find(self, name: string, is_special: bool) -> mut Name_Subtable?
+public find_special(scope: Name_Subtable, name: string) -> mut Name_Subtable?
+{
+    return find(scope, name, true);
+}
+
+public find(scope: Name_Subtable, name: string, is_special: bool) -> mut Name_Subtable?
+{
+    for let subtable: mut Name_Subtable in scope.subtables
     {
-        for let subtable: mut Name_Subtable in subtables
-        {
-            if unqualified_name(subtable.name) == name
-                and subtable.name.is_special == is_special
-                { return subtable; }
-        }
+        if unqualified_name(subtable.name) == name
+            and subtable.name.is_special == is_special
+            { return subtable; }
+    }
+    return none;
+}
+
+public lookup(scope: Name_Subtable, name: string) -> mut Name_Subtable?
+{
+    return lookup(scope, name, false);
+}
+
+public lookup_special(scope: Name_Subtable, name: string) -> mut Name_Subtable?
+{
+    return lookup(scope, name, true);
+}
+
+public lookup(scope: Name_Subtable, name: string, is_special: bool) -> mut Name_Subtable?
+{
+    var subtable: mut Name_Subtable? = find(scope, name, is_special);
+    if subtable == none and scope.parent =/= none
+    {
+        subtable = lookup(scope.parent, name, is_special);
+    }
+    return subtable;
+}
+
+public get_scope(scope: Name_Subtable, name: Name) -> Name_Subtable?
+{
+    if names(name, scope.name)
+    {
+        return scope;
+    }
+    else if not is_qualified_by(name, scope.name)
+    {
         return none;
     }
 
-    public lookup(self, name: string) -> mut Name_Subtable?
+    for let subtable: Name_Subtable in scope.subtables
     {
-        return lookup(name, false);
+        let value: Name_Subtable? = get_scope(subtable, name);
+        if value =/= none
+            { return value; }
     }
 
-    public lookup_special(self, name: string) -> mut Name_Subtable?
+    return none;
+}
+
+public bind_type(scope: mut Name_Subtable, type: Type) -> void
+{
+    assert(type =/= none, full_name(scope.name));
+    if scope.type =/= none
     {
-        return lookup(name, true);
+        // TODO this prevents multiple variables with the same name and type in a method
+        assert(full_name(scope.type.name) == full_name(type.name),
+            full_name(scope.name)+" currently `"+full_name(scope.type.name)+"` trying to set to `"+full_name(type.name)+"`");
     }
+    scope.type = type;
+}
 
-    protected lookup(self, name: string, is_special: bool) -> mut Name_Subtable?
-    {
-        var subtable: mut Name_Subtable? = find(name, is_special);
-        if subtable == none and parent =/= none
-        {
-            subtable = parent.lookup(name, is_special);
-        }
-        return subtable;
-    }
-
-    public get(self, name: Name) -> Name_Subtable?
-    {
-        if names(name, self.name)
-        {
-            return self;
-        }
-        else if not is_qualified_by(name, self.name)
-        {
-            return none;
-        }
-
-        for let subtable: Name_Subtable in subtables
-        {
-            let value: Name_Subtable? = subtable.get(name);
-            if value =/= none
-                { return value; }
-        }
-
-        return none;
-    }
-
-    public bind_type(mut self, type: Type) -> void
-    {
-        assert(type =/= none, full_name(self.name));
-        if self.type =/= none
-        {
-            // TODO this prevents multiple variables with the same name and type in a method
-            assert(full_name(self.type.name) == full_name(type.name),
-                full_name(self.name)+" currently `"+full_name(self.type.name)+"` trying to set to `"+full_name(type.name)+"`");
-        }
-        self.type = type;
-    }
-
-    // TODO huge hack to recover mutability
-    public as_mut(self) -> mut Name_Subtable
-    {
-        return parent.find(unqualified_name(name), name.is_special);
-    }
+// TODO huge hack to recover mutability
+public as_mut(scope: Name_Subtable) -> mut Name_Subtable
+{
+    return find(scope.parent, unqualified_name(scope.name), scope.name.is_special);
 }

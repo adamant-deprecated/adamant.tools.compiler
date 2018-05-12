@@ -16,8 +16,8 @@ public table_contains_referenced_child_names() -> void
     let name_table_builder: Name_Table_Builder = new Name_Table_Builder();
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
     let name_table: Name_Table = name_table_builder.build(name, package_syntax, references);
-    let namespace: Name_Subtable = name_table.any_package.find("system");
-    assert(namespace.find("console") =/= none, "");
+    let namespace: Name_Subtable = find(name_table.any_package, "system");
+    assert(find(namespace, "console") =/= none, "");
 
     let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
     assert(name_table.get(system_namespace_name) =/= none, "");

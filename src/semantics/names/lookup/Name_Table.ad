@@ -39,12 +39,12 @@ public /*mut*/ class Name_Table
 
     public add(mut self, name: Name, type: Type) -> void
     {
-        any_package.add(name, type);
+        add_subtable(any_package, name, type);
         for let package: mut Name_Subtable in packages
         {
             if is_qualified_by(name, package.name)
             {
-                package.add(name, type);
+                add_subtable(package, name, type);
                 return;
             }
         }
@@ -56,14 +56,14 @@ public /*mut*/ class Name_Table
         // TODO this condition isn't intention revealing
         if name.package == none
         {
-            return any_package.get(name);
+            return get_scope(any_package, name);
         }
 
         for let package: Name_Subtable in packages
         {
             if is_qualified_by(name, package.name)
             {
-                return package.get(name);
+                return get_scope(package, name);
             }
         }
 
