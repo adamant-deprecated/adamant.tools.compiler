@@ -1,5 +1,5 @@
 /// Builds the binding scopes so that we can look up names
-public build_name_table(self,
+public build_name_table(
     package_name: Package_Name,
     package_syntax: Syntax_Node,
     references: system.collections.List<Package_Reference>)

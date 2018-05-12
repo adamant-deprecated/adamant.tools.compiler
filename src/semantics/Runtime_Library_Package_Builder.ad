@@ -1,4 +1,4 @@
-public build_runtime_library_package(self) -> Package
+public build_runtime_library_package() -> Package
 {
     // The runtime library package has the special name `$runtime` to distinguish
     // it from all normal packages since dollar is invalid in a package name.
@@ -19,7 +19,7 @@ public build_runtime_library_package(self) -> Package
     return new Package(name, references, compilation_units, package_symbol);
 }
 
-public build_runtime_library_symbols(self, package_name: Package_Name) -> mut system.collections.List<Symbol>
+public build_runtime_library_symbols(package_name: Package_Name) -> mut system.collections.List<Symbol>
 {
     let global_namespace: Name = new Name.global_namespace(package_name);
     let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();

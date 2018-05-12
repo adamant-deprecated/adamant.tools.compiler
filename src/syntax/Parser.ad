@@ -1,4 +1,4 @@
-public parse_package(self, sources: system.collections.List<Source_Text>) -> Syntax_Node
+public parse_package(sources: system.collections.List<Source_Text>) -> Syntax_Node
 {
     let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
     for let source: Source_Text in sources
