@@ -1,9 +1,9 @@
 public class Source_File_Builder
 {
-    private let code: mut system.text.String_Builder;
-    private let indent: mut system.text.String_Builder; // TODO expose length as IndentDepth
-    private var firstElement: bool; // TODO expose public getter
-    private var afterBlock: bool; // TODO expose public getter
+    public let code: mut system.text.String_Builder;
+    public let indent: mut system.text.String_Builder; // TODO expose length as IndentDepth
+    public var firstElement: bool; // TODO expose public getter
+    public var afterBlock: bool; // TODO expose public getter
 
     public new()
     {
@@ -12,98 +12,99 @@ public class Source_File_Builder
         firstElement = true;
         afterBlock = true;
     }
-    public Error(mut self, message: string) -> void
-    {
-        code.Append(format_error(message));
-    }
+}
 
-    public BeginLine(mut self, value: string) -> void
-    {
-        code.Append(indent);
-        code.Append(value);
-        firstElement = afterBlock = false;
-    }
+public error(file: mut Source_File_Builder, message: string) -> void
+{
+    file.code.Append(format_error(message));
+}
 
-    public Write(mut self, value: string) -> void
-    {
-        code.Append(value);
-        firstElement = afterBlock = false;
-    }
+public begin_line(file: mut Source_File_Builder, value: string) -> void
+{
+    file.code.Append(file.indent);
+    file.code.Append(value);
+    file.firstElement = file.afterBlock = false;
+}
 
-    public EndLine(mut self, value: string) -> void
-    {
-        code.Append(value);
-        code.AppendLine(); // TODO need to think about the handling of newlines
-        firstElement = afterBlock = false;
-    }
+public write(file: mut Source_File_Builder, value: string) -> void
+{
+    file.code.Append(value);
+    file.firstElement = file.afterBlock = false;
+}
 
-    public WriteLine(mut self, value: string) -> void
-    {
-        code.Append(indent);
-        code.Append(value);
-        code.AppendLine();
-        firstElement = afterBlock = false;
-    }
+public end_line(file: mut Source_File_Builder, value: string) -> void
+{
+    file.code.Append(value);
+    file.code.AppendLine(); // TODO need to think about the handling of newlines
+    file.firstElement = file.afterBlock = false;
+}
 
-    public BlankLine(mut self) -> void
-    {
-        code.AppendLine();
-        firstElement = true;
-        afterBlock = false;
-    }
+public write_line(file: mut Source_File_Builder, value: string) -> void
+{
+    file.code.Append(file.indent);
+    file.code.Append(value);
+    file.code.AppendLine();
+    file.firstElement = file.afterBlock = false;
+}
 
-    public ElementSeparatorLine(mut self) -> void
-    {
-        if not firstElement
-        {
-            code.AppendLine();
-            firstElement = true;
-            afterBlock = false;
-        }
-    }
+public blank_line(file: mut Source_File_Builder) -> void
+{
+    file.code.AppendLine();
+    file.firstElement = true;
+    file.afterBlock = false;
+}
 
-    public StatementSeparatorLine(mut self) -> void
+public element_separator_line(file: mut Source_File_Builder) -> void
+{
+    if not file.firstElement
     {
-        if afterBlock
-        {
-            code.AppendLine();
-            firstElement = true;
-            afterBlock = false;
-        }
+        file.code.AppendLine();
+        file.firstElement = true;
+        file.afterBlock = false;
     }
+}
 
-    // @ensures IndentDepth == old(IndentDepth)+1
-    public BeginBlock(mut self) -> void
+public statement_separator_line(file: mut Source_File_Builder) -> void
+{
+    if file.afterBlock
     {
-        WriteLine("{");
-        indent.Append("\t");
-        firstElement = afterBlock = false;
+        file.code.AppendLine();
+        file.firstElement = true;
+        file.afterBlock = false;
     }
+}
 
-    // @requires IndentDepth > 0
-    // @ensures IndentDepth == old(IndentDepth)-1
-    public EndBlock(mut self) -> void
-    {
-        indent.Remove(0, 1);
-        WriteLine("}");
-        afterBlock = true;
-    }
+// @ensures IndentDepth == old(IndentDepth)+1
+public begin_block(file: mut Source_File_Builder) -> void
+{
+    write_line(file, "{");
+    file.indent.Append("\t");
+    file.firstElement = file.afterBlock = false;
+}
 
-    // @requires IndentDepth > 0
-    // @ensures IndentDepth == old(IndentDepth)-1
-    public EndBlockWithSemicolon(mut self) -> void
-    {
-        indent.Remove(0, 1);
-        WriteLine("};");
-    }
+// @requires IndentDepth > 0
+// @ensures IndentDepth == old(IndentDepth)-1
+public end_block(file: mut Source_File_Builder) -> void
+{
+    file.indent.Remove(0, 1);
+    write_line(file, "}");
+    file.afterBlock = true;
+}
 
-    public byte_length(self) -> int
-    {
-        return code.byte_length();
-    }
+// @requires IndentDepth > 0
+// @ensures IndentDepth == old(IndentDepth)-1
+public end_block_with_semicolon(file: mut Source_File_Builder) -> void
+{
+    file.indent.Remove(0, 1);
+    write_line(file, "};");
+}
 
-    public ToString(mut self) -> string
-    {
-        return code.ToString();
-    }
+public byte_length(file: Source_File_Builder) -> int
+{
+    return file.code.byte_length();
+}
+
+public to_string(file: mut Source_File_Builder) -> string
+{
+    return file.code.ToString();
 }
