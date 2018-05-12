@@ -142,7 +142,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
     }
 
     var emitter: mut Emitter = new Emitter(package, resources);
-    let translated: string = emitter.Emit();
+    let translated: string = emit(emitter);
 
     // Write output
     if verbose
