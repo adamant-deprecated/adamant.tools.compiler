@@ -23,7 +23,6 @@ class t_Symbol;
 class t_Type;
 class t_Name_Subtable;
 class t_Name_Table;
-class t_Name_Table_Builder;
 
 // Function Declarations
 auto compile_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Package const *_Nonnull;
@@ -48,6 +47,19 @@ auto Text_Position_retains_given_offeset_line_and_column_() -> void;
 inline t_Text_Span *_Nonnull new_t_Text_Span(i32 const start_, i32 const length_);
 auto format_error_(str const message_) -> str;
 inline t_Source_File_Builder *_Nonnull new_t_Source_File_Builder();
+auto error_(t_Source_File_Builder *_Nonnull const file_, str const message_) -> void;
+auto begin_line_(t_Source_File_Builder *_Nonnull const file_, str const value_) -> void;
+auto write_(t_Source_File_Builder *_Nonnull const file_, str const value_) -> void;
+auto end_line_(t_Source_File_Builder *_Nonnull const file_, str const value_) -> void;
+auto write_line_(t_Source_File_Builder *_Nonnull const file_, str const value_) -> void;
+auto blank_line_(t_Source_File_Builder *_Nonnull const file_) -> void;
+auto element_separator_line_(t_Source_File_Builder *_Nonnull const file_) -> void;
+auto statement_separator_line_(t_Source_File_Builder *_Nonnull const file_) -> void;
+auto begin_block_(t_Source_File_Builder *_Nonnull const file_) -> void;
+auto end_block_(t_Source_File_Builder *_Nonnull const file_) -> void;
+auto end_block_with_semicolon_(t_Source_File_Builder *_Nonnull const file_) -> void;
+auto byte_length_(t_Source_File_Builder const *_Nonnull const file_) -> i32;
+auto to_string_(t_Source_File_Builder *_Nonnull const file_) -> str;
 inline t_Compilation_Unit *_Nonnull new_t_Compilation_Unit(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_);
 auto collect_diagnostics_(t_Compilation_Unit const *_Nonnull const compilation_unit_, t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull const diagnostics_) -> void;
 inline t_Package *_Nonnull new_t_Package(t_Package_Name const *_Nonnull const name_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_, t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_, t_Symbol const *_Nonnull const symbol_);
@@ -160,16 +172,47 @@ auto is_identifier_char_(cp const c_) -> bit;
 auto is_number_char_(cp const c_) -> bit;
 inline t_Diagnostic *_Nonnull new_t_Diagnostic(i32 const level_, i32 const phase_, t_Source_Text const *_Nonnull const source_, t_Text_Span const *_Nonnull const span_, str const message_);
 inline t_Emitter *_Nonnull new_t_Emitter(t_Package const *_Nonnull const package_, t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_);
+auto emit_(t_Emitter *_Nonnull const emitter_) -> str;
+auto mangle_name_(t_Name const *_Nonnull const name_) -> str;
+auto contains_multi_underscore_runs_(str const value_) -> bit;
+auto convert_primitive_type_name_(t_Type const *_Nonnull const type_) -> str;
+auto convert_type_name_(t_Semantic_Node const *_Nonnull const type_node_) -> t_system__text__String_Builder *_Nonnull;
+auto convert_type_name_(t_Type const *_Nonnull const type_) -> t_system__text__String_Builder *_Nonnull;
+auto convert_reference_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const nullable_) -> str;
+auto convert_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const optional_) -> str;
+auto convert_type_(bit const mutable_binding_, t_Semantic_Node const *_Nonnull const type_node_) -> str;
+auto convert_parameter_list_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const parameters_, bit const is_main_function_) -> str;
+auto convert_parameter_list_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const parameters_) -> str;
+auto convert_expression_(t_Semantic_Node const *_Nonnull const syntax_, t_Source_File_Builder *_Nonnull const builder_) -> void;
+auto convert_member_access_(t_Semantic_Node const *_Nonnull const lhs_, t_Source_File_Builder *_Nonnull const builder_) -> void;
+auto emit_statement_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const statement_) -> void;
+auto emit_method_body_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const block_, bit const is_associated_function_) -> void;
+auto emit_constructor_body_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const block_, str const self_type_, bit const is_value_type_) -> void;
+auto emit_access_modifer_(t_Emitter *_Nonnull const emitter_, i32 const current_access_level_, i32 const access_modifer_) -> i32;
+auto emit_member_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const member_, str const class_name_, bit const is_value_type_, i32 const current_access_level_) -> i32;
+auto emit_default_constructor_(t_Emitter *_Nonnull const emitter_, str const type_name_, bit const is_value_type_, i32 const current_access_level_) -> void;
+auto emit_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const declaration_) -> void;
+auto emit_compilation_unit_(t_Emitter *_Nonnull const emitter_, t_Compilation_Unit const *_Nonnull const unit_) -> void;
+auto emit_preamble_(t_Emitter *_Nonnull const emitter_) -> void;
+auto emit_entry_point_adapter_(t_Emitter *_Nonnull const emitter_) -> void;
 inline t_Name *_Nonnull new_t_Name__global_namespace();
 inline t_Name *_Nonnull new_t_Name__global_namespace(t_Package_Name const *_Nonnull const package_);
 inline t_Name *_Nonnull new_t_Name(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_);
 inline t_Name *_Nonnull new_t_Name(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_, bit const is_special_);
 inline t_Name *_Nonnull new_t_Name__special(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_);
 inline t_Name *_Nonnull new_t_Name(t_Package_Name const *_Nullable const package_, i32 const kind_, t_system__collections__List<str> const *_Nonnull const segments_, bit const is_special_);
+auto unqualified_name_(t_Name const *_Nonnull const name_) -> str;
+auto full_name_(t_Name const *_Nonnull const name_) -> str;
+auto is_qualified_by_(t_Name const *_Nonnull const name_, t_Name const *_Nonnull const qualifier_) -> bit;
+auto qualifier_is_(t_Name const *_Nonnull const name_, t_Name const *_Nonnull const qualifier_) -> bit;
+auto names_(t_Name const *_Nonnull const name_, t_Name const *_Nonnull const other_) -> bit;
+auto is_package_qualified_(t_Name const *_Nonnull const name_) -> bit;
+auto remove_package_(t_Name const *_Nonnull const name_) -> t_Name const *_Nonnull;
 auto unit_test_Name_() -> void;
 auto name_with_unspecified_package_names_name_with_package_() -> void;
 auto name_with_unspecified_package_names_itself_() -> void;
 inline t_Package_Name *_Nonnull new_t_Package_Name(str const name_);
+auto full_name_(t_Package_Name const *_Nonnull const package_name_) -> str;
 inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_);
 inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_);
 inline t_Symbol *_Nonnull new_t_Symbol__identifier(str const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_);
@@ -194,11 +237,31 @@ auto remove_type_package_(t_Type const *_Nonnull const type_) -> t_Type const *_
 inline t_Name_Subtable *_Nonnull new_t_Name_Subtable__global_namespace(t_Name_Table const *_Nonnull const name_table_);
 inline t_Name_Subtable *_Nonnull new_t_Name_Subtable__global_namespace(t_Name_Table const *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_);
 inline t_Name_Subtable *_Nonnull new_t_Name_Subtable(t_Name_Subtable const *_Nonnull const parent_, t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_);
+auto add_subtable_(t_Name_Subtable *_Nonnull const scope_, t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> void;
+auto find_(t_Name_Subtable const *_Nonnull const scope_, str const name_) -> t_Name_Subtable *_Nullable;
+auto find_special_(t_Name_Subtable const *_Nonnull const scope_, str const name_) -> t_Name_Subtable *_Nullable;
+auto find_(t_Name_Subtable const *_Nonnull const scope_, str const name_, bit const is_special_) -> t_Name_Subtable *_Nullable;
+auto lookup_(t_Name_Subtable const *_Nonnull const scope_, str const name_) -> t_Name_Subtable *_Nullable;
+auto lookup_special_(t_Name_Subtable const *_Nonnull const scope_, str const name_) -> t_Name_Subtable *_Nullable;
+auto lookup_(t_Name_Subtable const *_Nonnull const scope_, str const name_, bit const is_special_) -> t_Name_Subtable *_Nullable;
+auto get_scope_(t_Name_Subtable const *_Nonnull const scope_, t_Name const *_Nonnull const name_) -> t_Name_Subtable const *_Nullable;
+auto bind_type_(t_Name_Subtable *_Nonnull const scope_, t_Type const *_Nonnull const type_) -> void;
+auto as_mut_(t_Name_Subtable const *_Nonnull const scope_) -> t_Name_Subtable *_Nonnull;
 auto unit_test_Name_Subtable_() -> void;
 auto global_namespace_contains_added_name_() -> void;
 auto namespace_contains_added_name_() -> void;
 inline t_Name_Table *_Nonnull new_t_Name_Table();
-inline t_Name_Table_Builder *_Nonnull new_t_Name_Table_Builder();
+auto add_package_(t_Name_Table *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_) -> t_Name const *_Nonnull;
+auto add_name_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> t_Name const *_Nonnull;
+auto add_name_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> void;
+auto get_name_(t_Name_Table const *_Nonnull const name_table_, t_Name const *_Nonnull const name_) -> t_Name_Subtable const *_Nullable;
+auto build_name_table_(t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) -> t_Name_Table const *_Nonnull;
+auto add_referenced_(t_Name_Table *_Nonnull const name_table_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) -> void;
+auto add_symbol_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> void;
+auto add_package_(t_Name_Table *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_) -> void;
+auto add_compilation_unit_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const global_namespace_, t_Syntax_Node const *_Nonnull const compilation_unit_) -> void;
+auto add_syntax_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Syntax_Node const *_Nonnull const syntax_) -> void;
+auto add_function_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const name_, t_Syntax_Node const *_Nonnull const function_) -> void;
 auto unit_test_Name_Table_Builder_() -> void;
 auto table_contains_referenced_child_names_() -> void;
 auto can_get_root_namespace_from_name_() -> void;
@@ -256,26 +319,11 @@ public:
 class t_Source_File_Builder
 {
 public:
-private:
 	t_system__text__String_Builder *_Nonnull code_;
 	t_system__text__String_Builder *_Nonnull indent_;
 	bit firstElement_;
 	bit afterBlock_;
-public:
 	auto construct() -> t_Source_File_Builder *_Nonnull;
-	auto Error_(str const message_) -> void;
-	auto BeginLine_(str const value_) -> void;
-	auto Write_(str const value_) -> void;
-	auto EndLine_(str const value_) -> void;
-	auto WriteLine_(str const value_) -> void;
-	auto BlankLine_() -> void;
-	auto ElementSeparatorLine_() -> void;
-	auto StatementSeparatorLine_() -> void;
-	auto BeginBlock_() -> void;
-	auto EndBlock_() -> void;
-	auto EndBlockWithSemicolon_() -> void;
-	auto byte_length_() const -> i32;
-	auto ToString_() -> str;
 };
 
 class t_Compilation_Unit
@@ -391,7 +439,6 @@ public:
 class t_Emitter
 {
 public:
-private:
 	t_Package const *_Nonnull package_;
 	t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull resources_;
 	t_Source_File_Builder *_Nonnull type_declarations_;
@@ -403,32 +450,7 @@ private:
 	str main_function_return_type_;
 	bit main_function_accepts_console_;
 	bit main_function_accepts_args_;
-public:
 	auto construct(t_Package const *_Nonnull const package_, t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const resources_) -> t_Emitter *_Nonnull;
-	auto Emit_() -> str;
-private:
-	static auto mangle_name_(t_Name const *_Nonnull const name_) -> str;
-	static auto contains_multi_underscore_runs_(str const value_) -> bit;
-	static auto convert_primitive_type_name_(t_Type const *_Nonnull const type_) -> str;
-	static auto convert_type_name_(t_Semantic_Node const *_Nonnull const type_node_) -> t_system__text__String_Builder *_Nonnull;
-	static auto convert_type_name_(t_Type const *_Nonnull const type_) -> t_system__text__String_Builder *_Nonnull;
-	static auto convert_reference_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const nullable_) -> str;
-	static auto convert_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const optional_) -> str;
-	static auto convert_type_(bit const mutable_binding_, t_Semantic_Node const *_Nonnull const type_node_) -> str;
-	auto convert_parameter_list_(t_Semantic_Node const *_Nonnull const parameters_, bit const is_main_function_) -> str;
-	auto convert_parameter_list_(t_Semantic_Node const *_Nonnull const parameters_) -> str;
-	static auto convert_expression_(t_Semantic_Node const *_Nonnull const syntax_, t_Source_File_Builder *_Nonnull const builder_) -> void;
-	static auto convert_member_access_(t_Semantic_Node const *_Nonnull const lhs_, t_Source_File_Builder *_Nonnull const builder_) -> void;
-	auto emit_statement_(t_Semantic_Node const *_Nonnull const statement_) -> void;
-	auto emit_method_body_(t_Semantic_Node const *_Nonnull const block_, bit const is_associated_function_) -> void;
-	auto emit_constructor_body_(t_Semantic_Node const *_Nonnull const block_, str const self_type_, bit const is_value_type_) -> void;
-	auto emit_access_modifer_(i32 const current_access_level_, i32 const access_modifer_) -> i32;
-	auto emit_member_declaration_(t_Semantic_Node const *_Nonnull const member_, str const class_name_, bit const is_value_type_, i32 const current_access_level_) -> i32;
-	auto emit_default_constructor_(str const type_name_, bit const is_value_type_, i32 const current_access_level_) -> void;
-	auto emit_declaration_(t_Semantic_Node const *_Nonnull const declaration_) -> void;
-	auto emit_compilation_unit_(t_Compilation_Unit const *_Nonnull const unit_) -> void;
-	auto emit_preamble_() -> void;
-	auto emit_entry_point_adapter_() -> void;
 };
 
 class t_Name
@@ -444,13 +466,6 @@ public:
 	auto construct(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_, bit const is_special_) -> t_Name *_Nonnull;
 	auto construct_special(t_Name const *_Nonnull const qualifier_, i32 const kind_, str const name_) -> t_Name *_Nonnull;
 	auto construct(t_Package_Name const *_Nullable const package_, i32 const kind_, t_system__collections__List<str> const *_Nonnull const segments_, bit const is_special_) -> t_Name *_Nonnull;
-	auto unqualified_() const -> str;
-	auto full_() const -> str;
-	auto is_qualified_with_(t_Name const *_Nonnull const qualifier_) const -> bit;
-	auto qualifier_is_(t_Name const *_Nonnull const qualifier_) const -> bit;
-	auto names_(t_Name const *_Nonnull const other_) const -> bit;
-	auto is_package_qualified_() const -> bit;
-	auto remove_package_() const -> t_Name const *_Nonnull;
 };
 
 class t_Package_Name
@@ -458,7 +473,6 @@ class t_Package_Name
 public:
 	str unqualified_;
 	auto construct(str const name_) -> t_Package_Name *_Nonnull;
-	auto full_() const -> str;
 };
 
 class t_Symbol
@@ -507,55 +521,18 @@ public:
 	t_Name_Subtable const *_Nullable parent_;
 	t_Name const *_Nonnull name_;
 	t_Type const *_Nonnull type_;
-private:
 	t_system__collections__List<t_Name_Subtable *_Nonnull> *_Nonnull subtables_;
-public:
 	auto construct_global_namespace(t_Name_Table const *_Nonnull const name_table_) -> t_Name_Subtable *_Nonnull;
 	auto construct_global_namespace(t_Name_Table const *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_) -> t_Name_Subtable *_Nonnull;
 	auto construct(t_Name_Subtable const *_Nonnull const parent_, t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> t_Name_Subtable *_Nonnull;
-	auto add_(t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> void;
-	auto find_(str const name_) const -> t_Name_Subtable *_Nullable;
-	auto find_special_(str const name_) const -> t_Name_Subtable *_Nullable;
-private:
-	auto find_(str const name_, bit const is_special_) const -> t_Name_Subtable *_Nullable;
-public:
-	auto lookup_(str const name_) const -> t_Name_Subtable *_Nullable;
-	auto lookup_special_(str const name_) const -> t_Name_Subtable *_Nullable;
-public:
-	auto lookup_(str const name_, bit const is_special_) const -> t_Name_Subtable *_Nullable;
-public:
-	auto get_(t_Name const *_Nonnull const name_) const -> t_Name_Subtable const *_Nullable;
-	auto bind_type_(t_Type const *_Nonnull const type_) -> void;
-	auto as_mut_() const -> t_Name_Subtable *_Nonnull;
 };
 
 class t_Name_Table
 {
 public:
 	t_Name_Subtable *_Nonnull any_package_;
-private:
 	t_system__collections__List<t_Name_Subtable *_Nonnull> *_Nonnull packages_;
-public:
 	auto construct() -> t_Name_Table *_Nonnull;
-	auto add_(t_Package_Name const *_Nonnull const package_name_) -> t_Name const *_Nonnull;
-	auto add_(t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> t_Name const *_Nonnull;
-	auto add_(t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> void;
-	auto get_(t_Name const *_Nonnull const name_) const -> t_Name_Subtable const *_Nullable;
-};
-
-class t_Name_Table_Builder
-{
-public:
-	auto build_(t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) const -> t_Name_Table const *_Nonnull;
-private:
-	static auto add_referenced_(t_Name_Table *_Nonnull const name_table_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) -> void;
-	static auto add_symbol_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> void;
-	static auto add_package_(t_Name_Table *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_) -> void;
-	static auto add_compilation_unit_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const global_namespace_, t_Syntax_Node const *_Nonnull const compilation_unit_) -> void;
-	static auto add_syntax_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Syntax_Node const *_Nonnull const syntax_) -> void;
-	static auto add_function_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const name_, t_Syntax_Node const *_Nonnull const function_) -> void;
-public:
-	auto construct() -> t_Name_Table_Builder *_Nonnull { return this; }
 };
 
 // Global Definitions
@@ -861,7 +838,7 @@ auto main_(t_system__console__Console *_Nonnull const console_, t_system__consol
 	}
 
 	t_Emitter *_Nonnull emitter_ = new_t_Emitter(package_, resources_);
-	str const translated_ = emitter_->Emit_();
+	str const translated_ = emit_(emitter_);
 	if (cond(verbose_))
 	{
 		console_->Write_(str("Output: "));
@@ -1157,107 +1134,94 @@ inline t_Source_File_Builder *_Nonnull new_t_Source_File_Builder()
 	return (new t_Source_File_Builder())->construct();
 }
 
-auto ::t_Source_File_Builder::Error_(str const message_) -> void
+auto error_(t_Source_File_Builder *_Nonnull const file_, str const message_) -> void
 {
-	auto self = this;
-	code_->Append_(format_error_(message_));
+	file_->code_->Append_(format_error_(message_));
 }
 
-auto ::t_Source_File_Builder::BeginLine_(str const value_) -> void
+auto begin_line_(t_Source_File_Builder *_Nonnull const file_, str const value_) -> void
 {
-	auto self = this;
-	code_->Append_(indent_);
-	code_->Append_(value_);
-	firstElement_ = afterBlock_ = bit_false;
+	file_->code_->Append_(file_->indent_);
+	file_->code_->Append_(value_);
+	file_->firstElement_ = file_->afterBlock_ = bit_false;
 }
 
-auto ::t_Source_File_Builder::Write_(str const value_) -> void
+auto write_(t_Source_File_Builder *_Nonnull const file_, str const value_) -> void
 {
-	auto self = this;
-	code_->Append_(value_);
-	firstElement_ = afterBlock_ = bit_false;
+	file_->code_->Append_(value_);
+	file_->firstElement_ = file_->afterBlock_ = bit_false;
 }
 
-auto ::t_Source_File_Builder::EndLine_(str const value_) -> void
+auto end_line_(t_Source_File_Builder *_Nonnull const file_, str const value_) -> void
 {
-	auto self = this;
-	code_->Append_(value_);
-	code_->AppendLine_();
-	firstElement_ = afterBlock_ = bit_false;
+	file_->code_->Append_(value_);
+	file_->code_->AppendLine_();
+	file_->firstElement_ = file_->afterBlock_ = bit_false;
 }
 
-auto ::t_Source_File_Builder::WriteLine_(str const value_) -> void
+auto write_line_(t_Source_File_Builder *_Nonnull const file_, str const value_) -> void
 {
-	auto self = this;
-	code_->Append_(indent_);
-	code_->Append_(value_);
-	code_->AppendLine_();
-	firstElement_ = afterBlock_ = bit_false;
+	file_->code_->Append_(file_->indent_);
+	file_->code_->Append_(value_);
+	file_->code_->AppendLine_();
+	file_->firstElement_ = file_->afterBlock_ = bit_false;
 }
 
-auto ::t_Source_File_Builder::BlankLine_() -> void
+auto blank_line_(t_Source_File_Builder *_Nonnull const file_) -> void
 {
-	auto self = this;
-	code_->AppendLine_();
-	firstElement_ = bit_true;
-	afterBlock_ = bit_false;
+	file_->code_->AppendLine_();
+	file_->firstElement_ = bit_true;
+	file_->afterBlock_ = bit_false;
 }
 
-auto ::t_Source_File_Builder::ElementSeparatorLine_() -> void
+auto element_separator_line_(t_Source_File_Builder *_Nonnull const file_) -> void
 {
-	auto self = this;
-	if (cond(bit_not(firstElement_)))
+	if (cond(bit_not(file_->firstElement_)))
 	{
-		code_->AppendLine_();
-		firstElement_ = bit_true;
-		afterBlock_ = bit_false;
+		file_->code_->AppendLine_();
+		file_->firstElement_ = bit_true;
+		file_->afterBlock_ = bit_false;
 	}
 }
 
-auto ::t_Source_File_Builder::StatementSeparatorLine_() -> void
+auto statement_separator_line_(t_Source_File_Builder *_Nonnull const file_) -> void
 {
-	auto self = this;
-	if (cond(afterBlock_))
+	if (cond(file_->afterBlock_))
 	{
-		code_->AppendLine_();
-		firstElement_ = bit_true;
-		afterBlock_ = bit_false;
+		file_->code_->AppendLine_();
+		file_->firstElement_ = bit_true;
+		file_->afterBlock_ = bit_false;
 	}
 }
 
-auto ::t_Source_File_Builder::BeginBlock_() -> void
+auto begin_block_(t_Source_File_Builder *_Nonnull const file_) -> void
 {
-	auto self = this;
-	WriteLine_(str("{"));
-	indent_->Append_(str("\t"));
-	firstElement_ = afterBlock_ = bit_false;
+	write_line_(file_, str("{"));
+	file_->indent_->Append_(str("\t"));
+	file_->firstElement_ = file_->afterBlock_ = bit_false;
 }
 
-auto ::t_Source_File_Builder::EndBlock_() -> void
+auto end_block_(t_Source_File_Builder *_Nonnull const file_) -> void
 {
-	auto self = this;
-	indent_->Remove_(i32(0), i32(1));
-	WriteLine_(str("}"));
-	afterBlock_ = bit_true;
+	file_->indent_->Remove_(i32(0), i32(1));
+	write_line_(file_, str("}"));
+	file_->afterBlock_ = bit_true;
 }
 
-auto ::t_Source_File_Builder::EndBlockWithSemicolon_() -> void
+auto end_block_with_semicolon_(t_Source_File_Builder *_Nonnull const file_) -> void
 {
-	auto self = this;
-	indent_->Remove_(i32(0), i32(1));
-	WriteLine_(str("};"));
+	file_->indent_->Remove_(i32(0), i32(1));
+	write_line_(file_, str("};"));
 }
 
-auto ::t_Source_File_Builder::byte_length_() const -> i32
+auto byte_length_(t_Source_File_Builder const *_Nonnull const file_) -> i32
 {
-	auto self = this;
-	return code_->byte_length_();
+	return file_->code_->byte_length_();
 }
 
-auto ::t_Source_File_Builder::ToString_() -> str
+auto to_string_(t_Source_File_Builder *_Nonnull const file_) -> str
 {
-	auto self = this;
-	return code_->ToString_();
+	return file_->code_->ToString_();
 }
 
 auto t_Compilation_Unit::construct(t_Syntax_Node const *_Nonnull const syntax_, t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_) -> t_Compilation_Unit *_Nonnull
@@ -1388,8 +1352,8 @@ auto build_adamant_language_namespace_symbol_(t_Name const *_Nonnull const globa
 	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const language_children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
 	language_children_->add_(build_optional_type_symbol_(language_namespace_));
 	t_system__collections__List<t_Symbol const *_Nonnull> *_Nonnull const adamant_children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
-	adamant_children_->add_(new_t_Symbol__identifier(language_namespace_->unqualified_(), language_children_));
-	return new_t_Symbol__identifier(adamant_namespace_->unqualified_(), adamant_children_);
+	adamant_children_->add_(new_t_Symbol__identifier(unqualified_name_(language_namespace_), language_children_));
+	return new_t_Symbol__identifier(unqualified_name_(adamant_namespace_), adamant_children_);
 }
 
 auto build_optional_type_symbol_(t_Name const *_Nonnull const language_namespace_) -> t_Symbol const *_Nonnull
@@ -1527,7 +1491,7 @@ auto build_function_symbol_(t_Name const *_Nonnull const name_) -> t_Symbol cons
 	t_Type const *_Nonnull const type_ = new_t_Type(FunctionType_, name_, bit_false);
 	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull const declarations_ = new_t_system__collections__List<t_Semantic_Node const *_Nonnull>();
 	t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const children_ = new_t_system__collections__List<t_Symbol const *_Nonnull>();
-	return new_t_Symbol__of_type(name_->unqualified_(), type_, declarations_, children_);
+	return new_t_Symbol__of_type(unqualified_name_(name_), type_, declarations_, children_);
 }
 
 auto build_namespace_symbol_(t_Name const *_Nonnull const name_, t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull const symbols_) -> t_Symbol const *_Nonnull
@@ -1621,8 +1585,7 @@ auto analyze_semantics_(t_Syntax_Node const *_Nonnull const package_syntax_) -> 
 	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(primitives_package_));
 	references_->add_(new_t_Package_Reference(runtime_package_));
-	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
-	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
+	t_Name_Table const *_Nonnull const name_table_ = build_name_table_(name_, package_syntax_, references_);
 	t_Semantic_Tree_Builder const *_Nonnull const semantic_tree_builder_ = new_t_Semantic_Tree_Builder();
 	t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull const compilation_units_ = build_compilation_units_(semantic_tree_builder_, package_syntax_, name_table_);
 	t_Symbol const *_Nonnull const package_symbol_ = build_symbols_(name_, compilation_units_);
@@ -1905,7 +1868,7 @@ inline t_Semantic_Tree_Builder *_Nonnull new_t_Semantic_Tree_Builder()
 auto build_compilation_units_(t_Semantic_Tree_Builder const *_Nonnull const builder_, t_Syntax_Node const *_Nonnull const package_syntax_, t_Name_Table const *_Nonnull const name_table_) -> t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull
 {
 	assert_(equal_op(package_syntax_->kind_, PackageNode_), str("package_syntax.kind=").op_add(package_syntax_->kind_));
-	assert_(not_equal_op(name_table_->any_package_->lookup_special_(str("string")), none), str("name_table.any_package.name=").op_add(name_table_->any_package_->name_->full_()));
+	assert_(not_equal_op(lookup_special_(name_table_->any_package_, str("string")), none), str("name_table.any_package.name=").op_add(full_name_(name_table_->any_package_->name_)));
 	t_system__collections__List<t_Compilation_Unit const *_Nonnull> *_Nonnull const compilation_units_ = new_t_system__collections__List<t_Compilation_Unit const *_Nonnull>();
 	for (t_Syntax_Node const *_Nonnull const compilation_unit_syntax_ : *(package_syntax_->children_))
 	{
@@ -1936,14 +1899,14 @@ auto build_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull const builder_
 		children_->add_(build_semantic_node_(builder_, access_modifier_(syntax_), name_table_, scope_));
 		t_Syntax_Node const *_Nonnull const function_name_ = first_child_syntax_(syntax_, Identifier_);
 		children_->add_(build_semantic_node_(builder_, function_name_, name_table_, scope_));
-		t_Name_Subtable *_Nonnull const function_scope_ = scope_->find_(get_text_(function_name_));
+		t_Name_Subtable *_Nonnull const function_scope_ = find_(scope_, get_text_(function_name_));
 		assert_(not_equal_op(function_scope_, none), str("get_text(function_name)=").op_add(get_text_(function_name_)));
 		t_Syntax_Node const *_Nonnull const parameters_ = first_child_syntax_(syntax_, ParameterList_);
 		children_->add_(build_parameters_semantic_node_(builder_, parameters_, name_table_, function_scope_));
 		t_Syntax_Node const *_Nonnull const return_type_ = syntax_->children_->op_Element(i32(4));
 		children_->add_(build_type_name_semantic_node_(builder_, return_type_, name_table_, scope_));
 		t_Type const *_Nonnull const function_type_ = new_t_Type(FunctionType_, function_scope_->name_, bit_false);
-		function_scope_->bind_type_(function_type_);
+		bind_type_(function_scope_, function_type_);
 		t_Syntax_Node const *_Nonnull const body_ = first_child_syntax_(syntax_, Block_);
 		if (cond(not_equal_op(body_, none)))
 		{
@@ -1956,7 +1919,7 @@ auto build_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull const builder_
 	{
 		t_Syntax_Node const *_Nonnull const type_name_ = first_child_syntax_(syntax_, Identifier_);
 		children_->add_(build_semantic_node_(builder_, type_name_, name_table_, scope_));
-		t_Name_Subtable const *_Nonnull const type_scope_ = scope_->find_(get_text_(type_name_));
+		t_Name_Subtable const *_Nonnull const type_scope_ = find_(scope_, get_text_(type_name_));
 		assert_(not_equal_op(type_scope_, none), str("get_text(type_name)=").op_add(get_text_(type_name_)));
 		for (t_Syntax_Node const *_Nonnull const member_ : *(members_(syntax_)))
 		{
@@ -1976,7 +1939,7 @@ auto build_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull const builder_
 			children_->add_(new_t_Semantic_Node__token(constructor_name_));
 		}
 
-		t_Name_Subtable const *_Nonnull const constructor_scope_ = scope_->find_special_(full_name_);
+		t_Name_Subtable const *_Nonnull const constructor_scope_ = find_special_(scope_, full_name_);
 		assert_(not_equal_op(constructor_scope_, none), str("full_name=").op_add(full_name_));
 		t_Syntax_Node const *_Nonnull const parameters_ = first_child_syntax_(syntax_, ParameterList_);
 		children_->add_(build_parameters_semantic_node_(builder_, parameters_, name_table_, constructor_scope_));
@@ -1990,7 +1953,7 @@ auto build_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull const builder_
 	}
 	else if (cond(equal_op(syntax_->kind_, IdentifierName_)))
 	{
-		t_Name_Subtable const *_Nonnull const name_scope_ = scope_->lookup_(get_text_(syntax_));
+		t_Name_Subtable const *_Nonnull const name_scope_ = lookup_(scope_, get_text_(syntax_));
 		if (cond(equal_op(name_scope_, none)))
 		{
 			t_Semantic_Node *_Nonnull const node_ = new_t_Semantic_Node__token(syntax_);
@@ -2026,8 +1989,8 @@ auto build_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull const builder_
 		}
 		else
 		{
-			t_Name_Subtable const *_Nonnull const access_scope_ = name_table_->get_(lhs_->of_type_->name_);
-			t_Name_Subtable const *_Nonnull const member_scope_ = access_scope_->find_(get_text_(member_name_));
+			t_Name_Subtable const *_Nonnull const access_scope_ = get_name_(name_table_, lhs_->of_type_->name_);
+			t_Name_Subtable const *_Nonnull const member_scope_ = find_(access_scope_, get_text_(member_name_));
 			if (cond(equal_op(member_scope_, none)))
 			{
 				rhs_ = new_t_Semantic_Node__token(member_name_);
@@ -2077,10 +2040,10 @@ auto build_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull const builder_
 		t_Syntax_Node const *_Nonnull const type_syntax_ = syntax_->children_->op_Element(i32(3));
 		t_Semantic_Node const *_Nonnull const type_node_ = build_type_name_semantic_node_(builder_, type_syntax_, name_table_, scope_);
 		assert_(not_equal_op(type_node_->referenced_type_, none), get_text_(type_node_));
-		t_Name_Subtable *_Nonnull const variable_scope_ = scope_->lookup_(get_text_(identifier_));
+		t_Name_Subtable *_Nonnull const variable_scope_ = lookup_(scope_, get_text_(identifier_));
 		assert_(not_equal_op(variable_scope_, none), get_text_(syntax_));
-		variable_scope_->bind_type_(type_node_->referenced_type_);
-		name_table_->get_(variable_scope_->name_)->as_mut_()->bind_type_(type_node_->referenced_type_);
+		bind_type_(variable_scope_, type_node_->referenced_type_);
+		bind_type_(as_mut_(get_name_(name_table_, variable_scope_->name_)), type_node_->referenced_type_);
 		children_->add_(type_node_);
 		if (cond(equal_op(syntax_->children_->op_magnitude(), i32(6))))
 		{
@@ -2092,19 +2055,19 @@ auto build_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull const builder_
 	}
 	else if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, TrueLiteralExpression_)) || bit_arg(equal_op(syntax_->kind_, FalseLiteralExpression_)))))
 	{
-		return new_t_Semantic_Node__of_type(scope_->lookup_special_(str("bool"))->type_, syntax_, children_);
+		return new_t_Semantic_Node__of_type(lookup_special_(scope_, str("bool"))->type_, syntax_, children_);
 	}
 	else if (cond(equal_op(syntax_->kind_, StringLiteralExpression_)))
 	{
-		return new_t_Semantic_Node__of_type(scope_->lookup_special_(str("string"))->type_, syntax_, children_);
+		return new_t_Semantic_Node__of_type(lookup_special_(scope_, str("string"))->type_, syntax_, children_);
 	}
 	else if (cond(equal_op(syntax_->kind_, CodePointLiteralExpression_)))
 	{
-		return new_t_Semantic_Node__of_type(scope_->lookup_special_(str("code_point"))->type_, syntax_, children_);
+		return new_t_Semantic_Node__of_type(lookup_special_(scope_, str("code_point"))->type_, syntax_, children_);
 	}
 	else if (cond(equal_op(syntax_->kind_, NumericLiteralExpression_)))
 	{
-		return new_t_Semantic_Node__of_type(scope_->lookup_special_(str("int"))->type_, syntax_, children_);
+		return new_t_Semantic_Node__of_type(lookup_special_(scope_, str("int"))->type_, syntax_, children_);
 	}
 	else if (cond(equal_op(syntax_->children_->op_magnitude(), i32(0))))
 	{
@@ -2142,9 +2105,9 @@ auto build_parameters_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull con
 			t_Semantic_Node const *_Nonnull const type_node_ = build_type_name_semantic_node_(builder_, type_syntax_, name_table_, scope_);
 			assert_(not_equal_op(type_node_->referenced_type_, none), get_text_(parameter_));
 			children_->add_(type_node_);
-			t_Name_Subtable *_Nonnull const parameter_scope_ = scope_->lookup_(get_text_(identifier_));
+			t_Name_Subtable *_Nonnull const parameter_scope_ = lookup_(scope_, get_text_(identifier_));
 			assert_(not_equal_op(parameter_scope_, none), get_text_(identifier_));
-			parameter_scope_->bind_type_(type_node_->referenced_type_);
+			bind_type_(parameter_scope_, type_node_->referenced_type_);
 			parameter_nodes_->add_(new_t_Semantic_Node__of_type(type_node_->referenced_type_, parameter_, children_));
 		}
 		else if (cond(equal_op(parameter_->kind_, SelfParameter_)))
@@ -2171,7 +2134,7 @@ auto build_type_name_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull cons
 	if (cond(equal_op(syntax_->kind_, PredefinedType_)))
 	{
 		str const primitive_name_ = get_text_(syntax_->children_->op_Element(i32(0)));
-		t_Name_Subtable const *_Nullable const primitive_entry_ = scope_->lookup_special_(primitive_name_);
+		t_Name_Subtable const *_Nullable const primitive_entry_ = lookup_special_(scope_, primitive_name_);
 		assert_(not_equal_op(primitive_entry_, none), str("No entry for primitive `").op_add(primitive_name_)->op_add(str("`")));
 		return new_t_Semantic_Node__referencing_type(primitive_entry_->type_, syntax_, children_);
 	}
@@ -2183,7 +2146,7 @@ auto build_type_name_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull cons
 		}
 
 		str const name_ = get_text_(syntax_);
-		t_Name_Subtable const *_Nullable const entry_ = scope_->lookup_(name_);
+		t_Name_Subtable const *_Nullable const entry_ = lookup_(scope_, name_);
 		if (cond(equal_op(entry_, none)))
 		{
 			t_Semantic_Node *_Nonnull const node_ = new_t_Semantic_Node__token(syntax_);
@@ -2215,9 +2178,9 @@ auto build_type_name_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull cons
 			else
 			{
 				t_Type const *_Nonnull const containing_type_ = qualifier_->referenced_type_;
-				t_Name_Subtable const *_Nonnull const containing_scope_ = name_table_->get_(containing_type_->name_);
-				assert_(not_equal_op(containing_scope_, none), containing_type_->name_->full_());
-				t_Name_Subtable const *_Nonnull const referenced_scope_ = containing_scope_->find_(get_text_(name_syntax_));
+				t_Name_Subtable const *_Nonnull const containing_scope_ = get_name_(name_table_, containing_type_->name_);
+				assert_(not_equal_op(containing_scope_, none), full_name_(containing_type_->name_));
+				t_Name_Subtable const *_Nonnull const referenced_scope_ = find_(containing_scope_, get_text_(name_syntax_));
 				if (cond(equal_op(referenced_scope_, none)))
 				{
 					t_Semantic_Node *_Nonnull const name_node_ = new_t_Semantic_Node__token(name_syntax_);
@@ -2250,9 +2213,9 @@ auto build_type_name_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull cons
 			else
 			{
 				t_Type const *_Nonnull const containing_type_ = qualifier_->referenced_type_;
-				t_Name_Subtable const *_Nonnull const containing_scope_ = name_table_->get_(containing_type_->name_);
-				assert_(not_equal_op(containing_scope_, none), containing_type_->name_->full_());
-				t_Name_Subtable const *_Nonnull const referenced_scope_ = containing_scope_->find_(get_text_(name_syntax_));
+				t_Name_Subtable const *_Nonnull const containing_scope_ = get_name_(name_table_, containing_type_->name_);
+				assert_(not_equal_op(containing_scope_, none), full_name_(containing_type_->name_));
+				t_Name_Subtable const *_Nonnull const referenced_scope_ = find_(containing_scope_, get_text_(name_syntax_));
 				if (cond(equal_op(referenced_scope_, none)))
 				{
 					t_Semantic_Node *_Nonnull const name_node_ = new_t_Semantic_Node__token(name_syntax_);
@@ -2317,7 +2280,7 @@ auto build_type_name_semantic_node_(t_Semantic_Tree_Builder const *_Nonnull cons
 			return new_t_Semantic_Node__concrete(syntax_, children_);
 		}
 
-		t_Name_Subtable const *_Nullable const optional_type_scope_ = name_table_->get_(builder_->optional_type_name_);
+		t_Name_Subtable const *_Nullable const optional_type_scope_ = get_name_(name_table_, builder_->optional_type_name_);
 		assert_(not_equal_op(optional_type_scope_, none), str(""));
 		t_Type const *_Nonnull const optional_type_ = optional_type_scope_->type_;
 		t_system__collections__List<t_Type const *_Nonnull> *_Nonnull const type_arguments_ = new_t_system__collections__List<t_Type const *_Nonnull>();
@@ -2374,7 +2337,7 @@ auto build_constructor_name_semantic_node_(t_Semantic_Tree_Builder const *_Nonnu
 		str const constructor_name_ = str("new_").op_add(get_text_(name_));
 		t_Type const *_Nonnull const referenced_type_ = type_node_->referenced_type_;
 		assert_(not_equal_op(referenced_type_, none), str("no referenced type for `").op_add(get_text_(type_node_))->op_add(str("`")));
-		t_Name_Subtable const *_Nullable const constructor_scope_ = name_table_->get_(referenced_type_->name_)->lookup_special_(constructor_name_);
+		t_Name_Subtable const *_Nullable const constructor_scope_ = lookup_special_(get_name_(name_table_, referenced_type_->name_), constructor_name_);
 		if (cond(not_equal_op(constructor_scope_, none)))
 		{
 			children_->add_(new_t_Semantic_Node__token(name_));
@@ -3867,35 +3830,34 @@ inline t_Emitter *_Nonnull new_t_Emitter(t_Package const *_Nonnull const package
 	return (new t_Emitter())->construct(package_, resources_);
 }
 
-auto ::t_Emitter::Emit_() -> str
+auto emit_(t_Emitter *_Nonnull const emitter_) -> str
 {
-	auto self = this;
-	type_declarations_ = new_t_Source_File_Builder();
-	function_declarations_ = new_t_Source_File_Builder();
-	class_declarations_ = new_t_Source_File_Builder();
-	global_definitions_ = new_t_Source_File_Builder();
-	definitions_ = new_t_Source_File_Builder();
-	main_function_return_type_ = str("");
-	main_function_accepts_console_ = bit_false;
-	main_function_accepts_args_ = bit_false;
-	emit_preamble_();
-	for (t_Compilation_Unit const *_Nonnull const compilation_unit_ : *(package_->compilation_units_))
+	emitter_->type_declarations_ = new_t_Source_File_Builder();
+	emitter_->function_declarations_ = new_t_Source_File_Builder();
+	emitter_->class_declarations_ = new_t_Source_File_Builder();
+	emitter_->global_definitions_ = new_t_Source_File_Builder();
+	emitter_->definitions_ = new_t_Source_File_Builder();
+	emitter_->main_function_return_type_ = str("");
+	emitter_->main_function_accepts_console_ = bit_false;
+	emitter_->main_function_accepts_args_ = bit_false;
+	emit_preamble_(emitter_);
+	for (t_Compilation_Unit const *_Nonnull const compilation_unit_ : *(emitter_->package_->compilation_units_))
 	{
-		emit_compilation_unit_(compilation_unit_);
+		emit_compilation_unit_(emitter_, compilation_unit_);
 	}
 
-	emit_entry_point_adapter_();
-	i32 const total_size_ = type_declarations_->byte_length_()->op_add(function_declarations_->byte_length_())->op_add(class_declarations_->byte_length_())->op_add(global_definitions_->byte_length_())->op_add(definitions_->byte_length_());
+	emit_entry_point_adapter_(emitter_);
+	i32 const total_size_ = byte_length_(emitter_->type_declarations_)->op_add(byte_length_(emitter_->function_declarations_))->op_add(byte_length_(emitter_->class_declarations_))->op_add(byte_length_(emitter_->global_definitions_))->op_add(byte_length_(emitter_->definitions_));
 	t_system__text__String_Builder *_Nonnull const cpp_code_ = new_t_system__text__String_Builder();
-	cpp_code_->Append_(type_declarations_->ToString_());
-	cpp_code_->Append_(function_declarations_->ToString_());
-	cpp_code_->Append_(class_declarations_->ToString_());
-	cpp_code_->Append_(global_definitions_->ToString_());
-	cpp_code_->Append_(definitions_->ToString_());
+	cpp_code_->Append_(to_string_(emitter_->type_declarations_));
+	cpp_code_->Append_(to_string_(emitter_->function_declarations_));
+	cpp_code_->Append_(to_string_(emitter_->class_declarations_));
+	cpp_code_->Append_(to_string_(emitter_->global_definitions_));
+	cpp_code_->Append_(to_string_(emitter_->definitions_));
 	return cpp_code_->ToString_();
 }
 
-auto ::t_Emitter::mangle_name_(t_Name const *_Nonnull const name_) -> str
+auto mangle_name_(t_Name const *_Nonnull const name_) -> str
 {
 	t_system__text__String_Builder *_Nonnull const builder_ = new_t_system__text__String_Builder();
 	if (cond(equal_op(name_->kind_, TypeName_)))
@@ -3956,7 +3918,7 @@ auto ::t_Emitter::mangle_name_(t_Name const *_Nonnull const name_) -> str
 	return builder_->ToString_();
 }
 
-auto ::t_Emitter::contains_multi_underscore_runs_(str const value_) -> bit
+auto contains_multi_underscore_runs_(str const value_) -> bit
 {
 	i32 i_ = i32(0);
 	bit last_char_underscore_ = bit_false;
@@ -3982,9 +3944,9 @@ auto ::t_Emitter::contains_multi_underscore_runs_(str const value_) -> bit
 	return bit_false;
 }
 
-auto ::t_Emitter::convert_primitive_type_name_(t_Type const *_Nonnull const type_) -> str
+auto convert_primitive_type_name_(t_Type const *_Nonnull const type_) -> str
 {
-	str const name_ = type_->name_->unqualified_();
+	str const name_ = unqualified_name_(type_->name_);
 	assert_(type_->is_primitive_, name_);
 	if (cond(equal_op(name_, str("bool"))))
 	{
@@ -4012,17 +3974,17 @@ auto ::t_Emitter::convert_primitive_type_name_(t_Type const *_Nonnull const type
 	}
 	else
 	{
-		NOT_IMPLEMENTED_(type_->name_->unqualified_());
+		NOT_IMPLEMENTED_(unqualified_name_(type_->name_));
 	}
 }
 
-auto ::t_Emitter::convert_type_name_(t_Semantic_Node const *_Nonnull const type_node_) -> t_system__text__String_Builder *_Nonnull
+auto convert_type_name_(t_Semantic_Node const *_Nonnull const type_node_) -> t_system__text__String_Builder *_Nonnull
 {
 	assert_(not_equal_op(type_node_->referenced_type_, none), get_text_(type_node_));
 	return convert_type_name_(type_node_->referenced_type_);
 }
 
-auto ::t_Emitter::convert_type_name_(t_Type const *_Nonnull const type_) -> t_system__text__String_Builder *_Nonnull
+auto convert_type_name_(t_Type const *_Nonnull const type_) -> t_system__text__String_Builder *_Nonnull
 {
 	t_system__text__String_Builder *_Nonnull const cpp_type_ = new_t_system__text__String_Builder();
 	if (cond(type_->is_primitive_))
@@ -4058,7 +4020,7 @@ auto ::t_Emitter::convert_type_name_(t_Type const *_Nonnull const type_) -> t_sy
 	return cpp_type_;
 }
 
-auto ::t_Emitter::convert_reference_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const nullable_) -> str
+auto convert_reference_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const nullable_) -> str
 {
 	t_system__text__String_Builder *_Nonnull const cpp_type_ = convert_type_name_(type_);
 	if (cond(bit_not(type_->is_mutable_)))
@@ -4084,10 +4046,10 @@ auto ::t_Emitter::convert_reference_type_(bit const mutable_binding_, t_Type con
 	return cpp_type_->ToString_();
 }
 
-auto ::t_Emitter::convert_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const optional_) -> str
+auto convert_type_(bit const mutable_binding_, t_Type const *_Nonnull type_, bit const optional_) -> str
 {
 	assert_(not_equal_op(type_, none), str(""));
-	if (cond(bit_op(bit_arg(type_->is_primitive_) && bit_arg(equal_op(type_->name_->unqualified_(), str("optional"))))))
+	if (cond(bit_op(bit_arg(type_->is_primitive_) && bit_arg(equal_op(unqualified_name_(type_->name_), str("optional"))))))
 	{
 		t_Type const *_Nonnull const optional_type_ = type_->type_parameters_->op_Element(i32(0));
 		if (cond(optional_type_->is_value_type_))
@@ -4126,15 +4088,14 @@ auto ::t_Emitter::convert_type_(bit const mutable_binding_, t_Type const *_Nonnu
 	}
 }
 
-auto ::t_Emitter::convert_type_(bit const mutable_binding_, t_Semantic_Node const *_Nonnull const type_node_) -> str
+auto convert_type_(bit const mutable_binding_, t_Semantic_Node const *_Nonnull const type_node_) -> str
 {
 	assert_(not_equal_op(type_node_->referenced_type_, none), get_text_(type_node_));
 	return convert_type_(mutable_binding_, type_node_->referenced_type_, bit_false);
 }
 
-auto ::t_Emitter::convert_parameter_list_(t_Semantic_Node const *_Nonnull const parameters_, bit const is_main_function_) -> str
+auto convert_parameter_list_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const parameters_, bit const is_main_function_) -> str
 {
-	auto self = this;
 	assert_(equal_op(parameters_->kind_, ParameterList_), str("parameters.kind=").op_add(parameters_->kind_));
 	t_system__text__String_Builder *_Nonnull const builder_ = new_t_system__text__String_Builder();
 	builder_->Append_(str("("));
@@ -4170,12 +4131,12 @@ auto ::t_Emitter::convert_parameter_list_(t_Semantic_Node const *_Nonnull const 
 
 			if (cond(equal_op(type_string_, str("system.console.Console"))))
 			{
-				main_function_accepts_console_ = bit_true;
+				emitter_->main_function_accepts_console_ = bit_true;
 			}
 
 			if (cond(equal_op(type_string_, str("system.console.Arguments"))))
 			{
-				main_function_accepts_args_ = bit_true;
+				emitter_->main_function_accepts_args_ = bit_true;
 			}
 		}
 	}
@@ -4184,13 +4145,12 @@ auto ::t_Emitter::convert_parameter_list_(t_Semantic_Node const *_Nonnull const 
 	return builder_->ToString_();
 }
 
-auto ::t_Emitter::convert_parameter_list_(t_Semantic_Node const *_Nonnull const parameters_) -> str
+auto convert_parameter_list_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const parameters_) -> str
 {
-	auto self = this;
-	return convert_parameter_list_(parameters_, bit_false);
+	return convert_parameter_list_(emitter_, parameters_, bit_false);
 }
 
-auto ::t_Emitter::convert_expression_(t_Semantic_Node const *_Nonnull const syntax_, t_Source_File_Builder *_Nonnull const builder_) -> void
+auto convert_expression_(t_Semantic_Node const *_Nonnull const syntax_, t_Source_File_Builder *_Nonnull const builder_) -> void
 {
 	if (cond(equal_op(syntax_->kind_, NewExpression_)))
 	{
@@ -4208,15 +4168,15 @@ auto ::t_Emitter::convert_expression_(t_Semantic_Node const *_Nonnull const synt
 
 		t_Type const *_Nonnull const type_ = type_node_->referenced_type_;
 		assert_(not_equal_op(type_, none), get_text_(type_node_));
-		builder_->Write_(str("new_"));
-		builder_->Write_(convert_type_name_(type_)->ToString_());
-		builder_->Write_(constructor_name_);
+		write_(builder_, str("new_"));
+		write_(builder_, convert_type_name_(type_)->ToString_());
+		write_(builder_, constructor_name_);
 		t_Semantic_Node const *_Nonnull const argumentList_ = syntax_->children_->op_Element(i32(1));
 		convert_expression_(argumentList_, builder_);
 	}
 	else if (cond(equal_op(syntax_->kind_, ArgumentList_)))
 	{
-		builder_->Write_(str("("));
+		write_(builder_, str("("));
 		bit first_expression_ = bit_true;
 		for (t_Semantic_Node const *_Nonnull const arg_ : *(syntax_->children_))
 		{
@@ -4228,26 +4188,26 @@ auto ::t_Emitter::convert_expression_(t_Semantic_Node const *_Nonnull const synt
 				}
 				else
 				{
-					builder_->Write_(str(", "));
+					write_(builder_, str(", "));
 				}
 
 				convert_expression_(arg_, builder_);
 			}
 		}
 
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, NotExpression_)))
 	{
-		builder_->Write_(str("bit_not("));
+		write_(builder_, str("bit_not("));
 		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, MagnitudeExpression_)))
 	{
 		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
 		convert_member_access_(syntax_->children_->op_Element(i32(1)), builder_);
-		builder_->Write_(str("op_magnitude()"));
+		write_(builder_, str("op_magnitude()"));
 	}
 	else if (cond(equal_op(syntax_->kind_, ParenthesizedExpression_)))
 	{
@@ -4255,37 +4215,37 @@ auto ::t_Emitter::convert_expression_(t_Semantic_Node const *_Nonnull const synt
 	}
 	else if (cond(equal_op(syntax_->kind_, NegateExpression_)))
 	{
-		builder_->Write_(str("i32_negate("));
+		write_(builder_, str("i32_negate("));
 		convert_expression_(syntax_->children_->op_Element(i32(1)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, NoneLiteralExpression_)))
 	{
-		builder_->Write_(str("none"));
+		write_(builder_, str("none"));
 	}
 	else if (cond(equal_op(syntax_->kind_, SelfExpression_)))
 	{
-		builder_->Write_(str("self"));
+		write_(builder_, str("self"));
 	}
 	else if (cond(equal_op(syntax_->kind_, NumericLiteralExpression_)))
 	{
-		builder_->Write_(str("i32(").op_add(get_text_(syntax_))->op_add(str(")")));
+		write_(builder_, str("i32(").op_add(get_text_(syntax_))->op_add(str(")")));
 	}
 	else if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, TrueLiteralExpression_)) || bit_arg(equal_op(syntax_->kind_, FalseLiteralExpression_)))))
 	{
-		builder_->Write_(str("bit_").op_add(get_text_(syntax_)));
+		write_(builder_, str("bit_").op_add(get_text_(syntax_)));
 	}
 	else if (cond(equal_op(syntax_->kind_, CodePointLiteralExpression_)))
 	{
-		builder_->Write_(str("cp(").op_add(get_text_(syntax_))->op_add(str(")")));
+		write_(builder_, str("cp(").op_add(get_text_(syntax_))->op_add(str(")")));
 	}
 	else if (cond(equal_op(syntax_->kind_, IdentifierName_)))
 	{
-		builder_->Write_(get_text_(syntax_)->op_add(str("_")));
+		write_(builder_, get_text_(syntax_)->op_add(str("_")));
 	}
 	else if (cond(equal_op(syntax_->kind_, StringLiteralExpression_)))
 	{
-		builder_->Write_(str("str(").op_add(get_text_(syntax_))->op_add(str(")")));
+		write_(builder_, str("str(").op_add(get_text_(syntax_))->op_add(str(")")));
 	}
 	else if (cond(equal_op(syntax_->kind_, AssignmentExpression_)))
 	{
@@ -4293,49 +4253,49 @@ auto ::t_Emitter::convert_expression_(t_Semantic_Node const *_Nonnull const synt
 		if (cond(equal_op(operator_, Equals_)))
 		{
 			convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
-			builder_->Write_(str(" "));
-			builder_->Write_(get_text_(syntax_->children_->op_Element(i32(1))));
-			builder_->Write_(str(" "));
+			write_(builder_, str(" "));
+			write_(builder_, get_text_(syntax_->children_->op_Element(i32(1))));
+			write_(builder_, str(" "));
 			convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
 		}
 		else
 		{
 			convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 			convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
-			builder_->Write_(str("op_"));
+			write_(builder_, str("op_"));
 			if (cond(equal_op(operator_, PlusEquals_)))
 			{
-				builder_->Write_(str("add_assign"));
+				write_(builder_, str("add_assign"));
 			}
 			else if (cond(equal_op(operator_, MinusEquals_)))
 			{
-				builder_->Write_(str("subtract_assign"));
+				write_(builder_, str("subtract_assign"));
 			}
 			else
 			{
-				builder_->Error_(str("Unsupported assignment operator ").op_add(operator_));
+				error_(builder_, str("Unsupported assignment operator ").op_add(operator_));
 			}
 
-			builder_->Write_(str("("));
+			write_(builder_, str("("));
 			convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-			builder_->Write_(str(")"));
+			write_(builder_, str(")"));
 		}
 	}
 	else if (cond(equal_op(syntax_->kind_, EqualExpression_)))
 	{
-		builder_->Write_(str("equal_op("));
+		write_(builder_, str("equal_op("));
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str(", "));
+		write_(builder_, str(", "));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, NotEqualExpression_)))
 	{
-		builder_->Write_(str("not_equal_op("));
+		write_(builder_, str("not_equal_op("));
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str(", "));
+		write_(builder_, str(", "));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, ComparisonExpression_)))
 	{
@@ -4343,120 +4303,120 @@ auto ::t_Emitter::convert_expression_(t_Semantic_Node const *_Nonnull const synt
 		t_Type const *_Nonnull const type_ = syntax_->children_->op_Element(i32(0))->of_type_;
 		if (cond(not_equal_op(type_, none)))
 		{
-			builder_->Write_(convert_primitive_type_name_(type_));
+			write_(builder_, convert_primitive_type_name_(type_));
 			if (cond(equal_op(operator_, LessThan_)))
 			{
-				builder_->Write_(str("_less_than"));
+				write_(builder_, str("_less_than"));
 			}
 			else if (cond(equal_op(operator_, LessThanEquals_)))
 			{
-				builder_->Write_(str("_less_than_or_equal"));
+				write_(builder_, str("_less_than_or_equal"));
 			}
 			else if (cond(equal_op(operator_, GreaterThan_)))
 			{
-				builder_->Write_(str("_greater_than"));
+				write_(builder_, str("_greater_than"));
 			}
 			else if (cond(equal_op(operator_, GreaterThanEquals_)))
 			{
-				builder_->Write_(str("_greater_than_or_equal"));
+				write_(builder_, str("_greater_than_or_equal"));
 			}
 			else
 			{
-				builder_->Error_(str("Unsupported comparison operator ").op_add(operator_));
+				error_(builder_, str("Unsupported comparison operator ").op_add(operator_));
 			}
 
-			builder_->Write_(str("("));
+			write_(builder_, str("("));
 			convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
-			builder_->Write_(str(", "));
+			write_(builder_, str(", "));
 			convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-			builder_->Write_(str(")"));
+			write_(builder_, str(")"));
 		}
 		else
 		{
 			convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 			convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
-			builder_->Write_(str("op_"));
+			write_(builder_, str("op_"));
 			if (cond(equal_op(operator_, LessThan_)))
 			{
-				builder_->Write_(str("less_than"));
+				write_(builder_, str("less_than"));
 			}
 			else if (cond(equal_op(operator_, LessThanEquals_)))
 			{
-				builder_->Write_(str("less_than_or_equal"));
+				write_(builder_, str("less_than_or_equal"));
 			}
 			else if (cond(equal_op(operator_, GreaterThan_)))
 			{
-				builder_->Write_(str("greater_than"));
+				write_(builder_, str("greater_than"));
 			}
 			else if (cond(equal_op(operator_, GreaterThanEquals_)))
 			{
-				builder_->Write_(str("greater_than_or_equal"));
+				write_(builder_, str("greater_than_or_equal"));
 			}
 			else
 			{
-				builder_->Error_(str("Unsupported comparison operator ").op_add(operator_));
+				error_(builder_, str("Unsupported comparison operator ").op_add(operator_));
 			}
 
-			builder_->Write_(str("("));
+			write_(builder_, str("("));
 			convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-			builder_->Write_(str(")"));
+			write_(builder_, str(")"));
 		}
 	}
 	else if (cond(equal_op(syntax_->kind_, AddExpression_)))
 	{
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str("op_add("));
+		write_(builder_, str("op_add("));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, SubtractExpression_)))
 	{
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str("op_subtract("));
+		write_(builder_, str("op_subtract("));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, MultiplyExpression_)))
 	{
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str("op_multiply("));
+		write_(builder_, str("op_multiply("));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, DivideExpression_)))
 	{
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str("op_divide("));
+		write_(builder_, str("op_divide("));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, RemainderExpression_)))
 	{
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str("op_remainder("));
+		write_(builder_, str("op_remainder("));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else if (cond(equal_op(syntax_->kind_, OrExpression_)))
 	{
-		builder_->Write_(str("bit_op(bit_arg("));
+		write_(builder_, str("bit_op(bit_arg("));
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str(") || bit_arg("));
+		write_(builder_, str(") || bit_arg("));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str("))"));
+		write_(builder_, str("))"));
 	}
 	else if (cond(equal_op(syntax_->kind_, AndExpression_)))
 	{
-		builder_->Write_(str("bit_op(bit_arg("));
+		write_(builder_, str("bit_op(bit_arg("));
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str(") && bit_arg("));
+		write_(builder_, str(") && bit_arg("));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str("))"));
+		write_(builder_, str("))"));
 	}
 	else if (cond(equal_op(syntax_->kind_, InvocationExpression_)))
 	{
@@ -4473,111 +4433,110 @@ auto ::t_Emitter::convert_expression_(t_Semantic_Node const *_Nonnull const synt
 	{
 		convert_expression_(syntax_->children_->op_Element(i32(0)), builder_);
 		convert_member_access_(syntax_->children_->op_Element(i32(0)), builder_);
-		builder_->Write_(str("op_Element("));
+		write_(builder_, str("op_Element("));
 		convert_expression_(syntax_->children_->op_Element(i32(2)), builder_);
-		builder_->Write_(str(")"));
+		write_(builder_, str(")"));
 	}
 	else
 	{
-		builder_->Error_(str("Could not convert expression of type ").op_add(syntax_->kind_));
+		error_(builder_, str("Could not convert expression of type ").op_add(syntax_->kind_));
 	}
 }
 
-auto ::t_Emitter::convert_member_access_(t_Semantic_Node const *_Nonnull const lhs_, t_Source_File_Builder *_Nonnull const builder_) -> void
+auto convert_member_access_(t_Semantic_Node const *_Nonnull const lhs_, t_Source_File_Builder *_Nonnull const builder_) -> void
 {
 	t_Type const *_Nullable const type_ = lhs_->of_type_;
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(type_, none)) && bit_arg(type_->is_value_type_))) && bit_arg(bit_not(bit_op(bit_arg(bit_op(bit_arg(type_->is_primitive_) && bit_arg(equal_op(type_->name_->unqualified_(), str("optional"))))) && bit_arg(bit_not(type_->type_parameters_->op_Element(i32(0))->is_value_type_))))))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(type_, none)) && bit_arg(type_->is_value_type_))) && bit_arg(bit_not(bit_op(bit_arg(bit_op(bit_arg(type_->is_primitive_) && bit_arg(equal_op(unqualified_name_(type_->name_), str("optional"))))) && bit_arg(bit_not(type_->type_parameters_->op_Element(i32(0))->is_value_type_))))))))
 	{
-		builder_->Write_(str("."));
+		write_(builder_, str("."));
 	}
 	else
 	{
-		builder_->Write_(str("->"));
+		write_(builder_, str("->"));
 	}
 }
 
-auto ::t_Emitter::emit_statement_(t_Semantic_Node const *_Nonnull const statement_) -> void
+auto emit_statement_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const statement_) -> void
 {
-	auto self = this;
-	definitions_->StatementSeparatorLine_();
+	statement_separator_line_(emitter_->definitions_);
 	if (cond(equal_op(statement_->kind_, ReturnStatement_)))
 	{
 		if (cond(equal_op(statement_->children_->op_magnitude(), i32(2))))
 		{
-			definitions_->WriteLine_(str("return;"));
+			write_line_(emitter_->definitions_, str("return;"));
 		}
 		else
 		{
-			definitions_->BeginLine_(str("return "));
-			convert_expression_(statement_->children_->op_Element(i32(1)), definitions_);
-			definitions_->EndLine_(str(";"));
+			begin_line_(emitter_->definitions_, str("return "));
+			convert_expression_(statement_->children_->op_Element(i32(1)), emitter_->definitions_);
+			end_line_(emitter_->definitions_, str(";"));
 		}
 	}
 	else if (cond(equal_op(statement_->kind_, LoopStatement_)))
 	{
-		definitions_->WriteLine_(str("for (;;)"));
-		emit_statement_(statement_->children_->op_Element(i32(1)));
+		write_line_(emitter_->definitions_, str("for (;;)"));
+		emit_statement_(emitter_, statement_->children_->op_Element(i32(1)));
 	}
 	else if (cond(equal_op(statement_->kind_, Block_)))
 	{
-		definitions_->BeginBlock_();
+		begin_block_(emitter_->definitions_);
 		for (t_Semantic_Node const *_Nonnull const block_statement_ : *(node_statements_(statement_)))
 		{
-			emit_statement_(block_statement_);
+			emit_statement_(emitter_, block_statement_);
 		}
 
-		definitions_->EndBlock_();
+		end_block_(emitter_->definitions_);
 	}
 	else if (cond(equal_op(statement_->kind_, WhileStatement_)))
 	{
-		definitions_->BeginLine_(str("while (cond("));
-		convert_expression_(statement_->children_->op_Element(i32(1)), definitions_);
-		definitions_->EndLine_(str("))"));
-		emit_statement_(statement_->children_->op_Element(i32(2)));
+		begin_line_(emitter_->definitions_, str("while (cond("));
+		convert_expression_(statement_->children_->op_Element(i32(1)), emitter_->definitions_);
+		end_line_(emitter_->definitions_, str("))"));
+		emit_statement_(emitter_, statement_->children_->op_Element(i32(2)));
 	}
 	else if (cond(equal_op(statement_->kind_, ForStatement_)))
 	{
-		definitions_->BeginLine_(str("for ("));
+		begin_line_(emitter_->definitions_, str("for ("));
 		t_Semantic_Node const *_Nonnull const variable_declaration_ = first_child_(statement_, VariableDeclaration_);
 		bit const mutable_binding_ = node_has_child_(variable_declaration_, VarKeyword_);
 		str const name_ = get_text_(first_child_(variable_declaration_, Identifier_));
 		t_Semantic_Node const *_Nonnull const type_ = variable_declaration_->children_->op_Element(i32(2));
-		definitions_->Write_(convert_type_(mutable_binding_, type_)->op_add(str(" "))->op_add(name_)->op_add(str("_")));
-		definitions_->Write_(str(" : *("));
-		convert_expression_(statement_->children_->op_Element(i32(3)), definitions_);
-		definitions_->EndLine_(str("))"));
-		emit_statement_(statement_->children_->op_Element(i32(4)));
+		write_(emitter_->definitions_, convert_type_(mutable_binding_, type_)->op_add(str(" "))->op_add(name_)->op_add(str("_")));
+		write_(emitter_->definitions_, str(" : *("));
+		convert_expression_(statement_->children_->op_Element(i32(3)), emitter_->definitions_);
+		end_line_(emitter_->definitions_, str("))"));
+		emit_statement_(emitter_, statement_->children_->op_Element(i32(4)));
 	}
 	else if (cond(equal_op(statement_->kind_, DoWhileStatement_)))
 	{
-		definitions_->WriteLine_(str("do"));
-		emit_statement_(statement_->children_->op_Element(i32(1)));
-		definitions_->BeginLine_(str("while (cond("));
-		convert_expression_(statement_->children_->op_Element(i32(3)), definitions_);
-		definitions_->EndLine_(str("));"));
+		write_line_(emitter_->definitions_, str("do"));
+		emit_statement_(emitter_, statement_->children_->op_Element(i32(1)));
+		begin_line_(emitter_->definitions_, str("while (cond("));
+		convert_expression_(statement_->children_->op_Element(i32(3)), emitter_->definitions_);
+		end_line_(emitter_->definitions_, str("));"));
 	}
 	else if (cond(equal_op(statement_->kind_, IfStatement_)))
 	{
 		t_Semantic_Node const *_Nullable if_statement_ = statement_;
-		definitions_->BeginLine_(str(""));
+		begin_line_(emitter_->definitions_, str(""));
 		for (;;)
 		{
-			definitions_->Write_(str("if (cond("));
-			convert_expression_(if_statement_->children_->op_Element(i32(1)), definitions_);
-			definitions_->EndLine_(str("))"));
-			emit_statement_(if_statement_->children_->op_Element(i32(2)));
+			write_(emitter_->definitions_, str("if (cond("));
+			convert_expression_(if_statement_->children_->op_Element(i32(1)), emitter_->definitions_);
+			end_line_(emitter_->definitions_, str("))"));
+			emit_statement_(emitter_, if_statement_->children_->op_Element(i32(2)));
 			t_Semantic_Node const *_Nullable const elseClause_ = first_child_(if_statement_, ElseClause_);
 			if (cond(not_equal_op(elseClause_, none)))
 			{
 				if_statement_ = first_child_(elseClause_, IfStatement_);
 				if (cond(not_equal_op(if_statement_, none)))
 				{
-					definitions_->BeginLine_(str("else "));
+					begin_line_(emitter_->definitions_, str("else "));
 				}
 				else
 				{
-					definitions_->WriteLine_(str("else"));
-					emit_statement_(elseClause_->children_->op_Element(i32(1)));
+					write_line_(emitter_->definitions_, str("else"));
+					emit_statement_(emitter_, elseClause_->children_->op_Element(i32(1)));
 					break;
 				}
 			}
@@ -4589,11 +4548,11 @@ auto ::t_Emitter::emit_statement_(t_Semantic_Node const *_Nonnull const statemen
 	}
 	else if (cond(equal_op(statement_->kind_, BreakStatement_)))
 	{
-		definitions_->WriteLine_(str("break;"));
+		write_line_(emitter_->definitions_, str("break;"));
 	}
 	else if (cond(equal_op(statement_->kind_, ContinueStatement_)))
 	{
-		definitions_->WriteLine_(str("continue;"));
+		write_line_(emitter_->definitions_, str("continue;"));
 	}
 	else if (cond(equal_op(statement_->kind_, LocalDeclarationStatement_)))
 	{
@@ -4601,21 +4560,21 @@ auto ::t_Emitter::emit_statement_(t_Semantic_Node const *_Nonnull const statemen
 		str const variable_name_ = get_text_(first_child_(variable_declaration_, Identifier_));
 		t_Semantic_Node const *_Nonnull const variable_type_ = variable_declaration_->children_->op_Element(i32(2));
 		bit const mutable_binding_ = node_has_child_(variable_declaration_, VarKeyword_);
-		definitions_->BeginLine_(convert_type_(mutable_binding_, variable_type_));
-		definitions_->Write_(str(" ").op_add(variable_name_)->op_add(str("_")));
+		begin_line_(emitter_->definitions_, convert_type_(mutable_binding_, variable_type_));
+		write_(emitter_->definitions_, str(" ").op_add(variable_name_)->op_add(str("_")));
 		if (cond(variable_declaration_->children_->op_magnitude()->op_greater_than(i32(3))))
 		{
-			definitions_->Write_(str(" = "));
-			convert_expression_(variable_declaration_->children_->op_Element(i32(3)), definitions_);
+			write_(emitter_->definitions_, str(" = "));
+			convert_expression_(variable_declaration_->children_->op_Element(i32(3)), emitter_->definitions_);
 		}
 
-		definitions_->EndLine_(str(";"));
+		end_line_(emitter_->definitions_, str(";"));
 	}
 	else if (cond(equal_op(statement_->kind_, ExpressionStatement_)))
 	{
-		definitions_->BeginLine_(str(""));
-		convert_expression_(statement_->children_->op_Element(i32(0)), definitions_);
-		definitions_->EndLine_(str(";"));
+		begin_line_(emitter_->definitions_, str(""));
+		convert_expression_(statement_->children_->op_Element(i32(0)), emitter_->definitions_);
+		end_line_(emitter_->definitions_, str(";"));
 	}
 	else
 	{
@@ -4623,62 +4582,59 @@ auto ::t_Emitter::emit_statement_(t_Semantic_Node const *_Nonnull const statemen
 	}
 }
 
-auto ::t_Emitter::emit_method_body_(t_Semantic_Node const *_Nonnull const block_, bit const is_associated_function_) -> void
+auto emit_method_body_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const block_, bit const is_associated_function_) -> void
 {
-	auto self = this;
-	definitions_->BeginBlock_();
+	begin_block_(emitter_->definitions_);
 	if (cond(bit_not(is_associated_function_)))
 	{
-		definitions_->WriteLine_(str("auto self = this;"));
+		write_line_(emitter_->definitions_, str("auto self = this;"));
 	}
 
 	for (t_Semantic_Node const *_Nonnull const statement_ : *(node_statements_(block_)))
 	{
-		emit_statement_(statement_);
+		emit_statement_(emitter_, statement_);
 	}
 
-	definitions_->EndBlock_();
+	end_block_(emitter_->definitions_);
 }
 
-auto ::t_Emitter::emit_constructor_body_(t_Semantic_Node const *_Nonnull const block_, str const self_type_, bit const is_value_type_) -> void
+auto emit_constructor_body_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const block_, str const self_type_, bit const is_value_type_) -> void
 {
-	auto self = this;
-	definitions_->BeginBlock_();
+	begin_block_(emitter_->definitions_);
 	if (cond(is_value_type_))
 	{
-		definitions_->WriteLine_(self_type_.op_add(str(" self;")));
+		write_line_(emitter_->definitions_, self_type_.op_add(str(" self;")));
 	}
 	else
 	{
-		definitions_->WriteLine_(self_type_.op_add(str(" self = this;")));
+		write_line_(emitter_->definitions_, self_type_.op_add(str(" self = this;")));
 	}
 
 	for (t_Semantic_Node const *_Nonnull const statement_ : *(node_statements_(block_)))
 	{
-		emit_statement_(statement_);
+		emit_statement_(emitter_, statement_);
 	}
 
-	definitions_->WriteLine_(str("return self;"));
-	definitions_->EndBlock_();
+	write_line_(emitter_->definitions_, str("return self;"));
+	end_block_(emitter_->definitions_);
 }
 
-auto ::t_Emitter::emit_access_modifer_(i32 const current_access_level_, i32 const access_modifer_) -> i32
+auto emit_access_modifer_(t_Emitter *_Nonnull const emitter_, i32 const current_access_level_, i32 const access_modifer_) -> i32
 {
-	auto self = this;
 	if (cond(not_equal_op(access_modifer_, current_access_level_)))
 	{
 		if (cond(bit_op(bit_arg(equal_op(access_modifer_, PublicKeyword_)) || bit_arg(equal_op(access_modifer_, InternalKeyword_)))))
 		{
-			class_declarations_->EndLine_(str("public:"));
+			end_line_(emitter_->class_declarations_, str("public:"));
 			return PublicKeyword_;
 		}
 		else if (cond(equal_op(access_modifer_, ProtectedKeyword_)))
 		{
-			class_declarations_->EndLine_(str("public:"));
+			end_line_(emitter_->class_declarations_, str("public:"));
 		}
 		else if (cond(equal_op(access_modifer_, PrivateKeyword_)))
 		{
-			class_declarations_->EndLine_(str("private:"));
+			end_line_(emitter_->class_declarations_, str("private:"));
 		}
 		else
 		{
@@ -4689,19 +4645,18 @@ auto ::t_Emitter::emit_access_modifer_(i32 const current_access_level_, i32 cons
 	return access_modifer_;
 }
 
-auto ::t_Emitter::emit_member_declaration_(t_Semantic_Node const *_Nonnull const member_, str const class_name_, bit const is_value_type_, i32 const current_access_level_) -> i32
+auto emit_member_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const member_, str const class_name_, bit const is_value_type_, i32 const current_access_level_) -> i32
 {
-	auto self = this;
 	i32 access_modifer_ = node_access_modifier_(member_)->kind_;
 	if (cond(equal_op(member_->kind_, ConstructorDeclaration_)))
 	{
 		access_modifer_ = PublicKeyword_;
 	}
 
-	access_modifer_ = emit_access_modifer_(current_access_level_, access_modifer_);
+	access_modifer_ = emit_access_modifer_(emitter_, current_access_level_, access_modifer_);
 	if (cond(equal_op(member_->kind_, ConstructorDeclaration_)))
 	{
-		str const parameters_ = convert_parameter_list_(first_child_(member_, ParameterList_));
+		str const parameters_ = convert_parameter_list_(emitter_, first_child_(member_, ParameterList_));
 		str new_function_name_ = str("new_").op_add(class_name_);
 		str constructor_full_name_ = str("construct");
 		t_Semantic_Node const *_Nullable const constructor_name_node_ = first_child_(member_, Identifier_);
@@ -4718,27 +4673,27 @@ auto ::t_Emitter::emit_member_declaration_(t_Semantic_Node const *_Nonnull const
 			return_type_ = return_type_.op_add(str(" *_Nonnull"));
 		}
 
-		class_declarations_->BeginLine_(str(""));
+		begin_line_(emitter_->class_declarations_, str(""));
 		if (cond(is_value_type_))
 		{
-			class_declarations_->Write_(str("static "));
+			write_(emitter_->class_declarations_, str("static "));
 		}
 
-		class_declarations_->EndLine_(str("auto ").op_add(constructor_full_name_)->op_add(parameters_)->op_add(str(" -> "))->op_add(return_type_)->op_add(str(";")));
-		definitions_->ElementSeparatorLine_();
-		definitions_->WriteLine_(str("auto ").op_add(class_name_)->op_add(str("::"))->op_add(constructor_full_name_)->op_add(parameters_)->op_add(str(" -> "))->op_add(return_type_));
-		emit_constructor_body_(first_child_(member_, Block_), return_type_, is_value_type_);
-		function_declarations_->WriteLine_(str("inline ").op_add(return_type_)->op_add(str(" "))->op_add(new_function_name_)->op_add(parameters_)->op_add(str(";")));
-		definitions_->ElementSeparatorLine_();
-		definitions_->WriteLine_(str("inline ").op_add(return_type_)->op_add(str(" "))->op_add(new_function_name_)->op_add(parameters_));
-		definitions_->BeginBlock_();
+		end_line_(emitter_->class_declarations_, str("auto ").op_add(constructor_full_name_)->op_add(parameters_)->op_add(str(" -> "))->op_add(return_type_)->op_add(str(";")));
+		element_separator_line_(emitter_->definitions_);
+		write_line_(emitter_->definitions_, str("auto ").op_add(class_name_)->op_add(str("::"))->op_add(constructor_full_name_)->op_add(parameters_)->op_add(str(" -> "))->op_add(return_type_));
+		emit_constructor_body_(emitter_, first_child_(member_, Block_), return_type_, is_value_type_);
+		write_line_(emitter_->function_declarations_, str("inline ").op_add(return_type_)->op_add(str(" "))->op_add(new_function_name_)->op_add(parameters_)->op_add(str(";")));
+		element_separator_line_(emitter_->definitions_);
+		write_line_(emitter_->definitions_, str("inline ").op_add(return_type_)->op_add(str(" "))->op_add(new_function_name_)->op_add(parameters_));
+		begin_block_(emitter_->definitions_);
 		if (cond(bit_not(is_value_type_)))
 		{
-			definitions_->BeginLine_(str("return (new ").op_add(class_name_)->op_add(str("())->"))->op_add(constructor_full_name_)->op_add(str("(")));
+			begin_line_(emitter_->definitions_, str("return (new ").op_add(class_name_)->op_add(str("())->"))->op_add(constructor_full_name_)->op_add(str("(")));
 		}
 		else
 		{
-			definitions_->BeginLine_(str("return ").op_add(class_name_)->op_add(str("::"))->op_add(constructor_full_name_)->op_add(str("(")));
+			begin_line_(emitter_->definitions_, str("return ").op_add(class_name_)->op_add(str("::"))->op_add(constructor_full_name_)->op_add(str("(")));
 		}
 
 		bit first_parameter_ = bit_true;
@@ -4746,18 +4701,18 @@ auto ::t_Emitter::emit_member_declaration_(t_Semantic_Node const *_Nonnull const
 		{
 			if (cond(bit_not(first_parameter_)))
 			{
-				definitions_->Write_(str(", "));
+				write_(emitter_->definitions_, str(", "));
 			}
 			else
 			{
 				first_parameter_ = bit_false;
 			}
 
-			definitions_->Write_(get_text_(first_child_(parameter_, Identifier_))->op_add(str("_")));
+			write_(emitter_->definitions_, get_text_(first_child_(parameter_, Identifier_))->op_add(str("_")));
 		}
 
-		definitions_->EndLine_(str(");"));
-		definitions_->EndBlock_();
+		end_line_(emitter_->definitions_, str(");"));
+		end_block_(emitter_->definitions_);
 	}
 	else if (cond(equal_op(member_->kind_, FieldDeclaration_)))
 	{
@@ -4765,12 +4720,12 @@ auto ::t_Emitter::emit_member_declaration_(t_Semantic_Node const *_Nonnull const
 		str const field_name_ = get_text_(first_child_(variable_declaration_, Identifier_));
 		t_Semantic_Node const *_Nonnull const field_type_ = variable_declaration_->children_->op_Element(i32(2));
 		str const cpp_type_ = convert_type_(bit_true, field_type_);
-		class_declarations_->WriteLine_(cpp_type_.op_add(str(" "))->op_add(field_name_)->op_add(str("_;")));
+		write_line_(emitter_->class_declarations_, cpp_type_.op_add(str(" "))->op_add(field_name_)->op_add(str("_;")));
 	}
 	else if (cond(equal_op(member_->kind_, MethodDeclaration_)))
 	{
 		str const method_name_ = get_text_(first_child_(member_, Identifier_));
-		str const parameters_ = convert_parameter_list_(first_child_(member_, ParameterList_));
+		str const parameters_ = convert_parameter_list_(emitter_, first_child_(member_, ParameterList_));
 		t_Semantic_Node const *_Nullable const self_parameter_ = first_child_(first_child_(member_, ParameterList_), SelfParameter_);
 		bit const is_associated_function_ = equal_op(self_parameter_, none);
 		bit const mutable_self_ = bit_op(bit_arg(bit_not(is_associated_function_)) && bit_arg(node_has_child_(self_parameter_, MutableKeyword_)));
@@ -4788,65 +4743,63 @@ auto ::t_Emitter::emit_member_declaration_(t_Semantic_Node const *_Nonnull const
 			constModifier_ = str("const ");
 		}
 
-		class_declarations_->WriteLine_(static_modifier_.op_add(str("auto "))->op_add(method_name_)->op_add(str("_"))->op_add(parameters_)->op_add(str(" "))->op_add(constModifier_)->op_add(str("-> "))->op_add(cpp_type_)->op_add(str(";")));
-		definitions_->ElementSeparatorLine_();
-		definitions_->WriteLine_(str("auto ::").op_add(class_name_)->op_add(str("::"))->op_add(method_name_)->op_add(str("_"))->op_add(parameters_)->op_add(str(" "))->op_add(constModifier_)->op_add(str("-> "))->op_add(cpp_type_));
+		write_line_(emitter_->class_declarations_, static_modifier_.op_add(str("auto "))->op_add(method_name_)->op_add(str("_"))->op_add(parameters_)->op_add(str(" "))->op_add(constModifier_)->op_add(str("-> "))->op_add(cpp_type_)->op_add(str(";")));
+		element_separator_line_(emitter_->definitions_);
+		write_line_(emitter_->definitions_, str("auto ::").op_add(class_name_)->op_add(str("::"))->op_add(method_name_)->op_add(str("_"))->op_add(parameters_)->op_add(str(" "))->op_add(constModifier_)->op_add(str("-> "))->op_add(cpp_type_));
 		t_Semantic_Node const *_Nonnull const block_ = first_child_(member_, Block_);
-		emit_method_body_(block_, is_associated_function_);
+		emit_method_body_(emitter_, block_, is_associated_function_);
 	}
 	else
 	{
-		definitions_->Error_(str("Could not emit member of type ").op_add(member_->kind_));
+		error_(emitter_->definitions_, str("Could not emit member of type ").op_add(member_->kind_));
 	}
 
 	return access_modifer_;
 }
 
-auto ::t_Emitter::emit_default_constructor_(str const type_name_, bit const is_value_type_, i32 const current_access_level_) -> void
+auto emit_default_constructor_(t_Emitter *_Nonnull const emitter_, str const type_name_, bit const is_value_type_, i32 const current_access_level_) -> void
 {
-	auto self = this;
-	emit_access_modifer_(current_access_level_, PublicKeyword_);
+	emit_access_modifer_(emitter_, current_access_level_, PublicKeyword_);
 	str return_type_ = type_name_;
 	if (cond(bit_not(is_value_type_)))
 	{
 		return_type_ = return_type_.op_add(str(" *_Nonnull"));
 	}
 
-	class_declarations_->BeginLine_(str(""));
+	begin_line_(emitter_->class_declarations_, str(""));
 	if (cond(is_value_type_))
 	{
-		class_declarations_->Write_(str("static "));
+		write_(emitter_->class_declarations_, str("static "));
 	}
 
-	class_declarations_->Write_(str("auto construct() -> ").op_add(return_type_));
+	write_(emitter_->class_declarations_, str("auto construct() -> ").op_add(return_type_));
 	if (cond(is_value_type_))
 	{
-		class_declarations_->EndLine_(str(" { return ").op_add(type_name_)->op_add(str("(); }")));
+		end_line_(emitter_->class_declarations_, str(" { return ").op_add(type_name_)->op_add(str("(); }")));
 	}
 	else
 	{
-		class_declarations_->EndLine_(str(" { return this; }"));
+		end_line_(emitter_->class_declarations_, str(" { return this; }"));
 	}
 
-	function_declarations_->WriteLine_(str("inline ").op_add(return_type_)->op_add(str(" new_"))->op_add(type_name_)->op_add(str("();")));
-	definitions_->ElementSeparatorLine_();
-	definitions_->WriteLine_(str("inline ").op_add(return_type_)->op_add(str(" new_"))->op_add(type_name_)->op_add(str("()")));
-	definitions_->BeginBlock_();
+	write_line_(emitter_->function_declarations_, str("inline ").op_add(return_type_)->op_add(str(" new_"))->op_add(type_name_)->op_add(str("();")));
+	element_separator_line_(emitter_->definitions_);
+	write_line_(emitter_->definitions_, str("inline ").op_add(return_type_)->op_add(str(" new_"))->op_add(type_name_)->op_add(str("()")));
+	begin_block_(emitter_->definitions_);
 	if (cond(bit_not(is_value_type_)))
 	{
-		definitions_->WriteLine_(str("return (new ").op_add(type_name_)->op_add(str("())->construct();")));
+		write_line_(emitter_->definitions_, str("return (new ").op_add(type_name_)->op_add(str("())->construct();")));
 	}
 	else
 	{
-		definitions_->WriteLine_(str("return ").op_add(type_name_)->op_add(str("::construct();")));
+		write_line_(emitter_->definitions_, str("return ").op_add(type_name_)->op_add(str("::construct();")));
 	}
 
-	definitions_->EndBlock_();
+	end_block_(emitter_->definitions_);
 }
 
-auto ::t_Emitter::emit_declaration_(t_Semantic_Node const *_Nonnull const declaration_) -> void
+auto emit_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const declaration_) -> void
 {
-	auto self = this;
 	if (cond(equal_op(declaration_->kind_, GlobalDeclaration_)))
 	{
 		t_Semantic_Node const *_Nonnull const variable_declaration_ = first_child_(declaration_, VariableDeclaration_);
@@ -4854,91 +4807,91 @@ auto ::t_Emitter::emit_declaration_(t_Semantic_Node const *_Nonnull const declar
 		t_Semantic_Node const *_Nonnull const variable_type_ = variable_declaration_->children_->op_Element(i32(2));
 		bit const mutable_binding_ = node_has_child_(variable_declaration_, VarKeyword_);
 		str const cpp_type_ = convert_type_(mutable_binding_, variable_type_);
-		global_definitions_->BeginLine_(cpp_type_);
-		global_definitions_->Write_(str(" ").op_add(variable_name_)->op_add(str("_ = ")));
+		begin_line_(emitter_->global_definitions_, cpp_type_);
+		write_(emitter_->global_definitions_, str(" ").op_add(variable_name_)->op_add(str("_ = ")));
 		t_Semantic_Node const *_Nonnull const expression_ = variable_declaration_->children_->op_Element(i32(3));
-		convert_expression_(expression_, global_definitions_);
-		global_definitions_->EndLine_(str(";"));
+		convert_expression_(expression_, emitter_->global_definitions_);
+		end_line_(emitter_->global_definitions_, str(";"));
 	}
 	else if (cond(equal_op(declaration_->kind_, ClassDeclaration_)))
 	{
 		t_Type const *_Nonnull const declared_type_ = declaration_->declares_type_;
 		assert_(not_equal_op(declared_type_, none), get_text_(first_child_(declaration_, Identifier_)));
 		str const class_name_ = mangle_name_(declared_type_->name_);
-		type_declarations_->WriteLine_(str("class ").op_add(class_name_)->op_add(str(";")));
-		class_declarations_->ElementSeparatorLine_();
-		class_declarations_->WriteLine_(str("class ").op_add(class_name_));
-		class_declarations_->BeginBlock_();
-		class_declarations_->EndLine_(str("public:"));
+		write_line_(emitter_->type_declarations_, str("class ").op_add(class_name_)->op_add(str(";")));
+		element_separator_line_(emitter_->class_declarations_);
+		write_line_(emitter_->class_declarations_, str("class ").op_add(class_name_));
+		begin_block_(emitter_->class_declarations_);
+		end_line_(emitter_->class_declarations_, str("public:"));
 		i32 current_access_level_ = PublicKeyword_;
 		bit has_constructors_ = bit_false;
 		for (t_Semantic_Node const *_Nonnull const member_ : *(node_members_(declaration_)))
 		{
 			has_constructors_ = bit_op(bit_arg(has_constructors_) || bit_arg(equal_op(member_->kind_, ConstructorDeclaration_)));
-			current_access_level_ = emit_member_declaration_(member_, class_name_, bit_false, current_access_level_);
+			current_access_level_ = emit_member_declaration_(emitter_, member_, class_name_, bit_false, current_access_level_);
 		}
 
 		if (cond(bit_not(has_constructors_)))
 		{
-			emit_default_constructor_(class_name_, bit_false, current_access_level_);
+			emit_default_constructor_(emitter_, class_name_, bit_false, current_access_level_);
 		}
 
-		class_declarations_->EndBlockWithSemicolon_();
+		end_block_with_semicolon_(emitter_->class_declarations_);
 	}
 	else if (cond(equal_op(declaration_->kind_, StructDeclaration_)))
 	{
 		t_Type const *_Nonnull const declared_type_ = declaration_->declares_type_;
 		assert_(not_equal_op(declared_type_, none), get_text_(first_child_(declaration_, Identifier_)));
 		str const struct_name_ = mangle_name_(declared_type_->name_);
-		type_declarations_->WriteLine_(str("struct ").op_add(struct_name_)->op_add(str(";")));
-		class_declarations_->ElementSeparatorLine_();
-		class_declarations_->WriteLine_(str("struct ").op_add(struct_name_)->op_add(str(" final")));
-		class_declarations_->BeginBlock_();
-		class_declarations_->EndLine_(str("public:"));
-		class_declarations_->WriteLine_(struct_name_.op_add(str(" * operator->() { return this; }")));
-		class_declarations_->WriteLine_(struct_name_.op_add(str(" const * operator->() const { return this; }")));
-		class_declarations_->WriteLine_(struct_name_.op_add(str(" & operator* () { return *this; }")));
-		class_declarations_->WriteLine_(struct_name_.op_add(str(" const & operator* () const { return *this; }")));
+		write_line_(emitter_->type_declarations_, str("struct ").op_add(struct_name_)->op_add(str(";")));
+		element_separator_line_(emitter_->class_declarations_);
+		write_line_(emitter_->class_declarations_, str("struct ").op_add(struct_name_)->op_add(str(" final")));
+		begin_block_(emitter_->class_declarations_);
+		end_line_(emitter_->class_declarations_, str("public:"));
+		write_line_(emitter_->class_declarations_, struct_name_.op_add(str(" * operator->() { return this; }")));
+		write_line_(emitter_->class_declarations_, struct_name_.op_add(str(" const * operator->() const { return this; }")));
+		write_line_(emitter_->class_declarations_, struct_name_.op_add(str(" & operator* () { return *this; }")));
+		write_line_(emitter_->class_declarations_, struct_name_.op_add(str(" const & operator* () const { return *this; }")));
 		i32 current_access_level_ = PublicKeyword_;
 		bit has_constructors_ = bit_false;
 		for (t_Semantic_Node const *_Nonnull const member_ : *(node_members_(declaration_)))
 		{
 			has_constructors_ = bit_op(bit_arg(has_constructors_) || bit_arg(equal_op(member_->kind_, ConstructorDeclaration_)));
-			current_access_level_ = emit_member_declaration_(member_, struct_name_, bit_true, current_access_level_);
+			current_access_level_ = emit_member_declaration_(emitter_, member_, struct_name_, bit_true, current_access_level_);
 		}
 
 		if (cond(bit_not(has_constructors_)))
 		{
-			emit_default_constructor_(struct_name_, bit_true, current_access_level_);
+			emit_default_constructor_(emitter_, struct_name_, bit_true, current_access_level_);
 		}
 
-		class_declarations_->EndBlockWithSemicolon_();
+		end_block_with_semicolon_(emitter_->class_declarations_);
 	}
 	else if (cond(equal_op(declaration_->kind_, EnumDeclaration_)))
 	{
 		str const enum_name_ = get_text_(first_child_(declaration_, Identifier_));
-		type_declarations_->WriteLine_(str("enum class ").op_add(enum_name_)->op_add(str("_;")));
-		class_declarations_->ElementSeparatorLine_();
-		class_declarations_->WriteLine_(str("enum class ").op_add(enum_name_)->op_add(str("_")));
-		class_declarations_->BeginBlock_();
+		write_line_(emitter_->type_declarations_, str("enum class ").op_add(enum_name_)->op_add(str("_;")));
+		element_separator_line_(emitter_->class_declarations_);
+		write_line_(emitter_->class_declarations_, str("enum class ").op_add(enum_name_)->op_add(str("_")));
+		begin_block_(emitter_->class_declarations_);
 		for (t_Semantic_Node const *_Nonnull const member_ : *(declaration_->children_))
 		{
 			if (cond(equal_op(member_->kind_, EnumMemberDeclaration_)))
 			{
 				str const member_name_ = get_text_(member_->children_->op_Element(i32(0)));
-				class_declarations_->BeginLine_(member_name_.op_add(str("_")));
+				begin_line_(emitter_->class_declarations_, member_name_.op_add(str("_")));
 				t_Semantic_Node const *_Nullable const member_value_ = first_child_(member_, Number_);
 				if (cond(not_equal_op(member_value_, none)))
 				{
-					class_declarations_->Write_(str(" = "));
-					class_declarations_->Write_(get_text_(member_value_));
+					write_(emitter_->class_declarations_, str(" = "));
+					write_(emitter_->class_declarations_, get_text_(member_value_));
 				}
 
-				class_declarations_->EndLine_(str(","));
+				end_line_(emitter_->class_declarations_, str(","));
 			}
 		}
 
-		class_declarations_->EndBlockWithSemicolon_();
+		end_block_with_semicolon_(emitter_->class_declarations_);
 	}
 	else if (cond(equal_op(declaration_->kind_, FunctionDeclaration_)))
 	{
@@ -4946,93 +4899,90 @@ auto ::t_Emitter::emit_declaration_(t_Semantic_Node const *_Nonnull const declar
 		bit const is_main_ = equal_op(name_, str("main"));
 		if (cond(is_main_))
 		{
-			main_function_name_ = name_;
+			emitter_->main_function_name_ = name_;
 		}
 
-		str const parameters_ = convert_parameter_list_(first_child_(declaration_, ParameterList_), is_main_);
+		str const parameters_ = convert_parameter_list_(emitter_, first_child_(declaration_, ParameterList_), is_main_);
 		t_Semantic_Node const *_Nonnull const return_type_node_ = declaration_->children_->op_Element(i32(3));
 		str const cpp_type_ = convert_type_(bit_true, return_type_node_);
-		function_declarations_->WriteLine_(str("auto ").op_add(name_)->op_add(str("_"))->op_add(parameters_)->op_add(str(" -> "))->op_add(cpp_type_)->op_add(str(";")));
-		definitions_->ElementSeparatorLine_();
-		definitions_->WriteLine_(str("auto ").op_add(name_)->op_add(str("_"))->op_add(parameters_)->op_add(str(" -> "))->op_add(cpp_type_));
+		write_line_(emitter_->function_declarations_, str("auto ").op_add(name_)->op_add(str("_"))->op_add(parameters_)->op_add(str(" -> "))->op_add(cpp_type_)->op_add(str(";")));
+		element_separator_line_(emitter_->definitions_);
+		write_line_(emitter_->definitions_, str("auto ").op_add(name_)->op_add(str("_"))->op_add(parameters_)->op_add(str(" -> "))->op_add(cpp_type_));
 		if (cond(is_main_))
 		{
-			if (cond(not_equal_op(main_function_return_type_, str(""))))
+			if (cond(not_equal_op(emitter_->main_function_return_type_, str(""))))
 			{
-				definitions_->Error_(str("Multiple declarations of main"));
+				error_(emitter_->definitions_, str("Multiple declarations of main"));
 			}
 
-			main_function_return_type_ = cpp_type_;
+			emitter_->main_function_return_type_ = cpp_type_;
 		}
 
-		emit_statement_(first_child_(declaration_, Block_));
+		emit_statement_(emitter_, first_child_(declaration_, Block_));
 	}
 	else if (cond(equal_op(declaration_->kind_, EndOfFileToken_)))
 	{
 	}
 	else
 	{
-		definitions_->Error_(str("Could not emit declaration of type ").op_add(declaration_->kind_));
+		error_(emitter_->definitions_, str("Could not emit declaration of type ").op_add(declaration_->kind_));
 	}
 }
 
-auto ::t_Emitter::emit_compilation_unit_(t_Compilation_Unit const *_Nonnull const unit_) -> void
+auto emit_compilation_unit_(t_Emitter *_Nonnull const emitter_, t_Compilation_Unit const *_Nonnull const unit_) -> void
 {
-	auto self = this;
 	for (t_Semantic_Node const *_Nonnull const declaration_ : *(unit_->declarations_))
 	{
-		emit_declaration_(declaration_);
+		emit_declaration_(emitter_, declaration_);
 	}
 }
 
-auto ::t_Emitter::emit_preamble_() -> void
+auto emit_preamble_(t_Emitter *_Nonnull const emitter_) -> void
 {
-	auto self = this;
-	type_declarations_->WriteLine_(str("#include \"RuntimeLibrary.hpp\""));
-	type_declarations_->BlankLine_();
-	type_declarations_->WriteLine_(str("// Type Declarations"));
-	function_declarations_->BlankLine_();
-	function_declarations_->WriteLine_(str("// Function Declarations"));
-	class_declarations_->BlankLine_();
-	class_declarations_->WriteLine_(str("// Class Declarations"));
-	global_definitions_->BlankLine_();
-	global_definitions_->WriteLine_(str("// Global Definitions"));
-	definitions_->BlankLine_();
-	definitions_->WriteLine_(str("// Definitions"));
+	write_line_(emitter_->type_declarations_, str("#include \"RuntimeLibrary.hpp\""));
+	blank_line_(emitter_->type_declarations_);
+	write_line_(emitter_->type_declarations_, str("// Type Declarations"));
+	blank_line_(emitter_->function_declarations_);
+	write_line_(emitter_->function_declarations_, str("// Function Declarations"));
+	blank_line_(emitter_->class_declarations_);
+	write_line_(emitter_->class_declarations_, str("// Class Declarations"));
+	blank_line_(emitter_->global_definitions_);
+	write_line_(emitter_->global_definitions_, str("// Global Definitions"));
+	blank_line_(emitter_->definitions_);
+	write_line_(emitter_->definitions_, str("// Definitions"));
 }
 
-auto ::t_Emitter::emit_entry_point_adapter_() -> void
+auto emit_entry_point_adapter_(t_Emitter *_Nonnull const emitter_) -> void
 {
-	auto self = this;
-	definitions_->ElementSeparatorLine_();
-	definitions_->WriteLine_(str("// Entry Point Adapter"));
-	definitions_->WriteLine_(str("std::int32_t main(int argc, char const *const * argv)"));
-	definitions_->BeginBlock_();
-	definitions_->WriteLine_(str("try"));
-	definitions_->BeginBlock_();
-	for (t_Source_Text const *_Nonnull const resource_ : *(resources_))
+	element_separator_line_(emitter_->definitions_);
+	write_line_(emitter_->definitions_, str("// Entry Point Adapter"));
+	write_line_(emitter_->definitions_, str("std::int32_t main(int argc, char const *const * argv)"));
+	begin_block_(emitter_->definitions_);
+	write_line_(emitter_->definitions_, str("try"));
+	begin_block_(emitter_->definitions_);
+	for (t_Source_Text const *_Nonnull const resource_ : *(emitter_->resources_))
 	{
-		definitions_->BeginLine_(str("resource_manager_->AddResource(str(\""));
-		definitions_->Write_(resource_->name_);
-		definitions_->Write_(str("\"), str(\""));
-		definitions_->Write_(resource_->text_.Replace_(str("\\"), str("\\\\"))->Replace_(str("\n"), str("\\n"))->Replace_(str("\r"), str("\\r"))->Replace_(str("\""), str("\\\"")));
-		definitions_->EndLine_(str("\"));"));
+		begin_line_(emitter_->definitions_, str("resource_manager_->AddResource(str(\""));
+		write_(emitter_->definitions_, resource_->name_);
+		write_(emitter_->definitions_, str("\"), str(\""));
+		write_(emitter_->definitions_, resource_->text_.Replace_(str("\\"), str("\\\\"))->Replace_(str("\n"), str("\\n"))->Replace_(str("\r"), str("\\r"))->Replace_(str("\""), str("\\\"")));
+		end_line_(emitter_->definitions_, str("\"));"));
 	}
 
-	if (cond(resources_->op_magnitude()->op_greater_than(i32(0))))
+	if (cond(emitter_->resources_->op_magnitude()->op_greater_than(i32(0))))
 	{
-		definitions_->EndLine_(str(""));
+		end_line_(emitter_->definitions_, str(""));
 	}
 
 	t_system__text__String_Builder *_Nonnull const args_ = new_t_system__text__String_Builder();
-	if (cond(main_function_accepts_console_))
+	if (cond(emitter_->main_function_accepts_console_))
 	{
 		args_->Append_(str("new t_system__console__Console()"));
 	}
 
-	if (cond(main_function_accepts_args_))
+	if (cond(emitter_->main_function_accepts_args_))
 	{
-		if (cond(main_function_accepts_console_))
+		if (cond(emitter_->main_function_accepts_console_))
 		{
 			args_->Append_(str(", "));
 		}
@@ -5040,24 +4990,24 @@ auto ::t_Emitter::emit_entry_point_adapter_() -> void
 		args_->Append_(str("new t_system__console__Arguments(argc, argv)"));
 	}
 
-	if (cond(equal_op(main_function_return_type_, str("void"))))
+	if (cond(equal_op(emitter_->main_function_return_type_, str("void"))))
 	{
-		definitions_->WriteLine_(main_function_name_.op_add(str("_("))->op_add(args_->ToString_())->op_add(str(");")));
-		definitions_->WriteLine_(str("return 0;"));
+		write_line_(emitter_->definitions_, emitter_->main_function_name_.op_add(str("_("))->op_add(args_->ToString_())->op_add(str(");")));
+		write_line_(emitter_->definitions_, str("return 0;"));
 	}
 	else
 	{
-		definitions_->WriteLine_(str("return ").op_add(main_function_name_)->op_add(str("_("))->op_add(args_->ToString_())->op_add(str(").value;")));
+		write_line_(emitter_->definitions_, str("return ").op_add(emitter_->main_function_name_)->op_add(str("_("))->op_add(args_->ToString_())->op_add(str(").value;")));
 	}
 
-	definitions_->EndBlock_();
-	definitions_->WriteLine_(str("catch(std::exception &ex)"));
-	definitions_->BeginBlock_();
-	definitions_->WriteLine_(str("std::printf(\"Program exited due to error:\\n\");"));
-	definitions_->WriteLine_(str("std::printf(\"%s\", ex.what());"));
-	definitions_->WriteLine_(str("return 70;"));
-	definitions_->EndBlock_();
-	definitions_->EndBlock_();
+	end_block_(emitter_->definitions_);
+	write_line_(emitter_->definitions_, str("catch(std::exception &ex)"));
+	begin_block_(emitter_->definitions_);
+	write_line_(emitter_->definitions_, str("std::printf(\"Program exited due to error:\\n\");"));
+	write_line_(emitter_->definitions_, str("std::printf(\"%s\", ex.what());"));
+	write_line_(emitter_->definitions_, str("return 70;"));
+	end_block_(emitter_->definitions_);
+	end_block_(emitter_->definitions_);
 }
 
 auto t_Name::construct_global_namespace() -> t_Name *_Nonnull
@@ -5178,47 +5128,44 @@ inline t_Name *_Nonnull new_t_Name(t_Package_Name const *_Nullable const package
 	return (new t_Name())->construct(package_, kind_, segments_, is_special_);
 }
 
-auto ::t_Name::unqualified_() const -> str
+auto unqualified_name_(t_Name const *_Nonnull const name_) -> str
 {
-	auto self = this;
-	if (cond(equal_op(segments_->op_magnitude(), i32(0))))
+	if (cond(equal_op(name_->segments_->op_magnitude(), i32(0))))
 	{
 		return str("");
 	}
 
-	return segments_->op_Element(segments_->op_magnitude()->op_subtract(i32(1)));
+	return name_->segments_->op_Element(name_->segments_->op_magnitude()->op_subtract(i32(1)));
 }
 
-auto ::t_Name::full_() const -> str
+auto full_name_(t_Name const *_Nonnull const name_) -> str
 {
-	auto self = this;
-	str name_ = str("");
-	if (cond(not_equal_op(package_, none)))
+	str result_ = str("");
+	if (cond(not_equal_op(name_->package_, none)))
 	{
-		name_ = package_->full_();
+		result_ = full_name_(name_->package_);
 	}
 
-	name_ = name_.op_add(str("::"));
+	result_ = result_.op_add(str("::"));
 	bit first_ = bit_true;
-	for (str const segment_ : *(segments_))
+	for (str const segment_ : *(name_->segments_))
 	{
 		if (cond(first_))
 		{
 			first_ = bit_false;
-			name_ = name_.op_add(segment_);
+			result_ = result_.op_add(segment_);
 			continue;
 		}
 
-		name_ = name_.op_add(str("."))->op_add(segment_);
+		result_ = result_.op_add(str("."))->op_add(segment_);
 	}
 
-	return name_;
+	return result_;
 }
 
-auto ::t_Name::is_qualified_with_(t_Name const *_Nonnull const qualifier_) const -> bit
+auto is_qualified_by_(t_Name const *_Nonnull const name_, t_Name const *_Nonnull const qualifier_) -> bit
 {
-	auto self = this;
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(package_, none)) && bit_arg(not_equal_op(qualifier_->package_, none)))) && bit_arg(not_equal_op(package_->full_(), qualifier_->package_->full_())))) || bit_arg(segments_->op_magnitude()->op_less_than_or_equal(qualifier_->segments_->op_magnitude())))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(name_->package_, none)) && bit_arg(not_equal_op(qualifier_->package_, none)))) && bit_arg(not_equal_op(full_name_(name_->package_), full_name_(qualifier_->package_))))) || bit_arg(name_->segments_->op_magnitude()->op_less_than_or_equal(qualifier_->segments_->op_magnitude())))))
 	{
 		return bit_false;
 	}
@@ -5226,7 +5173,7 @@ auto ::t_Name::is_qualified_with_(t_Name const *_Nonnull const qualifier_) const
 	i32 i_ = i32(0);
 	for (str const segment_ : *(qualifier_->segments_))
 	{
-		if (cond(not_equal_op(segment_, segments_->op_Element(i_))))
+		if (cond(not_equal_op(segment_, name_->segments_->op_Element(i_))))
 		{
 			return bit_false;
 		}
@@ -5237,16 +5184,14 @@ auto ::t_Name::is_qualified_with_(t_Name const *_Nonnull const qualifier_) const
 	return bit_true;
 }
 
-auto ::t_Name::qualifier_is_(t_Name const *_Nonnull const qualifier_) const -> bit
+auto qualifier_is_(t_Name const *_Nonnull const name_, t_Name const *_Nonnull const qualifier_) -> bit
 {
-	auto self = this;
-	return bit_op(bit_arg(equal_op(qualifier_->segments_->op_magnitude()->op_add(i32(1)), segments_->op_magnitude())) && bit_arg(is_qualified_with_(qualifier_)));
+	return bit_op(bit_arg(equal_op(qualifier_->segments_->op_magnitude()->op_add(i32(1)), name_->segments_->op_magnitude())) && bit_arg(is_qualified_by_(name_, qualifier_)));
 }
 
-auto ::t_Name::names_(t_Name const *_Nonnull const other_) const -> bit
+auto names_(t_Name const *_Nonnull const name_, t_Name const *_Nonnull const other_) -> bit
 {
-	auto self = this;
-	if (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(package_, none)) && bit_arg(bit_op(bit_arg(equal_op(other_->package_, none)) || bit_arg(not_equal_op(package_->full_(), other_->package_->full_())))))) || bit_arg(not_equal_op(segments_->op_magnitude(), other_->segments_->op_magnitude())))))
+	if (cond(bit_op(bit_arg(bit_op(bit_arg(not_equal_op(name_->package_, none)) && bit_arg(bit_op(bit_arg(equal_op(other_->package_, none)) || bit_arg(not_equal_op(full_name_(name_->package_), full_name_(other_->package_))))))) || bit_arg(not_equal_op(name_->segments_->op_magnitude(), other_->segments_->op_magnitude())))))
 	{
 		return bit_false;
 	}
@@ -5254,7 +5199,7 @@ auto ::t_Name::names_(t_Name const *_Nonnull const other_) const -> bit
 	i32 i_ = i32(0);
 	for (str const segment_ : *(other_->segments_))
 	{
-		if (cond(not_equal_op(segment_, segments_->op_Element(i_))))
+		if (cond(not_equal_op(segment_, name_->segments_->op_Element(i_))))
 		{
 			return bit_false;
 		}
@@ -5265,22 +5210,20 @@ auto ::t_Name::names_(t_Name const *_Nonnull const other_) const -> bit
 	return bit_true;
 }
 
-auto ::t_Name::is_package_qualified_() const -> bit
+auto is_package_qualified_(t_Name const *_Nonnull const name_) -> bit
 {
-	auto self = this;
-	return not_equal_op(package_, none);
+	return not_equal_op(name_->package_, none);
 }
 
-auto ::t_Name::remove_package_() const -> t_Name const *_Nonnull
+auto remove_package_(t_Name const *_Nonnull const name_) -> t_Name const *_Nonnull
 {
-	auto self = this;
-	if (cond(equal_op(package_, none)))
+	if (cond(equal_op(name_->package_, none)))
 	{
-		return self;
+		return name_;
 	}
 	else
 	{
-		return new_t_Name(none, kind_, segments_, is_special_);
+		return new_t_Name(none, name_->kind_, name_->segments_, name_->is_special_);
 	}
 }
 
@@ -5294,13 +5237,13 @@ auto name_with_unspecified_package_names_name_with_package_() -> void
 {
 	t_Name const *_Nonnull const name_without_package_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("system"));
 	t_Name const *_Nonnull const name_with_package_ = new_t_Name(new_t_Name__global_namespace(new_t_Package_Name(str("package"))), NamespaceName_, str("system"));
-	assert_(name_without_package_->names_(name_with_package_), str(""));
+	assert_(names_(name_without_package_, name_with_package_), str(""));
 }
 
 auto name_with_unspecified_package_names_itself_() -> void
 {
 	t_Name const *_Nonnull const name_without_package_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("system"));
-	assert_(name_without_package_->names_(name_without_package_), str(""));
+	assert_(names_(name_without_package_, name_without_package_), str(""));
 }
 
 auto t_Package_Name::construct(str const name_) -> t_Package_Name *_Nonnull
@@ -5316,10 +5259,9 @@ inline t_Package_Name *_Nonnull new_t_Package_Name(str const name_)
 	return (new t_Package_Name())->construct(name_);
 }
 
-auto ::t_Package_Name::full_() const -> str
+auto full_name_(t_Package_Name const *_Nonnull const package_name_) -> str
 {
-	auto self = this;
-	return unqualified_;
+	return package_name_->unqualified_;
 }
 
 auto t_Symbol::construct_identifier(str const name_) -> t_Symbol *_Nonnull
@@ -5425,9 +5367,9 @@ auto t_Symbol::construct_declaring(t_Type const *_Nonnull const declares_type_, 
 {
 	t_Symbol *_Nonnull self = this;
 	assert_(not_equal_op(declares_type_, none), str(""));
-	assert_(not_equal_op(declarations_, none), str("name=").op_add(declares_type_->name_->unqualified_()));
-	assert_(not_equal_op(children_, none), str("name=").op_add(declares_type_->name_->unqualified_()));
-	self->name_ = declares_type_->name_->unqualified_();
+	assert_(not_equal_op(declarations_, none), str("name=").op_add(unqualified_name_(declares_type_->name_)));
+	assert_(not_equal_op(children_, none), str("name=").op_add(unqualified_name_(declares_type_->name_)));
+	self->name_ = unqualified_name_(declares_type_->name_);
 	self->is_special_name_ = declares_type_->name_->is_special_;
 	self->of_type_ = none;
 	self->declares_type_ = declares_type_;
@@ -5600,8 +5542,8 @@ auto t_Type::construct_generic(t_Type const *_Nonnull const definition_, t_syste
 {
 	t_Type *_Nonnull self = this;
 	assert_(not_equal_op(definition_, none), str(""));
-	assert_(not_equal_op(type_arguments_, none), definition_->name_->full_());
-	assert_(equal_op(definition_->type_parameters_->op_magnitude(), type_arguments_->op_magnitude()), definition_->name_->full_()->op_add(str(" "))->op_add(definition_->type_parameters_->op_magnitude())->op_add(str(" given "))->op_add(type_arguments_->op_magnitude()));
+	assert_(not_equal_op(type_arguments_, none), full_name_(definition_->name_));
+	assert_(equal_op(definition_->type_parameters_->op_magnitude(), type_arguments_->op_magnitude()), full_name_(definition_->name_)->op_add(str(" "))->op_add(definition_->type_parameters_->op_magnitude())->op_add(str(" given "))->op_add(type_arguments_->op_magnitude()));
 	self->kind_ = definition_->kind_;
 	self->name_ = definition_->name_;
 	self->type_parameters_ = type_arguments_;
@@ -5637,7 +5579,7 @@ inline t_Type *_Nonnull new_t_Type(i32 const kind_, t_Name const *_Nonnull const
 
 auto make_mutable_type_(t_Type const *_Nonnull const type_) -> t_Type const *_Nonnull
 {
-	assert_(type_->is_potentially_mutable_, str("self.name=").op_add(type_->name_->full_()));
+	assert_(type_->is_potentially_mutable_, str("self.name=").op_add(full_name_(type_->name_)));
 	return new_t_Type(type_->kind_, type_->name_, type_->type_parameters_, type_->is_primitive_, type_->is_potentially_mutable_, bit_true);
 }
 
@@ -5649,9 +5591,9 @@ auto make_immutable_type_(t_Type const *_Nonnull const type_) -> t_Type const *_
 auto remove_type_package_(t_Type const *_Nonnull const type_) -> t_Type const *_Nonnull
 {
 	assert_(equal_op(type_->kind_, NamespaceType_), str("kind=").op_add(type_->kind_));
-	if (cond(type_->name_->is_package_qualified_()))
+	if (cond(is_package_qualified_(type_->name_)))
 	{
-		return new_t_Type(type_->kind_, type_->name_->remove_package_(), type_->type_parameters_, type_->is_primitive_, type_->is_potentially_mutable_, type_->is_mutable_);
+		return new_t_Type(type_->kind_, remove_package_(type_->name_), type_->type_parameters_, type_->is_primitive_, type_->is_potentially_mutable_, type_->is_mutable_);
 	}
 	else
 	{
@@ -5707,54 +5649,50 @@ inline t_Name_Subtable *_Nonnull new_t_Name_Subtable(t_Name_Subtable const *_Non
 	return (new t_Name_Subtable())->construct(parent_, name_, type_);
 }
 
-auto ::t_Name_Subtable::add_(t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> void
+auto add_subtable_(t_Name_Subtable *_Nonnull const scope_, t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> void
 {
-	auto self = this;
-	assert_(name_->is_qualified_with_(self->name_), str("\"").op_add(name_->full_())->op_add(str("\" is not a child of \""))->op_add(self->name_->full_())->op_add(str("\"")));
-	if (cond(name_->qualifier_is_(self->name_)))
+	assert_(is_qualified_by_(name_, scope_->name_), str("\"").op_add(full_name_(name_))->op_add(str("\" is not a child of \""))->op_add(full_name_(scope_->name_))->op_add(str("\"")));
+	if (cond(qualifier_is_(name_, scope_->name_)))
 	{
-		if (cond(bit_op(bit_arg(bit_op(bit_arg(equal_op(self->name_->package_, none)) && bit_arg(not_equal_op(type_, none)))) && bit_arg(equal_op(type_->kind_, NamespaceType_)))))
+		if (cond(bit_op(bit_arg(bit_op(bit_arg(equal_op(scope_->name_->package_, none)) && bit_arg(not_equal_op(type_, none)))) && bit_arg(equal_op(type_->kind_, NamespaceType_)))))
 		{
-			subtables_->add_(new_t_Name_Subtable(self, name_->remove_package_(), remove_type_package_(type_)));
+			scope_->subtables_->add_(new_t_Name_Subtable(scope_, remove_package_(name_), remove_type_package_(type_)));
 		}
 		else
 		{
-			subtables_->add_(new_t_Name_Subtable(self, name_, type_));
+			scope_->subtables_->add_(new_t_Name_Subtable(scope_, name_, type_));
 		}
 
 		return;
 	}
 
-	for (t_Name_Subtable *_Nonnull const subtable_ : *(subtables_))
+	for (t_Name_Subtable *_Nonnull const subtable_ : *(scope_->subtables_))
 	{
-		if (cond(name_->is_qualified_with_(subtable_->name_)))
+		if (cond(is_qualified_by_(name_, subtable_->name_)))
 		{
-			subtable_->add_(name_, type_);
+			add_subtable_(subtable_, name_, type_);
 			return;
 		}
 	}
 
-	assert_(equal_op(name_->segments_->op_magnitude(), self->name_->segments_->op_magnitude()->op_add(i32(1))), str("Can't add \"").op_add(name_->full_())->op_add(str("\" to \""))->op_add(self->name_->full_())->op_add(str("\"")));
+	assert_(equal_op(name_->segments_->op_magnitude(), scope_->name_->segments_->op_magnitude()->op_add(i32(1))), str("Can't add \"").op_add(full_name_(name_))->op_add(str("\" to \""))->op_add(full_name_(scope_->name_))->op_add(str("\"")));
 }
 
-auto ::t_Name_Subtable::find_(str const name_) const -> t_Name_Subtable *_Nullable
+auto find_(t_Name_Subtable const *_Nonnull const scope_, str const name_) -> t_Name_Subtable *_Nullable
 {
-	auto self = this;
-	return find_(name_, bit_false);
+	return find_(scope_, name_, bit_false);
 }
 
-auto ::t_Name_Subtable::find_special_(str const name_) const -> t_Name_Subtable *_Nullable
+auto find_special_(t_Name_Subtable const *_Nonnull const scope_, str const name_) -> t_Name_Subtable *_Nullable
 {
-	auto self = this;
-	return find_(name_, bit_true);
+	return find_(scope_, name_, bit_true);
 }
 
-auto ::t_Name_Subtable::find_(str const name_, bit const is_special_) const -> t_Name_Subtable *_Nullable
+auto find_(t_Name_Subtable const *_Nonnull const scope_, str const name_, bit const is_special_) -> t_Name_Subtable *_Nullable
 {
-	auto self = this;
-	for (t_Name_Subtable *_Nonnull const subtable_ : *(subtables_))
+	for (t_Name_Subtable *_Nonnull const subtable_ : *(scope_->subtables_))
 	{
-		if (cond(bit_op(bit_arg(equal_op(subtable_->name_->unqualified_(), name_)) && bit_arg(equal_op(subtable_->name_->is_special_, is_special_)))))
+		if (cond(bit_op(bit_arg(equal_op(unqualified_name_(subtable_->name_), name_)) && bit_arg(equal_op(subtable_->name_->is_special_, is_special_)))))
 		{
 			return subtable_;
 		}
@@ -5763,45 +5701,41 @@ auto ::t_Name_Subtable::find_(str const name_, bit const is_special_) const -> t
 	return none;
 }
 
-auto ::t_Name_Subtable::lookup_(str const name_) const -> t_Name_Subtable *_Nullable
+auto lookup_(t_Name_Subtable const *_Nonnull const scope_, str const name_) -> t_Name_Subtable *_Nullable
 {
-	auto self = this;
-	return lookup_(name_, bit_false);
+	return lookup_(scope_, name_, bit_false);
 }
 
-auto ::t_Name_Subtable::lookup_special_(str const name_) const -> t_Name_Subtable *_Nullable
+auto lookup_special_(t_Name_Subtable const *_Nonnull const scope_, str const name_) -> t_Name_Subtable *_Nullable
 {
-	auto self = this;
-	return lookup_(name_, bit_true);
+	return lookup_(scope_, name_, bit_true);
 }
 
-auto ::t_Name_Subtable::lookup_(str const name_, bit const is_special_) const -> t_Name_Subtable *_Nullable
+auto lookup_(t_Name_Subtable const *_Nonnull const scope_, str const name_, bit const is_special_) -> t_Name_Subtable *_Nullable
 {
-	auto self = this;
-	t_Name_Subtable *_Nullable subtable_ = find_(name_, is_special_);
-	if (cond(bit_op(bit_arg(equal_op(subtable_, none)) && bit_arg(not_equal_op(parent_, none)))))
+	t_Name_Subtable *_Nullable subtable_ = find_(scope_, name_, is_special_);
+	if (cond(bit_op(bit_arg(equal_op(subtable_, none)) && bit_arg(not_equal_op(scope_->parent_, none)))))
 	{
-		subtable_ = parent_->lookup_(name_, is_special_);
+		subtable_ = lookup_(scope_->parent_, name_, is_special_);
 	}
 
 	return subtable_;
 }
 
-auto ::t_Name_Subtable::get_(t_Name const *_Nonnull const name_) const -> t_Name_Subtable const *_Nullable
+auto get_scope_(t_Name_Subtable const *_Nonnull const scope_, t_Name const *_Nonnull const name_) -> t_Name_Subtable const *_Nullable
 {
-	auto self = this;
-	if (cond(name_->names_(self->name_)))
+	if (cond(names_(name_, scope_->name_)))
 	{
-		return self;
+		return scope_;
 	}
-	else if (cond(bit_not(name_->is_qualified_with_(self->name_))))
+	else if (cond(bit_not(is_qualified_by_(name_, scope_->name_))))
 	{
 		return none;
 	}
 
-	for (t_Name_Subtable const *_Nonnull const subtable_ : *(subtables_))
+	for (t_Name_Subtable const *_Nonnull const subtable_ : *(scope_->subtables_))
 	{
-		t_Name_Subtable const *_Nullable const value_ = subtable_->get_(name_);
+		t_Name_Subtable const *_Nullable const value_ = get_scope_(subtable_, name_);
 		if (cond(not_equal_op(value_, none)))
 		{
 			return value_;
@@ -5811,22 +5745,20 @@ auto ::t_Name_Subtable::get_(t_Name const *_Nonnull const name_) const -> t_Name
 	return none;
 }
 
-auto ::t_Name_Subtable::bind_type_(t_Type const *_Nonnull const type_) -> void
+auto bind_type_(t_Name_Subtable *_Nonnull const scope_, t_Type const *_Nonnull const type_) -> void
 {
-	auto self = this;
-	assert_(not_equal_op(type_, none), self->name_->full_());
-	if (cond(not_equal_op(self->type_, none)))
+	assert_(not_equal_op(type_, none), full_name_(scope_->name_));
+	if (cond(not_equal_op(scope_->type_, none)))
 	{
-		assert_(equal_op(self->type_->name_->full_(), type_->name_->full_()), self->name_->full_()->op_add(str(" currently `"))->op_add(self->type_->name_->full_())->op_add(str("` trying to set to `"))->op_add(type_->name_->full_())->op_add(str("`")));
+		assert_(equal_op(full_name_(scope_->type_->name_), full_name_(type_->name_)), full_name_(scope_->name_)->op_add(str(" currently `"))->op_add(full_name_(scope_->type_->name_))->op_add(str("` trying to set to `"))->op_add(full_name_(type_->name_))->op_add(str("`")));
 	}
 
-	self->type_ = type_;
+	scope_->type_ = type_;
 }
 
-auto ::t_Name_Subtable::as_mut_() const -> t_Name_Subtable *_Nonnull
+auto as_mut_(t_Name_Subtable const *_Nonnull const scope_) -> t_Name_Subtable *_Nonnull
 {
-	auto self = this;
-	return parent_->find_(name_->unqualified_(), name_->is_special_);
+	return find_(scope_->parent_, unqualified_name_(scope_->name_), scope_->name_->is_special_);
 }
 
 auto unit_test_Name_Subtable_() -> void
@@ -5840,9 +5772,9 @@ auto global_namespace_contains_added_name_() -> void
 	t_Name_Table const *_Nonnull const name_table_ = new_t_Name_Table();
 	t_Name_Subtable *_Nonnull const global_namespace_ = new_t_Name_Subtable__global_namespace(name_table_);
 	t_Name const *_Nonnull const test_name_ = new_t_Name(global_namespace_->name_, TypeName_, str("test"));
-	global_namespace_->add_(test_name_, none);
-	assert_(not_equal_op(global_namespace_->find_(str("test")), none), str(""));
-	assert_(not_equal_op(global_namespace_->get_(test_name_), none), str(""));
+	add_subtable_(global_namespace_, test_name_, none);
+	assert_(not_equal_op(find_(global_namespace_, str("test")), none), str(""));
+	assert_(not_equal_op(get_scope_(global_namespace_, test_name_), none), str(""));
 }
 
 auto namespace_contains_added_name_() -> void
@@ -5850,10 +5782,10 @@ auto namespace_contains_added_name_() -> void
 	t_Name_Table const *_Nonnull const name_table_ = new_t_Name_Table();
 	t_Name_Subtable *_Nonnull const global_namespace_ = new_t_Name_Subtable__global_namespace(name_table_);
 	t_Name const *_Nonnull const namespace_name_ = new_t_Name(global_namespace_->name_, NamespaceName_, str("namespace"));
-	global_namespace_->add_(namespace_name_, none);
-	global_namespace_->add_(new_t_Name(namespace_name_, TypeName_, str("test")), none);
-	t_Name_Subtable const *_Nonnull const namespace_ = global_namespace_->find_(str("namespace"));
-	assert_(not_equal_op(namespace_->find_(str("test")), none), str(""));
+	add_subtable_(global_namespace_, namespace_name_, none);
+	add_subtable_(global_namespace_, new_t_Name(namespace_name_, TypeName_, str("test")), none);
+	t_Name_Subtable const *_Nonnull const namespace_ = find_(global_namespace_, str("namespace"));
+	assert_(not_equal_op(find_(namespace_, str("test")), none), str(""));
 }
 
 auto t_Name_Table::construct() -> t_Name_Table *_Nonnull
@@ -5869,70 +5801,65 @@ inline t_Name_Table *_Nonnull new_t_Name_Table()
 	return (new t_Name_Table())->construct();
 }
 
-auto ::t_Name_Table::add_(t_Package_Name const *_Nonnull const package_name_) -> t_Name const *_Nonnull
+auto add_package_(t_Name_Table *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_) -> t_Name const *_Nonnull
 {
-	auto self = this;
-	t_Name_Subtable *_Nonnull const subtable_ = new_t_Name_Subtable__global_namespace(self, package_name_);
-	packages_->add_(subtable_);
+	t_Name_Subtable *_Nonnull const subtable_ = new_t_Name_Subtable__global_namespace(name_table_, package_name_);
+	name_table_->packages_->add_(subtable_);
 	return subtable_->name_;
 }
 
-auto ::t_Name_Table::add_(t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> t_Name const *_Nonnull
+auto add_name_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> t_Name const *_Nonnull
 {
-	auto self = this;
 	t_Name const *_Nonnull name_;
 	if (cond(not_equal_op(symbol_->declares_type_, none)))
 	{
 		name_ = new_t_Name(parent_, TypeName_, symbol_->name_, symbol_->is_special_name_);
-		add_(name_, symbol_->declares_type_);
+		add_name_(name_table_, name_, symbol_->declares_type_);
 	}
 	else
 	{
 		name_ = new_t_Name(parent_, FunctionName_, symbol_->name_, symbol_->is_special_name_);
-		add_(name_, symbol_->of_type_);
+		add_name_(name_table_, name_, symbol_->of_type_);
 	}
 
 	return name_;
 }
 
-auto ::t_Name_Table::add_(t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> void
+auto add_name_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const name_, t_Type const *_Nonnull const type_) -> void
 {
-	auto self = this;
-	any_package_->add_(name_, type_);
-	for (t_Name_Subtable *_Nonnull const package_ : *(packages_))
+	add_subtable_(name_table_->any_package_, name_, type_);
+	for (t_Name_Subtable *_Nonnull const package_ : *(name_table_->packages_))
 	{
-		if (cond(name_->is_qualified_with_(package_->name_)))
+		if (cond(is_qualified_by_(name_, package_->name_)))
 		{
-			package_->add_(name_, type_);
+			add_subtable_(package_, name_, type_);
 			return;
 		}
 	}
 
-	THROW_EXCEPTION_(str("Can't add name \"").op_add(name_->full_())->op_add(str("\" because package doesn't exist in table.")));
+	THROW_EXCEPTION_(str("Can't add name \"").op_add(full_name_(name_))->op_add(str("\" because package doesn't exist in table.")));
 }
 
-auto ::t_Name_Table::get_(t_Name const *_Nonnull const name_) const -> t_Name_Subtable const *_Nullable
+auto get_name_(t_Name_Table const *_Nonnull const name_table_, t_Name const *_Nonnull const name_) -> t_Name_Subtable const *_Nullable
 {
-	auto self = this;
 	if (cond(equal_op(name_->package_, none)))
 	{
-		return any_package_->get_(name_);
+		return get_scope_(name_table_->any_package_, name_);
 	}
 
-	for (t_Name_Subtable const *_Nonnull const package_ : *(packages_))
+	for (t_Name_Subtable const *_Nonnull const package_ : *(name_table_->packages_))
 	{
-		if (cond(name_->is_qualified_with_(package_->name_)))
+		if (cond(is_qualified_by_(name_, package_->name_)))
 		{
-			return package_->get_(name_);
+			return get_scope_(package_, name_);
 		}
 	}
 
 	return none;
 }
 
-auto ::t_Name_Table_Builder::build_(t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) const -> t_Name_Table const *_Nonnull
+auto build_name_table_(t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) -> t_Name_Table const *_Nonnull
 {
-	auto self = this;
 	assert_(equal_op(package_syntax_->kind_, PackageNode_), str("package_syntax.kind=").op_add(package_syntax_->kind_));
 	t_Name_Table *_Nonnull const name_table_ = new_t_Name_Table();
 	add_referenced_(name_table_, references_);
@@ -5940,12 +5867,12 @@ auto ::t_Name_Table_Builder::build_(t_Package_Name const *_Nonnull const package
 	return name_table_;
 }
 
-auto ::t_Name_Table_Builder::add_referenced_(t_Name_Table *_Nonnull const name_table_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) -> void
+auto add_referenced_(t_Name_Table *_Nonnull const name_table_, t_system__collections__List<t_Package_Reference> const *_Nonnull const references_) -> void
 {
 	for (t_Package_Reference const reference_ : *(references_))
 	{
 		t_Package_Name const *_Nonnull const reference_name_ = new_t_Package_Name(reference_.name_);
-		t_Name const *_Nonnull const global_namespace_ = name_table_->add_(reference_name_);
+		t_Name const *_Nonnull const global_namespace_ = add_package_(name_table_, reference_name_);
 		for (t_Symbol const *_Nonnull const symbol_ : *(reference_.package_->symbol_->children_))
 		{
 			add_symbol_(name_table_, global_namespace_, symbol_);
@@ -5953,26 +5880,26 @@ auto ::t_Name_Table_Builder::add_referenced_(t_Name_Table *_Nonnull const name_t
 	}
 }
 
-auto ::t_Name_Table_Builder::add_symbol_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> void
+auto add_symbol_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Symbol const *_Nonnull const symbol_) -> void
 {
-	t_Name const *_Nonnull const name_ = name_table_->add_(parent_, symbol_);
+	t_Name const *_Nonnull const name_ = add_name_(name_table_, parent_, symbol_);
 	for (t_Symbol const *_Nonnull const child_ : *(symbol_->children_))
 	{
 		add_symbol_(name_table_, name_, child_);
 	}
 }
 
-auto ::t_Name_Table_Builder::add_package_(t_Name_Table *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_) -> void
+auto add_package_(t_Name_Table *_Nonnull const name_table_, t_Package_Name const *_Nonnull const package_name_, t_Syntax_Node const *_Nonnull const package_syntax_) -> void
 {
 	assert_(equal_op(package_syntax_->kind_, PackageNode_), str("package_syntax.kind=").op_add(package_syntax_->kind_));
-	t_Name const *_Nonnull const global_namespace_ = name_table_->add_(package_name_);
+	t_Name const *_Nonnull const global_namespace_ = add_package_(name_table_, package_name_);
 	for (t_Syntax_Node const *_Nonnull const compilation_unit_ : *(package_syntax_->children_))
 	{
 		add_compilation_unit_(name_table_, global_namespace_, compilation_unit_);
 	}
 }
 
-auto ::t_Name_Table_Builder::add_compilation_unit_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const global_namespace_, t_Syntax_Node const *_Nonnull const compilation_unit_) -> void
+auto add_compilation_unit_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const global_namespace_, t_Syntax_Node const *_Nonnull const compilation_unit_) -> void
 {
 	assert_(equal_op(compilation_unit_->kind_, CompilationUnit_), str("compilation_unit.kind=").op_add(compilation_unit_->kind_));
 	for (t_Syntax_Node const *_Nonnull const declaration_ : *(compilation_unit_->children_))
@@ -5981,7 +5908,7 @@ auto ::t_Name_Table_Builder::add_compilation_unit_(t_Name_Table *_Nonnull const 
 	}
 }
 
-auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Syntax_Node const *_Nonnull const syntax_) -> void
+auto add_syntax_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const parent_, t_Syntax_Node const *_Nonnull const syntax_) -> void
 {
 	if (cond(bit_op(bit_arg(equal_op(syntax_->kind_, FunctionDeclaration_)) || bit_arg(equal_op(syntax_->kind_, MethodDeclaration_)))))
 	{
@@ -6003,7 +5930,7 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, TypeName_, unqualified_name_);
 		t_Type const *_Nonnull const type_ = new_t_Type(type_kind_, name_, bit_true);
-		name_table_->add_(name_, type_);
+		add_name_(name_table_, name_, type_);
 		for (t_Syntax_Node const *_Nonnull const member_ : *(members_(syntax_)))
 		{
 			add_syntax_(name_table_, name_, member_);
@@ -6022,28 +5949,28 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 		add_function_(name_table_, name_, syntax_);
 		t_Name const *_Nonnull const self_name_ = new_t_Name__special(name_, VariableName_, str("self"));
 		t_Type const *_Nonnull const self_type_ = none;
-		name_table_->add_(self_name_, self_type_);
+		add_name_(name_table_, self_name_, self_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, FieldDeclaration_)))
 	{
 		str const unqualified_name_ = get_text_(first_child_syntax_(first_child_syntax_(syntax_, VariableDeclaration_), Identifier_));
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, TypeName_, unqualified_name_);
 		t_Type const *_Nullable const no_type_ = none;
-		name_table_->add_(name_, no_type_);
+		add_name_(name_table_, name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, EnumDeclaration_)))
 	{
 		str const unqualified_name_ = get_text_(first_child_syntax_(syntax_, Identifier_));
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, TypeName_, unqualified_name_);
 		t_Type const *_Nonnull const type_ = new_t_Type(ReferenceType_, name_, bit_true);
-		name_table_->add_(name_, type_);
+		add_name_(name_table_, name_, type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, GlobalDeclaration_)))
 	{
 		str const unqualified_name_ = get_text_(first_child_syntax_(first_child_syntax_(syntax_, VariableDeclaration_), Identifier_));
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, TypeName_, unqualified_name_);
 		t_Type const *_Nullable const no_type_ = none;
-		name_table_->add_(name_, no_type_);
+		add_name_(name_table_, name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, Block_)))
 	{
@@ -6061,7 +5988,7 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 		t_Syntax_Node const *_Nonnull const identifier_ = first_child_syntax_(first_child_syntax_(syntax_, VariableDeclaration_), Identifier_);
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, get_text_(identifier_));
 		t_Type const *_Nullable const no_type_ = none;
-		name_table_->add_(name_, no_type_);
+		add_name_(name_table_, name_, no_type_);
 		add_syntax_(name_table_, parent_, first_child_syntax_(syntax_, Block_));
 	}
 	else if (cond(equal_op(syntax_->kind_, IfStatement_)))
@@ -6090,20 +6017,20 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 		t_Syntax_Node const *_Nonnull const identifier_ = first_child_syntax_(first_child_syntax_(syntax_, VariableDeclaration_), Identifier_);
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, get_text_(identifier_));
 		t_Type const *_Nullable const no_type_ = none;
-		name_table_->add_(name_, no_type_);
+		add_name_(name_table_, name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, Parameter_)))
 	{
 		t_Syntax_Node const *_Nonnull const identifier_ = first_child_syntax_(syntax_, Identifier_);
 		t_Name const *_Nonnull const name_ = new_t_Name(parent_, VariableName_, get_text_(identifier_));
 		t_Type const *_Nullable const no_type_ = none;
-		name_table_->add_(name_, no_type_);
+		add_name_(name_table_, name_, no_type_);
 	}
 	else if (cond(equal_op(syntax_->kind_, SelfParameter_)))
 	{
 		t_Name const *_Nonnull const name_ = new_t_Name__special(parent_, VariableName_, str("self"));
 		t_Type const *_Nullable const no_type_ = none;
-		name_table_->add_(name_, no_type_);
+		add_name_(name_table_, name_, no_type_);
 	}
 	else if (cond(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(bit_op(bit_arg(equal_op(syntax_->kind_, ExpressionStatement_)) || bit_arg(equal_op(syntax_->kind_, ReturnStatement_)))) || bit_arg(equal_op(syntax_->kind_, BreakStatement_)))) || bit_arg(equal_op(syntax_->kind_, ContinueStatement_)))) || bit_arg(equal_op(syntax_->kind_, EndOfFileToken_)))))
 	{
@@ -6114,10 +6041,10 @@ auto ::t_Name_Table_Builder::add_syntax_(t_Name_Table *_Nonnull const name_table
 	}
 }
 
-auto ::t_Name_Table_Builder::add_function_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const name_, t_Syntax_Node const *_Nonnull const function_) -> void
+auto add_function_(t_Name_Table *_Nonnull const name_table_, t_Name const *_Nonnull const name_, t_Syntax_Node const *_Nonnull const function_) -> void
 {
 	t_Type const *_Nullable const no_type_ = none;
-	name_table_->add_(name_, no_type_);
+	add_name_(name_table_, name_, no_type_);
 	t_Syntax_Node const *_Nonnull const parameters_syntax_ = first_child_syntax_(function_, ParameterList_);
 	for (t_Syntax_Node const *_Nonnull const parameter_ : *(parameters_(parameters_syntax_)))
 	{
@@ -6126,11 +6053,6 @@ auto ::t_Name_Table_Builder::add_function_(t_Name_Table *_Nonnull const name_tab
 
 	t_Syntax_Node const *_Nonnull const body_ = first_child_syntax_(function_, Block_);
 	add_syntax_(name_table_, name_, body_);
-}
-
-inline t_Name_Table_Builder *_Nonnull new_t_Name_Table_Builder()
-{
-	return (new t_Name_Table_Builder())->construct();
 }
 
 auto unit_test_Name_Table_Builder_() -> void
@@ -6147,17 +6069,16 @@ auto table_contains_referenced_child_names_() -> void
 	t_Package const *_Nonnull const runtime_package_ = build_runtime_library_package_();
 	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(runtime_package_));
-	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = new_t_Syntax_Node(PackageNode_, none, i32(0), i32(0));
-	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
-	t_Name_Subtable const *_Nonnull const namespace_ = name_table_->any_package_->find_(str("system"));
-	assert_(not_equal_op(namespace_->find_(str("console")), none), str(""));
+	t_Name_Table const *_Nonnull const name_table_ = build_name_table_(name_, package_syntax_, references_);
+	t_Name_Subtable const *_Nonnull const namespace_ = find_(name_table_->any_package_, str("system"));
+	assert_(not_equal_op(find_(namespace_, str("console")), none), str(""));
 	t_Name const *_Nonnull const system_namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("system"));
-	assert_(not_equal_op(name_table_->get_(system_namespace_name_), none), str(""));
+	assert_(not_equal_op(get_name_(name_table_, system_namespace_name_), none), str(""));
 	t_Name const *_Nonnull const console_namespace_name_ = new_t_Name(system_namespace_name_, NamespaceName_, str("console"));
-	assert_(not_equal_op(name_table_->get_(console_namespace_name_), none), str(""));
+	assert_(not_equal_op(get_name_(name_table_, console_namespace_name_), none), str(""));
 	t_Name const *_Nonnull const console_class_name_ = new_t_Name(console_namespace_name_, TypeName_, str("Console"));
-	assert_(not_equal_op(name_table_->get_(console_class_name_), none), str(""));
+	assert_(not_equal_op(get_name_(name_table_, console_class_name_), none), str(""));
 }
 
 auto can_get_root_namespace_from_name_() -> void
@@ -6166,11 +6087,10 @@ auto can_get_root_namespace_from_name_() -> void
 	t_Package const *_Nonnull const runtime_package_ = build_runtime_library_package_();
 	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(runtime_package_));
-	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = new_t_Syntax_Node(PackageNode_, none, i32(0), i32(0));
-	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
+	t_Name_Table const *_Nonnull const name_table_ = build_name_table_(name_, package_syntax_, references_);
 	t_Name const *_Nonnull const namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("system"));
-	assert_(not_equal_op(name_table_->get_(namespace_name_), none), str(""));
+	assert_(not_equal_op(get_name_(name_table_, namespace_name_), none), str(""));
 }
 
 auto can_get_Console_class_from_name_without_package_() -> void
@@ -6179,13 +6099,12 @@ auto can_get_Console_class_from_name_without_package_() -> void
 	t_Package const *_Nonnull const runtime_package_ = build_runtime_library_package_();
 	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(runtime_package_));
-	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = new_t_Syntax_Node(PackageNode_, none, i32(0), i32(0));
-	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
+	t_Name_Table const *_Nonnull const name_table_ = build_name_table_(name_, package_syntax_, references_);
 	t_Name const *_Nonnull const system_namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("system"));
 	t_Name const *_Nonnull const console_namespace_name_ = new_t_Name(system_namespace_name_, NamespaceName_, str("console"));
 	t_Name const *_Nonnull const console_class_name_ = new_t_Name(console_namespace_name_, TypeName_, str("Console"));
-	assert_(not_equal_op(name_table_->get_(console_class_name_), none), str(""));
+	assert_(not_equal_op(get_name_(name_table_, console_class_name_), none), str(""));
 }
 
 auto can_get_Optional_class_from_name_with_package_() -> void
@@ -6194,15 +6113,14 @@ auto can_get_Optional_class_from_name_with_package_() -> void
 	t_Package const *_Nonnull const primitives_package_ = build_primitives_package_();
 	t_system__collections__List<t_Package_Reference> *_Nonnull const references_ = new_t_system__collections__List<t_Package_Reference>();
 	references_->add_(new_t_Package_Reference(primitives_package_));
-	t_Name_Table_Builder const *_Nonnull const name_table_builder_ = new_t_Name_Table_Builder();
 	t_Syntax_Node const *_Nonnull const package_syntax_ = new_t_Syntax_Node(PackageNode_, none, i32(0), i32(0));
-	t_Name_Table const *_Nonnull const name_table_ = name_table_builder_->build_(name_, package_syntax_, references_);
+	t_Name_Table const *_Nonnull const name_table_ = build_name_table_(name_, package_syntax_, references_);
 	t_Package_Name const *_Nonnull const package_name_ = new_t_Package_Name(str("$primitives"));
 	t_Name const *_Nonnull const adamant_namespace_name_ = new_t_Name(new_t_Name__global_namespace(), NamespaceName_, str("adamant"));
 	t_Name const *_Nonnull const language_namespace_name_ = new_t_Name(adamant_namespace_name_, NamespaceName_, str("language"));
-	assert_(not_equal_op(name_table_->get_(language_namespace_name_), none), str(""));
+	assert_(not_equal_op(get_name_(name_table_, language_namespace_name_), none), str(""));
 	t_Name const *_Nonnull const optional_class_name_ = new_t_Name(language_namespace_name_, TypeName_, str("optional"));
-	assert_(not_equal_op(name_table_->get_(optional_class_name_), none), str(""));
+	assert_(not_equal_op(get_name_(name_table_, optional_class_name_), none), str(""));
 }
 
 // Entry Point Adapter
