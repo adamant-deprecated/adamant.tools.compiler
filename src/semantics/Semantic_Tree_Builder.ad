@@ -173,7 +173,7 @@ public build_semantic_node(
         else
         {
             // debug_write_line("Getting scope for type name `"+full_name(lhs.of_type.name)+"`");
-            let access_scope: Name_Subtable = name_table.get(lhs.of_type.name);
+            let access_scope: Name_Subtable = get_name(name_table, lhs.of_type.name);
             let member_scope: Name_Subtable = find(access_scope, get_text(member_name));
 
             if member_scope == none
@@ -234,7 +234,7 @@ public build_semantic_node(
         // debug_write_line("Binding variable `"+get_text(identifier)+"` with type `"+full_name(type_node.referenced_type.name)+"`, full scope is `"+full_name(variable_scope.name)+"`");
         bind_type(variable_scope, type_node.referenced_type);
         // Now we have to do the same binding in the specific package instead of the 'any' package
-        bind_type(as_mut(name_table.get(variable_scope.name)), type_node.referenced_type);
+        bind_type(as_mut(get_name(name_table, variable_scope.name)), type_node.referenced_type);
         children.add(type_node);
         if |syntax.children| == 6
         {
@@ -387,7 +387,7 @@ public build_type_name_semantic_node(
             else
             {
                 let containing_type: Type = qualifier.referenced_type;
-                let containing_scope: Name_Subtable = name_table.get(containing_type.name);
+                let containing_scope: Name_Subtable = get_name(name_table, containing_type.name);
                 // `containing_scope` shouldn't be none, because we looked it up to get the name
                 assert(containing_scope =/= none, full_name(containing_type.name));
                 let referenced_scope: Name_Subtable = find(containing_scope, get_text(name_syntax));
@@ -427,7 +427,7 @@ public build_type_name_semantic_node(
             else
             {
                 let containing_type: Type = qualifier.referenced_type;
-                let containing_scope: Name_Subtable = name_table.get(containing_type.name);
+                let containing_scope: Name_Subtable = get_name(name_table, containing_type.name);
                 // `containing_scope` shouldn't be none, because we looked it up to get the name
                 assert(containing_scope =/= none, full_name(containing_type.name));
                 let referenced_scope: Name_Subtable = find(containing_scope, get_text(name_syntax));
@@ -493,7 +493,7 @@ public build_type_name_semantic_node(
             add_could_not_determine_type_error(inner_type);
             return new Semantic_Node.concrete(syntax, children);
         }
-        let optional_type_scope: Name_Subtable? = name_table.get(builder.optional_type_name);
+        let optional_type_scope: Name_Subtable? = get_name(name_table, builder.optional_type_name);
         assert(optional_type_scope =/= none, "");
         let optional_type: Type = optional_type_scope.type;
         let type_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
@@ -567,7 +567,7 @@ public build_constructor_name_semantic_node(
         let constructor_name: string = "new_" + get_text(name);
         let referenced_type: Type = type_node.referenced_type;
         assert(referenced_type =/= none, "no referenced type for `"+get_text(type_node)+"`");
-        let constructor_scope: Name_Subtable? = lookup_special(name_table.get(referenced_type.name), constructor_name);
+        let constructor_scope: Name_Subtable? = lookup_special(get_name(name_table, referenced_type.name), constructor_name);
         if constructor_scope =/= none
         {
             children.add(new Semantic_Node.token(name));

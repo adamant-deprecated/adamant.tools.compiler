@@ -20,7 +20,7 @@ public add_referenced(
     for let reference: Package_Reference in references
     {
         let reference_name: Package_Name = new Package_Name(reference.name);
-        let global_namespace: Name = name_table.add(reference_name);
+        let global_namespace: Name = add_package(name_table, reference_name);
         // We already added the package symbol as a reference name, now add the children
         for let symbol: Symbol in reference.package.symbol.children
         {
@@ -31,7 +31,7 @@ public add_referenced(
 
 public add_symbol(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> void
 {
-    let name: Name = name_table.add(parent, symbol);
+    let name: Name = add_name(name_table, parent, symbol);
     for let child: Symbol in symbol.children
     {
         add_symbol(/*mut*/ name_table, name, child);
@@ -45,7 +45,7 @@ public add_package(
     -> void
 {
     assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
-    let global_namespace: Name = name_table.add(package_name);
+    let global_namespace: Name = add_package(name_table, package_name);
     for let compilation_unit: Syntax_Node in package_syntax.children
     {
         add_compilation_unit(name_table, global_namespace, compilation_unit);
@@ -88,7 +88,7 @@ public add_syntax(
             { type_kind = ValueType; }
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let type: Type = new Type(type_kind, name, true);
-        name_table.add(name, type);
+        add_name(name_table, name, type);
         for let member: Syntax_Node in members(syntax)
         {
             add_syntax(name_table, name, member);
@@ -107,21 +107,21 @@ public add_syntax(
         // Implicit Self Parameter (have to add after adding function name)
         let self_name: Name = new Name.special(name, VariableName, "self");
         let self_type: Type = none; // TODO: do we already know the class/struct type?
-        name_table.add(self_name, self_type); // need variable to avoid ambiguity about types
+        add_name(name_table, self_name, self_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == FieldDeclaration
     {
         let unqualified_name: string = get_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let no_type: Type? = none; // we don't have a type for functions yet
-        name_table.add(name, no_type);
+        add_name(name_table, name, no_type);
     }
     else if syntax.kind == EnumDeclaration
     {
         let unqualified_name: string = get_text(first_child_syntax(syntax, Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let type: Type = new Type(ReferenceType, name, true);
-        name_table.add(name, type);
+        add_name(name_table, name, type);
         // TODO Add enum member symbols
     }
     else if syntax.kind == GlobalDeclaration
@@ -129,7 +129,7 @@ public add_syntax(
         let unqualified_name: string = get_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let no_type: Type? = none; // we don't have a type for functions yet
-        name_table.add(name, no_type);
+        add_name(name_table, name, no_type);
     }
     else if syntax.kind == Block
     {
@@ -149,7 +149,7 @@ public add_syntax(
         let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
         let name: Name = new Name(parent, VariableName, get_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
-        name_table.add(name, no_type); // need variable to avoid ambiguity about types
+        add_name(name_table, name, no_type); // need variable to avoid ambiguity about types
         add_syntax(name_table, parent, first_child_syntax(syntax, Block));
     }
     else if syntax.kind == IfStatement
@@ -179,20 +179,20 @@ public add_syntax(
         let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
         let name: Name = new Name(parent, VariableName, get_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
-        name_table.add(name, no_type); // need variable to avoid ambiguity about types
+        add_name(name_table, name, no_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == Parameter
     {
         let identifier: Syntax_Node = first_child_syntax(syntax, Identifier);
         let name: Name = new Name(parent, VariableName, get_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
-        name_table.add(name, no_type); // need variable to avoid ambiguity about types
+        add_name(name_table, name, no_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == SelfParameter
     {
         let name: Name = new Name.special(parent, VariableName, "self");
         let no_type: Type? = none; // TODO: do we already know the class/struct type?
-        name_table.add(name, no_type); // need variable to avoid ambiguity about types
+        add_name(name_table, name, no_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == ExpressionStatement
         or syntax.kind == ReturnStatement
@@ -215,7 +215,7 @@ public add_function(
     -> void
 {
     let no_type: Type? = none; // we don't have a type for functions yet
-    name_table.add(name, no_type); // ambiguous unless we type the variable first
+    add_name(name_table, name, no_type); // ambiguous unless we type the variable first
 
     let parameters_syntax: Syntax_Node = first_child_syntax(function, ParameterList);
     for let parameter: Syntax_Node in parameters(parameters_syntax)
