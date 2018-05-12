@@ -1,231 +1,228 @@
 /// Builds the binding scopes so that we can look up names
-public class Name_Table_Builder
+public build_name_table(self,
+    package_name: Package_Name,
+    package_syntax: Syntax_Node,
+    references: system.collections.List<Package_Reference>)
+    -> Name_Table
 {
-    public build(self,
-        package_name: Package_Name,
-        package_syntax: Syntax_Node,
-        references: system.collections.List<Package_Reference>)
-        -> Name_Table
-    {
-        assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
-        let name_table: mut Name_Table = new Name_Table();
-        add_referenced(name_table, references);
-        add_package(name_table, package_name, package_syntax);
-        return name_table;
-    }
+    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+    let name_table: mut Name_Table = new Name_Table();
+    add_referenced(name_table, references);
+    add_package(name_table, package_name, package_syntax);
+    return name_table;
+}
 
-    private add_referenced(
-        name_table: mut Name_Table,
-        references: system.collections.List<Package_Reference>)
-        -> void
+public add_referenced(
+    name_table: mut Name_Table,
+    references: system.collections.List<Package_Reference>)
+    -> void
+{
+    for let reference: Package_Reference in references
     {
-        for let reference: Package_Reference in references
+        let reference_name: Package_Name = new Package_Name(reference.name);
+        let global_namespace: Name = name_table.add(reference_name);
+        // We already added the package symbol as a reference name, now add the children
+        for let symbol: Symbol in reference.package.symbol.children
         {
-            let reference_name: Package_Name = new Package_Name(reference.name);
-            let global_namespace: Name = name_table.add(reference_name);
-            // We already added the package symbol as a reference name, now add the children
-            for let symbol: Symbol in reference.package.symbol.children
-            {
-                add_symbol(/*mut*/ name_table, global_namespace, symbol);
-            }
+            add_symbol(/*mut*/ name_table, global_namespace, symbol);
         }
     }
+}
 
-    private add_symbol(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> void
+public add_symbol(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> void
+{
+    let name: Name = name_table.add(parent, symbol);
+    for let child: Symbol in symbol.children
     {
-        let name: Name = name_table.add(parent, symbol);
-        for let child: Symbol in symbol.children
+        add_symbol(/*mut*/ name_table, name, child);
+    }
+}
+
+public add_package(
+    name_table: mut Name_Table,
+    package_name: Package_Name,
+    package_syntax: Syntax_Node)
+    -> void
+{
+    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+    let global_namespace: Name = name_table.add(package_name);
+    for let compilation_unit: Syntax_Node in package_syntax.children
+    {
+        add_compilation_unit(name_table, global_namespace, compilation_unit);
+    }
+}
+
+public add_compilation_unit(
+    name_table: mut Name_Table,
+    global_namespace: Name,
+    compilation_unit: Syntax_Node)
+    -> void
+{
+    assert(compilation_unit.kind == CompilationUnit, "compilation_unit.kind=" + compilation_unit.kind);
+    for let declaration: Syntax_Node in compilation_unit.children
+    {
+        add_syntax(name_table, global_namespace, declaration);
+    }
+}
+
+public add_syntax(
+    name_table: mut Name_Table,
+    parent: Name,
+    syntax: Syntax_Node)
+    -> void
+{
+    if syntax.kind == FunctionDeclaration
+        or syntax.kind == MethodDeclaration
+    {
+        let name: Name = new Name(parent, FunctionName, get_text(first_child_syntax(syntax, Identifier)));
+        add_function(name_table, name, syntax);
+    }
+    else if syntax.kind == ClassDeclaration
+        or syntax.kind == StructDeclaration
+    {
+        let unqualified_name: string = get_text(first_child_syntax(syntax, Identifier));
+        var type_kind: int;
+        if syntax.kind == ClassDeclaration
+            { type_kind = ReferenceType; }
+        else
+            { type_kind = ValueType; }
+        let name: Name = new Name(parent, TypeName, unqualified_name);
+        let type: Type = new Type(type_kind, name, true);
+        name_table.add(name, type);
+        for let member: Syntax_Node in members(syntax)
         {
-            add_symbol(/*mut*/ name_table, name, child);
+            add_syntax(name_table, name, member);
         }
     }
-
-    private add_package(
-        name_table: mut Name_Table,
-        package_name: Package_Name,
-        package_syntax: Syntax_Node)
-        -> void
+    else if syntax.kind == ConstructorDeclaration
     {
-        assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
-        let global_namespace: Name = name_table.add(package_name);
-        for let compilation_unit: Syntax_Node in package_syntax.children
+        var full_name: string = "new";
+        let constructor_name: Syntax_Node? = first_child_syntax(syntax, Identifier);
+        if constructor_name =/= none
+            { full_name = "new_" + get_text(constructor_name); }
+        let name: Name = new Name.special(parent, FunctionName, full_name);
+
+        add_function(name_table, name, syntax);
+
+        // Implicit Self Parameter (have to add after adding function name)
+        let self_name: Name = new Name.special(name, VariableName, "self");
+        let self_type: Type = none; // TODO: do we already know the class/struct type?
+        name_table.add(self_name, self_type); // need variable to avoid ambiguity about types
+    }
+    else if syntax.kind == FieldDeclaration
+    {
+        let unqualified_name: string = get_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
+        let name: Name = new Name(parent, TypeName, unqualified_name);
+        let no_type: Type? = none; // we don't have a type for functions yet
+        name_table.add(name, no_type);
+    }
+    else if syntax.kind == EnumDeclaration
+    {
+        let unqualified_name: string = get_text(first_child_syntax(syntax, Identifier));
+        let name: Name = new Name(parent, TypeName, unqualified_name);
+        let type: Type = new Type(ReferenceType, name, true);
+        name_table.add(name, type);
+        // TODO Add enum member symbols
+    }
+    else if syntax.kind == GlobalDeclaration
+    {
+        let unqualified_name: string = get_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
+        let name: Name = new Name(parent, TypeName, unqualified_name);
+        let no_type: Type? = none; // we don't have a type for functions yet
+        name_table.add(name, no_type);
+    }
+    else if syntax.kind == Block
+    {
+        for let statement: Syntax_Node in statements(syntax)
         {
-            add_compilation_unit(name_table, global_namespace, compilation_unit);
+            add_syntax(name_table, parent, statement);
         }
     }
-
-    private add_compilation_unit(
-        name_table: mut Name_Table,
-        global_namespace: Name,
-        compilation_unit: Syntax_Node)
-        -> void
+    else if syntax.kind == LoopStatement
+        or syntax.kind == WhileStatement
+        or syntax.kind == DoWhileStatement
     {
-        assert(compilation_unit.kind == CompilationUnit, "compilation_unit.kind=" + compilation_unit.kind);
-        for let declaration: Syntax_Node in compilation_unit.children
+        add_syntax(name_table, parent, first_child_syntax(syntax, Block));
+    }
+    else if syntax.kind == ForStatement
+    {
+        let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
+        let name: Name = new Name(parent, VariableName, get_text(identifier));
+        let no_type: Type? = none; // Haven't bound the type yet
+        name_table.add(name, no_type); // need variable to avoid ambiguity about types
+        add_syntax(name_table, parent, first_child_syntax(syntax, Block));
+    }
+    else if syntax.kind == IfStatement
+    {
+        add_syntax(name_table, parent, first_child_syntax(syntax, Block));
+        let else_clause: Syntax_Node? = first_child_syntax(syntax, ElseClause);
+        if else_clause =/= none
         {
-            add_syntax(name_table, global_namespace, declaration);
+            add_syntax(name_table, parent, else_clause);
         }
     }
-
-    private add_syntax(
-        name_table: mut Name_Table,
-        parent: Name,
-        syntax: Syntax_Node)
-        -> void
+    else if syntax.kind == ElseClause
     {
-        if syntax.kind == FunctionDeclaration
-            or syntax.kind == MethodDeclaration
+        // This might be a good place for some kind of coalesce operator
+        let block: Syntax_Node? = first_child_syntax(syntax, Block);
+        if block =/= none
         {
-            let name: Name = new Name(parent, FunctionName, get_text(first_child_syntax(syntax, Identifier)));
-            add_function(name_table, name, syntax);
-        }
-        else if syntax.kind == ClassDeclaration
-            or syntax.kind == StructDeclaration
-        {
-            let unqualified_name: string = get_text(first_child_syntax(syntax, Identifier));
-            var type_kind: int;
-            if syntax.kind == ClassDeclaration
-                { type_kind = ReferenceType; }
-            else
-                { type_kind = ValueType; }
-            let name: Name = new Name(parent, TypeName, unqualified_name);
-            let type: Type = new Type(type_kind, name, true);
-            name_table.add(name, type);
-            for let member: Syntax_Node in members(syntax)
-            {
-                add_syntax(name_table, name, member);
-            }
-        }
-        else if syntax.kind == ConstructorDeclaration
-        {
-            var full_name: string = "new";
-            let constructor_name: Syntax_Node? = first_child_syntax(syntax, Identifier);
-            if constructor_name =/= none
-                { full_name = "new_" + get_text(constructor_name); }
-            let name: Name = new Name.special(parent, FunctionName, full_name);
-
-            add_function(name_table, name, syntax);
-
-            // Implicit Self Parameter (have to add after adding function name)
-            let self_name: Name = new Name.special(name, VariableName, "self");
-            let self_type: Type = none; // TODO: do we already know the class/struct type?
-            name_table.add(self_name, self_type); // need variable to avoid ambiguity about types
-        }
-        else if syntax.kind == FieldDeclaration
-        {
-            let unqualified_name: string = get_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
-            let name: Name = new Name(parent, TypeName, unqualified_name);
-            let no_type: Type? = none; // we don't have a type for functions yet
-            name_table.add(name, no_type);
-        }
-        else if syntax.kind == EnumDeclaration
-        {
-            let unqualified_name: string = get_text(first_child_syntax(syntax, Identifier));
-            let name: Name = new Name(parent, TypeName, unqualified_name);
-            let type: Type = new Type(ReferenceType, name, true);
-            name_table.add(name, type);
-            // TODO Add enum member symbols
-        }
-        else if syntax.kind == GlobalDeclaration
-        {
-            let unqualified_name: string = get_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
-            let name: Name = new Name(parent, TypeName, unqualified_name);
-            let no_type: Type? = none; // we don't have a type for functions yet
-            name_table.add(name, no_type);
-        }
-        else if syntax.kind == Block
-        {
-            for let statement: Syntax_Node in statements(syntax)
-            {
-                add_syntax(name_table, parent, statement);
-            }
-        }
-        else if syntax.kind == LoopStatement
-            or syntax.kind == WhileStatement
-            or syntax.kind == DoWhileStatement
-        {
-            add_syntax(name_table, parent, first_child_syntax(syntax, Block));
-        }
-        else if syntax.kind == ForStatement
-        {
-            let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
-            let name: Name = new Name(parent, VariableName, get_text(identifier));
-            let no_type: Type? = none; // Haven't bound the type yet
-            name_table.add(name, no_type); // need variable to avoid ambiguity about types
-            add_syntax(name_table, parent, first_child_syntax(syntax, Block));
-        }
-        else if syntax.kind == IfStatement
-        {
-            add_syntax(name_table, parent, first_child_syntax(syntax, Block));
-            let else_clause: Syntax_Node? = first_child_syntax(syntax, ElseClause);
-            if else_clause =/= none
-            {
-                add_syntax(name_table, parent, else_clause);
-            }
-        }
-        else if syntax.kind == ElseClause
-        {
-            // This might be a good place for some kind of coalesce operator
-            let block: Syntax_Node? = first_child_syntax(syntax, Block);
-            if block =/= none
-            {
-                add_syntax(name_table, parent, block);
-            }
-            else
-            {
-                add_syntax(name_table, parent, first_child_syntax(syntax, IfStatement));
-            }
-        }
-        else if syntax.kind == LocalDeclarationStatement
-        {
-            let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
-            let name: Name = new Name(parent, VariableName, get_text(identifier));
-            let no_type: Type? = none; // Haven't bound the type yet
-            name_table.add(name, no_type); // need variable to avoid ambiguity about types
-        }
-        else if syntax.kind == Parameter
-        {
-            let identifier: Syntax_Node = first_child_syntax(syntax, Identifier);
-            let name: Name = new Name(parent, VariableName, get_text(identifier));
-            let no_type: Type? = none; // Haven't bound the type yet
-            name_table.add(name, no_type); // need variable to avoid ambiguity about types
-        }
-        else if syntax.kind == SelfParameter
-        {
-            let name: Name = new Name.special(parent, VariableName, "self");
-            let no_type: Type? = none; // TODO: do we already know the class/struct type?
-            name_table.add(name, no_type); // need variable to avoid ambiguity about types
-        }
-        else if syntax.kind == ExpressionStatement
-            or syntax.kind == ReturnStatement
-            or syntax.kind == BreakStatement
-            or syntax.kind == ContinueStatement
-            or syntax.kind == EndOfFileToken
-        {
-            // ignore these
+            add_syntax(name_table, parent, block);
         }
         else
         {
-            NOT_IMPLEMENTED("syntax.kind=" + syntax.kind);
+            add_syntax(name_table, parent, first_child_syntax(syntax, IfStatement));
         }
     }
-
-    private add_function(
-        name_table: mut Name_Table,
-        name: Name,
-        function: Syntax_Node)
-        -> void
+    else if syntax.kind == LocalDeclarationStatement
     {
-        let no_type: Type? = none; // we don't have a type for functions yet
-        name_table.add(name, no_type); // ambiguous unless we type the variable first
-
-        let parameters_syntax: Syntax_Node = first_child_syntax(function, ParameterList);
-        for let parameter: Syntax_Node in parameters(parameters_syntax)
-        {
-            add_syntax(name_table, name, parameter);
-        }
-
-        let body: Syntax_Node = first_child_syntax(function, Block);
-        add_syntax(name_table, name, body);
+        let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
+        let name: Name = new Name(parent, VariableName, get_text(identifier));
+        let no_type: Type? = none; // Haven't bound the type yet
+        name_table.add(name, no_type); // need variable to avoid ambiguity about types
     }
+    else if syntax.kind == Parameter
+    {
+        let identifier: Syntax_Node = first_child_syntax(syntax, Identifier);
+        let name: Name = new Name(parent, VariableName, get_text(identifier));
+        let no_type: Type? = none; // Haven't bound the type yet
+        name_table.add(name, no_type); // need variable to avoid ambiguity about types
+    }
+    else if syntax.kind == SelfParameter
+    {
+        let name: Name = new Name.special(parent, VariableName, "self");
+        let no_type: Type? = none; // TODO: do we already know the class/struct type?
+        name_table.add(name, no_type); // need variable to avoid ambiguity about types
+    }
+    else if syntax.kind == ExpressionStatement
+        or syntax.kind == ReturnStatement
+        or syntax.kind == BreakStatement
+        or syntax.kind == ContinueStatement
+        or syntax.kind == EndOfFileToken
+    {
+        // ignore these
+    }
+    else
+    {
+        NOT_IMPLEMENTED("syntax.kind=" + syntax.kind);
+    }
+}
+
+public add_function(
+    name_table: mut Name_Table,
+    name: Name,
+    function: Syntax_Node)
+    -> void
+{
+    let no_type: Type? = none; // we don't have a type for functions yet
+    name_table.add(name, no_type); // ambiguous unless we type the variable first
+
+    let parameters_syntax: Syntax_Node = first_child_syntax(function, ParameterList);
+    for let parameter: Syntax_Node in parameters(parameters_syntax)
+    {
+        add_syntax(name_table, name, parameter);
+    }
+
+    let body: Syntax_Node = first_child_syntax(function, Block);
+    add_syntax(name_table, name, body);
 }
