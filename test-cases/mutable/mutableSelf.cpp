@@ -4,6 +4,7 @@
 class t_Test;
 
 // Function Declarations
+t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);
 inline t_Test *_Nonnull new_t_Test();
 auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 
@@ -16,7 +17,6 @@ private:
 	bit value_;
 public:
 	auto change_(bit const value_) -> void;
-	auto construct() -> t_Test *_Nonnull { return this; }
 };
 
 // Global Definitions
@@ -29,9 +29,11 @@ auto ::t_Test::change_(bit const value_) -> void
 	self->value_ = value_;
 }
 
+t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self) { return self; }
+
 inline t_Test *_Nonnull new_t_Test()
 {
-	return (new t_Test())->construct();
+	return c_t_Test(new t_Test());
 }
 
 auto main_(t_system__console__Console *_Nonnull const console_) -> void

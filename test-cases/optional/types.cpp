@@ -4,6 +4,7 @@
 class t_Test;
 
 // Function Declarations
+t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);
 inline t_Test *_Nonnull new_t_Test();
 auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>;
 auto main_(t_system__console__Console *_Nonnull const console_) -> void;
@@ -13,16 +14,17 @@ auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 class t_Test
 {
 public:
-	auto construct() -> t_Test *_Nonnull { return this; }
 };
 
 // Global Definitions
 
 // Definitions
 
+t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self) { return self; }
+
 inline t_Test *_Nonnull new_t_Test()
 {
-	return (new t_Test())->construct();
+	return c_t_Test(new t_Test());
 }
 
 auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>

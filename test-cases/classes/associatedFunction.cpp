@@ -4,6 +4,7 @@
 class t_C;
 
 // Function Declarations
+t_C *_Nonnull c_t_C(t_C *_Nonnull self);
 inline t_C *_Nonnull new_t_C();
 auto main_() -> void;
 
@@ -14,7 +15,6 @@ class t_C
 public:
 	auto method_() const -> str;
 	static auto function_() -> str;
-	auto construct() -> t_C *_Nonnull { return this; }
 };
 
 // Global Definitions
@@ -32,9 +32,11 @@ auto ::t_C::function_() -> str
 	return str("hello");
 }
 
+t_C *_Nonnull c_t_C(t_C *_Nonnull self) { return self; }
+
 inline t_C *_Nonnull new_t_C()
 {
-	return (new t_C())->construct();
+	return c_t_C(new t_C());
 }
 
 auto main_() -> void

@@ -939,31 +939,43 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
     return access_modifer;
 }
 
-public emit_default_constructor(emitter: mut Emitter, type_name: string, is_value_type: bool, current_access_level: int) -> void
+public emit_default_constructor(emitter: mut Emitter, type_name: string, is_value_type: bool) -> void
 {
-    emit_access_modifer(emitter, current_access_level, PublicKeyword);
+    let default_constructor_name: string = "c_"+type_name;
 
     var return_type: string = type_name;
     if not is_value_type
         { return_type = return_type + " *_Nonnull"; }
-    // Write out the declaration for C++ so we can call functions defined after others
-    begin_line(emitter.class_declarations, "");
-    if is_value_type { write(emitter.class_declarations, "static "); }
-    write(emitter.class_declarations, "auto construct() -> " + return_type);
-    if is_value_type
-        { end_line(emitter.class_declarations, " { return " + type_name + "(); }"); }
-    else
-        { end_line(emitter.class_declarations, " { return this; }"); }
 
-    // Write out new function
-    write_line(emitter.function_declarations, "inline " + return_type + " new_" + type_name + "();");
+    var constructor_signature: string = return_type + " " + default_constructor_name + "(";
+    if not is_value_type
+        { constructor_signature = constructor_signature + return_type + " self"; }
+    constructor_signature = constructor_signature + ")";
+
+    // Constructor Declaration
+    write_line(emitter.function_declarations, constructor_signature + ";");
+
+     // Constructor definition
     element_separator_line(emitter.definitions);
-    write_line(emitter.definitions, "inline " + return_type + " new_" + type_name + "()");
+    begin_line(emitter.definitions, constructor_signature);
+    // TODO I probably need to do the default initalization
+    if is_value_type
+        { end_line(emitter.definitions, " { return {}; }"); }
+    else
+        { end_line(emitter.definitions, " { return self; }"); }
+
+    // `new_` function declaration
+    let new_function_signature: string = "inline " + return_type + " new_" + type_name + "()";
+    write_line(emitter.function_declarations, new_function_signature + ";");
+
+    // `new_` function definition
+    element_separator_line(emitter.definitions);
+    write_line(emitter.definitions, new_function_signature);
     begin_block(emitter.definitions);
     if not is_value_type
-        { write_line(emitter.definitions, "return (new " + type_name + "())->construct();"); }
+        { write_line(emitter.definitions, "return "+default_constructor_name+"(new " + type_name + "());"); }
     else
-        { write_line(emitter.definitions, "return " + type_name + "::construct();"); }
+        { write_line(emitter.definitions, "return " + default_constructor_name + "();"); }
     end_block(emitter.definitions);
 }
 
@@ -1001,7 +1013,8 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         }
         if not has_constructors
         {
-            emit_default_constructor(emitter, class_name, false, current_access_level);
+            emit_default_constructor(emitter, class_name, false
+            );
         }
         end_block_with_semicolon(emitter.class_declarations);
     }
@@ -1030,7 +1043,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         }
         if not has_constructors
         {
-            emit_default_constructor(emitter, struct_name, true, current_access_level);
+            emit_default_constructor(emitter, struct_name, true);
         }
         end_block_with_semicolon(emitter.class_declarations);
     }

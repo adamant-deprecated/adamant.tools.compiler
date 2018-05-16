@@ -5,7 +5,9 @@ class t_Reference_Type;
 struct t_Value_Type;
 
 // Function Declarations
+t_Reference_Type *_Nonnull c_t_Reference_Type(t_Reference_Type *_Nonnull self);
 inline t_Reference_Type *_Nonnull new_t_Reference_Type();
+t_Value_Type c_t_Value_Type();
 inline t_Value_Type new_t_Value_Type();
 auto main_() -> void;
 
@@ -14,7 +16,6 @@ auto main_() -> void;
 class t_Reference_Type
 {
 public:
-	auto construct() -> t_Reference_Type *_Nonnull { return this; }
 };
 
 struct t_Value_Type final
@@ -24,21 +25,24 @@ public:
 	t_Value_Type const * operator->() const { return this; }
 	t_Value_Type & operator* () { return *this; }
 	t_Value_Type const & operator* () const { return *this; }
-	static auto construct() -> t_Value_Type { return t_Value_Type(); }
 };
 
 // Global Definitions
 
 // Definitions
 
+t_Reference_Type *_Nonnull c_t_Reference_Type(t_Reference_Type *_Nonnull self) { return self; }
+
 inline t_Reference_Type *_Nonnull new_t_Reference_Type()
 {
-	return (new t_Reference_Type())->construct();
+	return c_t_Reference_Type(new t_Reference_Type());
 }
+
+t_Value_Type c_t_Value_Type() { return {}; }
 
 inline t_Value_Type new_t_Value_Type()
 {
-	return t_Value_Type::construct();
+	return c_t_Value_Type();
 }
 
 auto main_() -> void
