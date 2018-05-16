@@ -1,28 +1,28 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class t_Source_Text;
-class t_Text_Line;
-class t_Text_Lines;
-class t_Text_Position;
-class t_Text_Span;
-class t_Source_File_Builder;
-class t_Compilation_Unit;
-class t_Package;
+struct t_Source_Text;
+struct t_Text_Line;
+struct t_Text_Lines;
+struct t_Text_Position;
+struct t_Text_Span;
+struct t_Source_File_Builder;
+struct t_Compilation_Unit;
+struct t_Package;
 struct t_Package_Reference;
-class t_Semantic_Node;
-class t_Semantic_Tree_Builder;
-class t_Compilation_Unit_Parser;
-class t_Syntax_Node;
-class t_Token_Stream;
-class t_Diagnostic;
-class t_Emitter;
-class t_Name;
-class t_Package_Name;
-class t_Symbol;
-class t_Type;
-class t_Name_Subtable;
-class t_Name_Table;
+struct t_Semantic_Node;
+struct t_Semantic_Tree_Builder;
+struct t_Compilation_Unit_Parser;
+struct t_Syntax_Node;
+struct t_Token_Stream;
+struct t_Diagnostic;
+struct t_Emitter;
+struct t_Name;
+struct t_Package_Name;
+struct t_Symbol;
+struct t_Type;
+struct t_Name_Subtable;
+struct t_Name_Table;
 
 // Function Declarations
 auto compile_(t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull const sources_) -> t_Package const *_Nonnull;
@@ -325,9 +325,8 @@ auto can_get_Optional_class_from_name_with_package_() -> void;
 
 // Class Declarations
 
-class t_Source_Text
+struct t_Source_Text
 {
-public:
 	str package_;
 	str path_;
 	str name_;
@@ -335,55 +334,48 @@ public:
 	t_Text_Lines const *_Nonnull lines_;
 };
 
-class t_Text_Line
+struct t_Text_Line
 {
-public:
 	t_Source_Text const *_Nonnull source_;
 	i32 start_;
 	i32 byte_length_;
 };
 
-class t_Text_Lines
+struct t_Text_Lines
 {
-public:
 	t_Source_Text const *_Nonnull source_;
 	t_system__collections__List<i32> const *_Nonnull start_of_line_;
 };
 
-class t_Text_Position
+struct t_Text_Position
 {
-public:
 	i32 character_offset_;
 	i32 line_;
 	i32 column_;
 };
 
-class t_Text_Span
+struct t_Text_Span
 {
-public:
 	i32 start_;
 	i32 byte_length_;
 };
 
-class t_Source_File_Builder
+struct t_Source_File_Builder
 {
-public:
 	t_system__text__String_Builder *_Nonnull code_;
 	t_system__text__String_Builder *_Nonnull indent_;
 	bit firstElement_;
 	bit afterBlock_;
 };
 
-class t_Compilation_Unit
+struct t_Compilation_Unit
 {
-public:
 	t_Syntax_Node const *_Nonnull syntax_;
 	t_system__collections__List<t_Semantic_Node const *_Nonnull> const *_Nonnull declarations_;
 };
 
-class t_Package
+struct t_Package
 {
-public:
 	t_Package_Name const *_Nonnull name_;
 	t_system__collections__List<t_Package_Reference> const *_Nonnull references_;
 	t_system__collections__List<t_Compilation_Unit const *_Nonnull> const *_Nonnull compilation_units_;
@@ -392,7 +384,6 @@ public:
 
 struct t_Package_Reference final
 {
-public:
 	t_Package_Reference * operator->() { return this; }
 	t_Package_Reference const * operator->() const { return this; }
 	t_Package_Reference & operator* () { return *this; }
@@ -401,9 +392,8 @@ public:
 	t_Package const *_Nonnull package_;
 };
 
-class t_Semantic_Node
+struct t_Semantic_Node
 {
-public:
 	t_Syntax_Node const *_Nonnull syntax_;
 	i32 kind_;
 	bit is_missing_;
@@ -418,23 +408,20 @@ public:
 	t_Type const *_Nullable referenced_type_;
 };
 
-class t_Semantic_Tree_Builder
+struct t_Semantic_Tree_Builder
 {
-public:
 	t_Name const *_Nonnull optional_type_name_;
 };
 
-class t_Compilation_Unit_Parser
+struct t_Compilation_Unit_Parser
 {
-public:
 	t_Token_Stream *_Nonnull token_stream_;
 	t_Syntax_Node const *_Nullable token_;
 	t_Syntax_Node const *_Nullable compilation_unit_;
 };
 
-class t_Syntax_Node
+struct t_Syntax_Node
 {
-public:
 	i32 kind_;
 	bit is_missing_;
 	t_Source_Text const *_Nonnull source_;
@@ -444,18 +431,16 @@ public:
 	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull node_diagnostics_;
 };
 
-class t_Token_Stream
+struct t_Token_Stream
 {
-public:
 	t_Source_Text const *_Nonnull source_;
 	u32 position_;
 	t_system__collections__List<t_Diagnostic const *_Nonnull> *_Nonnull diagnostics_;
 	bit end_of_file_;
 };
 
-class t_Diagnostic
+struct t_Diagnostic
 {
-public:
 	i32 level_;
 	i32 phase_;
 	t_Source_Text const *_Nonnull source_;
@@ -464,9 +449,8 @@ public:
 	str message_;
 };
 
-class t_Emitter
+struct t_Emitter
 {
-public:
 	t_Package const *_Nonnull package_;
 	t_system__collections__List<t_Source_Text const *_Nonnull> const *_Nonnull resources_;
 	t_Source_File_Builder *_Nonnull type_declarations_;
@@ -480,24 +464,21 @@ public:
 	bit main_function_accepts_args_;
 };
 
-class t_Name
+struct t_Name
 {
-public:
 	t_Package_Name const *_Nullable package_;
 	i32 kind_;
 	t_system__collections__List<str> const *_Nonnull segments_;
 	bit is_special_;
 };
 
-class t_Package_Name
+struct t_Package_Name
 {
-public:
 	str unqualified_;
 };
 
-class t_Symbol
+struct t_Symbol
 {
-public:
 	str name_;
 	bit is_special_name_;
 	i32 kind_;
@@ -507,9 +488,8 @@ public:
 	t_system__collections__List<t_Symbol const *_Nonnull> const *_Nonnull children_;
 };
 
-class t_Type
+struct t_Type
 {
-public:
 	i32 kind_;
 	t_Name const *_Nonnull name_;
 	t_system__collections__List<t_Type const *_Nonnull> const *_Nonnull type_parameters_;
@@ -519,9 +499,8 @@ public:
 	bit is_mutable_;
 };
 
-class t_Name_Subtable
+struct t_Name_Subtable
 {
-public:
 	t_Name_Table const *_Nonnull name_table_;
 	t_Name_Subtable const *_Nullable parent_;
 	t_Name const *_Nonnull name_;
@@ -529,9 +508,8 @@ public:
 	t_system__collections__List<t_Name_Subtable *_Nonnull> *_Nonnull subtables_;
 };
 
-class t_Name_Table
+struct t_Name_Table
 {
-public:
 	t_Name_Subtable *_Nonnull any_package_;
 	t_system__collections__List<t_Name_Subtable *_Nonnull> *_Nonnull packages_;
 };
@@ -4780,7 +4758,7 @@ auto emit_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const
 		t_Type const *_Nonnull const declared_type_ = declaration_->declares_type_;
 		assert_(not_equal_op(declared_type_, none), get_text_(first_child_(declaration_, Identifier_)));
 		str const class_name_ = mangle_name_(declared_type_->name_);
-		write_line_(emitter_->type_declarations_, str("struct ").op_add(class_name_)->op_add(str(";")));
+		write_line_(emitter_->type_declarations_, str("typedef struct ").op_add(class_name_)->op_add(str(" "))->op_add(class_name_)->op_add(str(";")));
 		element_separator_line_(emitter_->class_declarations_);
 		write_line_(emitter_->class_declarations_, str("struct ").op_add(class_name_));
 		begin_block_(emitter_->class_declarations_);
@@ -4803,7 +4781,7 @@ auto emit_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const
 		t_Type const *_Nonnull const declared_type_ = declaration_->declares_type_;
 		assert_(not_equal_op(declared_type_, none), get_text_(first_child_(declaration_, Identifier_)));
 		str const struct_name_ = mangle_name_(declared_type_->name_);
-		write_line_(emitter_->type_declarations_, str("struct ").op_add(struct_name_)->op_add(str(";")));
+		write_line_(emitter_->type_declarations_, str("typedef struct ").op_add(struct_name_)->op_add(str(" "))->op_add(struct_name_)->op_add(str(";")));
 		element_separator_line_(emitter_->class_declarations_);
 		write_line_(emitter_->class_declarations_, str("struct ").op_add(struct_name_)->op_add(str(" final")));
 		begin_block_(emitter_->class_declarations_);
