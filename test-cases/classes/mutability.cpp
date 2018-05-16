@@ -1,8 +1,8 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class t_Mutable_Object;
-class t_immutable_object;
+struct t_Mutable_Object;
+struct t_immutable_object;
 
 // Function Declarations
 t_Mutable_Object *_Nonnull c_t_Mutable_Object(t_Mutable_Object *_Nonnull self);
@@ -13,14 +13,12 @@ auto main_() -> void;
 
 // Class Declarations
 
-class t_Mutable_Object
+struct t_Mutable_Object
 {
-public:
 };
 
-class t_immutable_object
+struct t_immutable_object
 {
-public:
 };
 
 // Global Definitions

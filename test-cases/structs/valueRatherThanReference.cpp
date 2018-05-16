@@ -1,7 +1,7 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class t_Reference_Type;
+struct t_Reference_Type;
 struct t_Value_Type;
 
 // Function Declarations
@@ -13,14 +13,12 @@ auto main_() -> void;
 
 // Class Declarations
 
-class t_Reference_Type
+struct t_Reference_Type
 {
-public:
 };
 
 struct t_Value_Type final
 {
-public:
 	t_Value_Type * operator->() { return this; }
 	t_Value_Type const * operator->() const { return this; }
 	t_Value_Type & operator* () { return *this; }

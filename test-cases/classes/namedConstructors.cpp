@@ -1,7 +1,7 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class t_C;
+struct t_C;
 
 // Function Declarations
 t_C *_Nonnull c_t_C(t_C *_Nonnull self, str const name_);
@@ -14,9 +14,8 @@ auto main_() -> void;
 
 // Class Declarations
 
-class t_C
+struct t_C
 {
-public:
 	str name_;
 	i32 kind_;
 };

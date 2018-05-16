@@ -1,7 +1,7 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-class t_Test;
+struct t_Test;
 
 // Function Declarations
 t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);
@@ -11,9 +11,8 @@ auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
-class t_Test
+struct t_Test
 {
-public:
 };
 
 // Global Definitions

@@ -841,39 +841,8 @@ public emit_constructor_body(emitter: mut Emitter, block: Semantic_Node, self_ty
     end_block(emitter.definitions);
 }
 
-public emit_access_modifer(emitter: mut Emitter, current_access_level: int, access_modifer: int) -> int
+public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, class_name: string, is_value_type: bool) -> void
 {
-    if access_modifer =/= current_access_level
-    {
-        // We avoid the indent by using end_line()
-        if access_modifer == PublicKeyword
-            or access_modifer == InternalKeyword
-        {
-            end_line(emitter.class_declarations, "public:");
-            return PublicKeyword;
-        }
-        else if access_modifer == ProtectedKeyword
-        {
-            end_line(emitter.class_declarations, "public:");
-        }
-        else if access_modifer == PrivateKeyword
-        {
-            end_line(emitter.class_declarations, "private:");
-        }
-        else
-        {
-            THROW_EXCEPTION("Invalid access modifier in Emitter.emit_member_declaration(). kind is " + access_modifer);
-        }
-    }
-    return access_modifer;
-}
-
-public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, class_name: string, is_value_type: bool, current_access_level: int) -> int
-{
-    var access_modifer: int = node_access_modifier(member).kind;
-    if member.kind == ConstructorDeclaration // always make constructors public so they can be called by `new_` functions
-        { access_modifer = PublicKeyword; }
-    access_modifer = emit_access_modifer(emitter, current_access_level, access_modifer);
     if member.kind == ConstructorDeclaration
     {
         var new_function_name: string = "new_" + class_name;
@@ -967,8 +936,6 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
     {
         error(emitter.definitions, "Could not emit member of type " + member.kind);
     }
-
-    return access_modifer;
 }
 
 public emit_default_constructor(emitter: mut Emitter, type_name: string, is_value_type: bool) -> void
@@ -1034,17 +1001,15 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let declared_type: Type = declaration.declares_type;
         assert(declared_type =/= none, get_text(first_child(declaration, Identifier)));
         let class_name: string = mangle_name(declared_type.name);
-        write_line(emitter.type_declarations, "class " + class_name + ";");
+        write_line(emitter.type_declarations, "struct " + class_name + ";");
         element_separator_line(emitter.class_declarations);
-        write_line(emitter.class_declarations, "class " + class_name);
+        write_line(emitter.class_declarations, "struct " + class_name);
         begin_block(emitter.class_declarations);
-        end_line(emitter.class_declarations, "public:"); // Assume we aren't nested, avoid the indent
-        var current_access_level: int = PublicKeyword;
         var has_constructors: bool = false;
         for let member: Semantic_Node in node_members(declaration)
         {
             has_constructors = has_constructors or member.kind == ConstructorDeclaration;
-            current_access_level = emit_member_declaration(emitter, member, class_name, false, current_access_level);
+            emit_member_declaration(emitter, member, class_name, false);
         }
         if not has_constructors
         {
@@ -1061,19 +1026,17 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         element_separator_line(emitter.class_declarations);
         write_line(emitter.class_declarations, "struct " + struct_name + " final");
         begin_block(emitter.class_declarations);
-        end_line(emitter.class_declarations, "public:"); // Assume we aren't nested, avoid the indent
         // Write out arrow and dereference operators for using value types like reference types
         // TODO Emit correct code to use value types as value types rather than reference types and drop this code
         write_line(emitter.class_declarations, struct_name + " * operator->() { return this; }");
         write_line(emitter.class_declarations, struct_name + " const * operator->() const { return this; }");
         write_line(emitter.class_declarations, struct_name + " & operator* () { return *this; }");
         write_line(emitter.class_declarations, struct_name + " const & operator* () const { return *this; }");
-        var current_access_level: int = PublicKeyword;
         var has_constructors: bool = false;
         for let member: Semantic_Node in node_members(declaration)
         {
             has_constructors = has_constructors or member.kind == ConstructorDeclaration;
-            current_access_level = emit_member_declaration(emitter, member, struct_name, true, current_access_level);
+            emit_member_declaration(emitter, member, struct_name, true);
         }
         if not has_constructors
         {

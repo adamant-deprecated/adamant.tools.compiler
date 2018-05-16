@@ -12,7 +12,6 @@ auto main_() -> void;
 
 struct t_Test final
 {
-public:
 	t_Test * operator->() { return this; }
 	t_Test const * operator->() const { return this; }
 	t_Test & operator* () { return *this; }
