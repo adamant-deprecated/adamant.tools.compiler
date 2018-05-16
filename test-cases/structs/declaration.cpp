@@ -4,6 +4,7 @@
 struct t_Test;
 
 // Function Declarations
+t_Test c_t_Test(str const name_);
 inline t_Test new_t_Test(str const name_);
 auto main_() -> void;
 
@@ -17,7 +18,6 @@ public:
 	t_Test & operator* () { return *this; }
 	t_Test const & operator* () const { return *this; }
 	str name_;
-	static auto construct(str const name_) -> t_Test;
 	auto method_() const -> str;
 };
 
@@ -25,7 +25,7 @@ public:
 
 // Definitions
 
-auto t_Test::construct(str const name_) -> t_Test
+t_Test c_t_Test(str const name_)
 {
 	t_Test self;
 	self->name_ = name_;
@@ -34,7 +34,7 @@ auto t_Test::construct(str const name_) -> t_Test
 
 inline t_Test new_t_Test(str const name_)
 {
-	return t_Test::construct(name_);
+	return c_t_Test(name_);
 }
 
 auto ::t_Test::method_() const -> str

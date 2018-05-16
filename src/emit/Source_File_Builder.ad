@@ -7,10 +7,10 @@ public class Source_File_Builder
 
     public new()
     {
-        code = new system.text.String_Builder();
-        indent = new system.text.String_Builder();
-        firstElement = true;
-        afterBlock = true;
+        self.code = new system.text.String_Builder();
+        self.indent = new system.text.String_Builder();
+        self.firstElement = true;
+        self.afterBlock = true;
     }
 }
 

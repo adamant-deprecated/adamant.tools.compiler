@@ -1,7 +1,6 @@
-
 // Names ending with underscores are reserved.
-// Names starting with underscore must be ignore/unused so we will never need to
-// construct composite names from them. (they will just be varibles)
+// Names starting with underscore must be ignored/unused so we will never need to
+// construct composite names from them. (they will just be variables)
 // Names with 2 or more underscores in the middle, add one underscore.
 // Form compound names by joining with double underscore.
 // Prefix names with kind indicator.
@@ -15,7 +14,7 @@
 // * f32: float
 // * f16d16: fixed point
 // * str: string
-// * bit:  bool
+// * bit: bool
 //
 // # Tuples
 // Have a prefix of `t_` and are followed by type parameters. For example:
@@ -26,11 +25,11 @@
 // # Prefixes
 // The simple name prefixes are:
 // * t_ class/struct
-// * m_ method
+// * m_ method - `m_<full type>__0n_<name>`
 // * fn_ function
 // * op_ operator
-// * c_ construct
-// * new_ new and construct
+// * c_ construct - c_<full type>__<name>`
+// * new_ new and construct - c_<full type>__<name>`
 // * v_ variable (needed to avoid creating a variable that conflicts with another name)
 //
 // # Combinable prefixes
@@ -49,14 +48,19 @@
 //
 // # Function Parameter Types
 // Number of parameters is appended after double underscore, even for none.
-
 // Then arguments are listed, double underscore, number of segments followed by
-// name prefix (run together).  Primitives can be listed in place of the number
-// example: f_bar__3_s__0r_system__text__String_Builder__1__0i32__0string
-// example: f_bar__3__0i32__0r_system__text__String_Builder__0__string
-// f_bar__baz__3__1_i32__3r_system_text__String_Builder
-// first parameter doesn't need  double underscore or zero
-// additional abbreviations i=i32, u=u32 c=cp, b=bit
+// name prefix (run together). Primitives can be listed in place of the number.
+// Additional abbreviations i=i32, u=u32 c=cp, b=bit, s=str
+// examples:
+//   bar(string, system.text.String_Builder, int64)
+//   f_bar__3__s__3rt_system__text__String_Builder__i64
+//
+//   bar(int, system.collections.List<int>)
+//   f_bar__2__i__5rt_system__collections__List__1__i
+//
+//   bar.baz()
+//   f_bar__baz__0
+//
 public class Emitter
 {
     public let package: Package;
@@ -313,12 +317,18 @@ public convert_type(mutable_binding: bool, type_node: Semantic_Node) -> string
     return convert_type(mutable_binding, type_node.referenced_type, false); // not optional
 }
 
-public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, is_main_function: bool) -> string
+// TODO can't have `self_type` be a nullable string because comparision not implemented yet
+public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, self_type: string, is_main_function: bool) -> string
 {
     assert(parameters.kind == ParameterList, "parameters.kind=" + parameters.kind);
     let builder: mut system.text.String_Builder = new system.text.String_Builder();
     builder.Append("(");
-    var first_parameter: bool = true;
+    if self_type.ByteLength() > 0
+    {
+        builder.Append(self_type);
+        builder.Append(" self");
+    }
+    var first_parameter: bool = self_type.ByteLength() == 0;
     for let parameter: Semantic_Node in children_of_kind(parameters, Parameter)
     {
         if not first_parameter
@@ -350,9 +360,19 @@ public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, i
     return builder.ToString();
 }
 
+public convert_method_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, self_type: string) -> string
+{
+    return convert_parameter_list(emitter, parameters, self_type, false);
+}
+
+public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, is_main_function: bool) -> string
+{
+    return convert_parameter_list(emitter, parameters, "", is_main_function);
+}
+
 public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node) -> string
 {
-    return convert_parameter_list(emitter, parameters, false);
+    return convert_parameter_list(emitter, parameters, "", false);
 }
 
 public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builder) -> void
@@ -813,10 +833,6 @@ public emit_constructor_body(emitter: mut Emitter, block: Semantic_Node, self_ty
     {
         write_line(emitter.definitions, self_type + " self;");
     }
-    else
-    {
-        write_line(emitter.definitions, self_type + " self = this;");
-    }
     for let statement: Semantic_Node in node_statements(block)
     {
         emit_statement(emitter, statement);
@@ -860,36 +876,52 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
     access_modifer = emit_access_modifer(emitter, current_access_level, access_modifer);
     if member.kind == ConstructorDeclaration
     {
-        let parameters: string = convert_parameter_list(emitter, first_child(member, ParameterList));
         var new_function_name: string = "new_" + class_name;
-        var constructor_full_name: string = "construct";
+        var constructor_full_name: string = "c_" + class_name;
         let constructor_name_node: Semantic_Node? = first_child(member, Identifier);
         if constructor_name_node =/= none
         {
             let constructor_name: string = get_text(constructor_name_node);
             new_function_name = new_function_name + "__" + constructor_name;
-            constructor_full_name = "construct_" + constructor_name;
+            constructor_full_name = constructor_full_name + "__" + constructor_name;
         }
         var return_type: string = class_name;
         if not is_value_type
             { return_type = return_type + " *_Nonnull"; }
-        // Write out the declaration for C++ so we can call functions defined after others
-        begin_line(emitter.class_declarations, "");
-        if is_value_type { write(emitter.class_declarations, "static "); }
-        end_line(emitter.class_declarations, "auto " + constructor_full_name + parameters + " -> " + return_type + ";");
+        let parameters_node: Semantic_Node = first_child(member, ParameterList);
+        var constructor_parameters: string;
+        if not is_value_type
+            { constructor_parameters = convert_method_parameter_list(emitter, parameters_node, return_type); }
+        else
+            { constructor_parameters = convert_parameter_list(emitter, parameters_node); }
+
+        // Constructor Signature
+        var constructor_signature: string = return_type + " " + constructor_full_name + constructor_parameters;
+
+        // Constructor Declaration
+        write_line(emitter.function_declarations, constructor_signature + ";");
+
+        // Constructor definition
         element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, "auto " + class_name + "::" + constructor_full_name + parameters + " -> " + return_type);
+        write_line(emitter.definitions, constructor_signature);
         emit_constructor_body(emitter, first_child(member, Block), return_type, is_value_type);
-        // Write out new function
-        write_line(emitter.function_declarations, "inline " + return_type + " " + new_function_name + parameters + ";");
+
+        // `new_` Function Signature
+        // New function never has self parameter, so we have to redo the parameter list
+        let new_function_signature: string = "inline " + return_type + " " + new_function_name  + convert_parameter_list(emitter, parameters_node);
+
+        // `new_` Function Declaration
+        write_line(emitter.function_declarations, new_function_signature + ";");
+
+        // `new_` Function Definition
         element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, "inline " + return_type + " " + new_function_name + parameters);
+        write_line(emitter.definitions, new_function_signature);
         begin_block(emitter.definitions);
         if not is_value_type
-            { begin_line(emitter.definitions, "return (new " + class_name + "())->" + constructor_full_name + "("); }
+            { begin_line(emitter.definitions, "return " + constructor_full_name + "(new " + class_name + "()"); }
         else
-            { begin_line(emitter.definitions, "return " + class_name + "::" + constructor_full_name + "("); }
-        var first_parameter: bool = true;
+            { begin_line(emitter.definitions, "return " + constructor_full_name + "("); }
+        var first_parameter: bool = is_value_type;
         for let parameter: Semantic_Node in first_child(member, ParameterList).children
         {
             if not first_parameter
@@ -947,6 +979,7 @@ public emit_default_constructor(emitter: mut Emitter, type_name: string, is_valu
     if not is_value_type
         { return_type = return_type + " *_Nonnull"; }
 
+    // Constructor Signature
     var constructor_signature: string = return_type + " " + default_constructor_name + "(";
     if not is_value_type
         { constructor_signature = constructor_signature + return_type + " self"; }
@@ -964,11 +997,13 @@ public emit_default_constructor(emitter: mut Emitter, type_name: string, is_valu
     else
         { end_line(emitter.definitions, " { return self; }"); }
 
-    // `new_` function declaration
+    // `new_` Function Signature
     let new_function_signature: string = "inline " + return_type + " new_" + type_name + "()";
+
+    // `new_` function Declaration
     write_line(emitter.function_declarations, new_function_signature + ";");
 
-    // `new_` function definition
+    // `new_` Function Definition
     element_separator_line(emitter.definitions);
     write_line(emitter.definitions, new_function_signature);
     begin_block(emitter.definitions);
@@ -1013,8 +1048,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         }
         if not has_constructors
         {
-            emit_default_constructor(emitter, class_name, false
-            );
+            emit_default_constructor(emitter, class_name, false);
         }
         end_block_with_semicolon(emitter.class_declarations);
     }

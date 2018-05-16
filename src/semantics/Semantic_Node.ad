@@ -91,7 +91,7 @@ public class Semantic_Node
         self.byte_length = syntax.byte_length;
         self.children = children;
         self.node_diagnostics = new system.collections.List<Diagnostic>();
-        self.of_type = of_type;
+        self.of_type = none;
         self.converted_type = none;
         self.declares_type = type;
         self.referenced_type = none;

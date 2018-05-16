@@ -8,7 +8,7 @@ public class Text_Line
     {
         self.source = source;
         self.start = start;
-        byte_length = length;
+        self.byte_length = length;
     }
 
     public new spanning(source: Source_Text, start: int, end: int)

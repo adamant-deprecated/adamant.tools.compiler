@@ -4,8 +4,11 @@
 class t_C;
 
 // Function Declarations
+t_C *_Nonnull c_t_C(t_C *_Nonnull self, str const name_);
 inline t_C *_Nonnull new_t_C(str const name_);
+t_C *_Nonnull c_t_C__one(t_C *_Nonnull self, str const name_);
 inline t_C *_Nonnull new_t_C__one(str const name_);
+t_C *_Nonnull c_t_C__two(t_C *_Nonnull self, str const name_);
 inline t_C *_Nonnull new_t_C__two(str const name_);
 auto main_() -> void;
 
@@ -16,18 +19,14 @@ class t_C
 public:
 	str name_;
 	i32 kind_;
-	auto construct(str const name_) -> t_C *_Nonnull;
-	auto construct_one(str const name_) -> t_C *_Nonnull;
-	auto construct_two(str const name_) -> t_C *_Nonnull;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto t_C::construct(str const name_) -> t_C *_Nonnull
+t_C *_Nonnull c_t_C(t_C *_Nonnull self, str const name_)
 {
-	t_C *_Nonnull self = this;
 	self->name_ = name_;
 	self->kind_ = i32(0);
 	return self;
@@ -35,12 +34,11 @@ auto t_C::construct(str const name_) -> t_C *_Nonnull
 
 inline t_C *_Nonnull new_t_C(str const name_)
 {
-	return (new t_C())->construct(name_);
+	return c_t_C(new t_C(), name_);
 }
 
-auto t_C::construct_one(str const name_) -> t_C *_Nonnull
+t_C *_Nonnull c_t_C__one(t_C *_Nonnull self, str const name_)
 {
-	t_C *_Nonnull self = this;
 	self->name_ = name_;
 	self->kind_ = i32(1);
 	return self;
@@ -48,12 +46,11 @@ auto t_C::construct_one(str const name_) -> t_C *_Nonnull
 
 inline t_C *_Nonnull new_t_C__one(str const name_)
 {
-	return (new t_C())->construct_one(name_);
+	return c_t_C__one(new t_C(), name_);
 }
 
-auto t_C::construct_two(str const name_) -> t_C *_Nonnull
+t_C *_Nonnull c_t_C__two(t_C *_Nonnull self, str const name_)
 {
-	t_C *_Nonnull self = this;
 	self->name_ = name_;
 	self->kind_ = i32(2);
 	return self;
@@ -61,7 +58,7 @@ auto t_C::construct_two(str const name_) -> t_C *_Nonnull
 
 inline t_C *_Nonnull new_t_C__two(str const name_)
 {
-	return (new t_C())->construct_two(name_);
+	return c_t_C__two(new t_C(), name_);
 }
 
 auto main_() -> void

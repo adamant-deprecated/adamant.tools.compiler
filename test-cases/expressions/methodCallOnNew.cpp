@@ -4,6 +4,7 @@
 class t_Test;
 
 // Function Declarations
+t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);
 inline t_Test *_Nonnull new_t_Test();
 auto main_() -> void;
 
@@ -13,23 +14,21 @@ class t_Test
 {
 public:
 	bit value_;
-	auto construct() -> t_Test *_Nonnull;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto t_Test::construct() -> t_Test *_Nonnull
+t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self)
 {
-	t_Test *_Nonnull self = this;
 	value_ = bit_true;
 	return self;
 }
 
 inline t_Test *_Nonnull new_t_Test()
 {
-	return (new t_Test())->construct();
+	return c_t_Test(new t_Test());
 }
 
 auto main_() -> void
