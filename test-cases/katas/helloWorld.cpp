@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(t_system__console__Console *_Nonnull const console_) -> void;
+auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(t_system__console__Console *_Nonnull const console_) -> void
+auto main_(system__console__Console *_Nonnull const console_) -> void
 {
 	console_->WriteLine_(str("Hello World!"));
 }
@@ -21,7 +21,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new t_system__console__Console());
+		main_(new system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

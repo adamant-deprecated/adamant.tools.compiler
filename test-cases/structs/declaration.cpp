@@ -1,21 +1,21 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct t_Test t_Test;
+typedef struct Test Test;
 
 // Function Declarations
-t_Test c_t_Test(str const name_);
-inline t_Test new_t_Test(str const name_);
+Test c_Test(str const name_);
+inline Test new_Test(str const name_);
 auto main_() -> void;
 
 // Class Declarations
 
-struct t_Test final
+struct Test
 {
-	t_Test * operator->() { return this; }
-	t_Test const * operator->() const { return this; }
-	t_Test & operator* () { return *this; }
-	t_Test const & operator* () const { return *this; }
+	Test * operator->() { return this; }
+	Test const * operator->() const { return this; }
+	Test & operator* () { return *this; }
+	Test const & operator* () const { return *this; }
 	str name_;
 	auto method_() const -> str;
 };
@@ -24,19 +24,19 @@ struct t_Test final
 
 // Definitions
 
-t_Test c_t_Test(str const name_)
+Test c_Test(str const name_)
 {
-	t_Test self;
+	Test self;
 	self->name_ = name_;
 	return self;
 }
 
-inline t_Test new_t_Test(str const name_)
+inline Test new_Test(str const name_)
 {
-	return c_t_Test(name_);
+	return c_Test(name_);
 }
 
-auto ::t_Test::method_() const -> str
+auto ::Test::method_() const -> str
 {
 	auto self = this;
 	return name_;
@@ -44,7 +44,7 @@ auto ::t_Test::method_() const -> str
 
 auto main_() -> void
 {
-	t_Test const t_ = new_t_Test(str("Bob"));
+	Test const t_ = new_Test(str("Bob"));
 	t_.method_();
 }
 

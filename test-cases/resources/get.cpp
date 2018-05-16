@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(t_system__console__Console *_Nonnull const console_) -> void;
+auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(t_system__console__Console *_Nonnull const console_) -> void
+auto main_(system__console__Console *_Nonnull const console_) -> void
 {
 	console_->Write_(resource_manager_->GetString_(str("hello.rsrc")));
 	console_->Write_(resource_manager_->GetString_(str("world.rsrc")));
@@ -25,7 +25,7 @@ std::int32_t main(int argc, char const *const * argv)
 		resource_manager_->AddResource(str("hello.rsrc"), str("Hello to\nall my \"cool\" friends\\enemies.\n"));
 		resource_manager_->AddResource(str("world.rsrc"), str("Goodbye world!\n"));
 
-		main_(new t_system__console__Console());
+		main_(new system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

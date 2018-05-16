@@ -1,16 +1,16 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct t_C t_C;
+typedef struct C C;
 
 // Function Declarations
-t_C *_Nonnull c_t_C(t_C *_Nonnull self, str const name_);
-inline t_C *_Nonnull new_t_C(str const name_);
+C *_Nonnull c_C(C *_Nonnull self, str const name_);
+inline C *_Nonnull new_C(str const name_);
 auto main_() -> void;
 
 // Class Declarations
 
-struct t_C
+struct C
 {
 	str name_;
 	auto method_() const -> str;
@@ -20,18 +20,18 @@ struct t_C
 
 // Definitions
 
-t_C *_Nonnull c_t_C(t_C *_Nonnull self, str const name_)
+C *_Nonnull c_C(C *_Nonnull self, str const name_)
 {
 	self->name_ = name_;
 	return self;
 }
 
-inline t_C *_Nonnull new_t_C(str const name_)
+inline C *_Nonnull new_C(str const name_)
 {
-	return c_t_C(new t_C(), name_);
+	return c_C(new C(), name_);
 }
 
-auto ::t_C::method_() const -> str
+auto ::C::method_() const -> str
 {
 	auto self = this;
 	return name_;
@@ -39,7 +39,7 @@ auto ::t_C::method_() const -> str
 
 auto main_() -> void
 {
-	str const s_ = new_t_C(str("Bob"))->method_();
+	str const s_ = new_C(str("Bob"))->method_();
 }
 
 // Entry Point Adapter

@@ -27,3 +27,7 @@ This phase is specified in a short hand notation of concatenating strings.
 5. `type_name + "__new__" + number_of_parameters`
 6. `type_name + "__get__" + property_name`
 7. `type_name + "__set__" + property_name`
+
+### Special Names
+
+* Tuples: `tuple_` + number_of_type_parameters + type_parameters_separated_by_underscores

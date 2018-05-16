@@ -407,7 +407,7 @@ void debug_write_line_(str value);
 void debug_write_line_();
 
 template<typename T>
-class t_system__collections__List
+class system__collections__List
 {
 private:
     T *_Nonnull values;
@@ -421,7 +421,7 @@ public:
     const_iterator end() const { return &values[length]; }
 
     // Adamant Members
-    t_system__collections__List *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
+    system__collections__List *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
     void add_(T value);
     void clear_() { length = 0; }
     i32 op_magnitude() const { return i32(length); }
@@ -429,7 +429,7 @@ public:
 };
 
 template<typename T>
-void t_system__collections__List<T>::add_(T value)
+void system__collections__List<T>::add_(T value)
 {
     if(length >= capacity)
     {
@@ -446,7 +446,7 @@ void t_system__collections__List<T>::add_(T value)
 }
 
 template<typename T>
-T const & t_system__collections__List<T>::op_Element(i32 const index) const
+T const & system__collections__List<T>::op_Element(i32 const index) const
 {
     if(index.value < 0 || index.value >= length)
         throw std::out_of_range("List index out of bounds");
@@ -454,12 +454,12 @@ T const & t_system__collections__List<T>::op_Element(i32 const index) const
 }
 
 template<typename T>
-t_system__collections__List<T> *_Nonnull new_t_system__collections__List()
+system__collections__List<T> *_Nonnull new_system__collections__List()
 {
-    return (new t_system__collections__List<T>())->construct();
+    return (new system__collections__List<T>())->construct();
 }
 
-class t_system__console__Console
+class system__console__Console
 {
 public:
     void Write_(str value);
@@ -467,7 +467,7 @@ public:
     void WriteLine_();
 };
 
-class t_system__console__Arguments
+class system__console__Arguments
 {
 private:
     str *_Nonnull args;
@@ -475,7 +475,7 @@ public:
     // Runtime Use Members
     typedef str const *_Nonnull const_iterator;
 
-    t_system__console__Arguments(int argc, char const *_Nonnull const *_Nonnull argv);
+    system__console__Arguments(int argc, char const *_Nonnull const *_Nonnull argv);
     const_iterator begin() const { return &args[0]; }
     const_iterator end() const { return &args[Count]; }
 
@@ -491,39 +491,39 @@ public:
     }
 };
 
-class t_system__io__File_Reader
+class system__io__File_Reader
 {
 private:
     std::FILE *_Nonnull file;
 
 public:
-    t_system__io__File_Reader *_Nonnull construct(const str& fileName);
+    system__io__File_Reader *_Nonnull construct(const str& fileName);
     str ReadToEndSync_();
     void Close_();
 };
 
-inline t_system__io__File_Reader *_Nonnull new_t_system__io__File_Reader(const str& fileName)
+inline system__io__File_Reader *_Nonnull new_system__io__File_Reader(const str& fileName)
 {
-    return (new t_system__io__File_Reader())->construct(fileName);
+    return (new system__io__File_Reader())->construct(fileName);
 }
 
-class t_system__io__File_Writer
+class system__io__File_Writer
 {
 private:
     std::FILE *_Nonnull file;
 
 public:
-    t_system__io__File_Writer *_Nonnull construct(const str& fileName);
+    system__io__File_Writer *_Nonnull construct(const str& fileName);
     void Write_(const str& value);
     void Close_();
 };
 
-inline t_system__io__File_Writer *_Nonnull new_t_system__io__File_Writer(const str& fileName)
+inline system__io__File_Writer *_Nonnull new_system__io__File_Writer(const str& fileName)
 {
-    return (new t_system__io__File_Writer())->construct(fileName);
+    return (new system__io__File_Writer())->construct(fileName);
 }
 
-class t_system__text__String_Builder
+class system__text__String_Builder
 {
 private:
     char *_Nullable buffer;
@@ -532,16 +532,16 @@ private:
     void ensure_capacity(int needed);
 public:
     // Runtime Use Members
-    t_system__text__String_Builder(): buffer(0), capacity(0), length(0) { }
+    system__text__String_Builder(): buffer(0), capacity(0), length(0) { }
 
     // Adamant Members
-    t_system__text__String_Builder *_Nonnull construct() { return this; }
-    t_system__text__String_Builder *_Nonnull construct(str const & value);
-    t_system__text__String_Builder *_Nonnull construct_with_capacity(i32 capacity);
+    system__text__String_Builder *_Nonnull construct() { return this; }
+    system__text__String_Builder *_Nonnull construct(str const & value);
+    system__text__String_Builder *_Nonnull construct_with_capacity(i32 capacity);
     // TODO byte_length_ should be a property
     i32 byte_length_() const { return i32(length); }
     void Append_(str const & value);
-    void Append_(t_system__text__String_Builder const *_Nonnull value);
+    void Append_(system__text__String_Builder const *_Nonnull value);
     void AppendLine_(str const& value);
     void AppendLine_();
     void Remove_(i32 start, i32 length);
@@ -549,17 +549,17 @@ public:
     str ToString_();
 };
 
-inline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder()
+inline system__text__String_Builder *_Nonnull new_system__text__String_Builder()
 {
-    return (new t_system__text__String_Builder())->construct();
+    return (new system__text__String_Builder())->construct();
 }
 
-inline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder(str const & value)
+inline system__text__String_Builder *_Nonnull new_system__text__String_Builder(str const & value)
 {
-    return (new t_system__text__String_Builder())->construct(value);
+    return (new system__text__String_Builder())->construct(value);
 }
 
-inline t_system__text__String_Builder *_Nonnull new_t_system__text__String_Builder__with_capacity(i32 capacity)
+inline system__text__String_Builder *_Nonnull new_system__text__String_Builder__with_capacity(i32 capacity)
 {
-    return (new t_system__text__String_Builder())->construct_with_capacity(capacity);
+    return (new system__text__String_Builder())->construct_with_capacity(capacity);
 }

@@ -1,23 +1,23 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct t_Mutable_Object t_Mutable_Object;
-typedef struct t_immutable_object t_immutable_object;
+typedef struct Mutable_Object Mutable_Object;
+typedef struct immutable_object immutable_object;
 
 // Function Declarations
-t_Mutable_Object *_Nonnull c_t_Mutable_Object(t_Mutable_Object *_Nonnull self);
-inline t_Mutable_Object *_Nonnull new_t_Mutable_Object();
-t_immutable_object *_Nonnull c_t_immutable_object(t_immutable_object *_Nonnull self);
-inline t_immutable_object *_Nonnull new_t_immutable_object();
+Mutable_Object *_Nonnull c_Mutable_Object(Mutable_Object *_Nonnull self);
+inline Mutable_Object *_Nonnull new_Mutable_Object();
+immutable_object *_Nonnull c_immutable_object(immutable_object *_Nonnull self);
+inline immutable_object *_Nonnull new_immutable_object();
 auto main_() -> void;
 
 // Class Declarations
 
-struct t_Mutable_Object
+struct Mutable_Object
 {
 };
 
-struct t_immutable_object
+struct immutable_object
 {
 };
 
@@ -25,24 +25,24 @@ struct t_immutable_object
 
 // Definitions
 
-t_Mutable_Object *_Nonnull c_t_Mutable_Object(t_Mutable_Object *_Nonnull self) { return self; }
+Mutable_Object *_Nonnull c_Mutable_Object(Mutable_Object *_Nonnull self) { return self; }
 
-inline t_Mutable_Object *_Nonnull new_t_Mutable_Object()
+inline Mutable_Object *_Nonnull new_Mutable_Object()
 {
-	return c_t_Mutable_Object(new t_Mutable_Object());
+	return c_Mutable_Object(new Mutable_Object());
 }
 
-t_immutable_object *_Nonnull c_t_immutable_object(t_immutable_object *_Nonnull self) { return self; }
+immutable_object *_Nonnull c_immutable_object(immutable_object *_Nonnull self) { return self; }
 
-inline t_immutable_object *_Nonnull new_t_immutable_object()
+inline immutable_object *_Nonnull new_immutable_object()
 {
-	return c_t_immutable_object(new t_immutable_object());
+	return c_immutable_object(new immutable_object());
 }
 
 auto main_() -> void
 {
-	t_Mutable_Object const *_Nonnull const m_ = new_t_Mutable_Object();
-	t_immutable_object const *_Nonnull const i_ = new_t_immutable_object();
+	Mutable_Object const *_Nonnull const m_ = new_Mutable_Object();
+	immutable_object const *_Nonnull const i_ = new_immutable_object();
 }
 
 // Entry Point Adapter

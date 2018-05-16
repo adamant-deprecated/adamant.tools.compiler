@@ -1,16 +1,16 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct t_Test t_Test;
+typedef struct Test Test;
 
 // Function Declarations
-t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);
-inline t_Test *_Nonnull new_t_Test();
+Test *_Nonnull c_Test(Test *_Nonnull self);
+inline Test *_Nonnull new_Test();
 auto main_() -> void;
 
 // Class Declarations
 
-struct t_Test
+struct Test
 {
 	bit value_;
 };
@@ -19,20 +19,20 @@ struct t_Test
 
 // Definitions
 
-t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self)
+Test *_Nonnull c_Test(Test *_Nonnull self)
 {
 	self->value_ = bit_true;
 	return self;
 }
 
-inline t_Test *_Nonnull new_t_Test()
+inline Test *_Nonnull new_Test()
 {
-	return c_t_Test(new t_Test());
+	return c_Test(new Test());
 }
 
 auto main_() -> void
 {
-	bit const value_ = new_t_Test()->value_;
+	bit const value_ = new_Test()->value_;
 }
 
 // Entry Point Adapter

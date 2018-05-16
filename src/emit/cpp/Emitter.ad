@@ -15,52 +15,6 @@
 // * f16d16: fixed point
 // * str: string
 // * bit: bool
-//
-// # Tuples
-// Have a prefix of `t_` and are followed by type parameters. For example:
-// t_2__i__i: is a pair of ints
-// This marks them as types and doesn't conflict with any other types because
-// their name can't start with a number.
-//
-// # Prefixes
-// The simple name prefixes are:
-// * t_ class/struct
-// * m_ method - `m_<full type>__0n_<name>`
-// * fn_ function
-// * op_ operator
-// * c_ construct - c_<full type>__<name>`
-// * new_ new and construct - c_<full type>__<name>`
-// * v_ variable (needed to avoid creating a variable that conflicts with another name)
-//
-// # Combinable prefixes
-// Reference and optional types are formed by a sequence of letters in a prefix
-// * t: a type that isn't primitive (i.e. most types except primitives will have 't')
-// * r: reference (don't need to distinguish class/struct the type name says that)
-// * o: optional
-//
-// Examples:
-// * rt_Foo - reference to `Foo`
-// * or_i32: optional reference to a variable holding an int
-//
-// # Generic Type Parameters
-// The number of generic is appended after a double underscore (except for none)
-// * t_Foo__3 - number of type parameters
-//
-// # Function Parameter Types
-// Number of parameters is appended after double underscore, even for none.
-// Then arguments are listed, double underscore, number of segments followed by
-// name prefix (run together). Primitives can be listed in place of the number.
-// Additional abbreviations i=i32, u=u32 c=cp, b=bit, s=str
-// examples:
-//   bar(string, system.text.String_Builder, int64)
-//   f_bar__3__s__3rt_system__text__String_Builder__i64
-//
-//   bar(int, system.collections.List<int>)
-//   f_bar__2__i__5rt_system__collections__List__1__i
-//
-//   bar.baz()
-//   f_bar__baz__0
-//
 public class Emitter
 {
     public let package: Package;
@@ -127,12 +81,6 @@ public mangle_name(name: Name) -> string
 {
     // TODO what about name.is_special == true?
     let builder: mut system.text.String_Builder = new system.text.String_Builder();
-    if name.kind == TypeName
-        { builder.Append("t_"); }
-    else if name.kind == FunctionName
-        { builder.Append("f_"); }
-    else if name.kind == VariableName
-        { builder.Append("v_"); }
 
     var first_segment: bool = true;
     for let segment: string in name.segments
@@ -1024,7 +972,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let struct_name: string = mangle_name(declared_type.name);
         write_line(emitter.type_declarations, "typedef struct " + struct_name + " " + struct_name + ";");
         element_separator_line(emitter.class_declarations);
-        write_line(emitter.class_declarations, "struct " + struct_name + " final");
+        write_line(emitter.class_declarations, "struct " + struct_name);
         begin_block(emitter.class_declarations);
         // Write out arrow and dereference operators for using value types like reference types
         // TODO Emit correct code to use value types as value types rather than reference types and drop this code
@@ -1152,12 +1100,12 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
     // TODO should be `new mut`
     let args: mut system.text.String_Builder = new system.text.String_Builder();
     if emitter.main_function_accepts_console
-        { args.Append("new t_system__console__Console()"); }
+        { args.Append("new system__console__Console()"); }
     if emitter.main_function_accepts_args
     {
         if emitter.main_function_accepts_console
             { args.Append(", "); }
-        args.Append("new t_system__console__Arguments(argc, argv)");
+        args.Append("new system__console__Arguments(argc, argv)");
     }
 
     if emitter.main_function_return_type == "void"

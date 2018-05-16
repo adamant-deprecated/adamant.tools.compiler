@@ -1,16 +1,16 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct t_Test t_Test;
+typedef struct Test Test;
 
 // Function Declarations
-t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);
-inline t_Test *_Nonnull new_t_Test();
-auto main_(t_system__console__Console *_Nonnull const console_) -> void;
+Test *_Nonnull c_Test(Test *_Nonnull self);
+inline Test *_Nonnull new_Test();
+auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
-struct t_Test
+struct Test
 {
 	bit value_;
 	auto change_(bit const value_) -> void;
@@ -20,22 +20,22 @@ struct t_Test
 
 // Definitions
 
-auto ::t_Test::change_(bit const value_) -> void
+auto ::Test::change_(bit const value_) -> void
 {
 	auto self = this;
 	self->value_ = value_;
 }
 
-t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self) { return self; }
+Test *_Nonnull c_Test(Test *_Nonnull self) { return self; }
 
-inline t_Test *_Nonnull new_t_Test()
+inline Test *_Nonnull new_Test()
 {
-	return c_t_Test(new t_Test());
+	return c_Test(new Test());
 }
 
-auto main_(t_system__console__Console *_Nonnull const console_) -> void
+auto main_(system__console__Console *_Nonnull const console_) -> void
 {
-	t_Test *_Nonnull const test_ = new_t_Test();
+	Test *_Nonnull const test_ = new_Test();
 	test_->change_(bit_true);
 }
 
@@ -44,7 +44,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new t_system__console__Console());
+		main_(new system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

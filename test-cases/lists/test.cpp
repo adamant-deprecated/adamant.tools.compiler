@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(t_system__console__Console *_Nonnull const console_) -> void;
+auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ auto main_(t_system__console__Console *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(t_system__console__Console *_Nonnull const console_) -> void
+auto main_(system__console__Console *_Nonnull const console_) -> void
 {
-	t_system__collections__List<str> *_Nonnull const strings_ = new_t_system__collections__List<str>();
+	system__collections__List<str> *_Nonnull const strings_ = new_system__collections__List<str>();
 	strings_->add_(str("Hello"));
 	strings_->add_(str("World!"));
 	if (cond(not_equal_op(strings_->op_magnitude(), i32(2))))
@@ -29,15 +29,15 @@ auto main_(t_system__console__Console *_Nonnull const console_) -> void
 
 	console_->WriteLine_();
 	strings_->clear_();
-	t_system__collections__List<t_system__text__String_Builder *_Nonnull> *_Nonnull const builders_ = new_t_system__collections__List<t_system__text__String_Builder *_Nonnull>();
-	builders_->add_(new_t_system__text__String_Builder(str("sb[0]: ")));
-	builders_->add_(new_t_system__text__String_Builder(str("sb[1]: ")));
-	for (t_system__text__String_Builder *_Nonnull const sb_ : *(builders_))
+	system__collections__List<system__text__String_Builder *_Nonnull> *_Nonnull const builders_ = new_system__collections__List<system__text__String_Builder *_Nonnull>();
+	builders_->add_(new_system__text__String_Builder(str("sb[0]: ")));
+	builders_->add_(new_system__text__String_Builder(str("sb[1]: ")));
+	for (system__text__String_Builder *_Nonnull const sb_ : *(builders_))
 	{
 		sb_->Append_(str("value"));
 	}
 
-	for (t_system__text__String_Builder *_Nonnull const sb_ : *(builders_))
+	for (system__text__String_Builder *_Nonnull const sb_ : *(builders_))
 	{
 		console_->WriteLine_(sb_->ToString_());
 	}
@@ -48,7 +48,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new t_system__console__Console());
+		main_(new system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

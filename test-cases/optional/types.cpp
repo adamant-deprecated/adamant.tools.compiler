@@ -1,17 +1,17 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct t_Test t_Test;
+typedef struct Test Test;
 
 // Function Declarations
-t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);
-inline t_Test *_Nonnull new_t_Test();
+Test *_Nonnull c_Test(Test *_Nonnull self);
+inline Test *_Nonnull new_Test();
 auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>;
-auto main_(t_system__console__Console *_Nonnull const console_) -> void;
+auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
 
-struct t_Test
+struct Test
 {
 };
 
@@ -19,25 +19,25 @@ struct t_Test
 
 // Definitions
 
-t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self) { return self; }
+Test *_Nonnull c_Test(Test *_Nonnull self) { return self; }
 
-inline t_Test *_Nonnull new_t_Test()
+inline Test *_Nonnull new_Test()
 {
-	return c_t_Test(new t_Test());
+	return c_Test(new Test());
 }
 
 auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>
 {
 	p_optional<i32> const z_ = none;
-	t_Test const *_Nullable const t_ = none;
-	t_system__text__String_Builder *_Nullable const sb_ = none;
-	t_system__collections__List<p_optional<i32>> const *_Nonnull const l_ = new_t_system__collections__List<p_optional<i32>>();
-	t_Test *_Nullable const m_ = none;
+	Test const *_Nullable const t_ = none;
+	system__text__String_Builder *_Nullable const sb_ = none;
+	system__collections__List<p_optional<i32>> const *_Nonnull const l_ = new_system__collections__List<p_optional<i32>>();
+	Test *_Nullable const m_ = none;
 	p_optional<p_optional<i32>> const d_ = none;
 	return none;
 }
 
-auto main_(t_system__console__Console *_Nonnull const console_) -> void
+auto main_(system__console__Console *_Nonnull const console_) -> void
 {
 	Func_(none, none);
 }
@@ -47,7 +47,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new t_system__console__Console());
+		main_(new system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

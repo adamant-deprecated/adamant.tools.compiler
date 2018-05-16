@@ -1,52 +1,52 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct t_Reference_Type t_Reference_Type;
-typedef struct t_Value_Type t_Value_Type;
+typedef struct Reference_Type Reference_Type;
+typedef struct Value_Type Value_Type;
 
 // Function Declarations
-t_Reference_Type *_Nonnull c_t_Reference_Type(t_Reference_Type *_Nonnull self);
-inline t_Reference_Type *_Nonnull new_t_Reference_Type();
-t_Value_Type c_t_Value_Type();
-inline t_Value_Type new_t_Value_Type();
+Reference_Type *_Nonnull c_Reference_Type(Reference_Type *_Nonnull self);
+inline Reference_Type *_Nonnull new_Reference_Type();
+Value_Type c_Value_Type();
+inline Value_Type new_Value_Type();
 auto main_() -> void;
 
 // Class Declarations
 
-struct t_Reference_Type
+struct Reference_Type
 {
 };
 
-struct t_Value_Type final
+struct Value_Type
 {
-	t_Value_Type * operator->() { return this; }
-	t_Value_Type const * operator->() const { return this; }
-	t_Value_Type & operator* () { return *this; }
-	t_Value_Type const & operator* () const { return *this; }
+	Value_Type * operator->() { return this; }
+	Value_Type const * operator->() const { return this; }
+	Value_Type & operator* () { return *this; }
+	Value_Type const & operator* () const { return *this; }
 };
 
 // Global Definitions
 
 // Definitions
 
-t_Reference_Type *_Nonnull c_t_Reference_Type(t_Reference_Type *_Nonnull self) { return self; }
+Reference_Type *_Nonnull c_Reference_Type(Reference_Type *_Nonnull self) { return self; }
 
-inline t_Reference_Type *_Nonnull new_t_Reference_Type()
+inline Reference_Type *_Nonnull new_Reference_Type()
 {
-	return c_t_Reference_Type(new t_Reference_Type());
+	return c_Reference_Type(new Reference_Type());
 }
 
-t_Value_Type c_t_Value_Type() { return {}; }
+Value_Type c_Value_Type() { return {}; }
 
-inline t_Value_Type new_t_Value_Type()
+inline Value_Type new_Value_Type()
 {
-	return c_t_Value_Type();
+	return c_Value_Type();
 }
 
 auto main_() -> void
 {
-	t_Reference_Type const *_Nonnull const r_ = new_t_Reference_Type();
-	t_Value_Type const v_ = new_t_Value_Type();
+	Reference_Type const *_Nonnull const r_ = new_Reference_Type();
+	Value_Type const v_ = new_Value_Type();
 }
 
 // Entry Point Adapter

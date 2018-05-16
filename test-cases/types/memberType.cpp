@@ -1,16 +1,16 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct t_Test t_Test;
+typedef struct Test Test;
 
 // Function Declarations
-t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);
-inline t_Test *_Nonnull new_t_Test();
+Test *_Nonnull c_Test(Test *_Nonnull self);
+inline Test *_Nonnull new_Test();
 auto main_() -> void;
 
 // Class Declarations
 
-struct t_Test
+struct Test
 {
 	i32 value_;
 };
@@ -19,20 +19,20 @@ struct t_Test
 
 // Definitions
 
-t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self)
+Test *_Nonnull c_Test(Test *_Nonnull self)
 {
 	self->value_ = i32(1);
 	return self;
 }
 
-inline t_Test *_Nonnull new_t_Test()
+inline Test *_Nonnull new_Test()
 {
-	return c_t_Test(new t_Test());
+	return c_Test(new Test());
 }
 
 auto main_() -> void
 {
-	t_Test const *_Nonnull const t_ = new_t_Test();
+	Test const *_Nonnull const t_ = new_Test();
 	bit const b_ = i32_less_than(t_->value_, i32(5));
 }
 
