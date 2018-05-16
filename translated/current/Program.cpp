@@ -190,7 +190,7 @@ auto emit_method_body_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const
 auto emit_constructor_body_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const block_, str const self_type_, bit const is_value_type_) -> void;
 auto emit_access_modifer_(t_Emitter *_Nonnull const emitter_, i32 const current_access_level_, i32 const access_modifer_) -> i32;
 auto emit_member_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const member_, str const class_name_, bit const is_value_type_, i32 const current_access_level_) -> i32;
-auto emit_default_constructor_(t_Emitter *_Nonnull const emitter_, str const type_name_, bit const is_value_type_, i32 const current_access_level_) -> void;
+auto emit_default_constructor_(t_Emitter *_Nonnull const emitter_, str const type_name_, bit const is_value_type_) -> void;
 auto emit_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const *_Nonnull const declaration_) -> void;
 auto emit_compilation_unit_(t_Emitter *_Nonnull const emitter_, t_Compilation_Unit const *_Nonnull const unit_) -> void;
 auto emit_preamble_(t_Emitter *_Nonnull const emitter_) -> void;
@@ -4757,42 +4757,46 @@ auto emit_member_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Nod
 	return access_modifer_;
 }
 
-auto emit_default_constructor_(t_Emitter *_Nonnull const emitter_, str const type_name_, bit const is_value_type_, i32 const current_access_level_) -> void
+auto emit_default_constructor_(t_Emitter *_Nonnull const emitter_, str const type_name_, bit const is_value_type_) -> void
 {
-	emit_access_modifer_(emitter_, current_access_level_, PublicKeyword_);
+	str const default_constructor_name_ = str("c_").op_add(type_name_);
 	str return_type_ = type_name_;
 	if (cond(bit_not(is_value_type_)))
 	{
 		return_type_ = return_type_.op_add(str(" *_Nonnull"));
 	}
 
-	begin_line_(emitter_->class_declarations_, str(""));
-	if (cond(is_value_type_))
+	str constructor_signature_ = return_type_.op_add(str(" "))->op_add(default_constructor_name_)->op_add(str("("));
+	if (cond(bit_not(is_value_type_)))
 	{
-		write_(emitter_->class_declarations_, str("static "));
+		constructor_signature_ = constructor_signature_.op_add(return_type_)->op_add(str(" self"));
 	}
 
-	write_(emitter_->class_declarations_, str("auto construct() -> ").op_add(return_type_));
+	constructor_signature_ = constructor_signature_.op_add(str(")"));
+	write_line_(emitter_->function_declarations_, constructor_signature_.op_add(str(";")));
+	element_separator_line_(emitter_->definitions_);
+	begin_line_(emitter_->definitions_, constructor_signature_);
 	if (cond(is_value_type_))
 	{
-		end_line_(emitter_->class_declarations_, str(" { return ").op_add(type_name_)->op_add(str("(); }")));
+		end_line_(emitter_->definitions_, str(" { return {}; }"));
 	}
 	else
 	{
-		end_line_(emitter_->class_declarations_, str(" { return this; }"));
+		end_line_(emitter_->definitions_, str(" { return self; }"));
 	}
 
-	write_line_(emitter_->function_declarations_, str("inline ").op_add(return_type_)->op_add(str(" new_"))->op_add(type_name_)->op_add(str("();")));
+	str const new_function_signature_ = str("inline ").op_add(return_type_)->op_add(str(" new_"))->op_add(type_name_)->op_add(str("()"));
+	write_line_(emitter_->function_declarations_, new_function_signature_.op_add(str(";")));
 	element_separator_line_(emitter_->definitions_);
-	write_line_(emitter_->definitions_, str("inline ").op_add(return_type_)->op_add(str(" new_"))->op_add(type_name_)->op_add(str("()")));
+	write_line_(emitter_->definitions_, new_function_signature_);
 	begin_block_(emitter_->definitions_);
 	if (cond(bit_not(is_value_type_)))
 	{
-		write_line_(emitter_->definitions_, str("return (new ").op_add(type_name_)->op_add(str("())->construct();")));
+		write_line_(emitter_->definitions_, str("return ").op_add(default_constructor_name_)->op_add(str("(new "))->op_add(type_name_)->op_add(str("());")));
 	}
 	else
 	{
-		write_line_(emitter_->definitions_, str("return ").op_add(type_name_)->op_add(str("::construct();")));
+		write_line_(emitter_->definitions_, str("return ").op_add(default_constructor_name_)->op_add(str("();")));
 	}
 
 	end_block_(emitter_->definitions_);
@@ -4833,7 +4837,7 @@ auto emit_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const
 
 		if (cond(bit_not(has_constructors_)))
 		{
-			emit_default_constructor_(emitter_, class_name_, bit_false, current_access_level_);
+			emit_default_constructor_(emitter_, class_name_, bit_false);
 		}
 
 		end_block_with_semicolon_(emitter_->class_declarations_);
@@ -4862,7 +4866,7 @@ auto emit_declaration_(t_Emitter *_Nonnull const emitter_, t_Semantic_Node const
 
 		if (cond(bit_not(has_constructors_)))
 		{
-			emit_default_constructor_(emitter_, struct_name_, bit_true, current_access_level_);
+			emit_default_constructor_(emitter_, struct_name_, bit_true);
 		}
 
 		end_block_with_semicolon_(emitter_->class_declarations_);
