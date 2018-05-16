@@ -22,7 +22,7 @@ public:
 
 t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self)
 {
-	value_ = i32(0);
+	self->value_ = i32(0);
 	return self;
 }
 
