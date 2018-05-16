@@ -22,7 +22,7 @@ public:
 
 t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self)
 {
-	value_ = bit_true;
+	self->value_ = bit_true;
 	return self;
 }
 

@@ -4,7 +4,7 @@ public class Test
 
     public new()
     {
-        value = 1;
+        self.value = 1;
     }
 }
 
