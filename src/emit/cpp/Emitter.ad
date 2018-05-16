@@ -1001,7 +1001,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let declared_type: Type = declaration.declares_type;
         assert(declared_type =/= none, get_text(first_child(declaration, Identifier)));
         let class_name: string = mangle_name(declared_type.name);
-        write_line(emitter.type_declarations, "struct " + class_name + ";");
+        write_line(emitter.type_declarations, "typedef struct " + class_name + " " + class_name + ";");
         element_separator_line(emitter.class_declarations);
         write_line(emitter.class_declarations, "struct " + class_name);
         begin_block(emitter.class_declarations);
@@ -1022,7 +1022,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let declared_type: Type = declaration.declares_type;
         assert(declared_type =/= none, get_text(first_child(declaration, Identifier)));
         let struct_name: string = mangle_name(declared_type.name);
-        write_line(emitter.type_declarations, "struct " + struct_name + ";");
+        write_line(emitter.type_declarations, "typedef struct " + struct_name + " " + struct_name + ";");
         element_separator_line(emitter.class_declarations);
         write_line(emitter.class_declarations, "struct " + struct_name + " final");
         begin_block(emitter.class_declarations);

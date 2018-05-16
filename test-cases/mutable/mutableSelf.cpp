@@ -1,7 +1,7 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-struct t_Test;
+typedef struct t_Test t_Test;
 
 // Function Declarations
 t_Test *_Nonnull c_t_Test(t_Test *_Nonnull self);

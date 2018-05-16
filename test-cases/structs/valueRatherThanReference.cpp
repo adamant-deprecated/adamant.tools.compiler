@@ -1,8 +1,8 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-struct t_Reference_Type;
-struct t_Value_Type;
+typedef struct t_Reference_Type t_Reference_Type;
+typedef struct t_Value_Type t_Value_Type;
 
 // Function Declarations
 t_Reference_Type *_Nonnull c_t_Reference_Type(t_Reference_Type *_Nonnull self);

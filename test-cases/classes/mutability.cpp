@@ -1,8 +1,8 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-struct t_Mutable_Object;
-struct t_immutable_object;
+typedef struct t_Mutable_Object t_Mutable_Object;
+typedef struct t_immutable_object t_immutable_object;
 
 // Function Declarations
 t_Mutable_Object *_Nonnull c_t_Mutable_Object(t_Mutable_Object *_Nonnull self);
