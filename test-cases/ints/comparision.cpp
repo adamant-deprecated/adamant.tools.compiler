@@ -14,10 +14,10 @@ auto main__0() -> void;
 auto main__0() -> void
 {
 	bool__00 x__;
-	x__ = int__00__op__less_than(int__00(1), int__00(2));
-	x__ = int__00__op__less_than_or_equal(int__00(1), int__00(2));
-	x__ = int__00__op__greater_than(int__00(1), int__00(2));
-	x__ = int__00__op__greater_than_or_equal(int__00(1), int__00(2));
+	x__ = int__00__0op__less_than(int__00(1), int__00(2));
+	x__ = int__00__0op__less_than_or_equal(int__00(1), int__00(2));
+	x__ = int__00__0op__greater_than(int__00(1), int__00(2));
+	x__ = int__00__0op__greater_than_or_equal(int__00(1), int__00(2));
 }
 
 // Entry Point Adapter

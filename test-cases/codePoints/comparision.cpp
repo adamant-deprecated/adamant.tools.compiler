@@ -14,10 +14,10 @@ auto main__0() -> void;
 auto main__0() -> void
 {
 	bool__00 x__;
-	x__ = code_point__00__op__less_than(code_point__00('a'), code_point__00('b'));
-	x__ = code_point__00__op__less_than_or_equal(code_point__00('a'), code_point__00('b'));
-	x__ = code_point__00__op__greater_than(code_point__00('a'), code_point__00('b'));
-	x__ = code_point__00__op__greater_than_or_equal(code_point__00('a'), code_point__00('b'));
+	x__ = code_point__00__0op__less_than(code_point__00('a'), code_point__00('b'));
+	x__ = code_point__00__0op__less_than_or_equal(code_point__00('a'), code_point__00('b'));
+	x__ = code_point__00__0op__greater_than(code_point__00('a'), code_point__00('b'));
+	x__ = code_point__00__0op__greater_than_or_equal(code_point__00('a'), code_point__00('b'));
 }
 
 // Entry Point Adapter

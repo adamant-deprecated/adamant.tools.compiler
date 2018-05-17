@@ -32,7 +32,7 @@ inline bool__00 bool__00_from(bool v) { return bool__00 { v }; }
 inline bool__00 bool__00__op(bool v) { return bool__00 { v }; }
 // Convert the arguments of a logical operation to bool
 inline bool bool__00__arg(bool__00 v) { return v.value; }
-inline bool__00 bool__00__op__not(bool__00 v) { return bool__00 { !v.value }; }
+inline bool__00 bool__00__0op__not(bool__00 v) { return bool__00 { !v.value }; }
 
 // `never`
 struct never
@@ -128,11 +128,11 @@ struct int__00
     uint__00 as_uint__0() const;
 };
 
-inline int__00 int__00__op__negate(int__00 v) { return int__00(-v.value); }
-inline bool__00 int__00__op__less_than(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
-inline bool__00 int__00__op__less_than_or_equal(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
-inline bool__00 int__00__op__greater_than(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
-inline bool__00 int__00__op__greater_than_or_equal(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
+inline int__00 int__00__0op__negate(int__00 v) { return int__00(-v.value); }
+inline bool__00 int__00__0op__less_than(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
+inline bool__00 int__00__0op__less_than_or_equal(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
+inline bool__00 int__00__0op__greater_than(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
+inline bool__00 int__00__0op__greater_than_or_equal(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
 
 // `uint`
 struct uint__00
@@ -163,10 +163,10 @@ struct uint__00
     uint__00 op__subtract(uint__00 other) const { return uint__00(this->value - other.value); }
 };
 
-inline bool__00 uint__00__op__less_than(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
-inline bool__00 uint__00__op__less_than_or_equal(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
-inline bool__00 uint__00__op__greater_than(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
-inline bool__00 uint__00__op__greater_than_or_equal(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
+inline bool__00 uint__00__0op__less_than(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
+inline bool__00 uint__00__0op__less_than_or_equal(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
+inline bool__00 uint__00__0op__greater_than(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
+inline bool__00 uint__00__0op__greater_than_or_equal(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
 
 inline int__00::int__00(uint__00 value)
     : value(value.value)
@@ -193,10 +193,10 @@ struct code_point__00
 char code_point__00__to_char(code_point__00 v);
 
 // TODO: Not sure code_point__00 should support comparision operations
-inline bool__00 code_point__00__op__less_than(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
-inline bool__00 code_point__00__op__less_than_or_equal(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
-inline bool__00 code_point__00__op__greater_than(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
-inline bool__00 code_point__00__op__greater_than_or_equal(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
+inline bool__00 code_point__00__0op__less_than(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
+inline bool__00 code_point__00__0op__less_than_or_equal(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
+inline bool__00 code_point__00__0op__greater_than(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
+inline bool__00 code_point__00__0op__greater_than_or_equal(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
 
 struct string__00
 {
@@ -239,10 +239,10 @@ struct string__00
     string__00 op__add(bool__00 value) const { return this->op__add(string__00(value)); }
 };
 
-bool__00 string__00__op__less_than(string__00 lhs, string__00 rhs);
-bool__00 string__00__op__less_than_or_equal(string__00 lhs, string__00 rhs);
-bool__00 string__00__op__greater_than(string__00 lhs, string__00 rhs);
-bool__00 string__00__op__greater_than_or_equal(string__00 lhs, string__00 rhs);
+bool__00 string__00__0op__less_than(string__00 lhs, string__00 rhs);
+bool__00 string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs);
+bool__00 string__00__0op__greater_than(string__00 lhs, string__00 rhs);
+bool__00 string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs);
 
 inline string__00 new_string__00()
 {
@@ -270,7 +270,7 @@ inline auto equal_op(p_optional<bool__00> lhs, p_optional<bool__00> rhs) -> bool
     if(lhs.has_value().value)
         return bool__00__op(bool__00__arg(rhs.has_value()) && bool__00__arg(equal_op(lhs.value(), rhs.value())));
     else
-        return bool__00__op__not(rhs.has_value());
+        return bool__00__0op__not(rhs.has_value());
 }
 
 inline auto equal_op(int__00 lhs, int__00 rhs) -> bool__00
@@ -282,7 +282,7 @@ inline auto equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bool__
     if(lhs.has_value().value)
         return bool__00__op(bool__00__arg(rhs.has_value()) && bool__00__arg(equal_op(lhs.value(), rhs.value())));
     else
-        return bool__00__op__not(rhs.has_value());
+        return bool__00__0op__not(rhs.has_value());
 }
 
 inline auto equal_op(o_never lhs, o_never rhs) -> bool__00
@@ -325,7 +325,7 @@ inline auto not_equal_op(int__00 lhs, int__00 rhs) -> bool__00
 inline auto not_equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bool__00
 {
     if(lhs.has_value().value)
-        return bool__00__op(bool__00__arg(bool__00__op__not(rhs.has_value())) || bool__00__arg(not_equal_op(lhs.value(), rhs.value())));
+        return bool__00__op(bool__00__arg(bool__00__0op__not(rhs.has_value())) || bool__00__arg(not_equal_op(lhs.value(), rhs.value())));
     else
         return rhs.has_value();
 }
@@ -334,7 +334,7 @@ inline auto not_equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bo
 template<typename T>
 inline auto not_equal_op(T lhs, T  rhs) -> bool__00
 {
-    return bool__00__op__not(equal_op(lhs, rhs));
+    return bool__00__0op__not(equal_op(lhs, rhs));
 }
 
 // TODO implement this without templates

@@ -14,8 +14,8 @@ auto main__0() -> void;
 auto main__0() -> void
 {
 	bool__00 x__;
-	x__ = bool__00__op(bool__00__arg(bool__00__op__not(true__00)) && bool__00__arg(false__00));
-	x__ = bool__00__op(bool__00__arg(bool__00__op__not(true__00)) || bool__00__arg(false__00));
+	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(true__00)) && bool__00__arg(false__00));
+	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(true__00)) || bool__00__arg(false__00));
 	x__ = bool__00__op(bool__00__arg(false__00) || bool__00__arg(bool__00__op(bool__00__arg(true__00) && bool__00__arg(true__00))));
 }
 

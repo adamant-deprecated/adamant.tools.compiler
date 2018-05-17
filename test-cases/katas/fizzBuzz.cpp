@@ -37,7 +37,7 @@ auto main__1(system__console__Console *_Nonnull const console__) -> void
 		}
 
 		x__.op__add_assign(int__00(1));
-		if (cond(int__00__op__greater_than(x__, int__00(100))))
+		if (cond(int__00__0op__greater_than(x__, int__00(100))))
 		{
 			break;
 		}

@@ -14,7 +14,7 @@ auto main__0() -> void;
 auto main__0() -> void
 {
 	int__00 x__ = int__00(1);
-	int__00 y__ = int__00__op__negate(x__);
+	int__00 y__ = int__00__0op__negate(x__);
 }
 
 // Entry Point Adapter

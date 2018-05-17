@@ -364,7 +364,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == NotExpression
     {
         // TODO change to other functions based on argument type
-        write(builder, "bool__00__op__not(");
+        write(builder, "bool__00__0op__not(");
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
@@ -380,7 +380,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NegateExpression
     {
-        write(builder, "int__00__op__negate(");
+        write(builder, "int__00__0op__negate(");
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
@@ -472,19 +472,19 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
             write(builder, convert_primitive_type_name(type));
             if operator == LessThan
             {
-                write(builder, "__op__less_than");
+                write(builder, "__0op__less_than");
             }
             else if operator == LessThanEquals
             {
-                write(builder, "__op__less_than_or_equal");
+                write(builder, "__0op__less_than_or_equal");
             }
             else if operator == GreaterThan
             {
-                write(builder, "__op__greater_than");
+                write(builder, "__0op__greater_than");
             }
             else if operator == GreaterThanEquals
             {
-                write(builder, "__op__greater_than_or_equal");
+                write(builder, "__0op__greater_than_or_equal");
             }
             else
             {

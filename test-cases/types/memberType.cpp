@@ -33,7 +33,7 @@ inline Test *_Nonnull new_Test()
 auto main__0() -> void
 {
 	Test const *_Nonnull const t__ = new_Test();
-	bool__00 const b__ = int__00__op__less_than(t__->value__, int__00(5));
+	bool__00 const b__ = int__00__0op__less_than(t__->value__, int__00(5));
 }
 
 // Entry Point Adapter
