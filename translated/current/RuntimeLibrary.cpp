@@ -21,18 +21,6 @@ char code_point__00__to_char(code_point__00 v)
     return v.value;
 }
 
-string__00 string__00::construct(code_point__00 c, int__00 repeat)
-{
-    string__00 self;
-    self.Length = repeat.value;
-    char* buffer = new char[repeat.value];
-    for (int i = 0; i < repeat.value; i++)
-        buffer[i] = code_point__00__to_char(c);
-
-    self.Buffer = buffer;
-    return self;
-}
-
 string__00::string__00(const char* s)
     : Length(std::strlen(s)), Buffer(s)
 {
@@ -69,6 +57,31 @@ string__00::string__00(code_point__00 other)
 string__00::string__00(bool__00 other)
     : string__00(other.value ? "true" : "false")
 {
+}
+
+string__00 string__00__0new__0()
+{
+    string__00 self;
+    self.Length = 0;
+    self.Buffer = 0;
+    return self;
+}
+string__00 string__00__0new__1(string__00 value)
+{
+    return value;
+}
+
+string__00 string__00__0new__2(code_point__00 c, int__00 repeat)
+{
+    string__00 self;
+    self.Length = repeat.value;
+    char* buffer = new char[repeat.value];
+    char ch = code_point__00__to_char(c);
+    for (int i = 0; i < repeat.value; i++)
+        buffer[i] = ch;
+
+    self.Buffer = buffer;
+    return self;
 }
 
 string__00 string__00::Substring__2(int__00 start, int__00 length) const
@@ -236,13 +249,12 @@ system__console__Arguments__0::system__console__Arguments__0(int argc, char cons
         args[i] = string__00(argv[i+1]);
 }
 
-system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0::construct(const string__00& fileName)
+system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string__00& fileName)
 {
-    std::FILE* foo;
-    auto fname = fileName.cstr();
-    file = std::fopen(fname, "rb");
+    char const *_Nonnull fname = fileName.cstr();
+    self->file = std::fopen(fname, "rb");
     delete[] fname;
-    return this;
+    return self;
 }
 
 string__00 system__io__File_Reader__0::ReadToEndSync__0()
@@ -260,12 +272,12 @@ void system__io__File_Reader__0::Close__0()
     std::fclose(file);
 }
 
-system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0::construct(const string__00& fileName)
+system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string__00& fileName)
 {
-    auto fname = fileName.cstr();
-    file = std::fopen(fname, "wb"); // TODO check error
+    char const *_Nonnull fname = fileName.cstr();
+    self->file = std::fopen(fname, "wb"); // TODO check error
     delete[] fname;
-    return this;
+    return self;
 }
 
 void system__io__File_Writer__0::Write__1(const string__00& value)
@@ -300,18 +312,20 @@ void system__text__String_Builder__0::ensure_capacity(int needed)
     }
 }
 
-system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0::construct(string__00 const & value)
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string__00 const & value)
 {
-    ensure_capacity(value.Length);
-    std::memcpy(buffer, value.Buffer, value.Length);
-    length = value.Length;
-    return this;
+    system__text__String_Builder__0__0new__0(self);
+    self->ensure_capacity(value.Length);
+    std::memcpy(self->buffer, value.Buffer, value.Length);
+    self->length = value.Length;
+    return self;
 }
 
-system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0::construct_with_capacity(int__00 capacity)
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int__00 capacity)
 {
-    ensure_capacity(capacity.value);
-    return this;
+    system__text__String_Builder__0__0new__0(self);
+    self->ensure_capacity(capacity.value);
+    return self;
 }
 
 void system__text__String_Builder__0::Append__1(string__00 const & value)
