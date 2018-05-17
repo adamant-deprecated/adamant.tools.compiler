@@ -14,8 +14,8 @@ auto main_() -> void;
 auto main_() -> void
 {
 	bit x_;
-	x_ = equal_op(cp('a'), cp('b'));
-	x_ = not_equal_op(cp('a'), cp('b'));
+	x_ = equal_op(code_point('a'), code_point('b'));
+	x_ = not_equal_op(code_point('a'), code_point('b'));
 }
 
 // Entry Point Adapter

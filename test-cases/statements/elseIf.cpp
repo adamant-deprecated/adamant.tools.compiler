@@ -13,15 +13,15 @@ auto main_() -> i32;
 
 auto main_() -> i32
 {
-	if (cond(bit_false))
+	if (cond(bit__false))
 	{
 		return i32(0);
 	}
-	else if (cond(bit_false))
+	else if (cond(bit__false))
 	{
 		return i32(42);
 	}
-	else if (cond(bit_false))
+	else if (cond(bit__false))
 	{
 		return i32(10);
 	}

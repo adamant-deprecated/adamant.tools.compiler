@@ -33,7 +33,7 @@ inline Test *_Nonnull new_Test()
 auto main_() -> void
 {
 	Test const *_Nonnull const t_ = new_Test();
-	bit const b_ = i32_less_than(t_->value_, i32(5));
+	bit const b_ = i32__op__less_than(t_->value_, i32(5));
 }
 
 // Entry Point Adapter

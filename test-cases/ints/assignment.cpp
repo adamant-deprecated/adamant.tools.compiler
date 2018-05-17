@@ -15,8 +15,8 @@ auto main_() -> i32
 {
 	i32 result_;
 	result_ = i32(40);
-	result_.op_add_assign(i32(3));
-	result_.op_subtract_assign(i32(1));
+	result_.op__add_assign(i32(3));
+	result_.op__subtract_assign(i32(1));
 	return result_;
 }
 

@@ -14,14 +14,14 @@ auto main_() -> void;
 
 auto True_() -> bit
 {
-	return bit_true;
+	return bit__true;
 }
 
 auto main_() -> void
 {
 	bit x_;
-	x_ = equal_op(bit_true, bit_false);
-	x_ = not_equal_op(bit_true, bit_false);
+	x_ = equal_op(bit__true, bit__false);
+	x_ = not_equal_op(bit__true, bit__false);
 	x_ = equal_op(True_(), True_());
 }
 

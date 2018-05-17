@@ -36,7 +36,7 @@ inline Test *_Nonnull new_Test()
 auto main_(system__console__Console *_Nonnull const console_) -> void
 {
 	Test *_Nonnull const test_ = new_Test();
-	test_->change_(bit_true);
+	test_->change_(bit__true);
 }
 
 // Entry Point Adapter

@@ -13,7 +13,7 @@ auto main_() -> i32;
 
 auto main_() -> i32
 {
-	while (cond(bit_true))
+	while (cond(bit__true))
 	{
 		return i32(0);
 	}

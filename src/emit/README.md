@@ -31,3 +31,5 @@ This phase is specified in a short hand notation of concatenating strings.
 ### Special Names
 
 * Tuples: `tuple_` + number_of_type_parameters + type_parameters_separated_by_underscores
+* `int`: `i32`
+* `uint`: `u32`

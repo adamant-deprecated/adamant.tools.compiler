@@ -1,20 +1,3 @@
-// Names ending with underscores are reserved.
-// Names starting with underscore must be ignored/unused so we will never need to
-// construct composite names from them. (they will just be variables)
-// Names with 2 or more underscores in the middle, add one underscore.
-// Form compound names by joining with double underscore.
-// Prefix names with kind indicator.
-// Suffix names with number followed by parameters.
-//
-// # Primitives
-// Have no prefix, contain no underscores. Names chosen to avoid conflicts with C/C++
-// * cp: code point
-// * i32, u32: signed and unsigned int
-// * size, offset
-// * f32: float
-// * f16d16: fixed point
-// * str: string
-// * bit: bool
 public class Emitter
 {
     public let package: Package;
@@ -155,21 +138,9 @@ public convert_primitive_type_name(type: Type) -> string
     {
         return "u32";
     }
-    else if name == "code_point"
-    {
-        return "cp";
-    }
-    else if name == "string"
-    {
-        return "str";
-    }
-    else if name == "void"
-    {
-        return "void";
-    }
     else
     {
-        NOT_IMPLEMENTED(unqualified_name(type.name));
+        return name;
     }
 }
 
@@ -374,7 +345,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == NotExpression
     {
         // TODO change to other functions based on argument type
-        write(builder, "bit_not(");
+        write(builder, "bit__op__not(");
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
@@ -382,7 +353,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[1], builder);
         convert_member_access(syntax.children[1], builder);
-        write(builder, "op_magnitude()");
+        write(builder, "op__magnitude()");
     }
     else if syntax.kind == ParenthesizedExpression
     {
@@ -390,7 +361,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NegateExpression
     {
-        write(builder, "i32_negate(");
+        write(builder, "i32__op__negate(");
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
@@ -409,11 +380,11 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == TrueLiteralExpression
         or syntax.kind == FalseLiteralExpression
     {
-        write(builder, "bit_" + get_text(syntax));
+        write(builder, "bit__" + get_text(syntax));
     }
     else if syntax.kind == CodePointLiteralExpression
     {
-        write(builder, "cp(" + get_text(syntax) + ")");
+        write(builder, "code_point(" + get_text(syntax) + ")");
     }
     else if syntax.kind == IdentifierName
     {
@@ -421,7 +392,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == StringLiteralExpression
     {
-        write(builder, "str(" + get_text(syntax) + ")");
+        write(builder, "string(" + get_text(syntax) + ")");
     }
     else if syntax.kind == AssignmentExpression
     {
@@ -438,7 +409,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         {
             convert_expression(syntax.children[0], builder);
             convert_member_access(syntax.children[0], builder);
-            write(builder, "op_");
+            write(builder, "op__");
             if operator == PlusEquals
             {
                 write(builder, "add_assign");
@@ -482,19 +453,19 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
             write(builder, convert_primitive_type_name(type));
             if operator == LessThan
             {
-                write(builder, "_less_than");
+                write(builder, "__op__less_than");
             }
             else if operator == LessThanEquals
             {
-                write(builder, "_less_than_or_equal");
+                write(builder, "__op__less_than_or_equal");
             }
             else if operator == GreaterThan
             {
-                write(builder, "_greater_than");
+                write(builder, "__op__greater_than");
             }
             else if operator == GreaterThanEquals
             {
-                write(builder, "_greater_than_or_equal");
+                write(builder, "__op__greater_than_or_equal");
             }
             else
             {
@@ -511,7 +482,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
             // Old style comparison, method on lhs
             convert_expression(syntax.children[0], builder);
             convert_member_access(syntax.children[0], builder);
-            write(builder, "op_");
+            write(builder, "op__");
             if operator == LessThan
             {
                 write(builder, "less_than");
@@ -541,7 +512,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[0], builder);
         convert_member_access(syntax.children[0], builder);
-        write(builder, "op_add(");
+        write(builder, "op__add(");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
@@ -549,7 +520,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[0], builder);
         convert_member_access(syntax.children[0], builder);
-        write(builder, "op_subtract(");
+        write(builder, "op__subtract(");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
@@ -557,7 +528,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[0], builder);
         convert_member_access(syntax.children[0], builder);
-        write(builder, "op_multiply(");
+        write(builder, "op__multiply(");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
@@ -565,7 +536,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[0], builder);
         convert_member_access(syntax.children[0], builder);
-        write(builder, "op_divide(");
+        write(builder, "op__divide(");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
@@ -573,31 +544,31 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[0], builder);
         convert_member_access(syntax.children[0], builder);
-        write(builder, "op_remainder(");
+        write(builder, "op__remainder(");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
     else if syntax.kind == OrExpression
     {
         // TODO Based on the type of the values involved, either:
-        // * bit_op(bit_arg(lhs) || bit_arg(rhs))
-        // * ({ T _lhs = lhs; op_true(_lhs) ? _lhs : op_or(_lhs, rhs); })
+        // * bit__op(bit__arg(lhs) || bit__arg(rhs))
+        // * ({ T _lhs = lhs; op__true(_lhs) ? _lhs : op__or(_lhs, rhs); })
         // Note: that is a "compound expression"
-        write(builder, "bit_op(bit_arg(");
+        write(builder, "bit__op(bit__arg(");
         convert_expression(syntax.children[0], builder);
-        write(builder, ") || bit_arg(");
+        write(builder, ") || bit__arg(");
         convert_expression(syntax.children[2], builder);
         write(builder, "))");
     }
     else if syntax.kind == AndExpression
     {
         // TODO Based on the type of the values involved, either:
-        // * bit_op(bit_arg(lhs) && bit_arg(rhs))
-        // * ({ T _lhs = lhs; op_false(_lhs) ? _lhs : op_and(_lhs, rhs); })
+        // * bit__op(bit__arg(lhs) && bit__arg(rhs))
+        // * ({ T _lhs = lhs; op__false(_lhs) ? _lhs : op__and(_lhs, rhs); })
         // Note: that is a "compound expression"
-        write(builder, "bit_op(bit_arg(");
+        write(builder, "bit__op(bit__arg(");
         convert_expression(syntax.children[0], builder);
-        write(builder, ") && bit_arg(");
+        write(builder, ") && bit__arg(");
         convert_expression(syntax.children[2], builder);
         write(builder, "))");
     }
@@ -616,7 +587,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[0], builder);
         convert_member_access(syntax.children[0], builder);
-        write(builder, "op_Element(");
+        write(builder, "op__Element(");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
@@ -1082,9 +1053,9 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
 
     for let resource: Source_Text in emitter.resources
     {
-        begin_line(emitter.definitions, "resource_manager_->AddResource(str(\"");
+        begin_line(emitter.definitions, "resource_manager_->AddResource(string(\"");
         write(emitter.definitions, resource.name);
-        write(emitter.definitions, "\"), str(\"");
+        write(emitter.definitions, "\"), string(\"");
         write(emitter.definitions, resource.text
                                 .Replace("\\", "\\\\")
                                 .Replace("\n", "\\n")

@@ -13,7 +13,7 @@ auto main_() -> void;
 
 auto main_() -> void
 {
-	u32 x_ = i32(1).as_uint_()->op_add(i32(2).as_uint_());
+	u32 x_ = i32(1).as_uint_()->op__add(i32(2).as_uint_());
 }
 
 // Entry Point Adapter

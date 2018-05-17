@@ -13,7 +13,7 @@ auto main_(system__console__Console *_Nonnull const console_, system__console__A
 
 auto main_(system__console__Console *_Nonnull const console_, system__console__Arguments const *_Nonnull const args_) -> void
 {
-	for (str const arg_ : *(args_))
+	for (string const arg_ : *(args_))
 	{
 		console_->WriteLine_(arg_);
 	}

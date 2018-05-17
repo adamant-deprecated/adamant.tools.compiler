@@ -6,7 +6,7 @@ typedef struct Test Test;
 // Function Declarations
 Test *_Nonnull c_Test(Test *_Nonnull self);
 inline Test *_Nonnull new_Test();
-auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>;
+auto Func_(p_optional<string> const x_, p_optional<u32> const y_) -> p_optional<i32>;
 auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Class Declarations
@@ -26,7 +26,7 @@ inline Test *_Nonnull new_Test()
 	return c_Test(new Test());
 }
 
-auto Func_(p_optional<str> const x_, p_optional<u32> const y_) -> p_optional<i32>
+auto Func_(p_optional<string> const x_, p_optional<u32> const y_) -> p_optional<i32>
 {
 	p_optional<i32> const z_ = none;
 	Test const *_Nullable const t_ = none;

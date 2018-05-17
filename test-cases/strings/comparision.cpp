@@ -14,10 +14,10 @@ auto main_() -> void;
 auto main_() -> void
 {
 	bit x_;
-	x_ = str_less_than(str("a"), str("b"));
-	x_ = str_less_than_or_equal(str("a"), str("b"));
-	x_ = str_greater_than(str("a"), str("b"));
-	x_ = str_greater_than_or_equal(str("a"), str("b"));
+	x_ = string__op__less_than(string("a"), string("b"));
+	x_ = string__op__less_than_or_equal(string("a"), string("b"));
+	x_ = string__op__greater_than(string("a"), string("b"));
+	x_ = string__op__greater_than_or_equal(string("a"), string("b"));
 }
 
 // Entry Point Adapter

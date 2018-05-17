@@ -13,7 +13,7 @@ auto main_() -> i32;
 
 auto main_() -> i32
 {
-	if (cond(bit_true))
+	if (cond(bit__true))
 	{
 		return i32(0);
 	}

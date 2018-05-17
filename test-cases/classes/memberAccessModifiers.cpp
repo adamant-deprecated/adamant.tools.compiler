@@ -4,49 +4,49 @@
 typedef struct C C;
 
 // Function Declarations
-C *_Nonnull c_C(C *_Nonnull self, str const name_);
-inline C *_Nonnull new_C(str const name_);
+C *_Nonnull c_C(C *_Nonnull self, string const name_);
+inline C *_Nonnull new_C(string const name_);
 auto main_() -> void;
 
 // Class Declarations
 
 struct C
 {
-	str name_;
-	auto method_() const -> str;
-	auto double_name_() const -> str;
+	string name_;
+	auto method_() const -> string;
+	auto double_name_() const -> string;
 };
 
 // Global Definitions
 
 // Definitions
 
-C *_Nonnull c_C(C *_Nonnull self, str const name_)
+C *_Nonnull c_C(C *_Nonnull self, string const name_)
 {
 	self->name_ = name_;
 	return self;
 }
 
-inline C *_Nonnull new_C(str const name_)
+inline C *_Nonnull new_C(string const name_)
 {
 	return c_C(new C(), name_);
 }
 
-auto ::C::method_() const -> str
+auto ::C::method_() const -> string
 {
 	auto self = this;
 	return double_name_();
 }
 
-auto ::C::double_name_() const -> str
+auto ::C::double_name_() const -> string
 {
 	auto self = this;
-	return name_.op_add(name_);
+	return name_.op__add(name_);
 }
 
 auto main_() -> void
 {
-	C const *_Nonnull const c_ = new_C(str("Bob"));
+	C const *_Nonnull const c_ = new_C(string("Bob"));
 	c_->method_();
 }
 

@@ -14,10 +14,10 @@ auto main_() -> void;
 auto main_() -> void
 {
 	bit x_;
-	x_ = i32(1).as_uint_()->op_less_than(i32(2).as_uint_());
-	x_ = i32(1).as_uint_()->op_less_than_or_equal(i32(2).as_uint_());
-	x_ = i32(1).as_uint_()->op_greater_than(i32(2).as_uint_());
-	x_ = i32(1).as_uint_()->op_greater_than_or_equal(i32(2).as_uint_());
+	x_ = i32(1).as_uint_()->op__less_than(i32(2).as_uint_());
+	x_ = i32(1).as_uint_()->op__less_than_or_equal(i32(2).as_uint_());
+	x_ = i32(1).as_uint_()->op__greater_than(i32(2).as_uint_());
+	x_ = i32(1).as_uint_()->op__greater_than_or_equal(i32(2).as_uint_());
 }
 
 // Entry Point Adapter

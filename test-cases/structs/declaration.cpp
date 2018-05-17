@@ -4,8 +4,8 @@
 typedef struct Test Test;
 
 // Function Declarations
-Test c_Test(str const name_);
-inline Test new_Test(str const name_);
+Test c_Test(string const name_);
+inline Test new_Test(string const name_);
 auto main_() -> void;
 
 // Class Declarations
@@ -16,27 +16,27 @@ struct Test
 	Test const * operator->() const { return this; }
 	Test & operator* () { return *this; }
 	Test const & operator* () const { return *this; }
-	str name_;
-	auto method_() const -> str;
+	string name_;
+	auto method_() const -> string;
 };
 
 // Global Definitions
 
 // Definitions
 
-Test c_Test(str const name_)
+Test c_Test(string const name_)
 {
 	Test self;
 	self->name_ = name_;
 	return self;
 }
 
-inline Test new_Test(str const name_)
+inline Test new_Test(string const name_)
 {
 	return c_Test(name_);
 }
 
-auto ::Test::method_() const -> str
+auto ::Test::method_() const -> string
 {
 	auto self = this;
 	return name_;
@@ -44,7 +44,7 @@ auto ::Test::method_() const -> str
 
 auto main_() -> void
 {
-	Test const t_ = new_Test(str("Bob"));
+	Test const t_ = new_Test(string("Bob"));
 	t_.method_();
 }
 

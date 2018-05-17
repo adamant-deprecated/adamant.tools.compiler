@@ -21,7 +21,7 @@ struct Test
 
 Test *_Nonnull c_Test(Test *_Nonnull self)
 {
-	self->value_ = bit_true;
+	self->value_ = bit__true;
 	return self;
 }
 

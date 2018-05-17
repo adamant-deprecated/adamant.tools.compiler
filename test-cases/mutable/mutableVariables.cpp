@@ -14,11 +14,11 @@ auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 auto Func_(i32 x_, i32 const y_) -> system__text__String_Builder *_Nonnull
 {
-	x_.op_add_assign(i32(1));
-	i32 const i_ = x_.op_add(i32(2));
-	i32 j_ = y_.op_subtract(i32(23));
+	x_.op__add_assign(i32(1));
+	i32 const i_ = x_.op__add(i32(2));
+	i32 j_ = y_.op__subtract(i32(23));
 	j_ = i_;
-	system__text__String_Builder *_Nonnull const stringA_ = new_system__text__String_Builder(str("Hello"));
+	system__text__String_Builder *_Nonnull const stringA_ = new_system__text__String_Builder(string("Hello"));
 	system__text__String_Builder const *_Nonnull stringB_;
 	stringB_ = stringA_;
 	return stringA_;

@@ -14,12 +14,12 @@ auto main_() -> void;
 
 auto Func_(bit const value_) -> bit
 {
-	return bit_false;
+	return bit__false;
 }
 
 auto main_() -> void
 {
-	Func_(bit_true);
+	Func_(bit__true);
 }
 
 // Entry Point Adapter

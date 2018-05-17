@@ -14,9 +14,9 @@ auto main_() -> void;
 auto main_() -> void
 {
 	bit x_;
-	x_ = bit_op(bit_arg(bit_not(bit_true)) && bit_arg(bit_false));
-	x_ = bit_op(bit_arg(bit_not(bit_true)) || bit_arg(bit_false));
-	x_ = bit_op(bit_arg(bit_false) || bit_arg(bit_op(bit_arg(bit_true) && bit_arg(bit_true))));
+	x_ = bit__op(bit__arg(bit__op__not(bit__true)) && bit__arg(bit__false));
+	x_ = bit__op(bit__arg(bit__op__not(bit__true)) || bit__arg(bit__false));
+	x_ = bit__op(bit__arg(bit__false) || bit__arg(bit__op(bit__arg(bit__true) && bit__arg(bit__true))));
 }
 
 // Entry Point Adapter

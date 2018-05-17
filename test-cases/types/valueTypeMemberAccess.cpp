@@ -13,8 +13,8 @@ auto main_() -> i32;
 
 auto main_() -> i32
 {
-	str const s_ = str("abc");
-	return s_.index_of_(cp('c'));
+	string const s_ = string("abc");
+	return s_.index_of_(code_point('c'));
 }
 
 // Entry Point Adapter

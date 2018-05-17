@@ -17,7 +17,7 @@ auto main_() -> i32
 	{
 		return i32(0);
 	}
-	while (cond(bit_true));
+	while (cond(bit__true));
 }
 
 // Entry Point Adapter

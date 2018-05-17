@@ -14,7 +14,7 @@ auto main_() -> void;
 auto main_() -> void
 {
 	i32 x_ = i32(1);
-	i32 y_ = i32_negate(x_);
+	i32 y_ = i32__op__negate(x_);
 }
 
 // Entry Point Adapter

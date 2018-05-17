@@ -14,16 +14,16 @@ auto main_() -> void;
 
 auto True_() -> bit
 {
-	return bit_true;
+	return bit__true;
 }
 
 auto main_() -> void
 {
 	bit x_;
-	x_ = bit_op(bit_arg(bit_true) && bit_arg(bit_false));
-	x_ = bit_op(bit_arg(bit_true) || bit_arg(bit_false));
-	x_ = bit_not(bit_true);
-	x_ = bit_op(bit_arg(True_()) || bit_arg(True_()));
+	x_ = bit__op(bit__arg(bit__true) && bit__arg(bit__false));
+	x_ = bit__op(bit__arg(bit__true) || bit__arg(bit__false));
+	x_ = bit__op__not(bit__true);
+	x_ = bit__op(bit__arg(True_()) || bit__arg(True_()));
 }
 
 // Entry Point Adapter

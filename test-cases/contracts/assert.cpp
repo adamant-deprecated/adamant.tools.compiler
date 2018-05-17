@@ -16,8 +16,8 @@ auto main_() -> void
 	i32 const x_ = i32(5);
 	i32 const y_ = i32(5);
 	i32 const z_ = i32(6);
-	assert_(equal_op(x_, y_), str("x=").op_add(x_)->op_add(str(" y="))->op_add(y_));
-	assert_(equal_op(y_, z_), str("y=").op_add(y_)->op_add(str(" z="))->op_add(z_));
+	assert_(equal_op(x_, y_), string("x=").op__add(x_)->op__add(string(" y="))->op__add(y_));
+	assert_(equal_op(y_, z_), string("y=").op__add(y_)->op__add(string(" z="))->op__add(z_));
 }
 
 // Entry Point Adapter

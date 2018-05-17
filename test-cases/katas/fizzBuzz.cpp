@@ -16,28 +16,28 @@ auto main_(system__console__Console *_Nonnull const console_) -> void
 	i32 x_ = i32(1);
 	for (;;)
 	{
-		if (cond(equal_op(x_.op_remainder(i32(3)), i32(0))))
+		if (cond(equal_op(x_.op__remainder(i32(3)), i32(0))))
 		{
-			if (cond(equal_op(x_.op_remainder(i32(5)), i32(0))))
+			if (cond(equal_op(x_.op__remainder(i32(5)), i32(0))))
 			{
-				console_->WriteLine_(str("FizzBuzz"));
+				console_->WriteLine_(string("FizzBuzz"));
 			}
 			else
 			{
-				console_->WriteLine_(str("Fizz"));
+				console_->WriteLine_(string("Fizz"));
 			}
 		}
-		else if (cond(equal_op(x_.op_remainder(i32(5)), i32(0))))
+		else if (cond(equal_op(x_.op__remainder(i32(5)), i32(0))))
 		{
-			console_->WriteLine_(str("Buzz"));
+			console_->WriteLine_(string("Buzz"));
 		}
 		else
 		{
 			console_->WriteLine_(x_);
 		}
 
-		x_.op_add_assign(i32(1));
-		if (cond(i32_greater_than(x_, i32(100))))
+		x_.op__add_assign(i32(1));
+		if (cond(i32__op__greater_than(x_, i32(100))))
 		{
 			break;
 		}
