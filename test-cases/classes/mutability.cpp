@@ -9,7 +9,7 @@ Mutable_Object *_Nonnull Mutable_Object__new__0(Mutable_Object *_Nonnull self);
 inline Mutable_Object *_Nonnull new_Mutable_Object();
 immutable_object *_Nonnull immutable_object__new__0(immutable_object *_Nonnull self);
 inline immutable_object *_Nonnull new_immutable_object();
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -39,10 +39,10 @@ inline immutable_object *_Nonnull new_immutable_object()
 	return immutable_object__new__0(new immutable_object());
 }
 
-auto main_() -> void
+auto main__0() -> void
 {
-	Mutable_Object const *_Nonnull const m_ = new_Mutable_Object();
-	immutable_object const *_Nonnull const i_ = new_immutable_object();
+	Mutable_Object const *_Nonnull const m__ = new_Mutable_Object();
+	immutable_object const *_Nonnull const i__ = new_immutable_object();
 }
 
 // Entry Point Adapter
@@ -50,7 +50,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

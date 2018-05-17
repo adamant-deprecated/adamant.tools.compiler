@@ -4,63 +4,63 @@
 typedef struct C C;
 
 // Function Declarations
-C *_Nonnull C__new__1(C *_Nonnull self, string const name_);
-inline C *_Nonnull new_C(string const name_);
-C *_Nonnull C__new__one__1(C *_Nonnull self, string const name_);
-inline C *_Nonnull new_C__one(string const name_);
-C *_Nonnull C__new__two__1(C *_Nonnull self, string const name_);
-inline C *_Nonnull new_C__two(string const name_);
-auto main_() -> void;
+C *_Nonnull C__new__1(C *_Nonnull self, string const name__);
+inline C *_Nonnull new_C(string const name__);
+C *_Nonnull C__new__one__1(C *_Nonnull self, string const name__);
+inline C *_Nonnull new_C__one(string const name__);
+C *_Nonnull C__new__two__1(C *_Nonnull self, string const name__);
+inline C *_Nonnull new_C__two(string const name__);
+auto main__0() -> void;
 
 // Class Declarations
 
 struct C
 {
-	string name_;
-	i32 kind_;
+	string name__;
+	i32 kind__;
 };
 
 // Global Definitions
 
 // Definitions
 
-C *_Nonnull C__new__1(C *_Nonnull self, string const name_)
+C *_Nonnull C__new__1(C *_Nonnull self, string const name__)
 {
-	self->name_ = name_;
-	self->kind_ = i32(0);
+	self->name__ = name__;
+	self->kind__ = i32(0);
 	return self;
 }
 
-inline C *_Nonnull new_C(string const name_)
+inline C *_Nonnull new_C(string const name__)
 {
-	return C__new__1(new C(), name_);
+	return C__new__1(new C(), name__);
 }
 
-C *_Nonnull C__new__one__1(C *_Nonnull self, string const name_)
+C *_Nonnull C__new__one__1(C *_Nonnull self, string const name__)
 {
-	self->name_ = name_;
-	self->kind_ = i32(1);
+	self->name__ = name__;
+	self->kind__ = i32(1);
 	return self;
 }
 
-inline C *_Nonnull new_C__one(string const name_)
+inline C *_Nonnull new_C__one(string const name__)
 {
-	return C__new__one__1(new C(), name_);
+	return C__new__one__1(new C(), name__);
 }
 
-C *_Nonnull C__new__two__1(C *_Nonnull self, string const name_)
+C *_Nonnull C__new__two__1(C *_Nonnull self, string const name__)
 {
-	self->name_ = name_;
-	self->kind_ = i32(2);
+	self->name__ = name__;
+	self->kind__ = i32(2);
 	return self;
 }
 
-inline C *_Nonnull new_C__two(string const name_)
+inline C *_Nonnull new_C__two(string const name__)
 {
-	return C__new__two__1(new C(), name_);
+	return C__new__two__1(new C(), name__);
 }
 
-auto main_() -> void
+auto main__0() -> void
 {
 	new_C(string("0"));
 	new_C__one(string("1"));
@@ -72,7 +72,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

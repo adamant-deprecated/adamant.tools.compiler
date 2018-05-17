@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(system__console__Console *_Nonnull const console_) -> void;
+auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
 // Class Declarations
 
@@ -11,35 +11,35 @@ auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(system__console__Console *_Nonnull const console_) -> void
+auto main__1(system__console__Console *_Nonnull const console__) -> void
 {
-	system__collections__List<string> *_Nonnull const strings_ = new_system__collections__List<string>();
-	strings_->add_(string("Hello"));
-	strings_->add_(string("World!"));
-	if (cond(not_equal_op(strings_->op__magnitude(), i32(2))))
+	system__collections__List<string> *_Nonnull const strings__ = new_system__collections__List<string>();
+	strings__->add__1(string("Hello"));
+	strings__->add__1(string("World!"));
+	if (cond(not_equal_op(strings__->op__magnitude(), i32(2))))
 	{
-		console_->WriteLine_(string("List length not 2!"));
+		console__->WriteLine__1(string("List length not 2!"));
 	}
 
-	console_->WriteLine_(string("strings[0]=").op__add(strings_->op__Element(i32(0))));
-	for (string const s_ : *(strings_))
+	console__->WriteLine__1(string("strings[0]=").op__add(strings__->op__Element(i32(0))));
+	for (string const s__ : *(strings__))
 	{
-		console_->WriteLine_(s_);
+		console__->WriteLine__1(s__);
 	}
 
-	console_->WriteLine_();
-	strings_->clear_();
-	system__collections__List<system__text__String_Builder *_Nonnull> *_Nonnull const builders_ = new_system__collections__List<system__text__String_Builder *_Nonnull>();
-	builders_->add_(new_system__text__String_Builder(string("sb[0]: ")));
-	builders_->add_(new_system__text__String_Builder(string("sb[1]: ")));
-	for (system__text__String_Builder *_Nonnull const sb_ : *(builders_))
+	console__->WriteLine__0();
+	strings__->clear__0();
+	system__collections__List<system__text__String_Builder *_Nonnull> *_Nonnull const builders__ = new_system__collections__List<system__text__String_Builder *_Nonnull>();
+	builders__->add__1(new_system__text__String_Builder(string("sb[0]: ")));
+	builders__->add__1(new_system__text__String_Builder(string("sb[1]: ")));
+	for (system__text__String_Builder *_Nonnull const sb__ : *(builders__))
 	{
-		sb_->Append_(string("value"));
+		sb__->Append__1(string("value"));
 	}
 
-	for (system__text__String_Builder *_Nonnull const sb_ : *(builders_))
+	for (system__text__String_Builder *_Nonnull const sb__ : *(builders__))
 	{
-		console_->WriteLine_(sb_->ToString_());
+		console__->WriteLine__1(sb__->ToString__0());
 	}
 }
 
@@ -48,7 +48,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new system__console__Console());
+		main__1(new system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> i32;
+auto main__0() -> i32;
 
 // Class Declarations
 
@@ -11,14 +11,14 @@ auto main_() -> i32;
 
 // Definitions
 
-auto main_() -> i32
+auto main__0() -> i32
 {
 	if (cond(bit__true))
 	{
 		return i32(0);
 	}
 
-	UNREACHABLE_();
+	UNREACHABLE__0();
 }
 
 // Entry Point Adapter
@@ -26,7 +26,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return main_().value;
+		return main__0().value;
 	}
 	catch(std::exception &ex)
 	{

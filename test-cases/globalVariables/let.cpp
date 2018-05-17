@@ -3,18 +3,18 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> i32;
+auto main__0() -> i32;
 
 // Class Declarations
 
 // Global Definitions
-i32 const Result_ = i32(42);
+i32 const Result__ = i32(42);
 
 // Definitions
 
-auto main_() -> i32
+auto main__0() -> i32
 {
-	return Result_;
+	return Result__;
 }
 
 // Entry Point Adapter
@@ -22,7 +22,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return main_().value;
+		return main__0().value;
 	}
 	catch(std::exception &ex)
 	{

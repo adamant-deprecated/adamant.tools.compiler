@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> i32;
+auto main__0() -> i32;
 
 // Class Declarations
 
@@ -11,10 +11,10 @@ auto main_() -> i32;
 
 // Definitions
 
-auto main_() -> i32
+auto main__0() -> i32
 {
-	string const s_ = string("abc");
-	return s_.index_of_(code_point('c'));
+	string const s__ = string("abc");
+	return s__.index_of__1(code_point('c'));
 }
 
 // Entry Point Adapter
@@ -22,7 +22,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return main_().value;
+		return main__0().value;
 	}
 	catch(std::exception &ex)
 	{

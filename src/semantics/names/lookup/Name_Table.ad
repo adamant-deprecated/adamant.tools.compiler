@@ -49,7 +49,7 @@ public add_name(name_table: mut Name_Table, name: Name, type: Type) -> void
             return;
         }
     }
-    THROW_EXCEPTION("Can't add name \""+full_name(name)+"\" because package doesn't exist in table.");
+    assert(false, "Can't add name \""+full_name(name)+"\" because package doesn't exist in table.");
 }
 
 public get_name(name_table: Name_Table, name: Name) -> Name_Subtable?

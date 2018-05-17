@@ -6,7 +6,7 @@ typedef struct Test Test;
 // Function Declarations
 Test *_Nonnull Test__new__0(Test *_Nonnull self);
 inline Test *_Nonnull new_Test();
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -25,13 +25,13 @@ inline Test *_Nonnull new_Test()
 	return Test__new__0(new Test());
 }
 
-auto main_() -> void
+auto main__0() -> void
 {
-	Test const *_Nonnull const a_ = new_Test();
-	Test const *_Nonnull const b_ = new_Test();
-	bit x_;
-	x_ = equal_op(a_, b_);
-	x_ = not_equal_op(a_, b_);
+	Test const *_Nonnull const a__ = new_Test();
+	Test const *_Nonnull const b__ = new_Test();
+	bit x__;
+	x__ = equal_op(a__, b__);
+	x__ = not_equal_op(a__, b__);
 }
 
 // Entry Point Adapter
@@ -39,7 +39,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

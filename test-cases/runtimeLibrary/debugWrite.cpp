@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -11,12 +11,12 @@ auto main_() -> void;
 
 // Definitions
 
-auto main_() -> void
+auto main__0() -> void
 {
-	debug_write_(string("prefix: "));
-	debug_write_line_(string("value"));
-	debug_write_line_();
-	debug_write_line_(string("eom"));
+	debug_write__1(string("prefix: "));
+	debug_write_line__1(string("value"));
+	debug_write_line__0();
+	debug_write_line__1(string("eom"));
 }
 
 // Entry Point Adapter
@@ -24,7 +24,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

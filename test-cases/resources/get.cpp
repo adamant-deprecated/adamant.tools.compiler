@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(system__console__Console *_Nonnull const console_) -> void;
+auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
 // Class Declarations
 
@@ -11,10 +11,10 @@ auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(system__console__Console *_Nonnull const console_) -> void
+auto main__1(system__console__Console *_Nonnull const console__) -> void
 {
-	console_->Write_(resource_manager_->GetString_(string("hello.rsrc")));
-	console_->Write_(resource_manager_->GetString_(string("world.rsrc")));
+	console__->Write__1(resource_manager__->GetString__1(string("hello.rsrc")));
+	console__->Write__1(resource_manager__->GetString__1(string("world.rsrc")));
 }
 
 // Entry Point Adapter
@@ -22,10 +22,10 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		resource_manager_->AddResource(string("hello.rsrc"), string("Hello to\nall my \"cool\" friends\\enemies.\n"));
-		resource_manager_->AddResource(string("world.rsrc"), string("Goodbye world!\n"));
+		resource_manager__->AddResource(string("hello.rsrc"), string("Hello to\nall my \"cool\" friends\\enemies.\n"));
+		resource_manager__->AddResource(string("world.rsrc"), string("Goodbye world!\n"));
 
-		main_(new system__console__Console());
+		main__1(new system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

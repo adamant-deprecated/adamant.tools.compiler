@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -11,11 +11,11 @@ auto main_() -> void;
 
 // Definitions
 
-auto main_() -> void
+auto main__0() -> void
 {
-	i32 x_;
-	x_ = i32(1).op__add(i32(3).op__subtract(i32(1))->op__divide(i32(2)));
-	x_ = i32(1).op__add(i32(3))->op__subtract(i32(1).op__divide(i32(2)));
+	i32 x__;
+	x__ = i32(1).op__add(i32(3).op__subtract(i32(1))->op__divide(i32(2)));
+	x__ = i32(1).op__add(i32(3))->op__subtract(i32(1).op__divide(i32(2)));
 }
 
 // Entry Point Adapter
@@ -23,7 +23,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

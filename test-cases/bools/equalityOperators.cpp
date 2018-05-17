@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto True_() -> bit;
-auto main_() -> void;
+auto True__0() -> bit;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -12,17 +12,17 @@ auto main_() -> void;
 
 // Definitions
 
-auto True_() -> bit
+auto True__0() -> bit
 {
 	return bit__true;
 }
 
-auto main_() -> void
+auto main__0() -> void
 {
-	bit x_;
-	x_ = equal_op(bit__true, bit__false);
-	x_ = not_equal_op(bit__true, bit__false);
-	x_ = equal_op(True_(), True_());
+	bit x__;
+	x__ = equal_op(bit__true, bit__false);
+	x__ = not_equal_op(bit__true, bit__false);
+	x__ = equal_op(True__0(), True__0());
 }
 
 // Entry Point Adapter
@@ -30,7 +30,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

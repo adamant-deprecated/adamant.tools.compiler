@@ -199,6 +199,24 @@ public node_parameters(node: Semantic_Node) -> system.collections.List<Semantic_
     return parameters;
 }
 
+// TODO this should only be on things like parameter list and function
+public node_argument_count(node: Semantic_Node) -> int
+{
+    var count: int = 0;
+    for let child: Semantic_Node in node.children
+    {
+        // TODO fix this to a more reliable means of telling what should be visited
+        if child.kind == LeftParen
+            or child.kind == RightParen
+            or child.kind == Comma
+        {
+            continue;
+        }
+        count += 1;
+    }
+    return count;
+}
+
 // TODO this should only be on things with access modifiers
 public node_access_modifier(node: Semantic_Node) -> Semantic_Node?
 {

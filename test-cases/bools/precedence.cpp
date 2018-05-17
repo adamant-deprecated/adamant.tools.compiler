@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -11,12 +11,12 @@ auto main_() -> void;
 
 // Definitions
 
-auto main_() -> void
+auto main__0() -> void
 {
-	bit x_;
-	x_ = bit__op(bit__arg(bit__op__not(bit__true)) && bit__arg(bit__false));
-	x_ = bit__op(bit__arg(bit__op__not(bit__true)) || bit__arg(bit__false));
-	x_ = bit__op(bit__arg(bit__false) || bit__arg(bit__op(bit__arg(bit__true) && bit__arg(bit__true))));
+	bit x__;
+	x__ = bit__op(bit__arg(bit__op__not(bit__true)) && bit__arg(bit__false));
+	x__ = bit__op(bit__arg(bit__op__not(bit__true)) || bit__arg(bit__false));
+	x__ = bit__op(bit__arg(bit__false) || bit__arg(bit__op(bit__arg(bit__true) && bit__arg(bit__true))));
 }
 
 // Entry Point Adapter
@@ -24,7 +24,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

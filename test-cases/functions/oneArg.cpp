@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Identity_(i32 const value_) -> i32;
-auto main_() -> i32;
+auto Identity__1(i32 const value__) -> i32;
+auto main__0() -> i32;
 
 // Class Declarations
 
@@ -12,14 +12,14 @@ auto main_() -> i32;
 
 // Definitions
 
-auto Identity_(i32 const value_) -> i32
+auto Identity__1(i32 const value__) -> i32
 {
-	return value_;
+	return value__;
 }
 
-auto main_() -> i32
+auto main__0() -> i32
 {
-	return Identity_(i32(42));
+	return Identity__1(i32(42));
 }
 
 // Entry Point Adapter
@@ -27,7 +27,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return main_().value;
+		return main__0().value;
 	}
 	catch(std::exception &ex)
 	{

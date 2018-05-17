@@ -4,42 +4,42 @@
 typedef struct C C;
 
 // Function Declarations
-C *_Nonnull C__new__1(C *_Nonnull self, string const name_);
-inline C *_Nonnull new_C(string const name_);
-auto main_() -> void;
+C *_Nonnull C__new__1(C *_Nonnull self, string const name__);
+inline C *_Nonnull new_C(string const name__);
+auto main__0() -> void;
 
 // Class Declarations
 
 struct C
 {
-	string name_;
-	auto method_() const -> string;
+	string name__;
+	auto method__0() const -> string;
 };
 
 // Global Definitions
 
 // Definitions
 
-C *_Nonnull C__new__1(C *_Nonnull self, string const name_)
+C *_Nonnull C__new__1(C *_Nonnull self, string const name__)
 {
-	self->name_ = name_;
+	self->name__ = name__;
 	return self;
 }
 
-inline C *_Nonnull new_C(string const name_)
+inline C *_Nonnull new_C(string const name__)
 {
-	return C__new__1(new C(), name_);
+	return C__new__1(new C(), name__);
 }
 
-auto ::C::method_() const -> string
+auto ::C::method__0() const -> string
 {
 	auto self = this;
-	return name_;
+	return name__;
 }
 
-auto main_() -> void
+auto main__0() -> void
 {
-	string const s_ = new_C(string("Bob"))->method_();
+	string const s__ = new_C(string("Bob"))->method__0();
 }
 
 // Entry Point Adapter
@@ -47,7 +47,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -11,10 +11,10 @@ auto main_() -> void;
 
 // Definitions
 
-auto main_() -> void
+auto main__0() -> void
 {
-	code_point result_;
-	result_ = string("hello").op__Element(i32(0));
+	code_point result__;
+	result__ = string("hello").op__Element(i32(0));
 }
 
 // Entry Point Adapter
@@ -22,7 +22,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

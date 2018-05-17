@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -11,13 +11,13 @@ auto main_() -> void;
 
 // Definitions
 
-auto main_() -> void
+auto main__0() -> void
 {
-	i32 const x_ = i32(5);
-	i32 const y_ = i32(5);
-	i32 const z_ = i32(6);
-	assert_(equal_op(x_, y_), string("x=").op__add(x_)->op__add(string(" y="))->op__add(y_));
-	assert_(equal_op(y_, z_), string("y=").op__add(y_)->op__add(string(" z="))->op__add(z_));
+	i32 const x__ = i32(5);
+	i32 const y__ = i32(5);
+	i32 const z__ = i32(6);
+	assert__2(equal_op(x__, y__), string("x=").op__add(x__)->op__add(string(" y="))->op__add(y__));
+	assert__2(equal_op(y__, z__), string("y=").op__add(y__)->op__add(string(" z="))->op__add(z__));
 }
 
 // Entry Point Adapter
@@ -25,7 +25,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

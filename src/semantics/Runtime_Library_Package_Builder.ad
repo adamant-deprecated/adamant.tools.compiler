@@ -25,7 +25,6 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
 
     // global symbols
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "THROW_EXCEPTION")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "NOT_IMPLEMENTED")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "UNREACHABLE")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "assert")));

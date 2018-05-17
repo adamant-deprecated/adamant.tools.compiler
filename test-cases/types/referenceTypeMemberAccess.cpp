@@ -6,13 +6,13 @@ typedef struct Test Test;
 // Function Declarations
 Test *_Nonnull Test__new__0(Test *_Nonnull self);
 inline Test *_Nonnull new_Test();
-auto main_() -> i32;
+auto main__0() -> i32;
 
 // Class Declarations
 
 struct Test
 {
-	i32 value_;
+	i32 value__;
 };
 
 // Global Definitions
@@ -21,7 +21,7 @@ struct Test
 
 Test *_Nonnull Test__new__0(Test *_Nonnull self)
 {
-	self->value_ = i32(0);
+	self->value__ = i32(0);
 	return self;
 }
 
@@ -30,10 +30,10 @@ inline Test *_Nonnull new_Test()
 	return Test__new__0(new Test());
 }
 
-auto main_() -> i32
+auto main__0() -> i32
 {
-	Test const *_Nonnull const t_ = new_Test();
-	return t_->value_;
+	Test const *_Nonnull const t__ = new_Test();
+	return t__->value__;
 }
 
 // Entry Point Adapter
@@ -41,7 +41,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return main_().value;
+		return main__0().value;
 	}
 	catch(std::exception &ex)
 	{

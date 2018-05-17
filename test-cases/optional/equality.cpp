@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_(system__console__Console *_Nonnull const console_) -> void;
+auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
 // Class Declarations
 
@@ -11,44 +11,44 @@ auto main_(system__console__Console *_Nonnull const console_) -> void;
 
 // Definitions
 
-auto main_(system__console__Console *_Nonnull const console_) -> void
+auto main__1(system__console__Console *_Nonnull const console__) -> void
 {
-	i32 const v_ = i32(42);
-	p_optional<i32> const n_ = none;
-	bit r_;
-	r_ = equal_op(v_, n_);
-	console_->WriteLine_(string("v == n: ").op__add(r_));
-	r_ = equal_op(n_, v_);
-	console_->WriteLine_(string("n == v: ").op__add(r_));
-	r_ = equal_op(n_, n_);
-	console_->WriteLine_(string("n == v: ").op__add(r_));
-	r_ = equal_op(i32(42), none);
-	console_->WriteLine_(string("42 == none: ").op__add(r_));
-	r_ = equal_op(none, i32(42));
-	console_->WriteLine_(string("none == 42: ").op__add(r_));
-	r_ = equal_op(none, none);
-	console_->WriteLine_(string("none == none: ").op__add(r_));
-	r_ = not_equal_op(v_, n_);
-	console_->WriteLine_(string("v =/= n: ").op__add(r_));
-	r_ = not_equal_op(n_, v_);
-	console_->WriteLine_(string("n =/= v: ").op__add(r_));
-	r_ = not_equal_op(n_, n_);
-	console_->WriteLine_(string("n =/= v: ").op__add(r_));
-	r_ = not_equal_op(i32(42), none);
-	console_->WriteLine_(string("42 =/= none: ").op__add(r_));
-	r_ = not_equal_op(none, i32(42));
-	console_->WriteLine_(string("none =/= 42: ").op__add(r_));
-	r_ = not_equal_op(none, none);
-	console_->WriteLine_(string("none =/= none: ").op__add(r_));
-	system__text__String_Builder const *_Nullable const sb_ = none;
-	r_ = equal_op(sb_, none);
-	console_->WriteLine_(string("sb == none: ").op__add(r_));
-	r_ = equal_op(none, sb_);
-	console_->WriteLine_(string("none == sb: ").op__add(r_));
-	r_ = not_equal_op(sb_, none);
-	console_->WriteLine_(string("sb =/= none: ").op__add(r_));
-	r_ = not_equal_op(none, sb_);
-	console_->WriteLine_(string("none =/= sb: ").op__add(r_));
+	i32 const v__ = i32(42);
+	p_optional<i32> const n__ = none;
+	bit r__;
+	r__ = equal_op(v__, n__);
+	console__->WriteLine__1(string("v == n: ").op__add(r__));
+	r__ = equal_op(n__, v__);
+	console__->WriteLine__1(string("n == v: ").op__add(r__));
+	r__ = equal_op(n__, n__);
+	console__->WriteLine__1(string("n == v: ").op__add(r__));
+	r__ = equal_op(i32(42), none);
+	console__->WriteLine__1(string("42 == none: ").op__add(r__));
+	r__ = equal_op(none, i32(42));
+	console__->WriteLine__1(string("none == 42: ").op__add(r__));
+	r__ = equal_op(none, none);
+	console__->WriteLine__1(string("none == none: ").op__add(r__));
+	r__ = not_equal_op(v__, n__);
+	console__->WriteLine__1(string("v =/= n: ").op__add(r__));
+	r__ = not_equal_op(n__, v__);
+	console__->WriteLine__1(string("n =/= v: ").op__add(r__));
+	r__ = not_equal_op(n__, n__);
+	console__->WriteLine__1(string("n =/= v: ").op__add(r__));
+	r__ = not_equal_op(i32(42), none);
+	console__->WriteLine__1(string("42 =/= none: ").op__add(r__));
+	r__ = not_equal_op(none, i32(42));
+	console__->WriteLine__1(string("none =/= 42: ").op__add(r__));
+	r__ = not_equal_op(none, none);
+	console__->WriteLine__1(string("none =/= none: ").op__add(r__));
+	system__text__String_Builder const *_Nullable const sb__ = none;
+	r__ = equal_op(sb__, none);
+	console__->WriteLine__1(string("sb == none: ").op__add(r__));
+	r__ = equal_op(none, sb__);
+	console__->WriteLine__1(string("none == sb: ").op__add(r__));
+	r__ = not_equal_op(sb__, none);
+	console__->WriteLine__1(string("sb =/= none: ").op__add(r__));
+	r__ = not_equal_op(none, sb__);
+	console__->WriteLine__1(string("none =/= sb: ").op__add(r__));
 }
 
 // Entry Point Adapter
@@ -56,7 +56,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_(new system__console__Console());
+		main__1(new system__console__Console());
 		return 0;
 	}
 	catch(std::exception &ex)

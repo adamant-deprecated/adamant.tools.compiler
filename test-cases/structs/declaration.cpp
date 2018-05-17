@@ -4,9 +4,9 @@
 typedef struct Test Test;
 
 // Function Declarations
-Test Test__new__1(string const name_);
-inline Test new_Test(string const name_);
-auto main_() -> void;
+Test Test__new__1(string const name__);
+inline Test new_Test(string const name__);
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -16,36 +16,36 @@ struct Test
 	Test const * operator->() const { return this; }
 	Test & operator* () { return *this; }
 	Test const & operator* () const { return *this; }
-	string name_;
-	auto method_() const -> string;
+	string name__;
+	auto method__0() const -> string;
 };
 
 // Global Definitions
 
 // Definitions
 
-Test Test__new__1(string const name_)
+Test Test__new__1(string const name__)
 {
 	Test self;
-	self->name_ = name_;
+	self->name__ = name__;
 	return self;
 }
 
-inline Test new_Test(string const name_)
+inline Test new_Test(string const name__)
 {
-	return Test__new__1(name_);
+	return Test__new__1(name__);
 }
 
-auto ::Test::method_() const -> string
+auto ::Test::method__0() const -> string
 {
 	auto self = this;
-	return name_;
+	return name__;
 }
 
-auto main_() -> void
+auto main__0() -> void
 {
-	Test const t_ = new_Test(string("Bob"));
-	t_.method_();
+	Test const t__ = new_Test(string("Bob"));
+	t__.method__0();
 }
 
 // Entry Point Adapter
@@ -53,7 +53,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

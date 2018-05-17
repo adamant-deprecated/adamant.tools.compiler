@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main_() -> i32;
+auto main__0() -> i32;
 
 // Class Declarations
 
@@ -11,10 +11,10 @@ auto main_() -> i32;
 
 // Definitions
 
-auto main_() -> i32
+auto main__0() -> i32
 {
-	system__collections__List<i32> const *_Nonnull const values_ = new_system__collections__List<i32>();
-	return values_->op__Element(i32(0));
+	system__collections__List<i32> const *_Nonnull const values__ = new_system__collections__List<i32>();
+	return values__->op__Element(i32(0));
 }
 
 // Entry Point Adapter
@@ -22,7 +22,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return main_().value;
+		return main__0().value;
 	}
 	catch(std::exception &ex)
 	{

@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(bit const value_) -> bit;
-auto main_() -> void;
+auto Func__1(bit const value__) -> bit;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -12,14 +12,14 @@ auto main_() -> void;
 
 // Definitions
 
-auto Func_(bit const value_) -> bit
+auto Func__1(bit const value__) -> bit
 {
 	return bit__false;
 }
 
-auto main_() -> void
+auto main__0() -> void
 {
-	Func_(bit__true);
+	Func__1(bit__true);
 }
 
 // Entry Point Adapter
@@ -27,7 +27,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

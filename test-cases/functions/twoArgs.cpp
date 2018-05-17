@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func_(i32 const a_, i32 const b_) -> i32;
-auto main_() -> i32;
+auto Func__2(i32 const a__, i32 const b__) -> i32;
+auto main__0() -> i32;
 
 // Class Declarations
 
@@ -12,14 +12,14 @@ auto main_() -> i32;
 
 // Definitions
 
-auto Func_(i32 const a_, i32 const b_) -> i32
+auto Func__2(i32 const a__, i32 const b__) -> i32
 {
-	return b_;
+	return b__;
 }
 
-auto main_() -> i32
+auto main__0() -> i32
 {
-	return Func_(i32(0), i32(42));
+	return Func__2(i32(0), i32(42));
 }
 
 // Entry Point Adapter
@@ -27,7 +27,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		return main_().value;
+		return main__0().value;
 	}
 	catch(std::exception &ex)
 	{

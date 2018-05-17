@@ -76,29 +76,34 @@ public mangle_name(name: Name) -> string
         if not contains_multi_underscore_runs(segment)
             { builder.Append(segment); }
         else
-        {
-            // Due to limitations with strings and loops, do the equivalent
-            // of a for loop
-            var underscores: int = 0;
-            var i: int = 0;
-            while i < segment.ByteLength()
-            {
-                if segment[i] == '_'
-                    { underscores += 1; }
-                else if underscores > 0
-                {
-                    if underscores >= 2
-                    {
-                        builder.Append("_");
-                    }
-                    underscores = 0;
-                }
-                builder.Append(new string(segment[i], 1)); // really bad memory use
-                i += 1;
-            }
-        }
+            { append_fixing_underscores(builder, segment); }
     }
     return builder.ToString();
+}
+
+public mangle_function_name(name: string, parameter_count: int) -> string
+{
+    let builder: mut system.text.String_Builder = new system.text.String_Builder();
+    if not contains_multi_underscore_runs(name)
+        { builder.Append(name); }
+    else
+        { append_fixing_underscores(builder, name); }
+    builder.Append("__");
+    builder.Append(parameter_count);
+    return builder.ToString();
+}
+
+public mangle_field_name(name: string) -> string
+{
+      if not contains_multi_underscore_runs(name)
+        { return name + "__"; }
+    else
+    {
+        let builder: mut system.text.String_Builder = new system.text.String_Builder();
+        append_fixing_underscores(builder, name);
+        builder.Append("__");
+        return builder.ToString();
+    }
 }
 
 public contains_multi_underscore_runs(value: string) -> bool
@@ -120,6 +125,29 @@ public contains_multi_underscore_runs(value: string) -> bool
         i += 1;
     }
     return false;
+}
+
+public append_fixing_underscores(builder: mut system.text.String_Builder, value: string) -> void
+{
+    // Due to limitations with strings and loops, do the equivalent
+    // of a for loop
+    var underscores: int = 0;
+    var i: int = 0;
+    while i < value.ByteLength()
+    {
+        if value[i] == '_'
+            { underscores += 1; }
+        else if underscores > 0
+        {
+            if underscores >= 2
+            {
+                builder.Append("_");
+            }
+            underscores = 0;
+        }
+        builder.Append(new string(value[i], 1)); // really bad memory use
+        i += 1;
+    }
 }
 
 public convert_primitive_type_name(type: Type) -> string
@@ -259,8 +287,7 @@ public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, s
         let type_node: Semantic_Node = parameter.children[|parameter.children| - 1];
         builder.Append(convert_type(mutable_binding, type_node));
         builder.Append(" ");
-        builder.Append(get_text(first_child(parameter, Identifier)));
-        builder.Append("_");
+        builder.Append(mangle_field_name(get_text(first_child(parameter, Identifier))));
 
         if is_main_function
         {
@@ -388,7 +415,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == IdentifierName
     {
-        write(builder, get_text(syntax) + "_");
+        write(builder, mangle_field_name(get_text(syntax)));
     }
     else if syntax.kind == StringLiteralExpression
     {
@@ -575,7 +602,11 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == InvocationExpression
     {
         convert_expression(syntax.children[0], builder);
-        convert_expression(syntax.children[1], builder);
+        // Assuming we just emitted the function name as a field, tack this on
+        let parameters_node: Semantic_Node = syntax.children[1];
+        // TODO we don't handle the arguments list correctly yet, so it still has the parens as children
+        write(builder, node_argument_count(parameters_node));
+        convert_expression(parameters_node, builder);
     }
     else if syntax.kind == MemberAccessExpression
     {
@@ -652,7 +683,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
         let name: string = get_text(first_child(variable_declaration, Identifier));
         let type: Semantic_Node = variable_declaration.children[2];
-        write(emitter.definitions, convert_type(mutable_binding, type) + " " + name + "_");
+        write(emitter.definitions, convert_type(mutable_binding, type) + " " + mangle_field_name(name));
         write(emitter.definitions, " : *(");
         convert_expression(statement.children[3], emitter.definitions); // expression
         end_line(emitter.definitions, "))");
@@ -710,7 +741,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         let variable_type: Semantic_Node = variable_declaration.children[2];
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
         begin_line(emitter.definitions, convert_type(mutable_binding, variable_type));
-        write(emitter.definitions, " " + variable_name + "_");
+        write(emitter.definitions, " " + mangle_field_name(variable_name));
         if |variable_declaration.children| > 3
         {
             write(emitter.definitions, " = ");
@@ -818,7 +849,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
             else
                 { first_parameter = false; }
 
-            write(emitter.definitions, get_text(first_child(parameter, Identifier)) + "_");
+            write(emitter.definitions, mangle_field_name(get_text(first_child(parameter, Identifier))));
         }
         end_line(emitter.definitions, ");");
         end_block(emitter.definitions);
@@ -829,13 +860,18 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         let field_name: string = get_text(first_child(variable_declaration, Identifier));
         let field_type: Semantic_Node = variable_declaration.children[2];
         let cpp_type: string = convert_type(true, field_type); // because we need to assign them in constructors don't mark fields const
-        write_line(emitter.class_declarations, cpp_type + " " + field_name + "_;");
+        write_line(emitter.class_declarations, cpp_type + " " + mangle_field_name(field_name) + ";");
     }
     else if member.kind == MethodDeclaration
     {
-        let method_name: string = get_text(first_child(member, Identifier));
-        let parameters: string = convert_parameter_list(emitter, first_child(member, ParameterList));
-        let self_parameter: Semantic_Node? = first_child(first_child(member, ParameterList), SelfParameter);
+        let parameters_node: Semantic_Node = first_child(member, ParameterList);
+        let self_parameter: Semantic_Node? = first_child(parameters_node, SelfParameter);
+        var parameter_count: int = |parameters_node.children|;
+        // For now we ignore the self parameter because the caller can't tell if it is a method or function call
+        if self_parameter =/= none
+            { parameter_count -= 1; }
+        let method_name: string = mangle_function_name(get_text(first_child(member, Identifier)), parameter_count);
+        let parameters: string = convert_parameter_list(emitter, parameters_node);
         let is_associated_function: bool = self_parameter == none;
         let mutable_self: bool = not is_associated_function and node_has_child(self_parameter, MutableKeyword);
         let return_type_node: Semantic_Node = member.children[3];
@@ -846,9 +882,9 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         var constModifier: string = "";
         if not mutable_self and not is_associated_function
             { constModifier = "const "; }
-        write_line(emitter.class_declarations, static_modifier + "auto " + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type + ";");
+        write_line(emitter.class_declarations, static_modifier + "auto " + method_name + parameters + " " + constModifier + "-> " + cpp_type + ";");
         element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, "auto ::" + class_name + "::" + method_name + "_" + parameters + " " + constModifier + "-> " + cpp_type);
+        write_line(emitter.definitions, "auto ::" + class_name + "::" + method_name + parameters + " " + constModifier + "-> " + cpp_type);
         let block: Semantic_Node = first_child(member, Block);
         emit_method_body(emitter, block, is_associated_function);
     }
@@ -911,7 +947,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
         let cpp_type: string = convert_type(mutable_binding, variable_type);
         begin_line(emitter.global_definitions, cpp_type);
-        write(emitter.global_definitions, " " + variable_name + "_ = ");
+        write(emitter.global_definitions, " " + mangle_field_name(variable_name) + " = ");
         let expression: Semantic_Node = variable_declaration.children[3];
         convert_expression(expression, emitter.global_definitions);
         end_line(emitter.global_definitions, ";");
@@ -990,16 +1026,18 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     }
     else if declaration.kind == FunctionDeclaration
     {
-        let name: string = get_text(first_child(declaration, Identifier));
+        let parameters_node: Semantic_Node = first_child(declaration, ParameterList);
+        var name: string = get_text(first_child(declaration, Identifier));
         let is_main: bool = name == "main";
+        name = mangle_function_name(name, |parameters_node.children|);
         if is_main { emitter.main_function_name = name; }
-        let parameters: string = convert_parameter_list(emitter, first_child(declaration, ParameterList), is_main);
+        let parameters: string = convert_parameter_list(emitter, parameters_node, is_main);
         let return_type_node: Semantic_Node = declaration.children[3];
         let cpp_type: string = convert_type(true, return_type_node);
         // Write out the function declaration for C++ so we can call functions defined after others
-        write_line(emitter.function_declarations, "auto " + name + "_" + parameters + " -> " + cpp_type + ";");
+        write_line(emitter.function_declarations, "auto " + name + parameters + " -> " + cpp_type + ";");
         element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, "auto " + name + "_" + parameters + " -> " + cpp_type);
+        write_line(emitter.definitions, "auto " + name + parameters + " -> " + cpp_type);
         if is_main
         {
             if emitter.main_function_return_type =/= ""
@@ -1054,7 +1092,7 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
 
     for let resource: Source_Text in emitter.resources
     {
-        begin_line(emitter.definitions, "resource_manager_->AddResource(string(\"");
+        begin_line(emitter.definitions, "resource_manager__->AddResource(string(\"");
         write(emitter.definitions, resource.name);
         write(emitter.definitions, "\"), string(\"");
         write(emitter.definitions, resource.text
@@ -1082,12 +1120,12 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
 
     if emitter.main_function_return_type == "void"
     {
-        write_line(emitter.definitions, emitter.main_function_name + "_(" + args.ToString() + ");");
+        write_line(emitter.definitions, emitter.main_function_name + "(" + args.ToString() + ");");
         write_line(emitter.definitions, "return 0;");
     }
     else
     {
-        write_line(emitter.definitions, "return " + emitter.main_function_name + "_(" + args.ToString() + ").value;");
+        write_line(emitter.definitions, "return " + emitter.main_function_name + "(" + args.ToString() + ").value;");
     }
 
     end_block(emitter.definitions); // try

@@ -9,7 +9,7 @@ Reference_Type *_Nonnull Reference_Type__new__0(Reference_Type *_Nonnull self);
 inline Reference_Type *_Nonnull new_Reference_Type();
 Value_Type Value_Type__new__0();
 inline Value_Type new_Value_Type();
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -43,10 +43,10 @@ inline Value_Type new_Value_Type()
 	return Value_Type__new__0();
 }
 
-auto main_() -> void
+auto main__0() -> void
 {
-	Reference_Type const *_Nonnull const r_ = new_Reference_Type();
-	Value_Type const v_ = new_Value_Type();
+	Reference_Type const *_Nonnull const r__ = new_Reference_Type();
+	Value_Type const v__ = new_Value_Type();
 }
 
 // Entry Point Adapter
@@ -54,7 +54,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)

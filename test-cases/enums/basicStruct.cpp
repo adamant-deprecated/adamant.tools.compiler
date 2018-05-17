@@ -4,7 +4,7 @@
 enum class day_of_week_;
 
 // Function Declarations
-auto main_() -> void;
+auto main__0() -> void;
 
 // Class Declarations
 
@@ -23,7 +23,7 @@ enum class day_of_week_
 
 // Definitions
 
-auto main_() -> void
+auto main__0() -> void
 {
 }
 
@@ -32,7 +32,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main_();
+		main__0();
 		return 0;
 	}
 	catch(std::exception &ex)
