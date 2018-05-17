@@ -977,12 +977,6 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         element_separator_line(emitter.class_declarations);
         write_line(emitter.class_declarations, "struct " + struct_name);
         begin_block(emitter.class_declarations);
-        // Write out arrow and dereference operators for using value types like reference types
-        // TODO Emit correct code to use value types as value types rather than reference types and drop this code
-        write_line(emitter.class_declarations, struct_name + " * operator->() { return this; }");
-        write_line(emitter.class_declarations, struct_name + " const * operator->() const { return this; }");
-        write_line(emitter.class_declarations, struct_name + " & operator* () { return *this; }");
-        write_line(emitter.class_declarations, struct_name + " const & operator* () const { return *this; }");
         var has_constructors: bool = false;
         for let member: Semantic_Node in node_members(declaration)
         {

@@ -106,7 +106,8 @@ public add_syntax(
 
         // Implicit Self Parameter (have to add after adding function name)
         let self_name: Name = new Name.special(name, VariableName, "self");
-        let self_type: Type = none; // TODO: do we already know the class/struct type?
+        let self_type: Type = get_name(name_table, parent).type;
+        assert(self_type =/= none);
         add_name(name_table, self_name, self_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == FieldDeclaration
@@ -191,8 +192,9 @@ public add_syntax(
     else if syntax.kind == SelfParameter
     {
         let name: Name = new Name.special(parent, VariableName, "self");
-        let no_type: Type? = none; // TODO: do we already know the class/struct type?
-        add_name(name_table, name, no_type); // need variable to avoid ambiguity about types
+        let self_type: Type = get_name(name_table, parent).parent.type;
+        assert(self_type =/= none);
+        add_name(name_table, name, self_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == ExpressionStatement
         or syntax.kind == ReturnStatement

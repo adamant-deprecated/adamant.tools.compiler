@@ -17,10 +17,6 @@ struct Reference_Type__0
 
 struct Value_Type__0
 {
-	Value_Type__0 * operator->() { return this; }
-	Value_Type__0 const * operator->() const { return this; }
-	Value_Type__0 & operator* () { return *this; }
-	Value_Type__0 const & operator* () const { return *this; }
 };
 
 // Global Definitions
