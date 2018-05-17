@@ -200,15 +200,15 @@ void ResourceManager::AddResource(string name, string value)
 
 ResourceManager *const resource_manager__ = new ResourceManager();
 
-void debug_write_(string value)
+void debug_write__1(string value)
 {
     std::fprintf(stderr, "%.*s", value.Length, value.Buffer);
 }
-void debug_write_line_(string value)
+void debug_write_line__1(string value)
 {
     std::fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
 }
-void debug_write_line_()
+void debug_write_line__0()
 {
     std::fprintf(stderr, "\n");
 }
