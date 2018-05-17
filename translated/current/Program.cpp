@@ -1918,6 +1918,11 @@ Semantic_Node__0 const *_Nonnull build_semantic_node__4(Semantic_Tree_Builder__0
 	{
 		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, string__00("int"))->type__, syntax__, children__);
 	}
+	else if (cond(equal_op(syntax__->kind__, SelfExpression__)))
+	{
+		children__->add__1(Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), first_child_syntax__2(syntax__, SelfKeyword__)));
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, string__00("self"))->type__, syntax__, children__);
+	}
 	else if (cond(equal_op(syntax__->children__->op__magnitude(), int__00(0))))
 	{
 		return Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), syntax__);
@@ -4627,10 +4632,6 @@ void emit_declaration__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 
 		element_separator_line__1(emitter__->class_declarations__);
 		write_line__2(emitter__->class_declarations__, string__00("struct ").op__add(struct_name__));
 		begin_block__1(emitter__->class_declarations__);
-		write_line__2(emitter__->class_declarations__, struct_name__.op__add(string__00(" * operator->() { return this; }")));
-		write_line__2(emitter__->class_declarations__, struct_name__.op__add(string__00(" const * operator->() const { return this; }")));
-		write_line__2(emitter__->class_declarations__, struct_name__.op__add(string__00(" & operator* () { return *this; }")));
-		write_line__2(emitter__->class_declarations__, struct_name__.op__add(string__00(" const & operator* () const { return *this; }")));
 		bool__00 has_constructors__ = false__00;
 		for (Semantic_Node__0 const *_Nonnull const member__ : *(node_members__1(declaration__)))
 		{
@@ -5572,7 +5573,8 @@ void add_syntax__3(Name_Table__0 *_Nonnull const name_table__, Name__0 const *_N
 		Name__0 const *_Nonnull const name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), parent__, FunctionName__, full_name__);
 		add_function__3(name_table__, name__, syntax__);
 		Name__0 const *_Nonnull const self_name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), name__, VariableName__, string__00("self"));
-		Type__0 const *_Nonnull const self_type__ = none;
+		Type__0 const *_Nonnull const self_type__ = get_name__2(name_table__, parent__)->type__;
+		assert__1(not_equal_op(self_type__, none));
 		add_name__3(name_table__, self_name__, self_type__);
 	}
 	else if (cond(equal_op(syntax__->kind__, FieldDeclaration__)))
@@ -5653,8 +5655,9 @@ void add_syntax__3(Name_Table__0 *_Nonnull const name_table__, Name__0 const *_N
 	else if (cond(equal_op(syntax__->kind__, SelfParameter__)))
 	{
 		Name__0 const *_Nonnull const name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), parent__, VariableName__, string__00("self"));
-		Type__0 const *_Nullable const no_type__ = none;
-		add_name__3(name_table__, name__, no_type__);
+		Type__0 const *_Nonnull const self_type__ = get_name__2(name_table__, parent__)->parent__->type__;
+		assert__1(not_equal_op(self_type__, none));
+		add_name__3(name_table__, name__, self_type__);
 	}
 	else if (cond(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(equal_op(syntax__->kind__, ExpressionStatement__)) || bool__00__arg(equal_op(syntax__->kind__, ReturnStatement__)))) || bool__00__arg(equal_op(syntax__->kind__, BreakStatement__)))) || bool__00__arg(equal_op(syntax__->kind__, ContinueStatement__)))) || bool__00__arg(equal_op(syntax__->kind__, EndOfFileToken__)))))
 	{

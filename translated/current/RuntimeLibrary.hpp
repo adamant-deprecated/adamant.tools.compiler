@@ -374,8 +374,16 @@ inline void assert(const bool__00 condition, char const *_Nonnull code, const st
             .op__add(string__00(", file ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
 }
 
-#define assert__2(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
+inline void assert(const bool__00 condition, char const *_Nonnull code, char const *_Nonnull file, const std::int32_t line)
+{
+    if(!condition.value)
+        throw std::runtime_error(
+            string__00("Assertion failed: ").op__add(string__00(code))
+            .op__add(string__00(", file ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
+}
 
+#define assert__2(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
+#define assert__1(condition) assert(condition, #condition, __FILE__, __LINE__)
 
 _Noreturn inline void NOT_IMPLEMENTED(const string__00 message, char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
 {
