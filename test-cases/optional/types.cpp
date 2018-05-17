@@ -4,7 +4,7 @@
 typedef struct Test Test;
 
 // Function Declarations
-Test *_Nonnull c_Test(Test *_Nonnull self);
+Test *_Nonnull Test__new__0(Test *_Nonnull self);
 inline Test *_Nonnull new_Test();
 auto Func_(p_optional<string> const x_, p_optional<u32> const y_) -> p_optional<i32>;
 auto main_(system__console__Console *_Nonnull const console_) -> void;
@@ -19,11 +19,11 @@ struct Test
 
 // Definitions
 
-Test *_Nonnull c_Test(Test *_Nonnull self) { return self; }
+Test *_Nonnull Test__new__0(Test *_Nonnull self) { return self; }
 
 inline Test *_Nonnull new_Test()
 {
-	return c_Test(new Test());
+	return Test__new__0(new Test());
 }
 
 auto Func_(p_optional<string> const x_, p_optional<u32> const y_) -> p_optional<i32>

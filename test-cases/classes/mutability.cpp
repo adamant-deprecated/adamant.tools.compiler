@@ -5,9 +5,9 @@ typedef struct Mutable_Object Mutable_Object;
 typedef struct immutable_object immutable_object;
 
 // Function Declarations
-Mutable_Object *_Nonnull c_Mutable_Object(Mutable_Object *_Nonnull self);
+Mutable_Object *_Nonnull Mutable_Object__new__0(Mutable_Object *_Nonnull self);
 inline Mutable_Object *_Nonnull new_Mutable_Object();
-immutable_object *_Nonnull c_immutable_object(immutable_object *_Nonnull self);
+immutable_object *_Nonnull immutable_object__new__0(immutable_object *_Nonnull self);
 inline immutable_object *_Nonnull new_immutable_object();
 auto main_() -> void;
 
@@ -25,18 +25,18 @@ struct immutable_object
 
 // Definitions
 
-Mutable_Object *_Nonnull c_Mutable_Object(Mutable_Object *_Nonnull self) { return self; }
+Mutable_Object *_Nonnull Mutable_Object__new__0(Mutable_Object *_Nonnull self) { return self; }
 
 inline Mutable_Object *_Nonnull new_Mutable_Object()
 {
-	return c_Mutable_Object(new Mutable_Object());
+	return Mutable_Object__new__0(new Mutable_Object());
 }
 
-immutable_object *_Nonnull c_immutable_object(immutable_object *_Nonnull self) { return self; }
+immutable_object *_Nonnull immutable_object__new__0(immutable_object *_Nonnull self) { return self; }
 
 inline immutable_object *_Nonnull new_immutable_object()
 {
-	return c_immutable_object(new immutable_object());
+	return immutable_object__new__0(new immutable_object());
 }
 
 auto main_() -> void

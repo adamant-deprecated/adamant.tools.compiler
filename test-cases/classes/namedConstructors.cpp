@@ -4,11 +4,11 @@
 typedef struct C C;
 
 // Function Declarations
-C *_Nonnull c_C(C *_Nonnull self, string const name_);
+C *_Nonnull C__new__1(C *_Nonnull self, string const name_);
 inline C *_Nonnull new_C(string const name_);
-C *_Nonnull c_C__one(C *_Nonnull self, string const name_);
+C *_Nonnull C__new__one__1(C *_Nonnull self, string const name_);
 inline C *_Nonnull new_C__one(string const name_);
-C *_Nonnull c_C__two(C *_Nonnull self, string const name_);
+C *_Nonnull C__new__two__1(C *_Nonnull self, string const name_);
 inline C *_Nonnull new_C__two(string const name_);
 auto main_() -> void;
 
@@ -24,7 +24,7 @@ struct C
 
 // Definitions
 
-C *_Nonnull c_C(C *_Nonnull self, string const name_)
+C *_Nonnull C__new__1(C *_Nonnull self, string const name_)
 {
 	self->name_ = name_;
 	self->kind_ = i32(0);
@@ -33,10 +33,10 @@ C *_Nonnull c_C(C *_Nonnull self, string const name_)
 
 inline C *_Nonnull new_C(string const name_)
 {
-	return c_C(new C(), name_);
+	return C__new__1(new C(), name_);
 }
 
-C *_Nonnull c_C__one(C *_Nonnull self, string const name_)
+C *_Nonnull C__new__one__1(C *_Nonnull self, string const name_)
 {
 	self->name_ = name_;
 	self->kind_ = i32(1);
@@ -45,10 +45,10 @@ C *_Nonnull c_C__one(C *_Nonnull self, string const name_)
 
 inline C *_Nonnull new_C__one(string const name_)
 {
-	return c_C__one(new C(), name_);
+	return C__new__one__1(new C(), name_);
 }
 
-C *_Nonnull c_C__two(C *_Nonnull self, string const name_)
+C *_Nonnull C__new__two__1(C *_Nonnull self, string const name_)
 {
 	self->name_ = name_;
 	self->kind_ = i32(2);
@@ -57,7 +57,7 @@ C *_Nonnull c_C__two(C *_Nonnull self, string const name_)
 
 inline C *_Nonnull new_C__two(string const name_)
 {
-	return c_C__two(new C(), name_);
+	return C__new__two__1(new C(), name_);
 }
 
 auto main_() -> void

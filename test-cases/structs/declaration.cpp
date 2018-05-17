@@ -4,7 +4,7 @@
 typedef struct Test Test;
 
 // Function Declarations
-Test c_Test(string const name_);
+Test Test__new__1(string const name_);
 inline Test new_Test(string const name_);
 auto main_() -> void;
 
@@ -24,7 +24,7 @@ struct Test
 
 // Definitions
 
-Test c_Test(string const name_)
+Test Test__new__1(string const name_)
 {
 	Test self;
 	self->name_ = name_;
@@ -33,7 +33,7 @@ Test c_Test(string const name_)
 
 inline Test new_Test(string const name_)
 {
-	return c_Test(name_);
+	return Test__new__1(name_);
 }
 
 auto ::Test::method_() const -> string

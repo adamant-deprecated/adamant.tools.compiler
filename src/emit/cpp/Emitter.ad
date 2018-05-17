@@ -764,19 +764,20 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
 {
     if member.kind == ConstructorDeclaration
     {
+        let parameters_node: Semantic_Node = first_child(member, ParameterList);
         var new_function_name: string = "new_" + class_name;
-        var constructor_full_name: string = "c_" + class_name;
+        var constructor_full_name: string = class_name + "__new__";
         let constructor_name_node: Semantic_Node? = first_child(member, Identifier);
         if constructor_name_node =/= none
         {
             let constructor_name: string = get_text(constructor_name_node);
             new_function_name = new_function_name + "__" + constructor_name;
-            constructor_full_name = constructor_full_name + "__" + constructor_name;
+            constructor_full_name = constructor_full_name + constructor_name + "__";
         }
+        constructor_full_name = constructor_full_name + |parameters_node.children|;
         var return_type: string = class_name;
         if not is_value_type
             { return_type = return_type + " *_Nonnull"; }
-        let parameters_node: Semantic_Node = first_child(member, ParameterList);
         var constructor_parameters: string;
         if not is_value_type
             { constructor_parameters = convert_method_parameter_list(emitter, parameters_node, return_type); }
@@ -859,7 +860,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
 
 public emit_default_constructor(emitter: mut Emitter, type_name: string, is_value_type: bool) -> void
 {
-    let default_constructor_name: string = "c_"+type_name;
+    let default_constructor_name: string = type_name + "__new__0";
 
     var return_type: string = type_name;
     if not is_value_type
@@ -877,7 +878,7 @@ public emit_default_constructor(emitter: mut Emitter, type_name: string, is_valu
      // Constructor definition
     element_separator_line(emitter.definitions);
     begin_line(emitter.definitions, constructor_signature);
-    // TODO I probably need to do the default initalization
+    // TODO I probably need to do the default initialization
     if is_value_type
         { end_line(emitter.definitions, " { return {}; }"); }
     else
