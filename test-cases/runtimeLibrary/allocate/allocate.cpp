@@ -5,7 +5,6 @@ typedef struct Test__0 Test__0;
 
 // Function Declarations
 Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self);
-inline Test__0 *_Nonnull new_Test__0();
 void main__0();
 
 // Class Declarations
@@ -19,11 +18,6 @@ struct Test__0
 // Definitions
 
 Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self) { return self; }
-
-inline Test__0 *_Nonnull new_Test__0()
-{
-	return Test__0__0new__0(new Test__0());
-}
 
 void main__0()
 {

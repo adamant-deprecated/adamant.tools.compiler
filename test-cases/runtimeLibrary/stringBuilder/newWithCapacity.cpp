@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	new_system__text__String_Builder__0__with_capacity(int__00(1000));
+	system__text__String_Builder__0__0new__with_capacity__1(allocate(sizeof(system__text__String_Builder__0)), int__00(1000));
 }
 
 // Entry Point Adapter

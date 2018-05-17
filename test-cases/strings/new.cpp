@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	new_string__00(string__00("foo"));
+	string__00__0new__1(string__00("foo"));
 }
 
 // Entry Point Adapter

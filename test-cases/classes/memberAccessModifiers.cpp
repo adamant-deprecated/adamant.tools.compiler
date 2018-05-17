@@ -5,7 +5,6 @@ typedef struct C__0 C__0;
 
 // Function Declarations
 C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string__00 const name__);
-inline C__0 *_Nonnull new_C__0(string__00 const name__);
 void main__0();
 
 // Class Declarations
@@ -27,11 +26,6 @@ C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string__00 const name__)
 	return self;
 }
 
-inline C__0 *_Nonnull new_C__0(string__00 const name__)
-{
-	return C__0__0new__1(new C__0(), name__);
-}
-
 string__00 C__0::method__0() const
 {
 	auto self = this;
@@ -46,7 +40,7 @@ string__00 C__0::double_name__0() const
 
 void main__0()
 {
-	C__0 const *_Nonnull const c__ = new_C__0(string__00("Bob"));
+	C__0 const *_Nonnull const c__ = C__0__0new__1(allocate(sizeof(C__0)), string__00("Bob"));
 	c__->method__0();
 }
 

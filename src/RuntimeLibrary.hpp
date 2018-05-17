@@ -35,19 +35,19 @@ inline bool bool__00__arg(bool__00 v) { return v.value; }
 inline bool__00 bool__00__0op__not(bool__00 v) { return bool__00 { !v.value }; }
 
 // `never`
-struct never
+struct never__00
 {
 };
 
 // `never?`
-struct o_never
+struct o_never__00
 {
     // TODO get rid of this conversion operator when compiler emits conversions
     template<class T>
     operator T*_Nullable() const { return static_cast<T*>(0); }
 };
 
-static const o_never none;
+static const o_never__00 none;
 
 template<typename T>
 struct p_optional final
@@ -63,7 +63,7 @@ public:
     // TODO make this constructor explicit
     p_optional(T const & value) : data(value), hasValue(true) {}
     // TODO get rid of this conversion operator when compiler emits conversions
-    p_optional(o_never none) : hasValue(false) {}
+    p_optional(o_never__00 none) : hasValue(false) {}
     auto has_value() const -> bool__00 { return bool__00_from(hasValue); }
     auto value() const -> T { return data; }
 
@@ -109,8 +109,8 @@ struct int__00
     int__00(uint__00 value);
 
     // Adamant Members
-    static auto construct() -> int__00 { return int__00(0); }
-    static auto copy(int__00 const & other) -> int__00 { return other; }
+    // static auto construct() -> int__00 { return int__00(0); }
+    // static auto copy(int__00 const & other) -> int__00 { return other; }
     void op__add_assign(int__00 other) { this->value += other.value; }
     void op__subtract_assign(int__00 other) { this->value -= other.value; }
     bool__00 op__less_than(int__00 other) const { return bool__00_from(this->value < other.value); }
@@ -152,7 +152,7 @@ struct uint__00
     uint__00(int__00 value): value(value.value) {}
 
     // Adamant Members
-    static auto construct() -> uint__00 { return uint__00(0); }
+    // static auto construct() -> uint__00 { return uint__00(0); }
     void op__add_assign(uint__00 other) { this->value += other.value; }
     void op__subtract_assign(uint__00 other) { this->value -= other.value; }
     bool__00 op__less_than(uint__00 other) const { return bool__00_from(this->value < other.value); }
@@ -185,9 +185,6 @@ struct code_point__00
     code_point__00 const *_Nonnull operator->() const { return this; }
     code_point__00 & operator* () { return *this; }
     code_point__00 const & operator* () const { return *this; }
-
-    // Adamant Members
-    // static auto construct() -> code_point__00 { return code_point__00('\0'); }
 };
 
 char code_point__00__to_char(code_point__00 v);
@@ -221,9 +218,9 @@ struct string__00
     explicit string__00(bool__00 other);
 
     // Adamant Members
-    static auto construct() -> string__00 { string__00 self; self.Length = 0; self.Buffer = 0; return self; }
-    static auto construct(string__00 value) -> string__00 { return value; }
-    static auto construct(code_point__00 c, int__00 repeat) -> string__00;
+    // static auto construct() -> string__00 { string__00 self; self.Length = 0; self.Buffer = 0; return self; }
+    // static auto construct(string__00 value) -> string__00 { return value; }
+    // static auto construct(code_point__00 c, int__00 repeat) -> string__00;
     // TODO ByteLength should be a property
     int__00 ByteLength__0() const { return int__00(Length); }
 
@@ -244,18 +241,9 @@ bool__00 string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs);
 bool__00 string__00__0op__greater_than(string__00 lhs, string__00 rhs);
 bool__00 string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs);
 
-inline string__00 new_string__00()
-{
-    return string__00::construct();
-}
-inline string__00 new_string__00(string__00 value)
-{
-    return string__00::construct(value);
-}
-inline string__00 new_string__00(code_point__00 c, int__00 repeat)
-{
-    return string__00::construct(c, repeat);
-}
+string__00 string__00__0new__0();
+string__00 string__00__0new__1(string__00 value);
+string__00 string__00__0new__2(code_point__00 c, int__00 repeat);
 
 // -----------------------------------------------------------------------------
 // Operators
@@ -285,7 +273,7 @@ inline auto equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bool__
         return bool__00__0op__not(rhs.has_value());
 }
 
-inline auto equal_op(o_never lhs, o_never rhs) -> bool__00
+inline auto equal_op(o_never__00 lhs, o_never__00 rhs) -> bool__00
 {
     return true__00;
 }
@@ -299,14 +287,14 @@ auto equal_op(string__00 lhs, string__00 rhs) -> bool__00;
 
 // TODO implement this without templates
 template<typename T>
-inline auto equal_op(T const *_Nullable lhs, o_never rhs) -> bool__00
+inline auto equal_op(T const *_Nullable lhs, o_never__00 rhs) -> bool__00
 {
     return bool__00_from(lhs == 0);
 }
 
 // TODO implement this without templates
 template<typename T>
-inline auto equal_op(o_never lhs, T const *_Nullable rhs) -> bool__00
+inline auto equal_op(o_never__00 lhs, T const *_Nullable rhs) -> bool__00
 {
     return bool__00_from(0 == rhs);
 }
@@ -339,14 +327,14 @@ inline auto not_equal_op(T lhs, T  rhs) -> bool__00
 
 // TODO implement this without templates
 template<typename T>
-inline auto not_equal_op(T const *_Nullable lhs, o_never rhs) -> bool__00
+inline auto not_equal_op(T const *_Nullable lhs, o_never__00 rhs) -> bool__00
 {
     return bool__00_from(lhs != 0);
 }
 
 // TODO implement this without templates
 template<typename T>
-inline auto not_equal_op(o_never lhs, T const *_Nullable rhs) -> bool__00
+inline auto not_equal_op(o_never__00 lhs, T const *_Nullable rhs) -> bool__00
 {
     return bool__00_from(0 != rhs);
 }
@@ -367,6 +355,12 @@ public:
     template<class T>
     operator T *_Nonnull() { return (T *) p; }
 };
+
+// Version of allocate used directly by the runtime
+inline voidp allocate(size_t bytes)
+{
+    return malloc(bytes);
+}
 
 inline voidp allocate__1(int__00 bytes)
 {
@@ -429,21 +423,19 @@ void debug_write_line__1(string__00 value);
 void debug_write_line__0();
 
 template<typename T>
-class system__collections__List__1
+struct system__collections__List__1
 {
-private:
     T *_Nonnull values;
     int length;
     int capacity;
 
-public:
     // Runtime Use Members
     typedef T const *_Nonnull const_iterator;
     const_iterator begin() const { return values; }
     const_iterator end() const { return &values[length]; }
 
     // Adamant Members
-    system__collections__List__1 *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
+    // system__collections__List__1 *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
     void add__1(T value);
     void clear__0() { length = 0; }
     int__00 op__magnitude() const { return int__00(length); }
@@ -476,9 +468,12 @@ T const & system__collections__List__1<T>::op__Element(int__00 const index) cons
 }
 
 template<typename T>
-system__collections__List__1<T> *_Nonnull new_system__collections__List__1()
+system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(system__collections__List__1<T> *_Nonnull self)
 {
-    return (new system__collections__List__1<T>())->construct();
+    self->values = 0;
+    self->length = 0;
+    self->capacity = 0;
+    return self;
 }
 
 class system__console__Console__0
@@ -513,53 +508,42 @@ public:
     }
 };
 
-class system__io__File_Reader__0
+struct system__io__File_Reader__0
 {
-private:
     std::FILE *_Nonnull file;
 
-public:
-    system__io__File_Reader__0 *_Nonnull construct(const string__00& fileName);
+    // system__io__File_Reader__0 *_Nonnull construct(const string__00& fileName);
     string__00 ReadToEndSync__0();
     void Close__0();
 };
 
-inline system__io__File_Reader__0 *_Nonnull new_system__io__File_Reader__0(const string__00& fileName)
-{
-    return (new system__io__File_Reader__0())->construct(fileName);
-}
+system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string__00& fileName);
 
-class system__io__File_Writer__0
+struct system__io__File_Writer__0
 {
-private:
     std::FILE *_Nonnull file;
 
-public:
-    system__io__File_Writer__0 *_Nonnull construct(const string__00& fileName);
+    // system__io__File_Writer__0 *_Nonnull construct(const string__00& fileName);
     void Write__1(const string__00& value);
     void Close__0();
 };
 
-inline system__io__File_Writer__0 *_Nonnull new_system__io__File_Writer__0(const string__00& fileName)
-{
-    return (new system__io__File_Writer__0())->construct(fileName);
-}
+system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string__00& fileName);
 
-class system__text__String_Builder__0
+struct system__text__String_Builder__0
 {
-private:
     char *_Nullable buffer;
     int capacity;
     int length;
     void ensure_capacity(int needed);
-public:
+
     // Runtime Use Members
-    system__text__String_Builder__0(): buffer(0), capacity(0), length(0) { }
+    // system__text__String_Builder__0(): buffer(0), capacity(0), length(0) { }
 
     // Adamant Members
-    system__text__String_Builder__0 *_Nonnull construct() { return this; }
-    system__text__String_Builder__0 *_Nonnull construct(string__00 const & value);
-    system__text__String_Builder__0 *_Nonnull construct_with_capacity(int__00 capacity);
+    // system__text__String_Builder__0 *_Nonnull construct() { return this; }
+    // system__text__String_Builder__0 *_Nonnull construct(string__00 const & value);
+    // system__text__String_Builder__0 *_Nonnull construct_with_capacity(int__00 capacity);
     // TODO byte_length should be a property
     int__00 byte_length__0() const { return int__00(length); }
     void Append__1(string__00 const & value);
@@ -571,17 +555,13 @@ public:
     string__00 ToString__0();
 };
 
-inline system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0()
+inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self)
 {
-    return (new system__text__String_Builder__0())->construct();
+    self->buffer = 0;
+    self->capacity = 0;
+    self->length = 0;
+    return self;
 }
 
-inline system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0(string__00 const & value)
-{
-    return (new system__text__String_Builder__0())->construct(value);
-}
-
-inline system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0__with_capacity(int__00 capacity)
-{
-    return (new system__text__String_Builder__0())->construct_with_capacity(capacity);
-}
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string__00 const & value);
+system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int__00 capacity);

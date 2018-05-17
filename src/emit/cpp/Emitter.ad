@@ -176,6 +176,11 @@ public convert_type_name(type_node: Semantic_Node) -> mut system.text.String_Bui
 
 public convert_type_name(type: Type) -> mut system.text.String_Builder
 {
+    return convert_type_name(type, true);
+}
+
+public convert_type_name(type: Type, include_type_parameters: bool) -> mut system.text.String_Builder
+{
     let cpp_type: mut system.text.String_Builder = new system.text.String_Builder();
     if type.is_primitive
     {
@@ -186,19 +191,24 @@ public convert_type_name(type: Type) -> mut system.text.String_Builder
         cpp_type.Append(mangle_name(type));
     }
 
-    if |type.type_parameters| > 0
+    if |type.type_parameters| > 0 and include_type_parameters
     {
-        cpp_type.Append("<");
-        var first: bool = true;
-        for let type_parameter: Type in type.type_parameters
-        {
-            if first { first = false; }
-            else { cpp_type.Append(", "); }
-            cpp_type.Append(convert_type(true, type_parameter, false));
-        }
-        cpp_type.Append(">");
+        convert_type_parameters(cpp_type, type);
     }
     return cpp_type;
+}
+
+public convert_type_parameters(builder: mut system.text.String_Builder, type: Type) -> void
+{
+    builder.Append("<");
+    var first: bool = true;
+    for let type_parameter: Type in type.type_parameters
+    {
+        if first { first = false; }
+        else { builder.Append(", "); }
+        builder.Append(convert_type(true, type_parameter, false));
+    }
+    builder.Append(">");
 }
 
 public convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
@@ -338,12 +348,23 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
 
         let type: Type = type_node.referenced_type;
         assert(type =/= none, get_text(type_node));
-        write(builder, "new_");
-        write(builder, convert_type_name(type).ToString());
+        write(builder, convert_type_name(type, false).ToString());
+        write(builder, "__0new");
         write(builder, constructor_name);
+        write(builder, "__");
+        let argument_list: Semantic_Node = syntax.children[1];
+        write(builder, node_argument_count(argument_list));
+        if |type.type_parameters| > 0
+        {
+            let params: mut system.text.String_Builder = new system.text.String_Builder();
+            convert_type_parameters(params, type);
+            write(builder, params.ToString());
+        }
 
-        let argumentList: Semantic_Node = syntax.children[1];
-        convert_expression(argumentList, builder);
+        if type.is_value_type
+            { convert_expression(argument_list, builder); }
+        else
+            { convert_reference_type_constructor_arguments(argument_list, builder, convert_type_name(type).ToString()); }
     }
     else if syntax.kind == ArgumentList
     {
@@ -623,6 +644,29 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
 }
 
+public convert_reference_type_constructor_arguments(
+    syntax: Semantic_Node,
+    builder: mut Source_File_Builder,
+    type_name: string)
+    -> void
+{
+    assert(syntax.kind == ArgumentList, "");
+    write(builder, "(allocate(sizeof(");
+    write(builder, type_name);
+    write(builder, "))");
+    for let arg: Semantic_Node in syntax.children
+    {
+        if arg.kind =/= LeftParen
+            and arg.kind =/= RightParen
+            and arg.kind =/= Comma
+        {
+            write(builder, ", ");
+            convert_expression(arg, builder);
+        }
+    }
+    write(builder, ")");
+}
+
 public convert_member_access(lhs: Semantic_Node, builder: mut Source_File_Builder) -> void
 {
     let type: Type? = lhs.of_type;
@@ -820,34 +864,6 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         element_separator_line(emitter.definitions);
         write_line(emitter.definitions, constructor_signature);
         emit_constructor_body(emitter, first_child(member, Block), return_type, is_value_type);
-
-        // `new_` Function Signature
-        // New function never has self parameter, so we have to redo the parameter list
-        let new_function_signature: string = "inline " + return_type + " " + new_function_name  + convert_parameter_list(emitter, parameters_node);
-
-        // `new_` Function Declaration
-        write_line(emitter.function_declarations, new_function_signature + ";");
-
-        // `new_` Function Definition
-        element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, new_function_signature);
-        begin_block(emitter.definitions);
-        if not is_value_type
-            { begin_line(emitter.definitions, "return " + constructor_full_name + "(new " + class_name + "()"); }
-        else
-            { begin_line(emitter.definitions, "return " + constructor_full_name + "("); }
-        var first_parameter: bool = is_value_type;
-        for let parameter: Semantic_Node in first_child(member, ParameterList).children
-        {
-            if not first_parameter
-                { write(emitter.definitions, ", "); }
-            else
-                { first_parameter = false; }
-
-            write(emitter.definitions, mangle_field_name(get_text(first_child(parameter, Identifier))));
-        }
-        end_line(emitter.definitions, ");");
-        end_block(emitter.definitions);
     }
     else if member.kind == FieldDeclaration
     {
@@ -914,22 +930,6 @@ public emit_default_constructor(emitter: mut Emitter, type_name: string, is_valu
         { end_line(emitter.definitions, " { return {}; }"); }
     else
         { end_line(emitter.definitions, " { return self; }"); }
-
-    // `new_` Function Signature
-    let new_function_signature: string = "inline " + return_type + " new_" + type_name + "()";
-
-    // `new_` function Declaration
-    write_line(emitter.function_declarations, new_function_signature + ";");
-
-    // `new_` Function Definition
-    element_separator_line(emitter.definitions);
-    write_line(emitter.definitions, new_function_signature);
-    begin_block(emitter.definitions);
-    if not is_value_type
-        { write_line(emitter.definitions, "return "+default_constructor_name+"(new " + type_name + "());"); }
-    else
-        { write_line(emitter.definitions, "return " + default_constructor_name + "();"); }
-    end_block(emitter.definitions);
 }
 
 public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> void

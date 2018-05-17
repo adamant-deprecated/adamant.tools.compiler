@@ -13,7 +13,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	system__collections__List__1<string__00> *_Nonnull const strings__ = new_system__collections__List__1<string__00>();
+	system__collections__List__1<string__00> *_Nonnull const strings__ = system__collections__List__1__0new__0<string__00>(allocate(sizeof(system__collections__List__1<string__00>)));
 	strings__->add__1(string__00("Hello"));
 	strings__->add__1(string__00("World!"));
 	if (cond(not_equal_op(strings__->op__magnitude(), int__00(2))))
@@ -29,9 +29,9 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 
 	console__->WriteLine__0();
 	strings__->clear__0();
-	system__collections__List__1<system__text__String_Builder__0 *_Nonnull> *_Nonnull const builders__ = new_system__collections__List__1<system__text__String_Builder__0 *_Nonnull>();
-	builders__->add__1(new_system__text__String_Builder__0(string__00("sb[0]: ")));
-	builders__->add__1(new_system__text__String_Builder__0(string__00("sb[1]: ")));
+	system__collections__List__1<system__text__String_Builder__0 *_Nonnull> *_Nonnull const builders__ = system__collections__List__1__0new__0<system__text__String_Builder__0 *_Nonnull>(allocate(sizeof(system__collections__List__1<system__text__String_Builder__0 *_Nonnull>)));
+	builders__->add__1(system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), string__00("sb[0]: ")));
+	builders__->add__1(system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), string__00("sb[1]: ")));
 	for (system__text__String_Builder__0 *_Nonnull const sb__ : *(builders__))
 	{
 		sb__->Append__1(string__00("value"));

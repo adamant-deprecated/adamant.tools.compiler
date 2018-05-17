@@ -5,7 +5,6 @@ typedef struct C__0 C__0;
 
 // Function Declarations
 C__0 *_Nonnull C__0__0new__0(C__0 *_Nonnull self);
-inline C__0 *_Nonnull new_C__0();
 void main__0();
 
 // Class Declarations
@@ -33,14 +32,9 @@ string__00 C__0::function__0()
 
 C__0 *_Nonnull C__0__0new__0(C__0 *_Nonnull self) { return self; }
 
-inline C__0 *_Nonnull new_C__0()
-{
-	return C__0__0new__0(new C__0());
-}
-
 void main__0()
 {
-	C__0 const *_Nonnull const c__ = new_C__0();
+	C__0 const *_Nonnull const c__ = C__0__0new__0(allocate(sizeof(C__0)));
 	c__->method__0();
 }
 
