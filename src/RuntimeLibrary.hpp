@@ -356,6 +356,28 @@ inline auto not_equal_op(o_never lhs, T const *_Nullable rhs) -> bool__00
 // -----------------------------------------------------------------------------
 // Parts of the standard library that are currently implemented in the runtime.
 
+// This type is used to emulate C style void pointers in C++. That is, they
+// implictly convert to/from other pointer types.
+class voidp
+{
+    void *_Nonnull p;
+public:
+    template<class T>
+    voidp (T *_Nonnull pp) : p ((void *_Nonnull)pp) {}
+    template<class T>
+    operator T *_Nonnull() { return (T *) p; }
+};
+
+inline voidp allocate__1(int__00 bytes)
+{
+    return malloc(bytes.value);
+}
+
+inline void free__1(voidp object)
+{
+    free(object);
+}
+
 inline void assert(const bool__00 condition, char const *_Nonnull code, const string__00 message, char const *_Nonnull file, const std::int32_t line)
 {
     if(!condition.value)

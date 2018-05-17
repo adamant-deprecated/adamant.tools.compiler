@@ -1,0 +1,9 @@
+public class Test
+{
+}
+
+public main() -> void
+{
+    let t: Test = allocate(48);
+    free(t);
+}
