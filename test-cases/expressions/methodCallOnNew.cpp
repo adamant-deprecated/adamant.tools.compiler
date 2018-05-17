@@ -4,7 +4,7 @@
 typedef struct Test Test;
 
 // Function Declarations
-Test *_Nonnull Test__new__0(Test *_Nonnull self);
+Test *_Nonnull Test__0new__0(Test *_Nonnull self);
 inline Test *_Nonnull new_Test();
 auto main__0() -> void;
 
@@ -19,7 +19,7 @@ struct Test
 
 // Definitions
 
-Test *_Nonnull Test__new__0(Test *_Nonnull self)
+Test *_Nonnull Test__0new__0(Test *_Nonnull self)
 {
 	self->value__ = bit__true;
 	return self;
@@ -27,7 +27,7 @@ Test *_Nonnull Test__new__0(Test *_Nonnull self)
 
 inline Test *_Nonnull new_Test()
 {
-	return Test__new__0(new Test());
+	return Test__0new__0(new Test());
 }
 
 auto main__0() -> void

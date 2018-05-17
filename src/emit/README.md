@@ -36,5 +36,5 @@ This phase is specified in a short hand notation of concatenating strings.
 ### Special Names
 
 * Tuples: `tuple__0` + number_of_type_parameters + `__` + type_parameters_separated_by_underscores (leading zero distinguishes it from a standard type named "tuple")
-* Primitives: type + `__00` (double zero distinguishes then from standard types)
+* Primitives: type + `__00` (double zero distinguishes them from standard types)
 * Optional: `optional__01__` + the type that is optional

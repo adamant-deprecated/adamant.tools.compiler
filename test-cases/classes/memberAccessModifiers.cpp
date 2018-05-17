@@ -4,7 +4,7 @@
 typedef struct C C;
 
 // Function Declarations
-C *_Nonnull C__new__1(C *_Nonnull self, string const name__);
+C *_Nonnull C__0new__1(C *_Nonnull self, string const name__);
 inline C *_Nonnull new_C(string const name__);
 auto main__0() -> void;
 
@@ -21,7 +21,7 @@ struct C
 
 // Definitions
 
-C *_Nonnull C__new__1(C *_Nonnull self, string const name__)
+C *_Nonnull C__0new__1(C *_Nonnull self, string const name__)
 {
 	self->name__ = name__;
 	return self;
@@ -29,7 +29,7 @@ C *_Nonnull C__new__1(C *_Nonnull self, string const name__)
 
 inline C *_Nonnull new_C(string const name__)
 {
-	return C__new__1(new C(), name__);
+	return C__0new__1(new C(), name__);
 }
 
 auto ::C::method__0() const -> string

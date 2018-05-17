@@ -5,9 +5,9 @@ typedef struct Reference_Type Reference_Type;
 typedef struct Value_Type Value_Type;
 
 // Function Declarations
-Reference_Type *_Nonnull Reference_Type__new__0(Reference_Type *_Nonnull self);
+Reference_Type *_Nonnull Reference_Type__0new__0(Reference_Type *_Nonnull self);
 inline Reference_Type *_Nonnull new_Reference_Type();
-Value_Type Value_Type__new__0();
+Value_Type Value_Type__0new__0();
 inline Value_Type new_Value_Type();
 auto main__0() -> void;
 
@@ -29,18 +29,18 @@ struct Value_Type
 
 // Definitions
 
-Reference_Type *_Nonnull Reference_Type__new__0(Reference_Type *_Nonnull self) { return self; }
+Reference_Type *_Nonnull Reference_Type__0new__0(Reference_Type *_Nonnull self) { return self; }
 
 inline Reference_Type *_Nonnull new_Reference_Type()
 {
-	return Reference_Type__new__0(new Reference_Type());
+	return Reference_Type__0new__0(new Reference_Type());
 }
 
-Value_Type Value_Type__new__0() { return {}; }
+Value_Type Value_Type__0new__0() { return {}; }
 
 inline Value_Type new_Value_Type()
 {
-	return Value_Type__new__0();
+	return Value_Type__0new__0();
 }
 
 auto main__0() -> void

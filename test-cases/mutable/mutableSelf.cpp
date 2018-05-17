@@ -4,7 +4,7 @@
 typedef struct Test Test;
 
 // Function Declarations
-Test *_Nonnull Test__new__0(Test *_Nonnull self);
+Test *_Nonnull Test__0new__0(Test *_Nonnull self);
 inline Test *_Nonnull new_Test();
 auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
@@ -26,11 +26,11 @@ auto ::Test::change__1(bit const value__) -> void
 	self->value__ = value__;
 }
 
-Test *_Nonnull Test__new__0(Test *_Nonnull self) { return self; }
+Test *_Nonnull Test__0new__0(Test *_Nonnull self) { return self; }
 
 inline Test *_Nonnull new_Test()
 {
-	return Test__new__0(new Test());
+	return Test__0new__0(new Test());
 }
 
 auto main__1(system__console__Console *_Nonnull const console__) -> void

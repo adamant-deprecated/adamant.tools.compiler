@@ -797,7 +797,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
     {
         let parameters_node: Semantic_Node = first_child(member, ParameterList);
         var new_function_name: string = "new_" + class_name;
-        var constructor_full_name: string = class_name + "__new__";
+        var constructor_full_name: string = class_name + "__0new__";
         let constructor_name_node: Semantic_Node? = first_child(member, Identifier);
         if constructor_name_node =/= none
         {
@@ -896,7 +896,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
 
 public emit_default_constructor(emitter: mut Emitter, type_name: string, is_value_type: bool) -> void
 {
-    let default_constructor_name: string = type_name + "__new__0";
+    let default_constructor_name: string = type_name + "__0new__0";
 
     var return_type: string = type_name;
     if not is_value_type
