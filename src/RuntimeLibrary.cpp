@@ -5,7 +5,7 @@
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-u32 i32::as_uint_() const
+u32 i32::as_uint__0() const
 {
     if(this->value < 0)
         throw std::range_error("Can't convert negative number to unsigned");
