@@ -78,7 +78,7 @@ string__00 string__00::Substring__2(int__00 start, int__00 length) const
 
 string__00 string__00::Replace__2(string__00 oldValue, string__00 newValue) const
 {
-    system__text__String_Builder builder = system__text__String_Builder(); // TODO initialize capacity
+    system__text__String_Builder__0 builder = system__text__String_Builder__0(); // TODO initialize capacity
     int limit = Length - oldValue.Length + 1;
     int lastIndex = 0;
     // TODO the Substring calls in here are leaking memory
@@ -213,22 +213,22 @@ void debug_write_line__0()
     std::fprintf(stderr, "\n");
 }
 
-void system__console__Console::Write__1(string__00 value)
+void system__console__Console__0::Write__1(string__00 value)
 {
     std::printf("%.*s", value.Length, value.Buffer);
 }
 
-void system__console__Console::WriteLine__1(string__00 value)
+void system__console__Console__0::WriteLine__1(string__00 value)
 {
     std::printf("%.*s\n", value.Length, value.Buffer);
 }
 
-void system__console__Console::WriteLine__0()
+void system__console__Console__0::WriteLine__0()
 {
     std::printf("\n");
 }
 
-system__console__Arguments::system__console__Arguments(int argc, char const *const * argv)
+system__console__Arguments__0::system__console__Arguments__0(int argc, char const *const * argv)
     : Count(argc-1)
 {
     args = new string__00[Count];
@@ -236,7 +236,7 @@ system__console__Arguments::system__console__Arguments(int argc, char const *con
         args[i] = string__00(argv[i+1]);
 }
 
-system__io__File_Reader *_Nonnull system__io__File_Reader::construct(const string__00& fileName)
+system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0::construct(const string__00& fileName)
 {
     std::FILE* foo;
     auto fname = fileName.cstr();
@@ -245,7 +245,7 @@ system__io__File_Reader *_Nonnull system__io__File_Reader::construct(const strin
     return this;
 }
 
-string__00 system__io__File_Reader::ReadToEndSync__0()
+string__00 system__io__File_Reader__0::ReadToEndSync__0()
 {
     std::fseek(file, 0, SEEK_END);
     auto length = std::ftell(file);
@@ -255,12 +255,12 @@ string__00 system__io__File_Reader::ReadToEndSync__0()
     return string__00(length, buffer);
 }
 
-void system__io__File_Reader::Close__0()
+void system__io__File_Reader__0::Close__0()
 {
     std::fclose(file);
 }
 
-system__io__File_Writer *_Nonnull system__io__File_Writer::construct(const string__00& fileName)
+system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0::construct(const string__00& fileName)
 {
     auto fname = fileName.cstr();
     file = std::fopen(fname, "wb"); // TODO check error
@@ -268,17 +268,17 @@ system__io__File_Writer *_Nonnull system__io__File_Writer::construct(const strin
     return this;
 }
 
-void system__io__File_Writer::Write__1(const string__00& value)
+void system__io__File_Writer__0::Write__1(const string__00& value)
 {
     std::fwrite(value.Buffer, sizeof(char), value.Length, file);
 }
 
-void system__io__File_Writer::Close__0()
+void system__io__File_Writer__0::Close__0()
 {
     std::fclose(file);
 }
 
-void system__text__String_Builder::ensure_capacity(int needed)
+void system__text__String_Builder__0::ensure_capacity(int needed)
 {
     int new_capacity = capacity == 0 ? 128 : capacity;
     while(new_capacity < needed)
@@ -300,7 +300,7 @@ void system__text__String_Builder::ensure_capacity(int needed)
     }
 }
 
-system__text__String_Builder *_Nonnull system__text__String_Builder::construct(string__00 const & value)
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0::construct(string__00 const & value)
 {
     ensure_capacity(value.Length);
     std::memcpy(buffer, value.Buffer, value.Length);
@@ -308,13 +308,13 @@ system__text__String_Builder *_Nonnull system__text__String_Builder::construct(s
     return this;
 }
 
-system__text__String_Builder *_Nonnull system__text__String_Builder::construct_with_capacity(int__00 capacity)
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0::construct_with_capacity(int__00 capacity)
 {
     ensure_capacity(capacity.value);
     return this;
 }
 
-void system__text__String_Builder::Append__1(string__00 const & value)
+void system__text__String_Builder__0::Append__1(string__00 const & value)
 {
     int new_length = length + value.Length;
     ensure_capacity(new_length);
@@ -322,7 +322,7 @@ void system__text__String_Builder::Append__1(string__00 const & value)
     length = new_length;
 }
 
-void system__text__String_Builder::Append__1(system__text__String_Builder const *_Nonnull value)
+void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 const *_Nonnull value)
 {
     int new_length = length + value->length;
     ensure_capacity(new_length);
@@ -330,7 +330,7 @@ void system__text__String_Builder::Append__1(system__text__String_Builder const 
     length = new_length;
 }
 
-void system__text__String_Builder::AppendLine__1(string__00 const & value)
+void system__text__String_Builder__0::AppendLine__1(string__00 const & value)
 {
     int new_length = length + value.Length + 1;
     ensure_capacity(new_length);
@@ -339,7 +339,7 @@ void system__text__String_Builder::AppendLine__1(string__00 const & value)
     length = new_length;
 }
 
-void system__text__String_Builder::AppendLine__0()
+void system__text__String_Builder__0::AppendLine__0()
 {
     int new_length = length + 1;
     ensure_capacity(new_length);
@@ -347,7 +347,7 @@ void system__text__String_Builder::AppendLine__0()
     length = new_length;
 }
 
-void system__text__String_Builder::Remove__2(int__00 start, int__00 length)
+void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
 {
     if(start.value >= this->length)
         throw std::runtime_error("String_Builder.Remove() start >= length");
@@ -360,7 +360,7 @@ void system__text__String_Builder::Remove__2(int__00 start, int__00 length)
     this->length -= length.value;
 }
 
-void system__text__String_Builder::Remove__1(int__00 start)
+void system__text__String_Builder__0::Remove__1(int__00 start)
 {
     if(start.value >= length)
         throw std::runtime_error("String_Builder.Remove() start >= length");
@@ -368,7 +368,7 @@ void system__text__String_Builder::Remove__1(int__00 start)
     length = start.value;
 }
 
-string__00 system__text__String_Builder::ToString__0()
+string__00 system__text__String_Builder__0::ToString__0()
 {
     string__00 result(length, buffer);
     // give up ownership of buffer
