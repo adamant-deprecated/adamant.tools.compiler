@@ -1,16 +1,16 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct Test Test;
+typedef struct Test__0 Test__0;
 
 // Function Declarations
-Test *_Nonnull Test__0new__0(Test *_Nonnull self);
-inline Test *_Nonnull new_Test();
-auto main__1(system__console__Console *_Nonnull const console__) -> void;
+Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self);
+inline Test__0 *_Nonnull new_Test__0();
+auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
 
 // Class Declarations
 
-struct Test
+struct Test__0
 {
 	bool__00 value__;
 	auto change__1(bool__00 const value__) -> void;
@@ -20,22 +20,22 @@ struct Test
 
 // Definitions
 
-auto ::Test::change__1(bool__00 const value__) -> void
+auto ::Test__0::change__1(bool__00 const value__) -> void
 {
 	auto self = this;
 	self->value__ = value__;
 }
 
-Test *_Nonnull Test__0new__0(Test *_Nonnull self) { return self; }
+Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self) { return self; }
 
-inline Test *_Nonnull new_Test()
+inline Test__0 *_Nonnull new_Test__0()
 {
-	return Test__0new__0(new Test());
+	return Test__0__0new__0(new Test__0());
 }
 
-auto main__1(system__console__Console *_Nonnull const console__) -> void
+auto main__1(system__console__Console__0 *_Nonnull const console__) -> void
 {
-	Test *_Nonnull const test__ = new_Test();
+	Test__0 *_Nonnull const test__ = new_Test__0();
 	test__->change__1(true__00);
 }
 
@@ -44,7 +44,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main__1(new system__console__Console());
+		main__1(new system__console__Console__0());
 		return 0;
 	}
 	catch(std::exception &ex)

@@ -13,7 +13,7 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	new_system__text__String_Builder();
+	new_system__text__String_Builder__0();
 }
 
 // Entry Point Adapter

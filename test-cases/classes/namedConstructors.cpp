@@ -1,20 +1,20 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct C C;
+typedef struct C__0 C__0;
 
 // Function Declarations
-C *_Nonnull C__0new__1(C *_Nonnull self, string__00 const name__);
-inline C *_Nonnull new_C(string__00 const name__);
-C *_Nonnull C__0new__one__1(C *_Nonnull self, string__00 const name__);
-inline C *_Nonnull new_C__one(string__00 const name__);
-C *_Nonnull C__0new__two__1(C *_Nonnull self, string__00 const name__);
-inline C *_Nonnull new_C__two(string__00 const name__);
+C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string__00 const name__);
+inline C__0 *_Nonnull new_C__0(string__00 const name__);
+C__0 *_Nonnull C__0__0new__one__1(C__0 *_Nonnull self, string__00 const name__);
+inline C__0 *_Nonnull new_C__0__one(string__00 const name__);
+C__0 *_Nonnull C__0__0new__two__1(C__0 *_Nonnull self, string__00 const name__);
+inline C__0 *_Nonnull new_C__0__two(string__00 const name__);
 auto main__0() -> void;
 
 // Class Declarations
 
-struct C
+struct C__0
 {
 	string__00 name__;
 	int__00 kind__;
@@ -24,47 +24,47 @@ struct C
 
 // Definitions
 
-C *_Nonnull C__0new__1(C *_Nonnull self, string__00 const name__)
+C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string__00 const name__)
 {
 	self->name__ = name__;
 	self->kind__ = int__00(0);
 	return self;
 }
 
-inline C *_Nonnull new_C(string__00 const name__)
+inline C__0 *_Nonnull new_C__0(string__00 const name__)
 {
-	return C__0new__1(new C(), name__);
+	return C__0__0new__1(new C__0(), name__);
 }
 
-C *_Nonnull C__0new__one__1(C *_Nonnull self, string__00 const name__)
+C__0 *_Nonnull C__0__0new__one__1(C__0 *_Nonnull self, string__00 const name__)
 {
 	self->name__ = name__;
 	self->kind__ = int__00(1);
 	return self;
 }
 
-inline C *_Nonnull new_C__one(string__00 const name__)
+inline C__0 *_Nonnull new_C__0__one(string__00 const name__)
 {
-	return C__0new__one__1(new C(), name__);
+	return C__0__0new__one__1(new C__0(), name__);
 }
 
-C *_Nonnull C__0new__two__1(C *_Nonnull self, string__00 const name__)
+C__0 *_Nonnull C__0__0new__two__1(C__0 *_Nonnull self, string__00 const name__)
 {
 	self->name__ = name__;
 	self->kind__ = int__00(2);
 	return self;
 }
 
-inline C *_Nonnull new_C__two(string__00 const name__)
+inline C__0 *_Nonnull new_C__0__two(string__00 const name__)
 {
-	return C__0new__two__1(new C(), name__);
+	return C__0__0new__two__1(new C__0(), name__);
 }
 
 auto main__0() -> void
 {
-	new_C(string__00("0"));
-	new_C__one(string__00("1"));
-	new_C__two(string__00("2"));
+	new_C__0(string__00("0"));
+	new_C__0__one(string__00("1"));
+	new_C__0__two(string__00("2"));
 }
 
 // Entry Point Adapter

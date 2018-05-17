@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__2(system__console__Console *_Nonnull const console__, system__console__Arguments const *_Nonnull const args__) -> void;
+auto main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__2(system__console__Console *_Nonnull const console__, system__console
 
 // Definitions
 
-auto main__2(system__console__Console *_Nonnull const console__, system__console__Arguments const *_Nonnull const args__) -> void
+auto main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__) -> void
 {
 	for (string__00 const arg__ : *(args__))
 	{
@@ -24,7 +24,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main__2(new system__console__Console(), new system__console__Arguments(argc, argv));
+		main__2(new system__console__Console__0(), new system__console__Arguments__0(argc, argv));
 		return 0;
 	}
 	catch(std::exception &ex)

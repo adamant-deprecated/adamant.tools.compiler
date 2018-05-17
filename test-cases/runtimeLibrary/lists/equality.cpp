@@ -13,7 +13,7 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	system__collections__List<int__00> const *_Nonnull const values__ = new_system__collections__List<int__00>();
+	system__collections__List__1<int__00> const *_Nonnull const values__ = new_system__collections__List__1<int__00>();
 	equal_op(values__, values__);
 	not_equal_op(values__, values__);
 }

@@ -1,16 +1,16 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct C C;
+typedef struct C__0 C__0;
 
 // Function Declarations
-C *_Nonnull C__0new__0(C *_Nonnull self);
-inline C *_Nonnull new_C();
+C__0 *_Nonnull C__0__0new__0(C__0 *_Nonnull self);
+inline C__0 *_Nonnull new_C__0();
 auto main__0() -> void;
 
 // Class Declarations
 
-struct C
+struct C__0
 {
 	auto method__0() const -> string__00;
 	static auto function__0() -> string__00;
@@ -20,27 +20,27 @@ struct C
 
 // Definitions
 
-auto ::C::method__0() const -> string__00
+auto ::C__0::method__0() const -> string__00
 {
 	auto self = this;
 	return function__0();
 }
 
-auto ::C::function__0() -> string__00
+auto ::C__0::function__0() -> string__00
 {
 	return string__00("hello");
 }
 
-C *_Nonnull C__0new__0(C *_Nonnull self) { return self; }
+C__0 *_Nonnull C__0__0new__0(C__0 *_Nonnull self) { return self; }
 
-inline C *_Nonnull new_C()
+inline C__0 *_Nonnull new_C__0()
 {
-	return C__0new__0(new C());
+	return C__0__0new__0(new C__0());
 }
 
 auto main__0() -> void
 {
-	C const *_Nonnull const c__ = new_C();
+	C__0 const *_Nonnull const c__ = new_C__0();
 	c__->method__0();
 }
 

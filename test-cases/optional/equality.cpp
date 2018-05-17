@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__1(system__console__Console *_Nonnull const console__) -> void;
+auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
 // Definitions
 
-auto main__1(system__console__Console *_Nonnull const console__) -> void
+auto main__1(system__console__Console__0 *_Nonnull const console__) -> void
 {
 	int__00 const v__ = int__00(42);
 	p_optional<int__00> const n__ = none;
@@ -40,7 +40,7 @@ auto main__1(system__console__Console *_Nonnull const console__) -> void
 	console__->WriteLine__1(string__00("none =/= 42: ").op__add(r__));
 	r__ = not_equal_op(none, none);
 	console__->WriteLine__1(string__00("none =/= none: ").op__add(r__));
-	system__text__String_Builder const *_Nullable const sb__ = none;
+	system__text__String_Builder__0 const *_Nullable const sb__ = none;
 	r__ = equal_op(sb__, none);
 	console__->WriteLine__1(string__00("sb == none: ").op__add(r__));
 	r__ = equal_op(none, sb__);
@@ -56,7 +56,7 @@ std::int32_t main(int argc, char const *const * argv)
 {
 	try
 	{
-		main__1(new system__console__Console());
+		main__1(new system__console__Console__0());
 		return 0;
 	}
 	catch(std::exception &ex)

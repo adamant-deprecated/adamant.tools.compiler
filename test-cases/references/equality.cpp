@@ -1,16 +1,16 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct Test Test;
+typedef struct Test__0 Test__0;
 
 // Function Declarations
-Test *_Nonnull Test__0new__0(Test *_Nonnull self);
-inline Test *_Nonnull new_Test();
+Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self);
+inline Test__0 *_Nonnull new_Test__0();
 auto main__0() -> void;
 
 // Class Declarations
 
-struct Test
+struct Test__0
 {
 };
 
@@ -18,17 +18,17 @@ struct Test
 
 // Definitions
 
-Test *_Nonnull Test__0new__0(Test *_Nonnull self) { return self; }
+Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self) { return self; }
 
-inline Test *_Nonnull new_Test()
+inline Test__0 *_Nonnull new_Test__0()
 {
-	return Test__0new__0(new Test());
+	return Test__0__0new__0(new Test__0());
 }
 
 auto main__0() -> void
 {
-	Test const *_Nonnull const a__ = new_Test();
-	Test const *_Nonnull const b__ = new_Test();
+	Test__0 const *_Nonnull const a__ = new_Test__0();
+	Test__0 const *_Nonnull const b__ = new_Test__0();
 	bool__00 x__;
 	x__ = equal_op(a__, b__);
 	x__ = not_equal_op(a__, b__);

@@ -1,21 +1,21 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef struct Test Test;
+typedef struct Test__0 Test__0;
 
 // Function Declarations
-Test Test__0new__1(string__00 const name__);
-inline Test new_Test(string__00 const name__);
+Test__0 Test__0__0new__1(string__00 const name__);
+inline Test__0 new_Test__0(string__00 const name__);
 auto main__0() -> void;
 
 // Class Declarations
 
-struct Test
+struct Test__0
 {
-	Test * operator->() { return this; }
-	Test const * operator->() const { return this; }
-	Test & operator* () { return *this; }
-	Test const & operator* () const { return *this; }
+	Test__0 * operator->() { return this; }
+	Test__0 const * operator->() const { return this; }
+	Test__0 & operator* () { return *this; }
+	Test__0 const & operator* () const { return *this; }
 	string__00 name__;
 	auto method__0() const -> string__00;
 };
@@ -24,19 +24,19 @@ struct Test
 
 // Definitions
 
-Test Test__0new__1(string__00 const name__)
+Test__0 Test__0__0new__1(string__00 const name__)
 {
-	Test self;
+	Test__0 self;
 	self->name__ = name__;
 	return self;
 }
 
-inline Test new_Test(string__00 const name__)
+inline Test__0 new_Test__0(string__00 const name__)
 {
-	return Test__0new__1(name__);
+	return Test__0__0new__1(name__);
 }
 
-auto ::Test::method__0() const -> string__00
+auto ::Test__0::method__0() const -> string__00
 {
 	auto self = this;
 	return name__;
@@ -44,7 +44,7 @@ auto ::Test::method__0() const -> string__00
 
 auto main__0() -> void
 {
-	Test const t__ = new_Test(string__00("Bob"));
+	Test__0 const t__ = new_Test__0(string__00("Bob"));
 	t__.method__0();
 }
 

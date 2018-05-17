@@ -407,7 +407,7 @@ void debug_write_line__1(string__00 value);
 void debug_write_line__0();
 
 template<typename T>
-class system__collections__List
+class system__collections__List__1
 {
 private:
     T *_Nonnull values;
@@ -421,7 +421,7 @@ public:
     const_iterator end() const { return &values[length]; }
 
     // Adamant Members
-    system__collections__List *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
+    system__collections__List__1 *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
     void add__1(T value);
     void clear__0() { length = 0; }
     int__00 op__magnitude() const { return int__00(length); }
@@ -429,7 +429,7 @@ public:
 };
 
 template<typename T>
-void system__collections__List<T>::add__1(T value)
+void system__collections__List__1<T>::add__1(T value)
 {
     if(length >= capacity)
     {
@@ -446,7 +446,7 @@ void system__collections__List<T>::add__1(T value)
 }
 
 template<typename T>
-T const & system__collections__List<T>::op__Element(int__00 const index) const
+T const & system__collections__List__1<T>::op__Element(int__00 const index) const
 {
     if(index.value < 0 || index.value >= length)
         throw std::out_of_range("List index out of bounds");
@@ -454,12 +454,12 @@ T const & system__collections__List<T>::op__Element(int__00 const index) const
 }
 
 template<typename T>
-system__collections__List<T> *_Nonnull new_system__collections__List()
+system__collections__List__1<T> *_Nonnull new_system__collections__List__1()
 {
-    return (new system__collections__List<T>())->construct();
+    return (new system__collections__List__1<T>())->construct();
 }
 
-class system__console__Console
+class system__console__Console__0
 {
 public:
     void Write__1(string__00 value);
@@ -467,7 +467,7 @@ public:
     void WriteLine__0();
 };
 
-class system__console__Arguments
+class system__console__Arguments__0
 {
 private:
     string__00 *_Nonnull args;
@@ -475,7 +475,7 @@ public:
     // Runtime Use Members
     typedef string__00 const *_Nonnull const_iterator;
 
-    system__console__Arguments(int argc, char const *_Nonnull const *_Nonnull argv);
+    system__console__Arguments__0(int argc, char const *_Nonnull const *_Nonnull argv);
     const_iterator begin() const { return &args[0]; }
     const_iterator end() const { return &args[Count]; }
 
@@ -491,39 +491,39 @@ public:
     }
 };
 
-class system__io__File_Reader
+class system__io__File_Reader__0
 {
 private:
     std::FILE *_Nonnull file;
 
 public:
-    system__io__File_Reader *_Nonnull construct(const string__00& fileName);
+    system__io__File_Reader__0 *_Nonnull construct(const string__00& fileName);
     string__00 ReadToEndSync__0();
     void Close__0();
 };
 
-inline system__io__File_Reader *_Nonnull new_system__io__File_Reader(const string__00& fileName)
+inline system__io__File_Reader__0 *_Nonnull new_system__io__File_Reader__0(const string__00& fileName)
 {
-    return (new system__io__File_Reader())->construct(fileName);
+    return (new system__io__File_Reader__0())->construct(fileName);
 }
 
-class system__io__File_Writer
+class system__io__File_Writer__0
 {
 private:
     std::FILE *_Nonnull file;
 
 public:
-    system__io__File_Writer *_Nonnull construct(const string__00& fileName);
+    system__io__File_Writer__0 *_Nonnull construct(const string__00& fileName);
     void Write__1(const string__00& value);
     void Close__0();
 };
 
-inline system__io__File_Writer *_Nonnull new_system__io__File_Writer(const string__00& fileName)
+inline system__io__File_Writer__0 *_Nonnull new_system__io__File_Writer__0(const string__00& fileName)
 {
-    return (new system__io__File_Writer())->construct(fileName);
+    return (new system__io__File_Writer__0())->construct(fileName);
 }
 
-class system__text__String_Builder
+class system__text__String_Builder__0
 {
 private:
     char *_Nullable buffer;
@@ -532,16 +532,16 @@ private:
     void ensure_capacity(int needed);
 public:
     // Runtime Use Members
-    system__text__String_Builder(): buffer(0), capacity(0), length(0) { }
+    system__text__String_Builder__0(): buffer(0), capacity(0), length(0) { }
 
     // Adamant Members
-    system__text__String_Builder *_Nonnull construct() { return this; }
-    system__text__String_Builder *_Nonnull construct(string__00 const & value);
-    system__text__String_Builder *_Nonnull construct_with_capacity(int__00 capacity);
+    system__text__String_Builder__0 *_Nonnull construct() { return this; }
+    system__text__String_Builder__0 *_Nonnull construct(string__00 const & value);
+    system__text__String_Builder__0 *_Nonnull construct_with_capacity(int__00 capacity);
     // TODO byte_length should be a property
     int__00 byte_length__0() const { return int__00(length); }
     void Append__1(string__00 const & value);
-    void Append__1(system__text__String_Builder const *_Nonnull value);
+    void Append__1(system__text__String_Builder__0 const *_Nonnull value);
     void AppendLine__1(string__00 const& value);
     void AppendLine__0();
     void Remove__2(int__00 start, int__00 length);
@@ -549,17 +549,17 @@ public:
     string__00 ToString__0();
 };
 
-inline system__text__String_Builder *_Nonnull new_system__text__String_Builder()
+inline system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0()
 {
-    return (new system__text__String_Builder())->construct();
+    return (new system__text__String_Builder__0())->construct();
 }
 
-inline system__text__String_Builder *_Nonnull new_system__text__String_Builder(string__00 const & value)
+inline system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0(string__00 const & value)
 {
-    return (new system__text__String_Builder())->construct(value);
+    return (new system__text__String_Builder__0())->construct(value);
 }
 
-inline system__text__String_Builder *_Nonnull new_system__text__String_Builder__with_capacity(int__00 capacity)
+inline system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0__with_capacity(int__00 capacity)
 {
-    return (new system__text__String_Builder())->construct_with_capacity(capacity);
+    return (new system__text__String_Builder__0())->construct_with_capacity(capacity);
 }

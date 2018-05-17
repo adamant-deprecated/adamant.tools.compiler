@@ -59,14 +59,13 @@ public emit(emitter: mut Emitter) -> string
     return cpp_code.ToString();
 }
 
-// TODO implement and use mangle_name(name: Name)
-public mangle_name(name: Name) -> string
+public mangle_name(type: Type) -> string
 {
     // TODO what about name.is_special == true?
     let builder: mut system.text.String_Builder = new system.text.String_Builder();
 
     var first_segment: bool = true;
-    for let segment: string in name.segments
+    for let segment: string in type.name.segments
     {
         if first_segment
             { first_segment = false; }
@@ -78,6 +77,10 @@ public mangle_name(name: Name) -> string
         else
             { append_fixing_underscores(builder, segment); }
     }
+
+    builder.Append("__");
+    builder.Append(|type.type_parameters|);
+
     return builder.ToString();
 }
 
@@ -180,7 +183,7 @@ public convert_type_name(type: Type) -> mut system.text.String_Builder
     }
     else
     {
-        cpp_type.Append(mangle_name(type.name));
+        cpp_type.Append(mangle_name(type));
     }
 
     if |type.type_parameters| > 0
@@ -948,7 +951,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     {
         let declared_type: Type = declaration.declares_type;
         assert(declared_type =/= none, get_text(first_child(declaration, Identifier)));
-        let class_name: string = mangle_name(declared_type.name);
+        let class_name: string = mangle_name(declared_type);
         write_line(emitter.type_declarations, "typedef struct " + class_name + " " + class_name + ";");
         element_separator_line(emitter.class_declarations);
         write_line(emitter.class_declarations, "struct " + class_name);
@@ -969,7 +972,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     {
         let declared_type: Type = declaration.declares_type;
         assert(declared_type =/= none, get_text(first_child(declaration, Identifier)));
-        let struct_name: string = mangle_name(declared_type.name);
+        let struct_name: string = mangle_name(declared_type);
         write_line(emitter.type_declarations, "typedef struct " + struct_name + " " + struct_name + ";");
         element_separator_line(emitter.class_declarations);
         write_line(emitter.class_declarations, "struct " + struct_name);
@@ -1102,12 +1105,12 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
     // TODO should be `new mut`
     let args: mut system.text.String_Builder = new system.text.String_Builder();
     if emitter.main_function_accepts_console
-        { args.Append("new system__console__Console()"); }
+        { args.Append("new system__console__Console__0()"); }
     if emitter.main_function_accepts_args
     {
         if emitter.main_function_accepts_console
             { args.Append(", "); }
-        args.Append("new system__console__Arguments(argc, argv)");
+        args.Append("new system__console__Arguments__0(argc, argv)");
     }
 
     if emitter.main_function_return_type == "void"
