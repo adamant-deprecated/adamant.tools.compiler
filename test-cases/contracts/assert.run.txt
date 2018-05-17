@@ -1,4 +1,4 @@
 70
 2
 Program exited due to error:
-Assertion failed: equal_op(y_, z_), y=5 z=6, file test-cases/contracts/assert.cpp, line 20
+Assertion failed: equal_op(y__, z__), y=5 z=6, file test-cases/contracts/assert.cpp, line 20
