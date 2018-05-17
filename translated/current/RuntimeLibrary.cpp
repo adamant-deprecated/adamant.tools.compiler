@@ -5,7 +5,7 @@
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-u32 i32::as_uint_() const
+u32 i32::as_uint__0() const
 {
     if(this->value < 0)
         throw std::range_error("Can't convert negative number to unsigned");
@@ -71,32 +71,32 @@ string::string(bit other)
 {
 }
 
-string string::Substring_(i32 start, i32 length) const
+string string::Substring__2(i32 start, i32 length) const
 {
     return string(length.value, Buffer + start.value);
 }
 
-string string::Replace_(string oldValue, string newValue) const
+string string::Replace__2(string oldValue, string newValue) const
 {
     system__text__String_Builder builder = system__text__String_Builder(); // TODO initialize capacity
     int limit = Length - oldValue.Length + 1;
     int lastIndex = 0;
     // TODO the Substring calls in here are leaking memory
     for(int i=0; i < limit; i++)
-        if (cond(equal_op(Substring_(i32(i), i32(oldValue.Length)), oldValue)))
+        if (cond(equal_op(Substring__2(i32(i), i32(oldValue.Length)), oldValue)))
         {
-            builder.Append_(Substring_(i32(lastIndex), i32(i-lastIndex)));
-            builder.Append_(newValue);
+            builder.Append__1(Substring__2(i32(lastIndex), i32(i-lastIndex)));
+            builder.Append__1(newValue);
             i += oldValue.Length; // skip over the value we just matched
             lastIndex = i;
             i--; // we need i-- to offset the i++ that is about to happen
         }
 
-    builder.Append_(Substring_(i32(lastIndex), i32(Length - lastIndex)));
-    return builder.ToString_();
+    builder.Append__1(Substring__2(i32(lastIndex), i32(Length - lastIndex)));
+    return builder.ToString__0();
 }
 
-i32 string::LastIndexOf_(code_point c) const
+i32 string::LastIndexOf__1(code_point c) const
 {
     for(int i = Length - 1; i >= 0; i--)
         if(Buffer[i] == code_point__to_char(c))
@@ -105,7 +105,7 @@ i32 string::LastIndexOf_(code_point c) const
     return i32(-1); // TODO should return none
 }
 
-i32 string::index_of_(code_point c) const
+i32 string::index_of__1(code_point c) const
 {
     for(int i = 0; i < Length; i++)
         if(Buffer[i] == code_point__to_char(c))
@@ -189,7 +189,7 @@ bool operator < (string const & lhs, string const & rhs)
 
 std::map<string, string> resourceValues;
 
-string const & ResourceManager::GetString_(string resourceName)
+string const & ResourceManager::GetString__1(string resourceName)
 {
     return resourceValues.at(resourceName);
 }
@@ -198,32 +198,32 @@ void ResourceManager::AddResource(string name, string value)
     resourceValues.insert(std::make_pair(name, value));
 }
 
-ResourceManager *const resource_manager_ = new ResourceManager();
+ResourceManager *const resource_manager__ = new ResourceManager();
 
-void debug_write_(string value)
+void debug_write__1(string value)
 {
     std::fprintf(stderr, "%.*s", value.Length, value.Buffer);
 }
-void debug_write_line_(string value)
+void debug_write_line__1(string value)
 {
     std::fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
 }
-void debug_write_line_()
+void debug_write_line__0()
 {
     std::fprintf(stderr, "\n");
 }
 
-void system__console__Console::Write_(string value)
+void system__console__Console::Write__1(string value)
 {
     std::printf("%.*s", value.Length, value.Buffer);
 }
 
-void system__console__Console::WriteLine_(string value)
+void system__console__Console::WriteLine__1(string value)
 {
     std::printf("%.*s\n", value.Length, value.Buffer);
 }
 
-void system__console__Console::WriteLine_()
+void system__console__Console::WriteLine__0()
 {
     std::printf("\n");
 }
@@ -245,7 +245,7 @@ system__io__File_Reader *_Nonnull system__io__File_Reader::construct(const strin
     return this;
 }
 
-string system__io__File_Reader::ReadToEndSync_()
+string system__io__File_Reader::ReadToEndSync__0()
 {
     std::fseek(file, 0, SEEK_END);
     auto length = std::ftell(file);
@@ -255,7 +255,7 @@ string system__io__File_Reader::ReadToEndSync_()
     return string(length, buffer);
 }
 
-void system__io__File_Reader::Close_()
+void system__io__File_Reader::Close__0()
 {
     std::fclose(file);
 }
@@ -268,12 +268,12 @@ system__io__File_Writer *_Nonnull system__io__File_Writer::construct(const strin
     return this;
 }
 
-void system__io__File_Writer::Write_(const string& value)
+void system__io__File_Writer::Write__1(const string& value)
 {
     std::fwrite(value.Buffer, sizeof(char), value.Length, file);
 }
 
-void system__io__File_Writer::Close_()
+void system__io__File_Writer::Close__0()
 {
     std::fclose(file);
 }
@@ -314,7 +314,7 @@ system__text__String_Builder *_Nonnull system__text__String_Builder::construct_w
     return this;
 }
 
-void system__text__String_Builder::Append_(string const & value)
+void system__text__String_Builder::Append__1(string const & value)
 {
     int new_length = length + value.Length;
     ensure_capacity(new_length);
@@ -322,7 +322,7 @@ void system__text__String_Builder::Append_(string const & value)
     length = new_length;
 }
 
-void system__text__String_Builder::Append_(system__text__String_Builder const *_Nonnull value)
+void system__text__String_Builder::Append__1(system__text__String_Builder const *_Nonnull value)
 {
     int new_length = length + value->length;
     ensure_capacity(new_length);
@@ -330,7 +330,7 @@ void system__text__String_Builder::Append_(system__text__String_Builder const *_
     length = new_length;
 }
 
-void system__text__String_Builder::AppendLine_(string const & value)
+void system__text__String_Builder::AppendLine__1(string const & value)
 {
     int new_length = length + value.Length + 1;
     ensure_capacity(new_length);
@@ -339,7 +339,7 @@ void system__text__String_Builder::AppendLine_(string const & value)
     length = new_length;
 }
 
-void system__text__String_Builder::AppendLine_()
+void system__text__String_Builder::AppendLine__0()
 {
     int new_length = length + 1;
     ensure_capacity(new_length);
@@ -347,7 +347,7 @@ void system__text__String_Builder::AppendLine_()
     length = new_length;
 }
 
-void system__text__String_Builder::Remove_(i32 start, i32 length)
+void system__text__String_Builder::Remove__2(i32 start, i32 length)
 {
     if(start.value >= this->length)
         throw std::runtime_error("String_Builder.Remove() start >= length");
@@ -360,7 +360,7 @@ void system__text__String_Builder::Remove_(i32 start, i32 length)
     this->length -= length.value;
 }
 
-void system__text__String_Builder::Remove_(i32 start)
+void system__text__String_Builder::Remove__1(i32 start)
 {
     if(start.value >= length)
         throw std::runtime_error("String_Builder.Remove() start >= length");
@@ -368,7 +368,7 @@ void system__text__String_Builder::Remove_(i32 start)
     length = start.value;
 }
 
-string system__text__String_Builder::ToString_()
+string system__text__String_Builder::ToString__0()
 {
     string result(length, buffer);
     // give up ownership of buffer

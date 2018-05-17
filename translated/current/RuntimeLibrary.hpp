@@ -125,7 +125,7 @@ struct i32
     i32 op__magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return i32(this->value < 0 ? -this->value : this->value); }
 
     // Hack because we don't support as correctly yet
-    u32 as_uint_() const;
+    u32 as_uint__0() const;
 };
 
 inline i32 i32__op__negate(i32 v) { return i32(-v.value); }
@@ -187,7 +187,7 @@ struct code_point
     code_point const & operator* () const { return *this; }
 
     // Adamant Members
-    static auto construct() -> code_point { return code_point('\0'); }
+    // static auto construct() -> code_point { return code_point('\0'); }
 };
 
 char code_point__to_char(code_point v);
@@ -225,13 +225,13 @@ struct string
     static auto construct(string value) -> string { return value; }
     static auto construct(code_point c, i32 repeat) -> string;
     // TODO ByteLength should be a property
-    i32 ByteLength_() const { return i32(Length); }
+    i32 ByteLength__0() const { return i32(Length); }
 
-    string Substring_(i32 start, i32 length) const;
-    string Substring_(i32 start) const { return Substring_(start, i32(Length-start.value)); }
-    string Replace_(string oldValue, string newValue) const;
-    i32 LastIndexOf_(code_point c) const;
-    i32 index_of_(code_point c) const;
+    string Substring__2(i32 start, i32 length) const;
+    string Substring__1(i32 start) const { return Substring__2(start, i32(Length-start.value)); }
+    string Replace__2(string oldValue, string newValue) const;
+    i32 LastIndexOf__1(code_point c) const;
+    i32 index_of__1(code_point c) const;
 
     // TODO check index bounds
     code_point op__Element(i32 const index) const { return code_point(Buffer[index.value]); }
@@ -356,13 +356,6 @@ inline auto not_equal_op(o_never lhs, T const *_Nullable rhs) -> bit
 // -----------------------------------------------------------------------------
 // Parts of the standard library that are currently implemented in the runtime.
 
-// A placeholder function until we get proper exceptions implemented
-_Noreturn inline void THROW_EXCEPTION_(const string& value)
-{
-    throw std::runtime_error(value.cstr());
-}
-
-
 inline void assert(const bit condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const std::int32_t line)
 {
     if(!condition.value)
@@ -371,7 +364,7 @@ inline void assert(const bit condition, char const *_Nonnull code, const string 
             .op__add(string(", file ")).op__add(string(file)).op__add(string(", line ")).op__add(i32(line)).cstr());
 }
 
-#define assert_(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
+#define assert__2(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
 
 
 _Noreturn inline void NOT_IMPLEMENTED(const string message, char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
@@ -381,7 +374,7 @@ _Noreturn inline void NOT_IMPLEMENTED(const string message, char const *_Nonnull
         .op__add(string(" not yet implemented, ")).op__add(message).op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(i32(line)).cstr());
 }
 
-#define NOT_IMPLEMENTED_(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
+#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
 
 
 _Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
@@ -391,20 +384,20 @@ _Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_No
         .op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(i32(line)).cstr());
 }
 
-#define UNREACHABLE_() UNREACHABLE(__func__, __FILE__, __LINE__)
+#define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)
 
 class ResourceManager
 {
 public:
-    string const & GetString_(string resourceName);
+    string const & GetString__1(string resourceName);
     void AddResource(string name, string value);
 };
 
-extern ResourceManager *_Nonnull const resource_manager_;
+extern ResourceManager *_Nonnull const resource_manager__;
 
-void debug_write_(string value);
-void debug_write_line_(string value);
-void debug_write_line_();
+void debug_write__1(string value);
+void debug_write_line__1(string value);
+void debug_write_line__0();
 
 template<typename T>
 class system__collections__List
@@ -422,14 +415,14 @@ public:
 
     // Adamant Members
     system__collections__List *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
-    void add_(T value);
-    void clear_() { length = 0; }
+    void add__1(T value);
+    void clear__0() { length = 0; }
     i32 op__magnitude() const { return i32(length); }
     T const & op__Element(i32 const index) const;
 };
 
 template<typename T>
-void system__collections__List<T>::add_(T value)
+void system__collections__List<T>::add__1(T value)
 {
     if(length >= capacity)
     {
@@ -462,9 +455,9 @@ system__collections__List<T> *_Nonnull new_system__collections__List()
 class system__console__Console
 {
 public:
-    void Write_(string value);
-    void WriteLine_(string value);
-    void WriteLine_();
+    void Write__1(string value);
+    void WriteLine__1(string value);
+    void WriteLine__0();
 };
 
 class system__console__Arguments
@@ -498,8 +491,8 @@ private:
 
 public:
     system__io__File_Reader *_Nonnull construct(const string& fileName);
-    string ReadToEndSync_();
-    void Close_();
+    string ReadToEndSync__0();
+    void Close__0();
 };
 
 inline system__io__File_Reader *_Nonnull new_system__io__File_Reader(const string& fileName)
@@ -514,8 +507,8 @@ private:
 
 public:
     system__io__File_Writer *_Nonnull construct(const string& fileName);
-    void Write_(const string& value);
-    void Close_();
+    void Write__1(const string& value);
+    void Close__0();
 };
 
 inline system__io__File_Writer *_Nonnull new_system__io__File_Writer(const string& fileName)
@@ -538,15 +531,15 @@ public:
     system__text__String_Builder *_Nonnull construct() { return this; }
     system__text__String_Builder *_Nonnull construct(string const & value);
     system__text__String_Builder *_Nonnull construct_with_capacity(i32 capacity);
-    // TODO byte_length_ should be a property
-    i32 byte_length_() const { return i32(length); }
-    void Append_(string const & value);
-    void Append_(system__text__String_Builder const *_Nonnull value);
-    void AppendLine_(string const& value);
-    void AppendLine_();
-    void Remove_(i32 start, i32 length);
-    void Remove_(i32 start);
-    string ToString_();
+    // TODO byte_length should be a property
+    i32 byte_length__0() const { return i32(length); }
+    void Append__1(string const & value);
+    void Append__1(system__text__String_Builder const *_Nonnull value);
+    void AppendLine__1(string const& value);
+    void AppendLine__0();
+    void Remove__2(i32 start, i32 length);
+    void Remove__1(i32 start);
+    string ToString__0();
 };
 
 inline system__text__String_Builder *_Nonnull new_system__text__String_Builder()
