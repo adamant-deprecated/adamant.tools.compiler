@@ -4622,7 +4622,7 @@ auto emit_member_declaration__4(Emitter *_Nonnull const emitter__, Semantic_Node
 	{
 		Semantic_Node const *_Nonnull const parameters_node__ = first_child__2(member__, ParameterList__);
 		string new_function_name__ = string("new_").op__add(class_name__);
-		string constructor_full_name__ = class_name__.op__add(string("__new__"));
+		string constructor_full_name__ = class_name__.op__add(string("__0new__"));
 		Semantic_Node const *_Nullable const constructor_name_node__ = first_child__2(member__, Identifier__);
 		if (cond(not_equal_op(constructor_name_node__, none)))
 		{
@@ -4735,7 +4735,7 @@ auto emit_member_declaration__4(Emitter *_Nonnull const emitter__, Semantic_Node
 
 auto emit_default_constructor__3(Emitter *_Nonnull const emitter__, string const type_name__, bit const is_value_type__) -> void
 {
-	string const default_constructor_name__ = type_name__.op__add(string("__new__0"));
+	string const default_constructor_name__ = type_name__.op__add(string("__0new__0"));
 	string return_type__ = type_name__;
 	if (cond(bit__op__not(is_value_type__)))
 	{
