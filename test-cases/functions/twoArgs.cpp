@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func__2(int__00 const a__, int__00 const b__) -> int__00;
-auto main__0() -> int__00;
+int__00 Func__2(int__00 const a__, int__00 const b__);
+int__00 main__0();
 
 // Class Declarations
 
@@ -12,12 +12,12 @@ auto main__0() -> int__00;
 
 // Definitions
 
-auto Func__2(int__00 const a__, int__00 const b__) -> int__00
+int__00 Func__2(int__00 const a__, int__00 const b__)
 {
 	return b__;
 }
 
-auto main__0() -> int__00
+int__00 main__0()
 {
 	return Func__2(int__00(0), int__00(42));
 }

@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
+void main__1(system__console__Console__0 *_Nonnull const console__);
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
 
 // Definitions
 
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void
+void main__1(system__console__Console__0 *_Nonnull const console__)
 {
 	system__collections__List__1<string__00> *_Nonnull const strings__ = new_system__collections__List__1<string__00>();
 	strings__->add__1(string__00("Hello"));

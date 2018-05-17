@@ -9,7 +9,7 @@ Mutable_Object__0 *_Nonnull Mutable_Object__0__0new__0(Mutable_Object__0 *_Nonnu
 inline Mutable_Object__0 *_Nonnull new_Mutable_Object__0();
 immutable_object__0 *_Nonnull immutable_object__0__0new__0(immutable_object__0 *_Nonnull self);
 inline immutable_object__0 *_Nonnull new_immutable_object__0();
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
@@ -39,7 +39,7 @@ inline immutable_object__0 *_Nonnull new_immutable_object__0()
 	return immutable_object__0__0new__0(new immutable_object__0());
 }
 
-auto main__0() -> void
+void main__0()
 {
 	Mutable_Object__0 const *_Nonnull const m__ = new_Mutable_Object__0();
 	immutable_object__0 const *_Nonnull const i__ = new_immutable_object__0();

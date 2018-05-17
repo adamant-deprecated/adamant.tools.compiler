@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__0() -> void;
 
 // Definitions
 
-auto main__0() -> void
+void main__0()
 {
 	code_point__00 result__;
 	result__ = string__00("hello").op__Element(int__00(0));

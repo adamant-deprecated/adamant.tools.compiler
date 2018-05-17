@@ -6,8 +6,8 @@ typedef struct Test__0 Test__0;
 // Function Declarations
 Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self);
 inline Test__0 *_Nonnull new_Test__0();
-auto Func__2(p_optional<string__00> const x__, p_optional<uint__00> const y__) -> p_optional<int__00>;
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
+p_optional<int__00> Func__2(p_optional<string__00> const x__, p_optional<uint__00> const y__);
+void main__1(system__console__Console__0 *_Nonnull const console__);
 
 // Class Declarations
 
@@ -26,7 +26,7 @@ inline Test__0 *_Nonnull new_Test__0()
 	return Test__0__0new__0(new Test__0());
 }
 
-auto Func__2(p_optional<string__00> const x__, p_optional<uint__00> const y__) -> p_optional<int__00>
+p_optional<int__00> Func__2(p_optional<string__00> const x__, p_optional<uint__00> const y__)
 {
 	p_optional<int__00> const z__ = none;
 	Test__0 const *_Nullable const t__ = none;
@@ -37,7 +37,7 @@ auto Func__2(p_optional<string__00> const x__, p_optional<uint__00> const y__) -
 	return none;
 }
 
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void
+void main__1(system__console__Console__0 *_Nonnull const console__)
 {
 	Func__2(none, none);
 }

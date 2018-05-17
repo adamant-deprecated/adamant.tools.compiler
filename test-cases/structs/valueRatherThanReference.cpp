@@ -9,7 +9,7 @@ Reference_Type__0 *_Nonnull Reference_Type__0__0new__0(Reference_Type__0 *_Nonnu
 inline Reference_Type__0 *_Nonnull new_Reference_Type__0();
 Value_Type__0 Value_Type__0__0new__0();
 inline Value_Type__0 new_Value_Type__0();
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
@@ -43,7 +43,7 @@ inline Value_Type__0 new_Value_Type__0()
 	return Value_Type__0__0new__0();
 }
 
-auto main__0() -> void
+void main__0()
 {
 	Reference_Type__0 const *_Nonnull const r__ = new_Reference_Type__0();
 	Value_Type__0 const v__ = new_Value_Type__0();

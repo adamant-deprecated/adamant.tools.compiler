@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Identity__1(int__00 const value__) -> int__00;
-auto main__0() -> int__00;
+int__00 Identity__1(int__00 const value__);
+int__00 main__0();
 
 // Class Declarations
 
@@ -12,12 +12,12 @@ auto main__0() -> int__00;
 
 // Definitions
 
-auto Identity__1(int__00 const value__) -> int__00
+int__00 Identity__1(int__00 const value__)
 {
 	return value__;
 }
 
-auto main__0() -> int__00
+int__00 main__0()
 {
 	return Identity__1(int__00(42));
 }

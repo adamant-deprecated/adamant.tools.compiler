@@ -876,10 +876,10 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
             { static_modifier = "static "; }
         var constModifier: string = "";
         if not mutable_self and not is_associated_function
-            { constModifier = "const "; }
-        write_line(emitter.class_declarations, static_modifier + "auto " + method_name + parameters + " " + constModifier + "-> " + cpp_type + ";");
+            { constModifier = " const"; }
+        write_line(emitter.class_declarations, static_modifier + cpp_type + " " + method_name + parameters + constModifier + ";");
         element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, "auto ::" + class_name + "::" + method_name + parameters + " " + constModifier + "-> " + cpp_type);
+        write_line(emitter.definitions, cpp_type + " " + class_name + "::" + method_name + parameters + constModifier);
         let block: Semantic_Node = first_child(member, Block);
         emit_method_body(emitter, block, is_associated_function);
     }
@@ -1030,9 +1030,9 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let return_type_node: Semantic_Node = declaration.children[3];
         let cpp_type: string = convert_type(true, return_type_node);
         // Write out the function declaration for C++ so we can call functions defined after others
-        write_line(emitter.function_declarations, "auto " + name + parameters + " -> " + cpp_type + ";");
+        write_line(emitter.function_declarations, cpp_type + " " + name + parameters + ";");
         element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, "auto " + name + parameters + " -> " + cpp_type);
+        write_line(emitter.definitions, cpp_type + " " + name + parameters);
         if is_main
         {
             if emitter.main_function_return_type =/= ""

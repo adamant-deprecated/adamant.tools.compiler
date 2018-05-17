@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> int__00;
+int__00 main__0();
 
 // Class Declarations
 
@@ -12,7 +12,7 @@ int__00 const Result__ = int__00(42);
 
 // Definitions
 
-auto main__0() -> int__00
+int__00 main__0()
 {
 	return Result__;
 }

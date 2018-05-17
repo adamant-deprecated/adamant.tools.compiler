@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func__1(bool__00 const value__) -> bool__00;
-auto main__0() -> void;
+bool__00 Func__1(bool__00 const value__);
+void main__0();
 
 // Class Declarations
 
@@ -12,12 +12,12 @@ auto main__0() -> void;
 
 // Definitions
 
-auto Func__1(bool__00 const value__) -> bool__00
+bool__00 Func__1(bool__00 const value__)
 {
 	return false__00;
 }
 
-auto main__0() -> void
+void main__0()
 {
 	Func__1(true__00);
 }

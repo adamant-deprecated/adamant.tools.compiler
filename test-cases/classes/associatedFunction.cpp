@@ -6,27 +6,27 @@ typedef struct C__0 C__0;
 // Function Declarations
 C__0 *_Nonnull C__0__0new__0(C__0 *_Nonnull self);
 inline C__0 *_Nonnull new_C__0();
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
 struct C__0
 {
-	auto method__0() const -> string__00;
-	static auto function__0() -> string__00;
+	string__00 method__0() const;
+	static string__00 function__0();
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::C__0::method__0() const -> string__00
+string__00 C__0::method__0() const
 {
 	auto self = this;
 	return function__0();
 }
 
-auto ::C__0::function__0() -> string__00
+string__00 C__0::function__0()
 {
 	return string__00("hello");
 }
@@ -38,7 +38,7 @@ inline C__0 *_Nonnull new_C__0()
 	return C__0__0new__0(new C__0());
 }
 
-auto main__0() -> void
+void main__0()
 {
 	C__0 const *_Nonnull const c__ = new_C__0();
 	c__->method__0();

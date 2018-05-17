@@ -6,21 +6,21 @@ typedef struct Test__0 Test__0;
 // Function Declarations
 Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self);
 inline Test__0 *_Nonnull new_Test__0();
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
+void main__1(system__console__Console__0 *_Nonnull const console__);
 
 // Class Declarations
 
 struct Test__0
 {
 	bool__00 value__;
-	auto change__1(bool__00 const value__) -> void;
+	void change__1(bool__00 const value__);
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::Test__0::change__1(bool__00 const value__) -> void
+void Test__0::change__1(bool__00 const value__)
 {
 	auto self = this;
 	self->value__ = value__;
@@ -33,7 +33,7 @@ inline Test__0 *_Nonnull new_Test__0()
 	return Test__0__0new__0(new Test__0());
 }
 
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void
+void main__1(system__console__Console__0 *_Nonnull const console__)
 {
 	Test__0 *_Nonnull const test__ = new_Test__0();
 	test__->change__1(true__00);

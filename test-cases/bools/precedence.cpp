@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__0() -> void;
 
 // Definitions
 
-auto main__0() -> void
+void main__0()
 {
 	bool__00 x__;
 	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(true__00)) && bool__00__arg(false__00));

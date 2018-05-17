@@ -4,7 +4,7 @@
 enum class day_of_week_;
 
 // Function Declarations
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
@@ -23,7 +23,7 @@ enum class day_of_week_
 
 // Definitions
 
-auto main__0() -> void
+void main__0()
 {
 }
 

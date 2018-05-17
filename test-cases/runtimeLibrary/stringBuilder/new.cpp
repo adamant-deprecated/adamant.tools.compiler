@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__0() -> void;
 
 // Definitions
 
-auto main__0() -> void
+void main__0()
 {
 	new_system__text__String_Builder__0();
 }

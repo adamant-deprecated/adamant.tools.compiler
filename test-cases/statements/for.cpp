@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__) -> void;
+void main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__);
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__2(system__console__Console__0 *_Nonnull const console__, system__cons
 
 // Definitions
 
-auto main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__) -> void
+void main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__)
 {
 	for (string__00 const arg__ : *(args__))
 	{

@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__0() -> void;
 
 // Definitions
 
-auto main__0() -> void
+void main__0()
 {
 	bool__00 x__;
 	x__ = int__00__0op__less_than(int__00(1), int__00(2));

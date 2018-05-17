@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> int__00;
+int__00 main__0();
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__0() -> int__00;
 
 // Definitions
 
-auto main__0() -> int__00
+int__00 main__0()
 {
 	NOT_IMPLEMENTED__0();
 }

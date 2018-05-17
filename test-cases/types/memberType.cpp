@@ -6,7 +6,7 @@ typedef struct Test__0 Test__0;
 // Function Declarations
 Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self);
 inline Test__0 *_Nonnull new_Test__0();
-auto main__0() -> void;
+void main__0();
 
 // Class Declarations
 
@@ -30,7 +30,7 @@ inline Test__0 *_Nonnull new_Test__0()
 	return Test__0__0new__0(new Test__0());
 }
 
-auto main__0() -> void
+void main__0()
 {
 	Test__0 const *_Nonnull const t__ = new_Test__0();
 	bool__00 const b__ = int__00__0op__less_than(t__->value__, int__00(5));

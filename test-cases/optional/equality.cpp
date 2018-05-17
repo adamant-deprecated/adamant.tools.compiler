@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
+void main__1(system__console__Console__0 *_Nonnull const console__);
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
 
 // Definitions
 
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void
+void main__1(system__console__Console__0 *_Nonnull const console__)
 {
 	int__00 const v__ = int__00(42);
 	p_optional<int__00> const n__ = none;

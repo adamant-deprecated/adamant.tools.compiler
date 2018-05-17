@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Identity__1(code_point__00 const value__) -> code_point__00;
-auto main__0() -> void;
+code_point__00 Identity__1(code_point__00 const value__);
+void main__0();
 
 // Class Declarations
 
@@ -12,12 +12,12 @@ auto main__0() -> void;
 
 // Definitions
 
-auto Identity__1(code_point__00 const value__) -> code_point__00
+code_point__00 Identity__1(code_point__00 const value__)
 {
 	return value__;
 }
 
-auto main__0() -> void
+void main__0()
 {
 	Identity__1(code_point__00('a'));
 }

@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> int__00;
+int__00 main__0();
 
 // Class Declarations
 
@@ -11,7 +11,7 @@ auto main__0() -> int__00;
 
 // Definitions
 
-auto main__0() -> int__00
+int__00 main__0()
 {
 	system__collections__List__1<int__00> const *_Nonnull const values__ = new_system__collections__List__1<int__00>();
 	return values__->op__Element(int__00(0));

@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto True__0() -> bool__00;
-auto main__0() -> void;
+bool__00 True__0();
+void main__0();
 
 // Class Declarations
 
@@ -12,12 +12,12 @@ auto main__0() -> void;
 
 // Definitions
 
-auto True__0() -> bool__00
+bool__00 True__0()
 {
 	return true__00;
 }
 
-auto main__0() -> void
+void main__0()
 {
 	bool__00 x__;
 	x__ = equal_op(true__00, false__00);

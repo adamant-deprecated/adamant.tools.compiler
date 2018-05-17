@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func__2(int__00 x__, int__00 const y__) -> system__text__String_Builder__0 *_Nonnull;
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
+system__text__String_Builder__0 *_Nonnull Func__2(int__00 x__, int__00 const y__);
+void main__1(system__console__Console__0 *_Nonnull const console__);
 
 // Class Declarations
 
@@ -12,7 +12,7 @@ auto main__1(system__console__Console__0 *_Nonnull const console__) -> void;
 
 // Definitions
 
-auto Func__2(int__00 x__, int__00 const y__) -> system__text__String_Builder__0 *_Nonnull
+system__text__String_Builder__0 *_Nonnull Func__2(int__00 x__, int__00 const y__)
 {
 	x__.op__add_assign(int__00(1));
 	int__00 const i__ = x__.op__add(int__00(2));
@@ -24,7 +24,7 @@ auto Func__2(int__00 x__, int__00 const y__) -> system__text__String_Builder__0 
 	return stringA__;
 }
 
-auto main__1(system__console__Console__0 *_Nonnull const console__) -> void
+void main__1(system__console__Console__0 *_Nonnull const console__)
 {
 	console__->WriteLine__1(Func__2(int__00(1), int__00(2))->ToString__0());
 }
