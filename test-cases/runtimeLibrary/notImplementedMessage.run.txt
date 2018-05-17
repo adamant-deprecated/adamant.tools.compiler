@@ -1,0 +1,4 @@
+70
+2
+Program exited due to error:
+Function main__0 not yet implemented, [Test Message], test-cases/runtimeLibrary/notImplementedMessage.cpp, line 16

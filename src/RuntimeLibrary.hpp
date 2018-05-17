@@ -374,8 +374,15 @@ _Noreturn inline void NOT_IMPLEMENTED(const string message, char const *_Nonnull
         .op__add(string(" not yet implemented, ")).op__add(message).op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(i32(line)).cstr());
 }
 
-#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
+_Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
+{
+    throw std::runtime_error(
+        string("Function ").op__add(string(function))
+        .op__add(string(" not yet implemented, ")).op__add(string(file)).op__add(string(", line ")).op__add(i32(line)).cstr());
+}
 
+#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
+#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED(__func__, __FILE__, __LINE__)
 
 _Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
 {

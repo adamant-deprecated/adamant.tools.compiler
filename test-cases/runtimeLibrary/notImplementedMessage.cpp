@@ -13,7 +13,7 @@ auto main__0() -> i32;
 
 auto main__0() -> i32
 {
-	NOT_IMPLEMENTED__0();
+	NOT_IMPLEMENTED__1(string("[Test Message]"));
 }
 
 // Entry Point Adapter
