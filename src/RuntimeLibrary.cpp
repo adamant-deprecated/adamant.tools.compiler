@@ -321,7 +321,7 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
     return self;
 }
 
-system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int__00 capacity)
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int__00 capacity)
 {
     system__text__String_Builder__0__0new__0(self);
     self->ensure_capacity(capacity.value);

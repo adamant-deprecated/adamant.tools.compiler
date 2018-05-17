@@ -109,8 +109,6 @@ struct int__00
     int__00(uint__00 value);
 
     // Adamant Members
-    // static auto construct() -> int__00 { return int__00(0); }
-    // static auto copy(int__00 const & other) -> int__00 { return other; }
     void op__add_assign(int__00 other) { this->value += other.value; }
     void op__subtract_assign(int__00 other) { this->value -= other.value; }
     bool__00 op__less_than(int__00 other) const { return bool__00_from(this->value < other.value); }
@@ -152,7 +150,6 @@ struct uint__00
     uint__00(int__00 value): value(value.value) {}
 
     // Adamant Members
-    // static auto construct() -> uint__00 { return uint__00(0); }
     void op__add_assign(uint__00 other) { this->value += other.value; }
     void op__subtract_assign(uint__00 other) { this->value -= other.value; }
     bool__00 op__less_than(uint__00 other) const { return bool__00_from(this->value < other.value); }
@@ -218,9 +215,6 @@ struct string__00
     explicit string__00(bool__00 other);
 
     // Adamant Members
-    // static auto construct() -> string__00 { string__00 self; self.Length = 0; self.Buffer = 0; return self; }
-    // static auto construct(string__00 value) -> string__00 { return value; }
-    // static auto construct(code_point__00 c, int__00 repeat) -> string__00;
     // TODO ByteLength should be a property
     int__00 ByteLength__0() const { return int__00(Length); }
 
@@ -435,7 +429,6 @@ struct system__collections__List__1
     const_iterator end() const { return &values[length]; }
 
     // Adamant Members
-    // system__collections__List__1 *_Nonnull construct() { values = 0; length = 0; capacity = 0; return this; }
     void add__1(T value);
     void clear__0() { length = 0; }
     int__00 op__magnitude() const { return int__00(length); }
@@ -512,7 +505,6 @@ struct system__io__File_Reader__0
 {
     std::FILE *_Nonnull file;
 
-    // system__io__File_Reader__0 *_Nonnull construct(const string__00& fileName);
     string__00 ReadToEndSync__0();
     void Close__0();
 };
@@ -523,7 +515,6 @@ struct system__io__File_Writer__0
 {
     std::FILE *_Nonnull file;
 
-    // system__io__File_Writer__0 *_Nonnull construct(const string__00& fileName);
     void Write__1(const string__00& value);
     void Close__0();
 };
@@ -537,13 +528,7 @@ struct system__text__String_Builder__0
     int length;
     void ensure_capacity(int needed);
 
-    // Runtime Use Members
-    // system__text__String_Builder__0(): buffer(0), capacity(0), length(0) { }
-
     // Adamant Members
-    // system__text__String_Builder__0 *_Nonnull construct() { return this; }
-    // system__text__String_Builder__0 *_Nonnull construct(string__00 const & value);
-    // system__text__String_Builder__0 *_Nonnull construct_with_capacity(int__00 capacity);
     // TODO byte_length should be a property
     int__00 byte_length__0() const { return int__00(length); }
     void Append__1(string__00 const & value);
@@ -564,4 +549,4 @@ inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0
 }
 
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string__00 const & value);
-system__text__String_Builder__0 *_Nonnull new_system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int__00 capacity);
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int__00 capacity);
