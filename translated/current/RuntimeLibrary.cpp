@@ -5,15 +5,15 @@
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-u32 i32::as_uint__0() const
+uint__00 int__00::as_uint__0() const
 {
     if(this->value < 0)
         throw std::range_error("Can't convert negative number to unsigned");
 
-    return u32(this->value);
+    return uint__00(this->value);
 }
 
-char code_point__to_char(code_point v)
+char code_point__00__to_char(code_point__00 v)
 {
     if(v.value > 0xFF)
         throw std::range_error("Unicode char values not yet supported");
@@ -21,29 +21,29 @@ char code_point__to_char(code_point v)
     return v.value;
 }
 
-string string::construct(code_point c, i32 repeat)
+string__00 string__00::construct(code_point__00 c, int__00 repeat)
 {
-    string self;
+    string__00 self;
     self.Length = repeat.value;
     char* buffer = new char[repeat.value];
     for (int i = 0; i < repeat.value; i++)
-        buffer[i] = code_point__to_char(c);
+        buffer[i] = code_point__00__to_char(c);
 
     self.Buffer = buffer;
     return self;
 }
 
-string::string(const char* s)
+string__00::string__00(const char* s)
     : Length(std::strlen(s)), Buffer(s)
 {
 }
 
-string::string(int length, const char* s)
+string__00::string__00(int length, const char* s)
     : Length(length), Buffer(s)
 {
 }
 
-char const * string::cstr() const
+char const * string__00::cstr() const
 {
     auto buffer = new char[Length + 1];
     std::memcpy(buffer, Buffer, Length);
@@ -51,7 +51,7 @@ char const * string::cstr() const
     return buffer;
 }
 
-string::string(i32 other)
+string__00::string__00(int__00 other)
     : Length(0), Buffer(0)
 {
     char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
@@ -61,119 +61,119 @@ string::string(i32 other)
     Buffer = buffer;
 }
 
-string::string(code_point other)
-    : Length(1), Buffer(new char[1] { code_point__to_char(other) })
+string__00::string__00(code_point__00 other)
+    : Length(1), Buffer(new char[1] { code_point__00__to_char(other) })
 {
 }
 
-string::string(bit other)
-    : string(other.value ? "true" : "false")
+string__00::string__00(bool__00 other)
+    : string__00(other.value ? "true" : "false")
 {
 }
 
-string string::Substring__2(i32 start, i32 length) const
+string__00 string__00::Substring__2(int__00 start, int__00 length) const
 {
-    return string(length.value, Buffer + start.value);
+    return string__00(length.value, Buffer + start.value);
 }
 
-string string::Replace__2(string oldValue, string newValue) const
+string__00 string__00::Replace__2(string__00 oldValue, string__00 newValue) const
 {
     system__text__String_Builder builder = system__text__String_Builder(); // TODO initialize capacity
     int limit = Length - oldValue.Length + 1;
     int lastIndex = 0;
     // TODO the Substring calls in here are leaking memory
     for(int i=0; i < limit; i++)
-        if (cond(equal_op(Substring__2(i32(i), i32(oldValue.Length)), oldValue)))
+        if (cond(equal_op(Substring__2(int__00(i), int__00(oldValue.Length)), oldValue)))
         {
-            builder.Append__1(Substring__2(i32(lastIndex), i32(i-lastIndex)));
+            builder.Append__1(Substring__2(int__00(lastIndex), int__00(i-lastIndex)));
             builder.Append__1(newValue);
             i += oldValue.Length; // skip over the value we just matched
             lastIndex = i;
             i--; // we need i-- to offset the i++ that is about to happen
         }
 
-    builder.Append__1(Substring__2(i32(lastIndex), i32(Length - lastIndex)));
+    builder.Append__1(Substring__2(int__00(lastIndex), int__00(Length - lastIndex)));
     return builder.ToString__0();
 }
 
-i32 string::LastIndexOf__1(code_point c) const
+int__00 string__00::LastIndexOf__1(code_point__00 c) const
 {
     for(int i = Length - 1; i >= 0; i--)
-        if(Buffer[i] == code_point__to_char(c))
-            return i32(i);
+        if(Buffer[i] == code_point__00__to_char(c))
+            return int__00(i);
 
-    return i32(-1); // TODO should return none
+    return int__00(-1); // TODO should return none
 }
 
-i32 string::index_of__1(code_point c) const
+int__00 string__00::index_of__1(code_point__00 c) const
 {
     for(int i = 0; i < Length; i++)
-        if(Buffer[i] == code_point__to_char(c))
-            return i32(i);
+        if(Buffer[i] == code_point__00__to_char(c))
+            return int__00(i);
 
-    return i32(-1);
+    return int__00(-1);
 }
 
-string string::op__add(string const & value) const
+string__00 string__00::op__add(string__00 const & value) const
 {
     int newLength = Length + value.Length;
     char* chars = new char[newLength];
     size_t offset = sizeof(char) * Length;
     std::memcpy(chars, Buffer, offset);
     std::memcpy(chars + offset, value.Buffer, value.Length);
-    return string(newLength, chars);
+    return string__00(newLength, chars);
 }
 
-auto equal_op(string lhs, string rhs) -> bit
+auto equal_op(string__00 lhs, string__00 rhs) -> bool__00
 {
     if (lhs.Length != rhs.Length)
-        return bit__false;
+        return false__00;
 
     for (int i = 0; i < lhs.Length; i++)
         if (lhs.Buffer[i] != rhs.Buffer[i])
-            return bit__false;
+            return false__00;
 
-    return bit__true;
+    return true__00;
 }
 
-bit string__op__less_than(string lhs, string rhs)
+bool__00 string__00__op__less_than(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
     bool result = std::strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
-    return bit_from(result);
+    return bool__00_from(result);
 }
-bit string__op__less_than_or_equal(string lhs, string rhs)
+bool__00 string__00__op__less_than_or_equal(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
     bool result = std::strcmp(left, right) <= 0;
     delete[] left;
     delete[] right;
-    return bit_from(result);
+    return bool__00_from(result);
 }
-bit string__op__greater_than(string lhs, string rhs)
+bool__00 string__00__op__greater_than(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
     bool result = std::strcmp(left, right) > 0;
     delete[] left;
     delete[] right;
-    return bit_from(result);
+    return bool__00_from(result);
 }
-bit string__op__greater_than_or_equal(string lhs, string rhs)
+bool__00 string__00__op__greater_than_or_equal(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
     bool result = std::strcmp(left, right) >= 0;
     delete[] left;
     delete[] right;
-    return bit_from(result);
+    return bool__00_from(result);
 }
 
-bool operator < (string const & lhs, string const & rhs)
+bool operator < (string__00 const & lhs, string__00 const & rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -187,24 +187,24 @@ bool operator < (string const & lhs, string const & rhs)
 // Standard Library
 // -----------------------------------------------------------------------------
 
-std::map<string, string> resourceValues;
+std::map<string__00, string__00> resourceValues;
 
-string const & ResourceManager::GetString__1(string resourceName)
+string__00 const & ResourceManager::GetString__1(string__00 resourceName)
 {
     return resourceValues.at(resourceName);
 }
-void ResourceManager::AddResource(string name, string value)
+void ResourceManager::AddResource(string__00 name, string__00 value)
 {
     resourceValues.insert(std::make_pair(name, value));
 }
 
 ResourceManager *const resource_manager__ = new ResourceManager();
 
-void debug_write__1(string value)
+void debug_write__1(string__00 value)
 {
     std::fprintf(stderr, "%.*s", value.Length, value.Buffer);
 }
-void debug_write_line__1(string value)
+void debug_write_line__1(string__00 value)
 {
     std::fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
 }
@@ -213,12 +213,12 @@ void debug_write_line__0()
     std::fprintf(stderr, "\n");
 }
 
-void system__console__Console::Write__1(string value)
+void system__console__Console::Write__1(string__00 value)
 {
     std::printf("%.*s", value.Length, value.Buffer);
 }
 
-void system__console__Console::WriteLine__1(string value)
+void system__console__Console::WriteLine__1(string__00 value)
 {
     std::printf("%.*s\n", value.Length, value.Buffer);
 }
@@ -231,12 +231,12 @@ void system__console__Console::WriteLine__0()
 system__console__Arguments::system__console__Arguments(int argc, char const *const * argv)
     : Count(argc-1)
 {
-    args = new string[Count];
+    args = new string__00[Count];
     for (int i = 0; i < Count; i++)
-        args[i] = string(argv[i+1]);
+        args[i] = string__00(argv[i+1]);
 }
 
-system__io__File_Reader *_Nonnull system__io__File_Reader::construct(const string& fileName)
+system__io__File_Reader *_Nonnull system__io__File_Reader::construct(const string__00& fileName)
 {
     std::FILE* foo;
     auto fname = fileName.cstr();
@@ -245,14 +245,14 @@ system__io__File_Reader *_Nonnull system__io__File_Reader::construct(const strin
     return this;
 }
 
-string system__io__File_Reader::ReadToEndSync__0()
+string__00 system__io__File_Reader::ReadToEndSync__0()
 {
     std::fseek(file, 0, SEEK_END);
     auto length = std::ftell(file);
     std::fseek(file, 0, SEEK_SET);
     auto buffer = new char[length];
     length = std::fread(buffer, sizeof(char), length, file);
-    return string(length, buffer);
+    return string__00(length, buffer);
 }
 
 void system__io__File_Reader::Close__0()
@@ -260,7 +260,7 @@ void system__io__File_Reader::Close__0()
     std::fclose(file);
 }
 
-system__io__File_Writer *_Nonnull system__io__File_Writer::construct(const string& fileName)
+system__io__File_Writer *_Nonnull system__io__File_Writer::construct(const string__00& fileName)
 {
     auto fname = fileName.cstr();
     file = std::fopen(fname, "wb"); // TODO check error
@@ -268,7 +268,7 @@ system__io__File_Writer *_Nonnull system__io__File_Writer::construct(const strin
     return this;
 }
 
-void system__io__File_Writer::Write__1(const string& value)
+void system__io__File_Writer::Write__1(const string__00& value)
 {
     std::fwrite(value.Buffer, sizeof(char), value.Length, file);
 }
@@ -300,7 +300,7 @@ void system__text__String_Builder::ensure_capacity(int needed)
     }
 }
 
-system__text__String_Builder *_Nonnull system__text__String_Builder::construct(string const & value)
+system__text__String_Builder *_Nonnull system__text__String_Builder::construct(string__00 const & value)
 {
     ensure_capacity(value.Length);
     std::memcpy(buffer, value.Buffer, value.Length);
@@ -308,13 +308,13 @@ system__text__String_Builder *_Nonnull system__text__String_Builder::construct(s
     return this;
 }
 
-system__text__String_Builder *_Nonnull system__text__String_Builder::construct_with_capacity(i32 capacity)
+system__text__String_Builder *_Nonnull system__text__String_Builder::construct_with_capacity(int__00 capacity)
 {
     ensure_capacity(capacity.value);
     return this;
 }
 
-void system__text__String_Builder::Append__1(string const & value)
+void system__text__String_Builder::Append__1(string__00 const & value)
 {
     int new_length = length + value.Length;
     ensure_capacity(new_length);
@@ -330,7 +330,7 @@ void system__text__String_Builder::Append__1(system__text__String_Builder const 
     length = new_length;
 }
 
-void system__text__String_Builder::AppendLine__1(string const & value)
+void system__text__String_Builder::AppendLine__1(string__00 const & value)
 {
     int new_length = length + value.Length + 1;
     ensure_capacity(new_length);
@@ -347,7 +347,7 @@ void system__text__String_Builder::AppendLine__0()
     length = new_length;
 }
 
-void system__text__String_Builder::Remove__2(i32 start, i32 length)
+void system__text__String_Builder::Remove__2(int__00 start, int__00 length)
 {
     if(start.value >= this->length)
         throw std::runtime_error("String_Builder.Remove() start >= length");
@@ -360,7 +360,7 @@ void system__text__String_Builder::Remove__2(i32 start, i32 length)
     this->length -= length.value;
 }
 
-void system__text__String_Builder::Remove__1(i32 start)
+void system__text__String_Builder::Remove__1(int__00 start)
 {
     if(start.value >= length)
         throw std::runtime_error("String_Builder.Remove() start >= length");
@@ -368,9 +368,9 @@ void system__text__String_Builder::Remove__1(i32 start)
     length = start.value;
 }
 
-string system__text__String_Builder::ToString__0()
+string__00 system__text__String_Builder::ToString__0()
 {
-    string result(length, buffer);
+    string__00 result(length, buffer);
     // give up ownership of buffer
     buffer = 0;
     length = 0;
