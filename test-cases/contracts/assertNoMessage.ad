@@ -1,0 +1,7 @@
+public main() -> void
+{
+	let x: int = 5;
+	let y: int = 5;
+
+	assert(x =/= y);
+}

@@ -1,0 +1,4 @@
+70
+2
+Program exited due to error:
+Assertion failed: not_equal_op(x__, y__), file test-cases/contracts/assertNoMessage.cpp, line 18
