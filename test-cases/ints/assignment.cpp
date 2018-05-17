@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> i32;
+auto main__0() -> int__00;
 
 // Class Declarations
 
@@ -11,12 +11,12 @@ auto main__0() -> i32;
 
 // Definitions
 
-auto main__0() -> i32
+auto main__0() -> int__00
 {
-	i32 result__;
-	result__ = i32(40);
-	result__.op__add_assign(i32(3));
-	result__.op__subtract_assign(i32(1));
+	int__00 result__;
+	result__ = int__00(40);
+	result__.op__add_assign(int__00(3));
+	result__.op__subtract_assign(int__00(1));
 	return result__;
 }
 

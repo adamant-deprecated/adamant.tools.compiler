@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Identity__1(i32 const value__) -> i32;
-auto main__0() -> i32;
+auto Identity__1(int__00 const value__) -> int__00;
+auto main__0() -> int__00;
 
 // Class Declarations
 
@@ -12,14 +12,14 @@ auto main__0() -> i32;
 
 // Definitions
 
-auto Identity__1(i32 const value__) -> i32
+auto Identity__1(int__00 const value__) -> int__00
 {
 	return value__;
 }
 
-auto main__0() -> i32
+auto main__0() -> int__00
 {
-	return Identity__1(i32(42));
+	return Identity__1(int__00(42));
 }
 
 // Entry Point Adapter

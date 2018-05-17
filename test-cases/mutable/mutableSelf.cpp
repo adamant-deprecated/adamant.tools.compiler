@@ -12,15 +12,15 @@ auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
 struct Test
 {
-	bit value__;
-	auto change__1(bit const value__) -> void;
+	bool__00 value__;
+	auto change__1(bool__00 const value__) -> void;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::Test::change__1(bit const value__) -> void
+auto ::Test::change__1(bool__00 const value__) -> void
 {
 	auto self = this;
 	self->value__ = value__;
@@ -36,7 +36,7 @@ inline Test *_Nonnull new_Test()
 auto main__1(system__console__Console *_Nonnull const console__) -> void
 {
 	Test *_Nonnull const test__ = new_Test();
-	test__->change__1(bit__true);
+	test__->change__1(true__00);
 }
 
 // Entry Point Adapter

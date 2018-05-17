@@ -13,11 +13,11 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	bit x__;
-	x__ = i32(1).as_uint__0()->op__less_than(i32(2).as_uint__0());
-	x__ = i32(1).as_uint__0()->op__less_than_or_equal(i32(2).as_uint__0());
-	x__ = i32(1).as_uint__0()->op__greater_than(i32(2).as_uint__0());
-	x__ = i32(1).as_uint__0()->op__greater_than_or_equal(i32(2).as_uint__0());
+	bool__00 x__;
+	x__ = int__00(1).as_uint__0()->op__less_than(int__00(2).as_uint__0());
+	x__ = int__00(1).as_uint__0()->op__less_than_or_equal(int__00(2).as_uint__0());
+	x__ = int__00(1).as_uint__0()->op__greater_than(int__00(2).as_uint__0());
+	x__ = int__00(1).as_uint__0()->op__greater_than_or_equal(int__00(2).as_uint__0());
 }
 
 // Entry Point Adapter

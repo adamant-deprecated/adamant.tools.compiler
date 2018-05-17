@@ -12,23 +12,23 @@ auto main__0() -> void;
 
 struct C
 {
-	auto method__0() const -> string;
-	static auto function__0() -> string;
+	auto method__0() const -> string__00;
+	static auto function__0() -> string__00;
 };
 
 // Global Definitions
 
 // Definitions
 
-auto ::C::method__0() const -> string
+auto ::C::method__0() const -> string__00
 {
 	auto self = this;
 	return function__0();
 }
 
-auto ::C::function__0() -> string
+auto ::C::function__0() -> string__00
 {
-	return string("hello");
+	return string__00("hello");
 }
 
 C *_Nonnull C__0new__0(C *_Nonnull self) { return self; }

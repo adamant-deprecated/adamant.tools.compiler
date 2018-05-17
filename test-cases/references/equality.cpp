@@ -29,7 +29,7 @@ auto main__0() -> void
 {
 	Test const *_Nonnull const a__ = new_Test();
 	Test const *_Nonnull const b__ = new_Test();
-	bit x__;
+	bool__00 x__;
 	x__ = equal_op(a__, b__);
 	x__ = not_equal_op(a__, b__);
 }

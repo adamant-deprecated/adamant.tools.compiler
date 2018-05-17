@@ -13,10 +13,10 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	bit x__;
-	x__ = bit__op(bit__arg(bit__op__not(bit__true)) && bit__arg(bit__false));
-	x__ = bit__op(bit__arg(bit__op__not(bit__true)) || bit__arg(bit__false));
-	x__ = bit__op(bit__arg(bit__false) || bit__arg(bit__op(bit__arg(bit__true) && bit__arg(bit__true))));
+	bool__00 x__;
+	x__ = bool__00__op(bool__00__arg(bool__00__op__not(true__00)) && bool__00__arg(false__00));
+	x__ = bool__00__op(bool__00__arg(bool__00__op__not(true__00)) || bool__00__arg(false__00));
+	x__ = bool__00__op(bool__00__arg(false__00) || bool__00__arg(bool__00__op(bool__00__arg(true__00) && bool__00__arg(true__00))));
 }
 
 // Entry Point Adapter

@@ -13,7 +13,7 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	string x__ = string("Hello ").op__add(string("World! "))->op__add(i32(4))->op__add(code_point('c'));
+	string__00 x__ = string__00("Hello ").op__add(string__00("World! "))->op__add(int__00(4))->op__add(code_point__00('c'));
 }
 
 // Entry Point Adapter

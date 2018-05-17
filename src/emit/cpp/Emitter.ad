@@ -154,21 +154,13 @@ public convert_primitive_type_name(type: Type) -> string
 {
     let name: string = unqualified_name(type.name);
     assert(type.is_primitive, name);
-    if name == "bool"
+    if name == "void"
     {
-        return "bit";
-    }
-    else if name == "int"
-    {
-        return "i32";
-    }
-    else if name == "uint"
-    {
-        return "u32";
+        return "void";
     }
     else
     {
-        return name;
+        return name + "__00";
     }
 }
 
@@ -372,7 +364,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == NotExpression
     {
         // TODO change to other functions based on argument type
-        write(builder, "bit__op__not(");
+        write(builder, "bool__00__op__not(");
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
@@ -388,7 +380,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NegateExpression
     {
-        write(builder, "i32__op__negate(");
+        write(builder, "int__00__op__negate(");
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
@@ -402,16 +394,16 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NumericLiteralExpression
     {
-        write(builder, "i32(" + get_text(syntax) + ")");
+        write(builder, "int__00(" + get_text(syntax) + ")");
     }
     else if syntax.kind == TrueLiteralExpression
         or syntax.kind == FalseLiteralExpression
     {
-        write(builder, "bit__" + get_text(syntax));
+        write(builder, get_text(syntax) + "__00");
     }
     else if syntax.kind == CodePointLiteralExpression
     {
-        write(builder, "code_point(" + get_text(syntax) + ")");
+        write(builder, "code_point__00(" + get_text(syntax) + ")");
     }
     else if syntax.kind == IdentifierName
     {
@@ -419,7 +411,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == StringLiteralExpression
     {
-        write(builder, "string(" + get_text(syntax) + ")");
+        write(builder, "string__00(" + get_text(syntax) + ")");
     }
     else if syntax.kind == AssignmentExpression
     {
@@ -578,24 +570,24 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == OrExpression
     {
         // TODO Based on the type of the values involved, either:
-        // * bit__op(bit__arg(lhs) || bit__arg(rhs))
+        // * bool__00__op(bool__00__arg(lhs) || bool__00__arg(rhs))
         // * ({ T _lhs = lhs; op__true(_lhs) ? _lhs : op__or(_lhs, rhs); })
         // Note: that is a "compound expression"
-        write(builder, "bit__op(bit__arg(");
+        write(builder, "bool__00__op(bool__00__arg(");
         convert_expression(syntax.children[0], builder);
-        write(builder, ") || bit__arg(");
+        write(builder, ") || bool__00__arg(");
         convert_expression(syntax.children[2], builder);
         write(builder, "))");
     }
     else if syntax.kind == AndExpression
     {
         // TODO Based on the type of the values involved, either:
-        // * bit__op(bit__arg(lhs) && bit__arg(rhs))
+        // * bool__00__op(bool__00__arg(lhs) && bool__00__arg(rhs))
         // * ({ T _lhs = lhs; op__false(_lhs) ? _lhs : op__and(_lhs, rhs); })
         // Note: that is a "compound expression"
-        write(builder, "bit__op(bit__arg(");
+        write(builder, "bool__00__op(bool__00__arg(");
         convert_expression(syntax.children[0], builder);
-        write(builder, ") && bit__arg(");
+        write(builder, ") && bool__00__arg(");
         convert_expression(syntax.children[2], builder);
         write(builder, "))");
     }
@@ -1092,9 +1084,9 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
 
     for let resource: Source_Text in emitter.resources
     {
-        begin_line(emitter.definitions, "resource_manager__->AddResource(string(\"");
+        begin_line(emitter.definitions, "resource_manager__->AddResource(string__00(\"");
         write(emitter.definitions, resource.name);
-        write(emitter.definitions, "\"), string(\"");
+        write(emitter.definitions, "\"), string__00(\"");
         write(emitter.definitions, resource.text
                                 .Replace("\\", "\\\\")
                                 .Replace("\n", "\\n")

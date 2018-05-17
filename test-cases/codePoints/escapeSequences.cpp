@@ -13,9 +13,9 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	string s__ = string("\"\\");
-	code_point c__ = code_point('\'');
-	c__ = code_point('\\');
+	string__00 s__ = string__00("\"\\");
+	code_point__00 c__ = code_point__00('\'');
+	c__ = code_point__00('\\');
 }
 
 // Entry Point Adapter

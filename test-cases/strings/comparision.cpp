@@ -13,11 +13,11 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	bit x__;
-	x__ = string__op__less_than(string("a"), string("b"));
-	x__ = string__op__less_than_or_equal(string("a"), string("b"));
-	x__ = string__op__greater_than(string("a"), string("b"));
-	x__ = string__op__greater_than_or_equal(string("a"), string("b"));
+	bool__00 x__;
+	x__ = string__00__op__less_than(string__00("a"), string__00("b"));
+	x__ = string__00__op__less_than_or_equal(string__00("a"), string__00("b"));
+	x__ = string__00__op__greater_than(string__00("a"), string__00("b"));
+	x__ = string__00__op__greater_than_or_equal(string__00("a"), string__00("b"));
 }
 
 // Entry Point Adapter

@@ -32,9 +32,11 @@ This phase is specified in a short hand notation of concatenating strings.
 5. `type_name + "__0new__" + number_of_parameters`
 6. `type_name + "__0get__" + property_name`
 7. `type_name + "__0set__" + property_name`
+8. `type_name + "__0op__" + operator_name`
 
 ### Special Names
 
 * Tuples: `tuple__0` + number_of_type_parameters + `__` + type_parameters_separated_by_underscores (leading zero distinguishes it from a standard type named "tuple")
 * Primitives: type + `__00` (double zero distinguishes them from standard types)
-* Optional: `optional__01__` + the type that is optional
+* Optional: `optional__01__` + the_type_that_is_optional
+* True & False: `true__00`, `false__00`

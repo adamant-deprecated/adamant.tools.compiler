@@ -13,9 +13,9 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	bit x__;
-	x__ = equal_op(i32(1), i32(2));
-	x__ = not_equal_op(i32(1), i32(2));
+	bool__00 x__;
+	x__ = equal_op(int__00(1), int__00(2));
+	x__ = not_equal_op(int__00(1), int__00(2));
 }
 
 // Entry Point Adapter

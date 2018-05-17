@@ -3,16 +3,16 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> i32;
+auto main__0() -> int__00;
 
 // Class Declarations
 
 // Global Definitions
-i32 const Result__ = i32(42);
+int__00 const Result__ = int__00(42);
 
 // Definitions
 
-auto main__0() -> i32
+auto main__0() -> int__00
 {
 	return Result__;
 }

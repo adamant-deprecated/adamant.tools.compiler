@@ -6,13 +6,13 @@ typedef struct Test Test;
 // Function Declarations
 Test *_Nonnull Test__0new__0(Test *_Nonnull self);
 inline Test *_Nonnull new_Test();
-auto main__0() -> i32;
+auto main__0() -> int__00;
 
 // Class Declarations
 
 struct Test
 {
-	i32 value__;
+	int__00 value__;
 };
 
 // Global Definitions
@@ -21,7 +21,7 @@ struct Test
 
 Test *_Nonnull Test__0new__0(Test *_Nonnull self)
 {
-	self->value__ = i32(0);
+	self->value__ = int__00(0);
 	return self;
 }
 
@@ -30,7 +30,7 @@ inline Test *_Nonnull new_Test()
 	return Test__0new__0(new Test());
 }
 
-auto main__0() -> i32
+auto main__0() -> int__00
 {
 	Test const *_Nonnull const t__ = new_Test();
 	return t__->value__;

@@ -6,7 +6,7 @@ typedef struct Test Test;
 // Function Declarations
 Test *_Nonnull Test__0new__0(Test *_Nonnull self);
 inline Test *_Nonnull new_Test();
-auto Func__2(p_optional<string> const x__, p_optional<u32> const y__) -> p_optional<i32>;
+auto Func__2(p_optional<string__00> const x__, p_optional<uint__00> const y__) -> p_optional<int__00>;
 auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
 // Class Declarations
@@ -26,14 +26,14 @@ inline Test *_Nonnull new_Test()
 	return Test__0new__0(new Test());
 }
 
-auto Func__2(p_optional<string> const x__, p_optional<u32> const y__) -> p_optional<i32>
+auto Func__2(p_optional<string__00> const x__, p_optional<uint__00> const y__) -> p_optional<int__00>
 {
-	p_optional<i32> const z__ = none;
+	p_optional<int__00> const z__ = none;
 	Test const *_Nullable const t__ = none;
 	system__text__String_Builder *_Nullable const sb__ = none;
-	system__collections__List<p_optional<i32>> const *_Nonnull const l__ = new_system__collections__List<p_optional<i32>>();
+	system__collections__List<p_optional<int__00>> const *_Nonnull const l__ = new_system__collections__List<p_optional<int__00>>();
 	Test *_Nullable const m__ = none;
-	p_optional<p_optional<i32>> const d__ = none;
+	p_optional<p_optional<int__00>> const d__ = none;
 	return none;
 }
 

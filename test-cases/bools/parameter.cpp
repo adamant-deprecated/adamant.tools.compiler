@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto Func__1(bit const value__) -> bit;
+auto Func__1(bool__00 const value__) -> bool__00;
 auto main__0() -> void;
 
 // Class Declarations
@@ -12,14 +12,14 @@ auto main__0() -> void;
 
 // Definitions
 
-auto Func__1(bit const value__) -> bit
+auto Func__1(bool__00 const value__) -> bool__00
 {
-	return bit__false;
+	return false__00;
 }
 
 auto main__0() -> void
 {
-	Func__1(bit__true);
+	Func__1(true__00);
 }
 
 // Entry Point Adapter

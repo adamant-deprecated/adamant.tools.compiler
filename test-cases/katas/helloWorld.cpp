@@ -13,7 +13,7 @@ auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
 auto main__1(system__console__Console *_Nonnull const console__) -> void
 {
-	console__->WriteLine__1(string("Hello World!"));
+	console__->WriteLine__1(string__00("Hello World!"));
 }
 
 // Entry Point Adapter

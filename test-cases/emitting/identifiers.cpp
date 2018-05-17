@@ -13,7 +13,7 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	i32 const a___b__ = i32(5);
+	int__00 const a___b__ = int__00(5);
 }
 
 // Entry Point Adapter

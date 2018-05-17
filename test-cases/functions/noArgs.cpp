@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-auto Func__0() -> i32;
-auto main__0() -> i32;
+auto Func__0() -> int__00;
+auto main__0() -> int__00;
 
 // Class Declarations
 
@@ -12,12 +12,12 @@ auto main__0() -> i32;
 
 // Definitions
 
-auto Func__0() -> i32
+auto Func__0() -> int__00
 {
-	return i32(42);
+	return int__00(42);
 }
 
-auto main__0() -> i32
+auto main__0() -> int__00
 {
 	return Func__0();
 }

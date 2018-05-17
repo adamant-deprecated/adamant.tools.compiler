@@ -13,7 +13,7 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	new_string(string("foo"));
+	new_string__00(string__00("foo"));
 }
 
 // Entry Point Adapter

@@ -13,31 +13,31 @@ auto main__1(system__console__Console *_Nonnull const console__) -> void;
 
 auto main__1(system__console__Console *_Nonnull const console__) -> void
 {
-	i32 x__ = i32(1);
+	int__00 x__ = int__00(1);
 	for (;;)
 	{
-		if (cond(equal_op(x__.op__remainder(i32(3)), i32(0))))
+		if (cond(equal_op(x__.op__remainder(int__00(3)), int__00(0))))
 		{
-			if (cond(equal_op(x__.op__remainder(i32(5)), i32(0))))
+			if (cond(equal_op(x__.op__remainder(int__00(5)), int__00(0))))
 			{
-				console__->WriteLine__1(string("FizzBuzz"));
+				console__->WriteLine__1(string__00("FizzBuzz"));
 			}
 			else
 			{
-				console__->WriteLine__1(string("Fizz"));
+				console__->WriteLine__1(string__00("Fizz"));
 			}
 		}
-		else if (cond(equal_op(x__.op__remainder(i32(5)), i32(0))))
+		else if (cond(equal_op(x__.op__remainder(int__00(5)), int__00(0))))
 		{
-			console__->WriteLine__1(string("Buzz"));
+			console__->WriteLine__1(string__00("Buzz"));
 		}
 		else
 		{
 			console__->WriteLine__1(x__);
 		}
 
-		x__.op__add_assign(i32(1));
-		if (cond(i32__op__greater_than(x__, i32(100))))
+		x__.op__add_assign(int__00(1));
+		if (cond(int__00__op__greater_than(x__, int__00(100))))
 		{
 			break;
 		}

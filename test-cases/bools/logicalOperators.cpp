@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto True__0() -> bit;
+auto True__0() -> bool__00;
 auto main__0() -> void;
 
 // Class Declarations
@@ -12,18 +12,18 @@ auto main__0() -> void;
 
 // Definitions
 
-auto True__0() -> bit
+auto True__0() -> bool__00
 {
-	return bit__true;
+	return true__00;
 }
 
 auto main__0() -> void
 {
-	bit x__;
-	x__ = bit__op(bit__arg(bit__true) && bit__arg(bit__false));
-	x__ = bit__op(bit__arg(bit__true) || bit__arg(bit__false));
-	x__ = bit__op__not(bit__true);
-	x__ = bit__op(bit__arg(True__0()) || bit__arg(True__0()));
+	bool__00 x__;
+	x__ = bool__00__op(bool__00__arg(true__00) && bool__00__arg(false__00));
+	x__ = bool__00__op(bool__00__arg(true__00) || bool__00__arg(false__00));
+	x__ = bool__00__op__not(true__00);
+	x__ = bool__00__op(bool__00__arg(True__0()) || bool__00__arg(True__0()));
 }
 
 // Entry Point Adapter

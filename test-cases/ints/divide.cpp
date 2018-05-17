@@ -13,7 +13,7 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	i32 x__ = i32(2).op__divide(i32(1));
+	int__00 x__ = int__00(2).op__divide(int__00(1));
 }
 
 // Entry Point Adapter

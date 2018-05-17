@@ -13,11 +13,11 @@ auto main__0() -> void;
 
 auto main__0() -> void
 {
-	i32 const x__ = i32(5);
-	i32 const y__ = i32(5);
-	i32 const z__ = i32(6);
-	assert__2(equal_op(x__, y__), string("x=").op__add(x__)->op__add(string(" y="))->op__add(y__));
-	assert__2(equal_op(y__, z__), string("y=").op__add(y__)->op__add(string(" z="))->op__add(z__));
+	int__00 const x__ = int__00(5);
+	int__00 const y__ = int__00(5);
+	int__00 const z__ = int__00(6);
+	assert__2(equal_op(x__, y__), string__00("x=").op__add(x__)->op__add(string__00(" y="))->op__add(y__));
+	assert__2(equal_op(y__, z__), string__00("y=").op__add(y__)->op__add(string__00(" z="))->op__add(z__));
 }
 
 // Entry Point Adapter

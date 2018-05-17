@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> i32;
+auto main__0() -> int__00;
 
 // Class Declarations
 
@@ -11,23 +11,23 @@ auto main__0() -> i32;
 
 // Definitions
 
-auto main__0() -> i32
+auto main__0() -> int__00
 {
-	if (cond(bit__false))
+	if (cond(false__00))
 	{
-		return i32(0);
+		return int__00(0);
 	}
-	else if (cond(bit__false))
+	else if (cond(false__00))
 	{
-		return i32(42);
+		return int__00(42);
 	}
-	else if (cond(bit__false))
+	else if (cond(false__00))
 	{
-		return i32(10);
+		return int__00(10);
 	}
 	else
 	{
-		return i32(0);
+		return int__00(0);
 	}
 }
 

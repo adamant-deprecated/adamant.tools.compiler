@@ -12,7 +12,7 @@ auto main__0() -> void;
 
 struct Test
 {
-	i32 value__;
+	int__00 value__;
 };
 
 // Global Definitions
@@ -21,7 +21,7 @@ struct Test
 
 Test *_Nonnull Test__0new__0(Test *_Nonnull self)
 {
-	self->value__ = i32(1);
+	self->value__ = int__00(1);
 	return self;
 }
 
@@ -33,7 +33,7 @@ inline Test *_Nonnull new_Test()
 auto main__0() -> void
 {
 	Test const *_Nonnull const t__ = new_Test();
-	bit const b__ = i32__op__less_than(t__->value__, i32(5));
+	bool__00 const b__ = int__00__op__less_than(t__->value__, int__00(5));
 }
 
 // Entry Point Adapter

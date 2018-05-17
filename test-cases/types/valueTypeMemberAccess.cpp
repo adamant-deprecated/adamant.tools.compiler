@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-auto main__0() -> i32;
+auto main__0() -> int__00;
 
 // Class Declarations
 
@@ -11,10 +11,10 @@ auto main__0() -> i32;
 
 // Definitions
 
-auto main__0() -> i32
+auto main__0() -> int__00
 {
-	string const s__ = string("abc");
-	return s__.index_of__1(code_point('c'));
+	string__00 const s__ = string__00("abc");
+	return s__.index_of__1(code_point__00('c'));
 }
 
 // Entry Point Adapter
