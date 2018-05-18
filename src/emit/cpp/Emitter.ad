@@ -394,8 +394,10 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == MagnitudeExpression
     {
-        convert_expression(syntax.children[1], builder);
-        convert_member_access(syntax.children[1], builder);
+        // Pipes were removed during semantic tree build
+        let expression_node: Semantic_Node = syntax.children[0];
+        convert_expression(expression_node, builder);
+        convert_member_access(expression_node, builder);
         write(builder, "op__magnitude()");
     }
     else if syntax.kind == ParenthesizedExpression
@@ -553,18 +555,22 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == AddExpression
     {
-        convert_expression(syntax.children[0], builder);
-        convert_member_access(syntax.children[0], builder);
+        let lhs_node: Semantic_Node = syntax.children[0];
+        let rhs_node: Semantic_Node = syntax.children[1];
+        convert_expression(lhs_node, builder);
+        convert_member_access(lhs_node, builder);
         write(builder, "op__add(");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(rhs_node, builder);
         write(builder, ")");
     }
     else if syntax.kind == SubtractExpression
     {
-        convert_expression(syntax.children[0], builder);
-        convert_member_access(syntax.children[0], builder);
+        let lhs_node: Semantic_Node = syntax.children[0];
+        let rhs_node: Semantic_Node = syntax.children[1];
+        convert_expression(lhs_node, builder);
+        convert_member_access(lhs_node, builder);
         write(builder, "op__subtract(");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(rhs_node, builder);
         write(builder, ")");
     }
     else if syntax.kind == MultiplyExpression
