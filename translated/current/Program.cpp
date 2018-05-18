@@ -337,10 +337,6 @@ struct Package__0
 
 struct Package_Reference__0
 {
-	Package_Reference__0 * operator->() { return this; }
-	Package_Reference__0 const * operator->() const { return this; }
-	Package_Reference__0 & operator* () { return *this; }
-	Package_Reference__0 const & operator* () const { return *this; }
 	string__00 name__;
 	Package__0 const *_Nonnull package__;
 };
@@ -1153,16 +1149,16 @@ system__collections__List__1<Diagnostic__0 const *_Nonnull> const *_Nonnull all_
 Package_Reference__0 Package_Reference__0__0new__1(Package__0 const *_Nonnull const package__)
 {
 	Package_Reference__0 self;
-	self->name__ = package__->name__->unqualified__;
-	self->package__ = package__;
+	self.name__ = package__->name__->unqualified__;
+	self.package__ = package__;
 	return self;
 }
 
 Package_Reference__0 Package_Reference__0__0new__2(string__00 const name__, Package__0 const *_Nonnull const package__)
 {
 	Package_Reference__0 self;
-	self->name__ = name__;
-	self->package__ = package__;
+	self.name__ = name__;
+	self.package__ = package__;
 	return self;
 }
 
@@ -1922,6 +1918,23 @@ Semantic_Node__0 const *_Nonnull build_semantic_node__4(Semantic_Tree_Builder__0
 	{
 		children__->add__1(Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), first_child_syntax__2(syntax__, SelfKeyword__)));
 		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, string__00("self"))->type__, syntax__, children__);
+	}
+	else if (cond(equal_op(syntax__->kind__, MagnitudeExpression__)))
+	{
+		children__->add__1(build_semantic_node__4(builder__, syntax__->children__->op__Element(int__00(1)), name_table__, scope__));
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, string__00("int"))->type__, syntax__, children__);
+	}
+	else if (cond(equal_op(syntax__->kind__, AddExpression__)))
+	{
+		children__->add__1(build_semantic_node__4(builder__, syntax__->children__->op__Element(int__00(0)), name_table__, scope__));
+		children__->add__1(build_semantic_node__4(builder__, syntax__->children__->op__Element(int__00(2)), name_table__, scope__));
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, string__00("int"))->type__, syntax__, children__);
+	}
+	else if (cond(equal_op(syntax__->kind__, SubtractExpression__)))
+	{
+		children__->add__1(build_semantic_node__4(builder__, syntax__->children__->op__Element(int__00(0)), name_table__, scope__));
+		children__->add__1(build_semantic_node__4(builder__, syntax__->children__->op__Element(int__00(2)), name_table__, scope__));
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, string__00("int"))->type__, syntax__, children__);
 	}
 	else if (cond(equal_op(syntax__->children__->op__magnitude(), int__00(0))))
 	{
@@ -4040,8 +4053,9 @@ void convert_expression__2(Semantic_Node__0 const *_Nonnull const syntax__, Sour
 	}
 	else if (cond(equal_op(syntax__->kind__, MagnitudeExpression__)))
 	{
-		convert_expression__2(syntax__->children__->op__Element(int__00(1)), builder__);
-		convert_member_access__2(syntax__->children__->op__Element(int__00(1)), builder__);
+		Semantic_Node__0 const *_Nonnull const expression_node__ = syntax__->children__->op__Element(int__00(0));
+		convert_expression__2(expression_node__, builder__);
+		convert_member_access__2(expression_node__, builder__);
 		write__2(builder__, string__00("op__magnitude()"));
 	}
 	else if (cond(equal_op(syntax__->kind__, ParenthesizedExpression__)))
@@ -4199,18 +4213,22 @@ void convert_expression__2(Semantic_Node__0 const *_Nonnull const syntax__, Sour
 	}
 	else if (cond(equal_op(syntax__->kind__, AddExpression__)))
 	{
-		convert_expression__2(syntax__->children__->op__Element(int__00(0)), builder__);
-		convert_member_access__2(syntax__->children__->op__Element(int__00(0)), builder__);
+		Semantic_Node__0 const *_Nonnull const lhs_node__ = syntax__->children__->op__Element(int__00(0));
+		Semantic_Node__0 const *_Nonnull const rhs_node__ = syntax__->children__->op__Element(int__00(1));
+		convert_expression__2(lhs_node__, builder__);
+		convert_member_access__2(lhs_node__, builder__);
 		write__2(builder__, string__00("op__add("));
-		convert_expression__2(syntax__->children__->op__Element(int__00(2)), builder__);
+		convert_expression__2(rhs_node__, builder__);
 		write__2(builder__, string__00(")"));
 	}
 	else if (cond(equal_op(syntax__->kind__, SubtractExpression__)))
 	{
-		convert_expression__2(syntax__->children__->op__Element(int__00(0)), builder__);
-		convert_member_access__2(syntax__->children__->op__Element(int__00(0)), builder__);
+		Semantic_Node__0 const *_Nonnull const lhs_node__ = syntax__->children__->op__Element(int__00(0));
+		Semantic_Node__0 const *_Nonnull const rhs_node__ = syntax__->children__->op__Element(int__00(1));
+		convert_expression__2(lhs_node__, builder__);
+		convert_member_access__2(lhs_node__, builder__);
 		write__2(builder__, string__00("op__subtract("));
-		convert_expression__2(syntax__->children__->op__Element(int__00(2)), builder__);
+		convert_expression__2(rhs_node__, builder__);
 		write__2(builder__, string__00(")"));
 	}
 	else if (cond(equal_op(syntax__->kind__, MultiplyExpression__)))
