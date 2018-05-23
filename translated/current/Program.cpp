@@ -647,7 +647,7 @@ void write__2(system__console__Console__0 *_Nonnull const console__, system__col
 			severity__ = string__00("Error");
 		}
 
-		console__->WriteLine__1(diagnostic__->source__->path__->op__add(string__00(":"))->op__add(position__->line__)->op__add(string__00(":"))->op__add(position__->column__)->op__add(string__00(" "))->op__add(severity__)->op__add(string__00(":")));
+		console__->WriteLine__1(diagnostic__->source__->path__->op__add(string__00(":")).op__add(position__->line__).op__add(string__00(":")).op__add(position__->column__).op__add(string__00(" ")).op__add(severity__).op__add(string__00(":")));
 		console__->WriteLine__1(string__00("  ").op__add(diagnostic__->message__));
 	}
 }
@@ -723,7 +723,7 @@ int__00 main__2(system__console__Console__0 *_Nonnull const console__, system__c
 	}
 
 	system__collections__List__1<Source_Text__0 const *_Nonnull> *_Nonnull const resources__ = system__collections__List__1__0new__0<Source_Text__0 const *_Nonnull>(allocate(sizeof(system__collections__List__1<Source_Text__0 const *_Nonnull>)));
-	if (cond(resourceFilePaths__->op__magnitude()->op__greater_than(int__00(0))))
+	if (cond(int__00__0op__greater_than(resourceFilePaths__->op__magnitude(), int__00(0))))
 	{
 		if (cond(verbose__))
 		{
@@ -893,7 +893,7 @@ Text_Position__0 const *_Nonnull position_of_start__2(Source_Text__0 const *_Non
 	int__00 const char_offset__ = span__->start__;
 	int__00 const line_number__ = line_containing_offset__2(source__->lines__, char_offset__);
 	int__00 const line_start__ = get_line__2(source__->lines__, line_number__)->start__;
-	int__00 column__ = char_offset__.op__subtract(line_start__)->op__add(int__00(1));
+	int__00 column__ = char_offset__.op__subtract(line_start__).op__add(int__00(1));
 	int__00 i__ = line_start__;
 	while (cond(int__00__0op__less_than(i__, char_offset__)))
 	{
@@ -954,7 +954,7 @@ Text_Line__0 const *_Nonnull get_line__2(Text_Lines__0 const *_Nonnull const lin
 int__00 line_containing_offset__2(Text_Lines__0 const *_Nonnull const lines__, int__00 const character_offset__)
 {
 	assert__2(int__00__0op__greater_than_or_equal(character_offset__, int__00(0)), string__00("offset ").op__add(character_offset__));
-	assert__2(int__00__0op__less_than_or_equal(character_offset__, source_byte_length__1(lines__->source__)), string__00("offset ").op__add(character_offset__)->op__add(string__00(" source length "))->op__add(source_byte_length__1(lines__->source__)));
+	assert__2(int__00__0op__less_than_or_equal(character_offset__, source_byte_length__1(lines__->source__)), string__00("offset ").op__add(character_offset__).op__add(string__00(" source length ")).op__add(source_byte_length__1(lines__->source__)));
 	int__00 left__ = int__00(0);
 	int__00 right__ = line_count__1(lines__)->op__subtract(int__00(1));
 	while (cond(int__00__0op__less_than_or_equal(left__, right__)))
@@ -1008,7 +1008,7 @@ Text_Span__0 *_Nonnull Text_Span__0__0new__2(Text_Span__0 *_Nonnull self, int__0
 
 string__00 format_error__1(string__00 const message__)
 {
-	return string__00("<$ ").op__add(message__)->op__add(string__00(" $>"));
+	return string__00("<$ ").op__add(message__).op__add(string__00(" $>"));
 }
 
 Source_File_Builder__0 *_Nonnull Source_File_Builder__0__0new__0(Source_File_Builder__0 *_Nonnull self)
@@ -1168,9 +1168,9 @@ Package__0 const *_Nonnull build_primitives_package__0()
 	system__collections__List__1<Package_Reference__0> const *_Nonnull const references__ = system__collections__List__1__0new__0<Package_Reference__0>(allocate(sizeof(system__collections__List__1<Package_Reference__0>)));
 	system__collections__List__1<Compilation_Unit__0 const *_Nonnull> const *_Nonnull const compilation_units__ = system__collections__List__1__0new__0<Compilation_Unit__0 const *_Nonnull>(allocate(sizeof(system__collections__List__1<Compilation_Unit__0 const *_Nonnull>)));
 	system__collections__List__1<Symbol__0 const *_Nonnull> *_Nonnull const primitive_symbols__ = build_primitive_symbols__1(name__);
-	assert__2(primitive_symbols__->op__magnitude()->op__greater_than(int__00(0)), string__00("|primitive_symbols|=").op__add(primitive_symbols__->op__magnitude()));
+	assert__2(int__00__0op__greater_than(primitive_symbols__->op__magnitude(), int__00(0)), string__00("|primitive_symbols|=").op__add(primitive_symbols__->op__magnitude()));
 	Symbol__0 const *_Nonnull const package_symbol__ = Symbol__0__0new__package__2(allocate(sizeof(Symbol__0)), name__->unqualified__, primitive_symbols__);
-	assert__2(package_symbol__->children__->op__magnitude()->op__greater_than(int__00(0)), string__00("|package_symbol.children|=").op__add(package_symbol__->children__->op__magnitude()));
+	assert__2(int__00__0op__greater_than(package_symbol__->children__->op__magnitude(), int__00(0)), string__00("|package_symbol.children|=").op__add(package_symbol__->children__->op__magnitude()));
 	return Package__0__0new__4(allocate(sizeof(Package__0)), name__, references__, compilation_units__, package_symbol__);
 }
 
@@ -1278,7 +1278,7 @@ void Package_symbol_has_package_name__0()
 void Package_symbol_has_children__0()
 {
 	Package__0 const *_Nonnull const package__ = build_primitives_package__0();
-	assert__2(package__->symbol__->children__->op__magnitude()->op__greater_than(int__00(0)), string__00(""));
+	assert__2(int__00__0op__greater_than(package__->symbol__->children__->op__magnitude(), int__00(0)), string__00(""));
 }
 
 void Package_contains_the_string_type__0()
@@ -1305,9 +1305,9 @@ Package__0 const *_Nonnull build_runtime_library_package__0()
 	system__collections__List__1<Package_Reference__0> const *_Nonnull const references__ = system__collections__List__1__0new__0<Package_Reference__0>(allocate(sizeof(system__collections__List__1<Package_Reference__0>)));
 	system__collections__List__1<Compilation_Unit__0 const *_Nonnull> const *_Nonnull const compilation_units__ = system__collections__List__1__0new__0<Compilation_Unit__0 const *_Nonnull>(allocate(sizeof(system__collections__List__1<Compilation_Unit__0 const *_Nonnull>)));
 	system__collections__List__1<Symbol__0 const *_Nonnull> *_Nonnull const symbols__ = build_runtime_library_symbols__1(name__);
-	assert__2(symbols__->op__magnitude()->op__greater_than(int__00(0)), string__00("|symbols|=").op__add(symbols__->op__magnitude()));
+	assert__2(int__00__0op__greater_than(symbols__->op__magnitude(), int__00(0)), string__00("|symbols|=").op__add(symbols__->op__magnitude()));
 	Symbol__0 const *_Nonnull const package_symbol__ = Symbol__0__0new__package__2(allocate(sizeof(Symbol__0)), name__->unqualified__, symbols__);
-	assert__2(package_symbol__->children__->op__magnitude()->op__greater_than(int__00(0)), string__00("|package_symbol.children|=").op__add(package_symbol__->children__->op__magnitude()));
+	assert__2(int__00__0op__greater_than(package_symbol__->children__->op__magnitude(), int__00(0)), string__00("|package_symbol.children|=").op__add(package_symbol__->children__->op__magnitude()));
 	return Package__0__0new__4(allocate(sizeof(Package__0)), name__, references__, compilation_units__, package_symbol__);
 }
 
@@ -1968,7 +1968,7 @@ Semantic_Node__0 *_Nonnull build_parameters_semantic_node__4(Semantic_Tree_Build
 
 			Syntax_Node__0 const *_Nonnull const identifier__ = first_child_syntax__2(parameter__, Identifier__);
 			children__->add__1(Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), identifier__));
-			Syntax_Node__0 const *_Nonnull const type_syntax__ = parameter__->children__->op__Element(parameter__->children__->op__magnitude()->op__subtract(int__00(1)));
+			Syntax_Node__0 const *_Nonnull const type_syntax__ = parameter__->children__->op__Element(parameter__->children__->op__magnitude().op__subtract(int__00(1)));
 			Semantic_Node__0 const *_Nonnull const type_node__ = build_type_name_semantic_node__4(builder__, type_syntax__, name_table__, scope__);
 			assert__2(not_equal_op(type_node__->referenced_type__, none), get_text__1(parameter__));
 			children__->add__1(type_node__);
@@ -2002,7 +2002,7 @@ Semantic_Node__0 *_Nonnull build_type_name_semantic_node__4(Semantic_Tree_Builde
 	{
 		string__00 const primitive_name__ = get_text__1(syntax__->children__->op__Element(int__00(0)));
 		Name_Subtable__0 const *_Nullable const primitive_entry__ = lookup_special__2(scope__, primitive_name__);
-		assert__2(not_equal_op(primitive_entry__, none), string__00("No entry for primitive `").op__add(primitive_name__)->op__add(string__00("`")));
+		assert__2(not_equal_op(primitive_entry__, none), string__00("No entry for primitive `").op__add(primitive_name__).op__add(string__00("`")));
 		return Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), primitive_entry__->type__, syntax__, children__);
 	}
 	else if (cond(equal_op(syntax__->kind__, IdentifierName__)))
@@ -2158,7 +2158,7 @@ Semantic_Node__0 *_Nonnull build_type_name_semantic_node__4(Semantic_Tree_Builde
 	else
 	{
 		int__00 const place__ = syntax__->start__;
-		NOT_IMPLEMENTED__1(string__00("syntax.kind=").op__add(syntax__->kind__)->op__add(string__00(" at "))->op__add(place__));
+		NOT_IMPLEMENTED__1(string__00("syntax.kind=").op__add(syntax__->kind__).op__add(string__00(" at ")).op__add(place__));
 	}
 }
 
@@ -2203,7 +2203,7 @@ Semantic_Node__0 const *_Nonnull build_constructor_name_semantic_node__4(Semanti
 		Syntax_Node__0 const *_Nonnull const name__ = syntax__->children__->op__Element(int__00(2));
 		string__00 const constructor_name__ = string__00("new_").op__add(get_text__1(name__));
 		Type__0 const *_Nonnull const referenced_type__ = type_node__->referenced_type__;
-		assert__2(not_equal_op(referenced_type__, none), string__00("no referenced type for `").op__add(get_text__1(type_node__))->op__add(string__00("`")));
+		assert__2(not_equal_op(referenced_type__, none), string__00("no referenced type for `").op__add(get_text__1(type_node__)).op__add(string__00("`")));
 		Name_Subtable__0 const *_Nullable const constructor_scope__ = lookup_special__2(get_name__2(name_table__, referenced_type__->name__), constructor_name__);
 		if (cond(not_equal_op(constructor_scope__, none)))
 		{
@@ -2217,17 +2217,17 @@ Semantic_Node__0 const *_Nonnull build_constructor_name_semantic_node__4(Semanti
 
 void add_resolution_error__1(Semantic_Node__0 *_Nonnull const node__)
 {
-	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__00("Could not resolve name `").op__add(get_text__1(node__))->op__add(string__00("`"))));
+	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__00("Could not resolve name `").op__add(get_text__1(node__)).op__add(string__00("`"))));
 }
 
 void add_resolution_error__2(Semantic_Node__0 *_Nonnull const node__, Semantic_Node__0 const *_Nonnull const qualifier__)
 {
-	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__00("Could not resolve name `").op__add(get_text__1(node__))->op__add(string__00("` because qualifier `"))->op__add(get_text__1(qualifier__))->op__add(string__00("` could not be resolved."))));
+	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__00("Could not resolve name `").op__add(get_text__1(node__)).op__add(string__00("` because qualifier `")).op__add(get_text__1(qualifier__)).op__add(string__00("` could not be resolved."))));
 }
 
 void add_could_not_determine_type_error__1(Semantic_Node__0 *_Nonnull const node__)
 {
-	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__00("Could not determine type for `").op__add(get_text__1(node__))->op__add(string__00("`"))));
+	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__00("Could not determine type for `").op__add(get_text__1(node__)).op__add(string__00("`"))));
 }
 
 Symbol__0 const *_Nonnull build_symbols__2(Package_Name__0 const *_Nonnull const package_name__, system__collections__List__1<Compilation_Unit__0 const *_Nonnull> const *_Nonnull const compilation_units__)
@@ -3025,8 +3025,8 @@ Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__2(Syntax_Node__0 *_Nonnull self, 
 	self->is_missing__ = false__00;
 	self->source__ = children__->op__Element(int__00(0))->source__;
 	self->start__ = children__->op__Element(int__00(0))->start__;
-	Syntax_Node__0 const *_Nonnull const lastChild__ = children__->op__Element(children__->op__magnitude()->op__subtract(int__00(1)));
-	self->byte_length__ = lastChild__->start__.op__subtract(self->start__)->op__add(lastChild__->byte_length__);
+	Syntax_Node__0 const *_Nonnull const lastChild__ = children__->op__Element(children__->op__magnitude().op__subtract(int__00(1)));
+	self->byte_length__ = lastChild__->start__.op__subtract(self->start__).op__add(lastChild__->byte_length__);
 	self->children__ = children__;
 	self->node_diagnostics__ = system__collections__List__1__0new__0<Diagnostic__0 const *_Nonnull>(allocate(sizeof(system__collections__List__1<Diagnostic__0 const *_Nonnull>)));
 	return self;
@@ -3068,12 +3068,12 @@ Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__skipped__1(Syntax_Node__0 *_Nonnu
 	self->is_missing__ = false__00;
 	self->source__ = skipped_nodes__->op__Element(int__00(0))->source__;
 	self->start__ = skipped_nodes__->op__Element(int__00(0))->start__;
-	Syntax_Node__0 const *_Nonnull const lastChild__ = skipped_nodes__->op__Element(skipped_nodes__->op__magnitude()->op__subtract(int__00(1)));
-	self->byte_length__ = lastChild__->start__.op__subtract(self->start__)->op__add(lastChild__->byte_length__);
+	Syntax_Node__0 const *_Nonnull const lastChild__ = skipped_nodes__->op__Element(skipped_nodes__->op__magnitude().op__subtract(int__00(1)));
+	self->byte_length__ = lastChild__->start__.op__subtract(self->start__).op__add(lastChild__->byte_length__);
 	self->children__ = system__collections__List__1__0new__0<Syntax_Node__0 const *_Nonnull>(allocate(sizeof(system__collections__List__1<Syntax_Node__0 const *_Nonnull>)));
 	self->node_diagnostics__ = system__collections__List__1__0new__0<Diagnostic__0 const *_Nonnull>(allocate(sizeof(system__collections__List__1<Diagnostic__0 const *_Nonnull>)));
 	Text_Span__0 const *_Nonnull const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), self->start__, self->byte_length__);
-	self->node_diagnostics__->add__1(Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, self->source__, span__, string__00("Skipped ").op__add(skipped_nodes__->op__magnitude())->op__add(string__00(" unexpected token(s)"))));
+	self->node_diagnostics__->add__1(Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, self->source__, span__, string__00("Skipped ").op__add(skipped_nodes__->op__magnitude()).op__add(string__00(" unexpected token(s)"))));
 	return self;
 }
 
@@ -3267,12 +3267,12 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 		}
 		else if (cond(equal_op(curChar__, code_point__00('='))))
 		{
-			if (cond(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(1))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
+			if (cond(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(1)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
 			{
 				return new_operator_token__3(tokens__, EqualsEquals__, int__00(2));
 			}
 
-			if (cond(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(2))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('/'))))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(2))), code_point__00('='))))))
+			if (cond(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(2)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('/'))))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(2))), code_point__00('='))))))
 			{
 				return new_operator_token__3(tokens__, EqualsSlashEquals__, int__00(3));
 			}
@@ -3281,7 +3281,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 		}
 		else if (cond(equal_op(curChar__, code_point__00('+'))))
 		{
-			if (cond(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(1))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
+			if (cond(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(1)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
 			{
 				return new_operator_token__3(tokens__, PlusEquals__, int__00(2));
 			}
@@ -3290,12 +3290,12 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 		}
 		else if (cond(equal_op(curChar__, code_point__00('-'))))
 		{
-			if (cond(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(1))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('>'))))))
+			if (cond(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(1)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('>'))))))
 			{
 				return new_operator_token__3(tokens__, Arrow__, int__00(2));
 			}
 
-			if (cond(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(1))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
+			if (cond(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(1)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
 			{
 				return new_operator_token__3(tokens__, MinusEquals__, int__00(2));
 			}
@@ -3304,7 +3304,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 		}
 		else if (cond(equal_op(curChar__, code_point__00('/'))))
 		{
-			if (cond(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(1))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('/'))))))
+			if (cond(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(1)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('/'))))))
 			{
 				while (cond(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(uint__00__0op__less_than(tokens__->position__, source_byte_length__1(tokens__->source__))) && bool__00__arg(not_equal_op(tokens__->source__->text__.op__Element(tokens__->position__), code_point__00('\r'))))) && bool__00__arg(not_equal_op(tokens__->source__->text__.op__Element(tokens__->position__), code_point__00('\n'))))))
 				{
@@ -3314,7 +3314,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 				continue;
 			}
 
-			if (cond(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(1))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('*'))))))
+			if (cond(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(1)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('*'))))))
 			{
 				tokens__->position__.op__add_assign(int__00(2));
 				bool__00 lastCharStar__ = false__00;
@@ -3336,7 +3336,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 		}
 		else if (cond(equal_op(curChar__, code_point__00('<'))))
 		{
-			if (cond(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(1))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
+			if (cond(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(1)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
 			{
 				return new_operator_token__3(tokens__, LessThanEquals__, int__00(2));
 			}
@@ -3345,7 +3345,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 		}
 		else if (cond(equal_op(curChar__, code_point__00('>'))))
 		{
-			if (cond(bool__00__op(bool__00__arg(tokens__->position__.op__add(int__00(1))->op__less_than(source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
+			if (cond(bool__00__op(bool__00__arg(int__00__0op__less_than(tokens__->position__.op__add(int__00(1)), source_byte_length__1(tokens__->source__))) && bool__00__arg(equal_op(tokens__->source__->text__.op__Element(tokens__->position__.op__add(int__00(1))), code_point__00('='))))))
 			{
 				return new_operator_token__3(tokens__, GreaterThanEquals__, int__00(2));
 			}
@@ -3403,7 +3403,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 			}
 
 			Text_Span__0 const *_Nonnull diagnosticSpan__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, int__00(1));
-			tokens__->diagnostics__->add__1(Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnosticSpan__, string__00("Invalid character `").op__add(curChar__)->op__add(string__00("`"))));
+			tokens__->diagnostics__->add__1(Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnosticSpan__, string__00("Invalid character `").op__add(curChar__).op__add(string__00("`"))));
 			tokens__->position__ = end__;
 		}
 	}
@@ -3573,7 +3573,7 @@ Syntax_Node__0 const *_Nonnull new_identifier_or_keyword_token__2(Token_Stream__
 		if (cond(bool__00__op(bool__00__arg(value__.ByteLength__0()->op__greater_than(int__00(1))) && bool__00__arg(equal_op(value__.op__Element(value__.ByteLength__0()->op__subtract(int__00(1))), code_point__00('_'))))))
 		{
 			Text_Span__0 const *_Nonnull diagnosticSpan__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, end__.op__subtract(tokens__->position__));
-			tokens__->diagnostics__->add__1(Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnosticSpan__, string__00("Identifiers ending with underscore are reserved `").op__add(value__)->op__add(string__00("`"))));
+			tokens__->diagnostics__->add__1(Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnosticSpan__, string__00("Identifiers ending with underscore are reserved `").op__add(value__).op__add(string__00("`"))));
 		}
 	}
 
@@ -3648,7 +3648,7 @@ string__00 emit__1(Emitter__0 *_Nonnull const emitter__)
 	}
 
 	emit_entry_point_adapter__1(emitter__);
-	int__00 const total_size__ = byte_length__1(emitter__->type_declarations__)->op__add(byte_length__1(emitter__->function_declarations__))->op__add(byte_length__1(emitter__->class_declarations__))->op__add(byte_length__1(emitter__->global_definitions__))->op__add(byte_length__1(emitter__->definitions__));
+	int__00 const total_size__ = byte_length__1(emitter__->type_declarations__)->op__add(byte_length__1(emitter__->function_declarations__)).op__add(byte_length__1(emitter__->class_declarations__)).op__add(byte_length__1(emitter__->global_definitions__)).op__add(byte_length__1(emitter__->definitions__));
 	system__text__String_Builder__0 *_Nonnull const cpp_code__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
 	cpp_code__->Append__1(to_string__1(emitter__->type_declarations__));
 	cpp_code__->Append__1(to_string__1(emitter__->function_declarations__));
@@ -3808,7 +3808,7 @@ system__text__String_Builder__0 *_Nonnull convert_type_name__2(Type__0 const *_N
 		cpp_type__->Append__1(mangle_name__1(type__));
 	}
 
-	if (cond(bool__00__op(bool__00__arg(type__->type_parameters__->op__magnitude()->op__greater_than(int__00(0))) && bool__00__arg(include_type_parameters__))))
+	if (cond(bool__00__op(bool__00__arg(int__00__0op__greater_than(type__->type_parameters__->op__magnitude(), int__00(0))) && bool__00__arg(include_type_parameters__))))
 	{
 		convert_type_parameters__2(cpp_type__, type__);
 	}
@@ -3935,7 +3935,7 @@ string__00 convert_parameter_list__4(Emitter__0 *_Nonnull const emitter__, Seman
 		}
 
 		bool__00 const mutable_binding__ = node_has_child__2(parameter__, VarKeyword__);
-		Semantic_Node__0 const *_Nonnull const type_node__ = parameter__->children__->op__Element(parameter__->children__->op__magnitude()->op__subtract(int__00(1)));
+		Semantic_Node__0 const *_Nonnull const type_node__ = parameter__->children__->op__Element(parameter__->children__->op__magnitude().op__subtract(int__00(1)));
 		builder__->Append__1(convert_type__2(mutable_binding__, type_node__));
 		builder__->Append__1(string__00(" "));
 		builder__->Append__1(mangle_field_name__1(get_text__1(first_child__2(parameter__, Identifier__))));
@@ -4006,7 +4006,7 @@ void convert_expression__2(Semantic_Node__0 const *_Nonnull const syntax__, Sour
 		write__2(builder__, string__00("__"));
 		Semantic_Node__0 const *_Nonnull const argument_list__ = syntax__->children__->op__Element(int__00(1));
 		write__2(builder__, node_argument_count__1(argument_list__));
-		if (cond(type__->type_parameters__->op__magnitude()->op__greater_than(int__00(0))))
+		if (cond(int__00__0op__greater_than(type__->type_parameters__->op__magnitude(), int__00(0))))
 		{
 			system__text__String_Builder__0 *_Nonnull const params__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
 			convert_type_parameters__2(params__, type__);
@@ -4078,7 +4078,7 @@ void convert_expression__2(Semantic_Node__0 const *_Nonnull const syntax__, Sour
 	}
 	else if (cond(equal_op(syntax__->kind__, NumericLiteralExpression__)))
 	{
-		write__2(builder__, string__00("int__00(").op__add(get_text__1(syntax__))->op__add(string__00(")")));
+		write__2(builder__, string__00("int__00(").op__add(get_text__1(syntax__)).op__add(string__00(")")));
 	}
 	else if (cond(bool__00__op(bool__00__arg(equal_op(syntax__->kind__, TrueLiteralExpression__)) || bool__00__arg(equal_op(syntax__->kind__, FalseLiteralExpression__)))))
 	{
@@ -4086,7 +4086,7 @@ void convert_expression__2(Semantic_Node__0 const *_Nonnull const syntax__, Sour
 	}
 	else if (cond(equal_op(syntax__->kind__, CodePointLiteralExpression__)))
 	{
-		write__2(builder__, string__00("code_point__00(").op__add(get_text__1(syntax__))->op__add(string__00(")")));
+		write__2(builder__, string__00("code_point__00(").op__add(get_text__1(syntax__)).op__add(string__00(")")));
 	}
 	else if (cond(equal_op(syntax__->kind__, IdentifierName__)))
 	{
@@ -4094,7 +4094,7 @@ void convert_expression__2(Semantic_Node__0 const *_Nonnull const syntax__, Sour
 	}
 	else if (cond(equal_op(syntax__->kind__, StringLiteralExpression__)))
 	{
-		write__2(builder__, string__00("string__00(").op__add(get_text__1(syntax__))->op__add(string__00(")")));
+		write__2(builder__, string__00("string__00(").op__add(get_text__1(syntax__)).op__add(string__00(")")));
 	}
 	else if (cond(equal_op(syntax__->kind__, AssignmentExpression__)))
 	{
@@ -4374,7 +4374,7 @@ void emit_statement__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 co
 		bool__00 const mutable_binding__ = node_has_child__2(variable_declaration__, VarKeyword__);
 		string__00 const name__ = get_text__1(first_child__2(variable_declaration__, Identifier__));
 		Semantic_Node__0 const *_Nonnull const type__ = variable_declaration__->children__->op__Element(int__00(2));
-		write__2(emitter__->definitions__, convert_type__2(mutable_binding__, type__)->op__add(string__00(" "))->op__add(mangle_field_name__1(name__)));
+		write__2(emitter__->definitions__, convert_type__2(mutable_binding__, type__)->op__add(string__00(" ")).op__add(mangle_field_name__1(name__)));
 		write__2(emitter__->definitions__, string__00(" : *("));
 		convert_expression__2(statement__->children__->op__Element(int__00(3)), emitter__->definitions__);
 		end_line__2(emitter__->definitions__, string__00("))"));
@@ -4435,7 +4435,7 @@ void emit_statement__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 co
 		bool__00 const mutable_binding__ = node_has_child__2(variable_declaration__, VarKeyword__);
 		begin_line__2(emitter__->definitions__, convert_type__2(mutable_binding__, variable_type__));
 		write__2(emitter__->definitions__, string__00(" ").op__add(mangle_field_name__1(variable_name__)));
-		if (cond(variable_declaration__->children__->op__magnitude()->op__greater_than(int__00(3))))
+		if (cond(int__00__0op__greater_than(variable_declaration__->children__->op__magnitude(), int__00(3))))
 		{
 			write__2(emitter__->definitions__, string__00(" = "));
 			convert_expression__2(variable_declaration__->children__->op__Element(int__00(3)), emitter__->definitions__);
@@ -4499,8 +4499,8 @@ void emit_member_declaration__4(Emitter__0 *_Nonnull const emitter__, Semantic_N
 		if (cond(not_equal_op(constructor_name_node__, none)))
 		{
 			string__00 const constructor_name__ = get_text__1(constructor_name_node__);
-			new_function_name__ = new_function_name__.op__add(string__00("__"))->op__add(constructor_name__);
-			constructor_full_name__ = constructor_full_name__.op__add(constructor_name__)->op__add(string__00("__"));
+			new_function_name__ = new_function_name__.op__add(string__00("__")).op__add(constructor_name__);
+			constructor_full_name__ = constructor_full_name__.op__add(constructor_name__).op__add(string__00("__"));
 		}
 
 		constructor_full_name__ = constructor_full_name__.op__add(parameters_node__->children__->op__magnitude());
@@ -4520,7 +4520,7 @@ void emit_member_declaration__4(Emitter__0 *_Nonnull const emitter__, Semantic_N
 			constructor_parameters__ = convert_parameter_list__2(emitter__, parameters_node__);
 		}
 
-		string__00 constructor_signature__ = return_type__.op__add(string__00(" "))->op__add(constructor_full_name__)->op__add(constructor_parameters__);
+		string__00 constructor_signature__ = return_type__.op__add(string__00(" ")).op__add(constructor_full_name__).op__add(constructor_parameters__);
 		write_line__2(emitter__->function_declarations__, constructor_signature__.op__add(string__00(";")));
 		element_separator_line__1(emitter__->definitions__);
 		write_line__2(emitter__->definitions__, constructor_signature__);
@@ -4532,7 +4532,7 @@ void emit_member_declaration__4(Emitter__0 *_Nonnull const emitter__, Semantic_N
 		string__00 const field_name__ = get_text__1(first_child__2(variable_declaration__, Identifier__));
 		Semantic_Node__0 const *_Nonnull const field_type__ = variable_declaration__->children__->op__Element(int__00(2));
 		string__00 const cpp_type__ = convert_type__2(true__00, field_type__);
-		write_line__2(emitter__->class_declarations__, cpp_type__.op__add(string__00(" "))->op__add(mangle_field_name__1(field_name__))->op__add(string__00(";")));
+		write_line__2(emitter__->class_declarations__, cpp_type__.op__add(string__00(" ")).op__add(mangle_field_name__1(field_name__)).op__add(string__00(";")));
 	}
 	else if (cond(equal_op(member__->kind__, MethodDeclaration__)))
 	{
@@ -4562,9 +4562,9 @@ void emit_member_declaration__4(Emitter__0 *_Nonnull const emitter__, Semantic_N
 			constModifier__ = string__00(" const");
 		}
 
-		write_line__2(emitter__->class_declarations__, static_modifier__.op__add(cpp_type__)->op__add(string__00(" "))->op__add(method_name__)->op__add(parameters__)->op__add(constModifier__)->op__add(string__00(";")));
+		write_line__2(emitter__->class_declarations__, static_modifier__.op__add(cpp_type__).op__add(string__00(" ")).op__add(method_name__).op__add(parameters__).op__add(constModifier__).op__add(string__00(";")));
 		element_separator_line__1(emitter__->definitions__);
-		write_line__2(emitter__->definitions__, cpp_type__.op__add(string__00(" "))->op__add(class_name__)->op__add(string__00("::"))->op__add(method_name__)->op__add(parameters__)->op__add(constModifier__));
+		write_line__2(emitter__->definitions__, cpp_type__.op__add(string__00(" ")).op__add(class_name__).op__add(string__00("::")).op__add(method_name__).op__add(parameters__).op__add(constModifier__));
 		Semantic_Node__0 const *_Nonnull const block__ = first_child__2(member__, Block__);
 		emit_method_body__3(emitter__, block__, is_associated_function__);
 	}
@@ -4583,10 +4583,10 @@ void emit_default_constructor__3(Emitter__0 *_Nonnull const emitter__, string__0
 		return_type__ = return_type__.op__add(string__00(" *_Nonnull"));
 	}
 
-	string__00 constructor_signature__ = return_type__.op__add(string__00(" "))->op__add(default_constructor_name__)->op__add(string__00("("));
+	string__00 constructor_signature__ = return_type__.op__add(string__00(" ")).op__add(default_constructor_name__).op__add(string__00("("));
 	if (cond(bool__00__0op__not(is_value_type__)))
 	{
-		constructor_signature__ = constructor_signature__.op__add(return_type__)->op__add(string__00(" self"));
+		constructor_signature__ = constructor_signature__.op__add(return_type__).op__add(string__00(" self"));
 	}
 
 	constructor_signature__ = constructor_signature__.op__add(string__00(")"));
@@ -4613,7 +4613,7 @@ void emit_declaration__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 
 		bool__00 const mutable_binding__ = node_has_child__2(variable_declaration__, VarKeyword__);
 		string__00 const cpp_type__ = convert_type__2(mutable_binding__, variable_type__);
 		begin_line__2(emitter__->global_definitions__, cpp_type__);
-		write__2(emitter__->global_definitions__, string__00(" ").op__add(mangle_field_name__1(variable_name__))->op__add(string__00(" = ")));
+		write__2(emitter__->global_definitions__, string__00(" ").op__add(mangle_field_name__1(variable_name__)).op__add(string__00(" = ")));
 		Semantic_Node__0 const *_Nonnull const expression__ = variable_declaration__->children__->op__Element(int__00(3));
 		convert_expression__2(expression__, emitter__->global_definitions__);
 		end_line__2(emitter__->global_definitions__, string__00(";"));
@@ -4623,7 +4623,7 @@ void emit_declaration__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 
 		Type__0 const *_Nonnull const declared_type__ = declaration__->declares_type__;
 		assert__2(not_equal_op(declared_type__, none), get_text__1(first_child__2(declaration__, Identifier__)));
 		string__00 const class_name__ = mangle_name__1(declared_type__);
-		write_line__2(emitter__->type_declarations__, string__00("typedef struct ").op__add(class_name__)->op__add(string__00(" "))->op__add(class_name__)->op__add(string__00(";")));
+		write_line__2(emitter__->type_declarations__, string__00("typedef struct ").op__add(class_name__).op__add(string__00(" ")).op__add(class_name__).op__add(string__00(";")));
 		element_separator_line__1(emitter__->class_declarations__);
 		write_line__2(emitter__->class_declarations__, string__00("struct ").op__add(class_name__));
 		begin_block__1(emitter__->class_declarations__);
@@ -4646,7 +4646,7 @@ void emit_declaration__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 
 		Type__0 const *_Nonnull const declared_type__ = declaration__->declares_type__;
 		assert__2(not_equal_op(declared_type__, none), get_text__1(first_child__2(declaration__, Identifier__)));
 		string__00 const struct_name__ = mangle_name__1(declared_type__);
-		write_line__2(emitter__->type_declarations__, string__00("typedef struct ").op__add(struct_name__)->op__add(string__00(" "))->op__add(struct_name__)->op__add(string__00(";")));
+		write_line__2(emitter__->type_declarations__, string__00("typedef struct ").op__add(struct_name__).op__add(string__00(" ")).op__add(struct_name__).op__add(string__00(";")));
 		element_separator_line__1(emitter__->class_declarations__);
 		write_line__2(emitter__->class_declarations__, string__00("struct ").op__add(struct_name__));
 		begin_block__1(emitter__->class_declarations__);
@@ -4667,9 +4667,9 @@ void emit_declaration__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 
 	else if (cond(equal_op(declaration__->kind__, EnumDeclaration__)))
 	{
 		string__00 const enum_name__ = get_text__1(first_child__2(declaration__, Identifier__));
-		write_line__2(emitter__->type_declarations__, string__00("enum class ").op__add(enum_name__)->op__add(string__00("_;")));
+		write_line__2(emitter__->type_declarations__, string__00("enum class ").op__add(enum_name__).op__add(string__00("_;")));
 		element_separator_line__1(emitter__->class_declarations__);
-		write_line__2(emitter__->class_declarations__, string__00("enum class ").op__add(enum_name__)->op__add(string__00("_")));
+		write_line__2(emitter__->class_declarations__, string__00("enum class ").op__add(enum_name__).op__add(string__00("_")));
 		begin_block__1(emitter__->class_declarations__);
 		for (Semantic_Node__0 const *_Nonnull const member__ : *(declaration__->children__))
 		{
@@ -4704,9 +4704,9 @@ void emit_declaration__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 
 		string__00 const parameters__ = convert_parameter_list__3(emitter__, parameters_node__, is_main__);
 		Semantic_Node__0 const *_Nonnull const return_type_node__ = declaration__->children__->op__Element(int__00(3));
 		string__00 const cpp_type__ = convert_type__2(true__00, return_type_node__);
-		write_line__2(emitter__->function_declarations__, cpp_type__.op__add(string__00(" "))->op__add(name__)->op__add(parameters__)->op__add(string__00(";")));
+		write_line__2(emitter__->function_declarations__, cpp_type__.op__add(string__00(" ")).op__add(name__).op__add(parameters__).op__add(string__00(";")));
 		element_separator_line__1(emitter__->definitions__);
-		write_line__2(emitter__->definitions__, cpp_type__.op__add(string__00(" "))->op__add(name__)->op__add(parameters__));
+		write_line__2(emitter__->definitions__, cpp_type__.op__add(string__00(" ")).op__add(name__).op__add(parameters__));
 		if (cond(is_main__))
 		{
 			if (cond(not_equal_op(emitter__->main_function_return_type__, string__00(""))))
@@ -4768,7 +4768,7 @@ void emit_entry_point_adapter__1(Emitter__0 *_Nonnull const emitter__)
 		end_line__2(emitter__->definitions__, string__00("\"));"));
 	}
 
-	if (cond(emitter__->resources__->op__magnitude()->op__greater_than(int__00(0))))
+	if (cond(int__00__0op__greater_than(emitter__->resources__->op__magnitude(), int__00(0))))
 	{
 		end_line__2(emitter__->definitions__, string__00(""));
 	}
@@ -4791,12 +4791,12 @@ void emit_entry_point_adapter__1(Emitter__0 *_Nonnull const emitter__)
 
 	if (cond(equal_op(emitter__->main_function_return_type__, string__00("void"))))
 	{
-		write_line__2(emitter__->definitions__, emitter__->main_function_name__.op__add(string__00("("))->op__add(args__->ToString__0())->op__add(string__00(");")));
+		write_line__2(emitter__->definitions__, emitter__->main_function_name__.op__add(string__00("(")).op__add(args__->ToString__0()).op__add(string__00(");")));
 		write_line__2(emitter__->definitions__, string__00("return 0;"));
 	}
 	else
 	{
-		write_line__2(emitter__->definitions__, string__00("return ").op__add(emitter__->main_function_name__)->op__add(string__00("("))->op__add(args__->ToString__0())->op__add(string__00(").value;")));
+		write_line__2(emitter__->definitions__, string__00("return ").op__add(emitter__->main_function_name__).op__add(string__00("(")).op__add(args__->ToString__0()).op__add(string__00(").value;")));
 	}
 
 	end_block__1(emitter__->definitions__);
@@ -4898,7 +4898,7 @@ string__00 unqualified_name__1(Name__0 const *_Nonnull const name__)
 		return string__00("");
 	}
 
-	return name__->segments__->op__Element(name__->segments__->op__magnitude()->op__subtract(int__00(1)));
+	return name__->segments__->op__Element(name__->segments__->op__magnitude().op__subtract(int__00(1)));
 }
 
 string__00 full_name__1(Name__0 const *_Nonnull const name__)
@@ -4920,7 +4920,7 @@ string__00 full_name__1(Name__0 const *_Nonnull const name__)
 			continue;
 		}
 
-		result__ = result__.op__add(string__00("."))->op__add(segment__);
+		result__ = result__.op__add(string__00(".")).op__add(segment__);
 	}
 
 	return result__;
@@ -4928,7 +4928,7 @@ string__00 full_name__1(Name__0 const *_Nonnull const name__)
 
 bool__00 is_qualified_by__2(Name__0 const *_Nonnull const name__, Name__0 const *_Nonnull const qualifier__)
 {
-	if (cond(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(not_equal_op(name__->package__, none)) && bool__00__arg(not_equal_op(qualifier__->package__, none)))) && bool__00__arg(not_equal_op(full_name__1(name__->package__), full_name__1(qualifier__->package__))))) || bool__00__arg(name__->segments__->op__magnitude()->op__less_than_or_equal(qualifier__->segments__->op__magnitude())))))
+	if (cond(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(not_equal_op(name__->package__, none)) && bool__00__arg(not_equal_op(qualifier__->package__, none)))) && bool__00__arg(not_equal_op(full_name__1(name__->package__), full_name__1(qualifier__->package__))))) || bool__00__arg(int__00__0op__less_than_or_equal(name__->segments__->op__magnitude(), qualifier__->segments__->op__magnitude())))))
 	{
 		return false__00;
 	}
@@ -4949,7 +4949,7 @@ bool__00 is_qualified_by__2(Name__0 const *_Nonnull const name__, Name__0 const 
 
 bool__00 qualifier_is__2(Name__0 const *_Nonnull const name__, Name__0 const *_Nonnull const qualifier__)
 {
-	return bool__00__op(bool__00__arg(equal_op(qualifier__->segments__->op__magnitude()->op__add(int__00(1)), name__->segments__->op__magnitude())) && bool__00__arg(is_qualified_by__2(name__, qualifier__)));
+	return bool__00__op(bool__00__arg(equal_op(qualifier__->segments__->op__magnitude().op__add(int__00(1)), name__->segments__->op__magnitude())) && bool__00__arg(is_qualified_by__2(name__, qualifier__)));
 }
 
 bool__00 names__2(Name__0 const *_Nonnull const name__, Name__0 const *_Nonnull const other__)
@@ -5221,7 +5221,7 @@ Type__0 *_Nonnull Type__0__0new__generic__2(Type__0 *_Nonnull self, Type__0 cons
 {
 	assert__2(not_equal_op(definition__, none), string__00(""));
 	assert__2(not_equal_op(type_arguments__, none), full_name__1(definition__->name__));
-	assert__2(equal_op(definition__->type_parameters__->op__magnitude(), type_arguments__->op__magnitude()), full_name__1(definition__->name__)->op__add(string__00(" "))->op__add(definition__->type_parameters__->op__magnitude())->op__add(string__00(" given "))->op__add(type_arguments__->op__magnitude()));
+	assert__2(equal_op(definition__->type_parameters__->op__magnitude(), type_arguments__->op__magnitude()), full_name__1(definition__->name__)->op__add(string__00(" ")).op__add(definition__->type_parameters__->op__magnitude()).op__add(string__00(" given ")).op__add(type_arguments__->op__magnitude()));
 	self->kind__ = definition__->kind__;
 	self->name__ = definition__->name__;
 	self->type_parameters__ = type_arguments__;
@@ -5300,7 +5300,7 @@ Name_Subtable__0 *_Nonnull Name_Subtable__0__0new__3(Name_Subtable__0 *_Nonnull 
 
 void add_subtable__3(Name_Subtable__0 *_Nonnull const scope__, Name__0 const *_Nonnull const name__, Type__0 const *_Nonnull const type__)
 {
-	assert__2(is_qualified_by__2(name__, scope__->name__), string__00("\"").op__add(full_name__1(name__))->op__add(string__00("\" is not a child of \""))->op__add(full_name__1(scope__->name__))->op__add(string__00("\"")));
+	assert__2(is_qualified_by__2(name__, scope__->name__), string__00("\"").op__add(full_name__1(name__)).op__add(string__00("\" is not a child of \"")).op__add(full_name__1(scope__->name__)).op__add(string__00("\"")));
 	if (cond(qualifier_is__2(name__, scope__->name__)))
 	{
 		if (cond(bool__00__op(bool__00__arg(bool__00__op(bool__00__arg(equal_op(scope__->name__->package__, none)) && bool__00__arg(not_equal_op(type__, none)))) && bool__00__arg(equal_op(type__->kind__, NamespaceType__)))))
@@ -5324,7 +5324,7 @@ void add_subtable__3(Name_Subtable__0 *_Nonnull const scope__, Name__0 const *_N
 		}
 	}
 
-	assert__2(equal_op(name__->segments__->op__magnitude(), scope__->name__->segments__->op__magnitude()->op__add(int__00(1))), string__00("Can't add \"").op__add(full_name__1(name__))->op__add(string__00("\" to \""))->op__add(full_name__1(scope__->name__))->op__add(string__00("\"")));
+	assert__2(equal_op(name__->segments__->op__magnitude(), scope__->name__->segments__->op__magnitude().op__add(int__00(1))), string__00("Can't add \"").op__add(full_name__1(name__)).op__add(string__00("\" to \"")).op__add(full_name__1(scope__->name__)).op__add(string__00("\"")));
 }
 
 Name_Subtable__0 *_Nullable find__2(Name_Subtable__0 const *_Nonnull const scope__, string__00 const name__)
@@ -5399,7 +5399,7 @@ void bind_type__2(Name_Subtable__0 *_Nonnull const scope__, Type__0 const *_Nonn
 	assert__2(not_equal_op(type__, none), full_name__1(scope__->name__));
 	if (cond(not_equal_op(scope__->type__, none)))
 	{
-		assert__2(equal_op(full_name__1(scope__->type__->name__), full_name__1(type__->name__)), full_name__1(scope__->name__)->op__add(string__00(" currently `"))->op__add(full_name__1(scope__->type__->name__))->op__add(string__00("` trying to set to `"))->op__add(full_name__1(type__->name__))->op__add(string__00("`")));
+		assert__2(equal_op(full_name__1(scope__->type__->name__), full_name__1(type__->name__)), full_name__1(scope__->name__)->op__add(string__00(" currently `")).op__add(full_name__1(scope__->type__->name__)).op__add(string__00("` trying to set to `")).op__add(full_name__1(type__->name__)).op__add(string__00("`")));
 	}
 
 	scope__->type__ = type__;
@@ -5480,7 +5480,7 @@ void add_name__3(Name_Table__0 *_Nonnull const name_table__, Name__0 const *_Non
 		}
 	}
 
-	assert__2(false__00, string__00("Can't add name \"").op__add(full_name__1(name__))->op__add(string__00("\" because package doesn't exist in table.")));
+	assert__2(false__00, string__00("Can't add name \"").op__add(full_name__1(name__)).op__add(string__00("\" because package doesn't exist in table.")));
 }
 
 Name_Subtable__0 const *_Nullable get_name__2(Name_Table__0 const *_Nonnull const name_table__, Name__0 const *_Nonnull const name__)
