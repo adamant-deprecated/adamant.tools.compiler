@@ -1,3 +1,4 @@
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -28,6 +29,9 @@ public:
 
 // Since C++ doesn't have the _Bool type, we #define one
 #define _Bool bool
+
+// offically, printf_s isn't in C++ and so it doesn't compile in TravisCI
+// #define printf_s printf
 
 #else
 
