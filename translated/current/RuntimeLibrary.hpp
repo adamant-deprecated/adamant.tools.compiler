@@ -1,10 +1,40 @@
-// On windows this disables warnings about using fopen_s instead of fopen
-// It must be defined before including the headers.
-// #define _CRT_SECURE_NO_WARNINGS
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+
+// -----------------------------------------------------------------------------
+// C++ Compatibility
+// -----------------------------------------------------------------------------
+// This section defines things that make C++ behave more like C so we can make
+// the transition to C.
+#ifdef __cplusplus
+
+// This type is used to emulate C style void pointers in C++. That is, they
+// implictly convert to/from other pointer types.
+class void_ptr
+{
+private:
+    void *_Nullable ptr;
+public:
+    template<class T>
+    void_ptr(T *_Nullable value) : ptr((void *_Nullable)value) {}
+    template<class T>
+    operator T *_Nullable() const { return (T *)ptr; }
+    bool operator==(void_ptr rhs) const { return ptr == rhs.ptr; }
+    template<class T>
+    bool operator==(T *_Nullable rhs) const { return ptr == rhs; }
+};
+
+// Since C++ doesn't have the _Bool type, we #define one
+#define _Bool bool
+
+#else
+
+#define void_ptr void*_Nullable
+
+#endif
+
 
 #define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
 #define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
@@ -20,42 +50,40 @@ inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code,
 // -----------------------------------------------------------------------------
 
 // `bool`
-struct bool__00
+struct bool__00 // TODO once we are really using C, name `bool`
 {
-    bool value;
+    _Bool value;
 };
 
 // `true`
-static const bool__00 true__00 = { true };
+static const bool__00 true__00 = { 1 }; // TODO once we are really using C, name `true`
 // `false`
-static const bool__00 false__00 = { false };
+static const bool__00 false__00 = { 0 }; // TODO once we are really using C, name `false`
 
 // Function used in conditions to make them take `bool__00`
-inline bool cond(bool__00 cond) { return cond.value; }
+inline _Bool cond(bool__00 cond) { return cond.value; }
 
 // Used by runtime for converting to bool__00
-inline bool__00 bool__00_from(bool v) { return bool__00 { v }; }
+inline bool__00 bool__00_from(_Bool v) { return (bool__00){ v }; }
 
 // Wrap a bool__00 operation that is bool based
-inline bool__00 bool__00__op(bool v) { return bool__00 { v }; }
+inline bool__00 bool__00__op(_Bool v) { return (bool__00){ v }; }
 // Convert the arguments of a logical operation to bool
-inline bool bool__00__arg(bool__00 v) { return v.value; }
-inline bool__00 bool__00__0op__not(bool__00 v) { return bool__00 { !v.value }; }
+inline _Bool bool__00__arg(bool__00 v) { return v.value; }
+inline bool__00 bool__00__0op__not(bool__00 v) { return (bool__00){ !v.value }; }
 
-// `never`
-struct never__00
+// `never` type
+struct never
 {
 };
 
-// `never?`
-struct o_never__00
+// `never?` type
+struct optional__never
 {
-    // TODO get rid of this conversion operator when compiler emits conversions
-    template<class T>
-    operator T*_Nullable() const { return static_cast<T*>(0); }
 };
 
-static const o_never__00 none;
+// TODO this is a hack for now, the type of `none` should be `never?`
+static const void_ptr none = (void*)0;
 
 template<typename T>
 struct p_optional final
@@ -71,7 +99,7 @@ public:
     // TODO make this constructor explicit
     p_optional(T const & value) : data(value), hasValue(true) {}
     // TODO get rid of this conversion operator when compiler emits conversions
-    p_optional(o_never__00 none) : hasValue(false) {}
+    p_optional(void_ptr value) : hasValue(false) {}
     auto has_value() const -> bool__00 { return bool__00_from(hasValue); }
     auto value() const -> T { return data; }
 
@@ -282,9 +310,9 @@ inline auto equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bool__
         return bool__00__0op__not(rhs.has_value());
 }
 
-inline auto equal_op(o_never__00 lhs, o_never__00 rhs) -> bool__00
+inline auto equal_op(void_ptr lhs, void_ptr rhs) -> bool__00
 {
-    return true__00;
+    return bool__00_from(lhs == rhs);
 }
 
 inline auto equal_op(code_point__00 lhs, code_point__00 rhs) -> bool__00
@@ -296,16 +324,16 @@ auto equal_op(string__00 lhs, string__00 rhs) -> bool__00;
 
 // TODO implement this without templates
 template<typename T>
-inline auto equal_op(T const *_Nullable lhs, o_never__00 rhs) -> bool__00
+inline auto equal_op(T const *_Nullable lhs, void_ptr rhs) -> bool__00
 {
-    return bool__00_from(lhs == 0);
+    return bool__00_from(lhs == rhs);
 }
 
 // TODO implement this without templates
 template<typename T>
-inline auto equal_op(o_never__00 lhs, T const *_Nullable rhs) -> bool__00
+inline auto equal_op(void_ptr lhs, T const *_Nullable rhs) -> bool__00
 {
-    return bool__00_from(0 == rhs);
+    return bool__00_from(lhs == rhs);
 }
 
 // TODO Get rid of this ability
@@ -336,16 +364,16 @@ inline auto not_equal_op(T lhs, T  rhs) -> bool__00
 
 // TODO implement this without templates
 template<typename T>
-inline auto not_equal_op(T const *_Nullable lhs, o_never__00 rhs) -> bool__00
+inline auto not_equal_op(T const *_Nullable lhs, void_ptr rhs) -> bool__00
 {
-    return bool__00_from(lhs != 0);
+    return bool__00_from(lhs != rhs);
 }
 
 // TODO implement this without templates
 template<typename T>
-inline auto not_equal_op(o_never__00 lhs, T const *_Nullable rhs) -> bool__00
+inline auto not_equal_op(void_ptr lhs, T const *_Nullable rhs) -> bool__00
 {
-    return bool__00_from(0 != rhs);
+    return bool__00_from(lhs != rhs);
 }
 
 // -----------------------------------------------------------------------------
@@ -353,30 +381,18 @@ inline auto not_equal_op(o_never__00 lhs, T const *_Nullable rhs) -> bool__00
 // -----------------------------------------------------------------------------
 // Parts of the standard library that are currently implemented in the runtime.
 
-// This type is used to emulate C style void pointers in C++. That is, they
-// implictly convert to/from other pointer types.
-class voidp
-{
-    void *_Nonnull p;
-public:
-    template<class T>
-    voidp (T *_Nonnull pp) : p ((void *_Nonnull)pp) {}
-    template<class T>
-    operator T *_Nonnull() { return (T *) p; }
-};
-
 // Version of allocate used directly by the runtime
-inline voidp allocate(size_t bytes)
+inline void_ptr allocate(size_t bytes)
 {
     return malloc(bytes);
 }
 
-inline voidp allocate__1(int__00 bytes)
+inline void_ptr allocate__1(int__00 bytes)
 {
     return malloc(bytes.value);
 }
 
-inline void free__1(voidp object)
+inline void free__1(void_ptr object)
 {
     free(object);
 }
