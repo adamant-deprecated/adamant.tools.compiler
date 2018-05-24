@@ -7,13 +7,13 @@
 
 uint__00 int__00::as_uint__0() const
 {
-    assert__1(bool__00_from(this->value >= 0));
+    lib_assert(this->value >= 0);
     return uint__00(this->value);
 }
 
 char code_point__00__to_char(code_point__00 v)
 {
-    assert__1(bool__00_from(v.value <= 0xFF));
+    lib_assert(v.value <= 0xFF);
     return v.value;
 }
 
@@ -40,7 +40,7 @@ string__00::string__00(int__00 other)
 {
     char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
     int length = sprintf_s(buffer, 12, "%d", other.value);
-    assert__1(bool__00_from(length > 0));
+    lib_assert(length > 0);
     Length = length;
     Buffer = buffer;
 }
@@ -152,7 +152,7 @@ BOOL string__00__0op__less_than(string__00 lhs, string__00 rhs)
     _Bool result = strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
-    return bool__00_from(result);
+    return bool_from(result);
 }
 BOOL string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
 {
@@ -161,13 +161,13 @@ BOOL string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
     _Bool result = strcmp(left, right) <= 0;
     delete[] left;
     delete[] right;
-    return bool__00_from(result);
+    return bool_from(result);
 }
 BOOL string__00__0op__greater_than(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    BOOL result = bool__00_from(strcmp(left, right) > 0);
+    BOOL result = bool_from(strcmp(left, right) > 0);
     delete[] left;
     delete[] right;
     return result;
@@ -176,7 +176,7 @@ BOOL string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    BOOL result = bool__00_from(strcmp(left, right) >= 0);
+    BOOL result = bool_from(strcmp(left, right) >= 0);
     delete[] left;
     delete[] right;
     return result;
@@ -359,10 +359,10 @@ void system__text__String_Builder__0::AppendLine__0()
 
 void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
 {
-    assert__1(bool__00_from(start.value < this->length));
+    lib_assert(start.value < this->length);
 
     int end = start.value + length.value;
-    assert__1(bool__00_from(end <= this->length)); // less than or equal because end is one past the end of the remove
+    lib_assert(end <= this->length); // less than or equal because end is one past the end of the remove
 
     memmove_s(buffer+start.value, capacity-start.value, buffer+end, this->length-end);
     this->length -= length.value;
@@ -370,7 +370,7 @@ void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
 
 void system__text__String_Builder__0::Remove__1(int__00 start)
 {
-    assert__1(bool__00_from(start.value < length));
+    lib_assert(start.value < length);
     length = start.value;
 }
 
