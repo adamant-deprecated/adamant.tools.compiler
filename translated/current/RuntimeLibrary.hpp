@@ -93,6 +93,17 @@ struct optional__never
 {
 };
 
+typedef struct optional__BOOL optional__BOOL;
+struct optional__BOOL
+{
+    BOOL has_value;
+    union
+    {
+        never _;
+        BOOL value;
+    };
+};
+
 // TODO this is a hack for now, the type of `none` should be `never?`
 static const void_ptr none = (void*)0;
 
@@ -301,12 +312,12 @@ inline BOOL equal_op(BOOL lhs, BOOL rhs)
 {
     return bool_from(lhs.value == rhs.value);
 }
-inline BOOL equal_op(p_optional<BOOL> lhs, p_optional<BOOL> rhs)
+inline BOOL equal_op(optional__BOOL lhs, optional__BOOL rhs)
 {
-    if(lhs.has_value().value)
-        return bool_op(bool_arg(rhs.has_value()) && bool_arg(equal_op(lhs.value(), rhs.value())));
+    if(cond(lhs.has_value))
+        return bool_op(bool_arg(rhs.has_value) && bool_arg(equal_op(lhs.value, rhs.value)));
     else
-        return BOOL__0op__not(rhs.has_value());
+        return BOOL__0op__not(rhs.has_value);
 }
 
 inline BOOL equal_op(int__00 lhs, int__00 rhs)
