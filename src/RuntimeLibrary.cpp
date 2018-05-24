@@ -149,7 +149,7 @@ bool__00 string__00__0op__less_than(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = strcmp(left, right) < 0;
+    _Bool result = strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
     return bool__00_from(result);
@@ -158,7 +158,7 @@ bool__00 string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = strcmp(left, right) <= 0;
+    _Bool result = strcmp(left, right) <= 0;
     delete[] left;
     delete[] right;
     return bool__00_from(result);
