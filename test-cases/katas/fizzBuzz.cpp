@@ -13,12 +13,12 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	int32 x__ = int32(1);
+	int32 x__ = (int32){1};
 	for (;;)
 	{
-		if (cond(equal_op(x__.op__remainder(int32(3)), int32(0))))
+		if (cond(equal_op(x__.op__remainder((int32){3}), (int32){0})))
 		{
-			if (cond(equal_op(x__.op__remainder(int32(5)), int32(0))))
+			if (cond(equal_op(x__.op__remainder((int32){5}), (int32){0})))
 			{
 				console__->WriteLine__1(string("FizzBuzz"));
 			}
@@ -27,7 +27,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 				console__->WriteLine__1(string("Fizz"));
 			}
 		}
-		else if (cond(equal_op(x__.op__remainder(int32(5)), int32(0))))
+		else if (cond(equal_op(x__.op__remainder((int32){5}), (int32){0})))
 		{
 			console__->WriteLine__1(string("Buzz"));
 		}
@@ -36,8 +36,8 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 			console__->WriteLine__1(x__);
 		}
 
-		x__.op__add_assign(int32(1));
-		if (cond(int32__0op__greater_than(x__, int32(100))))
+		x__.op__add_assign((int32){1});
+		if (cond(int32__0op__greater_than(x__, (int32){100})))
 		{
 			break;
 		}

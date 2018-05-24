@@ -1,7 +1,7 @@
 public class Token_Stream
 {
     public let source: Source_Text;
-    public var position: uint;
+    public var position: int;
     public let diagnostics: mut system.collections.List<Diagnostic>;
     public var end_of_file: bool;
 
@@ -21,7 +21,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
         return end_of_file_token(tokens);
     }
 
-    var end: uint = -1;
+    var end: int = -1;
     while tokens.position < source_byte_length(tokens.source)
     {
         let curChar: code_point = tokens.source.text[tokens.position];
@@ -226,9 +226,9 @@ public end_of_file_token(tokens: mut Token_Stream) -> Syntax_Node?
     return new_token(tokens, EndOfFileToken, tokens.position);
 }
 
-public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: uint) -> Syntax_Node
+public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Syntax_Node
 {
-    let length: uint = end-tokens.position;
+    let length: int = end-tokens.position;
     let value: string = tokens.source.text.Substring(tokens.position, length);
     var type: int;
     if value == "new"
@@ -320,12 +320,12 @@ public new_operator_token(tokens: mut Token_Stream, type: int) -> Syntax_Node
     return new_token(tokens, type, tokens.position + 1);
 }
 
-public new_operator_token(tokens: mut Token_Stream, type: int, length: uint) -> Syntax_Node
+public new_operator_token(tokens: mut Token_Stream, type: int, length: int) -> Syntax_Node
 {
     return new_token(tokens, type, tokens.position + length);
 }
 
-public new_token(tokens: mut Token_Stream, type: int, end: uint) -> Syntax_Node
+public new_token(tokens: mut Token_Stream, type: int, end: int) -> Syntax_Node
 {
     let token: mut Syntax_Node = new Syntax_Node(type, tokens.source, tokens.position, end - tokens.position);
 

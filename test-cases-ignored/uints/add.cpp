@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	uint32 x__ = int32(1).as_uint__0()->op__add(int32(2).as_uint__0());
+	uint32 x__ = (int32){1}.as_uint__0()->op__add((int32){2}.as_uint__0());
 }
 
 // Entry Point Adapter

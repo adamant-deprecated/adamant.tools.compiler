@@ -3,12 +3,12 @@ public class Syntax_Node
     public let kind: int;
     public let is_missing: bool;
     public let source: Source_Text;
-    public let start: uint;
-    public let byte_length: uint; // TODO is this ByteLength?
+    public let start: int;
+    public let byte_length: int; // TODO is this ByteLength?
     public let children: system.collections.List<Syntax_Node>;
     public let node_diagnostics: mut system.collections.List<Diagnostic>;
 
-    public new(type: int, source: Source_Text, start: uint, length: uint)
+    public new(type: int, source: Source_Text, start: int, length: int)
     {
         self.kind = type;
         self.is_missing = false;
@@ -19,7 +19,7 @@ public class Syntax_Node
         self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
-    public new(type: int, isMissing: bool, source: Source_Text, start: uint, length: uint)
+    public new(type: int, isMissing: bool, source: Source_Text, start: int, length: int)
     {
         self.kind = type;
         self.is_missing = isMissing;
@@ -57,7 +57,7 @@ public class Syntax_Node
         self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
-    public new missing(type: int, source: Source_Text, start: uint)
+    public new missing(type: int, source: Source_Text, start: int)
     {
         self.kind = type;
         self.is_missing = true;

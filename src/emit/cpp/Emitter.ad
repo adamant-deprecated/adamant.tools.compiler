@@ -428,7 +428,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NumericLiteralExpression
     {
-        write(builder, "int32(" + get_text(syntax) + ")");
+        write(builder, "(int32){" + get_text(syntax) + "}");
     }
     else if syntax.kind == TrueLiteralExpression
     {

@@ -24,21 +24,21 @@ struct C__0
 C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string const name__)
 {
 	self->name__ = name__;
-	self->kind__ = int32(0);
+	self->kind__ = (int32){0};
 	return self;
 }
 
 C__0 *_Nonnull C__0__0new__one__1(C__0 *_Nonnull self, string const name__)
 {
 	self->name__ = name__;
-	self->kind__ = int32(1);
+	self->kind__ = (int32){1};
 	return self;
 }
 
 C__0 *_Nonnull C__0__0new__two__1(C__0 *_Nonnull self, string const name__)
 {
 	self->name__ = name__;
-	self->kind__ = int32(2);
+	self->kind__ = (int32){2};
 	return self;
 }
 

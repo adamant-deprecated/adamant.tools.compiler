@@ -9,8 +9,8 @@ public class Semantic_Node
     public let kind: int;
     public let is_missing: bool;
     public let source: Source_Text;
-    public let start: uint;
-    public let byte_length: uint;
+    public let start: int;
+    public let byte_length: int;
     public let children: system.collections.List<Semantic_Node>;
     public let node_diagnostics: mut system.collections.List<Diagnostic>;
 

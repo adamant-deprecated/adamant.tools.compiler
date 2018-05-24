@@ -4,11 +4,11 @@
 {
     public let TokenType: Token_Type;
     public let source: Source_Text;
-    public let start: uint;
-    public let byte_length: uint; // TODO Is this byte length?
+    public let start: int;
+    public let byte_length: int; // TODO Is this byte length?
     //public Text: string;
 
-    public new(tokenType: Token_Type, source: Source_Text, start: uint, length: uint)
+    public new(tokenType: Token_Type, source: Source_Text, start: int, length: int)
     {
         TokenType = tokenType;
         self.source = source;

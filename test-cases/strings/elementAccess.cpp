@@ -14,7 +14,7 @@ void main__0();
 void main__0()
 {
 	code_point result__;
-	result__ = string("hello").op__Element(int32(0));
+	result__ = string("hello").op__Element((int32){0});
 }
 
 // Entry Point Adapter

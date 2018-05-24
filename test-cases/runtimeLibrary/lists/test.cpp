@@ -16,12 +16,12 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 	system__collections__List__1<string> *_Nonnull const strings__ = system__collections__List__1__0new__0<string>(allocate(sizeof(system__collections__List__1<string>)));
 	strings__->add__1(string("Hello"));
 	strings__->add__1(string("World!"));
-	if (cond(not_equal_op(strings__->op__magnitude(), int32(2))))
+	if (cond(not_equal_op(strings__->op__magnitude(), (int32){2})))
 	{
 		console__->WriteLine__1(string("List length not 2!"));
 	}
 
-	console__->WriteLine__1(string("strings[0]=").op__add(strings__->op__Element(int32(0))));
+	console__->WriteLine__1(string("strings[0]=").op__add(strings__->op__Element((int32){0})));
 	for (string const s__ : *(strings__))
 	{
 		console__->WriteLine__1(s__);
