@@ -14,7 +14,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
 	int32 const v__ = int32(42);
-	p_optional<int32> const n__ = none;
+	optional__int32 const n__ = none;
 	BOOL r__;
 	r__ = equal_op(v__, n__);
 	console__->WriteLine__1(string("v == n: ").op__add(r__));

@@ -1,0 +1,14 @@
+0
+12
+v == n: false
+n == v: false
+n == n: true
+n == none: true
+none == n: true
+none == none: true
+v =/= n: true
+n =/= v: true
+n =/= n: false
+n =/= none: false
+none =/= n: false
+none =/= none: false

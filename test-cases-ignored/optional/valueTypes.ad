@@ -1,0 +1,11 @@
+public Func(x: string?, y: uint?) -> int?
+{
+	let z: int? = none;
+	let d: int?? = none;
+	return none;
+}
+
+public main(console: mut system.console.Console) -> void
+{
+	Func(none, none);
+}

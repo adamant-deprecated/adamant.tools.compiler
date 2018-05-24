@@ -1,0 +1,34 @@
+public main(console: mut system.console.Console) -> void
+{
+	let v: system.text.String_Builder = new system.text.String_Builder();
+	let n: system.text.String_Builder? = none;
+	var r: bool;
+
+	// Equal
+	r = v == n;
+	console.WriteLine("v == n: " + r);
+	r = n == v;
+	console.WriteLine("n == v: " + r);
+	r = n == n;
+	console.WriteLine("n == n: " + r);
+	r = n == none;
+	console.WriteLine("n == none: " + r);
+	r = none == n;
+	console.WriteLine("none == n: " + r);
+	r = none == none;
+	console.WriteLine("none == none: " + r);
+
+	// Not Equal
+	r = v =/= n;
+	console.WriteLine("v =/= n: " + r);
+	r = n =/= v;
+	console.WriteLine("n =/= v: " + r);
+	r = n =/= n;
+	console.WriteLine("n =/= n: " + r);
+	r = n =/= none;
+	console.WriteLine("n =/= none: " + r);
+	r = none =/= n;
+	console.WriteLine("none =/= n: " + r);
+	r = none =/= none;
+	console.WriteLine("none =/= none: " + r);
+}

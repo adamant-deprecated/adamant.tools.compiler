@@ -2,18 +2,16 @@ public class Test
 {
 }
 
-public Func(x: string?, y: uint?) -> int?
+public Func(x: Test?) -> Test?
 {
-	let z: int? = none;
 	let t: Test? = none;
 	let sb: mut system.text.String_Builder? = none;
-	let l: system.collections.List<int?> = new system.collections.List<int?>();
+	let l: system.collections.List<Test?> = new system.collections.List<Test?>();
 	let m: mut Test? = none;
-	let d: int?? = none;
 	return none;
 }
 
 public main(console: mut system.console.Console) -> void
 {
-	Func(none, none);
+	Func(none);
 }

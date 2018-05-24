@@ -10,7 +10,7 @@ public main(console: mut system.console.Console) -> void
 	r = n == v;
 	console.WriteLine("n == v: " + r);
 	r = n == n;
-	console.WriteLine("n == v: " + r);
+	console.WriteLine("n == n: " + r);
 	r = 42 == none;
 	console.WriteLine("42 == none: " + r);
 	r = none == 42;
@@ -24,22 +24,11 @@ public main(console: mut system.console.Console) -> void
 	r = n =/= v;
 	console.WriteLine("n =/= v: " + r);
 	r = n =/= n;
-	console.WriteLine("n =/= v: " + r);
+	console.WriteLine("n =/= n: " + r);
 	r = 42 =/= none;
 	console.WriteLine("42 =/= none: " + r);
 	r = none =/= 42;
 	console.WriteLine("none =/= 42: " + r);
 	r = none =/= none;
 	console.WriteLine("none =/= none: " + r);
-
-    // Reference equal none
-    let sb: system.text.String_Builder? = none;
-    r = sb == none;
-    console.WriteLine("sb == none: " + r);
-    r = none == sb;
-    console.WriteLine("none == sb: " + r);
-    r = sb =/= none;
-    console.WriteLine("sb =/= none: " + r);
-    r = none =/= sb;
-    console.WriteLine("none =/= sb: " + r);
 }
