@@ -1,8 +1,10 @@
-#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+
+// TODO C: switch to memcpy_s
+// TODO C: switch to printf_s
 
 // -----------------------------------------------------------------------------
 // C++ Compatibility
@@ -29,9 +31,6 @@ public:
 
 // Since C++ doesn't have the _Bool type, we #define one
 #define _Bool bool
-
-// offically, printf_s isn't in C++ and so it doesn't compile in TravisCI
-// #define printf_s printf
 
 #else
 
@@ -405,7 +404,7 @@ inline void assert__2__impl(const bool__00 condition, char const *_Nonnull code,
 {
     if(!condition.value)
     {
-        printf_s("%s", string__00("Assertion failed: ").op__add(string__00(code)).op__add(string__00(", ")).op__add(message)
+        printf("%s", string__00("Assertion failed: ").op__add(string__00(code)).op__add(string__00(", ")).op__add(message)
             .op__add(string__00(", file ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
         exit(70);
     }
@@ -415,7 +414,7 @@ inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code,
 {
     if(!condition.value)
     {
-        printf_s("%s", string__00("Assertion failed: ").op__add(string__00(code))
+        printf("%s", string__00("Assertion failed: ").op__add(string__00(code))
             .op__add(string__00(", file ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
         exit(70);
     }
@@ -423,14 +422,14 @@ inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code,
 
 _Noreturn inline void NOT_IMPLEMENTED(const string__00 message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf_s("%s", string__00("Function ").op__add(string__00(function))
+    printf("%s", string__00("Function ").op__add(string__00(function))
         .op__add(string__00(" not yet implemented, ")).op__add(message).op__add(string__00(", ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
     exit(70);
 }
 
 _Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf_s("%s", string__00("Function ").op__add(string__00(function))
+    printf("%s", string__00("Function ").op__add(string__00(function))
         .op__add(string__00(" not yet implemented, ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
     exit(70);
 }
@@ -440,7 +439,7 @@ _Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const 
 
 _Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf_s("%s", string__00("Reached \"UNREACHABLE\" statement in function ").op__add(string__00(function))
+    printf("%s", string__00("Reached \"UNREACHABLE\" statement in function ").op__add(string__00(function))
         .op__add(string__00(", ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
     exit(70);
 }
@@ -488,7 +487,7 @@ void system__collections__List__1<T>::add__1(T value)
         // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         T* newValues = (T*)new char[newCapacity * sizeof(T)];
-        memcpy_s(newValues, newCapacity * sizeof(T), values, length * sizeof(T));
+        memcpy(newValues, values, length * sizeof(T));
         values = newValues;
         capacity = newCapacity;
     }
