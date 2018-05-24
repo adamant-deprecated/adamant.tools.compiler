@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	bool__00 x__;
+	BOOL x__;
 	x__ = int__00(1).as_uint__0()->op__less_than(int__00(2).as_uint__0());
 	x__ = int__00(1).as_uint__0()->op__less_than_or_equal(int__00(2).as_uint__0());
 	x__ = int__00(1).as_uint__0()->op__greater_than(int__00(2).as_uint__0());

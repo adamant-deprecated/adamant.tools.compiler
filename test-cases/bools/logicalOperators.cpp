@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-bool__00 True__0();
+BOOL True__0();
 void main__0();
 
 // Class Declarations
@@ -12,17 +12,17 @@ void main__0();
 
 // Definitions
 
-bool__00 True__0()
+BOOL True__0()
 {
-	return true__00;
+	return TRUE;
 }
 
 void main__0()
 {
-	bool__00 x__;
-	x__ = bool__00__op(bool__00__arg(true__00) && bool__00__arg(false__00));
-	x__ = bool__00__op(bool__00__arg(true__00) || bool__00__arg(false__00));
-	x__ = bool__00__0op__not(true__00);
+	BOOL x__;
+	x__ = bool__00__op(bool__00__arg(TRUE) && bool__00__arg(FALSE));
+	x__ = bool__00__op(bool__00__arg(TRUE) || bool__00__arg(FALSE));
+	x__ = bool__00__0op__not(TRUE);
 	x__ = bool__00__op(bool__00__arg(True__0()) || bool__00__arg(True__0()));
 }
 

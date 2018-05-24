@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	bool__00 x__;
+	BOOL x__;
 	x__ = equal_op(code_point__00('a'), code_point__00('b'));
 	x__ = not_equal_op(code_point__00('a'), code_point__00('b'));
 }

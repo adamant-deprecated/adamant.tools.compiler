@@ -11,7 +11,7 @@ void main__0();
 
 struct Test__0
 {
-	bool__00 value__;
+	BOOL value__;
 };
 
 // Global Definitions
@@ -20,13 +20,13 @@ struct Test__0
 
 Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self)
 {
-	self->value__ = true__00;
+	self->value__ = TRUE;
 	return self;
 }
 
 void main__0()
 {
-	bool__00 const value__ = Test__0__0new__0(allocate(sizeof(Test__0)))->value__;
+	BOOL const value__ = Test__0__0new__0(allocate(sizeof(Test__0)))->value__;
 }
 
 // Entry Point Adapter

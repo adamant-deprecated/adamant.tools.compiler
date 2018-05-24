@@ -23,7 +23,7 @@ void main__0()
 {
 	Test__0 const *_Nonnull const a__ = Test__0__0new__0(allocate(sizeof(Test__0)));
 	Test__0 const *_Nonnull const b__ = Test__0__0new__0(allocate(sizeof(Test__0)));
-	bool__00 x__;
+	BOOL x__;
 	x__ = equal_op(a__, b__);
 	x__ = not_equal_op(a__, b__);
 }

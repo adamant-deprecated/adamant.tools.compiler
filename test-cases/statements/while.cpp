@@ -13,7 +13,7 @@ int__00 main__0();
 
 int__00 main__0()
 {
-	while (cond(true__00))
+	while (cond(TRUE))
 	{
 		return int__00(0);
 	}

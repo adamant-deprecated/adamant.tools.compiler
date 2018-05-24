@@ -13,10 +13,10 @@ void main__0();
 
 void main__0()
 {
-	bool__00 x__;
-	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(true__00)) && bool__00__arg(false__00));
-	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(true__00)) || bool__00__arg(false__00));
-	x__ = bool__00__op(bool__00__arg(false__00) || bool__00__arg(bool__00__op(bool__00__arg(true__00) && bool__00__arg(true__00))));
+	BOOL x__;
+	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(TRUE)) && bool__00__arg(FALSE));
+	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(TRUE)) || bool__00__arg(FALSE));
+	x__ = bool__00__op(bool__00__arg(FALSE) || bool__00__arg(bool__00__op(bool__00__arg(TRUE) && bool__00__arg(TRUE))));
 }
 
 // Entry Point Adapter

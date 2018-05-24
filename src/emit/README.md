@@ -37,6 +37,6 @@ This phase is specified in a short hand notation of concatenating strings.
 ### Special Names
 
 * Tuples: `tuple__0` + number_of_type_parameters + `__` + type_parameters_separated_by_underscores (leading zero distinguishes it from a standard type named "tuple")
-* Primitives: type except `int` is `int32` and `uint` is `uint32` (not having a number of generic args distinguishes them from standard types)
+* Primitives: type except `bool` is `BOOL`, `int` is `int32` and `uint` is `uint32` (not having a number of generic args distinguishes them from standard types)
 * Optional: `optional__` + the_type_that_is_optional (not having a number of generic args distinguishes it from standard types)
-* True & False: `true__00`, `false__00`
+* True & False: `TRUE`, `FALSE`

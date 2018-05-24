@@ -157,7 +157,11 @@ public convert_primitive_type_name(type: Type) -> string
 {
     let name: string = unqualified_name(type.name);
     assert(type.is_primitive, name);
-    if name == "void"
+    if name == "bool"
+    {
+        return "BOOL";
+    }
+    else if name == "void"
     {
         return "void";
     }
@@ -423,9 +427,12 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, "int__00(" + get_text(syntax) + ")");
     }
     else if syntax.kind == TrueLiteralExpression
-        or syntax.kind == FalseLiteralExpression
     {
-        write(builder, get_text(syntax) + "__00");
+        write(builder, "TRUE");
+    }
+    else if syntax.kind == FalseLiteralExpression
+    {
+        write(builder, "FALSE");
     }
     else if syntax.kind == CodePointLiteralExpression
     {

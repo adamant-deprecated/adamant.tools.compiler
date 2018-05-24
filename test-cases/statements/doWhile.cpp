@@ -17,7 +17,7 @@ int__00 main__0()
 	{
 		return int__00(0);
 	}
-	while (cond(true__00));
+	while (cond(TRUE));
 }
 
 // Entry Point Adapter

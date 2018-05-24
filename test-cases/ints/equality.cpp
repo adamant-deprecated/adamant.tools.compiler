@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	bool__00 x__;
+	BOOL x__;
 	x__ = equal_op(int__00(1), int__00(2));
 	x__ = not_equal_op(int__00(1), int__00(2));
 }

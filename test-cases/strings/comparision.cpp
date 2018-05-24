@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	bool__00 x__;
+	BOOL x__;
 	x__ = string__00__0op__less_than(string__00("a"), string__00("b"));
 	x__ = string__00__0op__less_than_or_equal(string__00("a"), string__00("b"));
 	x__ = string__00__0op__greater_than(string__00("a"), string__00("b"));

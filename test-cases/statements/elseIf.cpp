@@ -13,15 +13,15 @@ int__00 main__0();
 
 int__00 main__0()
 {
-	if (cond(false__00))
+	if (cond(FALSE))
 	{
 		return int__00(0);
 	}
-	else if (cond(false__00))
+	else if (cond(FALSE))
 	{
 		return int__00(42);
 	}
-	else if (cond(false__00))
+	else if (cond(FALSE))
 	{
 		return int__00(10);
 	}

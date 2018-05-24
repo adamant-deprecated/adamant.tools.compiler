@@ -13,6 +13,9 @@
 // the transition to C.
 #ifdef __cplusplus
 
+// Use `_Bool` as the native bool type
+#define _Bool bool
+
 // This type is used to emulate C style void pointers in C++. That is, they
 // implictly convert to/from other pointer types.
 class void_ptr
@@ -24,13 +27,10 @@ public:
     void_ptr(T *_Nullable value) : ptr((void *_Nullable)value) {}
     template<class T>
     operator T *_Nullable() const { return (T *)ptr; }
-    bool operator==(void_ptr rhs) const { return ptr == rhs.ptr; }
+    _Bool operator==(void_ptr rhs) const { return ptr == rhs.ptr; }
     template<class T>
-    bool operator==(T *_Nullable rhs) const { return ptr == rhs; }
+    _Bool operator==(T *_Nullable rhs) const { return ptr == rhs; }
 };
-
-// Since C++ doesn't have the _Bool type, we #define one
-#define _Bool bool
 
 #else
 
@@ -38,42 +38,58 @@ public:
 
 #endif
 
-
-#define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
-#define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
-
-typedef struct bool__00 bool__00;
-typedef struct string__00 string__00;
-
-inline void assert__2__impl(const bool__00 condition, char const *_Nonnull code, const string__00 message, char const *_Nonnull file, const int32_t line);
-inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);
-
 // -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
 
 // `bool`
-struct bool__00 // TODO once we are really using C, name `bool`
+// For now, use `BOOL` as the emitted type
+// TODO C: switch `BOOL` to `bool`
+// TODO C: switch `TRUE` to `true`
+// TODO C: switch `FALSE` to `false`
+#ifdef __cplusplus
+
+struct BOOL
 {
     _Bool value;
 };
 
-// `true`
-static const bool__00 true__00 = { 1 }; // TODO once we are really using C, name `true`
-// `false`
-static const bool__00 false__00 = { 0 }; // TODO once we are really using C, name `false`
+static const BOOL TRUE = { true };
+static const BOOL FALSE = { false };
 
-// Function used in conditions to make them take `bool__00`
-inline _Bool cond(bool__00 cond) { return cond.value; }
+#else
 
-// Used by runtime for converting to bool__00
-inline bool__00 bool__00_from(_Bool v) { return (bool__00){ v }; }
+struct BOOL
+{
+    _Bool value;
+};
 
-// Wrap a bool__00 operation that is bool based
-inline bool__00 bool__00__op(_Bool v) { return (bool__00){ v }; }
+static const BOOL TRUE = { 1 };
+static const BOOL TRUE = { 0 };
+
+#endif
+
+// Function used in conditions to make them take `bool`
+inline _Bool cond(BOOL cond) { return cond.value; }
+
+// Used by runtime for converting to bool
+inline BOOL bool__00_from(_Bool v) { return (BOOL){ v }; }
+
+// Wrap a bool operation that is bool based
+inline BOOL bool__00__op(_Bool v) { return (BOOL){ v }; }
 // Convert the arguments of a logical operation to bool
-inline _Bool bool__00__arg(bool__00 v) { return v.value; }
-inline bool__00 bool__00__0op__not(bool__00 v) { return (bool__00){ !v.value }; }
+inline _Bool bool__00__arg(BOOL v) { return v.value; }
+inline BOOL bool__00__0op__not(BOOL v) { return (BOOL){ !v.value }; }
+
+// Need full definition of `bool` for these
+#define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
+#define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
+
+typedef struct string__00 string__00;
+
+inline void assert__2__impl(const BOOL condition, char const *_Nonnull code, const string__00 message, char const *_Nonnull file, const int32_t line);
+inline void assert__1__impl(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);
+
 
 // `never` type
 struct never
@@ -92,7 +108,7 @@ template<typename T>
 struct p_optional final
 {
 private:
-    bool hasValue;
+    _Bool hasValue;
     union
     {
         T data;
@@ -100,10 +116,10 @@ private:
 
 public:
     // TODO make this constructor explicit
-    p_optional(T const & value) : data(value), hasValue(true) {}
+    p_optional(T const & value) : data(value), hasValue(1) {}
     // TODO get rid of this conversion operator when compiler emits conversions
-    p_optional(void_ptr value) : hasValue(false) {}
-    auto has_value() const -> bool__00 { return bool__00_from(hasValue); }
+    p_optional(void_ptr value) : hasValue(0) {}
+    auto has_value() const -> BOOL { return bool__00_from(hasValue); }
     auto value() const -> T { return data; }
 
     T & operator->()
@@ -150,10 +166,10 @@ struct int__00
     // Adamant Members
     void op__add_assign(int__00 other) { this->value += other.value; }
     void op__subtract_assign(int__00 other) { this->value -= other.value; }
-    bool__00 op__less_than(int__00 other) const { return bool__00_from(this->value < other.value); }
-    bool__00 op__less_than_or_equal(int__00 other) const { return bool__00_from(this->value <= other.value); }
-    bool__00 op__greater_than(int__00 other) const { return bool__00_from(this->value > other.value); }
-    bool__00 op__greater_than_or_equal(int__00 other) const { return bool__00_from(this->value >= other.value); }
+    BOOL op__less_than(int__00 other) const { return bool__00_from(this->value < other.value); }
+    BOOL op__less_than_or_equal(int__00 other) const { return bool__00_from(this->value <= other.value); }
+    BOOL op__greater_than(int__00 other) const { return bool__00_from(this->value > other.value); }
+    BOOL op__greater_than_or_equal(int__00 other) const { return bool__00_from(this->value >= other.value); }
     int__00 op__add(int__00 other) const { return int__00(this->value + other.value); }
     int__00 op__subtract(int__00 other) const { return int__00(this->value - other.value); }
     int__00 op__multiply(int__00 other) const { return int__00(this->value * other.value); }
@@ -166,10 +182,10 @@ struct int__00
 };
 
 inline int__00 int__00__0op__negate(int__00 v) { return int__00(-v.value); }
-inline bool__00 int__00__0op__less_than(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
-inline bool__00 int__00__0op__less_than_or_equal(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
-inline bool__00 int__00__0op__greater_than(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
-inline bool__00 int__00__0op__greater_than_or_equal(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
+inline BOOL int__00__0op__less_than(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
+inline BOOL int__00__0op__less_than_or_equal(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
+inline BOOL int__00__0op__greater_than(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
+inline BOOL int__00__0op__greater_than_or_equal(int__00 lhs, int__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
 
 // `uint`
 struct uint__00
@@ -191,18 +207,18 @@ struct uint__00
     // Adamant Members
     void op__add_assign(uint__00 other) { this->value += other.value; }
     void op__subtract_assign(uint__00 other) { this->value -= other.value; }
-    bool__00 op__less_than(uint__00 other) const { return bool__00_from(this->value < other.value); }
-    bool__00 op__less_than_or_equal(uint__00 other) const { return bool__00_from(this->value <= other.value); }
-    bool__00 op__greater_than(uint__00 other) const { return bool__00_from(this->value > other.value); }
-    bool__00 op__greater_than_or_equal(uint__00 other) const { return bool__00_from(this->value >= other.value); }
+    BOOL op__less_than(uint__00 other) const { return bool__00_from(this->value < other.value); }
+    BOOL op__less_than_or_equal(uint__00 other) const { return bool__00_from(this->value <= other.value); }
+    BOOL op__greater_than(uint__00 other) const { return bool__00_from(this->value > other.value); }
+    BOOL op__greater_than_or_equal(uint__00 other) const { return bool__00_from(this->value >= other.value); }
     uint__00 op__add(uint__00 other) const { return uint__00(this->value + other.value); }
     uint__00 op__subtract(uint__00 other) const { return uint__00(this->value - other.value); }
 };
 
-inline bool__00 uint__00__0op__less_than(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
-inline bool__00 uint__00__0op__less_than_or_equal(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
-inline bool__00 uint__00__0op__greater_than(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
-inline bool__00 uint__00__0op__greater_than_or_equal(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
+inline BOOL uint__00__0op__less_than(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
+inline BOOL uint__00__0op__less_than_or_equal(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
+inline BOOL uint__00__0op__greater_than(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
+inline BOOL uint__00__0op__greater_than_or_equal(uint__00 lhs, uint__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
 
 inline int__00::int__00(uint__00 value)
     : value(value.value)
@@ -226,10 +242,10 @@ struct code_point__00
 char code_point__00__to_char(code_point__00 v);
 
 // TODO: Not sure code_point__00 should support comparision operations
-inline bool__00 code_point__00__0op__less_than(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
-inline bool__00 code_point__00__0op__less_than_or_equal(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
-inline bool__00 code_point__00__0op__greater_than(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
-inline bool__00 code_point__00__0op__greater_than_or_equal(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
+inline BOOL code_point__00__0op__less_than(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value < rhs.value); }
+inline BOOL code_point__00__0op__less_than_or_equal(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value <= rhs.value); }
+inline BOOL code_point__00__0op__greater_than(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value > rhs.value); }
+inline BOOL code_point__00__0op__greater_than_or_equal(code_point__00 lhs, code_point__00 rhs) { return bool__00_from(lhs.value >= rhs.value); }
 
 struct string__00
 {
@@ -251,7 +267,7 @@ struct string__00
     // Hack to support conversion of int and code_point__00 to string__00s for now
     string__00(int__00 other);
     string__00(code_point__00 other);
-    explicit string__00(bool__00 other);
+    explicit string__00(BOOL other);
 
     // Adamant Members
     // TODO ByteLength should be a property
@@ -266,13 +282,13 @@ struct string__00
     // TODO check index bounds
     code_point__00 op__Element(int__00 const index) const { return code_point__00(Buffer[index.value]); }
     string__00 op__add(string__00 const & value) const;
-    string__00 op__add(bool__00 value) const { return this->op__add(string__00(value)); }
+    string__00 op__add(BOOL value) const { return this->op__add(string__00(value)); }
 };
 
-bool__00 string__00__0op__less_than(string__00 lhs, string__00 rhs);
-bool__00 string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs);
-bool__00 string__00__0op__greater_than(string__00 lhs, string__00 rhs);
-bool__00 string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs);
+BOOL string__00__0op__less_than(string__00 lhs, string__00 rhs);
+BOOL string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs);
+BOOL string__00__0op__greater_than(string__00 lhs, string__00 rhs);
+BOOL string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs);
 
 string__00 string__00__0new__0();
 string__00 string__00__0new__1(string__00 value);
@@ -289,11 +305,11 @@ inline int__00 int__00::op__magnitude() const
 // Operators
 // -----------------------------------------------------------------------------
 
-inline auto equal_op(bool__00 lhs, bool__00 rhs) -> bool__00
+inline BOOL equal_op(BOOL lhs, BOOL rhs)
 {
     return bool__00_from(lhs.value == rhs.value);
 }
-inline auto equal_op(p_optional<bool__00> lhs, p_optional<bool__00> rhs) -> bool__00
+inline BOOL equal_op(p_optional<BOOL> lhs, p_optional<BOOL> rhs)
 {
     if(lhs.has_value().value)
         return bool__00__op(bool__00__arg(rhs.has_value()) && bool__00__arg(equal_op(lhs.value(), rhs.value())));
@@ -301,11 +317,11 @@ inline auto equal_op(p_optional<bool__00> lhs, p_optional<bool__00> rhs) -> bool
         return bool__00__0op__not(rhs.has_value());
 }
 
-inline auto equal_op(int__00 lhs, int__00 rhs) -> bool__00
+inline BOOL equal_op(int__00 lhs, int__00 rhs)
 {
     return bool__00_from(lhs.value == rhs.value);
 }
-inline auto equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bool__00
+inline BOOL equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs)
 {
     if(lhs.has_value().value)
         return bool__00__op(bool__00__arg(rhs.has_value()) && bool__00__arg(equal_op(lhs.value(), rhs.value())));
@@ -313,44 +329,44 @@ inline auto equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bool__
         return bool__00__0op__not(rhs.has_value());
 }
 
-inline auto equal_op(void_ptr lhs, void_ptr rhs) -> bool__00
+inline BOOL equal_op(void_ptr lhs, void_ptr rhs)
 {
     return bool__00_from(lhs == rhs);
 }
 
-inline auto equal_op(code_point__00 lhs, code_point__00 rhs) -> bool__00
+inline BOOL equal_op(code_point__00 lhs, code_point__00 rhs)
 {
     return bool__00_from(lhs.value == rhs.value);
 }
 
-auto equal_op(string__00 lhs, string__00 rhs) -> bool__00;
+BOOL equal_op(string__00 lhs, string__00 rhs);
 
 // TODO implement this without templates
 template<typename T>
-inline auto equal_op(T const *_Nullable lhs, void_ptr rhs) -> bool__00
+inline BOOL equal_op(T const *_Nullable lhs, void_ptr rhs)
 {
     return bool__00_from(lhs == rhs);
 }
 
 // TODO implement this without templates
 template<typename T>
-inline auto equal_op(void_ptr lhs, T const *_Nullable rhs) -> bool__00
+inline BOOL equal_op(void_ptr lhs, T const *_Nullable rhs)
 {
     return bool__00_from(lhs == rhs);
 }
 
 // TODO Get rid of this ability
 template<typename T>
-inline auto equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs) -> bool__00
+inline BOOL equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs)
 {
     return bool__00_from(lhs == 0);
 }
 
-inline auto not_equal_op(int__00 lhs, int__00 rhs) -> bool__00
+inline BOOL not_equal_op(int__00 lhs, int__00 rhs)
 {
     return bool__00_from(lhs.value != rhs.value);
 }
-inline auto not_equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bool__00
+inline BOOL not_equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs)
 {
     if(lhs.has_value().value)
         return bool__00__op(bool__00__arg(bool__00__0op__not(rhs.has_value())) || bool__00__arg(not_equal_op(lhs.value(), rhs.value())));
@@ -360,21 +376,21 @@ inline auto not_equal_op(p_optional<int__00> lhs, p_optional<int__00> rhs) -> bo
 
 // TODO implement this without templates
 template<typename T>
-inline auto not_equal_op(T lhs, T  rhs) -> bool__00
+inline BOOL not_equal_op(T lhs, T  rhs)
 {
     return bool__00__0op__not(equal_op(lhs, rhs));
 }
 
 // TODO implement this without templates
 template<typename T>
-inline auto not_equal_op(T const *_Nullable lhs, void_ptr rhs) -> bool__00
+inline BOOL not_equal_op(T const *_Nullable lhs, void_ptr rhs)
 {
     return bool__00_from(lhs != rhs);
 }
 
 // TODO implement this without templates
 template<typename T>
-inline auto not_equal_op(void_ptr lhs, T const *_Nullable rhs) -> bool__00
+inline BOOL not_equal_op(void_ptr lhs, T const *_Nullable rhs)
 {
     return bool__00_from(lhs != rhs);
 }
@@ -400,7 +416,7 @@ inline void free__1(void_ptr object)
     free(object);
 }
 
-inline void assert__2__impl(const bool__00 condition, char const *_Nonnull code, const string__00 message, char const *_Nonnull file, const int32_t line)
+inline void assert__2__impl(const BOOL condition, char const *_Nonnull code, const string__00 message, char const *_Nonnull file, const int32_t line)
 {
     if(!condition.value)
     {
@@ -410,7 +426,7 @@ inline void assert__2__impl(const bool__00 condition, char const *_Nonnull code,
     }
 }
 
-inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)
+inline void assert__1__impl(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)
 {
     if(!condition.value)
     {

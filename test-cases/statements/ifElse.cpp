@@ -13,7 +13,7 @@ int__00 main__0();
 
 int__00 main__0()
 {
-	if (cond(true__00))
+	if (cond(TRUE))
 	{
 		return int__00(0);
 	}

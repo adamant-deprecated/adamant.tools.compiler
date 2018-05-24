@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-bool__00 True__0();
+BOOL True__0();
 void main__0();
 
 // Class Declarations
@@ -12,16 +12,16 @@ void main__0();
 
 // Definitions
 
-bool__00 True__0()
+BOOL True__0()
 {
-	return true__00;
+	return TRUE;
 }
 
 void main__0()
 {
-	bool__00 x__;
-	x__ = equal_op(true__00, false__00);
-	x__ = not_equal_op(true__00, false__00);
+	BOOL x__;
+	x__ = equal_op(TRUE, FALSE);
+	x__ = not_equal_op(TRUE, FALSE);
 	x__ = equal_op(True__0(), True__0());
 }
 

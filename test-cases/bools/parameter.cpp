@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-bool__00 Func__1(bool__00 const value__);
+BOOL Func__1(BOOL const value__);
 void main__0();
 
 // Class Declarations
@@ -12,14 +12,14 @@ void main__0();
 
 // Definitions
 
-bool__00 Func__1(bool__00 const value__)
+BOOL Func__1(BOOL const value__)
 {
-	return false__00;
+	return FALSE;
 }
 
 void main__0()
 {
-	Func__1(true__00);
+	Func__1(TRUE);
 }
 
 // Entry Point Adapter
