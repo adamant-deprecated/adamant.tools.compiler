@@ -39,7 +39,7 @@ string__00::string__00(int__00 other)
     : Length(0), Buffer(0)
 {
     char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
-    int length = sprintf_s(buffer, 12, "%d", other.value);
+    int length = sprintf(buffer, "%d", other.value);
     lib_assert(length > 0);
     Length = length;
     Buffer = buffer;
@@ -211,15 +211,15 @@ ResourceManager *const resource_manager__ = new ResourceManager();
 
 void debug_write__1(string__00 value)
 {
-    fprintf_s(stderr, "%.*s", value.Length, value.Buffer);
+    fprintf(stderr, "%.*s", value.Length, value.Buffer);
 }
 void debug_write_line__1(string__00 value)
 {
-    fprintf_s(stderr, "%.*s\n", value.Length, value.Buffer);
+    fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
 }
 void debug_write_line__0()
 {
-    fprintf_s(stderr, "\n");
+    fprintf(stderr, "\n");
 }
 
 void system__console__Console__0::Write__1(string__00 value)
@@ -248,7 +248,7 @@ system__console__Arguments__0::system__console__Arguments__0(int argc, char cons
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string__00& fileName)
 {
     char const *_Nonnull fname = fileName.cstr();
-    fopen_s(&self->file, fname, "rb"); // TODO check for error
+    self->file= fopen(fname, "rb"); // TODO check for error
     delete[] fname;
     return self;
 }
@@ -271,7 +271,7 @@ void system__io__File_Reader__0::Close__0()
 system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string__00& fileName)
 {
     char const *_Nonnull fname = fileName.cstr();
-    fopen_s(&self->file, fname, "wb"); // TODO check error
+    self->file = fopen(fname, "wb"); // TODO check error
     delete[] fname;
     return self;
 }
@@ -364,7 +364,7 @@ void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
     int end = start.value + length.value;
     lib_assert(end <= this->length); // less than or equal because end is one past the end of the remove
 
-    memmove_s(buffer+start.value, capacity-start.value, buffer+end, this->length-end);
+    memmove(buffer+start.value, buffer+end, this->length-end);
     this->length -= length.value;
 }
 

@@ -1,10 +1,13 @@
+// On windows this disables warnings about using fopen_s instead of fopen
+// It must be defined before including the headers.
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
 
-// TODO C: switch to memcpy_s
-// TODO C: switch to printf_s
+// TODO C: Consider using *_s versions of standard lib functions
 
 // -----------------------------------------------------------------------------
 // C++ Compatibility
