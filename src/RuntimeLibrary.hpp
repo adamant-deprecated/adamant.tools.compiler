@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <stdexcept>
+#include <assert.h>
 #include <string>
 
 // -----------------------------------------------------------------------------
@@ -69,22 +69,22 @@ public:
 
     T & operator->()
     {
-        if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
+        assert(hasValue && "Access to `none` Optional value");
         return data;
     }
     T const & operator->() const
     {
-        if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
+        assert(hasValue && "Access to `none` Optional value");
         return data;
     }
     T & operator* ()
     {
-        if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
+        assert(hasValue && "Access to `none` Optional value");
         return data;
     }
     T const & operator* () const
     {
-        if(!hasValue) throw std::runtime_error("Access to `none` Optional value");
+        assert(hasValue && "Access to `none` Optional value");
         return data;
     }
 };
@@ -120,7 +120,7 @@ struct int__00
     int__00 op__multiply(int__00 other) const { return int__00(this->value * other.value); }
     int__00 op__divide(int__00 other) const { return int__00(this->value / other.value); }
     int__00 op__remainder(int__00 other) const { return int__00(this->value % other.value); }
-    int__00 op__magnitude() const { if(this->value==INT32_MIN) throw std::overflow_error("Can't take |int.Min|"); return int__00(this->value < 0 ? -this->value : this->value); }
+    int__00 op__magnitude() const { assert(this->value!=INT32_MIN && "Can't take |int.Min|"); return int__00(this->value < 0 ? -this->value : this->value); }
 
     // Hack because we don't support as correctly yet
     uint__00 as_uint__0() const;
@@ -366,37 +366,41 @@ inline void free__1(voidp object)
     free(object);
 }
 
-inline void assert(const bool__00 condition, char const *_Nonnull code, const string__00 message, char const *_Nonnull file, const std::int32_t line)
+inline void assert__2__impl(const bool__00 condition, char const *_Nonnull code, const string__00 message, char const *_Nonnull file, const int32_t line)
 {
     if(!condition.value)
-        throw std::runtime_error(
-            string__00("Assertion failed: ").op__add(string__00(code)).op__add(string__00(", ")).op__add(message)
+    {
+        printf_s("%s", string__00("Assertion failed: ").op__add(string__00(code)).op__add(string__00(", ")).op__add(message)
             .op__add(string__00(", file ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
+        abort();
+    }
 }
 
-inline void assert(const bool__00 condition, char const *_Nonnull code, char const *_Nonnull file, const std::int32_t line)
+inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)
 {
     if(!condition.value)
-        throw std::runtime_error(
-            string__00("Assertion failed: ").op__add(string__00(code))
+    {
+        printf_s("%s", string__00("Assertion failed: ").op__add(string__00(code))
             .op__add(string__00(", file ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
+        abort();
+    }
 }
 
-#define assert__2(condition, message) assert(condition, #condition, message, __FILE__, __LINE__)
-#define assert__1(condition) assert(condition, #condition, __FILE__, __LINE__)
+#define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
+#define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
 
 _Noreturn inline void NOT_IMPLEMENTED(const string__00 message, char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
 {
-    throw std::runtime_error(
-        string__00("Function ").op__add(string__00(function))
+    printf_s("%s", string__00("Function ").op__add(string__00(function))
         .op__add(string__00(" not yet implemented, ")).op__add(message).op__add(string__00(", ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
+    abort();
 }
 
 _Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
 {
-    throw std::runtime_error(
-        string__00("Function ").op__add(string__00(function))
+    printf_s("%s", string__00("Function ").op__add(string__00(function))
         .op__add(string__00(" not yet implemented, ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
+    abort();
 }
 
 #define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
@@ -404,9 +408,9 @@ _Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const 
 
 _Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
 {
-    throw std::runtime_error(
-        string__00("Reached \"UNREACHABLE\" statement in function ").op__add(string__00(function))
+    printf_s("%s", string__00("Reached \"UNREACHABLE\" statement in function ").op__add(string__00(function))
         .op__add(string__00(", ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
+    abort();
 }
 
 #define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)
@@ -463,8 +467,7 @@ void system__collections__List__1<T>::add__1(T value)
 template<typename T>
 T const & system__collections__List__1<T>::op__Element(int__00 const index) const
 {
-    if(index.value < 0 || index.value >= length)
-        throw std::out_of_range("List index out of bounds");
+    assert(index.value >= 0 && index.value < length);
     return values[index.value];
 }
 
@@ -503,8 +506,7 @@ public:
     int__00 op__magnitude() const { return int__00(Count); }
     string__00 const & op__Element(int__00 const index) const
     {
-        if(index.value < 0 || index.value >= Count)
-            throw std::out_of_range("Argument index out of bounds");
+        assert(index.value >= 0 && index.value < Count);
         return args[index.value];
     }
 };

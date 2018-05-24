@@ -1079,10 +1079,7 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
 {
     element_separator_line(emitter.definitions);
     write_line(emitter.definitions, "// Entry Point Adapter");
-    write_line(emitter.definitions, "std::int32_t main(int argc, char const *const * argv)");
-    begin_block(emitter.definitions);
-
-    write_line(emitter.definitions, "try");
+    write_line(emitter.definitions, "int32_t main(int argc, char const *const * argv)");
     begin_block(emitter.definitions);
 
     for let resource: Source_Text in emitter.resources
@@ -1122,14 +1119,6 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
     {
         write_line(emitter.definitions, "return " + emitter.main_function_name + "(" + args.ToString() + ").value;");
     }
-
-    end_block(emitter.definitions); // try
-    write_line(emitter.definitions, "catch(std::exception &ex)");
-    begin_block(emitter.definitions);
-    write_line(emitter.definitions, "std::printf(\"Program exited due to error:\\n\");");
-    write_line(emitter.definitions, "std::printf(\"%s\", ex.what());");
-    write_line(emitter.definitions, "return 70;"); // Defined by sysexits.h as EX_SOFTWARE
-    end_block(emitter.definitions);
 
     end_block(emitter.definitions);
 }

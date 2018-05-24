@@ -7,17 +7,13 @@
 
 uint__00 int__00::as_uint__0() const
 {
-    if(this->value < 0)
-        throw std::range_error("Can't convert negative number to unsigned");
-
+    assert(this->value >= 0);
     return uint__00(this->value);
 }
 
 char code_point__00__to_char(code_point__00 v)
 {
-    if(v.value > 0xFF)
-        throw std::range_error("Unicode char values not yet supported");
-
+    assert(v.value <= 0xFF);
     return v.value;
 }
 
@@ -44,7 +40,7 @@ string__00::string__00(int__00 other)
 {
     char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
     int length = std::sprintf(buffer,"%d", other.value);
-    if(length <= 0) throw std::runtime_error("Could not convert int to string");
+    assert(length > 0);
     Length = length;
     Buffer = buffer;
 }
@@ -363,12 +359,10 @@ void system__text__String_Builder__0::AppendLine__0()
 
 void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
 {
-    if(start.value >= this->length)
-        throw std::runtime_error("String_Builder.Remove() start >= length");
+    assert(start.value < this->length);
 
     int end = start.value + length.value;
-    if(end > this->length) // greater than because end is one past the end of the remove
-        throw std::runtime_error("String_Builder.Remove() end > length");
+    assert(end <= this->length); // less than or equal because end is one past the end of the remove
 
     std::memmove(buffer+start.value, buffer+end, this->length-end);
     this->length -= length.value;
@@ -376,8 +370,7 @@ void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
 
 void system__text__String_Builder__0::Remove__1(int__00 start)
 {
-    if(start.value >= length)
-        throw std::runtime_error("String_Builder.Remove() start >= length");
+    assert(start.value < length);
 
     length = start.value;
 }
