@@ -269,6 +269,11 @@ public build_semantic_node(
         children.add(new Semantic_Node.token(first_child_syntax(syntax, SelfKeyword)));
         return new Semantic_Node.of_type(lookup_special(scope, "self").type, syntax, children);
     }
+    else if syntax.kind == NegateExpression
+    {
+        children.add(build_semantic_node(builder, syntax.children[1], name_table, scope));
+        return new Semantic_Node.of_type(lookup_special(scope, "int").type, syntax, children);
+    }
     else if syntax.kind == MagnitudeExpression
     {
         children.add(build_semantic_node(builder, syntax.children[1], name_table, scope));

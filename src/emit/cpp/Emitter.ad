@@ -415,7 +415,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == NegateExpression
     {
         write(builder, "int32__0op__negate(");
-        convert_expression(syntax.children[1], builder);
+        convert_expression(syntax.children[0], builder);
         write(builder, ")");
     }
     else if syntax.kind == NoneLiteralExpression
