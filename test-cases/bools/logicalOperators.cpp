@@ -20,10 +20,10 @@ BOOL True__0()
 void main__0()
 {
 	BOOL x__;
-	x__ = bool__00__op(bool__00__arg(TRUE) && bool__00__arg(FALSE));
-	x__ = bool__00__op(bool__00__arg(TRUE) || bool__00__arg(FALSE));
-	x__ = bool__00__0op__not(TRUE);
-	x__ = bool__00__op(bool__00__arg(True__0()) || bool__00__arg(True__0()));
+	x__ = bool_op(bool_arg(TRUE) && bool_arg(FALSE));
+	x__ = bool_op(bool_arg(TRUE) || bool_arg(FALSE));
+	x__ = BOOL__0op__not(TRUE);
+	x__ = bool_op(bool_arg(True__0()) || bool_arg(True__0()));
 }
 
 // Entry Point Adapter

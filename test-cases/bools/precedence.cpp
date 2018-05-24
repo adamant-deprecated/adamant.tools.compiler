@@ -14,9 +14,9 @@ void main__0();
 void main__0()
 {
 	BOOL x__;
-	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(TRUE)) && bool__00__arg(FALSE));
-	x__ = bool__00__op(bool__00__arg(bool__00__0op__not(TRUE)) || bool__00__arg(FALSE));
-	x__ = bool__00__op(bool__00__arg(FALSE) || bool__00__arg(bool__00__op(bool__00__arg(TRUE) && bool__00__arg(TRUE))));
+	x__ = bool_op(bool_arg(BOOL__0op__not(TRUE)) && bool_arg(FALSE));
+	x__ = bool_op(bool_arg(BOOL__0op__not(TRUE)) || bool_arg(FALSE));
+	x__ = bool_op(bool_arg(FALSE) || bool_arg(bool_op(bool_arg(TRUE) && bool_arg(TRUE))));
 }
 
 // Entry Point Adapter

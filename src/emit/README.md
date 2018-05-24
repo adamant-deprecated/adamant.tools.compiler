@@ -14,10 +14,10 @@ The name mangling occurs in two phases. In the first phase, the name of the indi
 
 ### Phase 1
 
-This phase ensures that there can be no conflicts with standard C identifiers and escapes the double underscore so it can be used as a separator.
+This phase ensures that there can be no conflicts with standard C identifiers and escapes the double underscore so it can be used as a separator. Note that all names even namespaces need to be modified.
 
 1. For any run of more than one underscore, add another underscore on the end. (This ensures no double underscores occur in the identifier)
-2. For types, append double underscore and the number of type parameters, even if zero.
+2. For types **and namespaces**, append double underscore and the number of type parameters, even if zero.
 3. For functions, append double underscore and the number of parameters, even if zero.
 4. For fields and variables, append a double underscore. For redeclarations of a variable, append a unique sequence number.
 
@@ -36,7 +36,13 @@ This phase is specified in a short hand notation of concatenating strings.
 
 ### Special Names
 
-* Tuples: `tuple__0` + number_of_type_parameters + `__` + type_parameters_separated_by_underscores (leading zero distinguishes it from a standard type named "tuple")
-* Primitives: type except `bool` is `BOOL`, `int` is `int32` and `uint` is `uint32` (not having a number of generic args distinguishes them from standard types)
-* Optional: `optional__` + the_type_that_is_optional (not having a number of generic args distinguishes it from standard types)
+Since all names are mangled, we are free to use C style names without concern for conflict except with the C standard library. This allows for shorter cleaner code
+
+* Tuples: `tuple` + number_of_type_parameters + `__` + type_parameters_separated_by_underscores
+* Primitives: type except that
+  * `int32`
+  * `uint32`
+  * `BOOL`
+* Optional: `optional__` + the_type_that_is_optional
 * True & False: `TRUE`, `FALSE`
+* None: `none`

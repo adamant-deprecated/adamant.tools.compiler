@@ -392,7 +392,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == NotExpression
     {
         // TODO change to other functions based on argument type
-        write(builder, "bool__00__0op__not(");
+        write(builder, "BOOL__0op__not(");
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
@@ -607,24 +607,24 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == OrExpression
     {
         // TODO Based on the type of the values involved, either:
-        // * bool__00__op(bool__00__arg(lhs) || bool__00__arg(rhs))
+        // * bool_op(bool_arg(lhs) || bool_arg(rhs))
         // * ({ T _lhs = lhs; op__true(_lhs) ? _lhs : op__or(_lhs, rhs); })
         // Note: that is a "compound expression"
-        write(builder, "bool__00__op(bool__00__arg(");
+        write(builder, "bool_op(bool_arg(");
         convert_expression(syntax.children[0], builder);
-        write(builder, ") || bool__00__arg(");
+        write(builder, ") || bool_arg(");
         convert_expression(syntax.children[2], builder);
         write(builder, "))");
     }
     else if syntax.kind == AndExpression
     {
         // TODO Based on the type of the values involved, either:
-        // * bool__00__op(bool__00__arg(lhs) && bool__00__arg(rhs))
+        // * bool_op(bool_arg(lhs) && bool_arg(rhs))
         // * ({ T _lhs = lhs; op__false(_lhs) ? _lhs : op__and(_lhs, rhs); })
         // Note: that is a "compound expression"
-        write(builder, "bool__00__op(bool__00__arg(");
+        write(builder, "bool_op(bool_arg(");
         convert_expression(syntax.children[0], builder);
-        write(builder, ") && bool__00__arg(");
+        write(builder, ") && bool_arg(");
         convert_expression(syntax.children[2], builder);
         write(builder, "))");
     }
