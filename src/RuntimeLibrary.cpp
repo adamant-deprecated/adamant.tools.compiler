@@ -7,18 +7,18 @@
 
 uint__00 int__00::as_uint__0() const
 {
-    assert(this->value >= 0);
+    assert__1(bool__00_from(this->value >= 0));
     return uint__00(this->value);
 }
 
 char code_point__00__to_char(code_point__00 v)
 {
-    assert(v.value <= 0xFF);
+    assert__1(bool__00_from(v.value <= 0xFF));
     return v.value;
 }
 
 string__00::string__00(const char* s)
-    : Length(std::strlen(s)), Buffer(s)
+    : Length(strlen(s)), Buffer(s)
 {
 }
 
@@ -30,7 +30,7 @@ string__00::string__00(int length, const char* s)
 char const * string__00::cstr() const
 {
     auto buffer = new char[Length + 1];
-    std::memcpy(buffer, Buffer, Length);
+    memcpy_s(buffer, Length + 1, Buffer, Length);
     buffer[Length] = 0;
     return buffer;
 }
@@ -39,8 +39,8 @@ string__00::string__00(int__00 other)
     : Length(0), Buffer(0)
 {
     char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
-    int length = std::sprintf(buffer,"%d", other.value);
-    assert(length > 0);
+    int length = sprintf_s(buffer, 12, "%d", other.value);
+    assert__1(bool__00_from(length > 0));
     Length = length;
     Buffer = buffer;
 }
@@ -128,8 +128,8 @@ string__00 string__00::op__add(string__00 const & value) const
     int newLength = Length + value.Length;
     char* chars = new char[newLength];
     size_t offset = sizeof(char) * Length;
-    std::memcpy(chars, Buffer, offset);
-    std::memcpy(chars + offset, value.Buffer, value.Length);
+    memcpy_s(chars, newLength, Buffer, offset);
+    memcpy_s(chars + offset, newLength-offset, value.Buffer, value.Length);
     return string__00(newLength, chars);
 }
 
@@ -149,7 +149,7 @@ bool__00 string__00__0op__less_than(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = std::strcmp(left, right) < 0;
+    bool result = strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
     return bool__00_from(result);
@@ -158,7 +158,7 @@ bool__00 string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = std::strcmp(left, right) <= 0;
+    bool result = strcmp(left, right) <= 0;
     delete[] left;
     delete[] right;
     return bool__00_from(result);
@@ -167,7 +167,7 @@ bool__00 string__00__0op__greater_than(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = std::strcmp(left, right) > 0;
+    bool result = strcmp(left, right) > 0;
     delete[] left;
     delete[] right;
     return bool__00_from(result);
@@ -176,7 +176,7 @@ bool__00 string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = std::strcmp(left, right) >= 0;
+    bool result = strcmp(left, right) >= 0;
     delete[] left;
     delete[] right;
     return bool__00_from(result);
@@ -186,7 +186,7 @@ bool operator < (string__00 const & lhs, string__00 const & rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = std::strcmp(left, right) < 0;
+    bool result = strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
     return result;
@@ -211,30 +211,30 @@ ResourceManager *const resource_manager__ = new ResourceManager();
 
 void debug_write__1(string__00 value)
 {
-    std::fprintf(stderr, "%.*s", value.Length, value.Buffer);
+    fprintf_s(stderr, "%.*s", value.Length, value.Buffer);
 }
 void debug_write_line__1(string__00 value)
 {
-    std::fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
+    fprintf_s(stderr, "%.*s\n", value.Length, value.Buffer);
 }
 void debug_write_line__0()
 {
-    std::fprintf(stderr, "\n");
+    fprintf_s(stderr, "\n");
 }
 
 void system__console__Console__0::Write__1(string__00 value)
 {
-    std::printf("%.*s", value.Length, value.Buffer);
+    printf_s("%.*s", value.Length, value.Buffer);
 }
 
 void system__console__Console__0::WriteLine__1(string__00 value)
 {
-    std::printf("%.*s\n", value.Length, value.Buffer);
+    printf_s("%.*s\n", value.Length, value.Buffer);
 }
 
 void system__console__Console__0::WriteLine__0()
 {
-    std::printf("\n");
+    printf_s("\n");
 }
 
 system__console__Arguments__0::system__console__Arguments__0(int argc, char const *const * argv)
@@ -248,42 +248,42 @@ system__console__Arguments__0::system__console__Arguments__0(int argc, char cons
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string__00& fileName)
 {
     char const *_Nonnull fname = fileName.cstr();
-    self->file = std::fopen(fname, "rb");
+    fopen_s(&self->file, fname, "rb"); // TODO check for error
     delete[] fname;
     return self;
 }
 
 string__00 system__io__File_Reader__0::ReadToEndSync__0()
 {
-    std::fseek(file, 0, SEEK_END);
-    auto length = std::ftell(file);
-    std::fseek(file, 0, SEEK_SET);
+    fseek(file, 0, SEEK_END);
+    auto length = ftell(file);
+    fseek(file, 0, SEEK_SET);
     auto buffer = new char[length];
-    length = std::fread(buffer, sizeof(char), length, file);
+    length = fread(buffer, sizeof(char), length, file);
     return string__00(length, buffer);
 }
 
 void system__io__File_Reader__0::Close__0()
 {
-    std::fclose(file);
+    fclose(file);
 }
 
 system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string__00& fileName)
 {
     char const *_Nonnull fname = fileName.cstr();
-    self->file = std::fopen(fname, "wb"); // TODO check error
+    fopen_s(&self->file, fname, "wb"); // TODO check error
     delete[] fname;
     return self;
 }
 
 void system__io__File_Writer__0::Write__1(const string__00& value)
 {
-    std::fwrite(value.Buffer, sizeof(char), value.Length, file);
+    fwrite(value.Buffer, sizeof(char), value.Length, file);
 }
 
 void system__io__File_Writer__0::Close__0()
 {
-    std::fclose(file);
+    fclose(file);
 }
 
 void system__text__String_Builder__0::ensure_capacity(int needed)
@@ -298,7 +298,7 @@ void system__text__String_Builder__0::ensure_capacity(int needed)
     {
         char* new_buffer = new char[new_capacity];
         if(length > 0)
-            std::memcpy(new_buffer, buffer, length);
+            memcpy_s(new_buffer, new_capacity, buffer, length);
 
         if(capacity > 0)
             delete[] buffer;
@@ -312,7 +312,7 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
 {
     system__text__String_Builder__0__0new__0(self);
     self->ensure_capacity(value.Length);
-    std::memcpy(self->buffer, value.Buffer, value.Length);
+    memcpy_s(self->buffer, self->capacity, value.Buffer, value.Length);
     self->length = value.Length;
     return self;
 }
@@ -328,7 +328,7 @@ void system__text__String_Builder__0::Append__1(string__00 const & value)
 {
     int new_length = length + value.Length;
     ensure_capacity(new_length);
-    std::memcpy(buffer+length, value.Buffer, value.Length);
+    memcpy_s(buffer+length, capacity-length, value.Buffer, value.Length);
     length = new_length;
 }
 
@@ -336,7 +336,7 @@ void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 
 {
     int new_length = length + value->length;
     ensure_capacity(new_length);
-    std::memcpy(buffer+length, value->buffer, value->length);
+    memcpy_s(buffer+length, capacity-length, value->buffer, value->length);
     length = new_length;
 }
 
@@ -344,7 +344,7 @@ void system__text__String_Builder__0::AppendLine__1(string__00 const & value)
 {
     int new_length = length + value.Length + 1;
     ensure_capacity(new_length);
-    std::memcpy(buffer+length, value.Buffer, value.Length);
+    memcpy_s(buffer+length, capacity-length, value.Buffer, value.Length);
     buffer[new_length-1] = '\n';
     length = new_length;
 }
@@ -359,19 +359,18 @@ void system__text__String_Builder__0::AppendLine__0()
 
 void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
 {
-    assert(start.value < this->length);
+    assert__1(bool__00_from(start.value < this->length));
 
     int end = start.value + length.value;
-    assert(end <= this->length); // less than or equal because end is one past the end of the remove
+    assert__1(bool__00_from(end <= this->length)); // less than or equal because end is one past the end of the remove
 
-    std::memmove(buffer+start.value, buffer+end, this->length-end);
+    memmove_s(buffer+start.value, capacity-start.value, buffer+end, this->length-end);
     this->length -= length.value;
 }
 
 void system__text__String_Builder__0::Remove__1(int__00 start)
 {
-    assert(start.value < length);
-
+    assert__1(bool__00_from(start.value < length));
     length = start.value;
 }
 

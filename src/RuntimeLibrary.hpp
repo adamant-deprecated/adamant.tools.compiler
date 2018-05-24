@@ -1,11 +1,19 @@
 // On windows this disables warnings about using fopen_s instead of fopen
 // It must be defined before including the headers.
-#define _CRT_SECURE_NO_WARNINGS
+// #define _CRT_SECURE_NO_WARNINGS
+#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <assert.h>
-#include <string>
+
+#define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
+#define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
+
+typedef struct bool__00 bool__00;
+typedef struct string__00 string__00;
+
+inline void assert__2__impl(const bool__00 condition, char const *_Nonnull code, const string__00 message, char const *_Nonnull file, const int32_t line);
+inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);
 
 // -----------------------------------------------------------------------------
 // Primitive Types
@@ -69,22 +77,22 @@ public:
 
     T & operator->()
     {
-        assert(hasValue && "Access to `none` Optional value");
+        assert__2(bool__00_from(hasValue), "Access to `none` Optional value");
         return data;
     }
     T const & operator->() const
     {
-        assert(hasValue && "Access to `none` Optional value");
+        assert__2(bool__00_from(hasValue), "Access to `none` Optional value");
         return data;
     }
     T & operator* ()
     {
-        assert(hasValue && "Access to `none` Optional value");
+        assert__2(bool__00_from(hasValue), "Access to `none` Optional value");
         return data;
     }
     T const & operator* () const
     {
-        assert(hasValue && "Access to `none` Optional value");
+        assert__2(bool__00_from(hasValue), "Access to `none` Optional value");
         return data;
     }
 };
@@ -95,10 +103,10 @@ struct uint__00;
 struct int__00
 {
     // Runtime Use Members
-    std::int32_t value;
+    int32_t value;
 
     explicit int__00() = default;
-    explicit int__00(std::int32_t value): value(value) {}
+    explicit int__00(int32_t value): value(value) {}
 
     int__00 *_Nonnull operator->() { return this; }
     int__00 const *_Nonnull operator->() const { return this; }
@@ -120,7 +128,7 @@ struct int__00
     int__00 op__multiply(int__00 other) const { return int__00(this->value * other.value); }
     int__00 op__divide(int__00 other) const { return int__00(this->value / other.value); }
     int__00 op__remainder(int__00 other) const { return int__00(this->value % other.value); }
-    int__00 op__magnitude() const { assert(this->value!=INT32_MIN && "Can't take |int.Min|"); return int__00(this->value < 0 ? -this->value : this->value); }
+    int__00 op__magnitude() const;
 
     // Hack because we don't support as correctly yet
     uint__00 as_uint__0() const;
@@ -136,10 +144,10 @@ inline bool__00 int__00__0op__greater_than_or_equal(int__00 lhs, int__00 rhs) { 
 struct uint__00
 {
     // Runtime Use Members
-    std::uint32_t value;
+    uint32_t value;
 
     explicit uint__00() = default;
-    explicit uint__00(std::uint32_t value): value(value) {}
+    explicit uint__00(uint32_t value): value(value) {}
 
     uint__00 *_Nonnull operator->() { return this; }
     uint__00 const *_Nonnull operator->() const { return this; }
@@ -172,7 +180,7 @@ inline int__00::int__00(uint__00 value)
 
 struct code_point__00
 {
-    std::uint32_t value;
+    uint32_t value;
 
     // Runtime Use Members
     explicit code_point__00() = default;
@@ -238,6 +246,13 @@ bool__00 string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs);
 string__00 string__00__0new__0();
 string__00 string__00__0new__1(string__00 value);
 string__00 string__00__0new__2(code_point__00 c, int__00 repeat);
+
+
+inline int__00 int__00::op__magnitude() const
+{
+    assert__2(bool__00_from(this->value!=INT32_MIN), string__00("Can't take |int.Min|"));
+    return int__00(this->value < 0 ? -this->value : this->value);
+}
 
 // -----------------------------------------------------------------------------
 // Operators
@@ -386,17 +401,14 @@ inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code,
     }
 }
 
-#define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
-#define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
-
-_Noreturn inline void NOT_IMPLEMENTED(const string__00 message, char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
+_Noreturn inline void NOT_IMPLEMENTED(const string__00 message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
     printf_s("%s", string__00("Function ").op__add(string__00(function))
         .op__add(string__00(" not yet implemented, ")).op__add(message).op__add(string__00(", ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
     exit(70);
 }
 
-_Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
+_Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
     printf_s("%s", string__00("Function ").op__add(string__00(function))
         .op__add(string__00(" not yet implemented, ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
@@ -406,7 +418,7 @@ _Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const 
 #define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
 #define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED(__func__, __FILE__, __LINE__)
 
-_Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
+_Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
     printf_s("%s", string__00("Reached \"UNREACHABLE\" statement in function ").op__add(string__00(function))
         .op__add(string__00(", ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
@@ -456,7 +468,7 @@ void system__collections__List__1<T>::add__1(T value)
         // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         T* newValues = (T*)new char[newCapacity * sizeof(T)];
-        std::memcpy(newValues, values, length * sizeof(T));
+        memcpy_s(newValues, newCapacity * sizeof(T), values, length * sizeof(T));
         values = newValues;
         capacity = newCapacity;
     }
@@ -467,7 +479,7 @@ void system__collections__List__1<T>::add__1(T value)
 template<typename T>
 T const & system__collections__List__1<T>::op__Element(int__00 const index) const
 {
-    assert(index.value >= 0 && index.value < length);
+    assert__1(bool__00_from(index.value >= 0 && index.value < length));
     return values[index.value];
 }
 
@@ -506,14 +518,14 @@ public:
     int__00 op__magnitude() const { return int__00(Count); }
     string__00 const & op__Element(int__00 const index) const
     {
-        assert(index.value >= 0 && index.value < Count);
+        assert__1(bool__00_from(index.value >= 0 && index.value < Count));
         return args[index.value];
     }
 };
 
 struct system__io__File_Reader__0
 {
-    std::FILE *_Nonnull file;
+    FILE *_Nonnull file;
 
     string__00 ReadToEndSync__0();
     void Close__0();
@@ -523,7 +535,7 @@ system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system_
 
 struct system__io__File_Writer__0
 {
-    std::FILE *_Nonnull file;
+    FILE *_Nonnull file;
 
     void Write__1(const string__00& value);
     void Close__0();
