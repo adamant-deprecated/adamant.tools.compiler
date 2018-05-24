@@ -522,7 +522,7 @@ ConsoleCommand CompileCpp(string sourceGlob, FilePath output, FilePath includeDi
 
 ConsoleCommand CompileCpp(string[] sourceGlobs, FilePath output, FilePath includeDirectory = null)
 {
-    var options =  " -std=c++14 -fno-rtti "; // -fsanitize=undefined
+    var options =  " -std=c++14 -fno-rtti -fno-exceptions "; // -fsanitize=undefined
     if(includeDirectory != null)
     {
         options += string.Format(" --include-directory \"{0}\"", includeDirectory);
