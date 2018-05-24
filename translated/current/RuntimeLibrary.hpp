@@ -42,15 +42,37 @@ public:
 #endif
 
 // -----------------------------------------------------------------------------
+// Library Utils
+// -----------------------------------------------------------------------------
+
+#define lib_assert(condition) lib_assert_impl(condition, #condition, __FILE__)
+inline void lib_assert_impl(const _Bool condition, char const *_Nonnull code, char const *_Nonnull file)
+{
+    if(!condition)
+    {
+        printf("Assertion failed: %s, file %s", code, file);
+        exit(70);
+    }
+}
+
+// -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-// `bool`
+typedef struct BOOL BOOL;
+typedef struct never never;
+typedef struct optional__never optional__never;
+typedef struct int32 int32;
+typedef struct uint32 uint32;
+typedef struct code_point code_point;
+typedef struct string string;
+
 // For now, use `BOOL` as the emitted type
 // TODO C: switch `BOOL` to `bool`
 // TODO C: switch `TRUE` to `true`
 // TODO C: switch `FALSE` to `false`
-typedef struct BOOL BOOL;
+
+// `bool` type
 struct BOOL
 {
     _Bool value;
@@ -72,17 +94,6 @@ inline _Bool bool_arg(BOOL v) { return v.value; }
 
 inline BOOL BOOL__0op__not(BOOL v) { return (BOOL){ !v.value }; }
 
-// Need full definition of `bool` for these
-#define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
-#define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
-#define lib_assert(condition) lib_assert_impl(condition, #condition, __FILE__)
-
-typedef struct string string;
-
-inline void assert__2__impl(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line);
-inline void assert__1__impl(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);
-inline void lib_assert_impl(const _Bool condition, char const *_Nonnull code, char const *_Nonnull file);
-
 // `never` type
 struct never
 {
@@ -93,63 +104,10 @@ struct optional__never
 {
 };
 
-typedef struct optional__BOOL optional__BOOL;
-struct optional__BOOL
-{
-    BOOL has_value;
-    union
-    {
-        never _;
-        BOOL value;
-    };
-};
-
 // TODO this is a hack for now, the type of `none` should be `never?`
 static const void_ptr none = (void*)0;
 
-template<typename T>
-struct p_optional final
-{
-private:
-    _Bool hasValue;
-    union
-    {
-        T data;
-    };
-
-public:
-    // TODO make this constructor explicit
-    p_optional(T const & value) : data(value), hasValue(1) {}
-    // TODO get rid of this conversion operator when compiler emits conversions
-    p_optional(void_ptr value) : hasValue(0) {}
-    auto has_value() const -> BOOL { return bool_from(hasValue); }
-    auto value() const -> T { return data; }
-
-    T & operator->()
-    {
-        lib_assert(hasValue);
-        return data;
-    }
-    T const & operator->() const
-    {
-        lib_assert(hasValue);
-        return data;
-    }
-    T & operator* ()
-    {
-        lib_assert(hasValue);
-        return data;
-    }
-    T const & operator* () const
-    {
-        lib_assert(hasValue);
-        return data;
-    }
-};
-
-struct uint32;
-
-// `int`
+// `int` type
 struct int32
 {
     // Runtime Use Members
@@ -190,7 +148,7 @@ inline BOOL int32__0op__less_than_or_equal(int32 lhs, int32 rhs) { return bool_f
 inline BOOL int32__0op__greater_than(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }
 inline BOOL int32__0op__greater_than_or_equal(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }
 
-// `uint`
+// `uint` type
 struct uint32
 {
     // Runtime Use Members
@@ -312,24 +270,10 @@ inline BOOL equal_op(BOOL lhs, BOOL rhs)
 {
     return bool_from(lhs.value == rhs.value);
 }
-inline BOOL equal_op(optional__BOOL lhs, optional__BOOL rhs)
-{
-    if(cond(lhs.has_value))
-        return bool_op(bool_arg(rhs.has_value) && bool_arg(equal_op(lhs.value, rhs.value)));
-    else
-        return BOOL__0op__not(rhs.has_value);
-}
 
 inline BOOL equal_op(int32 lhs, int32 rhs)
 {
     return bool_from(lhs.value == rhs.value);
-}
-inline BOOL equal_op(p_optional<int32> lhs, p_optional<int32> rhs)
-{
-    if(lhs.has_value().value)
-        return bool_op(bool_arg(rhs.has_value()) && bool_arg(equal_op(lhs.value(), rhs.value())));
-    else
-        return BOOL__0op__not(rhs.has_value());
 }
 
 inline BOOL equal_op(void_ptr lhs, void_ptr rhs)
@@ -344,37 +288,9 @@ inline BOOL equal_op(code_point lhs, code_point rhs)
 
 BOOL equal_op(string lhs, string rhs);
 
-// TODO implement this without templates
-template<typename T>
-inline BOOL equal_op(T const *_Nullable lhs, void_ptr rhs)
-{
-    return bool_from(lhs == rhs);
-}
-
-// TODO implement this without templates
-template<typename T>
-inline BOOL equal_op(void_ptr lhs, T const *_Nullable rhs)
-{
-    return bool_from(lhs == rhs);
-}
-
-// TODO Get rid of this ability
-template<typename T>
-inline BOOL equal_op(T const *_Nullable lhs, T const *_Nullable const & rhs)
-{
-    return bool_from(lhs == 0);
-}
-
 inline BOOL not_equal_op(int32 lhs, int32 rhs)
 {
     return bool_from(lhs.value != rhs.value);
-}
-inline BOOL not_equal_op(p_optional<int32> lhs, p_optional<int32> rhs)
-{
-    if(lhs.has_value().value)
-        return bool_op(bool_arg(BOOL__0op__not(rhs.has_value())) || bool_arg(not_equal_op(lhs.value(), rhs.value())));
-    else
-        return rhs.has_value();
 }
 
 // TODO implement this without templates
@@ -384,18 +300,9 @@ inline BOOL not_equal_op(T lhs, T  rhs)
     return BOOL__0op__not(equal_op(lhs, rhs));
 }
 
-// TODO implement this without templates
-template<typename T>
-inline BOOL not_equal_op(T const *_Nullable lhs, void_ptr rhs)
+inline BOOL not_equal_op(void_ptr lhs, void_ptr rhs)
 {
-    return bool_from(lhs != rhs);
-}
-
-// TODO implement this without templates
-template<typename T>
-inline BOOL not_equal_op(void_ptr lhs, T const *_Nullable rhs)
-{
-    return bool_from(lhs != rhs);
+    return BOOL__0op__not(bool_from(lhs == rhs));
 }
 
 // -----------------------------------------------------------------------------
@@ -419,6 +326,9 @@ inline void free__1(void_ptr object)
     free(object);
 }
 
+#define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
+#define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
+
 inline void assert__2__impl(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line)
 {
     if(!condition.value)
@@ -435,16 +345,6 @@ inline void assert__1__impl(const BOOL condition, char const *_Nonnull code, cha
     {
         printf("%s", string("Assertion failed: ").op__add(string(code))
             .op__add(string(", file ")).op__add(string(file)).op__add(string(", line ")).op__add(int32(line)).cstr());
-        exit(70);
-    }
-}
-
-inline void lib_assert_impl(const _Bool condition, char const *_Nonnull code, char const *_Nonnull file)
-{
-    if(!condition)
-    {
-        printf("%s", string("Assertion failed: ").op__add(string(code))
-            .op__add(string(", file ")).op__add(string(file)).cstr());
         exit(70);
     }
 }
