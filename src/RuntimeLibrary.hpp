@@ -372,7 +372,7 @@ inline void assert__2__impl(const bool__00 condition, char const *_Nonnull code,
     {
         printf_s("%s", string__00("Assertion failed: ").op__add(string__00(code)).op__add(string__00(", ")).op__add(message)
             .op__add(string__00(", file ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
-        abort();
+        exit(70);
     }
 }
 
@@ -382,7 +382,7 @@ inline void assert__1__impl(const bool__00 condition, char const *_Nonnull code,
     {
         printf_s("%s", string__00("Assertion failed: ").op__add(string__00(code))
             .op__add(string__00(", file ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
-        abort();
+        exit(70);
     }
 }
 
@@ -393,14 +393,14 @@ _Noreturn inline void NOT_IMPLEMENTED(const string__00 message, char const *_Non
 {
     printf_s("%s", string__00("Function ").op__add(string__00(function))
         .op__add(string__00(" not yet implemented, ")).op__add(message).op__add(string__00(", ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
-    abort();
+    exit(70);
 }
 
 _Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const *_Nonnull file, const std::int32_t line)
 {
     printf_s("%s", string__00("Function ").op__add(string__00(function))
         .op__add(string__00(" not yet implemented, ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
-    abort();
+    exit(70);
 }
 
 #define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
@@ -410,7 +410,7 @@ _Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_No
 {
     printf_s("%s", string__00("Reached \"UNREACHABLE\" statement in function ").op__add(string__00(function))
         .op__add(string__00(", ")).op__add(string__00(file)).op__add(string__00(", line ")).op__add(int__00(line)).cstr());
-    abort();
+    exit(70);
 }
 
 #define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)
