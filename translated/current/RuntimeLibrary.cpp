@@ -30,7 +30,7 @@ string__00::string__00(int length, const char* s)
 char const * string__00::cstr() const
 {
     auto buffer = new char[Length + 1];
-    memcpy_s(buffer, Length + 1, Buffer, Length);
+    memcpy(buffer, Buffer, Length);
     buffer[Length] = 0;
     return buffer;
 }
@@ -128,8 +128,8 @@ string__00 string__00::op__add(string__00 const & value) const
     int newLength = Length + value.Length;
     char* chars = new char[newLength];
     size_t offset = sizeof(char) * Length;
-    memcpy_s(chars, newLength, Buffer, offset);
-    memcpy_s(chars + offset, newLength-offset, value.Buffer, value.Length);
+    memcpy(chars, Buffer, offset);
+    memcpy(chars + offset, value.Buffer, value.Length);
     return string__00(newLength, chars);
 }
 
@@ -224,17 +224,17 @@ void debug_write_line__0()
 
 void system__console__Console__0::Write__1(string__00 value)
 {
-    printf_s("%.*s", value.Length, value.Buffer);
+    printf("%.*s", value.Length, value.Buffer);
 }
 
 void system__console__Console__0::WriteLine__1(string__00 value)
 {
-    printf_s("%.*s\n", value.Length, value.Buffer);
+    printf("%.*s\n", value.Length, value.Buffer);
 }
 
 void system__console__Console__0::WriteLine__0()
 {
-    printf_s("\n");
+    printf("\n");
 }
 
 system__console__Arguments__0::system__console__Arguments__0(int argc, char const *const * argv)
@@ -298,7 +298,7 @@ void system__text__String_Builder__0::ensure_capacity(int needed)
     {
         char* new_buffer = new char[new_capacity];
         if(length > 0)
-            memcpy_s(new_buffer, new_capacity, buffer, length);
+            memcpy(new_buffer, buffer, length);
 
         if(capacity > 0)
             delete[] buffer;
@@ -312,7 +312,7 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
 {
     system__text__String_Builder__0__0new__0(self);
     self->ensure_capacity(value.Length);
-    memcpy_s(self->buffer, self->capacity, value.Buffer, value.Length);
+    memcpy(self->buffer, value.Buffer, value.Length);
     self->length = value.Length;
     return self;
 }
@@ -328,7 +328,7 @@ void system__text__String_Builder__0::Append__1(string__00 const & value)
 {
     int new_length = length + value.Length;
     ensure_capacity(new_length);
-    memcpy_s(buffer+length, capacity-length, value.Buffer, value.Length);
+    memcpy(buffer+length, value.Buffer, value.Length);
     length = new_length;
 }
 
@@ -336,7 +336,7 @@ void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 
 {
     int new_length = length + value->length;
     ensure_capacity(new_length);
-    memcpy_s(buffer+length, capacity-length, value->buffer, value->length);
+    memcpy(buffer+length, value->buffer, value->length);
     length = new_length;
 }
 
@@ -344,7 +344,7 @@ void system__text__String_Builder__0::AppendLine__1(string__00 const & value)
 {
     int new_length = length + value.Length + 1;
     ensure_capacity(new_length);
-    memcpy_s(buffer+length, capacity-length, value.Buffer, value.Length);
+    memcpy(buffer+length, value.Buffer, value.Length);
     buffer[new_length-1] = '\n';
     length = new_length;
 }
