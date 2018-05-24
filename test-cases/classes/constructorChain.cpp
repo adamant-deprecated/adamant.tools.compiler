@@ -4,28 +4,28 @@
 typedef struct C__0 C__0;
 
 // Function Declarations
-C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string__00 const name__);
+C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string const name__);
 void main__0();
 
 // Class Declarations
 
 struct C__0
 {
-	string__00 name__;
-	string__00 method__0() const;
+	string name__;
+	string method__0() const;
 };
 
 // Global Definitions
 
 // Definitions
 
-C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string__00 const name__)
+C__0 *_Nonnull C__0__0new__1(C__0 *_Nonnull self, string const name__)
 {
 	self->name__ = name__;
 	return self;
 }
 
-string__00 C__0::method__0() const
+string C__0::method__0() const
 {
 	auto self = this;
 	return name__;
@@ -33,7 +33,7 @@ string__00 C__0::method__0() const
 
 void main__0()
 {
-	string__00 const s__ = C__0__0new__1(allocate(sizeof(C__0)), string__00("Bob"))->method__0();
+	string const s__ = C__0__0new__1(allocate(sizeof(C__0)), string("Bob"))->method__0();
 }
 
 // Entry Point Adapter

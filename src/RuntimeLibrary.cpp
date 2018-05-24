@@ -5,29 +5,29 @@
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-uint__00 int__00::as_uint__0() const
+uint32 int32::as_uint__0() const
 {
     lib_assert(this->value >= 0);
-    return uint__00(this->value);
+    return uint32(this->value);
 }
 
-char code_point__00__to_char(code_point__00 v)
+char code_point__to_char(code_point v)
 {
     lib_assert(v.value <= 0xFF);
     return v.value;
 }
 
-string__00::string__00(const char* s)
+string::string(const char* s)
     : Length(strlen(s)), Buffer(s)
 {
 }
 
-string__00::string__00(int length, const char* s)
+string::string(int length, const char* s)
     : Length(length), Buffer(s)
 {
 }
 
-char const * string__00::cstr() const
+char const * string::cstr() const
 {
     auto buffer = new char[Length + 1];
     memcpy(buffer, Buffer, Length);
@@ -35,7 +35,7 @@ char const * string__00::cstr() const
     return buffer;
 }
 
-string__00::string__00(int__00 other)
+string::string(int32 other)
     : Length(0), Buffer(0)
 {
     char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
@@ -45,34 +45,34 @@ string__00::string__00(int__00 other)
     Buffer = buffer;
 }
 
-string__00::string__00(code_point__00 other)
-    : Length(1), Buffer(new char[1] { code_point__00__to_char(other) })
+string::string(code_point other)
+    : Length(1), Buffer(new char[1] { code_point__to_char(other) })
 {
 }
 
-string__00::string__00(BOOL other)
-    : string__00(other.value ? "true" : "false")
+string::string(BOOL other)
+    : string(other.value ? "true" : "false")
 {
 }
 
-string__00 string__00__0new__0()
+string string__0new__0()
 {
-    string__00 self;
+    string self;
     self.Length = 0;
     self.Buffer = 0;
     return self;
 }
-string__00 string__00__0new__1(string__00 value)
+string string__0new__1(string value)
 {
     return value;
 }
 
-string__00 string__00__0new__2(code_point__00 c, int__00 repeat)
+string string__0new__2(code_point c, int32 repeat)
 {
-    string__00 self;
+    string self;
     self.Length = repeat.value;
     char* buffer = new char[repeat.value];
-    char ch = code_point__00__to_char(c);
+    char ch = code_point__to_char(c);
     for (int i = 0; i < repeat.value; i++)
         buffer[i] = ch;
 
@@ -80,60 +80,60 @@ string__00 string__00__0new__2(code_point__00 c, int__00 repeat)
     return self;
 }
 
-string__00 string__00::Substring__2(int__00 start, int__00 length) const
+string string::Substring__2(int32 start, int32 length) const
 {
-    return string__00(length.value, Buffer + start.value);
+    return string(length.value, Buffer + start.value);
 }
 
-string__00 string__00::Replace__2(string__00 oldValue, string__00 newValue) const
+string string::Replace__2(string oldValue, string newValue) const
 {
     system__text__String_Builder__0 builder = system__text__String_Builder__0(); // TODO initialize capacity
     int limit = Length - oldValue.Length + 1;
     int lastIndex = 0;
     // TODO the Substring calls in here are leaking memory
     for(int i=0; i < limit; i++)
-        if (cond(equal_op(Substring__2(int__00(i), int__00(oldValue.Length)), oldValue)))
+        if (cond(equal_op(Substring__2(int32(i), int32(oldValue.Length)), oldValue)))
         {
-            builder.Append__1(Substring__2(int__00(lastIndex), int__00(i-lastIndex)));
+            builder.Append__1(Substring__2(int32(lastIndex), int32(i-lastIndex)));
             builder.Append__1(newValue);
             i += oldValue.Length; // skip over the value we just matched
             lastIndex = i;
             i--; // we need i-- to offset the i++ that is about to happen
         }
 
-    builder.Append__1(Substring__2(int__00(lastIndex), int__00(Length - lastIndex)));
+    builder.Append__1(Substring__2(int32(lastIndex), int32(Length - lastIndex)));
     return builder.ToString__0();
 }
 
-int__00 string__00::LastIndexOf__1(code_point__00 c) const
+int32 string::LastIndexOf__1(code_point c) const
 {
     for(int i = Length - 1; i >= 0; i--)
-        if(Buffer[i] == code_point__00__to_char(c))
-            return int__00(i);
+        if(Buffer[i] == code_point__to_char(c))
+            return int32(i);
 
-    return int__00(-1); // TODO should return none
+    return int32(-1); // TODO should return none
 }
 
-int__00 string__00::index_of__1(code_point__00 c) const
+int32 string::index_of__1(code_point c) const
 {
     for(int i = 0; i < Length; i++)
-        if(Buffer[i] == code_point__00__to_char(c))
-            return int__00(i);
+        if(Buffer[i] == code_point__to_char(c))
+            return int32(i);
 
-    return int__00(-1);
+    return int32(-1);
 }
 
-string__00 string__00::op__add(string__00 const & value) const
+string string::op__add(string const & value) const
 {
     int newLength = Length + value.Length;
     char* chars = new char[newLength];
     size_t offset = sizeof(char) * Length;
     memcpy(chars, Buffer, offset);
     memcpy(chars + offset, value.Buffer, value.Length);
-    return string__00(newLength, chars);
+    return string(newLength, chars);
 }
 
-auto equal_op(string__00 lhs, string__00 rhs) -> BOOL
+auto equal_op(string lhs, string rhs) -> BOOL
 {
     if (lhs.Length != rhs.Length)
         return FALSE;
@@ -145,7 +145,7 @@ auto equal_op(string__00 lhs, string__00 rhs) -> BOOL
     return TRUE;
 }
 
-BOOL string__00__0op__less_than(string__00 lhs, string__00 rhs)
+BOOL string__0op__less_than(string lhs, string rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -154,7 +154,7 @@ BOOL string__00__0op__less_than(string__00 lhs, string__00 rhs)
     delete[] right;
     return bool_from(result);
 }
-BOOL string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
+BOOL string__0op__less_than_or_equal(string lhs, string rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -163,7 +163,7 @@ BOOL string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
     delete[] right;
     return bool_from(result);
 }
-BOOL string__00__0op__greater_than(string__00 lhs, string__00 rhs)
+BOOL string__0op__greater_than(string lhs, string rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -172,7 +172,7 @@ BOOL string__00__0op__greater_than(string__00 lhs, string__00 rhs)
     delete[] right;
     return result;
 }
-BOOL string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs)
+BOOL string__0op__greater_than_or_equal(string lhs, string rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -182,7 +182,7 @@ BOOL string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs)
     return result;
 }
 
-_Bool operator < (string__00 const & lhs, string__00 const & rhs)
+_Bool operator < (string const & lhs, string const & rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -196,24 +196,24 @@ _Bool operator < (string__00 const & lhs, string__00 const & rhs)
 // Standard Library
 // -----------------------------------------------------------------------------
 
-std::map<string__00, string__00> resourceValues;
+std::map<string, string> resourceValues;
 
-string__00 const & ResourceManager::GetString__1(string__00 resourceName)
+string const & ResourceManager::GetString__1(string resourceName)
 {
     return resourceValues.at(resourceName);
 }
-void ResourceManager::AddResource(string__00 name, string__00 value)
+void ResourceManager::AddResource(string name, string value)
 {
     resourceValues.insert(std::make_pair(name, value));
 }
 
 ResourceManager *const resource_manager__ = new ResourceManager();
 
-void debug_write__1(string__00 value)
+void debug_write__1(string value)
 {
     fprintf(stderr, "%.*s", value.Length, value.Buffer);
 }
-void debug_write_line__1(string__00 value)
+void debug_write_line__1(string value)
 {
     fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
 }
@@ -222,12 +222,12 @@ void debug_write_line__0()
     fprintf(stderr, "\n");
 }
 
-void system__console__Console__0::Write__1(string__00 value)
+void system__console__Console__0::Write__1(string value)
 {
     printf("%.*s", value.Length, value.Buffer);
 }
 
-void system__console__Console__0::WriteLine__1(string__00 value)
+void system__console__Console__0::WriteLine__1(string value)
 {
     printf("%.*s\n", value.Length, value.Buffer);
 }
@@ -240,12 +240,12 @@ void system__console__Console__0::WriteLine__0()
 system__console__Arguments__0::system__console__Arguments__0(int argc, char const *const * argv)
     : Count(argc-1)
 {
-    args = new string__00[Count];
+    args = new string[Count];
     for (int i = 0; i < Count; i++)
-        args[i] = string__00(argv[i+1]);
+        args[i] = string(argv[i+1]);
 }
 
-system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string__00& fileName)
+system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName)
 {
     char const *_Nonnull fname = fileName.cstr();
     self->file= fopen(fname, "rb"); // TODO check for error
@@ -253,14 +253,14 @@ system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system_
     return self;
 }
 
-string__00 system__io__File_Reader__0::ReadToEndSync__0()
+string system__io__File_Reader__0::ReadToEndSync__0()
 {
     fseek(file, 0, SEEK_END);
     auto length = ftell(file);
     fseek(file, 0, SEEK_SET);
     auto buffer = new char[length];
     length = fread(buffer, sizeof(char), length, file);
-    return string__00(length, buffer);
+    return string(length, buffer);
 }
 
 void system__io__File_Reader__0::Close__0()
@@ -268,7 +268,7 @@ void system__io__File_Reader__0::Close__0()
     fclose(file);
 }
 
-system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string__00& fileName)
+system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string& fileName)
 {
     char const *_Nonnull fname = fileName.cstr();
     self->file = fopen(fname, "wb"); // TODO check error
@@ -276,7 +276,7 @@ system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system_
     return self;
 }
 
-void system__io__File_Writer__0::Write__1(const string__00& value)
+void system__io__File_Writer__0::Write__1(const string& value)
 {
     fwrite(value.Buffer, sizeof(char), value.Length, file);
 }
@@ -308,7 +308,7 @@ void system__text__String_Builder__0::ensure_capacity(int needed)
     }
 }
 
-system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string__00 const & value)
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string const & value)
 {
     system__text__String_Builder__0__0new__0(self);
     self->ensure_capacity(value.Length);
@@ -317,14 +317,14 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
     return self;
 }
 
-system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int__00 capacity)
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity)
 {
     system__text__String_Builder__0__0new__0(self);
     self->ensure_capacity(capacity.value);
     return self;
 }
 
-void system__text__String_Builder__0::Append__1(string__00 const & value)
+void system__text__String_Builder__0::Append__1(string const & value)
 {
     int new_length = length + value.Length;
     ensure_capacity(new_length);
@@ -340,7 +340,7 @@ void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 
     length = new_length;
 }
 
-void system__text__String_Builder__0::AppendLine__1(string__00 const & value)
+void system__text__String_Builder__0::AppendLine__1(string const & value)
 {
     int new_length = length + value.Length + 1;
     ensure_capacity(new_length);
@@ -357,7 +357,7 @@ void system__text__String_Builder__0::AppendLine__0()
     length = new_length;
 }
 
-void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
+void system__text__String_Builder__0::Remove__2(int32 start, int32 length)
 {
     lib_assert(start.value < this->length);
 
@@ -368,15 +368,15 @@ void system__text__String_Builder__0::Remove__2(int__00 start, int__00 length)
     this->length -= length.value;
 }
 
-void system__text__String_Builder__0::Remove__1(int__00 start)
+void system__text__String_Builder__0::Remove__1(int32 start)
 {
     lib_assert(start.value < length);
     length = start.value;
 }
 
-string__00 system__text__String_Builder__0::ToString__0()
+string system__text__String_Builder__0::ToString__0()
 {
-    string__00 result(length, buffer);
+    string result(length, buffer);
     // give up ownership of buffer
     buffer = 0;
     length = 0;

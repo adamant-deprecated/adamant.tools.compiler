@@ -13,9 +13,9 @@ void main__0();
 
 void main__0()
 {
-	string__00 s__ = string__00("\"\\");
-	code_point__00 c__ = code_point__00('\'');
-	c__ = code_point__00('\\');
+	string s__ = string("\"\\");
+	code_point c__ = code_point('\'');
+	c__ = code_point('\\');
 }
 
 // Entry Point Adapter

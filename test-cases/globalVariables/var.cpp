@@ -3,16 +3,16 @@
 // Type Declarations
 
 // Function Declarations
-int__00 main__0();
+int32 main__0();
 
 // Class Declarations
 
 // Global Definitions
-int__00 Result__ = int__00(42);
+int32 Result__ = int32(42);
 
 // Definitions
 
-int__00 main__0()
+int32 main__0()
 {
 	return Result__;
 }

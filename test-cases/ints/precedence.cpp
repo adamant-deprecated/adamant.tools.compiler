@@ -13,9 +13,9 @@ void main__0();
 
 void main__0()
 {
-	int__00 x__;
-	x__ = int__00(1).op__add(int__00(3).op__subtract(int__00(1))->op__divide(int__00(2)));
-	x__ = int__00(1).op__add(int__00(3)).op__subtract(int__00(1).op__divide(int__00(2)));
+	int32 x__;
+	x__ = int32(1).op__add(int32(3).op__subtract(int32(1))->op__divide(int32(2)));
+	x__ = int32(1).op__add(int32(3)).op__subtract(int32(1).op__divide(int32(2)));
 }
 
 // Entry Point Adapter

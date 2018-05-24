@@ -161,13 +161,17 @@ public convert_primitive_type_name(type: Type) -> string
     {
         return "BOOL";
     }
-    else if name == "void"
+    else if name == "int"
     {
-        return "void";
+        return "int32";
+    }
+    else if name == "uint"
+    {
+        return "uint32";
     }
     else
     {
-        return name + "__00";
+        return name;
     }
 }
 
@@ -410,7 +414,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NegateExpression
     {
-        write(builder, "int__00__0op__negate(");
+        write(builder, "int32__0op__negate(");
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
@@ -424,7 +428,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NumericLiteralExpression
     {
-        write(builder, "int__00(" + get_text(syntax) + ")");
+        write(builder, "int32(" + get_text(syntax) + ")");
     }
     else if syntax.kind == TrueLiteralExpression
     {
@@ -436,7 +440,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == CodePointLiteralExpression
     {
-        write(builder, "code_point__00(" + get_text(syntax) + ")");
+        write(builder, "code_point(" + get_text(syntax) + ")");
     }
     else if syntax.kind == IdentifierName
     {
@@ -444,7 +448,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == StringLiteralExpression
     {
-        write(builder, "string__00(" + get_text(syntax) + ")");
+        write(builder, "string(" + get_text(syntax) + ")");
     }
     else if syntax.kind == AssignmentExpression
     {
@@ -1091,9 +1095,9 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
 
     for let resource: Source_Text in emitter.resources
     {
-        begin_line(emitter.definitions, "resource_manager__->AddResource(string__00(\"");
+        begin_line(emitter.definitions, "resource_manager__->AddResource(string(\"");
         write(emitter.definitions, resource.name);
-        write(emitter.definitions, "\"), string__00(\"");
+        write(emitter.definitions, "\"), string(\"");
         write(emitter.definitions, resource.text
                                 .Replace("\\", "\\\\")
                                 .Replace("\n", "\\n")

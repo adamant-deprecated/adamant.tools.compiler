@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-int__00 main__0();
+int32 main__0();
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ int__00 main__0();
 
 // Definitions
 
-int__00 main__0()
+int32 main__0()
 {
-	return int__00(42);
+	return int32(42);
 }
 
 // Entry Point Adapter

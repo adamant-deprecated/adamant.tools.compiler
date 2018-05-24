@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	int__00 x__ = int__00__0op__negate(int__00(1))->op__magnitude();
+	int32 x__ = int32__0op__negate(int32(1))->op__magnitude();
 }
 
 // Entry Point Adapter

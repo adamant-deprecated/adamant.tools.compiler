@@ -21,7 +21,7 @@ Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self) { return self; }
 
 void main__0()
 {
-	Test__0 const *_Nonnull const t__ = allocate__1(int__00(48));
+	Test__0 const *_Nonnull const t__ = allocate__1(int32(48));
 	free__1(t__);
 }
 

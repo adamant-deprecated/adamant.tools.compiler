@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-int__00 Func__2(int__00 const a__, int__00 const b__);
-int__00 main__0();
+int32 Func__2(int32 const a__, int32 const b__);
+int32 main__0();
 
 // Class Declarations
 
@@ -12,14 +12,14 @@ int__00 main__0();
 
 // Definitions
 
-int__00 Func__2(int__00 const a__, int__00 const b__)
+int32 Func__2(int32 const a__, int32 const b__)
 {
 	return b__;
 }
 
-int__00 main__0()
+int32 main__0()
 {
-	return Func__2(int__00(0), int__00(42));
+	return Func__2(int32(0), int32(42));
 }
 
 // Entry Point Adapter

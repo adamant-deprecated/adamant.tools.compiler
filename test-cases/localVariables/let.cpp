@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-int__00 main__0();
+int32 main__0();
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ int__00 main__0();
 
 // Definitions
 
-int__00 main__0()
+int32 main__0()
 {
-	int__00 const result__ = int__00(42);
+	int32 const result__ = int32(42);
 	return result__;
 }
 

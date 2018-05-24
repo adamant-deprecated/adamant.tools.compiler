@@ -13,7 +13,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	console__->WriteLine__1(string__00("Hello World!"));
+	console__->WriteLine__1(string("Hello World!"));
 }
 
 // Entry Point Adapter

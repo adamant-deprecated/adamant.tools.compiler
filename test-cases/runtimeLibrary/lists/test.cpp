@@ -13,16 +13,16 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	system__collections__List__1<string__00> *_Nonnull const strings__ = system__collections__List__1__0new__0<string__00>(allocate(sizeof(system__collections__List__1<string__00>)));
-	strings__->add__1(string__00("Hello"));
-	strings__->add__1(string__00("World!"));
-	if (cond(not_equal_op(strings__->op__magnitude(), int__00(2))))
+	system__collections__List__1<string> *_Nonnull const strings__ = system__collections__List__1__0new__0<string>(allocate(sizeof(system__collections__List__1<string>)));
+	strings__->add__1(string("Hello"));
+	strings__->add__1(string("World!"));
+	if (cond(not_equal_op(strings__->op__magnitude(), int32(2))))
 	{
-		console__->WriteLine__1(string__00("List length not 2!"));
+		console__->WriteLine__1(string("List length not 2!"));
 	}
 
-	console__->WriteLine__1(string__00("strings[0]=").op__add(strings__->op__Element(int__00(0))));
-	for (string__00 const s__ : *(strings__))
+	console__->WriteLine__1(string("strings[0]=").op__add(strings__->op__Element(int32(0))));
+	for (string const s__ : *(strings__))
 	{
 		console__->WriteLine__1(s__);
 	}
@@ -30,11 +30,11 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 	console__->WriteLine__0();
 	strings__->clear__0();
 	system__collections__List__1<system__text__String_Builder__0 *_Nonnull> *_Nonnull const builders__ = system__collections__List__1__0new__0<system__text__String_Builder__0 *_Nonnull>(allocate(sizeof(system__collections__List__1<system__text__String_Builder__0 *_Nonnull>)));
-	builders__->add__1(system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), string__00("sb[0]: ")));
-	builders__->add__1(system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), string__00("sb[1]: ")));
+	builders__->add__1(system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), string("sb[0]: ")));
+	builders__->add__1(system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), string("sb[1]: ")));
 	for (system__text__String_Builder__0 *_Nonnull const sb__ : *(builders__))
 	{
-		sb__->Append__1(string__00("value"));
+		sb__->Append__1(string("value"));
 	}
 
 	for (system__text__String_Builder__0 *_Nonnull const sb__ : *(builders__))

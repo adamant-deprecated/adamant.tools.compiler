@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-int__00 main__0();
+int32 main__0();
 
 // Class Declarations
 
@@ -11,11 +11,11 @@ int__00 main__0();
 
 // Definitions
 
-int__00 main__0()
+int32 main__0()
 {
 	while (cond(TRUE))
 	{
-		return int__00(0);
+		return int32(0);
 	}
 
 	UNREACHABLE__0();

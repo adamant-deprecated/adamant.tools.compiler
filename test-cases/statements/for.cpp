@@ -13,7 +13,7 @@ void main__2(system__console__Console__0 *_Nonnull const console__, system__cons
 
 void main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__)
 {
-	for (string__00 const arg__ : *(args__))
+	for (string const arg__ : *(args__))
 	{
 		console__->WriteLine__1(arg__);
 	}

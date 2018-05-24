@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-code_point__00 Identity__1(code_point__00 const value__);
+code_point Identity__1(code_point const value__);
 void main__0();
 
 // Class Declarations
@@ -12,14 +12,14 @@ void main__0();
 
 // Definitions
 
-code_point__00 Identity__1(code_point__00 const value__)
+code_point Identity__1(code_point const value__)
 {
 	return value__;
 }
 
 void main__0()
 {
-	Identity__1(code_point__00('a'));
+	Identity__1(code_point('a'));
 }
 
 // Entry Point Adapter

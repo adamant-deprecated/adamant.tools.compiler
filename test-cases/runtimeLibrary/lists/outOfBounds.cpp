@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-int__00 main__0();
+int32 main__0();
 
 // Class Declarations
 
@@ -11,10 +11,10 @@ int__00 main__0();
 
 // Definitions
 
-int__00 main__0()
+int32 main__0()
 {
-	system__collections__List__1<int__00> const *_Nonnull const values__ = system__collections__List__1__0new__0<int__00>(allocate(sizeof(system__collections__List__1<int__00>)));
-	return values__->op__Element(int__00(0));
+	system__collections__List__1<int32> const *_Nonnull const values__ = system__collections__List__1__0new__0<int32>(allocate(sizeof(system__collections__List__1<int32>)));
+	return values__->op__Element(int32(0));
 }
 
 // Entry Point Adapter

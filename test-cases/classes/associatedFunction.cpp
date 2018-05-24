@@ -11,23 +11,23 @@ void main__0();
 
 struct C__0
 {
-	string__00 method__0() const;
-	static string__00 function__0();
+	string method__0() const;
+	static string function__0();
 };
 
 // Global Definitions
 
 // Definitions
 
-string__00 C__0::method__0() const
+string C__0::method__0() const
 {
 	auto self = this;
 	return function__0();
 }
 
-string__00 C__0::function__0()
+string C__0::function__0()
 {
-	return string__00("hello");
+	return string("hello");
 }
 
 C__0 *_Nonnull C__0__0new__0(C__0 *_Nonnull self) { return self; }
