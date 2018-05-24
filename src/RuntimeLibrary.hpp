@@ -1,9 +1,9 @@
 // On windows this disables warnings about using fopen_s instead of fopen
 // It must be defined before including the headers.
 #define _CRT_SECURE_NO_WARNINGS
-#include <cstring>
-#include <cstdio>
-#include <cstdint>
+#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <stdexcept>
 #include <string>
 
