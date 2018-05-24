@@ -50,7 +50,7 @@ string__00::string__00(code_point__00 other)
 {
 }
 
-string__00::string__00(bool__00 other)
+string__00::string__00(BOOL other)
     : string__00(other.value ? "true" : "false")
 {
 }
@@ -133,19 +133,19 @@ string__00 string__00::op__add(string__00 const & value) const
     return string__00(newLength, chars);
 }
 
-auto equal_op(string__00 lhs, string__00 rhs) -> bool__00
+auto equal_op(string__00 lhs, string__00 rhs) -> BOOL
 {
     if (lhs.Length != rhs.Length)
-        return false__00;
+        return FALSE;
 
     for (int i = 0; i < lhs.Length; i++)
         if (lhs.Buffer[i] != rhs.Buffer[i])
-            return false__00;
+            return FALSE;
 
-    return true__00;
+    return TRUE;
 }
 
-bool__00 string__00__0op__less_than(string__00 lhs, string__00 rhs)
+BOOL string__00__0op__less_than(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -154,7 +154,7 @@ bool__00 string__00__0op__less_than(string__00 lhs, string__00 rhs)
     delete[] right;
     return bool__00_from(result);
 }
-bool__00 string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
+BOOL string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -163,30 +163,30 @@ bool__00 string__00__0op__less_than_or_equal(string__00 lhs, string__00 rhs)
     delete[] right;
     return bool__00_from(result);
 }
-bool__00 string__00__0op__greater_than(string__00 lhs, string__00 rhs)
+BOOL string__00__0op__greater_than(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = strcmp(left, right) > 0;
+    BOOL result = bool__00_from(strcmp(left, right) > 0);
     delete[] left;
     delete[] right;
-    return bool__00_from(result);
+    return result;
 }
-bool__00 string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs)
+BOOL string__00__0op__greater_than_or_equal(string__00 lhs, string__00 rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = strcmp(left, right) >= 0;
+    BOOL result = bool__00_from(strcmp(left, right) >= 0);
     delete[] left;
     delete[] right;
-    return bool__00_from(result);
+    return result;
 }
 
-bool operator < (string__00 const & lhs, string__00 const & rhs)
+_Bool operator < (string__00 const & lhs, string__00 const & rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
-    bool result = strcmp(left, right) < 0;
+    _Bool result = strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
     return result;
