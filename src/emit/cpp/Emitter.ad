@@ -115,7 +115,7 @@ public contains_multi_underscore_runs(value: string) -> bool
     // of a for loop
     var i: int = 0;
     var last_char_underscore: bool = false;
-    while i < string_length(value)
+    while i < string_byte_length(value)
     {
         if value[i] == '_'
         {
@@ -136,7 +136,7 @@ public append_fixing_underscores(builder: mut system.text.String_Builder, value:
     // of a for loop
     var underscores: int = 0;
     var i: int = 0;
-    while i < string_length(value)
+    while i < string_byte_length(value)
     {
         if value[i] == '_'
             { underscores += 1; }
@@ -283,12 +283,12 @@ public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, s
     assert(parameters.kind == ParameterList, "parameters.kind=" + parameters.kind);
     let builder: mut system.text.String_Builder = new system.text.String_Builder();
     builder.Append("(");
-    if string_length(self_type) > 0
+    if string_byte_length(self_type) > 0
     {
         builder.Append(self_type);
         builder.Append(" self");
     }
-    var first_parameter: bool = string_length(self_type) == 0;
+    var first_parameter: bool = string_byte_length(self_type) == 0;
     for let parameter: Semantic_Node in children_of_kind(parameters, Parameter)
     {
         if not first_parameter
@@ -647,14 +647,14 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
 
 public literal_length(value: string) -> int
 {
-    var length: int = string_length(value)-2; // start and end quotes
+    var length: int = string_byte_length(value)-2; // start and end quotes
     // Since each escape sequence is two chars, we subtract one for each escape sequence.
     // The this that makes this tricky is escaped backslash `"\\"`
     var escaped: bool = false;
     // Due to limitations with strings and loops, do the equivalent
     // of a for loop
     var i: int = 0;
-    while i < string_length(value)
+    while i < string_byte_length(value)
     {
         if value[i] == '\\' and not escaped
         {
