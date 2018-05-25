@@ -2,14 +2,21 @@
 #include <map>
 
 // -----------------------------------------------------------------------------
-// Primitive Types
+// Library Utils
 // -----------------------------------------------------------------------------
 
-uint32 int32::as_uint__0() const
+void lib_assert1(const _Bool condition, char const *_Nonnull code)
 {
-    lib_assert(this->value >= 0);
-    return uint32(this->value);
+    if(!condition)
+    {
+        printf("Assertion failed: %s", code);
+        exit(70);
+    }
 }
+
+// -----------------------------------------------------------------------------
+// Primitive Types
+// -----------------------------------------------------------------------------
 
 char code_point__to_char(code_point v)
 {
@@ -92,16 +99,16 @@ string string::Replace__2(string oldValue, string newValue) const
     int lastIndex = 0;
     // TODO the Substring calls in here are leaking memory
     for(int i=0; i < limit; i++)
-        if (cond(equal_op(Substring__2(int32(i), int32(oldValue.Length)), oldValue)))
+        if (cond(equal_op(Substring__2(int32_from(i), int32_from(oldValue.Length)), oldValue)))
         {
-            builder.Append__1(Substring__2(int32(lastIndex), int32(i-lastIndex)));
+            builder.Append__1(Substring__2(int32_from(lastIndex), int32_from(i-lastIndex)));
             builder.Append__1(newValue);
             i += oldValue.Length; // skip over the value we just matched
             lastIndex = i;
             i--; // we need i-- to offset the i++ that is about to happen
         }
 
-    builder.Append__1(Substring__2(int32(lastIndex), int32(Length - lastIndex)));
+    builder.Append__1(Substring__2(int32_from(lastIndex), int32_from(Length - lastIndex)));
     return builder.ToString__0();
 }
 
@@ -109,18 +116,18 @@ int32 string::LastIndexOf__1(code_point c) const
 {
     for(int i = Length - 1; i >= 0; i--)
         if(Buffer[i] == code_point__to_char(c))
-            return int32(i);
+            return int32_from(i);
 
-    return int32(-1); // TODO should return none
+    return int32_from(-1); // TODO should return none
 }
 
 int32 string::index_of__1(code_point c) const
 {
     for(int i = 0; i < Length; i++)
         if(Buffer[i] == code_point__to_char(c))
-            return int32(i);
+            return int32_from(i);
 
-    return int32(-1);
+    return int32_from(-1);
 }
 
 string string::op__add(string const & value) const
@@ -195,6 +202,47 @@ _Bool operator < (string const & lhs, string const & rhs)
 // -----------------------------------------------------------------------------
 // Standard Library
 // -----------------------------------------------------------------------------
+
+void assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)
+{
+    if(!condition.value)
+    {
+        printf("%s", string("Assertion failed: ").op__add(string(code))
+            .op__add(string(", file ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+        exit(70);
+    }
+}
+
+void assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line)
+{
+    if(!condition.value)
+    {
+        printf("%s", string("Assertion failed: ").op__add(string(code)).op__add(string(", ")).op__add(message)
+            .op__add(string(", file ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+        exit(70);
+    }
+}
+
+_Noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
+{
+    printf("%s", string("Function ").op__add(string(function))
+        .op__add(string(" not yet implemented, ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+    exit(70);
+}
+
+_Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
+{
+    printf("%s", string("Function ").op__add(string(function))
+        .op__add(string(" not yet implemented, ")).op__add(message).op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+    exit(70);
+}
+
+_Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
+{
+    printf("%s", string("Reached \"UNREACHABLE\" statement in function ").op__add(string(function))
+        .op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+    exit(70);
+}
 
 std::map<string, string> resourceValues;
 

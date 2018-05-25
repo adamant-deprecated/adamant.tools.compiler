@@ -45,27 +45,29 @@ public:
 // Library Utils
 // -----------------------------------------------------------------------------
 
-#define lib_assert(condition) lib_assert_impl(condition, #condition, __FILE__)
-inline void lib_assert_impl(const _Bool condition, char const *_Nonnull code, char const *_Nonnull file)
-{
-    if(!condition)
-    {
-        printf("Assertion failed: %s, file %s", code, file);
-        exit(70);
-    }
-}
+#define lib_assert(condition) lib_assert1(condition, #condition)
+void lib_assert1(const _Bool condition, char const *_Nonnull code);
 
 // -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-typedef struct BOOL BOOL;
 typedef struct never never;
 typedef struct optional__never optional__never;
+typedef struct BOOL BOOL;
 typedef struct int32 int32;
-typedef struct uint32 uint32;
 typedef struct code_point code_point;
 typedef struct string string;
+
+// `never` type
+struct never
+{
+};
+
+// `never?` type
+struct optional__never
+{
+};
 
 // For now, use `BOOL` as the emitted type
 // TODO C: switch `BOOL` to `bool`
@@ -94,16 +96,6 @@ inline _Bool bool_arg(BOOL v) { return v.value; }
 
 inline BOOL BOOL__0op__not(BOOL v) { return (BOOL){ !v.value }; }
 
-// `never` type
-struct never
-{
-};
-
-// `never?` type
-struct optional__never
-{
-};
-
 // TODO this is a hack for now, the type of `none` should be `never?`
 static const void_ptr none = (void*)0;
 
@@ -113,16 +105,10 @@ struct int32
     // Runtime Use Members
     int32_t value;
 
-    explicit int32() = default;
-    explicit int32(int32_t value): value(value) {}
-
     int32 *_Nonnull operator->() { return this; }
     int32 const *_Nonnull operator->() const { return this; }
     int32 & operator* () { return *this; }
     int32 const & operator* () const { return *this; }
-
-    // Hack to support conversion of uint to int for now
-    int32(uint32 value);
 
     // Adamant Members
     void op__add_assign(int32 other) { this->value += other.value; }
@@ -131,60 +117,22 @@ struct int32
     BOOL op__less_than_or_equal(int32 other) const { return bool_from(this->value <= other.value); }
     BOOL op__greater_than(int32 other) const { return bool_from(this->value > other.value); }
     BOOL op__greater_than_or_equal(int32 other) const { return bool_from(this->value >= other.value); }
-    int32 op__add(int32 other) const { return int32(this->value + other.value); }
-    int32 op__subtract(int32 other) const { return int32(this->value - other.value); }
-    int32 op__multiply(int32 other) const { return int32(this->value * other.value); }
-    int32 op__divide(int32 other) const { return int32(this->value / other.value); }
-    int32 op__remainder(int32 other) const { return int32(this->value % other.value); }
+    int32 op__add(int32 other) const { return (int32){ this->value + other.value}; }
+    int32 op__subtract(int32 other) const { return (int32){ this->value - other.value}; }
+    int32 op__multiply(int32 other) const { return (int32){ this->value * other.value}; }
+    int32 op__divide(int32 other) const { return (int32){ this->value / other.value}; }
+    int32 op__remainder(int32 other) const { return (int32){ this->value % other.value}; }
     int32 op__magnitude() const;
-
-    // Hack because we don't support as correctly yet
-    uint32 as_uint__0() const;
 };
 
-inline int32 int32__0op__negate(int32 v) { return int32(-v.value); }
+// Used by runtime for converting to int32
+inline int32 int32_from(int32_t v) { return (int32){ v }; }
+
+inline int32 int32__0op__negate(int32 v) { return int32_from(-v.value); }
 inline BOOL int32__0op__less_than(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }
 inline BOOL int32__0op__less_than_or_equal(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }
 inline BOOL int32__0op__greater_than(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }
 inline BOOL int32__0op__greater_than_or_equal(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }
-
-// `uint` type
-struct uint32
-{
-    // Runtime Use Members
-    uint32_t value;
-
-    explicit uint32() = default;
-    explicit uint32(uint32_t value): value(value) {}
-
-    uint32 *_Nonnull operator->() { return this; }
-    uint32 const *_Nonnull operator->() const { return this; }
-    uint32 & operator* () { return *this; }
-    uint32 const & operator* () const { return *this; }
-
-    // Hack to support conversion of int to uint for now
-    uint32(int32 value): value(value.value) {}
-
-    // Adamant Members
-    void op__add_assign(uint32 other) { this->value += other.value; }
-    void op__subtract_assign(uint32 other) { this->value -= other.value; }
-    BOOL op__less_than(uint32 other) const { return bool_from(this->value < other.value); }
-    BOOL op__less_than_or_equal(uint32 other) const { return bool_from(this->value <= other.value); }
-    BOOL op__greater_than(uint32 other) const { return bool_from(this->value > other.value); }
-    BOOL op__greater_than_or_equal(uint32 other) const { return bool_from(this->value >= other.value); }
-    uint32 op__add(uint32 other) const { return uint32(this->value + other.value); }
-    uint32 op__subtract(uint32 other) const { return uint32(this->value - other.value); }
-};
-
-inline BOOL uint32__0op__less_than(uint32 lhs, uint32 rhs) { return bool_from(lhs.value < rhs.value); }
-inline BOOL uint32__0op__less_than_or_equal(uint32 lhs, uint32 rhs) { return bool_from(lhs.value <= rhs.value); }
-inline BOOL uint32__0op__greater_than(uint32 lhs, uint32 rhs) { return bool_from(lhs.value > rhs.value); }
-inline BOOL uint32__0op__greater_than_or_equal(uint32 lhs, uint32 rhs) { return bool_from(lhs.value >= rhs.value); }
-
-inline int32::int32(uint32 value)
-    : value(value.value)
-{
-}
 
 struct code_point
 {
@@ -232,10 +180,10 @@ struct string
 
     // Adamant Members
     // TODO ByteLength should be a property
-    int32 ByteLength__0() const { return int32(Length); }
+    int32 ByteLength__0() const { return int32_from(Length); }
 
     string Substring__2(int32 start, int32 length) const;
-    string Substring__1(int32 start) const { return Substring__2(start, int32(Length-start.value)); }
+    string Substring__1(int32 start) const { return Substring__2(start, int32_from(Length-start.value)); }
     string Replace__2(string oldValue, string newValue) const;
     int32 LastIndexOf__1(code_point c) const;
     int32 index_of__1(code_point c) const;
@@ -259,7 +207,7 @@ string string__0new__2(code_point c, int32 repeat);
 inline int32 int32::op__magnitude() const
 {
     lib_assert(this->value!=INT32_MIN);
-    return int32(this->value < 0 ? -this->value : this->value);
+    return int32_from(this->value < 0 ? -this->value : this->value);
 }
 
 // -----------------------------------------------------------------------------
@@ -326,54 +274,19 @@ inline void free__1(void_ptr object)
     free(object);
 }
 
-#define assert__2(condition, message) assert__2__impl(condition, #condition, message, __FILE__, __LINE__)
-#define assert__1(condition) assert__1__impl(condition, #condition, __FILE__, __LINE__)
+#define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)
+#define assert__2(condition, message) assert2(condition, #condition, message, __FILE__, __LINE__)
+void assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);
+void assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line);
 
-inline void assert__2__impl(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line)
-{
-    if(!condition.value)
-    {
-        printf("%s", string("Assertion failed: ").op__add(string(code)).op__add(string(", ")).op__add(message)
-            .op__add(string(", file ")).op__add(string(file)).op__add(string(", line ")).op__add(int32(line)).cstr());
-        exit(70);
-    }
-}
-
-inline void assert__1__impl(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)
-{
-    if(!condition.value)
-    {
-        printf("%s", string("Assertion failed: ").op__add(string(code))
-            .op__add(string(", file ")).op__add(string(file)).op__add(string(", line ")).op__add(int32(line)).cstr());
-        exit(70);
-    }
-}
-
-_Noreturn inline void NOT_IMPLEMENTED(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
-{
-    printf("%s", string("Function ").op__add(string(function))
-        .op__add(string(" not yet implemented, ")).op__add(message).op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(int32(line)).cstr());
-    exit(70);
-}
-
-_Noreturn inline void NOT_IMPLEMENTED(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
-{
-    printf("%s", string("Function ").op__add(string(function))
-        .op__add(string(" not yet implemented, ")).op__add(string(file)).op__add(string(", line ")).op__add(int32(line)).cstr());
-    exit(70);
-}
-
-#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED(message, __func__, __FILE__, __LINE__)
-#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED(__func__, __FILE__, __LINE__)
-
-_Noreturn inline void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
-{
-    printf("%s", string("Reached \"UNREACHABLE\" statement in function ").op__add(string(function))
-        .op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(int32(line)).cstr());
-    exit(70);
-}
+#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED0(__func__, __FILE__, __LINE__)
+#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED1(message, __func__, __FILE__, __LINE__)
+_Noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
+_Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
 
 #define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)
+_Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
+
 
 class ResourceManager
 {
@@ -403,7 +316,7 @@ struct system__collections__List__1
     // Adamant Members
     void add__1(T value);
     void clear__0() { length = 0; }
-    int32 op__magnitude() const { return int32(length); }
+    int32 op__magnitude() const { return (int32){length}; }
     T const & op__Element(int32 const index) const;
 };
 
@@ -463,7 +376,7 @@ public:
     const int Count;
 
     // Adamant Members
-    int32 op__magnitude() const { return int32(Count); }
+    int32 op__magnitude() const { return int32_from(Count); }
     string const & op__Element(int32 const index) const
     {
         lib_assert(index.value >= 0 && index.value < Count);
@@ -500,7 +413,7 @@ struct system__text__String_Builder__0
 
     // Adamant Members
     // TODO byte_length should be a property
-    int32 byte_length__0() const { return int32(length); }
+    int32 byte_length__0() const { return int32_from(length); }
     void Append__1(string const & value);
     void Append__1(system__text__String_Builder__0 const *_Nonnull value);
     void AppendLine__1(string const& value);
