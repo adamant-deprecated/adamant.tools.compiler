@@ -79,7 +79,7 @@ public mangle_name(type: Type) -> string
     }
 
     builder.Append("__");
-    builder.Append(|type.type_parameters|);
+    builder.Append(int_to_string(|type.type_parameters|));
 
     return builder.ToString();
 }
@@ -92,7 +92,7 @@ public mangle_function_name(name: string, parameter_count: int) -> string
     else
         { append_fixing_underscores(builder, name); }
     builder.Append("__");
-    builder.Append(parameter_count);
+    builder.Append(int_to_string(parameter_count));
     return builder.ToString();
 }
 
@@ -280,7 +280,7 @@ public convert_type(mutable_binding: bool, type_node: Semantic_Node) -> string
 // TODO can't have `self_type` be a nullable string because comparision not implemented yet
 public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, self_type: string, is_main_function: bool) -> string
 {
-    assert(parameters.kind == ParameterList, "parameters.kind=" + parameters.kind);
+    assert(parameters.kind == ParameterList, "parameters.kind=" + int_to_string(parameters.kind));
     let builder: mut system.text.String_Builder = new system.text.String_Builder();
     builder.Append("(");
     if string_byte_length(self_type) > 0
@@ -361,7 +361,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, constructor_name);
         write(builder, "__");
         let argument_list: Semantic_Node = syntax.children[1];
-        write(builder, ""+node_argument_count(argument_list)); // trick to convert to string
+        write(builder, int_to_string(node_argument_count(argument_list)));
         if |type.type_parameters| > 0
         {
             let params: mut system.text.String_Builder = new system.text.String_Builder();
@@ -456,7 +456,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         let value: string = get_text(syntax);
         // Extra parens are needed in some weird cases with macros
-        write(builder, "((string){" + literal_length(value) + ",(uint8_t const*)" + value + "})");
+        write(builder, "((string){" + int_to_string(literal_length(value)) + ",(uint8_t const*)" + value + "})");
     }
     else if syntax.kind == AssignmentExpression
     {
@@ -482,7 +482,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
             }
             else
             {
-                error(builder, "Unsupported assignment operator " + operator);
+                error(builder, "Unsupported assignment operator " + int_to_string(operator));
             }
             write(builder, "(&(");
             convert_expression(syntax.children[0], builder);
@@ -540,7 +540,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         }
         else
         {
-            error(builder, "Unsupported comparison operator " + operator);
+            error(builder, "Unsupported comparison operator " + int_to_string(operator));
         }
         write(builder, "(");
         convert_expression(syntax.children[0], builder);
@@ -622,7 +622,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         // Assuming we just emitted the function name as a field, tack this on
         let parameters_node: Semantic_Node = syntax.children[1];
         // TODO we don't handle the arguments list correctly yet, so it still has the parens as children
-        write(builder, ""+node_argument_count(parameters_node)); // trick to convert to string
+        write(builder, int_to_string(node_argument_count(parameters_node)));
         convert_expression(parameters_node, builder);
     }
     else if syntax.kind == MemberAccessExpression
@@ -641,7 +641,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else
     {
-        error(builder, "Could not convert expression of type " + syntax.kind);
+        error(builder, "Could not convert expression of type " + int_to_string(syntax.kind));
     }
 }
 
@@ -879,7 +879,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
     }
     else
     {
-        NOT_IMPLEMENTED("statement.kind=" + statement.kind);
+        NOT_IMPLEMENTED("statement.kind=" + int_to_string(statement.kind));
     }
 }
 
@@ -927,7 +927,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
             new_function_name = new_function_name + "__" + constructor_name;
             constructor_full_name = constructor_full_name + constructor_name + "__";
         }
-        constructor_full_name = constructor_full_name + |parameters_node.children|;
+        constructor_full_name = constructor_full_name + int_to_string(|parameters_node.children|);
         var return_type: string = class_name;
         if not is_value_type
             { return_type = return_type + " *_Nonnull"; }
@@ -984,7 +984,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
     }
     else
     {
-        error(emitter.definitions, "Could not emit member of type " + member.kind);
+        error(emitter.definitions, "Could not emit member of type " + int_to_string(member.kind));
     }
 }
 
@@ -1124,7 +1124,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     }
     else
     {
-        error(emitter.definitions, "Could not emit declaration of type " + declaration.kind);
+        error(emitter.definitions, "Could not emit declaration of type " + int_to_string(declaration.kind));
     }
 }
 
@@ -1168,9 +1168,9 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
         resource_text = string_replace(resource_text, "\r", "\\r");
         resource_text = string_replace(resource_text, "\"", "\\\"");
         resource_text = "\""+resource_text+"\"";
-        begin_line(emitter.definitions, "resource_manager__->AddResource((string){"+literal_length(resource_name)+",(uint8_t const*)");
+        begin_line(emitter.definitions, "resource_manager__->AddResource((string){"+int_to_string(literal_length(resource_name))+",(uint8_t const*)");
         write(emitter.definitions, resource_name);
-        write(emitter.definitions, "}, (string){"+literal_length(resource_text)+",(uint8_t const*)");
+        write(emitter.definitions, "}, (string){"+int_to_string(literal_length(resource_text))+",(uint8_t const*)");
         write(emitter.definitions, resource_text);
         end_line(emitter.definitions, "});");
     }

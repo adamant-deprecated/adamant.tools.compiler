@@ -165,10 +165,6 @@ string string__0new__1(string value);
 string string__0new__2(code_point c, int32 repeat);
 
 string op__add(string lhs, string rhs);
-string op__add(string lhs, BOOL rhs);
-string op__add(string lhs, int32 rhs);
-string op__add(int32 lhs, string rhs);
-string op__add(string lhs, code_point rhs);
 BOOL string__0op__lt(string lhs, string rhs);
 BOOL string__0op__lte(string lhs, string rhs);
 BOOL string__0op__gt(string lhs, string rhs);
@@ -387,7 +383,6 @@ struct system__text__String_Builder__0
     int32 byte_length__0() const { return (int32){length}; }
     void Append__1(string const & value);
     void Append__1(system__text__String_Builder__0 const *_Nonnull value);
-    void Append__1(int32 value);
     void AppendLine__1(string const& value);
     void AppendLine__0();
     void Remove__2(int32 start, int32 length);

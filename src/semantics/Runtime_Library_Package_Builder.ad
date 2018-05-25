@@ -11,10 +11,10 @@ public build_runtime_library_package() -> Package
     let compilation_units: system.collections.List<Compilation_Unit> = new system.collections.List<Compilation_Unit>();
 
     let symbols: mut system.collections.List<Symbol> = build_runtime_library_symbols(name);
-    assert(|symbols| > 0, "|symbols|=" + |symbols|);
+    assert(|symbols| > 0, "|symbols|=" + int_to_string(|symbols|));
 
     let package_symbol: Symbol = new Symbol.package(name.unqualified, symbols);
-    assert(|package_symbol.children| > 0, "|package_symbol.children|=" + |package_symbol.children|);
+    assert(|package_symbol.children| > 0, "|package_symbol.children|=" + int_to_string(|package_symbol.children|));
 
     return new Package(name, references, compilation_units, package_symbol);
 }

@@ -20,7 +20,7 @@ public build_compilation_units(
     name_table: Name_Table)
     -> system.collections.List<Compilation_Unit>
 {
-    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
     // TODO remove below assertion once this is fixed
     assert(lookup_special(name_table.any_package, "string") =/= none, "name_table.any_package.name="+full_name(name_table.any_package.name));
 
@@ -39,7 +39,7 @@ public build_compilation_unit_semantic_node(
     name_table: Name_Table)
     -> Compilation_Unit
 {
-    assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + compilation_unit_syntax.kind);
+    assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + int_to_string(compilation_unit_syntax.kind));
 
     let scope: Name_Subtable = none; //name_table; // TODO this isn't right, we need to load the correct one
     let declarations: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
@@ -306,7 +306,7 @@ public build_semantic_node(
             children.add(build_semantic_node(builder, child_syntax, name_table, scope));
         }
         return new Semantic_Node.concrete(syntax, children);
-        // NOT_IMPLEMENTED("syntax.kind="+syntax.kind);
+        // NOT_IMPLEMENTED("syntax.kind="+int_to_string(syntax.kind));
     }
 }
 
@@ -317,7 +317,7 @@ public build_parameters_semantic_node(
     scope: Name_Subtable)
     -> mut Semantic_Node
 {
-    assert(parameters_syntax.kind == ParameterList, "parameters_syntax.kind="+ parameters_syntax.kind);
+    assert(parameters_syntax.kind == ParameterList, "parameters_syntax.kind="+ int_to_string(parameters_syntax.kind));
     let parameter_nodes: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     for let parameter: Syntax_Node in parameters(parameters_syntax)
     {
@@ -351,7 +351,7 @@ public build_parameters_semantic_node(
         }
         else
         {
-            NOT_IMPLEMENTED("parameter.kind="+parameter.kind);
+            NOT_IMPLEMENTED("parameter.kind="+int_to_string(parameter.kind));
         }
     }
 
@@ -539,7 +539,7 @@ public build_type_name_semantic_node(
         // }
         // return new Semantic_Node.concrete(syntax, children);
         let place: int = syntax.start;
-        NOT_IMPLEMENTED("syntax.kind="+syntax.kind+" at "+place);
+        NOT_IMPLEMENTED("syntax.kind="+int_to_string(syntax.kind)+" at "+int_to_string(place));
     }
 }
 
@@ -555,7 +555,7 @@ public build_type_arguments_semantic_node(
     // for convenience, we ignore identifier names
     if syntax.kind == IdentifierName
         { return type_parameters; }
-    assert(syntax.kind == GenericName, "syntax.kind=="+syntax.kind);
+    assert(syntax.kind == GenericName, "syntax.kind=="+int_to_string(syntax.kind));
     var in_type_arguments: bool = false;
     for let type_argument: Syntax_Node in syntax.children
     {

@@ -18,7 +18,7 @@ public write(console: mut system.console.Console, diagnostics: system.collection
         else
             { severity = "Error"; }
 
-        console.WriteLine(diagnostic.source.path+":"+position.line+":"+position.column+" "+severity+":");
+        console.WriteLine(diagnostic.source.path+":"+int_to_string(position.line)+":"+int_to_string(position.column)+" "+severity+":");
         console.WriteLine("  "+diagnostic.message);
     }
 }

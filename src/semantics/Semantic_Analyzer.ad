@@ -1,6 +1,6 @@
 public analyze_semantics(package_syntax: Syntax_Node) -> Package
 {
-    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
 
     // Hard code a stand-in package-name for now
     let name: Package_Name = new Package_Name("default");

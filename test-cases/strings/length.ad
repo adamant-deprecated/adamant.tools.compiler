@@ -1,7 +1,7 @@
 public main(console: mut system.console.Console) -> void
 {
     var s: string = "A good test string!";
-    console.WriteLine(string_byte_length(s) + ": " + s);
+    console.WriteLine(int_to_string(string_byte_length(s)) + ": " + s);
     s = "Yep,\twe know length!";
-    console.WriteLine(string_byte_length(s) + ": " + s);
+    console.WriteLine(int_to_string(string_byte_length(s)) + ": " + s);
 }

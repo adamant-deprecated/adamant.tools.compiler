@@ -17,8 +17,8 @@ public line_count(lines: Text_Lines) -> int
 
 public get_line(lines: Text_Lines, line_number: int) -> Text_Line
 {
-    assert(line_number > 0, "line "+line_number);
-    assert(line_number <= line_count(lines), "line "+line_number);
+    assert(line_number > 0, "line "+int_to_string(line_number));
+    assert(line_number <= line_count(lines), "line "+int_to_string(line_number));
     let line_index: int = line_number - 1; // line_number is one based
     let line_start: int = lines.start_of_line[line_index];
     if line_index == line_count(lines) - 1 // last line
@@ -30,8 +30,8 @@ public get_line(lines: Text_Lines, line_number: int) -> Text_Line
 
 public line_containing_offset(lines: Text_Lines, character_offset: int) -> int
 {
-    assert(character_offset >= 0, "offset "+character_offset);
-    assert(character_offset <= source_byte_length(lines.source), "offset "+character_offset+" source length "+source_byte_length(lines.source));
+    assert(character_offset >= 0, "offset "+int_to_string(character_offset));
+    assert(character_offset <= source_byte_length(lines.source), "offset "+int_to_string(character_offset)+" source length "+int_to_string(source_byte_length(lines.source)));
     // binary search for the line
     var left: int = 0;
     var right: int = line_count(lines) - 1;

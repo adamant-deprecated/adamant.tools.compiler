@@ -67,7 +67,7 @@ public class Syntax_Node
         self.children = new system.collections.List<Syntax_Node>();
         self.node_diagnostics = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(start, 0);
-        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + type));
+        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + int_to_string(type)));
     }
 
     public new skipped(skipped_node: Syntax_Node)
@@ -82,7 +82,7 @@ public class Syntax_Node
         self.children = children;
         self.node_diagnostics = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(skipped_node.start, skipped_node.byte_length);
-        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + skipped_node.kind));
+        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + int_to_string(skipped_node.kind)));
     }
 
     public new skipped(skipped_nodes: system.collections.List<Syntax_Node>)
@@ -97,7 +97,7 @@ public class Syntax_Node
         self.children = new system.collections.List<Syntax_Node>();
         self.node_diagnostics = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(self.start, self.byte_length);
-        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + |skipped_nodes| + " unexpected token(s)"));
+        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + int_to_string(|skipped_nodes|) + " unexpected token(s)"));
     }
 }
 

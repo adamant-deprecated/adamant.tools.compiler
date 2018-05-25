@@ -84,7 +84,7 @@ public class Type
         assert(definition =/= none, "");
         assert(type_arguments =/= none, full_name(definition.name));
         assert(|definition.type_parameters| == |type_arguments|,
-            full_name(definition.name)+" "+|definition.type_parameters|+" given "+|type_arguments|);
+            full_name(definition.name)+" "+int_to_string(|definition.type_parameters|)+" given "+int_to_string(|type_arguments|));
         self.kind = definition.kind;
         self.name = definition.name;
         self.type_parameters = type_arguments;
@@ -119,7 +119,7 @@ public make_immutable_type(type: Type) -> Type
 
 public remove_type_package(type: Type) -> Type
 {
-    assert(type.kind == NamespaceType, "kind=" + type.kind);
+    assert(type.kind == NamespaceType, "kind=" + int_to_string(type.kind));
     if is_package_qualified(type.name)
         { return new Type(type.kind,
                         remove_package(type.name),

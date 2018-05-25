@@ -1,4 +1,4 @@
 public main() -> void
 {
-    var x: string = "Hello " + "World! " + 4 + 'c';
+    var x: string = "Hello " + "World! " + int_to_string(4) + code_point_to_string('c');
 }

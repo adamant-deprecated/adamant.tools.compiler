@@ -129,26 +129,6 @@ string op__add(string lhs, string rhs)
     return (string){new_length, chars};
 }
 
-string op__add(string lhs, BOOL rhs)
-{
-    return op__add(lhs, bool_to_string__1(rhs));
-}
-
-string op__add(string lhs, int32 rhs)
-{
-    return op__add(lhs, int_to_string__1(rhs));
-}
-
-string op__add(int32 lhs, string rhs)
-{
-    return op__add(int_to_string__1(lhs), rhs);
-}
-
-string op__add(string lhs, code_point rhs)
-{
-    return op__add(lhs, code_point_to_string__1(rhs));
-}
-
 BOOL equal_op(string lhs, string rhs)
 {
     if (lhs.byte_length.value != rhs.byte_length.value)
@@ -439,11 +419,6 @@ void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 
     ensure_capacity(new_length);
     memcpy(buffer+length, value->buffer, value->length);
     length = new_length;
-}
-
-void system__text__String_Builder__0::Append__1(int32 value)
-{
-    Append__1(int_to_string__1(value));
 }
 
 void system__text__String_Builder__0::AppendLine__1(string const & value)

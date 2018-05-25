@@ -5,7 +5,7 @@ public build_name_table(
     references: system.collections.List<Package_Reference>)
     -> Name_Table
 {
-    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
     let name_table: mut Name_Table = new Name_Table();
     add_referenced(name_table, references);
     add_package(name_table, package_name, package_syntax);
@@ -44,7 +44,7 @@ public add_package(
     package_syntax: Syntax_Node)
     -> void
 {
-    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + package_syntax.kind);
+    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
     let global_namespace: Name = add_package(name_table, package_name);
     for let compilation_unit: Syntax_Node in package_syntax.children
     {
@@ -58,7 +58,7 @@ public add_compilation_unit(
     compilation_unit: Syntax_Node)
     -> void
 {
-    assert(compilation_unit.kind == CompilationUnit, "compilation_unit.kind=" + compilation_unit.kind);
+    assert(compilation_unit.kind == CompilationUnit, "compilation_unit.kind=" + int_to_string(compilation_unit.kind));
     for let declaration: Syntax_Node in compilation_unit.children
     {
         add_syntax(name_table, global_namespace, declaration);
@@ -206,7 +206,7 @@ public add_syntax(
     }
     else
     {
-        NOT_IMPLEMENTED("syntax.kind=" + syntax.kind);
+        NOT_IMPLEMENTED("syntax.kind=" + int_to_string(syntax.kind));
     }
 }
 
