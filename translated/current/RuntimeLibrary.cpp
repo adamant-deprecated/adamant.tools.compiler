@@ -16,7 +16,7 @@ void lib_assert1(const _Bool condition, char const *_Nonnull code)
 
 inline int32 int32_from(int32_t v) { return (int32){ v }; }
 
-char code_point__to_char(code_point v)
+uint8_t code_point__to_char(code_point v)
 {
     lib_assert(v.value <= 0xFF);
     return v.value;
@@ -26,12 +26,14 @@ char code_point__to_char(code_point v)
 // Primitive Types
 // -----------------------------------------------------------------------------
 
+static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
+
 string::string(const char* s)
-    : Length(strlen(s)), Buffer(s)
+    : Length(strlen(s)), Buffer((uint8_t const*)s)
 {
 }
 
-string::string(int length, const char* s)
+string::string(int length, uint8_t const* s)
     : Length(length), Buffer(s)
 {
 }
@@ -47,15 +49,15 @@ char const * string::cstr() const
 string::string(int32 other)
     : Length(0), Buffer(0)
 {
-    char* buffer = new char[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
-    int length = sprintf(buffer, "%d", other.value);
+    uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
+    int length = sprintf((char*)buffer, "%d", other.value);
     lib_assert(length > 0);
     Length = length;
     Buffer = buffer;
 }
 
 string::string(code_point other)
-    : Length(1), Buffer(new char[1] { code_point__to_char(other) })
+    : Length(1), Buffer(new uint8_t[1] { code_point__to_char(other) })
 {
 }
 
@@ -80,8 +82,8 @@ string string__0new__2(code_point c, int32 repeat)
 {
     string self;
     self.Length = repeat.value;
-    char* buffer = new char[repeat.value];
-    char ch = code_point__to_char(c);
+    uint8_t* buffer = new uint8_t[repeat.value];
+    uint8_t ch = code_point__to_char(c);
     for (int i = 0; i < repeat.value; i++)
         buffer[i] = ch;
 
@@ -135,8 +137,8 @@ int32 string::index_of__1(code_point c) const
 string op__add(string lhs, string rhs)
 {
     int newLength = lhs.Length + rhs.Length;
-    char* chars = new char[newLength];
-    size_t offset = sizeof(char) * lhs.Length;
+    uint8_t* chars = new uint8_t[newLength];
+    size_t offset = sizeof(uint8_t) * lhs.Length;
     memcpy(chars, lhs.Buffer, offset);
     memcpy(chars + offset, rhs.Buffer, rhs.Length);
     return string(newLength, chars);
@@ -303,8 +305,8 @@ string system__io__File_Reader__0::ReadToEndSync__0()
     fseek(file, 0, SEEK_END);
     auto length = ftell(file);
     fseek(file, 0, SEEK_SET);
-    auto buffer = new char[length];
-    length = fread(buffer, sizeof(char), length, file);
+    auto buffer = new uint8_t[length];
+    length = fread(buffer, sizeof(uint8_t), length, file);
     return string(length, buffer);
 }
 
@@ -341,9 +343,9 @@ void system__text__String_Builder__0::ensure_capacity(int needed)
 
     if(new_capacity > capacity)
     {
-        char* new_buffer = new char[new_capacity];
+        uint8_t* new_buffer = new uint8_t[new_capacity];
         if(length > 0)
-            memcpy(new_buffer, buffer, length);
+            memcpy(new_buffer, buffer, length*sizeof(uint8_t));
 
         if(capacity > 0)
             delete[] buffer;
