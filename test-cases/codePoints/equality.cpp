@@ -14,8 +14,8 @@ void main__0();
 void main__0()
 {
 	BOOL x__;
-	x__ = equal_op(code_point('a'), code_point('b'));
-	x__ = not_equal_op(code_point('a'), code_point('b'));
+	x__ = equal_op((code_point){'a'}, (code_point){'b'});
+	x__ = not_equal_op((code_point){'a'}, (code_point){'b'});
 }
 
 // Entry Point Adapter

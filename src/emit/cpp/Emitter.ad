@@ -440,7 +440,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == CodePointLiteralExpression
     {
-        write(builder, "code_point(" + get_text(syntax) + ")");
+        write(builder, "(code_point){" + get_text(syntax) + "}");
     }
     else if syntax.kind == IdentifierName
     {

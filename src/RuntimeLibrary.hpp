@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <wchar.h>
 
 // TODO C: Consider using *_s versions of standard lib functions
 
@@ -125,16 +126,9 @@ inline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >
 
 struct code_point
 {
-    uint32_t value;
-
-    // Runtime Use Members
-    explicit code_point() = default;
-    explicit code_point(char value): value(value) {}
+    char32_t value;
 };
 
-char code_point__to_char(code_point v);
-
-// TODO: Not sure code_point should support comparision operations
 inline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }
 inline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }
 inline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }
@@ -173,7 +167,7 @@ struct string
     int32 index_of__1(code_point c) const;
 
     // TODO check index bounds
-    code_point op__Element(int32 const index) const { return code_point(Buffer[index.value]); }
+    code_point op__Element(int32 const index) const { return (code_point){Buffer[index.value]}; }
 };
 
 string op__add(string lhs, string rhs);

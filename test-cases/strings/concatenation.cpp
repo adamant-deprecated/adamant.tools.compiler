@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	string x__ = op__add(op__add(op__add(string("Hello "), string("World! ")), (int32){4}), code_point('c'));
+	string x__ = op__add(op__add(op__add(string("Hello "), string("World! ")), (int32){4}), (code_point){'c'});
 }
 
 // Entry Point Adapter
