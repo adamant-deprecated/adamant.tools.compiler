@@ -221,7 +221,8 @@ BOOL string__0op__gte(string lhs, string rhs)
 
 string substring__3(string s, int32 start, int32 length)
 {
-    lib_assert(start.value < s.byte_length__.value);
+    // You can ask for a zero length substring at the end of the string
+    lib_assert(start.value <= s.byte_length__.value);
     lib_assert(start.value+length.value <= s.byte_length__.value);
     return (string){length, s.Buffer + start.value};
 }
