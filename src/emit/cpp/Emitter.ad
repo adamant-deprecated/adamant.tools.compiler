@@ -443,7 +443,10 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         // Extra parens are needed in some weird cases with macros
         // TODO write this out as hex or something
-        write(builder, "((code_point){(uint8_t)" + get_text(syntax) + "})");
+        let raw_value: string = get_text(syntax);
+        let code_point_value: code_point = code_point_literal_value(raw_value);
+        write(builder, "((code_point){/*" + substring(raw_value, 1, string_byte_length(raw_value)-2)
+            + "*/0x" + int_to_hex_string(code_point_as_int(code_point_value)) + "})");
     }
     else if syntax.kind == IdentifierName
     {
@@ -679,9 +682,11 @@ public code_point_literal_value(value: string) -> code_point
         // Something escaped like '\n'
         if value == "'\\\"'"
             { return '\"'; }
-        // TODO this isn't valid Adamant
         else if value == "'\\\\'"
             { return '\\'; }
+        // TODO '\'' isn't valid Adamant
+        else if value == "'\\''"
+            { return '\''; }
         // else if value == "'\\\{'"
         //     { return '{'; }
         else if value == "'\\\n'"
@@ -712,8 +717,7 @@ public code_point_literal_value(value: string) -> code_point
         }
         else
         {
-            // TODO put in the real value
-            return '\0';
+            return int_to_code_point(hex_string_to_int(substring(value, 3, 2)));
         }
     }
     else

@@ -14,8 +14,8 @@ void main__0();
 void main__0()
 {
 	string s__ = ((string){2,(uint8_t const*)"\"\\"});
-	code_point c__ = ((code_point){(uint8_t)'\''});
-	c__ = ((code_point){(uint8_t)'\\'});
+	code_point c__ = ((code_point){/*\'*/0x27});
+	c__ = ((code_point){/*\\*/0x5C});
 }
 
 // Entry Point Adapter
