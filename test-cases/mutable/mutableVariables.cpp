@@ -15,8 +15,8 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 system__text__String_Builder__0 *_Nonnull Func__2(int32 x__, int32 const y__)
 {
 	op__add_assign(&(x__), (int32){1});
-	int32 const i__ = x__.op__add((int32){2});
-	int32 j__ = y__.op__sub((int32){23});
+	int32 const i__ = op__add(x__, (int32){2});
+	int32 j__ = int32__0op__sub(y__, (int32){23});
 	j__ = i__;
 	system__text__String_Builder__0 *_Nonnull const stringA__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), string("Hello"));
 	system__text__String_Builder__0 const *_Nonnull stringB__;

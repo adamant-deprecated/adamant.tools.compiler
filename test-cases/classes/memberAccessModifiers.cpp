@@ -35,7 +35,7 @@ string C__0::method__0() const
 string C__0::double_name__0() const
 {
 	auto self = this;
-	return name__.op__add(name__);
+	return op__add(name__, name__);
 }
 
 void main__0()

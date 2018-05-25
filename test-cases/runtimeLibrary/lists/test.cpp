@@ -21,7 +21,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 		console__->WriteLine__1(string("List length not 2!"));
 	}
 
-	console__->WriteLine__1(string("strings[0]=").op__add(strings__->op__Element((int32){0})));
+	console__->WriteLine__1(op__add(string("strings[0]="), strings__->op__Element((int32){0})));
 	for (string const s__ : *(strings__))
 	{
 		console__->WriteLine__1(s__);

@@ -544,9 +544,9 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         let lhs_node: Semantic_Node = syntax.children[0];
         let rhs_node: Semantic_Node = syntax.children[1];
-        convert_expression(lhs_node, builder);
-        convert_member_access(lhs_node, builder);
         write(builder, "op__add(");
+        convert_expression(lhs_node, builder);
+        write(builder, ", ");
         convert_expression(rhs_node, builder);
         write(builder, ")");
     }
@@ -554,33 +554,33 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         let lhs_node: Semantic_Node = syntax.children[0];
         let rhs_node: Semantic_Node = syntax.children[1];
+        write(builder, "int32__0op__sub(");
         convert_expression(lhs_node, builder);
-        convert_member_access(lhs_node, builder);
-        write(builder, "op__sub(");
+        write(builder, ", ");
         convert_expression(rhs_node, builder);
         write(builder, ")");
     }
     else if syntax.kind == MultiplyExpression
     {
+        write(builder, "int32__0op__mul(");
         convert_expression(syntax.children[0], builder);
-        convert_member_access(syntax.children[0], builder);
-        write(builder, "op__mul(");
+        write(builder, ", ");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
     else if syntax.kind == DivideExpression
     {
+        write(builder, "int32__0op__div(");
         convert_expression(syntax.children[0], builder);
-        convert_member_access(syntax.children[0], builder);
-        write(builder, "op__div(");
+        write(builder, ", ");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
     else if syntax.kind == RemainderExpression
     {
+        write(builder, "int32__0op__remainder(");
         convert_expression(syntax.children[0], builder);
-        convert_member_access(syntax.children[0], builder);
-        write(builder, "op__remainder(");
+        write(builder, ", ");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }

@@ -114,20 +114,17 @@ struct int32
     int32 & operator* () { return *this; }
     int32 const & operator* () const { return *this; }
 
-    int32 op__add(int32 other) const { return (int32){ this->value + other.value}; }
-    int32 op__sub(int32 other) const { return (int32){ this->value - other.value}; }
-    int32 op__mul(int32 other) const { return (int32){ this->value * other.value}; }
-    int32 op__div(int32 other) const { return (int32){ this->value / other.value}; }
-    int32 op__remainder(int32 other) const { return (int32){ this->value % other.value}; }
     int32 op__magnitude() const;
 };
 
-// Used by runtime for converting to int32
-inline int32 int32_from(int32_t v) { return (int32){ v }; }
-
 inline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }
 inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }
-inline int32 int32__0op__neg(int32 v) { return int32_from(-v.value); }
+inline int32 int32__0op__neg(int32 v) { return (int32){-v.value}; }
+inline int32 op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }
+inline int32 int32__0op__sub(int32 lhs, int32 rhs) { return (int32){ lhs.value - rhs.value}; }
+inline int32 int32__0op__mul(int32 lhs, int32 rhs) { return (int32){ lhs.value * rhs.value}; }
+inline int32 int32__0op__div(int32 lhs, int32 rhs) { return (int32){ lhs.value / rhs.value}; }
+inline int32 int32__0op__remainder(int32 lhs, int32 rhs) { return (int32){ lhs.value % rhs.value}; }
 inline BOOL int32__0op__lt(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }
 inline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }
 inline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }
@@ -179,20 +176,20 @@ struct string
 
     // Adamant Members
     // TODO ByteLength should be a property
-    int32 ByteLength__0() const { return int32_from(Length); }
+    int32 ByteLength__0() const { return (int32){Length}; }
 
     string Substring__2(int32 start, int32 length) const;
-    string Substring__1(int32 start) const { return Substring__2(start, int32_from(Length-start.value)); }
+    string Substring__1(int32 start) const { return Substring__2(start, (int32){Length-start.value}); }
     string Replace__2(string oldValue, string newValue) const;
     int32 LastIndexOf__1(code_point c) const;
     int32 index_of__1(code_point c) const;
 
     // TODO check index bounds
     code_point op__Element(int32 const index) const { return code_point(Buffer[index.value]); }
-    string op__add(string const & value) const;
-    string op__add(BOOL value) const { return this->op__add(string(value)); }
 };
 
+string op__add(string lhs, string rhs);
+inline string op__add(string lhs, BOOL rhs) { return op__add(lhs, string(rhs)); }
 BOOL string__0op__lt(string lhs, string rhs);
 BOOL string__0op__lte(string lhs, string rhs);
 BOOL string__0op__gt(string lhs, string rhs);
@@ -206,7 +203,7 @@ string string__0new__2(code_point c, int32 repeat);
 inline int32 int32::op__magnitude() const
 {
     lib_assert(this->value!=INT32_MIN);
-    return int32_from(this->value < 0 ? -this->value : this->value);
+    return (int32){this->value < 0 ? -this->value : this->value};
 }
 
 // -----------------------------------------------------------------------------
@@ -369,7 +366,7 @@ public:
     const int Count;
 
     // Adamant Members
-    int32 op__magnitude() const { return int32_from(Count); }
+    int32 op__magnitude() const { return (int32){Count}; }
     string const & op__Element(int32 const index) const
     {
         lib_assert(index.value >= 0 && index.value < Count);
@@ -406,7 +403,7 @@ struct system__text__String_Builder__0
 
     // Adamant Members
     // TODO byte_length should be a property
-    int32 byte_length__0() const { return int32_from(length); }
+    int32 byte_length__0() const { return (int32){length}; }
     void Append__1(string const & value);
     void Append__1(system__text__String_Builder__0 const *_Nonnull value);
     void AppendLine__1(string const& value);

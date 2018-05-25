@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	int32 x__ = (int32){1}.op__sub((int32){2});
+	int32 x__ = int32__0op__sub((int32){1}, (int32){2});
 }
 
 // Entry Point Adapter
