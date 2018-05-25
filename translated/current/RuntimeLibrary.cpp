@@ -29,35 +29,35 @@ uint8_t code_point__to_char(code_point v)
 static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
 
 string::string(const char* s)
-    : Length(strlen(s)), Buffer((uint8_t const*)s)
+    : byte_length__(int32_from(strlen(s))), Buffer((uint8_t const*)s)
 {
 }
 
 string::string(int length, uint8_t const* s)
-    : Length(length), Buffer(s)
+    : byte_length__(int32_from(length)), Buffer(s)
 {
 }
 
 char const * string::cstr() const
 {
-    auto buffer = new char[Length + 1];
-    memcpy(buffer, Buffer, Length);
-    buffer[Length] = 0;
+    auto buffer = new char[byte_length__.value + 1];
+    memcpy(buffer, Buffer, byte_length__.value);
+    buffer[byte_length__.value] = 0;
     return buffer;
 }
 
 string::string(int32 other)
-    : Length(0), Buffer(0)
+    : byte_length__(int32_from(0)), Buffer(0)
 {
     uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
     int length = sprintf((char*)buffer, "%d", other.value);
     lib_assert(length > 0);
-    Length = length;
+    byte_length__ = int32_from(length);
     Buffer = buffer;
 }
 
 string::string(code_point other)
-    : Length(1), Buffer(new uint8_t[1] { code_point__to_char(other) })
+    : byte_length__(int32_from(1)), Buffer(new uint8_t[1] { code_point__to_char(other) })
 {
 }
 
@@ -69,7 +69,7 @@ string::string(BOOL other)
 string string__0new__0()
 {
     string self;
-    self.Length = 0;
+    self.byte_length__ = int32_from(0);
     self.Buffer = 0;
     return self;
 }
@@ -81,7 +81,7 @@ string string__0new__1(string value)
 string string__0new__2(code_point c, int32 repeat)
 {
     string self;
-    self.Length = repeat.value;
+    self.byte_length__ = repeat;
     uint8_t* buffer = new uint8_t[repeat.value];
     uint8_t ch = code_point__to_char(c);
     for (int i = 0; i < repeat.value; i++)
@@ -99,26 +99,26 @@ string string::Substring__2(int32 start, int32 length) const
 string string::Replace__2(string oldValue, string newValue) const
 {
     system__text__String_Builder__0 builder = system__text__String_Builder__0(); // TODO initialize capacity
-    int limit = Length - oldValue.Length + 1;
-    int lastIndex = 0;
+    int limit = byte_length__.value - oldValue.byte_length__.value + 1;
+    int last_index = 0;
     // TODO the Substring calls in here are leaking memory
     for(int i=0; i < limit; i++)
-        if (cond(equal_op(Substring__2(int32_from(i), int32_from(oldValue.Length)), oldValue)))
+        if(cond(equal_op(Substring__2(int32_from(i), oldValue.byte_length__), oldValue)))
         {
-            builder.Append__1(Substring__2(int32_from(lastIndex), int32_from(i-lastIndex)));
+            builder.Append__1(Substring__2(int32_from(last_index), int32_from(i-last_index)));
             builder.Append__1(newValue);
-            i += oldValue.Length; // skip over the value we just matched
-            lastIndex = i;
+            i += oldValue.byte_length__.value; // skip over the value we just matched
+            last_index = i;
             i--; // we need i-- to offset the i++ that is about to happen
         }
 
-    builder.Append__1(Substring__2(int32_from(lastIndex), int32_from(Length - lastIndex)));
+    builder.Append__1(Substring__2(int32_from(last_index), int32_from(byte_length__.value - last_index)));
     return builder.ToString__0();
 }
 
 int32 string::LastIndexOf__1(code_point c) const
 {
-    for(int i = Length - 1; i >= 0; i--)
+    for(int i = byte_length__.value - 1; i >= 0; i--)
         if(Buffer[i] == code_point__to_char(c))
             return int32_from(i);
 
@@ -127,7 +127,7 @@ int32 string::LastIndexOf__1(code_point c) const
 
 int32 string::index_of__1(code_point c) const
 {
-    for(int i = 0; i < Length; i++)
+    for(int i = 0; i < byte_length__.value; i++)
         if(Buffer[i] == code_point__to_char(c))
             return int32_from(i);
 
@@ -136,20 +136,20 @@ int32 string::index_of__1(code_point c) const
 
 string op__add(string lhs, string rhs)
 {
-    int newLength = lhs.Length + rhs.Length;
+    int newLength = lhs.byte_length__.value + rhs.byte_length__.value;
     uint8_t* chars = new uint8_t[newLength];
-    size_t offset = sizeof(uint8_t) * lhs.Length;
+    size_t offset = sizeof(uint8_t) * lhs.byte_length__.value;
     memcpy(chars, lhs.Buffer, offset);
-    memcpy(chars + offset, rhs.Buffer, rhs.Length);
+    memcpy(chars + offset, rhs.Buffer, rhs.byte_length__.value);
     return string(newLength, chars);
 }
 
 auto equal_op(string lhs, string rhs) -> BOOL
 {
-    if (lhs.Length != rhs.Length)
+    if (lhs.byte_length__.value != rhs.byte_length__.value)
         return FALSE;
 
-    for (int i = 0; i < lhs.Length; i++)
+    for (int i = 0; i < lhs.byte_length__.value; i++)
         if (lhs.Buffer[i] != rhs.Buffer[i])
             return FALSE;
 
@@ -258,11 +258,11 @@ ResourceManager *const resource_manager__ = new ResourceManager();
 
 void debug_write__1(string value)
 {
-    fprintf(stderr, "%.*s", value.Length, value.Buffer);
+    fprintf(stderr, "%.*s", value.byte_length__.value, value.Buffer);
 }
 void debug_write_line__1(string value)
 {
-    fprintf(stderr, "%.*s\n", value.Length, value.Buffer);
+    fprintf(stderr, "%.*s\n", value.byte_length__.value, value.Buffer);
 }
 void debug_write_line__0()
 {
@@ -271,12 +271,12 @@ void debug_write_line__0()
 
 void system__console__Console__0::Write__1(string value)
 {
-    printf("%.*s", value.Length, value.Buffer);
+    printf("%.*s", value.byte_length__.value, value.Buffer);
 }
 
 void system__console__Console__0::WriteLine__1(string value)
 {
-    printf("%.*s\n", value.Length, value.Buffer);
+    printf("%.*s\n", value.byte_length__.value, value.Buffer);
 }
 
 void system__console__Console__0::WriteLine__0()
@@ -325,7 +325,7 @@ system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system_
 
 void system__io__File_Writer__0::Write__1(const string& value)
 {
-    fwrite(value.Buffer, sizeof(char), value.Length, file);
+    fwrite(value.Buffer, sizeof(char), value.byte_length__.value, file);
 }
 
 void system__io__File_Writer__0::Close__0()
@@ -358,9 +358,9 @@ void system__text__String_Builder__0::ensure_capacity(int needed)
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string const & value)
 {
     system__text__String_Builder__0__0new__0(self);
-    self->ensure_capacity(value.Length);
-    memcpy(self->buffer, value.Buffer, value.Length);
-    self->length = value.Length;
+    self->ensure_capacity(value.byte_length__.value);
+    memcpy(self->buffer, value.Buffer, value.byte_length__.value);
+    self->length = value.byte_length__.value;
     return self;
 }
 
@@ -373,9 +373,9 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
 
 void system__text__String_Builder__0::Append__1(string const & value)
 {
-    int new_length = length + value.Length;
+    int new_length = length + value.byte_length__.value;
     ensure_capacity(new_length);
-    memcpy(buffer+length, value.Buffer, value.Length);
+    memcpy(buffer+length, value.Buffer, value.byte_length__.value);
     length = new_length;
 }
 
@@ -389,9 +389,9 @@ void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 
 
 void system__text__String_Builder__0::AppendLine__1(string const & value)
 {
-    int new_length = length + value.Length + 1;
+    int new_length = length + value.byte_length__.value + 1;
     ensure_capacity(new_length);
-    memcpy(buffer+length, value.Buffer, value.Length);
+    memcpy(buffer+length, value.Buffer, value.byte_length__.value);
     buffer[new_length-1] = '\n';
     length = new_length;
 }
