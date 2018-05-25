@@ -146,22 +146,12 @@ inline int32 code_point_as_int__1(code_point c) { return (int32){c.value}; }
 
 struct string
 {
-    int32 byte_length__; // TODO rename to just byte_length, though there will be a byte_length
+    int32 byte_length; // TODO rename to just byte_length, though there will be a byte_length
     // property in the future, it doesn't make sense to directly expose it right now because this is
     // not the correct implementation.
 
     // don't use chars because C's handling of chars sucks
     uint8_t const *_Nonnull Buffer; // TODO use byte and rename to `bytes`
-
-    string const *_Nonnull operator->() const { return this; }
-    string const & operator* () const { return *this; }
-
-    // Adamant Members
-    string Substring__2(int32 start, int32 length) const;
-    string Substring__1(int32 start) const { return Substring__2(start, (int32){byte_length__.value-start.value}); }
-    string Replace__2(string old_value, string new_value) const;
-    int32 LastIndexOf__1(code_point c) const;
-    int32 index_of__1(code_point c) const;
 
     // TODO check index bounds
     code_point op__Element(int32 const index) const { return (code_point){Buffer[index.value]}; }
@@ -181,9 +171,10 @@ BOOL string__0op__lte(string lhs, string rhs);
 BOOL string__0op__gt(string lhs, string rhs);
 BOOL string__0op__gte(string lhs, string rhs);
 
-inline int32 string_length__1(string s) { return s.byte_length__; }
+// rename to string_byte_length
+inline int32 string_length__1(string s) { return s.byte_length; }
 string substring__3(string s, int32 start, int32 length);
-inline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length__.value-start.value}); }
+inline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length.value-start.value}); }
 string string_replace__3(string s, string old_value, string new_value);
 int32 string_index_of__2(string s, code_point c);
 int32 string_last_index_of__2(string s, code_point c);
@@ -384,7 +375,7 @@ struct system__text__String_Builder__0
     void ensure_capacity(int needed);
 
     // Adamant Members
-    // TODO byte_length__ should be a property
+    // TODO byte_length should be a property
     int32 byte_length__0() const { return (int32){length}; }
     void Append__1(string const & value);
     void Append__1(system__text__String_Builder__0 const *_Nonnull value);

@@ -37,7 +37,7 @@ public class Name
     public new(qualifier: Name, kind: int, name: string)
     {
         assert(qualifier =/= none, "");
-        assert(name.byte_length > 0, "");
+        assert(string_length(name) > 0, "");
         self.package = qualifier.package;
         self.kind = kind;
         let segments: mut system.collections.List<string> = new system.collections.List<string>();
@@ -53,7 +53,7 @@ public class Name
     public new(qualifier: Name, kind: int, name: string, is_special: bool)
     {
         assert(qualifier =/= none, "");
-        assert(name.byte_length > 0, "");
+        assert(string_length(name) > 0, "");
         self.package = qualifier.package;
         self.kind = kind;
         let segments: mut system.collections.List<string> = new system.collections.List<string>();
@@ -69,7 +69,7 @@ public class Name
     public new special(qualifier: Name, kind: int, name: string)
     {
         assert(qualifier =/= none, "");
-        assert(name.byte_length > 0, "");
+        assert(string_length(name) > 0, "");
         self.package = qualifier.package;
         self.kind = kind;
         let segments: mut system.collections.List<string> = new system.collections.List<string>();

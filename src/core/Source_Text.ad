@@ -14,13 +14,13 @@ public class Source_Text
         // The path passed in. It should be be the path relative to the project or something.
         self.path = path;
         var name: string = path;
-        var index: int = name.LastIndexOf('/');
+        var index: int = string_last_index_of(name, '/');
         if index =/= -1
-            { name = name.Substring(index+1); }
+            { name = substring(name, index+1); }
 
-        index = name.LastIndexOf('\\');
+        index = string_last_index_of(name, '\\');
         if index =/= -1
-            { name = name.Substring(index+1); }
+            { name = substring(name, index+1); }
 
         self.name = name;
         self.text = text;
@@ -30,7 +30,7 @@ public class Source_Text
 
 public line_starts(text: string) -> system.collections.List<int>
 {
-    let length: int = text.byte_length;
+    let length: int = string_length(text);
     let starting_positions: mut system.collections.List<int> = new system.collections.List<int>();
     starting_positions.add(0); // there is always the first line
 
@@ -72,7 +72,7 @@ public line_starts(text: string) -> system.collections.List<int>
 
 public source_byte_length(source: Source_Text) -> int
 {
-    return source.text.byte_length;
+    return string_length(source.text);
 }
 
 public position_of_start(source: Source_Text, span: Text_Span) -> Text_Position

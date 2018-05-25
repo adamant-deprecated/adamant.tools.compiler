@@ -157,12 +157,12 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
 
     // Write RuntimeLibrary
     var outputDirPath: string = outputFilePath;
-    var index: int = outputDirPath.LastIndexOf('/');
+    var index: int = string_last_index_of(outputDirPath, '/');
     if index =/= -1
-        { outputDirPath = outputDirPath.Substring(0, index+1); }
-    index = outputDirPath.LastIndexOf('\\');
+        { outputDirPath = substring(outputDirPath, 0, index+1); }
+    index = string_last_index_of(outputDirPath, '\\');
     if index =/= -1
-        { outputDirPath = outputDirPath.Substring(0, index+1); }
+        { outputDirPath = substring(outputDirPath, 0, index+1); }
     if verbose
     {
         console.Write("Outputting RuntimeLibrary to: ");

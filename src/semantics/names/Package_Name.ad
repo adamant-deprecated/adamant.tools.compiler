@@ -8,7 +8,7 @@ public class Package_Name
 
     public new(name: string)
     {
-        assert(name.byte_length > 0, "");
+        assert(string_length(name) > 0, "");
         self.unqualified = name;
     }
 }

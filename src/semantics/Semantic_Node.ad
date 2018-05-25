@@ -124,7 +124,7 @@ public get_text_span(node: Semantic_Node) -> Text_Span
 public get_text(node: Semantic_Node) -> string
 {
     if node.source == none { return "$No Source$"; }
-    return node.source.text.Substring(node.start, node.byte_length);
+    return substring(node.source.text, node.start, node.byte_length);
 }
 
 public first_child(node: Semantic_Node, kind: int) -> Semantic_Node?

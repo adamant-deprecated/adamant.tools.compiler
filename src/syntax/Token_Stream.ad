@@ -229,7 +229,7 @@ public end_of_file_token(tokens: mut Token_Stream) -> Syntax_Node?
 public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Syntax_Node
 {
     let length: int = end-tokens.position;
-    let value: string = tokens.source.text.Substring(tokens.position, length);
+    let value: string = substring(tokens.source.text, tokens.position, length);
     var type: int;
     if value == "new"
         { type = NewKeyword; }
@@ -304,7 +304,7 @@ public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Sy
     else
     {
         type = Identifier;
-        if value.byte_length > 1 and value[value.byte_length-1] == '_'
+        if string_length(value) > 1 and value[string_length(value)-1] == '_'
         {
             var diagnosticSpan: Text_Span = new Text_Span(tokens.position, end - tokens.position);
             tokens.diagnostics.add(new Diagnostic(CompilationError, Lexing, tokens.source, diagnosticSpan,

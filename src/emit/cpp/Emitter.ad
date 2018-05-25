@@ -115,7 +115,7 @@ public contains_multi_underscore_runs(value: string) -> bool
     // of a for loop
     var i: int = 0;
     var last_char_underscore: bool = false;
-    while i < value.byte_length
+    while i < string_length(value)
     {
         if value[i] == '_'
         {
@@ -136,7 +136,7 @@ public append_fixing_underscores(builder: mut system.text.String_Builder, value:
     // of a for loop
     var underscores: int = 0;
     var i: int = 0;
-    while i < value.byte_length
+    while i < string_length(value)
     {
         if value[i] == '_'
             { underscores += 1; }
@@ -283,12 +283,12 @@ public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, s
     assert(parameters.kind == ParameterList, "parameters.kind=" + parameters.kind);
     let builder: mut system.text.String_Builder = new system.text.String_Builder();
     builder.Append("(");
-    if self_type.byte_length > 0
+    if string_length(self_type) > 0
     {
         builder.Append(self_type);
         builder.Append(" self");
     }
-    var first_parameter: bool = self_type.byte_length == 0;
+    var first_parameter: bool = string_length(self_type) == 0;
     for let parameter: Semantic_Node in children_of_kind(parameters, Parameter)
     {
         if not first_parameter
@@ -641,14 +641,14 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
 
 public literal_length(value: string) -> int
 {
-    var length: int = value.byte_length-2; // start and end quotes
+    var length: int = string_length(value)-2; // start and end quotes
     // Since each escape sequence is two chars, we subtract one for each escape sequence.
     // The this that makes this tricky is escaped backslash `"\\"`
     var escaped: bool = false;
     // Due to limitations with strings and loops, do the equivalent
     // of a for loop
     var i: int = 0;
-    while i < value.byte_length
+    while i < string_length(value)
     {
         if value[i] == '\\' and not escaped
         {
@@ -1098,11 +1098,12 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
     for let resource: Source_Text in emitter.resources
     {
         let resource_name: string = "\""+resource.name+"\"";
-        let resource_text: string = "\""+resource.text
-                                        .Replace("\\", "\\\\")
-                                        .Replace("\n", "\\n")
-                                        .Replace("\r", "\\r")
-                                        .Replace("\"", "\\\"")+"\"";
+        var resource_text: string = resource.text;
+        resource_text = string_replace(resource_text, "\\", "\\\\");
+        resource_text = string_replace(resource_text, "\n", "\\n");
+        resource_text = string_replace(resource_text, "\r", "\\r");
+        resource_text = string_replace(resource_text, "\"", "\\\"");
+        resource_text = "\""+resource_text+"\"";
         begin_line(emitter.definitions, "resource_manager__->AddResource((string){"+literal_length(resource_name)+",(uint8_t const*)");
         write(emitter.definitions, resource_name);
         write(emitter.definitions, "}, (string){"+literal_length(resource_text)+",(uint8_t const*)");
