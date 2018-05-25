@@ -128,6 +128,7 @@ inline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >
 
 string int_to_string__1(int32 i);
 string int_to_hex_string__1(int32 i);
+int32 hex_string_to_int__1(string s);
 
 struct byte
 {

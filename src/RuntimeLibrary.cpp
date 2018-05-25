@@ -81,6 +81,14 @@ string int_to_hex_string__1(int32 i)
     return (string){length, buffer};
 }
 
+int32 hex_string_to_int__1(string s)
+{
+    char const* cstr = cstr_from(s);
+    int32_t i = strtoul(cstr, NULL, 16);
+    delete[] cstr;
+    return (int32){i};
+}
+
 string code_point_to_string__1(code_point c)
 {
     return (string){1, new uint8_t[1] { code_point__to_char(c) }};
