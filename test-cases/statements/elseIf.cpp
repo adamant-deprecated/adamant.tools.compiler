@@ -15,19 +15,19 @@ int32 main__0()
 {
 	if (cond(FALSE))
 	{
-		return (int32){0};
+		return ((int32){0});
 	}
 	else if (cond(FALSE))
 	{
-		return (int32){42};
+		return ((int32){42});
 	}
 	else if (cond(FALSE))
 	{
-		return (int32){10};
+		return ((int32){10});
 	}
 	else
 	{
-		return (int32){0};
+		return ((int32){0});
 	}
 }
 

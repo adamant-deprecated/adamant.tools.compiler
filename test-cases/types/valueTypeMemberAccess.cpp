@@ -21,7 +21,7 @@ struct Test__0
 Test__0 Test__0__0new__0()
 {
 	Test__0 self;
-	self.value__ = (int32){0};
+	self.value__ = ((int32){0});
 	return self;
 }
 

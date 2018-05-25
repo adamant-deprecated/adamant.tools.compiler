@@ -19,7 +19,7 @@ int32 main__0()
 
 int32 Func__0()
 {
-	return (int32){42};
+	return ((int32){42});
 }
 
 // Entry Point Adapter

@@ -13,8 +13,8 @@ void main__0();
 
 void main__0()
 {
-	int32 const x__ = (int32){5};
-	int32 const y__ = (int32){5};
+	int32 const x__ = ((int32){5});
+	int32 const y__ = ((int32){5});
 	assert__1(not_equal_op(x__, y__));
 }
 

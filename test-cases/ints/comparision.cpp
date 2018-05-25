@@ -14,10 +14,10 @@ void main__0();
 void main__0()
 {
 	BOOL x__;
-	x__ = int32__0op__lt((int32){1}, (int32){2});
-	x__ = int32__0op__lte((int32){1}, (int32){2});
-	x__ = int32__0op__gt((int32){1}, (int32){2});
-	x__ = int32__0op__gte((int32){1}, (int32){2});
+	x__ = int32__0op__lt(((int32){1}), ((int32){2}));
+	x__ = int32__0op__lte(((int32){1}), ((int32){2}));
+	x__ = int32__0op__gt(((int32){1}), ((int32){2}));
+	x__ = int32__0op__gte(((int32){1}), ((int32){2}));
 }
 
 // Entry Point Adapter

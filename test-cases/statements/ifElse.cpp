@@ -15,11 +15,11 @@ int32 main__0()
 {
 	if (cond(TRUE))
 	{
-		return (int32){0};
+		return ((int32){0});
 	}
 	else
 	{
-		return (int32){42};
+		return ((int32){42});
 	}
 }
 

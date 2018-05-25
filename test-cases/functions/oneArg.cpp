@@ -19,7 +19,7 @@ int32 Identity__1(int32 const value__)
 
 int32 main__0()
 {
-	return Identity__1((int32){42});
+	return Identity__1(((int32){42}));
 }
 
 // Entry Point Adapter

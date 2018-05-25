@@ -428,7 +428,8 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NumericLiteralExpression
     {
-        write(builder, "(int32){" + get_text(syntax) + "}");
+        // Extra parens are needed in some wierd cases with macros
+        write(builder, "((int32){" + get_text(syntax) + "})");
     }
     else if syntax.kind == TrueLiteralExpression
     {
@@ -440,6 +441,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == CodePointLiteralExpression
     {
+        // Extra parens are needed in some wierd cases with macros
         // TODO write this out as hex or something
         write(builder, "((code_point){(uint8_t)" + get_text(syntax) + "})");
     }
@@ -450,6 +452,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == StringLiteralExpression
     {
         let value: string = get_text(syntax);
+        // Extra parens are needed in some wierd cases with macros
         write(builder, "((string){" + literal_length(value) + ",(uint8_t const*)" + value + "})");
     }
     else if syntax.kind == AssignmentExpression

@@ -14,8 +14,8 @@ void main__0();
 void main__0()
 {
 	code_point result__;
-	result__ = op__element(((string){5,(uint8_t const*)"hello"}), (int32){0});
-	result__ = op__element(((string){7,(uint8_t const*)"goodbye"}), (int32){4});
+	result__ = op__element(((string){5,(uint8_t const*)"hello"}), ((int32){0}));
+	result__ = op__element(((string){7,(uint8_t const*)"goodbye"}), ((int32){4}));
 }
 
 // Entry Point Adapter

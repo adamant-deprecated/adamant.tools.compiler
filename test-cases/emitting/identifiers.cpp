@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	int32 const a___b__ = (int32){5};
+	int32 const a___b__ = ((int32){5});
 }
 
 // Entry Point Adapter

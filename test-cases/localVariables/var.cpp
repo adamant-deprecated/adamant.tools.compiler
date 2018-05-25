@@ -13,7 +13,7 @@ int32 main__0();
 
 int32 main__0()
 {
-	int32 result__ = (int32){42};
+	int32 result__ = ((int32){42});
 	return result__;
 }
 

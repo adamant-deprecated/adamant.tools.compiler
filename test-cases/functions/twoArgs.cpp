@@ -19,7 +19,7 @@ int32 Func__2(int32 const a__, int32 const b__)
 
 int32 main__0()
 {
-	return Func__2((int32){0}, (int32){42});
+	return Func__2(((int32){0}), ((int32){42}));
 }
 
 // Entry Point Adapter

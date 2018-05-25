@@ -15,7 +15,7 @@ int32 main__0()
 {
 	for (;;)
 	{
-		return (int32){0};
+		return ((int32){0});
 	}
 }
 

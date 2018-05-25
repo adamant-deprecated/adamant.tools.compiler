@@ -15,7 +15,7 @@ int32 main__0()
 {
 	while (cond(TRUE))
 	{
-		return (int32){0};
+		return ((int32){0});
 	}
 
 	UNREACHABLE__0();

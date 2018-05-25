@@ -13,7 +13,7 @@ int32 main__0();
 
 int32 main__0()
 {
-	return (int32){0};
+	return ((int32){0});
 }
 
 // Entry Point Adapter
