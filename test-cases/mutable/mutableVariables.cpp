@@ -14,7 +14,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 system__text__String_Builder__0 *_Nonnull Func__2(int32 x__, int32 const y__)
 {
-	x__.op__add_assign((int32){1});
+	op__add_assign(&(x__), (int32){1});
 	int32 const i__ = x__.op__add((int32){2});
 	int32 j__ = y__.op__subtract((int32){23});
 	j__ = i__;

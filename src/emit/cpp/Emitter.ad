@@ -463,8 +463,6 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         }
         else
         {
-            convert_expression(syntax.children[0], builder);
-            convert_member_access(syntax.children[0], builder);
             write(builder, "op__");
             if operator == PlusEquals
             {
@@ -478,7 +476,9 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
             {
                 error(builder, "Unsupported assignment operator " + operator);
             }
-            write(builder, "(");
+            write(builder, "(&(");
+            convert_expression(syntax.children[0], builder);
+            write(builder, "), ");
             convert_expression(syntax.children[2], builder);
             write(builder, ")");
         }

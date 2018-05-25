@@ -15,8 +15,8 @@ int32 main__0()
 {
 	int32 result__;
 	result__ = (int32){40};
-	result__.op__add_assign((int32){3});
-	result__.op__subtract_assign((int32){1});
+	op__add_assign(&(result__), (int32){3});
+	op__subtract_assign(&(result__), (int32){1});
 	return result__;
 }
 
