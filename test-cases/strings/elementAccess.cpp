@@ -14,7 +14,8 @@ void main__0();
 void main__0()
 {
 	code_point result__;
-	result__ = string("hello").op__Element((int32){0});
+	result__ = ((string){5,(uint8_t const*)"hello"}).op__Element((int32){0});
+	result__ = ((string){7,(uint8_t const*)"goodbye"}).op__Element((int32){4});
 }
 
 // Entry Point Adapter

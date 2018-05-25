@@ -19,7 +19,7 @@ code_point Identity__1(code_point const value__)
 
 void main__0()
 {
-	Identity__1((code_point){'a'});
+	Identity__1(((code_point){(uint8_t)'a'}));
 }
 
 // Entry Point Adapter

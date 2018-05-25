@@ -14,10 +14,10 @@ void main__0();
 void main__0()
 {
 	BOOL x__;
-	x__ = string__0op__lt(string("a"), string("b"));
-	x__ = string__0op__lte(string("a"), string("b"));
-	x__ = string__0op__gt(string("a"), string("b"));
-	x__ = string__0op__gte(string("a"), string("b"));
+	x__ = string__0op__lt(((string){1,(uint8_t const*)"a"}), ((string){1,(uint8_t const*)"b"}));
+	x__ = string__0op__lte(((string){1,(uint8_t const*)"a"}), ((string){1,(uint8_t const*)"b"}));
+	x__ = string__0op__gt(((string){1,(uint8_t const*)"a"}), ((string){1,(uint8_t const*)"b"}));
+	x__ = string__0op__gte(((string){1,(uint8_t const*)"a"}), ((string){1,(uint8_t const*)"b"}));
 }
 
 // Entry Point Adapter

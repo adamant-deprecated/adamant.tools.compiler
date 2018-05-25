@@ -1,0 +1,6 @@
+public main(console: mut system.console.Console) -> void
+{
+    let s: string = "A good Test String!";
+    console.WriteLine(substring(s, 2, 4));
+    console.WriteLine(substring(s, 12));
+}

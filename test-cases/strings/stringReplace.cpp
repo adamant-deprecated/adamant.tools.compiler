@@ -13,7 +13,9 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	console__->WriteLine__1(((string){12,(uint8_t const*)"Hello World!"}));
+	string const s__ = ((string){24,(uint8_t const*)"A good good Test String!"});
+	console__->WriteLine__1(s__);
+	console__->WriteLine__1(string_replace__3(s__, ((string){4,(uint8_t const*)"good"}), ((string){3,(uint8_t const*)"bad"})));
 }
 
 // Entry Point Adapter

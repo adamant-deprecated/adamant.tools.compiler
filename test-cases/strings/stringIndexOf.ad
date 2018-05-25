@@ -1,0 +1,7 @@
+public main(console: mut system.console.Console) -> void
+{
+    let s: string = "A good test string!";
+    console.WriteLine(s);
+    console.WriteLine("First index of 't': " + string_index_of(s, 't'));
+    console.WriteLine("Last index of 't': " + string_last_index_of(s, 't'));
+}

@@ -13,8 +13,8 @@ int32 main__0();
 
 int32 main__0()
 {
-	string const s__ = string("abc");
-	return s__.index_of__1((code_point){'c'});
+	string const s__ = ((string){3,(uint8_t const*)"abc"});
+	return s__.index_of__1(((code_point){(uint8_t)'c'}));
 }
 
 // Entry Point Adapter

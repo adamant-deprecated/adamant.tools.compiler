@@ -13,7 +13,10 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	console__->WriteLine__1(((string){12,(uint8_t const*)"Hello World!"}));
+	string const s__ = ((string){19,(uint8_t const*)"A good test string!"});
+	console__->WriteLine__1(s__);
+	console__->WriteLine__1(op__add(((string){20,(uint8_t const*)"First index of 't': "}), string_index_of__2(s__, ((code_point){(uint8_t)'t'}))));
+	console__->WriteLine__1(op__add(((string){19,(uint8_t const*)"Last index of 't': "}), string_last_index_of__2(s__, ((code_point){(uint8_t)'t'}))));
 }
 
 // Entry Point Adapter

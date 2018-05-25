@@ -1,0 +1,4 @@
+0
+2
+19: A good test string!
+20: Yep,	we know length!

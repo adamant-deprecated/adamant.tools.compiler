@@ -1,0 +1,4 @@
+0
+2
+A good good Test String!
+A bad bad Test String!

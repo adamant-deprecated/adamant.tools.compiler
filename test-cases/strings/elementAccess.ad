@@ -1,5 +1,6 @@
 public main() -> void
 {
-	var result: code_point;
-	result = "hello"[0];
+    var result: code_point;
+    result = "hello"[0];
+    result = "goodbye"[4];
 }

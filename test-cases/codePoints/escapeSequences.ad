@@ -1,6 +1,6 @@
 public main() -> void
 {
-	var s: string = "\"\\";
-	var c: code_point = '\'';
-	c = '\\';
+    var s: string = "\"\\";
+    var c: code_point = '\'';
+    c = '\\';
 }

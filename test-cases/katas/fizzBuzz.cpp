@@ -20,16 +20,16 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 		{
 			if (cond(equal_op(int32__0op__remainder(x__, (int32){5}), (int32){0})))
 			{
-				console__->WriteLine__1(string("FizzBuzz"));
+				console__->WriteLine__1(((string){8,(uint8_t const*)"FizzBuzz"}));
 			}
 			else
 			{
-				console__->WriteLine__1(string("Fizz"));
+				console__->WriteLine__1(((string){4,(uint8_t const*)"Fizz"}));
 			}
 		}
 		else if (cond(equal_op(int32__0op__remainder(x__, (int32){5}), (int32){0})))
 		{
-			console__->WriteLine__1(string("Buzz"));
+			console__->WriteLine__1(((string){4,(uint8_t const*)"Buzz"}));
 		}
 		else
 		{

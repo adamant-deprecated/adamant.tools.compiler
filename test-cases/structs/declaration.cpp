@@ -34,7 +34,7 @@ string Test__0::method__0() const
 
 void main__0()
 {
-	Test__0 const t__ = Test__0__0new__1(string("Bob"));
+	Test__0 const t__ = Test__0__0new__1(((string){3,(uint8_t const*)"Bob"}));
 	t__.method__0();
 }
 

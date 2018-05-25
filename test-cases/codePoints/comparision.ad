@@ -1,8 +1,8 @@
 public main() -> void
 {
-	var x: bool;
-	x = 'a' < 'b';
-	x = 'a' <= 'b';
-	x = 'a' > 'b';
-	x = 'a' >= 'b';
+    var x: bool;
+    x = 'a' < 'b';
+    x = 'a' <= 'b';
+    x = 'a' > 'b';
+    x = 'a' >= 'b';
 }

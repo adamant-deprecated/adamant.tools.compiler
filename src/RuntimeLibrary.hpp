@@ -61,6 +61,7 @@ typedef struct never never;
 typedef struct optional__never optional__never;
 typedef struct BOOL BOOL;
 typedef struct int32 int32;
+typedef struct byte byte;
 typedef struct code_point code_point;
 typedef struct string string;
 
@@ -123,6 +124,13 @@ inline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <
 inline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }
 inline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }
 
+string int_to_hex__1(int32 value);
+
+struct byte
+{
+    uint8_t value;
+};
+
 struct code_point
 {
     // don't use something like char32_t because C's handling of chars sucks
@@ -134,31 +142,24 @@ inline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_f
 inline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }
 inline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }
 
+inline int32 code_point_as_int__1(code_point c) { return (int32){c.value}; }
+
 struct string
 {
-    int32 byte_length__;
-    // don't use chars because C's handling of chars sucks
-    uint8_t const *_Nonnull Buffer;
+    int32 byte_length__; // TODO rename to just byte_length, though there will be a byte_length
+    // property in the future, it doesn't make sense to directly expose it right now because this is
+    // not the correct implementation.
 
-    explicit string() = default;
-    explicit string(char const *_Nonnull s);
-    explicit string(int length, uint8_t const *_Nonnull s);
+    // don't use chars because C's handling of chars sucks
+    uint8_t const *_Nonnull Buffer; // TODO use byte and rename to `bytes`
+
     string const *_Nonnull operator->() const { return this; }
     string const & operator* () const { return *this; }
-
-    typedef uint8_t const *_Nonnull const_iterator;
-    const_iterator begin() const { return Buffer; }
-    const_iterator end() const { return Buffer+byte_length__.value; }
-
-    // Hack to support conversion of int and code_point to strings for now
-    string(int32 other);
-    string(code_point other);
-    explicit string(BOOL other);
 
     // Adamant Members
     string Substring__2(int32 start, int32 length) const;
     string Substring__1(int32 start) const { return Substring__2(start, (int32){byte_length__.value-start.value}); }
-    string Replace__2(string oldValue, string newValue) const;
+    string Replace__2(string old_value, string new_value) const;
     int32 LastIndexOf__1(code_point c) const;
     int32 index_of__1(code_point c) const;
 
@@ -166,16 +167,26 @@ struct string
     code_point op__Element(int32 const index) const { return (code_point){Buffer[index.value]}; }
 };
 
+string string__0new__0();
+string string__0new__1(string value);
+string string__0new__2(code_point c, int32 repeat);
+
 string op__add(string lhs, string rhs);
-inline string op__add(string lhs, BOOL rhs) { return op__add(lhs, string(rhs)); }
+string op__add(string lhs, BOOL rhs);
+string op__add(string lhs, int32 rhs);
+string op__add(int32 lhs, string rhs);
+string op__add(string lhs, code_point rhs);
 BOOL string__0op__lt(string lhs, string rhs);
 BOOL string__0op__lte(string lhs, string rhs);
 BOOL string__0op__gt(string lhs, string rhs);
 BOOL string__0op__gte(string lhs, string rhs);
 
-string string__0new__0();
-string string__0new__1(string value);
-string string__0new__2(code_point c, int32 repeat);
+inline int32 string_length__1(string s) { return s.byte_length__; }
+string substring__3(string s, int32 start, int32 length);
+inline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length__.value-start.value}); }
+string string_replace__3(string s, string old_value, string new_value);
+int32 string_index_of__2(string s, code_point c);
+int32 string_last_index_of__2(string s, code_point c);
 
 // -----------------------------------------------------------------------------
 // Operators
@@ -377,6 +388,7 @@ struct system__text__String_Builder__0
     int32 byte_length__0() const { return (int32){length}; }
     void Append__1(string const & value);
     void Append__1(system__text__String_Builder__0 const *_Nonnull value);
+    void Append__1(int32 value);
     void AppendLine__1(string const& value);
     void AppendLine__0();
     void Remove__2(int32 start, int32 length);

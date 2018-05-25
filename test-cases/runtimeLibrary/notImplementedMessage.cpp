@@ -13,7 +13,7 @@ int32 main__0();
 
 int32 main__0()
 {
-	NOT_IMPLEMENTED__1(string("[Test Message]"));
+	NOT_IMPLEMENTED__1(((string){14,(uint8_t const*)"[Test Message]"}));
 }
 
 // Entry Point Adapter

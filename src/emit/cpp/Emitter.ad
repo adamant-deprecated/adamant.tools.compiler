@@ -361,7 +361,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, constructor_name);
         write(builder, "__");
         let argument_list: Semantic_Node = syntax.children[1];
-        write(builder, node_argument_count(argument_list));
+        write(builder, ""+node_argument_count(argument_list)); // trick to convert to string
         if |type.type_parameters| > 0
         {
             let params: mut system.text.String_Builder = new system.text.String_Builder();
@@ -440,7 +440,8 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == CodePointLiteralExpression
     {
-        write(builder, "(code_point){" + get_text(syntax) + "}");
+        // TODO write this out as hex or something
+        write(builder, "((code_point){(uint8_t)" + get_text(syntax) + "})");
     }
     else if syntax.kind == IdentifierName
     {
@@ -448,7 +449,8 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == StringLiteralExpression
     {
-        write(builder, "string(" + get_text(syntax) + ")");
+        let value: string = get_text(syntax);
+        write(builder, "((string){" + literal_length(value) + ",(uint8_t const*)" + value + "})");
     }
     else if syntax.kind == AssignmentExpression
     {
@@ -614,7 +616,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         // Assuming we just emitted the function name as a field, tack this on
         let parameters_node: Semantic_Node = syntax.children[1];
         // TODO we don't handle the arguments list correctly yet, so it still has the parens as children
-        write(builder, node_argument_count(parameters_node));
+        write(builder, ""+node_argument_count(parameters_node)); // trick to convert to string
         convert_expression(parameters_node, builder);
     }
     else if syntax.kind == MemberAccessExpression
@@ -635,6 +637,30 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         error(builder, "Could not convert expression of type " + syntax.kind);
     }
+}
+
+public literal_length(value: string) -> int
+{
+    var length: int = value.byte_length-2; // start and end quotes
+    // Since each escape sequence is two chars, we subtract one for each escape sequence.
+    // The this that makes this tricky is escaped backslash `"\\"`
+    var escaped: bool = false;
+    // Due to limitations with strings and loops, do the equivalent
+    // of a for loop
+    var i: int = 0;
+    while i < value.byte_length
+    {
+        if value[i] == '\\' and not escaped
+        {
+            escaped = true;
+            length -= 1;
+        }
+        else
+            { escaped = false; }
+
+        i += 1;
+    }
+    return length;
 }
 
 public convert_reference_type_constructor_arguments(
@@ -1071,19 +1097,21 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
 
     for let resource: Source_Text in emitter.resources
     {
-        begin_line(emitter.definitions, "resource_manager__->AddResource(string(\"");
-        write(emitter.definitions, resource.name);
-        write(emitter.definitions, "\"), string(\"");
-        write(emitter.definitions, resource.text
-                                .Replace("\\", "\\\\")
-                                .Replace("\n", "\\n")
-                                .Replace("\r", "\\r")
-                                .Replace("\"", "\\\""));
-        end_line(emitter.definitions, "\"));");
+        let resource_name: string = "\""+resource.name+"\"";
+        let resource_text: string = "\""+resource.text
+                                        .Replace("\\", "\\\\")
+                                        .Replace("\n", "\\n")
+                                        .Replace("\r", "\\r")
+                                        .Replace("\"", "\\\"")+"\"";
+        begin_line(emitter.definitions, "resource_manager__->AddResource((string){"+literal_length(resource_name)+",(uint8_t const*)");
+        write(emitter.definitions, resource_name);
+        write(emitter.definitions, "}, (string){"+literal_length(resource_text)+",(uint8_t const*)");
+        write(emitter.definitions, resource_text);
+        end_line(emitter.definitions, "});");
     }
     if |emitter.resources| > 0
     {
-        end_line(emitter.definitions, ""); // Use EndLine to avoid having an indent on a blank line
+        end_line(emitter.definitions, ""); // Use end_line to avoid having an indent on a blank line
     }
 
     // TODO should be `new mut`

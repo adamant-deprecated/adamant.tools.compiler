@@ -27,7 +27,7 @@ string C__0::method__0() const
 
 string C__0::function__0()
 {
-	return string("hello");
+	return ((string){5,(uint8_t const*)"hello"});
 }
 
 C__0 *_Nonnull C__0__0new__0(C__0 *_Nonnull self) { return self; }

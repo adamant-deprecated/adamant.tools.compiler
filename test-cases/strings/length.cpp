@@ -13,7 +13,10 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	console__->WriteLine__1(((string){12,(uint8_t const*)"Hello World!"}));
+	string s__ = ((string){19,(uint8_t const*)"A good test string!"});
+	console__->WriteLine__1(op__add(op__add(string_length__1(s__), ((string){2,(uint8_t const*)": "})), s__));
+	s__ = ((string){20,(uint8_t const*)"Yep,\twe know length!"});
+	console__->WriteLine__1(op__add(op__add(string_length__1(s__), ((string){2,(uint8_t const*)": "})), s__));
 }
 
 // Entry Point Adapter

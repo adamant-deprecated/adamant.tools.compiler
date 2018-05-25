@@ -33,7 +33,7 @@ string C__0::method__0() const
 
 void main__0()
 {
-	string const s__ = C__0__0new__1(allocate(sizeof(C__0)), string("Bob"))->method__0();
+	string const s__ = C__0__0new__1(allocate(sizeof(C__0)), ((string){3,(uint8_t const*)"Bob"}))->method__0();
 }
 
 // Entry Point Adapter

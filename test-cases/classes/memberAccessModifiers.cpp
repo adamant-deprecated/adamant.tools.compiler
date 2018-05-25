@@ -40,7 +40,7 @@ string C__0::double_name__0() const
 
 void main__0()
 {
-	C__0 const *_Nonnull const c__ = C__0__0new__1(allocate(sizeof(C__0)), string("Bob"));
+	C__0 const *_Nonnull const c__ = C__0__0new__1(allocate(sizeof(C__0)), ((string){3,(uint8_t const*)"Bob"}));
 	c__->method__0();
 }
 

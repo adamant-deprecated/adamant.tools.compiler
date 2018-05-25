@@ -13,7 +13,7 @@ void main__0();
 
 void main__0()
 {
-	string__0new__1(string("foo"));
+	string__0new__1(((string){3,(uint8_t const*)"foo"}));
 }
 
 // Entry Point Adapter

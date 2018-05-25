@@ -13,10 +13,10 @@ void main__0();
 
 void main__0()
 {
-	debug_write__1(string("prefix: "));
-	debug_write_line__1(string("value"));
+	debug_write__1(((string){8,(uint8_t const*)"prefix: "}));
+	debug_write_line__1(((string){5,(uint8_t const*)"value"}));
 	debug_write_line__0();
-	debug_write_line__1(string("eom"));
+	debug_write_line__1(((string){3,(uint8_t const*)"eom"}));
 }
 
 // Entry Point Adapter
