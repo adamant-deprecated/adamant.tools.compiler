@@ -115,7 +115,7 @@ public contains_multi_underscore_runs(value: string) -> bool
     // of a for loop
     var i: int = 0;
     var last_char_underscore: bool = false;
-    while i < value.ByteLength()
+    while i < value.byte_length
     {
         if value[i] == '_'
         {
@@ -136,7 +136,7 @@ public append_fixing_underscores(builder: mut system.text.String_Builder, value:
     // of a for loop
     var underscores: int = 0;
     var i: int = 0;
-    while i < value.ByteLength()
+    while i < value.byte_length
     {
         if value[i] == '_'
             { underscores += 1; }
@@ -283,12 +283,12 @@ public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, s
     assert(parameters.kind == ParameterList, "parameters.kind=" + parameters.kind);
     let builder: mut system.text.String_Builder = new system.text.String_Builder();
     builder.Append("(");
-    if self_type.ByteLength() > 0
+    if self_type.byte_length > 0
     {
         builder.Append(self_type);
         builder.Append(" self");
     }
-    var first_parameter: bool = self_type.ByteLength() == 0;
+    var first_parameter: bool = self_type.byte_length == 0;
     for let parameter: Semantic_Node in children_of_kind(parameters, Parameter)
     {
         if not first_parameter

@@ -30,7 +30,7 @@ public class Source_Text
 
 public line_starts(text: string) -> system.collections.List<int>
 {
-    let length: int = text.ByteLength();
+    let length: int = text.byte_length;
     let starting_positions: mut system.collections.List<int> = new system.collections.List<int>();
     starting_positions.add(0); // there is always the first line
 
@@ -72,7 +72,7 @@ public line_starts(text: string) -> system.collections.List<int>
 
 public source_byte_length(source: Source_Text) -> int
 {
-    return source.text.ByteLength();
+    return source.text.byte_length;
 }
 
 public position_of_start(source: Source_Text, span: Text_Span) -> Text_Position

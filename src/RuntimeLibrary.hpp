@@ -156,9 +156,6 @@ struct string
     explicit string(BOOL other);
 
     // Adamant Members
-    // TODO ByteLength should be a property
-    int32 ByteLength__0() const { return byte_length__; }
-
     string Substring__2(int32 start, int32 length) const;
     string Substring__1(int32 start) const { return Substring__2(start, (int32){byte_length__.value-start.value}); }
     string Replace__2(string oldValue, string newValue) const;

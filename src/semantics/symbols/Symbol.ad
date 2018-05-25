@@ -14,7 +14,7 @@ public class Symbol
 
     public new identifier(name: string)
     {
-        assert(name.ByteLength() > 0, "");
+        assert(name.byte_length > 0, "");
         self.name = name;
         self.kind = IdentifierSymbol;
         self.is_special_name = false;
@@ -26,7 +26,7 @@ public class Symbol
 
     public new identifier(name: string, declarations: system.collections.List<Semantic_Node>)
     {
-        assert(name.ByteLength() > 0, "");
+        assert(name.byte_length > 0, "");
         assert(declarations =/= none, "name="+name);
         self.name = name;
         self.kind = IdentifierSymbol;
@@ -39,7 +39,7 @@ public class Symbol
 
     public new identifier(name: string, children: system.collections.List<Symbol>)
     {
-        assert(name.ByteLength() > 0, "");
+        assert(name.byte_length > 0, "");
         assert(children =/= none, "name="+name);
         self.name = name;
         self.kind = IdentifierSymbol;
@@ -52,7 +52,7 @@ public class Symbol
 
     public new constructor(name: string, declarations: system.collections.List<Semantic_Node>)
     {
-        assert(name.ByteLength() > 0, "");
+        assert(name.byte_length > 0, "");
         assert(declarations =/= none, "name="+name);
         self.name = name;
         self.kind = IdentifierSymbol;
@@ -65,7 +65,7 @@ public class Symbol
 
     public new package(name: string, children: system.collections.List<Symbol>)
     {
-        assert(name.ByteLength() > 0, "");
+        assert(name.byte_length > 0, "");
         assert(children =/= none, "name="+name);
         self.name = name;
         self.kind = PackageSymbol;

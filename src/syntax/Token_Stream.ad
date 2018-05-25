@@ -304,7 +304,7 @@ public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Sy
     else
     {
         type = Identifier;
-        if value.ByteLength() > 1 and value[value.ByteLength()-1] == '_'
+        if value.byte_length > 1 and value[value.byte_length-1] == '_'
         {
             var diagnosticSpan: Text_Span = new Text_Span(tokens.position, end - tokens.position);
             tokens.diagnostics.add(new Diagnostic(CompilationError, Lexing, tokens.source, diagnosticSpan,
