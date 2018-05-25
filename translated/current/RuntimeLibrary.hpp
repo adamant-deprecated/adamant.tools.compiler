@@ -75,6 +75,9 @@ struct optional__never
 {
 };
 
+// TODO this is a hack for now, the type of `none` should be `never?`
+static const void_ptr none = (void*)0;
+
 // For now, use `BOOL` as the emitted type
 // TODO C: switch `BOOL` to `bool`
 // TODO C: switch `TRUE` to `true`
@@ -93,17 +96,16 @@ static const BOOL FALSE = { 0 };
 inline _Bool cond(BOOL cond) { return cond.value; }
 
 // Used by runtime for converting to bool
-inline BOOL bool_from(_Bool v) { return (BOOL){ v }; }
+inline BOOL bool_from(_Bool b) { return (BOOL){ b }; }
 
 // Wrap a bool operation that is bool based
-inline BOOL bool_op(_Bool v) { return (BOOL){ v }; }
+inline BOOL bool_op(_Bool b) { return (BOOL){ b }; }
 // Convert the arguments of a logical operation to bool
-inline _Bool bool_arg(BOOL v) { return v.value; }
+inline _Bool bool_arg(BOOL b) { return b.value; }
 
-inline BOOL BOOL__0op__not(BOOL v) { return (BOOL){ !v.value }; }
+inline BOOL BOOL__0op__not(BOOL b) { return (BOOL){ !b.value }; }
 
-// TODO this is a hack for now, the type of `none` should be `never?`
-static const void_ptr none = (void*)0;
+string bool_to_string__1(BOOL b);
 
 // `int` type
 struct int32
@@ -124,7 +126,9 @@ inline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <
 inline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }
 inline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }
 
-string int_to_hex__1(int32 value);
+string int_to_string__1(int32 i);
+string int_to_hex_string__1(int32 i);
+int32 hex_string_to_int__1(string s);
 
 struct byte
 {
@@ -143,6 +147,7 @@ inline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_fr
 inline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }
 
 inline int32 code_point_as_int__1(code_point c) { return (int32){c.value}; }
+string code_point_to_string__1(code_point c);
 
 struct string
 {

@@ -48,20 +48,7 @@ char const * cstr_from(string value)
     return buffer;
 }
 
-string string_from(int32 value)
-{
-    uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
-    int length = sprintf((char*)buffer, "%d", value.value);
-    lib_assert(length > 0);
-    return (string){length, buffer};
-}
-
-string string_from(code_point value)
-{
-    return (string){1, new uint8_t[1] { code_point__to_char(value) }};
-}
-
-string string_from(char const* s)
+string string_from_cstr(char const* s)
 {
     return (string){strlen(s), (uint8_t const*)s};
 }
@@ -70,13 +57,41 @@ string string_from(char const* s)
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-string int_to_hex__1(int32 value)
+string bool_to_string__1(BOOL b)
 {
-    lib_assert(value.value >= 0);
-    uint8_t* buffer = new uint8_t[9]; // FF_FF_FF_FF plus null terminator
-    int length = sprintf((char*)buffer, "%X", value.value);
+    if(cond(b))
+        return (string){4,(uint8_t const*)"true"};
+    else
+        return (string){5,(uint8_t const*)"false"};
+}
+
+string int_to_string__1(int32 i)
+{
+    uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
+    int length = sprintf((char*)buffer, "%d", i.value);
     lib_assert(length > 0);
     return (string){length, buffer};
+}
+string int_to_hex_string__1(int32 i)
+{
+    lib_assert(i.value >= 0);
+    uint8_t* buffer = new uint8_t[9]; // FF_FF_FF_FF plus null terminator
+    int length = sprintf((char*)buffer, "%X", i.value);
+    lib_assert(length > 0);
+    return (string){length, buffer};
+}
+
+int32 hex_string_to_int__1(string s)
+{
+    char const* cstr = cstr_from(s);
+    int32_t i = strtoul(cstr, NULL, 16);
+    delete[] cstr;
+    return (int32){i};
+}
+
+string code_point_to_string__1(code_point c)
+{
+    return (string){1, new uint8_t[1] { code_point__to_char(c) }};
 }
 
 string string__0new__0()
@@ -111,22 +126,22 @@ string op__add(string lhs, string rhs)
 
 string op__add(string lhs, BOOL rhs)
 {
-    return op__add(lhs, string_from(rhs.value ? "true" : "false"));
+    return op__add(lhs, bool_to_string__1(rhs));
 }
 
 string op__add(string lhs, int32 rhs)
 {
-    return op__add(lhs, string_from(rhs));
+    return op__add(lhs, int_to_string__1(rhs));
 }
 
 string op__add(int32 lhs, string rhs)
 {
-    return op__add(string_from(lhs), rhs);
+    return op__add(int_to_string__1(lhs), rhs);
 }
 
 string op__add(string lhs, code_point rhs)
 {
-    return op__add(lhs, string_from(rhs));
+    return op__add(lhs, code_point_to_string__1(rhs));
 }
 
 BOOL equal_op(string lhs, string rhs)
@@ -323,7 +338,7 @@ system__console__Arguments__0::system__console__Arguments__0(int argc, char cons
 {
     args = new string[Count];
     for (int i = 0; i < Count; i++)
-        args[i] = string_from(argv[i+1]);
+        args[i] = string_from_cstr(argv[i+1]);
 }
 
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName)
@@ -423,7 +438,7 @@ void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 
 
 void system__text__String_Builder__0::Append__1(int32 value)
 {
-    Append__1(string_from(value));
+    Append__1(int_to_string__1(value));
 }
 
 void system__text__String_Builder__0::AppendLine__1(string const & value)
