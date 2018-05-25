@@ -136,9 +136,9 @@ inline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_f
 
 struct string
 {
+    int32 byte_length__;
     // don't use chars because C's handling of chars sucks
     uint8_t const *_Nonnull Buffer;
-    int Length;
 
     explicit string() = default;
     explicit string(char const *_Nonnull s);
@@ -148,8 +148,8 @@ struct string
     string const & operator* () const { return *this; }
 
     typedef uint8_t const *_Nonnull const_iterator;
-    const_iterator begin() const { return &Buffer[0]; }
-    const_iterator end() const { return &Buffer[Length]; }
+    const_iterator begin() const { return Buffer; }
+    const_iterator end() const { return Buffer+byte_length__.value; }
 
     // Hack to support conversion of int and code_point to strings for now
     string(int32 other);
@@ -158,10 +158,10 @@ struct string
 
     // Adamant Members
     // TODO ByteLength should be a property
-    int32 ByteLength__0() const { return (int32){Length}; }
+    int32 ByteLength__0() const { return byte_length__; }
 
     string Substring__2(int32 start, int32 length) const;
-    string Substring__1(int32 start) const { return Substring__2(start, (int32){Length-start.value}); }
+    string Substring__1(int32 start) const { return Substring__2(start, (int32){byte_length__.value-start.value}); }
     string Replace__2(string oldValue, string newValue) const;
     int32 LastIndexOf__1(code_point c) const;
     int32 index_of__1(code_point c) const;
@@ -377,7 +377,7 @@ struct system__text__String_Builder__0
     void ensure_capacity(int needed);
 
     // Adamant Members
-    // TODO byte_length should be a property
+    // TODO byte_length__ should be a property
     int32 byte_length__0() const { return (int32){length}; }
     void Append__1(string const & value);
     void Append__1(system__text__String_Builder__0 const *_Nonnull value);
