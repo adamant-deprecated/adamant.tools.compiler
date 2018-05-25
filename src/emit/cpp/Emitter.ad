@@ -687,21 +687,20 @@ public code_point_literal_value(value: string) -> code_point
         // TODO '\'' isn't valid Adamant
         else if value == "'\\''"
             { return '\''; }
-        // else if value == "'\\\{'"
-        //     { return '{'; }
-        else if value == "'\\\n'"
+        // TODO handle the case of '\{'
+        else if value == "'\\n'"
             { return '\n'; }
-        else if value == "'\\\r'"
+        else if value == "'\\r'"
             { return '\r'; }
-        else if value == "'\\\0'"
+        else if value == "'\\0'"
             { return '\0'; }
-        else if value == "'\\\b'"
+        else if value == "'\\b'"
             { return '\b'; }
-        else if value == "'\\\f'"
+        else if value == "'\\f'"
             { return '\f'; }
-        else if value == "'\\\t'"
-            { return '\f'; }
-        else if value == "'\\\b'"
+        else if value == "'\\t'"
+            { return '\t'; }
+        else if value == "'\\b'"
             { return '\b'; }
         else
         {
