@@ -14,7 +14,7 @@ void main__0();
 void main__0()
 {
 	int32 x__ = (int32){1};
-	int32 y__ = int32__0op__negate(x__);
+	int32 y__ = int32__0op__neg(x__);
 }
 
 // Entry Point Adapter

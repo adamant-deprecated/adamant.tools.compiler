@@ -414,7 +414,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NegateExpression
     {
-        write(builder, "int32__0op__negate(");
+        write(builder, "int32__0op__neg(");
         convert_expression(syntax.children[0], builder);
         write(builder, ")");
     }
@@ -470,7 +470,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
             }
             else if operator == MinusEquals
             {
-                write(builder, "subtract_assign");
+                write(builder, "sub_assign");
             }
             else
             {
@@ -516,19 +516,19 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
 
         if operator == LessThan
         {
-            write(builder, "__0op__less_than");
+            write(builder, "__0op__lt");
         }
         else if operator == LessThanEquals
         {
-            write(builder, "__0op__less_than_or_equal");
+            write(builder, "__0op__lte");
         }
         else if operator == GreaterThan
         {
-            write(builder, "__0op__greater_than");
+            write(builder, "__0op__gt");
         }
         else if operator == GreaterThanEquals
         {
-            write(builder, "__0op__greater_than_or_equal");
+            write(builder, "__0op__gte");
         }
         else
         {
@@ -556,7 +556,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         let rhs_node: Semantic_Node = syntax.children[1];
         convert_expression(lhs_node, builder);
         convert_member_access(lhs_node, builder);
-        write(builder, "op__subtract(");
+        write(builder, "op__sub(");
         convert_expression(rhs_node, builder);
         write(builder, ")");
     }
@@ -564,7 +564,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[0], builder);
         convert_member_access(syntax.children[0], builder);
-        write(builder, "op__multiply(");
+        write(builder, "op__mul(");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }
@@ -572,7 +572,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         convert_expression(syntax.children[0], builder);
         convert_member_access(syntax.children[0], builder);
-        write(builder, "op__divide(");
+        write(builder, "op__div(");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }

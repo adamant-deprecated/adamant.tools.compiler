@@ -14,10 +14,10 @@ void main__0();
 void main__0()
 {
 	BOOL x__;
-	x__ = string__0op__less_than(string("a"), string("b"));
-	x__ = string__0op__less_than_or_equal(string("a"), string("b"));
-	x__ = string__0op__greater_than(string("a"), string("b"));
-	x__ = string__0op__greater_than_or_equal(string("a"), string("b"));
+	x__ = string__0op__lt(string("a"), string("b"));
+	x__ = string__0op__lte(string("a"), string("b"));
+	x__ = string__0op__gt(string("a"), string("b"));
+	x__ = string__0op__gte(string("a"), string("b"));
 }
 
 // Entry Point Adapter

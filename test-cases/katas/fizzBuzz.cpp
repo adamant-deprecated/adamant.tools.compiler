@@ -37,7 +37,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 		}
 
 		op__add_assign(&(x__), (int32){1});
-		if (cond(int32__0op__greater_than(x__, (int32){100})))
+		if (cond(int32__0op__gt(x__, (int32){100})))
 		{
 			break;
 		}
