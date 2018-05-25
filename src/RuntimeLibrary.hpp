@@ -113,8 +113,6 @@ struct int32
     int32 const *_Nonnull operator->() const { return this; }
     int32 & operator* () { return *this; }
     int32 const & operator* () const { return *this; }
-
-    int32 op__magnitude() const;
 };
 
 inline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }
@@ -198,13 +196,6 @@ BOOL string__0op__gte(string lhs, string rhs);
 string string__0new__0();
 string string__0new__1(string value);
 string string__0new__2(code_point c, int32 repeat);
-
-
-inline int32 int32::op__magnitude() const
-{
-    lib_assert(this->value!=INT32_MIN);
-    return (int32){this->value < 0 ? -this->value : this->value};
-}
 
 // -----------------------------------------------------------------------------
 // Operators

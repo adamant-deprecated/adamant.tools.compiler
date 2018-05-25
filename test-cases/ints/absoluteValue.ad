@@ -1,4 +1,0 @@
-public main() -> void
-{
-	var x: int = |-1|;
-}
