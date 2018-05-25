@@ -627,9 +627,9 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == ElementAccessExpression
     {
+        write(builder, "op__element(");
         convert_expression(syntax.children[0], builder);
-        convert_member_access(syntax.children[0], builder);
-        write(builder, "op__Element(");
+        write(builder, ", ");
         convert_expression(syntax.children[2], builder);
         write(builder, ")");
     }

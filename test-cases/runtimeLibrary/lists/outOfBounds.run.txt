@@ -1,3 +1,3 @@
 70
 1
-Assertion failed: index.value >= 0 && index.value < length
+Assertion failed: index.value >= 0 && index.value < list->length

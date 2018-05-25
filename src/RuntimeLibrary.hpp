@@ -152,9 +152,6 @@ struct string
 
     // don't use chars because C's handling of chars sucks
     uint8_t const *_Nonnull Buffer; // TODO use byte and rename to `bytes`
-
-    // TODO check index bounds
-    code_point op__Element(int32 const index) const { return (code_point){Buffer[index.value]}; }
 };
 
 string string__0new__0();
@@ -170,6 +167,11 @@ BOOL string__0op__lt(string lhs, string rhs);
 BOOL string__0op__lte(string lhs, string rhs);
 BOOL string__0op__gt(string lhs, string rhs);
 BOOL string__0op__gte(string lhs, string rhs);
+inline code_point op__element(string value, int32 index)
+{
+    lib_assert(index.value >= 0 && index.value < value.byte_length.value);
+    return (code_point){value.Buffer[index.value]};
+}
 
 // rename to string_byte_length
 inline int32 string_length__1(string s) { return s.byte_length; }
@@ -280,7 +282,6 @@ struct system__collections__List__1
     void add__1(T value);
     void clear__0() { length = 0; }
     int32 op__magnitude() const { return (int32){length}; }
-    T const & op__Element(int32 const index) const;
 };
 
 template<typename T>
@@ -301,10 +302,10 @@ void system__collections__List__1<T>::add__1(T value)
 }
 
 template<typename T>
-T const & system__collections__List__1<T>::op__Element(int32 const index) const
+T op__element(system__collections__List__1<T> const*_Nonnull list, int32 const index)
 {
-    lib_assert(index.value >= 0 && index.value < length);
-    return values[index.value];
+    lib_assert(index.value >= 0 && index.value < list->length);
+    return list->values[index.value];
 }
 
 template<typename T>
@@ -326,9 +327,9 @@ public:
 
 class system__console__Arguments__0
 {
-private:
-    string *_Nonnull args;
 public:
+    string *_Nonnull args;
+
     // Runtime Use Members
     typedef string const *_Nonnull const_iterator;
 
@@ -340,12 +341,14 @@ public:
 
     // Adamant Members
     int32 op__magnitude() const { return (int32){Count}; }
-    string const & op__Element(int32 const index) const
-    {
-        lib_assert(index.value >= 0 && index.value < Count);
-        return args[index.value];
-    }
+
 };
+
+inline string op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)
+{
+    lib_assert(index.value >= 0 && index.value < arguments->Count);
+    return arguments->args[index.value];
+}
 
 struct system__io__File_Reader__0
 {
