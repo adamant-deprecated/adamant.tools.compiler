@@ -163,10 +163,10 @@ string string__0new__1(string value);
 string string__0new__2(code_point c, int32 repeat);
 
 string op__add(string lhs, string rhs);
-// string op__add(string lhs, BOOL rhs);
-// string op__add(string lhs, int32 rhs);
-// string op__add(int32 lhs, string rhs);
-// string op__add(string lhs, code_point rhs);
+string op__add(string lhs, BOOL rhs);
+string op__add(string lhs, int32 rhs);
+string op__add(int32 lhs, string rhs);
+string op__add(string lhs, code_point rhs);
 BOOL string__0op__lt(string lhs, string rhs);
 BOOL string__0op__lte(string lhs, string rhs);
 BOOL string__0op__gt(string lhs, string rhs);
