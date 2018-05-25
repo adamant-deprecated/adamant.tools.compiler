@@ -108,11 +108,6 @@ static const void_ptr none = (void*)0;
 struct int32
 {
     int32_t value;
-
-    int32 *_Nonnull operator->() { return this; }
-    int32 const *_Nonnull operator->() const { return this; }
-    int32 & operator* () { return *this; }
-    int32 const & operator* () const { return *this; }
 };
 
 inline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }
@@ -135,11 +130,6 @@ struct code_point
     // Runtime Use Members
     explicit code_point() = default;
     explicit code_point(char value): value(value) {}
-
-    code_point *_Nonnull operator->() { return this; }
-    code_point const *_Nonnull operator->() const { return this; }
-    code_point & operator* () { return *this; }
-    code_point const & operator* () const { return *this; }
 };
 
 char code_point__to_char(code_point v);
