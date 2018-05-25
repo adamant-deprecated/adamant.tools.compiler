@@ -22,6 +22,15 @@ uint8_t code_point__to_char(code_point v)
     return v.value;
 }
 
+char const * cstr_from(string value)
+{
+    int32_t length = value.byte_length__.value;
+    char* buffer = new char[length + 1];
+    memcpy(buffer, value.Buffer, length);
+    buffer[length] = 0;
+    return buffer;
+}
+
 // -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
@@ -36,14 +45,6 @@ string::string(const char* s)
 string::string(int length, uint8_t const* s)
     : byte_length__(int32_from(length)), Buffer(s)
 {
-}
-
-char const * string::cstr() const
-{
-    auto buffer = new char[byte_length__.value + 1];
-    memcpy(buffer, Buffer, byte_length__.value);
-    buffer[byte_length__.value] = 0;
-    return buffer;
 }
 
 string::string(int32 other)
@@ -158,8 +159,8 @@ auto equal_op(string lhs, string rhs) -> BOOL
 
 BOOL string__0op__lt(string lhs, string rhs)
 {
-    char const* left = lhs.cstr();
-    char const* right = rhs.cstr();
+    char const* left = cstr_from(lhs);
+    char const* right = cstr_from(rhs);
     _Bool result = strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
@@ -167,8 +168,8 @@ BOOL string__0op__lt(string lhs, string rhs)
 }
 BOOL string__0op__lte(string lhs, string rhs)
 {
-    char const* left = lhs.cstr();
-    char const* right = rhs.cstr();
+    char const* left = cstr_from(lhs);
+    char const* right = cstr_from(rhs);
     _Bool result = strcmp(left, right) <= 0;
     delete[] left;
     delete[] right;
@@ -176,8 +177,8 @@ BOOL string__0op__lte(string lhs, string rhs)
 }
 BOOL string__0op__gt(string lhs, string rhs)
 {
-    char const* left = lhs.cstr();
-    char const* right = rhs.cstr();
+    char const* left = cstr_from(lhs);
+    char const* right = cstr_from(rhs);
     BOOL result = bool_from(strcmp(left, right) > 0);
     delete[] left;
     delete[] right;
@@ -185,8 +186,8 @@ BOOL string__0op__gt(string lhs, string rhs)
 }
 BOOL string__0op__gte(string lhs, string rhs)
 {
-    char const* left = lhs.cstr();
-    char const* right = rhs.cstr();
+    char const* left = cstr_from(lhs);
+    char const* right = cstr_from(rhs);
     BOOL result = bool_from(strcmp(left, right) >= 0);
     delete[] left;
     delete[] right;
@@ -195,8 +196,8 @@ BOOL string__0op__gte(string lhs, string rhs)
 
 _Bool operator < (string const & lhs, string const & rhs)
 {
-    char const* left = lhs.cstr();
-    char const* right = rhs.cstr();
+    char const* left = cstr_from(lhs);
+    char const* right = cstr_from(rhs);
     _Bool result = strcmp(left, right) < 0;
     delete[] left;
     delete[] right;
@@ -220,7 +221,7 @@ void assert2(const BOOL condition, char const *_Nonnull code, const string messa
 {
     if(!condition.value)
     {
-        printf("Assertion failed: %s, %s, file %s, line %i", code, message.cstr(), file, line);
+        printf("Assertion failed: %s, %s, file %s, line %i", code, cstr_from(message), file, line);
         exit(70);
     }
 }
@@ -233,7 +234,7 @@ _Noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonn
 
 _Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf("Function %s not yet implemented, %s, %s, line %i", function, message.cstr(), file, line);
+    printf("Function %s not yet implemented, %s, %s, line %i", function, cstr_from(message), file, line);
     exit(70);
 }
 
@@ -294,7 +295,7 @@ system__console__Arguments__0::system__console__Arguments__0(int argc, char cons
 
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName)
 {
-    char const *_Nonnull fname = fileName.cstr();
+    char const *_Nonnull fname = cstr_from(fileName);
     self->file= fopen(fname, "rb"); // TODO check for error
     delete[] fname;
     return self;
@@ -317,7 +318,7 @@ void system__io__File_Reader__0::Close__0()
 
 system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string& fileName)
 {
-    char const *_Nonnull fname = fileName.cstr();
+    char const *_Nonnull fname = cstr_from(fileName);
     self->file = fopen(fname, "wb"); // TODO check error
     delete[] fname;
     return self;
