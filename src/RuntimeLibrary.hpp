@@ -175,6 +175,7 @@ inline code_point op__element(string value, int32 index)
 
 // rename to string_byte_length
 inline int32 string_length__1(string s) { return s.byte_length; }
+inline int32 string_byte_length__1(string s) { return s.byte_length; }
 string substring__3(string s, int32 start, int32 length);
 inline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length.value-start.value}); }
 string string_replace__3(string s, string old_value, string new_value);
