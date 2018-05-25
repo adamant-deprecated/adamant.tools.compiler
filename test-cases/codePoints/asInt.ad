@@ -1,9 +1,9 @@
 public main(console: mut system.console.Console) -> void
 {
     var c: code_point = 'a';
-    console.WriteLine("'"+c+"': "+code_point_as_int(c));
+    console.WriteLine("'"+code_point_to_string(c)+"': "+int_to_string(code_point_as_int(c)));
     c = 'z';
-    console.WriteLine("'"+c+"': "+code_point_as_int(c));
+    console.WriteLine("'"+code_point_to_string(c)+"': "+int_to_string(code_point_as_int(c)));
     c = '\\';
-    console.WriteLine("'"+c+"': "+code_point_as_int(c));
+    console.WriteLine("'"+code_point_to_string(c)+"': "+int_to_string(code_point_as_int(c)));
 }
