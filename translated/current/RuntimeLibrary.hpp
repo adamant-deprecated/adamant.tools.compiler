@@ -114,9 +114,6 @@ struct int32
     int32 & operator* () { return *this; }
     int32 const & operator* () const { return *this; }
 
-    // Adamant Members
-    void op__add_assign(int32 other) { this->value += other.value; }
-    void op__subtract_assign(int32 other) { this->value -= other.value; }
     BOOL op__less_than(int32 other) const { return bool_from(this->value < other.value); }
     BOOL op__less_than_or_equal(int32 other) const { return bool_from(this->value <= other.value); }
     BOOL op__greater_than(int32 other) const { return bool_from(this->value > other.value); }
@@ -132,6 +129,8 @@ struct int32
 // Used by runtime for converting to int32
 inline int32 int32_from(int32_t v) { return (int32){ v }; }
 
+inline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }
+inline void op__subtract_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }
 inline int32 int32__0op__negate(int32 v) { return int32_from(-v.value); }
 inline BOOL int32__0op__less_than(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }
 inline BOOL int32__0op__less_than_or_equal(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }
