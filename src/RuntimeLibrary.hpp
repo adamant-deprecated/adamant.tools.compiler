@@ -114,10 +114,6 @@ struct int32
     int32 & operator* () { return *this; }
     int32 const & operator* () const { return *this; }
 
-    BOOL op__less_than(int32 other) const { return bool_from(this->value < other.value); }
-    BOOL op__less_than_or_equal(int32 other) const { return bool_from(this->value <= other.value); }
-    BOOL op__greater_than(int32 other) const { return bool_from(this->value > other.value); }
-    BOOL op__greater_than_or_equal(int32 other) const { return bool_from(this->value >= other.value); }
     int32 op__add(int32 other) const { return (int32){ this->value + other.value}; }
     int32 op__subtract(int32 other) const { return (int32){ this->value - other.value}; }
     int32 op__multiply(int32 other) const { return (int32){ this->value * other.value}; }

@@ -507,62 +507,38 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         if type =/= none
         {
             write(builder, convert_primitive_type_name(type));
-            if operator == LessThan
-            {
-                write(builder, "__0op__less_than");
-            }
-            else if operator == LessThanEquals
-            {
-                write(builder, "__0op__less_than_or_equal");
-            }
-            else if operator == GreaterThan
-            {
-                write(builder, "__0op__greater_than");
-            }
-            else if operator == GreaterThanEquals
-            {
-                write(builder, "__0op__greater_than_or_equal");
-            }
-            else
-            {
-                error(builder, "Unsupported comparison operator " + operator);
-            }
-            write(builder, "(");
-            convert_expression(syntax.children[0], builder);
-            write(builder, ", ");
-            convert_expression(syntax.children[2], builder);
-            write(builder, ")");
         }
         else
         {
-            // Old style comparison, method on lhs
-            convert_expression(syntax.children[0], builder);
-            convert_member_access(syntax.children[0], builder);
-            write(builder, "op__");
-            if operator == LessThan
-            {
-                write(builder, "less_than");
-            }
-            else if operator == LessThanEquals
-            {
-                write(builder, "less_than_or_equal");
-            }
-            else if operator == GreaterThan
-            {
-                write(builder, "greater_than");
-            }
-            else if operator == GreaterThanEquals
-            {
-                write(builder, "greater_than_or_equal");
-            }
-            else
-            {
-                error(builder, "Unsupported comparison operator " + operator);
-            }
-            write(builder, "(");
-            convert_expression(syntax.children[2], builder);
-            write(builder, ")");
+            // TODO we just assume they are `int`s, that could be wrong
+            write(builder, "int32");
         }
+
+        if operator == LessThan
+        {
+            write(builder, "__0op__less_than");
+        }
+        else if operator == LessThanEquals
+        {
+            write(builder, "__0op__less_than_or_equal");
+        }
+        else if operator == GreaterThan
+        {
+            write(builder, "__0op__greater_than");
+        }
+        else if operator == GreaterThanEquals
+        {
+            write(builder, "__0op__greater_than_or_equal");
+        }
+        else
+        {
+            error(builder, "Unsupported comparison operator " + operator);
+        }
+        write(builder, "(");
+        convert_expression(syntax.children[0], builder);
+        write(builder, ", ");
+        convert_expression(syntax.children[2], builder);
+        write(builder, ")");
     }
     else if syntax.kind == AddExpression
     {
