@@ -2,6 +2,20 @@
 #include <map>
 
 // -----------------------------------------------------------------------------
+// Static Checks
+// -----------------------------------------------------------------------------
+
+// Because we assume we can cast from char* to uint8_t* they need to be the same size
+static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
+
+// Because we assume we can cast from uint8_t* to byte* they need to be the same size
+static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
+
+// Testing that the style we use for literals can be used as a const
+const code_point test_code_point = ((code_point){0xFF});
+const string test_string = ((string){5,(uint8_t const[]){0x34,0x7F,0x45,0xaf,0x69}});
+
+// -----------------------------------------------------------------------------
 // Library Utils
 // -----------------------------------------------------------------------------
 
@@ -16,6 +30,7 @@ void lib_assert1(const _Bool condition, char const *_Nonnull code)
 
 inline int32 int32_from(int32_t v) { return (int32){ v }; }
 
+// TODO change this to something like byte_from
 uint8_t code_point__to_char(code_point v)
 {
     lib_assert(v.value <= 0xFF);
@@ -31,49 +46,42 @@ char const * cstr_from(string value)
     return buffer;
 }
 
+string string_from(int32 value)
+{
+    uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
+    int length = sprintf((char*)buffer, "%d", value.value);
+    lib_assert(length > 0);
+    return (string){length, buffer};
+}
+
+string string_from(code_point value)
+{
+    return (string){1, new uint8_t[1] { code_point__to_char(value) }};
+}
+
+string string_from(char const* s)
+{
+    return (string){strlen(s), (uint8_t const*)s};
+}
+
 // -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
 
-static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
-
-string::string(const char* s)
-    : byte_length__(int32_from(strlen(s))), Buffer((uint8_t const*)s)
+string int_to_hex__1(int32 value)
 {
-}
-
-string::string(int length, uint8_t const* s)
-    : byte_length__(int32_from(length)), Buffer(s)
-{
-}
-
-string::string(int32 other)
-    : byte_length__(int32_from(0)), Buffer(0)
-{
-    uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
-    int length = sprintf((char*)buffer, "%d", other.value);
+    lib_assert(value.value >= 0);
+    uint8_t* buffer = new uint8_t[9]; // FF_FF_FF_FF plus null terminator
+    int length = sprintf((char*)buffer, "%X", value.value);
     lib_assert(length > 0);
-    byte_length__ = int32_from(length);
-    Buffer = buffer;
-}
-
-string::string(code_point other)
-    : byte_length__(int32_from(1)), Buffer(new uint8_t[1] { code_point__to_char(other) })
-{
-}
-
-string::string(BOOL other)
-    : string(other.value ? "true" : "false")
-{
+    return (string){length, buffer};
 }
 
 string string__0new__0()
 {
-    string self;
-    self.byte_length__ = int32_from(0);
-    self.Buffer = 0;
-    return self;
+    return (string){0, 0};
 }
+
 string string__0new__1(string value)
 {
     return value;
@@ -81,34 +89,31 @@ string string__0new__1(string value)
 
 string string__0new__2(code_point c, int32 repeat)
 {
-    string self;
-    self.byte_length__ = repeat;
     uint8_t* buffer = new uint8_t[repeat.value];
     uint8_t ch = code_point__to_char(c);
     for (int i = 0; i < repeat.value; i++)
         buffer[i] = ch;
 
-    self.Buffer = buffer;
-    return self;
+    return (string){repeat, buffer};
 }
 
 string string::Substring__2(int32 start, int32 length) const
 {
-    return string(length.value, Buffer + start.value);
+    return (string){length.value, Buffer + start.value};
 }
 
-string string::Replace__2(string oldValue, string newValue) const
+string string::Replace__2(string old_value, string new_value) const
 {
     system__text__String_Builder__0 builder = system__text__String_Builder__0(); // TODO initialize capacity
-    int limit = byte_length__.value - oldValue.byte_length__.value + 1;
+    int limit = byte_length__.value - old_value.byte_length__.value + 1;
     int last_index = 0;
     // TODO the Substring calls in here are leaking memory
     for(int i=0; i < limit; i++)
-        if(cond(equal_op(Substring__2(int32_from(i), oldValue.byte_length__), oldValue)))
+        if(cond(equal_op(Substring__2(int32_from(i), old_value.byte_length__), old_value)))
         {
             builder.Append__1(Substring__2(int32_from(last_index), int32_from(i-last_index)));
-            builder.Append__1(newValue);
-            i += oldValue.byte_length__.value; // skip over the value we just matched
+            builder.Append__1(new_value);
+            i += old_value.byte_length__.value; // skip over the value we just matched
             last_index = i;
             i--; // we need i-- to offset the i++ that is about to happen
         }
@@ -142,10 +147,30 @@ string op__add(string lhs, string rhs)
     size_t offset = sizeof(uint8_t) * lhs.byte_length__.value;
     memcpy(chars, lhs.Buffer, offset);
     memcpy(chars + offset, rhs.Buffer, rhs.byte_length__.value);
-    return string(newLength, chars);
+    return (string){newLength, chars};
 }
 
-auto equal_op(string lhs, string rhs) -> BOOL
+string op__add(string lhs, BOOL rhs)
+{
+    return op__add(lhs, string_from(rhs.value ? "true" : "false"));
+}
+
+string op__add(string lhs, int32 rhs)
+{
+    return op__add(lhs, string_from(rhs));
+}
+
+string op__add(int32 lhs, string rhs)
+{
+    return op__add(string_from(lhs), rhs);
+}
+
+string op__add(string lhs, code_point rhs)
+{
+    return op__add(lhs, string_from(rhs));
+}
+
+BOOL equal_op(string lhs, string rhs)
 {
     if (lhs.byte_length__.value != rhs.byte_length__.value)
         return FALSE;
@@ -194,6 +219,52 @@ BOOL string__0op__gte(string lhs, string rhs)
     return result;
 }
 
+string substring__3(string s, int32 start, int32 length)
+{
+    lib_assert(start.value < s.byte_length__.value);
+    lib_assert(start.value+length.value <= s.byte_length__.value);
+    return (string){length, s.Buffer + start.value};
+}
+string string_replace__3(string s, string old_value, string new_value)
+{
+    system__text__String_Builder__0 builder = system__text__String_Builder__0(); // TODO initialize capacity
+    int limit = s.byte_length__.value - old_value.byte_length__.value + 1;
+    int last_index = 0;
+    for(int i=0; i < limit; i++)
+        if(cond(equal_op(substring__3(s, int32_from(i), old_value.byte_length__), old_value)))
+        {
+            builder.Append__1(substring__3(s, int32_from(last_index), int32_from(i-last_index)));
+            builder.Append__1(new_value);
+            i += old_value.byte_length__.value; // skip over the value we just matched
+            last_index = i;
+            i--; // we need i-- to offset the i++ that is about to happen
+        }
+
+    builder.Append__1(substring__3(s, int32_from(last_index), int32_from(s.byte_length__.value - last_index)));
+    return builder.ToString__0();
+}
+int32 string_index_of__2(string s, code_point c)
+{
+    uint8_t value = code_point__to_char(c);
+    for(int i = 0; i < s.byte_length__.value; i++)
+        if(s.Buffer[i] == value)
+            return int32_from(i);
+
+    // TODO we should return `int?` and return `none` in this case
+    return int32_from(-1);
+}
+int32 string_last_index_of__2(string s, code_point c)
+{
+    uint8_t value = code_point__to_char(c);
+    for(int i = s.byte_length__.value - 1; i >= 0; i--)
+        if(s.Buffer[i] == value)
+            return int32_from(i);
+
+    // TODO we should return `int?` and return `none` in this case
+    return int32_from(-1);
+}
+
+// Operator used when we put strings into a map for resource manager
 _Bool operator < (string const & lhs, string const & rhs)
 {
     char const* left = cstr_from(lhs);
@@ -290,7 +361,7 @@ system__console__Arguments__0::system__console__Arguments__0(int argc, char cons
 {
     args = new string[Count];
     for (int i = 0; i < Count; i++)
-        args[i] = string(argv[i+1]);
+        args[i] = string_from(argv[i+1]);
 }
 
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName)
@@ -308,7 +379,7 @@ string system__io__File_Reader__0::ReadToEndSync__0()
     fseek(file, 0, SEEK_SET);
     auto buffer = new uint8_t[length];
     length = fread(buffer, sizeof(uint8_t), length, file);
-    return string(length, buffer);
+    return (string){length, buffer};
 }
 
 void system__io__File_Reader__0::Close__0()
@@ -388,6 +459,11 @@ void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 
     length = new_length;
 }
 
+void system__text__String_Builder__0::Append__1(int32 value)
+{
+    Append__1(string_from(value));
+}
+
 void system__text__String_Builder__0::AppendLine__1(string const & value)
 {
     int new_length = length + value.byte_length__.value + 1;
@@ -424,7 +500,7 @@ void system__text__String_Builder__0::Remove__1(int32 start)
 
 string system__text__String_Builder__0::ToString__0()
 {
-    string result(length, buffer);
+    string result = {length, buffer};
     // give up ownership of buffer
     buffer = 0;
     length = 0;
