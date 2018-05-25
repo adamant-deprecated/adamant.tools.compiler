@@ -114,14 +114,10 @@ struct int32
     int32 & operator* () { return *this; }
     int32 const & operator* () const { return *this; }
 
-    BOOL op__less_than(int32 other) const { return bool_from(this->value < other.value); }
-    BOOL op__less_than_or_equal(int32 other) const { return bool_from(this->value <= other.value); }
-    BOOL op__greater_than(int32 other) const { return bool_from(this->value > other.value); }
-    BOOL op__greater_than_or_equal(int32 other) const { return bool_from(this->value >= other.value); }
     int32 op__add(int32 other) const { return (int32){ this->value + other.value}; }
-    int32 op__subtract(int32 other) const { return (int32){ this->value - other.value}; }
-    int32 op__multiply(int32 other) const { return (int32){ this->value * other.value}; }
-    int32 op__divide(int32 other) const { return (int32){ this->value / other.value}; }
+    int32 op__sub(int32 other) const { return (int32){ this->value - other.value}; }
+    int32 op__mul(int32 other) const { return (int32){ this->value * other.value}; }
+    int32 op__div(int32 other) const { return (int32){ this->value / other.value}; }
     int32 op__remainder(int32 other) const { return (int32){ this->value % other.value}; }
     int32 op__magnitude() const;
 };
@@ -130,12 +126,12 @@ struct int32
 inline int32 int32_from(int32_t v) { return (int32){ v }; }
 
 inline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }
-inline void op__subtract_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }
-inline int32 int32__0op__negate(int32 v) { return int32_from(-v.value); }
-inline BOOL int32__0op__less_than(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }
-inline BOOL int32__0op__less_than_or_equal(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }
-inline BOOL int32__0op__greater_than(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }
-inline BOOL int32__0op__greater_than_or_equal(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }
+inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }
+inline int32 int32__0op__neg(int32 v) { return int32_from(-v.value); }
+inline BOOL int32__0op__lt(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }
+inline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }
+inline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }
+inline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }
 
 struct code_point
 {
@@ -154,10 +150,10 @@ struct code_point
 char code_point__to_char(code_point v);
 
 // TODO: Not sure code_point should support comparision operations
-inline BOOL code_point__0op__less_than(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }
-inline BOOL code_point__0op__less_than_or_equal(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }
-inline BOOL code_point__0op__greater_than(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }
-inline BOOL code_point__0op__greater_than_or_equal(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }
+inline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }
+inline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }
+inline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }
+inline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }
 
 struct string
 {
@@ -197,10 +193,10 @@ struct string
     string op__add(BOOL value) const { return this->op__add(string(value)); }
 };
 
-BOOL string__0op__less_than(string lhs, string rhs);
-BOOL string__0op__less_than_or_equal(string lhs, string rhs);
-BOOL string__0op__greater_than(string lhs, string rhs);
-BOOL string__0op__greater_than_or_equal(string lhs, string rhs);
+BOOL string__0op__lt(string lhs, string rhs);
+BOOL string__0op__lte(string lhs, string rhs);
+BOOL string__0op__gt(string lhs, string rhs);
+BOOL string__0op__gte(string lhs, string rhs);
 
 string string__0new__0();
 string string__0new__1(string value);

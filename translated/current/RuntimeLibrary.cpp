@@ -152,7 +152,7 @@ auto equal_op(string lhs, string rhs) -> BOOL
     return TRUE;
 }
 
-BOOL string__0op__less_than(string lhs, string rhs)
+BOOL string__0op__lt(string lhs, string rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -161,7 +161,7 @@ BOOL string__0op__less_than(string lhs, string rhs)
     delete[] right;
     return bool_from(result);
 }
-BOOL string__0op__less_than_or_equal(string lhs, string rhs)
+BOOL string__0op__lte(string lhs, string rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -170,7 +170,7 @@ BOOL string__0op__less_than_or_equal(string lhs, string rhs)
     delete[] right;
     return bool_from(result);
 }
-BOOL string__0op__greater_than(string lhs, string rhs)
+BOOL string__0op__gt(string lhs, string rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
@@ -179,7 +179,7 @@ BOOL string__0op__greater_than(string lhs, string rhs)
     delete[] right;
     return result;
 }
-BOOL string__0op__greater_than_or_equal(string lhs, string rhs)
+BOOL string__0op__gte(string lhs, string rhs)
 {
     char const* left = lhs.cstr();
     char const* right = rhs.cstr();
