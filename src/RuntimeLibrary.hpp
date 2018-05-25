@@ -6,7 +6,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <wchar.h>
 
 // TODO C: Consider using *_s versions of standard lib functions
 
@@ -126,7 +125,8 @@ inline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >
 
 struct code_point
 {
-    char32_t value;
+    // don't use something like char32_t because C's handling of chars sucks
+    uint32_t value;
 };
 
 inline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }
@@ -136,18 +136,18 @@ inline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_f
 
 struct string
 {
-    // Runtime Use Members
-    char const *_Nonnull Buffer;
+    // don't use chars because C's handling of chars sucks
+    uint8_t const *_Nonnull Buffer;
     int Length;
 
     explicit string() = default;
     explicit string(char const *_Nonnull s);
-    explicit string(int length, char const *_Nonnull s);
+    explicit string(int length, uint8_t const *_Nonnull s);
     char const *_Nonnull cstr() const;
     string const *_Nonnull operator->() const { return this; }
     string const & operator* () const { return *this; }
 
-    typedef char const *_Nonnull const_iterator;
+    typedef uint8_t const *_Nonnull const_iterator;
     const_iterator begin() const { return &Buffer[0]; }
     const_iterator end() const { return &Buffer[Length]; }
 
@@ -371,7 +371,7 @@ system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system_
 
 struct system__text__String_Builder__0
 {
-    char *_Nullable buffer;
+    uint8_t *_Nullable buffer;
     int capacity;
     int length;
     void ensure_capacity(int needed);
