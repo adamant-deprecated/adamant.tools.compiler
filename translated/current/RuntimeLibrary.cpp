@@ -16,15 +16,15 @@ void lib_assert1(const _Bool condition, char const *_Nonnull code)
 
 inline int32 int32_from(int32_t v) { return (int32){ v }; }
 
-// -----------------------------------------------------------------------------
-// Primitive Types
-// -----------------------------------------------------------------------------
-
 char code_point__to_char(code_point v)
 {
     lib_assert(v.value <= 0xFF);
     return v.value;
 }
+
+// -----------------------------------------------------------------------------
+// Primitive Types
+// -----------------------------------------------------------------------------
 
 string::string(const char* s)
     : Length(strlen(s)), Buffer(s)
