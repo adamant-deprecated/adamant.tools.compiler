@@ -143,7 +143,6 @@ struct string
     explicit string() = default;
     explicit string(char const *_Nonnull s);
     explicit string(int length, uint8_t const *_Nonnull s);
-    char const *_Nonnull cstr() const;
     string const *_Nonnull operator->() const { return this; }
     string const & operator* () const { return *this; }
 
