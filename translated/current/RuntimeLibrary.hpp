@@ -48,6 +48,11 @@ public:
 #define lib_assert(condition) lib_assert1(condition, #condition)
 void lib_assert1(const _Bool condition, char const *_Nonnull code);
 
+inline void_ptr allocate(size_t bytes)
+{
+    return malloc(bytes);
+}
+
 // -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
@@ -102,7 +107,6 @@ static const void_ptr none = (void*)0;
 // `int` type
 struct int32
 {
-    // Runtime Use Members
     int32_t value;
 
     int32 *_Nonnull operator->() { return this; }
@@ -257,12 +261,6 @@ inline BOOL not_equal_op(void_ptr lhs, void_ptr rhs)
 // Standard Library
 // -----------------------------------------------------------------------------
 // Parts of the standard library that are currently implemented in the runtime.
-
-// Version of allocate used directly by the runtime
-inline void_ptr allocate(size_t bytes)
-{
-    return malloc(bytes);
-}
 
 inline void_ptr allocate__1(int32 bytes)
 {
