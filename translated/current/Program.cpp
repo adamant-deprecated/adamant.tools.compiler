@@ -4118,7 +4118,9 @@ void convert_expression__2(Semantic_Node__0 const *_Nonnull const syntax__, Sour
 	}
 	else if (cond(equal_op(syntax__->kind__, CodePointLiteralExpression__)))
 	{
-		write__2(builder__, op__add(op__add(((string){23,(uint8_t const*)"((code_point){(uint8_t)"}), get_text__1(syntax__)), ((string){2,(uint8_t const*)"})"})));
+		string const raw_value__ = get_text__1(syntax__);
+		code_point const code_point_value__ = code_point_literal_value__1(raw_value__);
+		write__2(builder__, op__add(op__add(op__add(op__add(((string){16,(uint8_t const*)"((code_point){/*"}), substring__3(raw_value__, ((int32){1}), int32__0op__sub(string_byte_length__1(raw_value__), ((int32){2})))), ((string){4,(uint8_t const*)"*/0x"})), int_to_hex_string__1(code_point_as_int__1(code_point_value__))), ((string){2,(uint8_t const*)"})"})));
 	}
 	else if (cond(equal_op(syntax__->kind__, IdentifierName__)))
 	{
@@ -4346,31 +4348,35 @@ code_point code_point_literal_value__1(string const value__)
 		{
 			return ((code_point){(uint8_t)'\\'});
 		}
-		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\\n'"}))))
+		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\''"}))))
+		{
+			return ((code_point){(uint8_t)'\''});
+		}
+		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\n'"}))))
 		{
 			return ((code_point){(uint8_t)'\n'});
 		}
-		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\\r'"}))))
+		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\r'"}))))
 		{
 			return ((code_point){(uint8_t)'\r'});
 		}
-		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\\0'"}))))
+		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\0'"}))))
 		{
 			return ((code_point){(uint8_t)'\0'});
 		}
-		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\\b'"}))))
+		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\b'"}))))
 		{
 			return ((code_point){(uint8_t)'\b'});
 		}
-		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\\f'"}))))
+		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\f'"}))))
 		{
 			return ((code_point){(uint8_t)'\f'});
 		}
-		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\\t'"}))))
+		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\t'"}))))
 		{
-			return ((code_point){(uint8_t)'\f'});
+			return ((code_point){(uint8_t)'\t'});
 		}
-		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\\b'"}))))
+		else if (cond(equal_op(value__, ((string){4,(uint8_t const*)"'\\b'"}))))
 		{
 			return ((code_point){(uint8_t)'\b'});
 		}
@@ -4387,7 +4393,7 @@ code_point code_point_literal_value__1(string const value__)
 		}
 		else
 		{
-			return ((code_point){(uint8_t)'\0'});
+			return int_to_code_point__1(hex_string_to_int__1(substring__3(value__, ((int32){3}), ((int32){2}))));
 		}
 	}
 	else

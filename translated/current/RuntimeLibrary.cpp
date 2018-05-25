@@ -67,7 +67,7 @@ string bool_to_string__1(BOOL b)
 
 string int_to_string__1(int32 i)
 {
-    uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 to 2,147,483,647 plus null terminator
+    uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 plus null terminator
     int length = sprintf((char*)buffer, "%d", i.value);
     lib_assert(length > 0);
     return (string){length, buffer};
@@ -87,6 +87,11 @@ int32 hex_string_to_int__1(string s)
     int32_t i = strtoul(cstr, NULL, 16);
     delete[] cstr;
     return (int32){i};
+}
+
+code_point int_to_code_point__1(int32 i)
+{
+    return (code_point){i.value};
 }
 
 string code_point_to_string__1(code_point c)
@@ -116,12 +121,12 @@ string string__0new__2(code_point c, int32 repeat)
 
 string op__add(string lhs, string rhs)
 {
-    int newLength = lhs.byte_length.value + rhs.byte_length.value;
-    uint8_t* chars = new uint8_t[newLength];
+    int new_length = lhs.byte_length.value + rhs.byte_length.value;
+    uint8_t* chars = new uint8_t[new_length];
     size_t offset = sizeof(uint8_t) * lhs.byte_length.value;
     memcpy(chars, lhs.Buffer, offset);
     memcpy(chars + offset, rhs.Buffer, rhs.byte_length.value);
-    return (string){newLength, chars};
+    return (string){new_length, chars};
 }
 
 string op__add(string lhs, BOOL rhs)
@@ -203,7 +208,7 @@ string substring__3(string s, int32 start, int32 length)
 string string_replace__3(string s, string old_value, string new_value)
 {
     // We make one one the stack then manually call the constructor
-    system__text__String_Builder__0 builder; // TODO initialize capacity
+    system__text__String_Builder__0 builder;
     system__text__String_Builder__0__0new__with_capacity__1(&builder, s.byte_length);
     int limit = s.byte_length.value - old_value.byte_length.value + 1;
     int last_index = 0;
