@@ -14,6 +14,8 @@ void lib_assert1(const _Bool condition, char const *_Nonnull code)
     }
 }
 
+inline int32 int32_from(int32_t v) { return (int32){ v }; }
+
 // -----------------------------------------------------------------------------
 // Primitive Types
 // -----------------------------------------------------------------------------
@@ -130,13 +132,13 @@ int32 string::index_of__1(code_point c) const
     return int32_from(-1);
 }
 
-string string::op__add(string const & value) const
+string op__add(string lhs, string rhs)
 {
-    int newLength = Length + value.Length;
+    int newLength = lhs.Length + rhs.Length;
     char* chars = new char[newLength];
-    size_t offset = sizeof(char) * Length;
-    memcpy(chars, Buffer, offset);
-    memcpy(chars + offset, value.Buffer, value.Length);
+    size_t offset = sizeof(char) * lhs.Length;
+    memcpy(chars, lhs.Buffer, offset);
+    memcpy(chars + offset, rhs.Buffer, rhs.Length);
     return string(newLength, chars);
 }
 
@@ -207,8 +209,7 @@ void assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnu
 {
     if(!condition.value)
     {
-        printf("%s", string("Assertion failed: ").op__add(string(code))
-            .op__add(string(", file ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+        printf("Assertion failed: %s, file %s, line %i", code, file, line);
         exit(70);
     }
 }
@@ -217,30 +218,26 @@ void assert2(const BOOL condition, char const *_Nonnull code, const string messa
 {
     if(!condition.value)
     {
-        printf("%s", string("Assertion failed: ").op__add(string(code)).op__add(string(", ")).op__add(message)
-            .op__add(string(", file ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+        printf("Assertion failed: %s, %s, file %s, line %i", code, message.cstr(), file, line);
         exit(70);
     }
 }
 
 _Noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf("%s", string("Function ").op__add(string(function))
-        .op__add(string(" not yet implemented, ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+    printf("Function %s not yet implemented, %s, line %i", function, file, line);
     exit(70);
 }
 
 _Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf("%s", string("Function ").op__add(string(function))
-        .op__add(string(" not yet implemented, ")).op__add(message).op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+    printf("Function %s not yet implemented, %s, %s, line %i", function, message.cstr(), file, line);
     exit(70);
 }
 
 _Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf("%s", string("Reached \"UNREACHABLE\" statement in function ").op__add(string(function))
-        .op__add(string(", ")).op__add(string(file)).op__add(string(", line ")).op__add(int32_from(line)).cstr());
+    printf("Reached \"UNREACHABLE\" statement in function %s, %s, line %i", function, file, line);
     exit(70);
 }
 
