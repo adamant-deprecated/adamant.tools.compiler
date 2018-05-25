@@ -9,7 +9,7 @@
 static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
 
 // Because we assume we can cast from uint8_t* to byte* they need to be the same size
-static_assert(sizeof(uint8_t) == sizeof(byte), "chars must be 8 bits");
+static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
 
 // Testing that the style we use for literals can be used as a const
 const code_point test_code_point = ((code_point){0xFF});

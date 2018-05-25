@@ -21,7 +21,7 @@ public main(console: mut system.console.Console) -> void
 		}
 		else
 		{
-			console.WriteLine(x);
+			console.WriteLine(""+x); // Hack for converting to string
 		}
 
 		x += 1;
