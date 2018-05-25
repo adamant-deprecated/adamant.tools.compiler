@@ -31,6 +31,7 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "int_to_string")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "int_to_hex_string")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "code_point_to_string")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "string_length")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "string_byte_length")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "substring")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "string_replace")));
