@@ -50,7 +50,7 @@ char const * cstr_from(string value)
 
 string string_from_cstr(char const* s)
 {
-    return (string){strlen(s), (uint8_t const*)s};
+    return (string){(int32_t)strlen(s), (uint8_t const*)s};
 }
 
 // -----------------------------------------------------------------------------
@@ -91,7 +91,8 @@ int32 hex_string_to_int__1(string s)
 
 code_point int_to_code_point__1(int32 i)
 {
-    return (code_point){i.value};
+    lib_assert(i.value >= 0);
+    return (code_point){(uint32_t)i.value};
 }
 
 string code_point_to_string__1(code_point c)
@@ -341,7 +342,7 @@ string system__io__File_Reader__0::ReadToEndSync__0()
     fseek(file, 0, SEEK_SET);
     auto buffer = new uint8_t[length];
     length = fread(buffer, sizeof(uint8_t), length, file);
-    return (string){length, buffer};
+    return (string){(int32_t)length, buffer};
 }
 
 void system__io__File_Reader__0::Close__0()
