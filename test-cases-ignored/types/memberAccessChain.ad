@@ -1,0 +1,16 @@
+public struct Test
+{
+	public let s: string;
+
+	public new()
+	{
+		s = "This is a test";
+		let v: bool = self.s.index_of('c') == 2;
+	}
+}
+
+public Main() -> void
+{
+	let l: int = new Test().s.index_of('s');
+	let v: bool = "abc".index_of('c') == 2;
+}
