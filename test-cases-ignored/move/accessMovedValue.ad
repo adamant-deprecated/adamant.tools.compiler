@@ -1,0 +1,6 @@
+public Main() -> int
+{
+	let result: int = 42;
+	let x: int = result;
+	return result;
+}
