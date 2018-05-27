@@ -33,7 +33,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 		}
 		else
 		{
-			console__->WriteLine__1(op__add(((string){0,(uint8_t const*)""}), x__));
+			console__->WriteLine__1(int_to_string__1(x__));
 		}
 
 		op__add_assign(&(x__), ((int32){1}));
