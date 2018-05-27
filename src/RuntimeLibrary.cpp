@@ -91,7 +91,7 @@ int32 hex_string_to_int__1(string s)
 
 code_point int_to_code_point__1(int32 i)
 {
-    libassert(i.value >= 0);
+    lib_assert(i.value >= 0);
     return (code_point){(uint32_t)i.value};
 }
 
