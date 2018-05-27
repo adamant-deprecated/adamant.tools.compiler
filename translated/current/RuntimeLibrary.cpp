@@ -119,7 +119,7 @@ string string__0new__2(code_point c, int32 repeat)
     return (string){repeat, buffer};
 }
 
-string op__add(string lhs, string rhs)
+string string__0op__add(string lhs, string rhs)
 {
     int new_length = lhs.byte_length.value + rhs.byte_length.value;
     uint8_t* chars = new uint8_t[new_length];
