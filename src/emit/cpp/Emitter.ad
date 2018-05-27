@@ -45,7 +45,8 @@ public emit(emitter: mut Emitter) -> string
     // TODO all of this should be `string.join()`
     // TODO the `string.join()` call should be optimized into existence by the compiler from addition
     let total_size: int
-        = byte_length(emitter.type_declarations)
+        = 0 // Hack so it knows these are integer adds, not string concatenations
+        + byte_length(emitter.type_declarations)
         + byte_length(emitter.function_declarations)
         + byte_length(emitter.class_declarations)
         + byte_length(emitter.global_definitions)
@@ -552,7 +553,19 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         let lhs_node: Semantic_Node = syntax.children[0];
         let rhs_node: Semantic_Node = syntax.children[1];
-        write(builder, "op__add(");
+        var type: Type = lhs_node.of_type;
+        if type == none { type == rhs_node.of_type; }
+        if type =/= none
+        {
+            write(builder, convert_primitive_type_name(type));
+        }
+        else
+        {
+            // TODO we just assume they are `string`s, that could be wrong
+            // Seems more likely that the result of two function calls would be string
+            write(builder, "string");
+        }
+        write(builder, "__0op__add(");
         convert_expression(lhs_node, builder);
         write(builder, ", ");
         convert_expression(rhs_node, builder);

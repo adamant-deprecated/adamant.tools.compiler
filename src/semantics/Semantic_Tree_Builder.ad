@@ -281,9 +281,14 @@ public build_semantic_node(
     }
     else if syntax.kind == AddExpression
     {
-        children.add(build_semantic_node(builder, syntax.children[0], name_table, scope));
-        children.add(build_semantic_node(builder, syntax.children[2], name_table, scope));
-        return new Semantic_Node.of_type(lookup_special(scope, "int").type, syntax, children);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        children.add(lhs);
+        children.add(rhs);
+        var type: Type = lhs.of_type;
+        if type == none { type = rhs.of_type; }
+        if type == none { type = lookup_special(scope, "int").type; }
+        return new Semantic_Node.of_type(type, syntax, children);
     }
     else if syntax.kind == SubtractExpression
     {

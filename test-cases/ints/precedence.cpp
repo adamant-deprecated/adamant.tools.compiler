@@ -14,8 +14,8 @@ void main__0();
 void main__0()
 {
 	int32 x__;
-	x__ = op__add(((int32){1}), int32__0op__div(int32__0op__sub(((int32){3}), ((int32){1})), ((int32){2})));
-	x__ = int32__0op__sub(op__add(((int32){1}), ((int32){3})), int32__0op__div(((int32){1}), ((int32){2})));
+	x__ = int32__0op__add(((int32){1}), int32__0op__div(int32__0op__sub(((int32){3}), ((int32){1})), ((int32){2})));
+	x__ = int32__0op__sub(int32__0op__add(((int32){1}), ((int32){3})), int32__0op__div(((int32){1}), ((int32){2})));
 }
 
 // Entry Point Adapter

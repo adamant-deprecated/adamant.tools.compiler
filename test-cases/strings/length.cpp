@@ -14,9 +14,9 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
 	string s__ = ((string){19,(uint8_t const*)"A good test string!"});
-	console__->WriteLine__1(op__add(op__add(int_to_string__1(string_byte_length__1(s__)), ((string){2,(uint8_t const*)": "})), s__));
+	console__->WriteLine__1(string__0op__add(string__0op__add(int_to_string__1(string_byte_length__1(s__)), ((string){2,(uint8_t const*)": "})), s__));
 	s__ = ((string){20,(uint8_t const*)"Yep,\twe know length!"});
-	console__->WriteLine__1(op__add(op__add(int_to_string__1(string_byte_length__1(s__)), ((string){2,(uint8_t const*)": "})), s__));
+	console__->WriteLine__1(string__0op__add(string__0op__add(int_to_string__1(string_byte_length__1(s__)), ((string){2,(uint8_t const*)": "})), s__));
 }
 
 // Entry Point Adapter

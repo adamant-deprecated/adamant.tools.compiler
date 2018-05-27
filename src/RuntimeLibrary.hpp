@@ -116,7 +116,7 @@ struct int32
 inline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }
 inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }
 inline int32 int32__0op__neg(int32 v) { return (int32){-v.value}; }
-inline int32 op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }
+inline int32 int32__0op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }
 inline int32 int32__0op__sub(int32 lhs, int32 rhs) { return (int32){ lhs.value - rhs.value}; }
 inline int32 int32__0op__mul(int32 lhs, int32 rhs) { return (int32){ lhs.value * rhs.value}; }
 inline int32 int32__0op__div(int32 lhs, int32 rhs) { return (int32){ lhs.value / rhs.value}; }
@@ -164,7 +164,7 @@ string string__0new__0();
 string string__0new__1(string value);
 string string__0new__2(code_point c, int32 repeat);
 
-string op__add(string lhs, string rhs);
+string string__0op__add(string lhs, string rhs);
 BOOL string__0op__lt(string lhs, string rhs);
 BOOL string__0op__lte(string lhs, string rhs);
 BOOL string__0op__gt(string lhs, string rhs);
