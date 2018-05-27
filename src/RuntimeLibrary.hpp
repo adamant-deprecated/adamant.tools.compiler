@@ -147,7 +147,7 @@ inline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_f
 inline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }
 inline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }
 
-inline int32 code_point_as_int__1(code_point c) { return (int32){c.value}; }
+inline int32 code_point_as_int__1(code_point c) { return (int32){(int32_t)c.value}; }
 string code_point_to_string__1(code_point c);
 
 struct string

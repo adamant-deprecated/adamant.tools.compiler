@@ -41,7 +41,7 @@ public build_compilation_unit_semantic_node(
 {
     assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + int_to_string(compilation_unit_syntax.kind));
 
-    let scope: Name_Subtable = none; //name_table; // TODO this isn't right, we need to load the correct one
+    // TODO we need to load the correct scope
     let declarations: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     for let declaration_syntax: Syntax_Node in compilation_unit_syntax.children
     {
@@ -143,7 +143,7 @@ public build_semantic_node(
         }
         else
         {
-            let place: int = syntax.start;
+            // let place: int = syntax.start;
             // debug_write_line("Building identifier `"+get_text(syntax)+"` at "+place+", scope `"+full_name(name_scope.name)+'`');
             // assert(name_scope.type =/= none, get_text(syntax));
             if name_scope.type == none
@@ -587,10 +587,10 @@ public build_constructor_name_semantic_node(
         and syntax.children[2].kind == IdentifierName
     {
         let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-        // It could be a named constructor call
-        let type_node: Semantic_Node = build_type_name_semantic_node(builder, syntax.children[0], name_table, scope);
-        children.add(type_node);
         let qualifier: Syntax_Node = syntax.children[0];
+        // It could be a named constructor call
+        let type_node: Semantic_Node = build_type_name_semantic_node(builder, qualifier, name_table, scope);
+        children.add(type_node);
         let name: Syntax_Node = syntax.children[2];
         let constructor_name: string = "new_" + get_text(name);
         let referenced_type: Type = type_node.referenced_type;

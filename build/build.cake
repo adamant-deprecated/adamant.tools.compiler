@@ -522,7 +522,19 @@ ConsoleCommand CompileCpp(string sourceGlob, FilePath output, FilePath includeDi
 
 ConsoleCommand CompileCpp(string[] sourceGlobs, FilePath output, FilePath includeDirectory = null)
 {
-    var options =  " -std=c++14 -fno-rtti -fno-exceptions "; // -fsanitize=undefined
+    // Compiler Options Explained:
+    // -std=c++14 use the C++ 2014 standard (newest fully finalized)
+    // -fno-rtti : disables runtime type information
+    // -fno-exceptions : disables exceptions because we are trying to move toward C
+    var options =  " -std=c++14 -fno-rtti -fno-exceptions ";
+
+    // Additional options that can be useful:
+    // Include runtime checks: -fsanitize=undefined
+    // All warnings (except one annoying one): -Wall -Wno-missing-braces
+    // Disable Microsoft Extensions: -fno-ms-extensions
+    //  Note: With this, headers don't compile on windows, but it catches some errors that the standard
+    //          says should be errors and are caught on linux.
+
     if(includeDirectory != null)
     {
         options += string.Format(" --include-directory \"{0}\"", includeDirectory);
@@ -530,7 +542,8 @@ ConsoleCommand CompileCpp(string[] sourceGlobs, FilePath output, FilePath includ
     if(IsRunningOnWindows())
     {
         output = output.AppendExtension("exe");
-        options += " -Xclang -flto-visibility-public-std";
+        // Don't remeber why the below option used to be needed, leaving it around for a while
+        //options += " -Xclang -flto-visibility-public-std";
     }
 
     // Because wildcard expansion is handled by the shell on Linux and Cake StartProcess() always
