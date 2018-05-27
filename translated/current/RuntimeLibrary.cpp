@@ -12,10 +12,10 @@ static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
 static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
 
 // Testing that the style we use for literals can be used as a const
-const code_point test_code_point = ((code_point){0xFF});
+// const code_point test_code_point = ((code_point){0xFF});
 // TODO: C allows string literals that are one byte shorter than the array so no null terminator
 // TODO: C also has UTF-8 literals u8"hello"
-const string test_string = ((string){5,(uint8_t const[]){0x34,0x7F,0x45,0xaf,0x69}});
+// const string test_string = ((string){5,(uint8_t const[]){0x34,0x7F,0x45,0xaf,0x69}});
 
 // -----------------------------------------------------------------------------
 // Library Utils
@@ -127,26 +127,6 @@ string op__add(string lhs, string rhs)
     memcpy(chars, lhs.Buffer, offset);
     memcpy(chars + offset, rhs.Buffer, rhs.byte_length.value);
     return (string){new_length, chars};
-}
-
-string op__add(string lhs, BOOL rhs)
-{
-    return op__add(lhs, bool_to_string__1(rhs));
-}
-
-string op__add(string lhs, int32 rhs)
-{
-    return op__add(lhs, int_to_string__1(rhs));
-}
-
-string op__add(int32 lhs, string rhs)
-{
-    return op__add(int_to_string__1(lhs), rhs);
-}
-
-string op__add(string lhs, code_point rhs)
-{
-    return op__add(lhs, code_point_to_string__1(rhs));
 }
 
 BOOL equal_op(string lhs, string rhs)
@@ -439,11 +419,6 @@ void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 
     ensure_capacity(new_length);
     memcpy(buffer+length, value->buffer, value->length);
     length = new_length;
-}
-
-void system__text__String_Builder__0::Append__1(int32 value)
-{
-    Append__1(int_to_string__1(value));
 }
 
 void system__text__String_Builder__0::AppendLine__1(string const & value)
