@@ -685,6 +685,17 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == ElementAccessExpression
     {
+        var type: Type = syntax.children[0].of_type;
+        if type =/= none
+        {
+            write(builder, mangle_name(type));
+            write(builder, "__0");
+        }
+        else
+        {
+            // if we don't know the type, assum List<T>
+            write(builder, "system__collections__List__1__0");
+        }
         write(builder, "op__element(");
         convert_expression(syntax.children[0], builder);
         write(builder, ", ");
