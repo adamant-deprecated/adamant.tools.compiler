@@ -128,11 +128,17 @@ public full_name(name: Name) -> string
 // TODO this method name doesn't make it clear that the package could be unspecified
 public is_qualified_by(name: Name, qualifier: Name) -> bool
 {
-    if (name.package =/= none
-        and qualifier.package =/= none
-        and full_name(name.package) =/= full_name(qualifier.package))
-        or |name.segments| <= |qualifier.segments|
+    if |name.segments| <= |qualifier.segments|
         { return false; }
+
+    if name.package =/= none
+        and qualifier.package =/= none
+    {
+        // Hack put name in variable so compiler can figure out the types for not equal expression
+        let full_package_name: string = full_name(name.package);
+        if full_package_name =/= full_name(qualifier.package)
+            { return false; }
+    }
 
     var i: int = 0;
     for let segment: string in qualifier.segments
@@ -153,14 +159,18 @@ public qualifier_is(name: Name, qualifier: Name) -> bool
         and is_qualified_by(name, qualifier);
 }
 
-// TODO this name is a little confusing, it is like equal except for the package
+// TODO this name is a little confusing, it is like: equal except for the package
 public names(name: Name, other: Name) -> bool
 {
-    if (name.package =/= none
-        and (other.package == none or full_name(name.package) =/= full_name(other.package)))
-        or |name.segments| =/= |other.segments|
+    if |name.segments| =/= |other.segments|
+        { return false; }
+
+    if name.package =/= none
     {
-        return false;
+        // Hack put name in variable so compiler can figure out the types for not equal expression
+        let full_package_name: string = full_name(name.package);
+        if (other.package == none or full_package_name =/= full_name(other.package))
+            { return false; }
     }
 
     var i: int = 0;

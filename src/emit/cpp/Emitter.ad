@@ -537,7 +537,8 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         }
         else
         {
-            write(builder, "not_equal_op(");
+            // TODO defaulting to this because the compiler often compares to a int kind value
+            write(builder, "int32__0op__not_equal(");
         }
         convert_expression(lhs_node, builder);
         write(builder, ", ");
