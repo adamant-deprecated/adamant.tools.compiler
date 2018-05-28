@@ -270,15 +270,6 @@ _Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull funct
 #define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)
 _Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
 
-
-struct ResourceManager
-{
-    string const & GetString__1(string resourceName);
-    void AddResource(string name, string value);
-};
-
-// TODO don't expose this name
-extern ResourceManager *_Nonnull const resource_manager__;
 string get_resource__1(string resource_name);
 void add_resource(string name, string value);
 
