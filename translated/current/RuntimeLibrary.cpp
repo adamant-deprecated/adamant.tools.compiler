@@ -130,7 +130,7 @@ string string__0op__add(string lhs, string rhs)
     return (string){new_length, chars};
 }
 
-BOOL equal_op(string lhs, string rhs)
+BOOL string__0op__equal(string lhs, string rhs)
 {
     if (lhs.byte_length.value != rhs.byte_length.value)
         return FALSE;

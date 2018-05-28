@@ -30,9 +30,14 @@ public:
     void_ptr(T *_Nullable value) : ptr((void *_Nullable)value) {}
     template<class T>
     operator T *_Nullable() const { return (T *)ptr; }
+
     _Bool operator==(void_ptr rhs) const { return ptr == rhs.ptr; }
     template<class T>
     _Bool operator==(T *_Nullable rhs) const { return ptr == rhs; }
+
+    _Bool operator!=(void_ptr rhs) const { return ptr != rhs.ptr; }
+    template<class T>
+    _Bool operator!=(T *_Nullable rhs) const { return ptr != rhs; }
 };
 
 #else
@@ -186,27 +191,75 @@ int32 string_last_index_of__2(string s, code_point c);
 // Operators
 // -----------------------------------------------------------------------------
 
-inline BOOL equal_op(BOOL lhs, BOOL rhs)
+inline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs)
 {
     return bool_from(lhs.value == rhs.value);
 }
-
-inline BOOL equal_op(int32 lhs, int32 rhs)
+inline BOOL int32__0op__equal(int32 lhs, int32 rhs)
 {
     return bool_from(lhs.value == rhs.value);
 }
-
-inline BOOL equal_op(void_ptr lhs, void_ptr rhs)
+inline BOOL code_point__0op__equal(code_point lhs, code_point rhs)
+{
+    return bool_from(lhs.value == rhs.value);
+}
+BOOL string__0op__equal(string lhs, string rhs);
+// TODO this currently exists becuase of the compare `none`, it shouldn't exist
+inline BOOL never__0op__equal(void_ptr lhs, void_ptr rhs)
+{
+    return bool_from(lhs == rhs);
+}
+inline BOOL void_ptr__0op__equal(void_ptr lhs, void_ptr rhs)
 {
     return bool_from(lhs == rhs);
 }
 
+inline BOOL equal_op(BOOL lhs, BOOL rhs)
+{
+    return bool_from(lhs.value == rhs.value);
+}
+inline BOOL equal_op(int32 lhs, int32 rhs)
+{
+    return bool_from(lhs.value == rhs.value);
+}
+inline BOOL equal_op(void_ptr lhs, void_ptr rhs)
+{
+    return bool_from(lhs == rhs);
+}
 inline BOOL equal_op(code_point lhs, code_point rhs)
 {
     return bool_from(lhs.value == rhs.value);
 }
+inline BOOL equal_op(string lhs, string rhs)
+{
+    return string__0op__equal(lhs, rhs);
+}
 
-BOOL equal_op(string lhs, string rhs);
+inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)
+{
+    return bool_from(lhs.value != rhs.value);
+}
+inline BOOL int32__0op__not_equal(int32 lhs, int32 rhs)
+{
+    return bool_from(lhs.value != rhs.value);
+}
+inline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs)
+{
+    return bool_from(lhs.value != rhs.value);
+}
+inline BOOL string__0op__not_equal(string lhs, string rhs)
+{
+    return BOOL__0op__not(string__0op__equal(lhs, rhs));
+}
+// TODO this currently exists becuase of the compare `none`, it shouldn't exist
+inline BOOL never__0op__not_equal(void_ptr lhs, void_ptr rhs)
+{
+    return bool_from(lhs != rhs);
+}
+inline BOOL void_ptr__0op__not_equal(void_ptr lhs, void_ptr rhs)
+{
+    return bool_from(lhs != rhs);
+}
 
 inline BOOL not_equal_op(int32 lhs, int32 rhs)
 {
