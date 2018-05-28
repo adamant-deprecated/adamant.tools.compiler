@@ -46,9 +46,6 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "debug_write_line")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "get_resource")));
 
-    // TODO this is actually a global variable
-    symbols.add(build_function_symbol(new Name(global_namespace, VariableName, "resource_manager")));
-
     // system
     let system_namespace: Name = new Name(global_namespace, NamespaceName, "system");
     let system_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();

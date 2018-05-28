@@ -169,10 +169,10 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
         console.WriteLine(outputDirPath);
     }
     var resourceFile: mut system.io.File_Writer = new system.io.File_Writer(outputDirPath+"RuntimeLibrary.hpp");
-    resourceFile.Write(resource_manager.GetString("RuntimeLibrary.hpp"));
+    resourceFile.Write(get_resource("RuntimeLibrary.hpp"));
     resourceFile.Close();
     resourceFile = new system.io.File_Writer(outputDirPath+"RuntimeLibrary.cpp");
-    resourceFile.Write(resource_manager.GetString("RuntimeLibrary.cpp"));
+    resourceFile.Write(get_resource("RuntimeLibrary.cpp"));
     resourceFile.Close();
 
     return Success;

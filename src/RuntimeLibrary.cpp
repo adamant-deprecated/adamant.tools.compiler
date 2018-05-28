@@ -1,5 +1,4 @@
 #include "RuntimeLibrary.hpp"
-#include <map>
 
 // -----------------------------------------------------------------------------
 // Static Checks
@@ -297,7 +296,6 @@ void add_resource(string name, string value)
     resource_name[resource_count] = name;
     resource_value[resource_count] = value;
     resource_count += 1;
-    resource_manager__->AddResource(name, value);
 }
 
 string get_resource__1(string name)
@@ -307,20 +305,8 @@ string get_resource__1(string name)
             return resource_value[i];
 
     lib_assert_msg(false, cstr_from(name));
+    UNREACHABLE__0();
 }
-
-std::map<string, string> resourceValues;
-
-string const & ResourceManager::GetString__1(string resourceName)
-{
-    return resourceValues.at(resourceName);
-}
-void ResourceManager::AddResource(string name, string value)
-{
-    resourceValues.insert(std::make_pair(name, value));\
-}
-
-ResourceManager *const resource_manager__ = new ResourceManager();
 
 void debug_write__1(string value)
 {
