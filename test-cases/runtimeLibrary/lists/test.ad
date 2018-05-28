@@ -4,7 +4,7 @@ public main(console: mut system.console.Console) -> void
 	strings.add("Hello");
 	strings.add("World!");
 
-	if |strings| =/= 2
+	if strings.count =/= 2
 	{
 		console.WriteLine("List length not 2!");
 	}

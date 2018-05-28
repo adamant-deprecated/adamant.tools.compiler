@@ -281,41 +281,41 @@ template<typename T>
 struct system__collections__List__1
 {
     T *_Nonnull values;
-    int length;
-    int capacity;
+    int count__;
+    int capacity__;
 
     // Runtime Use Members
     typedef T const *_Nonnull const_iterator;
     const_iterator begin() const { return values; }
-    const_iterator end() const { return &values[length]; }
+    const_iterator end() const { return &values[count__]; }
 
     // Adamant Members
     void add__1(T value);
-    void clear__0() { length = 0; }
-    int32 op__magnitude() const { return (int32){length}; }
+    void clear__0() { count__ = 0; }
+    int32 op__magnitude() const { return (int32){count__}; }
 };
 
 template<typename T>
 void system__collections__List__1<T>::add__1(T value)
 {
-    if(length >= capacity)
+    if(count__ >= capacity__)
     {
-        int newCapacity = capacity == 0 ? 16 : capacity * 2;
+        int newCapacity = capacity__ == 0 ? 16 : capacity__ * 2;
         // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         T* newValues = (T*)new char[newCapacity * sizeof(T)];
-        memcpy(newValues, values, length * sizeof(T));
+        memcpy(newValues, values, count__ * sizeof(T));
         values = newValues;
-        capacity = newCapacity;
+        capacity__ = newCapacity;
     }
-    values[length] = value;
-    length++;
+    values[count__] = value;
+    count__++;
 }
 
 template<typename T>
 T op__element(system__collections__List__1<T> const*_Nonnull list, int32 const index)
 {
-    lib_assert(index.value >= 0 && index.value < list->length);
+    lib_assert(index.value >= 0 && index.value < list->count__);
     return list->values[index.value];
 }
 
@@ -323,8 +323,8 @@ template<typename T>
 system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(system__collections__List__1<T> *_Nonnull self)
 {
     self->values = 0;
-    self->length = 0;
-    self->capacity = 0;
+    self->count__ = 0;
+    self->capacity__ = 0;
     return self;
 }
 
