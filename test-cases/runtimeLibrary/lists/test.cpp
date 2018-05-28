@@ -16,7 +16,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 	system__collections__List__1<string> *_Nonnull const strings__ = system__collections__List__1__0new__0<string>(allocate(sizeof(system__collections__List__1<string>)));
 	strings__->add__1(((string){5,(uint8_t const*)"Hello"}));
 	strings__->add__1(((string){6,(uint8_t const*)"World!"}));
-	if (cond(not_equal_op(strings__->op__magnitude(), ((int32){2}))))
+	if (cond(int32__0op__not_equal(strings__->op__magnitude(), ((int32){2}))))
 	{
 		console__->WriteLine__1(((string){18,(uint8_t const*)"List length not 2!"}));
 	}

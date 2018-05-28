@@ -251,18 +251,24 @@ public build_semantic_node(
     }
     else if syntax.kind == StringLiteralExpression
     {
-        // TODO rather than looking up the time, directly use the one in the package
+        // TODO rather than looking up the type, directly use the one in the package
         return new Semantic_Node.of_type(lookup_special(scope, "string").type, syntax, children);
     }
     else if syntax.kind == CodePointLiteralExpression
     {
-        // TODO rather than looking up the time, directly use the one in the package
+        // TODO rather than looking up the type, directly use the one in the package
         return new Semantic_Node.of_type(lookup_special(scope, "code_point").type, syntax, children);
     }
     else if syntax.kind == NumericLiteralExpression
     {
-        // TODO rather than looking up the time, directly use the one in the package
+        // TODO rather than looking up the type, directly use the one in the package
         return new Semantic_Node.of_type(lookup_special(scope, "int").type, syntax, children);
+    }
+    else if syntax.kind == NoneLiteralExpression
+    {
+        // TODO rather than looking up the type, directly use the one in the package
+        let type: Type = build_optional_type(builder, name_table, lookup_special(scope, "never").type);
+        return new Semantic_Node.of_type(type, syntax, children);
     }
     else if syntax.kind == SelfExpression
     {
@@ -526,12 +532,7 @@ public build_type_name_semantic_node(
             add_could_not_determine_type_error(inner_type);
             return new Semantic_Node.concrete(syntax, children);
         }
-        let optional_type_scope: Name_Subtable? = get_name(name_table, builder.optional_type_name);
-        assert(optional_type_scope =/= none, "");
-        let optional_type: Type = optional_type_scope.type;
-        let type_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
-        type_arguments.add(inner_type.referenced_type);
-        let type: Type = new Type.generic(optional_type, type_arguments);
+        let type: Type = build_optional_type(builder, name_table, inner_type.referenced_type);
         return new Semantic_Node.referencing_type(type, syntax, children);
     }
     else
@@ -546,6 +547,21 @@ public build_type_name_semantic_node(
         let place: int = syntax.start;
         NOT_IMPLEMENTED("syntax.kind="+int_to_string(syntax.kind)+" at "+int_to_string(place));
     }
+}
+
+public build_optional_type(
+    builder: Semantic_Tree_Builder,
+    name_table: Name_Table,
+    base_type: Type
+) -> Type
+{
+    let optional_type_scope: Name_Subtable? = get_name(name_table, builder.optional_type_name);
+    assert(optional_type_scope =/= none, "");
+    let optional_type: Type = optional_type_scope.type;
+    let type_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
+    type_arguments.add(base_type);
+    let type: Type = new Type.generic(optional_type, type_arguments);
+    return type;
 }
 
 public build_type_arguments_semantic_node(

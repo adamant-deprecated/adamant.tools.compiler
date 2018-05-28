@@ -14,8 +14,8 @@ void main__0();
 void main__0()
 {
 	BOOL x__;
-	x__ = equal_op(((int32){1}), ((int32){2}));
-	x__ = not_equal_op(((int32){1}), ((int32){2}));
+	x__ = int32__0op__equal(((int32){1}), ((int32){2}));
+	x__ = int32__0op__not_equal(((int32){1}), ((int32){2}));
 }
 
 // Entry Point Adapter

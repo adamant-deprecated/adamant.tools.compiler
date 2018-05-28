@@ -15,7 +15,7 @@ void main__0()
 {
 	int32 const x__ = ((int32){5});
 	int32 const y__ = ((int32){5});
-	assert__1(not_equal_op(x__, y__));
+	assert__1(int32__0op__not_equal(x__, y__));
 }
 
 // Entry Point Adapter

@@ -20,8 +20,8 @@ BOOL True__0()
 void main__0()
 {
 	BOOL x__;
-	x__ = equal_op(TRUE, FALSE);
-	x__ = not_equal_op(TRUE, FALSE);
+	x__ = BOOL__0op__equal(TRUE, FALSE);
+	x__ = BOOL__0op__not_equal(TRUE, FALSE);
 	x__ = equal_op(True__0(), True__0());
 }
 

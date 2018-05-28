@@ -494,18 +494,54 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == EqualExpression
     {
-        write(builder, "equal_op(");
-        convert_expression(syntax.children[0], builder);
+        let lhs_node: Semantic_Node = syntax.children[0];
+        let rhs_node: Semantic_Node = syntax.children[2];
+        var type: Type = lhs_node.of_type;
+        if type == none { type = rhs_node.of_type; }
+        if type =/= none
+        {
+            if type.is_primitive and unqualified_name(type.name) == "optional"
+                { type = type.type_parameters[0]; }
+
+            if type.is_primitive
+                { write(builder, convert_primitive_type_name(type)); }
+            else
+                { write(builder, "void_ptr"); }
+            write(builder, "__0op__equal(");
+        }
+        else
+        {
+            write(builder, "equal_op(");
+        }
+        convert_expression(lhs_node, builder);
         write(builder, ", ");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(rhs_node, builder);
         write(builder, ")");
     }
     else if syntax.kind == NotEqualExpression
     {
-        write(builder, "not_equal_op(");
-        convert_expression(syntax.children[0], builder);
+        let lhs_node: Semantic_Node = syntax.children[0];
+        let rhs_node: Semantic_Node = syntax.children[2];
+        var type: Type = lhs_node.of_type;
+        if type == none { type = rhs_node.of_type; }
+        if type =/= none
+        {
+            if type.is_primitive and unqualified_name(type.name) == "optional"
+                { type = type.type_parameters[0]; }
+
+            if type.is_primitive
+                { write(builder, convert_primitive_type_name(type)); }
+            else
+                { write(builder, "void_ptr"); }
+            write(builder, "__0op__not_equal(");
+        }
+        else
+        {
+            write(builder, "ahh_not_equal_op(");
+        }
+        convert_expression(lhs_node, builder);
         write(builder, ", ");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(rhs_node, builder);
         write(builder, ")");
     }
     else if syntax.kind == ComparisonExpression
