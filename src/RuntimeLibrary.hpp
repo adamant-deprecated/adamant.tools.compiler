@@ -52,6 +52,8 @@ public:
 
 #define lib_assert(condition) lib_assert1(condition, #condition)
 void lib_assert1(const _Bool condition, char const *_Nonnull code);
+#define lib_assert_msg(condition, message) lib_assert2(condition, #condition, message)
+void lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message);
 
 inline void_ptr allocate(size_t bytes)
 {
@@ -214,27 +216,6 @@ inline BOOL void_ptr__0op__equal(void_ptr lhs, void_ptr rhs)
     return bool_from(lhs == rhs);
 }
 
-// inline BOOL equal_op(BOOL lhs, BOOL rhs)
-// {
-//     return bool_from(lhs.value == rhs.value);
-// }
-// inline BOOL equal_op(int32 lhs, int32 rhs)
-// {
-//     return bool_from(lhs.value == rhs.value);
-// }
-// inline BOOL equal_op(void_ptr lhs, void_ptr rhs)
-// {
-//     return bool_from(lhs == rhs);
-// }
-// inline BOOL equal_op(code_point lhs, code_point rhs)
-// {
-//     return bool_from(lhs.value == rhs.value);
-// }
-// inline BOOL equal_op(string lhs, string rhs)
-// {
-//     return string__0op__equal(lhs, rhs);
-// }
-
 inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)
 {
     return bool_from(lhs.value != rhs.value);
@@ -290,14 +271,16 @@ _Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull funct
 _Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
 
 
-class ResourceManager
+struct ResourceManager
 {
-public:
     string const & GetString__1(string resourceName);
     void AddResource(string name, string value);
 };
 
+// TODO don't expose this name
 extern ResourceManager *_Nonnull const resource_manager__;
+string get_resource__1(string resource_name);
+void add_resource(string name, string value);
 
 void debug_write__1(string value);
 void debug_write_line__1(string value);

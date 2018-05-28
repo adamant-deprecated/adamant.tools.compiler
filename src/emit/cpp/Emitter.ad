@@ -1219,7 +1219,7 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
         resource_text = string_replace(resource_text, "\r", "\\r");
         resource_text = string_replace(resource_text, "\"", "\\\"");
         resource_text = "\""+resource_text+"\"";
-        begin_line(emitter.definitions, "resource_manager__->AddResource((string){"+int_to_string(literal_length(resource_name))+",(uint8_t const*)");
+        begin_line(emitter.definitions, "add_resource((string){"+int_to_string(literal_length(resource_name))+",(uint8_t const*)");
         write(emitter.definitions, resource_name);
         write(emitter.definitions, "}, (string){"+int_to_string(literal_length(resource_text))+",(uint8_t const*)");
         write(emitter.definitions, resource_text);
