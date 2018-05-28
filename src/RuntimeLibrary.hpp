@@ -305,6 +305,8 @@ void system__collections__List__1<T>::add__1(T value)
         // Needed if T is a value type to avoid needing a default constructor
         T* newValues = (T*)new char[newCapacity * sizeof(T)];
         memcpy(newValues, values, count__.value * sizeof(T));
+        if(capacity__.value != 0)
+            delete[] values; // delete the old array
         values = newValues;
         capacity__ = (int32){newCapacity};
     }
@@ -322,7 +324,7 @@ T op__element(system__collections__List__1<T> const*_Nonnull list, int32 const i
 template<typename T>
 system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(system__collections__List__1<T> *_Nonnull self)
 {
-    self->values = 0;
+    self->values = NULL;
     self->count__ = {0};
     self->capacity__ = {0};
     return self;
