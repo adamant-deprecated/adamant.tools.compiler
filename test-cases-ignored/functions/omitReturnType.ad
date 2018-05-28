@@ -1,0 +1,9 @@
+public Func()
+{
+	return 42;
+}
+
+public Main() -> int
+{
+	return Func();
+}
