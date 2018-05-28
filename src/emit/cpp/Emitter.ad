@@ -537,7 +537,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         }
         else
         {
-            write(builder, "ahh_not_equal_op(");
+            write(builder, "not_equal_op(");
         }
         convert_expression(lhs_node, builder);
         write(builder, ", ");
