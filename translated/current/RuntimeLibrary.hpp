@@ -261,23 +261,6 @@ inline BOOL void_ptr__0op__not_equal(void_ptr lhs, void_ptr rhs)
     return bool_from(lhs != rhs);
 }
 
-inline BOOL not_equal_op(int32 lhs, int32 rhs)
-{
-    return bool_from(lhs.value != rhs.value);
-}
-
-// TODO implement this without templates
-template<typename T>
-inline BOOL not_equal_op(T lhs, T  rhs)
-{
-    return BOOL__0op__not(equal_op(lhs, rhs));
-}
-
-inline BOOL not_equal_op(void_ptr lhs, void_ptr rhs)
-{
-    return BOOL__0op__not(bool_from(lhs == rhs));
-}
-
 // -----------------------------------------------------------------------------
 // Standard Library
 // -----------------------------------------------------------------------------
