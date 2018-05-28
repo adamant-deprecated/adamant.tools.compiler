@@ -236,7 +236,7 @@ public convert_reference_type(mutable_binding: bool, var type: Type, nullable: b
 // Converts a type to C++
 public convert_type(mutable_binding: bool, var type: Type, optional: bool) -> string
 {
-    assert(type =/= none, "");
+    assert(type =/= none);
 
     if type.is_primitive and unqualified_name(type.name) == "optional"
     {
@@ -511,7 +511,8 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         }
         else
         {
-            write(builder, "equal_op(");
+            // TODO defaulting to this because the compiler often compares to a int kind value
+            write(builder, "int32__0op__equal(");
         }
         convert_expression(lhs_node, builder);
         write(builder, ", ");
@@ -783,7 +784,7 @@ public convert_reference_type_constructor_arguments(
     type_name: string)
     -> void
 {
-    assert(syntax.kind == ArgumentList, "");
+    assert(syntax.kind == ArgumentList);
     write(builder, "(allocate(sizeof(");
     write(builder, type_name);
     write(builder, "))");

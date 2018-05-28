@@ -556,7 +556,7 @@ public build_optional_type(
 ) -> Type
 {
     let optional_type_scope: Name_Subtable? = get_name(name_table, builder.optional_type_name);
-    assert(optional_type_scope =/= none, "");
+    assert(optional_type_scope =/= none);
     let optional_type: Type = optional_type_scope.type;
     let type_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
     type_arguments.add(base_type);

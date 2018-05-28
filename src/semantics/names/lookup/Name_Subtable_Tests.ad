@@ -10,8 +10,8 @@ public global_namespace_contains_added_name() -> void
     let global_namespace: mut Name_Subtable = new Name_Subtable.global_namespace(name_table);
     let test_name: Name = new Name(global_namespace.name, TypeName, "test");
     add_subtable(global_namespace, test_name, none);
-    assert(find(global_namespace, "test") =/= none, "");
-    assert(get_scope(global_namespace, test_name) =/= none, "");
+    assert(find(global_namespace, "test") =/= none);
+    assert(get_scope(global_namespace, test_name) =/= none);
 }
 
 public namespace_contains_added_name() -> void
@@ -22,5 +22,5 @@ public namespace_contains_added_name() -> void
     add_subtable(global_namespace, namespace_name, none);
     add_subtable(global_namespace, new Name(namespace_name, TypeName, "test"), none);
     let namespace: Name_Subtable = find(global_namespace, "namespace");
-    assert(find(namespace, "test") =/= none, "");
+    assert(find(namespace, "test") =/= none);
 }

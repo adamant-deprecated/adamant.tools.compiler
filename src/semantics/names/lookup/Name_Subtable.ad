@@ -136,8 +136,10 @@ public bind_type(scope: mut Name_Subtable, type: Type) -> void
     if scope.type =/= none
     {
         // TODO this prevents multiple variables with the same name and type in a method
-        assert(full_name(scope.type.name) == full_name(type.name),
-            full_name(scope.name)+" currently `"+full_name(scope.type.name)+"` trying to set to `"+full_name(type.name)+"`");
+        // Hack to let the compiler figure out the type for the equality operator
+        let scope_type_name: string = full_name(scope.type.name);
+        assert(scope_type_name == full_name(type.name),
+            full_name(scope.name)+" currently `"+scope_type_name+"` trying to set to `"+full_name(type.name)+"`");
     }
     scope.type = type;
 }

@@ -28,7 +28,7 @@ public class Semantic_Node
 
     public new token(syntax: Syntax_Node)
     {
-        assert(syntax =/= none, "");
+        assert(syntax =/= none);
         self.syntax = syntax;
         self.kind = syntax.kind;
         self.is_missing = syntax.is_missing;
@@ -46,7 +46,7 @@ public class Semantic_Node
     /// Construct a concrete mirror of a `Syntax_Node`
     public new concrete(syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
-        assert(syntax =/= none, "");
+        assert(syntax =/= none);
         self.syntax = syntax;
         self.kind = syntax.kind;
         self.is_missing = syntax.is_missing;
@@ -63,8 +63,8 @@ public class Semantic_Node
 
     public new of_type(of_type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
-        assert(of_type =/= none, "");
-        assert(syntax =/= none, "");
+        assert(of_type =/= none);
+        assert(syntax =/= none);
         self.syntax = syntax;
         self.kind = syntax.kind;
         self.is_missing = syntax.is_missing;
@@ -81,8 +81,8 @@ public class Semantic_Node
 
     public new declares_type(type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
-        assert(type =/= none, "");
-        assert(syntax =/= none, "");
+        assert(type =/= none);
+        assert(syntax =/= none);
         self.syntax = syntax;
         self.kind = syntax.kind;
         self.is_missing = syntax.is_missing;
@@ -99,8 +99,8 @@ public class Semantic_Node
 
     public new referencing_type(type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
-        assert(type =/= none, "");
-        assert(syntax =/= none, "");
+        assert(type =/= none);
+        assert(syntax =/= none);
         self.syntax = syntax;
         self.kind = syntax.kind;
         self.is_missing = syntax.is_missing;

@@ -214,26 +214,26 @@ inline BOOL void_ptr__0op__equal(void_ptr lhs, void_ptr rhs)
     return bool_from(lhs == rhs);
 }
 
-inline BOOL equal_op(BOOL lhs, BOOL rhs)
-{
-    return bool_from(lhs.value == rhs.value);
-}
-inline BOOL equal_op(int32 lhs, int32 rhs)
-{
-    return bool_from(lhs.value == rhs.value);
-}
-inline BOOL equal_op(void_ptr lhs, void_ptr rhs)
-{
-    return bool_from(lhs == rhs);
-}
-inline BOOL equal_op(code_point lhs, code_point rhs)
-{
-    return bool_from(lhs.value == rhs.value);
-}
-inline BOOL equal_op(string lhs, string rhs)
-{
-    return string__0op__equal(lhs, rhs);
-}
+// inline BOOL equal_op(BOOL lhs, BOOL rhs)
+// {
+//     return bool_from(lhs.value == rhs.value);
+// }
+// inline BOOL equal_op(int32 lhs, int32 rhs)
+// {
+//     return bool_from(lhs.value == rhs.value);
+// }
+// inline BOOL equal_op(void_ptr lhs, void_ptr rhs)
+// {
+//     return bool_from(lhs == rhs);
+// }
+// inline BOOL equal_op(code_point lhs, code_point rhs)
+// {
+//     return bool_from(lhs.value == rhs.value);
+// }
+// inline BOOL equal_op(string lhs, string rhs)
+// {
+//     return string__0op__equal(lhs, rhs);
+// }
 
 inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)
 {

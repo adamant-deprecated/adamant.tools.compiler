@@ -12,44 +12,46 @@ public Package_name_is_dollar_primitives() -> void
 {
     let package: Package = build_primitives_package();
     let name: Package_Name = package.name;
-    assert(name.unqualified == "$primitives", "");
+    assert(name.unqualified == "$primitives");
 }
 
 public Package_has_no_references_or_compilation_units() -> void
 {
     let package: Package = build_primitives_package();
-    assert(|package.references| == 0, "");
-    assert(|package.compilation_units| == 0, "");
+    assert(|package.references| == 0);
+    assert(|package.compilation_units| == 0);
 }
 
 public Package_symbol_has_package_name() -> void
 {
     let package: Package = build_primitives_package();
     let symbol: Symbol = package.symbol;
-    assert(symbol.kind == PackageSymbol, "");
-    assert(symbol.name == package.name.unqualified, "");
+    assert(symbol.kind == PackageSymbol);
+    // Hack to let the compiler figure out the type of this
+    let symbol_name: string = symbol.name;
+    assert(symbol_name == package.name.unqualified);
 }
 
 public Package_symbol_has_children() -> void
 {
     let package: Package = build_primitives_package();
-    assert(|package.symbol.children| > 0, "");
+    assert(|package.symbol.children| > 0);
 }
 
 public Package_contains_the_string_type() -> void
 {
     let package: Package = build_primitives_package();
     let string_symbol: Symbol = get_child(package.symbol, "string", IdentifierSymbol);
-    assert(string_symbol =/= none, "");
+    assert(string_symbol =/= none);
 }
 
 public Package_contains_optional_type() -> void
 {
     let package: Package = build_primitives_package();
     let adamant_symbol: Symbol? = get_child(package.symbol, "adamant", IdentifierSymbol);
-    assert(adamant_symbol =/= none, "");
+    assert(adamant_symbol =/= none);
     let langauge_symbol: Symbol? = get_child(adamant_symbol, "language", IdentifierSymbol);
-    assert(langauge_symbol =/= none, "");
+    assert(langauge_symbol =/= none);
     let optional_symbol: Symbol? = get_child(langauge_symbol, "optional", IdentifierSymbol);
-    assert(optional_symbol =/= none, "");
+    assert(optional_symbol =/= none);
 }

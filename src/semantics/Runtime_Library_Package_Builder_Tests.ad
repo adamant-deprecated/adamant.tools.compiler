@@ -10,14 +10,14 @@ public unit_test_build_runtime_library_package() -> void
 public Runtime_Library_Package_contains_system_package() -> void
 {
     let package: Package = build_runtime_library_package();
-    assert(get_child(package.symbol, "system", IdentifierSymbol) =/= none, "");
+    assert(get_child(package.symbol, "system", IdentifierSymbol) =/= none);
 }
 
 public System_namespace_contains_console_namespace() -> void
 {
     let package: Package = build_runtime_library_package();
     let system_namespace: Symbol = get_child(package.symbol, "system", IdentifierSymbol);
-    assert(get_child(system_namespace, "console", IdentifierSymbol) =/= none, "");
+    assert(get_child(system_namespace, "console", IdentifierSymbol) =/= none);
 }
 
 public Console_namespace_contains_Console_class() -> void
@@ -25,14 +25,14 @@ public Console_namespace_contains_Console_class() -> void
     let package: Package = build_runtime_library_package();
     let system_namespace: Symbol = get_child(package.symbol, "system", IdentifierSymbol);
     let console_namespace: Symbol = get_child(system_namespace, "console", IdentifierSymbol);
-    assert(get_child(console_namespace, "Console", IdentifierSymbol) =/= none, "");
+    assert(get_child(console_namespace, "Console", IdentifierSymbol) =/= none);
 }
 
 public System_namespace_contains_collections_namespace() -> void
 {
     let package: Package = build_runtime_library_package();
     let system_namespace: Symbol = get_child(package.symbol, "system", IdentifierSymbol);
-    assert(get_child(system_namespace, "collections", IdentifierSymbol) =/= none, "");
+    assert(get_child(system_namespace, "collections", IdentifierSymbol) =/= none);
 }
 
 public Collections_namespace_contains_List_class() -> void
@@ -40,5 +40,5 @@ public Collections_namespace_contains_List_class() -> void
     let package: Package = build_runtime_library_package();
     let system_namespace: Symbol = get_child(package.symbol, "system", IdentifierSymbol);
     let console_namespace: Symbol = get_child(system_namespace, "collections", IdentifierSymbol);
-    assert(get_child(console_namespace, "List", IdentifierSymbol) =/= none, "");
+    assert(get_child(console_namespace, "List", IdentifierSymbol) =/= none);
 }

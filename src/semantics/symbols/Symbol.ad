@@ -14,7 +14,7 @@ public class Symbol
 
     public new identifier(name: string)
     {
-        assert(string_byte_length(name) > 0, "");
+        assert(string_byte_length(name) > 0);
         self.name = name;
         self.kind = IdentifierSymbol;
         self.is_special_name = false;
@@ -26,7 +26,7 @@ public class Symbol
 
     public new identifier(name: string, declarations: system.collections.List<Semantic_Node>)
     {
-        assert(string_byte_length(name) > 0, "");
+        assert(string_byte_length(name) > 0);
         assert(declarations =/= none, "name="+name);
         self.name = name;
         self.kind = IdentifierSymbol;
@@ -39,7 +39,7 @@ public class Symbol
 
     public new identifier(name: string, children: system.collections.List<Symbol>)
     {
-        assert(string_byte_length(name) > 0, "");
+        assert(string_byte_length(name) > 0);
         assert(children =/= none, "name="+name);
         self.name = name;
         self.kind = IdentifierSymbol;
@@ -52,7 +52,7 @@ public class Symbol
 
     public new constructor(name: string, declarations: system.collections.List<Semantic_Node>)
     {
-        assert(string_byte_length(name) > 0, "");
+        assert(string_byte_length(name) > 0);
         assert(declarations =/= none, "name="+name);
         self.name = name;
         self.kind = IdentifierSymbol;
@@ -65,7 +65,7 @@ public class Symbol
 
     public new package(name: string, children: system.collections.List<Symbol>)
     {
-        assert(string_byte_length(name) > 0, "");
+        assert(string_byte_length(name) > 0);
         assert(children =/= none, "name="+name);
         self.name = name;
         self.kind = PackageSymbol;
@@ -81,7 +81,7 @@ public class Symbol
         declarations: system.collections.List<Semantic_Node>,
         children: system.collections.List<Symbol>)
     {
-        assert(declares_type =/= none, "");
+        assert(declares_type =/= none);
         assert(declarations =/= none, "name="+unqualified_name(declares_type.name));
         assert(children =/= none, "name="+unqualified_name(declares_type.name));
         self.name = unqualified_name(declares_type.name);

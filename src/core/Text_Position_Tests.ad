@@ -6,7 +6,7 @@ public unit_test_Text_Position() -> void
 public Text_Position_retains_given_offeset_line_and_column() -> void
 {
     let position: Text_Position = new Text_Position(23, 2, 5);
-    assert(position.character_offset == 23, "");
-    assert(position.line == 2, "");
-    assert(position.column == 5, "");
+    assert(position.character_offset == 23);
+    assert(position.line == 2);
+    assert(position.column == 5);
 }

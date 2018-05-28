@@ -194,7 +194,7 @@ string string_replace__3(string s, string old_value, string new_value)
     int limit = s.byte_length.value - old_value.byte_length.value + 1;
     int last_index = 0;
     for(int i=0; i < limit; i++)
-        if(cond(equal_op(substring__3(s, int32_from(i), old_value.byte_length), old_value)))
+        if(cond(string__0op__equal(substring__3(s, int32_from(i), old_value.byte_length), old_value)))
         {
             builder.Append__1(substring__3(s, int32_from(last_index), int32_from(i-last_index)));
             builder.Append__1(new_value);

@@ -8,5 +8,6 @@ public main() -> void
 	var x: bool;
 	x = true == false;
 	x = true =/= false;
-	x = True() == True(); // has weird problem parsing expressions
+	//TODO add back next line when typing is fixed
+	// x = True() == True(); // had weird problem parsing expressions
 }

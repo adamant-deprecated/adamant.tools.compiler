@@ -13,7 +13,7 @@ public class Type
     /// * is_mutable - whether the type as declared is mutable
     public new(kind: int, name: Name, is_mutable: bool)
     {
-        assert(name =/= none, "");
+        assert(name =/= none);
         self.kind = kind;
         self.name = name;
         self.type_parameters = new system.collections.List<Type>();
@@ -81,7 +81,7 @@ public class Type
 
     public new generic(definition: Type, type_arguments: system.collections.List<Type>)
     {
-        assert(definition =/= none, "");
+        assert(definition =/= none);
         assert(type_arguments =/= none, full_name(definition.name));
         assert(|definition.type_parameters| == |type_arguments|,
             full_name(definition.name)+" "+int_to_string(|definition.type_parameters|)+" given "+int_to_string(|type_arguments|));

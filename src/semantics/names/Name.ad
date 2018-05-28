@@ -25,7 +25,7 @@ public class Name
     // TODO rename to Name.of_global_namespace
     public new global_namespace(package: Package_Name)
     {
-        assert(package =/= none, "");
+        assert(package =/= none);
         self.package = package;
         self.kind = NamespaceName;
         self.segments = new system.collections.List<string>();
@@ -36,8 +36,8 @@ public class Name
     //      once constructors can call each other and the code isn't so long
     public new(qualifier: Name, kind: int, name: string)
     {
-        assert(qualifier =/= none, "");
-        assert(string_byte_length(name) > 0, "");
+        assert(qualifier =/= none);
+        assert(string_byte_length(name) > 0);
         self.package = qualifier.package;
         self.kind = kind;
         let segments: mut system.collections.List<string> = new system.collections.List<string>();
@@ -52,8 +52,8 @@ public class Name
 
     public new(qualifier: Name, kind: int, name: string, is_special: bool)
     {
-        assert(qualifier =/= none, "");
-        assert(string_byte_length(name) > 0, "");
+        assert(qualifier =/= none);
+        assert(string_byte_length(name) > 0);
         self.package = qualifier.package;
         self.kind = kind;
         let segments: mut system.collections.List<string> = new system.collections.List<string>();
@@ -68,8 +68,8 @@ public class Name
 
     public new special(qualifier: Name, kind: int, name: string)
     {
-        assert(qualifier =/= none, "");
-        assert(string_byte_length(name) > 0, "");
+        assert(qualifier =/= none);
+        assert(string_byte_length(name) > 0);
         self.package = qualifier.package;
         self.kind = kind;
         let segments: mut system.collections.List<string> = new system.collections.List<string>();
