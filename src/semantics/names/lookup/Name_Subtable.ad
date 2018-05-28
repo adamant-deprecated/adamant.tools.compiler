@@ -64,7 +64,7 @@ public add_subtable(scope: mut Name_Subtable, name: Name, type: Type) -> void
     }
 
     // TODO this assert is wrong
-    assert(|name.segments| == |scope.name.segments| + 1, "Can't add \""+full_name(name)+"\" to \""+full_name(scope.name)+"\"");
+    assert(name.segments.count == 1 + scope.name.segments.count, "Can't add \""+full_name(name)+"\" to \""+full_name(scope.name)+"\"");
 }
 
 /// Get a child name

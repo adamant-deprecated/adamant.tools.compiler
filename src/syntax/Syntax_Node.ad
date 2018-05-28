@@ -51,7 +51,7 @@ public class Syntax_Node
         // TODO enforce that list is not empty, for now we rely on `children[0]` failing
         self.source = children[0].source;
         self.start = children[0].start;
-        let lastChild: Syntax_Node = children[|children| - 1];
+        let lastChild: Syntax_Node = children[children.count - 1];
         self.byte_length = lastChild.start - self.start + lastChild.byte_length;
         self.children = children;
         self.node_diagnostics = new system.collections.List<Diagnostic>();
@@ -92,12 +92,12 @@ public class Syntax_Node
         // TODO enforce that list is not empty, for now we rely on `children[0]` failing
         self.source = skipped_nodes[0].source;
         self.start = skipped_nodes[0].start;
-        let lastChild: Syntax_Node = skipped_nodes[|skipped_nodes| - 1];
+        let lastChild: Syntax_Node = skipped_nodes[skipped_nodes.count - 1];
         self.byte_length = lastChild.start - self.start + lastChild.byte_length;
         self.children = new system.collections.List<Syntax_Node>();
         self.node_diagnostics = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(self.start, self.byte_length);
-        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + int_to_string(|skipped_nodes|) + " unexpected token(s)"));
+        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + int_to_string(skipped_nodes.count) + " unexpected token(s)"));
     }
 }
 

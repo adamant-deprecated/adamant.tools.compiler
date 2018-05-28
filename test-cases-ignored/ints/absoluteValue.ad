@@ -1,5 +1,5 @@
 public main() -> void
 {
-    // TODO not even sure I want this operator
+    // TODO this is the wrong operator for this
     var x: int = |-1|;
 }

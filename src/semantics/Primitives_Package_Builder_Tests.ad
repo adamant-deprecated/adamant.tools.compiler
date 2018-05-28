@@ -18,8 +18,8 @@ public Package_name_is_dollar_primitives() -> void
 public Package_has_no_references_or_compilation_units() -> void
 {
     let package: Package = build_primitives_package();
-    assert(|package.references| == 0);
-    assert(|package.compilation_units| == 0);
+    assert(package.references.count == 0);
+    assert(package.compilation_units.count == 0);
 }
 
 public Package_symbol_has_package_name() -> void
@@ -35,7 +35,7 @@ public Package_symbol_has_package_name() -> void
 public Package_symbol_has_children() -> void
 {
     let package: Package = build_primitives_package();
-    assert(|package.symbol.children| > 0);
+    assert(package.symbol.children.count > 0);
 }
 
 public Package_contains_the_string_type() -> void

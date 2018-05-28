@@ -83,8 +83,8 @@ public class Type
     {
         assert(definition =/= none);
         assert(type_arguments =/= none, full_name(definition.name));
-        assert(|definition.type_parameters| == |type_arguments|,
-            full_name(definition.name)+" "+int_to_string(|definition.type_parameters|)+" given "+int_to_string(|type_arguments|));
+        assert(definition.type_parameters.count == type_arguments.count,
+            full_name(definition.name)+" "+int_to_string(definition.type_parameters.count)+" given "+int_to_string(type_arguments.count));
         self.kind = definition.kind;
         self.name = definition.name;
         self.type_parameters = type_arguments;

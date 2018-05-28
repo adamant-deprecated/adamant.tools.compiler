@@ -236,7 +236,7 @@ public build_semantic_node(
         // Now we have to do the same binding in the specific package instead of the 'any' package
         bind_type(as_mut(get_name(name_table, variable_scope.name)), type_node.referenced_type);
         children.add(type_node);
-        if |syntax.children| == 6
+        if syntax.children.count == 6
         {
             let initalizer: Syntax_Node = syntax.children[5];
             children.add(build_semantic_node(builder, initalizer, name_table, scope));
@@ -303,7 +303,7 @@ public build_semantic_node(
         // TODO you can also add strings
         return new Semantic_Node.of_type(lookup_special(scope, "int").type, syntax, children);
     }
-    else if |syntax.children| == 0
+    else if syntax.children.count == 0
     {
         // Create a semantic node to represent the token
         return new Semantic_Node.token(syntax);
@@ -341,7 +341,7 @@ public build_parameters_semantic_node(
             let identifier: Syntax_Node = first_child_syntax(parameter, Identifier);
             children.add(new Semantic_Node.token(identifier));
             // Because a parameter can have `var` at the beginning, the position of the type isn't constant
-            let type_syntax: Syntax_Node = parameter.children[|parameter.children| - 1];
+            let type_syntax: Syntax_Node = parameter.children[parameter.children.count - 1];
             let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
             assert(type_node.referenced_type =/= none, get_text(parameter));
             children.add(type_node);

@@ -92,7 +92,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
     {
         console.WriteLine("Adamant Compiler v0.1.0");
     }
-    if |sourceFilePaths| == 0 or outputFilePath == ""
+    if sourceFilePaths.count == 0 or outputFilePath == ""
     {
         console.WriteLine("Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
         return UsageError;
@@ -100,7 +100,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
 
     // Read Resources
     let resources: mut system.collections.List<Source_Text> = new system.collections.List<Source_Text>();
-    if |resourceFilePaths| > 0
+    if resourceFilePaths.count > 0
     {
         if verbose
         {

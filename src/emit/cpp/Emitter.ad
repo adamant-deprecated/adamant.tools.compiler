@@ -80,7 +80,7 @@ public mangle_name(type: Type) -> string
     }
 
     builder.Append("__");
-    builder.Append(int_to_string(|type.type_parameters|));
+    builder.Append(int_to_string(type.type_parameters.count));
 
     return builder.ToString();
 }
@@ -200,7 +200,7 @@ public convert_type_name(type: Type, include_type_parameters: bool) -> mut syste
         cpp_type.Append(mangle_name(type));
     }
 
-    if |type.type_parameters| > 0 and include_type_parameters
+    if type.type_parameters.count > 0 and include_type_parameters
     {
         convert_type_parameters(cpp_type, type);
     }
@@ -298,7 +298,7 @@ public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, s
             { first_parameter = false; }
 
         let mutable_binding: bool = node_has_child(parameter, VarKeyword);
-        let type_node: Semantic_Node = parameter.children[|parameter.children| - 1];
+        let type_node: Semantic_Node = parameter.children[parameter.children.count - 1];
         builder.Append(convert_type(mutable_binding, type_node));
         builder.Append(" ");
         builder.Append(mangle_field_name(get_text(first_child(parameter, Identifier))));
@@ -363,7 +363,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, "__");
         let argument_list: Semantic_Node = syntax.children[1];
         write(builder, int_to_string(node_argument_count(argument_list)));
-        if |type.type_parameters| > 0
+        if type.type_parameters.count > 0
         {
             let params: mut system.text.String_Builder = new system.text.String_Builder();
             convert_type_parameters(params, type);
@@ -403,6 +403,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == MagnitudeExpression
     {
+        // TODO there is no longer a magnitude operator in the language
         // Pipes were removed during semantic tree build
         let expression_node: Semantic_Node = syntax.children[0];
         convert_expression(expression_node, builder);
@@ -819,7 +820,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
 
     if statement.kind == ReturnStatement
     {
-        if |statement.children| == 2
+        if statement.children.count == 2
             { write_line(emitter.definitions, "return;"); }
         else
         {
@@ -915,7 +916,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
         begin_line(emitter.definitions, convert_type(mutable_binding, variable_type));
         write(emitter.definitions, " " + mangle_field_name(variable_name));
-        if |variable_declaration.children| > 3
+        if variable_declaration.children.count > 3
         {
             write(emitter.definitions, " = ");
             convert_expression(variable_declaration.children[3], emitter.definitions);
@@ -978,7 +979,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
             new_function_name = new_function_name + "__" + constructor_name;
             constructor_full_name = constructor_full_name + constructor_name + "__";
         }
-        constructor_full_name = constructor_full_name + int_to_string(|parameters_node.children|);
+        constructor_full_name = constructor_full_name + int_to_string(parameters_node.children.count);
         var return_type: string = class_name;
         if not is_value_type
             { return_type = return_type + " *_Nonnull"; }
@@ -1011,7 +1012,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
     {
         let parameters_node: Semantic_Node = first_child(member, ParameterList);
         let self_parameter: Semantic_Node? = first_child(parameters_node, SelfParameter);
-        var parameter_count: int = |parameters_node.children|;
+        var parameter_count: int = parameters_node.children.count;
         // For now we ignore the self parameter because the caller can't tell if it is a method or function call
         if self_parameter =/= none
             { parameter_count -= 1; }
@@ -1152,7 +1153,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let parameters_node: Semantic_Node = first_child(declaration, ParameterList);
         var name: string = get_text(first_child(declaration, Identifier));
         let is_main: bool = name == "main";
-        name = mangle_function_name(name, |parameters_node.children|);
+        name = mangle_function_name(name, parameters_node.children.count);
         if is_main { emitter.main_function_name = name; }
         let parameters: string = convert_parameter_list(emitter, parameters_node, is_main);
         let return_type_node: Semantic_Node = declaration.children[3];
@@ -1225,7 +1226,7 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
         write(emitter.definitions, resource_text);
         end_line(emitter.definitions, "});");
     }
-    if |emitter.resources| > 0
+    if emitter.resources.count > 0
     {
         end_line(emitter.definitions, ""); // Use end_line to avoid having an indent on a blank line
     }

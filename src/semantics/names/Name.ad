@@ -97,8 +97,8 @@ public class Name
 
 public unqualified_name(name: Name) -> string
 {
-    if |name.segments|==0 { return ""; }
-    return name.segments[|name.segments| - 1];
+    if name.segments.count==0 { return ""; }
+    return name.segments[name.segments.count - 1];
 }
 
 public full_name(name: Name) -> string
@@ -128,7 +128,7 @@ public full_name(name: Name) -> string
 // TODO this method name doesn't make it clear that the package could be unspecified
 public is_qualified_by(name: Name, qualifier: Name) -> bool
 {
-    if |name.segments| <= |qualifier.segments|
+    if name.segments.count <= qualifier.segments.count
         { return false; }
 
     if name.package =/= none
@@ -155,14 +155,14 @@ public is_qualified_by(name: Name, qualifier: Name) -> bool
 // TODO this method name doesn't make it clear that the package could be unspecified
 public qualifier_is(name: Name, qualifier: Name) -> bool
 {
-    return |qualifier.segments|+1 == |name.segments|
+    return 1+qualifier.segments.count == name.segments.count
         and is_qualified_by(name, qualifier);
 }
 
 // TODO this name is a little confusing, it is like: equal except for the package
 public names(name: Name, other: Name) -> bool
 {
-    if |name.segments| =/= |other.segments|
+    if name.segments.count =/= other.segments.count
         { return false; }
 
     if name.package =/= none

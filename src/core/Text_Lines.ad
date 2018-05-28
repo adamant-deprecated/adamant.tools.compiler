@@ -12,7 +12,7 @@ public class Text_Lines
 
 public line_count(lines: Text_Lines) -> int
 {
-    return |lines.start_of_line|;
+    return lines.start_of_line.count;
 }
 
 public get_line(lines: Text_Lines, line_number: int) -> Text_Line

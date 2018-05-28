@@ -292,7 +292,6 @@ struct system__collections__List__1
     // Adamant Members
     void add__1(T value);
     void clear__0() { count__ = {0}; }
-    int32 op__magnitude() const { return count__; }
 };
 
 template<typename T>
