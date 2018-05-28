@@ -30,6 +30,15 @@ void lib_assert1(const _Bool condition, char const *_Nonnull code)
     }
 }
 
+void lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message)
+{
+    if(!condition)
+    {
+        printf("Assertion failed: %s, %s", code, message);
+        exit(70);
+    }
+}
+
 inline int32 int32_from(int32_t v) { return (int32){ v }; }
 
 // TODO change this to something like byte_from
@@ -278,6 +287,28 @@ _Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull f
     exit(70);
 }
 
+int32_t resource_count = 0;
+string resource_name[1024];
+string resource_value[1024];
+
+void add_resource(string name, string value)
+{
+    lib_assert_msg(resource_count < 1024, "only 1024 resources are currently supported");
+    resource_name[resource_count] = name;
+    resource_value[resource_count] = value;
+    resource_count += 1;
+    resource_manager__->AddResource(name, value);
+}
+
+string get_resource__1(string name)
+{
+    for(int32_t i=0; i < resource_count; i++)
+        if(cond(string__0op__equal(resource_name[i], name)))
+            return resource_value[i];
+
+    lib_assert_msg(false, cstr_from(name));
+}
+
 std::map<string, string> resourceValues;
 
 string const & ResourceManager::GetString__1(string resourceName)
@@ -286,7 +317,7 @@ string const & ResourceManager::GetString__1(string resourceName)
 }
 void ResourceManager::AddResource(string name, string value)
 {
-    resourceValues.insert(std::make_pair(name, value));
+    resourceValues.insert(std::make_pair(name, value));\
 }
 
 ResourceManager *const resource_manager__ = new ResourceManager();
