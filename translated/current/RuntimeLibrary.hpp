@@ -176,7 +176,7 @@ BOOL string__0op__lt(string lhs, string rhs);
 BOOL string__0op__lte(string lhs, string rhs);
 BOOL string__0op__gt(string lhs, string rhs);
 BOOL string__0op__gte(string lhs, string rhs);
-inline code_point op__element(string value, int32 index)
+inline code_point string__0__0op__element(string value, int32 index)
 {
     lib_assert(index.value >= 0 && index.value < value.byte_length.value);
     return (code_point){value.Buffer[index.value]};
@@ -314,7 +314,7 @@ void system__collections__List__1<T>::add__1(T value)
 }
 
 template<typename T>
-T op__element(system__collections__List__1<T> const*_Nonnull list, int32 const index)
+T system__collections__List__1__0op__element(system__collections__List__1<T> const*_Nonnull list, int32 const index)
 {
     lib_assert(index.value >= 0 && index.value < list->count__.value);
     return list->values[index.value];
@@ -356,7 +356,7 @@ public:
 
 };
 
-inline string op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)
+inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)
 {
     lib_assert(index.value >= 0 && index.value < arguments->Count);
     return arguments->args[index.value];
