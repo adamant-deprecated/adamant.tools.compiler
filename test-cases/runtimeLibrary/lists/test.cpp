@@ -31,8 +31,8 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 	console__->WriteLine__0();
 	clear_strings__1(strings__);
 	system__collections__List__1<system__text__String_Builder__0 *_Nonnull> *_Nonnull const builders__ = system__collections__List__1__0new__0<system__text__String_Builder__0 *_Nonnull>(allocate(sizeof(system__collections__List__1<system__text__String_Builder__0 *_Nonnull>)));
-	builders__->add__1(system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){7,(uint8_t const*)"sb[0]: "})));
-	builders__->add__1(system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){7,(uint8_t const*)"sb[1]: "})));
+	add_item__2(builders__, system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){7,(uint8_t const*)"sb[0]: "})));
+	add_item__2(builders__, system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){7,(uint8_t const*)"sb[1]: "})));
 	for (void_ptr__0iter iter = system__collections__List__1__0iterate(builders__); void_ptr__0next(&iter);)
 	{
 		system__text__String_Builder__0 *_Nonnull const sb__ = void_ptr__0current(&iter);
@@ -44,6 +44,8 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 		system__text__String_Builder__0 *_Nonnull const sb__ = void_ptr__0current(&iter);
 		console__->WriteLine__1(sb__->ToString__0());
 	}
+
+	clear_list__1(builders__);
 }
 
 // Entry Point Adapter

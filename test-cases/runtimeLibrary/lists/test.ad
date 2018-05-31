@@ -19,8 +19,8 @@ public main(console: mut system.console.Console) -> void
 	clear_strings(strings);
 
 	let builders: mut system.collections.List<mut system.text.String_Builder> = new system.collections.List<mut system.text.String_Builder>();
-	builders.add(new system.text.String_Builder("sb[0]: "));
-	builders.add(new system.text.String_Builder("sb[1]: "));
+	add_item(builders, new system.text.String_Builder("sb[0]: "));
+	add_item(builders, new system.text.String_Builder("sb[1]: "));
 	for let sb: mut system.text.String_Builder in builders
 	{
 		sb.Append("value");
@@ -29,4 +29,5 @@ public main(console: mut system.console.Console) -> void
 	{
 		console.WriteLine(sb.ToString());
 	}
+    clear_list(builders);
 }

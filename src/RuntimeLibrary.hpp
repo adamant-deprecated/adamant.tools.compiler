@@ -412,19 +412,53 @@ struct system__collections__List__1
 };
 
 template<typename T>
+system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(system__collections__List__1<T> *_Nonnull self)
+{
+    self->values = NULL;
+    self->count__ = {0};
+    self->capacity__ = {0};
+    return self;
+}
+
+template<typename T>
+void add_item__2(system__collections__List__1<T> *_Nonnull list, T value)
+{
+    if(list->count__.value >= list->capacity__.value)
+    {
+        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;
+        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+        // Needed if T is a value type to avoid needing a default constructor
+        T* new_values = (T*)new char[new_capacity * sizeof(T)];
+        memcpy(new_values, list->values, list->count__.value * sizeof(T));
+        if(list->capacity__.value != 0)
+            delete[] list->values; // delete the old array
+        list->values = new_values;
+        list->capacity__ = (int32){new_capacity};
+    }
+    list->values[list->count__.value] = value;
+    list->count__.value++;
+}
+
+template<typename T>
+void clear_list__1(system__collections__List__1<T> *_Nonnull list)
+{
+    list->count__ = (int32){0};
+}
+
+template<typename T>
 void system__collections__List__1<T>::add__1(T value)
 {
     if(count__.value >= capacity__.value)
     {
-        int32_t newCapacity = capacity__.value == 0 ? 16 : capacity__.value * 2;
+        int32_t new_capacity = capacity__.value == 0 ? 16 : capacity__.value * 2;
         // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
-        T* newValues = (T*)new char[newCapacity * sizeof(T)];
-        memcpy(newValues, values, count__.value * sizeof(T));
+        T* new_values = (T*)new char[new_capacity * sizeof(T)];
+        memcpy(new_values, values, count__.value * sizeof(T));
         if(capacity__.value != 0)
             delete[] values; // delete the old array
-        values = newValues;
-        capacity__ = (int32){newCapacity};
+        values = new_values;
+        capacity__ = (int32){new_capacity};
     }
     values[count__.value] = value;
     count__.value++;
@@ -435,15 +469,6 @@ T system__collections__List__1__0op__element(system__collections__List__1<T> con
 {
     lib_assert(index.value >= 0 && index.value < list->count__.value);
     return list->values[index.value];
-}
-
-template<typename T>
-system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(system__collections__List__1<T> *_Nonnull self)
-{
-    self->values = NULL;
-    self->count__ = {0};
-    self->capacity__ = {0};
-    return self;
 }
 
 template<typename T>

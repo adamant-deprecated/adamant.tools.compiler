@@ -51,6 +51,8 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     symbols.add(build_class_symbol(global_namespace, "Ints"));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "clear_ints")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "add_int")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "clear_list")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "add_item")));
 
     // system
     let system_namespace: Name = new Name(global_namespace, NamespaceName, "system");
