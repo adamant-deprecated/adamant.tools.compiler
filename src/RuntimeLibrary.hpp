@@ -290,7 +290,7 @@ struct string__0iter
     int32_t count;
 };
 
-bool string__0next(string__0iter*_Nonnull iter);
+_Bool string__0next(string__0iter*_Nonnull iter);
 inline string string__0current(string__0iter const*_Nonnull iter)
 {
     lib_assert(iter->current >= 0 && iter->current < iter->count);
@@ -312,7 +312,7 @@ inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 
 }
 inline void clear_strings__1(Strings__0 *_Nonnull strings)
 {
-    strings->count__ = {0};
+    strings->count__ = (int32){0};
 }
 void add_string__2(Strings__0 *_Nonnull strings, string value);
 inline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings)
@@ -341,7 +341,7 @@ struct int__0iter
     int32_t count;
 };
 
-bool int__0next(int__0iter*_Nonnull iter);
+_Bool int__0next(int__0iter*_Nonnull iter);
 inline int32 int__0current(int__0iter const*_Nonnull iter)
 {
     lib_assert(iter->current >= 0 && iter->current < iter->count);
@@ -363,12 +363,12 @@ inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const inde
 }
 inline void clear_ints__1(Ints__0 *_Nonnull ints)
 {
-    ints->count__ = {0};
+    ints->count__ = (int32){0};
 }
 void add_int__2(Ints__0 *_Nonnull ints, int32 value);
 inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)
 {
-    return int__0iter
+    return (int__0iter)
     {
         .values = ints->values,
         .current = -1,
@@ -377,7 +377,7 @@ inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)
 }
 inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)
 {
-    return int__0iter
+    return (int__0iter)
     {
         .values = ints->values,
         .current = -1,
@@ -392,7 +392,7 @@ struct void_ptr__0iter
     int32_t count;
 };
 
-bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);
+_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);
 inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)
 {
     lib_assert(iter->current >= 0 && iter->current < iter->count);
