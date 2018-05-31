@@ -420,8 +420,8 @@ system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(
     return self;
 }
 
-template<typename T>
-void add_item__2(system__collections__List__1<T> *_Nonnull list, T value)
+template<typename T, typename TValue>
+void add_item__2(system__collections__List__1<T> *_Nonnull list, TValue value)
 {
     if(list->count__.value >= list->capacity__.value)
     {
