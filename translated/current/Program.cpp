@@ -32,12 +32,12 @@ int32 main__2(system__console__Console__0 *_Nonnull const console__, system__con
 Source_Text__0 const *_Nonnull read_source__1(string const path__);
 void run_unit_tests__1(system__console__Console__0 *_Nonnull const console__);
 Source_Text__0 *_Nonnull Source_Text__0__0new__3(Source_Text__0 *_Nonnull self, string const package__, string const path__, string const text__);
-system__collections__List__1<int32> const *_Nonnull line_starts__1(string const text__);
+Ints__0 const *_Nonnull line_starts__1(string const text__);
 int32 source_byte_length__1(Source_Text__0 const *_Nonnull const source__);
 Text_Position__0 const *_Nonnull position_of_start__2(Source_Text__0 const *_Nonnull const source__, Text_Span__0 const *_Nonnull const span__);
 Text_Line__0 *_Nonnull Text_Line__0__0new__3(Text_Line__0 *_Nonnull self, Source_Text__0 const *_Nonnull const source__, int32 const start__, int32 const length__);
 Text_Line__0 *_Nonnull Text_Line__0__0new__spanning__3(Text_Line__0 *_Nonnull self, Source_Text__0 const *_Nonnull const source__, int32 const start__, int32 const end__);
-Text_Lines__0 *_Nonnull Text_Lines__0__0new__2(Text_Lines__0 *_Nonnull self, Source_Text__0 const *_Nonnull const source__, system__collections__List__1<int32> const *_Nonnull const start_of_line__);
+Text_Lines__0 *_Nonnull Text_Lines__0__0new__2(Text_Lines__0 *_Nonnull self, Source_Text__0 const *_Nonnull const source__, Ints__0 const *_Nonnull const start_of_line__);
 int32 line_count__1(Text_Lines__0 const *_Nonnull const lines__);
 Text_Line__0 const *_Nonnull get_line__2(Text_Lines__0 const *_Nonnull const lines__, int32 const line_number__);
 int32 line_containing_offset__2(Text_Lines__0 const *_Nonnull const lines__, int32 const character_offset__);
@@ -300,7 +300,7 @@ struct Text_Line__0
 struct Text_Lines__0
 {
 	Source_Text__0 const *_Nonnull source__;
-	system__collections__List__1<int32> const *_Nonnull start_of_line__;
+	Ints__0 const *_Nonnull start_of_line__;
 };
 
 struct Text_Position__0
@@ -855,11 +855,11 @@ Source_Text__0 *_Nonnull Source_Text__0__0new__3(Source_Text__0 *_Nonnull self, 
 	return self;
 }
 
-system__collections__List__1<int32> const *_Nonnull line_starts__1(string const text__)
+Ints__0 const *_Nonnull line_starts__1(string const text__)
 {
 	int32 const length__ = string_byte_length__1(text__);
-	system__collections__List__1<int32> *_Nonnull const starting_positions__ = system__collections__List__1__0new__0<int32>(allocate(sizeof(system__collections__List__1<int32>)));
-	starting_positions__->add__1(((int32){0}));
+	Ints__0 *_Nonnull const starting_positions__ = Ints__0__0new__0(allocate(sizeof(Ints__0)));
+	add_int__2(starting_positions__, ((int32){0}));
 	int32 position__ = ((int32){0});
 	while (cond(int32__0op__lt(position__, length__)))
 	{
@@ -885,7 +885,7 @@ system__collections__List__1<int32> const *_Nonnull line_starts__1(string const 
 			continue;
 		}
 
-		starting_positions__->add__1(position__);
+		add_int__2(starting_positions__, position__);
 	}
 
 	return starting_positions__;
@@ -932,7 +932,7 @@ Text_Line__0 *_Nonnull Text_Line__0__0new__spanning__3(Text_Line__0 *_Nonnull se
 	return self;
 }
 
-Text_Lines__0 *_Nonnull Text_Lines__0__0new__2(Text_Lines__0 *_Nonnull self, Source_Text__0 const *_Nonnull const source__, system__collections__List__1<int32> const *_Nonnull const start_of_line__)
+Text_Lines__0 *_Nonnull Text_Lines__0__0new__2(Text_Lines__0 *_Nonnull self, Source_Text__0 const *_Nonnull const source__, Ints__0 const *_Nonnull const start_of_line__)
 {
 	self->source__ = source__;
 	self->start_of_line__ = start_of_line__;
@@ -949,13 +949,13 @@ Text_Line__0 const *_Nonnull get_line__2(Text_Lines__0 const *_Nonnull const lin
 	assert__2(int32__0op__gt(line_number__, ((int32){0})), string__0op__add(((string){5,(uint8_t const*)"line "}), int_to_string__1(line_number__)));
 	assert__2(int32__0op__lte(line_number__, line_count__1(lines__)), string__0op__add(((string){5,(uint8_t const*)"line "}), int_to_string__1(line_number__)));
 	int32 const line_index__ = int32__0op__sub(line_number__, ((int32){1}));
-	int32 const line_start__ = system__collections__List__1__0op__element(lines__->start_of_line__, line_index__);
+	int32 const line_start__ = Ints__0__0op__element(lines__->start_of_line__, line_index__);
 	if (cond(int32__0op__equal(line_index__, int32__0op__sub(line_count__1(lines__), ((int32){1})))))
 	{
 		return Text_Line__0__0new__spanning__3(allocate(sizeof(Text_Line__0)), lines__->source__, line_start__, source_byte_length__1(lines__->source__));
 	}
 
-	int32 const line_end__ = system__collections__List__1__0op__element(lines__->start_of_line__, int32__0op__add(line_index__, ((int32){1})));
+	int32 const line_end__ = Ints__0__0op__element(lines__->start_of_line__, int32__0op__add(line_index__, ((int32){1})));
 	return Text_Line__0__0new__spanning__3(allocate(sizeof(Text_Line__0)), lines__->source__, line_start__, line_end__);
 }
 
@@ -968,7 +968,7 @@ int32 line_containing_offset__2(Text_Lines__0 const *_Nonnull const lines__, int
 	while (cond(int32__0op__lte(left__, right__)))
 	{
 		int32 const mid__ = int32__0op__add(left__, int32__0op__div(int32__0op__sub(right__, left__), ((int32){2})));
-		int32 const mid_line_start__ = system__collections__List__1__0op__element(lines__->start_of_line__, mid__);
+		int32 const mid_line_start__ = Ints__0__0op__element(lines__->start_of_line__, mid__);
 		if (cond(int32__0op__lt(mid_line_start__, character_offset__)))
 		{
 			left__ = int32__0op__add(mid__, ((int32){1}));
