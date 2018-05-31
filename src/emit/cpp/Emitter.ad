@@ -863,16 +863,66 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
     }
     else if statement.kind == ForStatement
     {
-        begin_line(emitter.definitions, "for (");
+        // For the code:
+        //      for let x: T in expr
+        //      {
+        //          //body
+        //      }
+        // Emit:
+        //
+        //      for(T__0iter iter = T__0iterate(expr); T__0next(iter);)
+        //      {
+        //          T x = T__0current(iter);
+        //          body
+        //      }
+        // Except use `void_ptr`` for all reference types `T` for the iter type and functions
+
         let variable_declaration: Semantic_Node = first_child(statement, VariableDeclaration);
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
-        let name: string = get_text(first_child(variable_declaration, Identifier));
-        let type: Semantic_Node = variable_declaration.children[2];
-        write(emitter.definitions, convert_type(mutable_binding, type) + " " + mangle_field_name(name));
-        write(emitter.definitions, " : *(");
-        convert_expression(statement.children[3], emitter.definitions); // expression
-        end_line(emitter.definitions, "))");
-        emit_statement(emitter, statement.children[4]); // Block Statement
+        let variable_name: string = get_text(first_child(variable_declaration, Identifier));
+        let variable_type_node: Semantic_Node = variable_declaration.children[2];
+        let iterator_expression: Semantic_Node = statement.children[3];
+        let iterator_over_type: Type = variable_type_node.referenced_type;
+        assert(iterator_over_type =/= none, get_text(variable_type_node));
+        var iterator_type: string;
+        if iterator_over_type.is_primitive
+            { iterator_type = convert_primitive_type_name(iterator_over_type); }
+        else
+            { iterator_type = "void_ptr"; }
+        let collection_type: Type = iterator_expression.of_type;
+        var iteratable_type: string;
+        if collection_type =/= none
+            { iteratable_type = mangle_name(collection_type); }
+        else
+            { iteratable_type = iterator_type; }
+
+        // for statement
+        begin_line(emitter.definitions, "for (");
+        write(emitter.definitions, iterator_type);
+        write(emitter.definitions, "__0iter iter = ");
+        write(emitter.definitions, iteratable_type);
+        write(emitter.definitions, "__0iterate(");
+        convert_expression(iterator_expression, emitter.definitions);
+        write(emitter.definitions, "); ");
+        write(emitter.definitions, iterator_type);
+        end_line(emitter.definitions, "__0next(&iter);)");
+        // loop block
+        begin_block(emitter.definitions);
+        // loop variable
+        begin_line(emitter.definitions, "");
+        write(emitter.definitions, convert_type(mutable_binding, variable_type_node));
+        write(emitter.definitions, " ");
+        write(emitter.definitions, mangle_field_name(variable_name));
+        write(emitter.definitions, " = ");
+        write(emitter.definitions, iterator_type);
+        end_line(emitter.definitions, "__0current(&iter);");
+        // loop body
+        let for_loop_body: Semantic_Node = statement.children[4];
+        for let block_statement: Semantic_Node in node_statements(for_loop_body)
+        {
+            emit_statement(emitter, block_statement);
+        }
+        end_block(emitter.definitions);
     }
     else if statement.kind == DoWhileStatement
     {

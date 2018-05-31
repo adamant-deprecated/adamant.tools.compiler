@@ -13,8 +13,9 @@ void main__2(system__console__Console__0 *_Nonnull const console__, system__cons
 
 void main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__)
 {
-	for (string const arg__ : *(args__))
+	for (string__0iter iter = system__console__Arguments__0__0iterate(args__); string__0next(&iter);)
 	{
+		string const arg__ = string__0current(&iter);
 		console__->WriteLine__1(arg__);
 	}
 }

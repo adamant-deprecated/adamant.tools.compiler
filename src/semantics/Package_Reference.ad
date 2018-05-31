@@ -1,5 +1,5 @@
 // TODO inherit from Package_Name?
-public struct Package_Reference
+public class Package_Reference // TODO change back to struct when it makes sense
 {
     /// The name the package will be referred to by within the current package.
     /// For most packages, this is the same as the package name. However, if a

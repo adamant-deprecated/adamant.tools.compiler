@@ -1,8 +1,8 @@
 public main(console: mut system.console.Console) -> void
 {
-	let strings: mut system.collections.List<string> = new system.collections.List<string>();
-	strings.add("Hello");
-	strings.add("World!");
+	let strings: mut Strings = new Strings();
+	add_string(strings, "Hello");
+	add_string(strings, "World!");
 
 	if strings.count =/= 2
 	{
@@ -16,7 +16,7 @@ public main(console: mut system.console.Console) -> void
 		console.WriteLine(s);
 	}
 	console.WriteLine();
-	strings.clear();
+	clear_strings(strings);
 
 	let builders: mut system.collections.List<mut system.text.String_Builder> = new system.collections.List<mut system.text.String_Builder>();
 	builders.add(new system.text.String_Builder("sb[0]: "));

@@ -45,6 +45,12 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "debug_write")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "debug_write_line")));
     symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "get_resource")));
+    symbols.add(build_class_symbol(global_namespace, "Strings"));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "clear_strings")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "add_string")));
+    symbols.add(build_class_symbol(global_namespace, "Ints"));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "clear_ints")));
+    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "add_int")));
 
     // system
     let system_namespace: Name = new Name(global_namespace, NamespaceName, "system");

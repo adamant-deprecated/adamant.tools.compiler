@@ -247,6 +247,12 @@ inline BOOL void_ptr__0op__not_equal(void_ptr lhs, void_ptr rhs)
 // -----------------------------------------------------------------------------
 // Parts of the standard library that are currently implemented in the runtime.
 
+typedef struct string__0iter string__0iter;
+typedef struct Strings__0 Strings__0;
+typedef struct int__0iter int__0iter;
+typedef struct Ints__0 Ints__0;
+typedef struct void_ptr__0iter void_ptr__0iter;
+
 inline void_ptr allocate__1(int32 bytes)
 {
     return malloc(bytes.value);
@@ -277,17 +283,121 @@ void debug_write__1(string value);
 void debug_write_line__1(string value);
 void debug_write_line__0();
 
+struct string__0iter
+{
+    string *_Nonnull values;
+    int32_t current;
+    int32_t count;
+
+    // For now, allow implicit coversion from list iterator to string iterator
+    string__0iter(void_ptr__0iter iter);
+    string__0iter(string *_Nonnull values, int32_t current, int32_t count)
+        : values(values), current(current), count(count) {}
+};
+
+bool string__0next(string__0iter*_Nonnull iter);
+inline string string__0current(string__0iter const*_Nonnull iter)
+{
+    lib_assert(iter->current >= 0 && iter->current < iter->count);
+    return iter->values[iter->current];
+}
+
+struct Strings__0
+{
+    string *_Nonnull values;
+    int32 count__;
+    int32 capacity__;
+};
+
+Strings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self);
+inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index)
+{
+    lib_assert(index.value >= 0 && index.value < strings->count__.value);
+    return strings->values[index.value];
+}
+inline void clear_strings__1(Strings__0 *_Nonnull strings)
+{
+    strings->count__ = {0};
+}
+void add_string__2(Strings__0 *_Nonnull strings, string value);
+inline string__0iter Strings__0__0iterate(Strings__0 *_Nonnull strings)
+{
+    return string__0iter(strings->values, -1, strings->count__.value);
+    // {
+    //     .values = strings->values,
+    //     .current = -1,
+    //     .count = strings->count__.value
+    // };
+}
+
+struct int__0iter
+{
+    int32 *_Nonnull values;
+    int32_t current;
+    int32_t count;
+};
+
+bool int__0next(int__0iter*_Nonnull iter);
+inline int32 int__0current(int__0iter const*_Nonnull iter)
+{
+    lib_assert(iter->current >= 0 && iter->current < iter->count);
+    return iter->values[iter->current];
+}
+
+struct Ints__0
+{
+    int32 *_Nonnull values;
+    int32 count__;
+    int32 capacity__;
+};
+
+Ints__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self);
+inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index)
+{
+    lib_assert(index.value >= 0 && index.value < ints->count__.value);
+    return ints->values[index.value];
+}
+inline void clear_ints__1(Ints__0 *_Nonnull ints)
+{
+    ints->count__ = {0};
+}
+void add_int__2(Ints__0 *_Nonnull ints, string value);
+inline int__0iter Strings__0__0iterate(Ints__0 *_Nonnull ints)
+{
+    return int__0iter
+    {
+        .values = ints->values,
+        .current = -1,
+        .count = ints->count__.value
+    };
+}
+
+struct void_ptr__0iter
+{
+    void_ptr *_Nonnull values;
+    int32_t current;
+    int32_t count;
+};
+
+bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);
+inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)
+{
+    lib_assert(iter->current >= 0 && iter->current < iter->count);
+    return iter->values[iter->current];
+}
+
+// For now, allow implicit coversion from list iterator to string iterator
+inline string__0iter::string__0iter(void_ptr__0iter iter)
+    : values((string *_Nonnull)iter.values), current(iter.current), count(iter.count)
+{
+}
+
 template<typename T>
 struct system__collections__List__1
 {
     T *_Nonnull values;
     int32 count__;
     int32 capacity__;
-
-    // Runtime Use Members
-    typedef T const *_Nonnull const_iterator;
-    const_iterator begin() const { return values; }
-    const_iterator end() const { return &values[count__.value]; }
 
     // Adamant Members
     void add__1(T value);
@@ -329,6 +439,38 @@ system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(
     return self;
 }
 
+template<typename T>
+void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1<T> const *_Nonnull list)
+{
+    return (void_ptr__0iter)
+    {
+        .values = (void_ptr*_Nonnull)list->values, // force cast could be bad if T is not a pointer
+        .current = -1,
+        .count = list->count__.value
+    };
+}
+
+template<typename T>
+void_ptr__0iter void_ptr__0iterate(system__collections__List__1<T> const *_Nonnull list)
+{
+    return (void_ptr__0iter)
+    {
+        .values = (void_ptr*_Nonnull)list->values, // force cast could be bad if T is not a pointer
+        .current = -1,
+        .count = list->count__.value
+    };
+}
+
+inline string__0iter string__0iterate(system__collections__List__1<string> const *_Nonnull list)
+{
+    return string__0iter(list->values, -1, list->count__.value);
+    // {
+    //     .values = (void_ptr*_Nonnull)list->values, // force cast could be bad if T is not a pointer
+    //     .current = -1,
+    //     .count = list->count__.value
+    // };
+}
+
 class system__console__Console__0
 {
 public:
@@ -337,29 +479,32 @@ public:
     void WriteLine__0();
 };
 
-class system__console__Arguments__0
+struct system__console__Arguments__0
 {
-public:
-    string *_Nonnull args;
-
-    // Runtime Use Members
-    typedef string const *_Nonnull const_iterator;
+    string *_Nonnull values;
 
     system__console__Arguments__0(int argc, char const *_Nonnull const *_Nonnull argv);
-    const_iterator begin() const { return &args[0]; }
-    const_iterator end() const { return &args[Count]; }
 
     const int Count;
 
     // Adamant Members
     int32 op__magnitude() const { return (int32){Count}; }
-
 };
 
 inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)
 {
     lib_assert(index.value >= 0 && index.value < arguments->Count);
-    return arguments->args[index.value];
+    return arguments->values[index.value];
+}
+
+inline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments)
+{
+    return string__0iter(arguments->values, -1, arguments->Count);
+    // {
+    //     .values = arguments->values,
+    //     .current = -1,
+    //     .count = arguments->Count
+    // };
 }
 
 struct system__io__File_Reader__0
