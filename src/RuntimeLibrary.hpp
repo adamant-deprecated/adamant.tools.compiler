@@ -330,6 +330,16 @@ inline string__0iter Strings__0__0iterate(Strings__0 *_Nonnull strings)
     // };
 }
 
+inline string__0iter string__0iterate(Strings__0 const *_Nonnull list)
+{
+    return string__0iter(list->values, -1, list->count__.value);
+    // {
+    //     .values = (void_ptr*_Nonnull)list->values, // force cast could be bad if T is not a pointer
+    //     .current = -1,
+    //     .count = list->count__.value
+    // };
+}
+
 struct int__0iter
 {
     int32 *_Nonnull values;
@@ -362,7 +372,16 @@ inline void clear_ints__1(Ints__0 *_Nonnull ints)
     ints->count__ = {0};
 }
 void add_int__2(Ints__0 *_Nonnull ints, string value);
-inline int__0iter Strings__0__0iterate(Ints__0 *_Nonnull ints)
+inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)
+{
+    return int__0iter
+    {
+        .values = ints->values,
+        .current = -1,
+        .count = ints->count__.value
+    };
+}
+inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)
 {
     return int__0iter
     {
