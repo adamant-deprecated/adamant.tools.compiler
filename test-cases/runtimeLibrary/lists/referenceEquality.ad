@@ -1,6 +1,8 @@
+public class Test {}
+
 public main() -> void
 {
-	let values: system.collections.List<int> = new system.collections.List<int>();
+	let values: system.collections.List<Test> = new system.collections.List<Test>();
 	values == values;
 	values =/= values;
 }

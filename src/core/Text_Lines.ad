@@ -1,9 +1,9 @@
 public class Text_Lines
 {
     public let source: Source_Text;
-    public let start_of_line: system.collections.List<int>;
+    public let start_of_line: Ints;
 
-    public new(source: Source_Text, start_of_line: system.collections.List<int>)
+    public new(source: Source_Text, start_of_line: Ints)
     {
         self.source = source;
         self.start_of_line = start_of_line;
