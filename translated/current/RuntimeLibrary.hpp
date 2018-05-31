@@ -320,7 +320,7 @@ inline void clear_strings__1(Strings__0 *_Nonnull strings)
     strings->count__ = {0};
 }
 void add_string__2(Strings__0 *_Nonnull strings, string value);
-inline string__0iter Strings__0__0iterate(Strings__0 *_Nonnull strings)
+inline string__0iter Strings__0__0iterate(Strings__0 const*_Nonnull strings)
 {
     return string__0iter(strings->values, -1, strings->count__.value);
     // {
