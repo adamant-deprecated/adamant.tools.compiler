@@ -290,7 +290,7 @@ struct string__0iter
     int32_t count;
 };
 
-bool string__0next(string__0iter*_Nonnull iter);
+_Bool string__0next(string__0iter*_Nonnull iter);
 inline string string__0current(string__0iter const*_Nonnull iter)
 {
     lib_assert(iter->current >= 0 && iter->current < iter->count);
@@ -312,7 +312,7 @@ inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 
 }
 inline void clear_strings__1(Strings__0 *_Nonnull strings)
 {
-    strings->count__ = {0};
+    strings->count__ = (int32){0};
 }
 void add_string__2(Strings__0 *_Nonnull strings, string value);
 inline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings)
@@ -341,7 +341,7 @@ struct int__0iter
     int32_t count;
 };
 
-bool int__0next(int__0iter*_Nonnull iter);
+_Bool int__0next(int__0iter*_Nonnull iter);
 inline int32 int__0current(int__0iter const*_Nonnull iter)
 {
     lib_assert(iter->current >= 0 && iter->current < iter->count);
@@ -363,12 +363,12 @@ inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const inde
 }
 inline void clear_ints__1(Ints__0 *_Nonnull ints)
 {
-    ints->count__ = {0};
+    ints->count__ = (int32){0};
 }
 void add_int__2(Ints__0 *_Nonnull ints, int32 value);
 inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)
 {
-    return int__0iter
+    return (int__0iter)
     {
         .values = ints->values,
         .current = -1,
@@ -377,7 +377,7 @@ inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)
 }
 inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)
 {
-    return int__0iter
+    return (int__0iter)
     {
         .values = ints->values,
         .current = -1,
@@ -392,7 +392,7 @@ struct void_ptr__0iter
     int32_t count;
 };
 
-bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);
+_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);
 inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)
 {
     lib_assert(iter->current >= 0 && iter->current < iter->count);
@@ -412,19 +412,53 @@ struct system__collections__List__1
 };
 
 template<typename T>
+system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(system__collections__List__1<T> *_Nonnull self)
+{
+    self->values = NULL;
+    self->count__ = {0};
+    self->capacity__ = {0};
+    return self;
+}
+
+template<typename T>
+void add_item__2(system__collections__List__1<T> *_Nonnull list, T value)
+{
+    if(list->count__.value >= list->capacity__.value)
+    {
+        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;
+        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+        // Needed if T is a value type to avoid needing a default constructor
+        T* new_values = (T*)new char[new_capacity * sizeof(T)];
+        memcpy(new_values, list->values, list->count__.value * sizeof(T));
+        if(list->capacity__.value != 0)
+            delete[] list->values; // delete the old array
+        list->values = new_values;
+        list->capacity__ = (int32){new_capacity};
+    }
+    list->values[list->count__.value] = value;
+    list->count__.value++;
+}
+
+template<typename T>
+void clear_list__1(system__collections__List__1<T> *_Nonnull list)
+{
+    list->count__ = (int32){0};
+}
+
+template<typename T>
 void system__collections__List__1<T>::add__1(T value)
 {
     if(count__.value >= capacity__.value)
     {
-        int32_t newCapacity = capacity__.value == 0 ? 16 : capacity__.value * 2;
+        int32_t new_capacity = capacity__.value == 0 ? 16 : capacity__.value * 2;
         // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
-        T* newValues = (T*)new char[newCapacity * sizeof(T)];
-        memcpy(newValues, values, count__.value * sizeof(T));
+        T* new_values = (T*)new char[new_capacity * sizeof(T)];
+        memcpy(new_values, values, count__.value * sizeof(T));
         if(capacity__.value != 0)
             delete[] values; // delete the old array
-        values = newValues;
-        capacity__ = (int32){newCapacity};
+        values = new_values;
+        capacity__ = (int32){new_capacity};
     }
     values[count__.value] = value;
     count__.value++;
@@ -435,15 +469,6 @@ T system__collections__List__1__0op__element(system__collections__List__1<T> con
 {
     lib_assert(index.value >= 0 && index.value < list->count__.value);
     return list->values[index.value];
-}
-
-template<typename T>
-system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(system__collections__List__1<T> *_Nonnull self)
-{
-    self->values = NULL;
-    self->count__ = {0};
-    self->capacity__ = {0};
-    return self;
 }
 
 template<typename T>
