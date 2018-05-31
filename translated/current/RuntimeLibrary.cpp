@@ -321,6 +321,91 @@ void debug_write_line__0()
     fprintf(stderr, "\n");
 }
 
+bool string__0next(string__0iter*_Nonnull iter)
+{
+    iter->current++;
+    if(iter->current >= iter->count)
+    {
+        iter->current = iter->count; // prevent current from further increase
+        return false;
+    }
+    return true;
+}
+
+Strings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)
+{
+    self->values = NULL;
+    self->count__ = {0};
+    self->capacity__ = {0};
+    return self;
+}
+
+void add_string__2(Strings__0 *_Nonnull strings, string value)
+{
+    if(strings->count__.value >= strings->capacity__.value)
+    {
+        int32_t new_capacity = strings->capacity__.value == 0 ? 16 : strings->capacity__.value * 2;
+        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+        // Needed if T is a value type to avoid needing a default constructor
+        string* new_values = (string*)new char[new_capacity * sizeof(string)];
+        memcpy(new_values, strings->values, strings->count__.value * sizeof(string));
+        if(strings->capacity__.value != 0)
+            delete[] strings->values; // delete the old array
+        strings->values = new_values;
+        strings->capacity__ = {new_capacity};
+    }
+    strings->values[strings->count__.value] = value;
+    strings->count__.value++;
+}
+
+bool int__0next(int__0iter*_Nonnull iter)
+{
+    iter->current++;
+    if(iter->current >= iter->count)
+    {
+        iter->current = iter->count; // prevent current from further increase
+        return false;
+    }
+    return true;
+}
+
+Ints__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)
+{
+    self->values = NULL;
+    self->count__ = {0};
+    self->capacity__ = {0};
+    return self;
+}
+
+void add_int__2(Ints__0 *_Nonnull ints, int32 value)
+{
+    if(ints->count__.value >= ints->capacity__.value)
+    {
+        int32_t new_capacity = ints->capacity__.value == 0 ? 16 : ints->capacity__.value * 2;
+        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+        // Needed if T is a value type to avoid needing a default constructor
+        int32* new_values = (int32*)new char[new_capacity * sizeof(int32)];
+        memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));
+        if(ints->capacity__.value != 0)
+            delete[] ints->values; // delete the old array
+        ints->values = new_values;
+        ints->capacity__ = {new_capacity};
+    }
+    ints->values[ints->count__.value] = value;
+    ints->count__.value++;
+}
+
+bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)
+{
+    iter->current++;
+    if(iter->current >= iter->count)
+    {
+        iter->current = iter->count; // prevent current from further increase
+        return false;
+    }
+    return true;
+}
+
 void system__console__Console__0::Write__1(string value)
 {
     printf("%.*s", value.byte_length.value, value.Buffer);
@@ -339,9 +424,9 @@ void system__console__Console__0::WriteLine__0()
 system__console__Arguments__0::system__console__Arguments__0(int argc, char const *const * argv)
     : Count(argc-1)
 {
-    args = new string[Count];
+    values = new string[Count];
     for (int i = 0; i < Count; i++)
-        args[i] = string_from_cstr(argv[i+1]);
+        values[i] = string_from_cstr(argv[i+1]);
 }
 
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName)
