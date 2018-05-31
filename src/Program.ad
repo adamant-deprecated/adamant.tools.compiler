@@ -48,8 +48,8 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
         return 0;
     }
 
-    let sourceFilePaths: mut system.collections.List<string> = new system.collections.List<string>();
-    let resourceFilePaths: mut system.collections.List<string> = new system.collections.List<string>();
+    let sourceFilePaths: mut Strings = new Strings();
+    let resourceFilePaths: mut Strings = new Strings();
     var outputFilePath: string = "";
     var verbose: bool = false;
     var argType: int = 0; // 0=source file, 1=resource file, 2=output file
@@ -71,12 +71,12 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
             }
             else
             {
-                sourceFilePaths.add(arg);
+                add_string(sourceFilePaths, arg);
             }
         }
         else if argType == 1 // resource file
         {
-            resourceFilePaths.add(arg);
+            add_string(resourceFilePaths, arg);
             argType = 0;
         }
         else if argType == 2 // output file

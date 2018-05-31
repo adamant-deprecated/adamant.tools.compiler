@@ -10,7 +10,7 @@ public class Name
     // package == none means that the package is unspecified
     public let package: Package_Name?; // TODO there should be kinds of names that have to have a package
     public let kind: int;
-    public let segments: system.collections.List<string>;
+    public let segments: Strings;
     public let is_special: bool;
 
     // TODO rename to Name.of_global_namespace
@@ -18,7 +18,7 @@ public class Name
     {
         self.package = none;
         self.kind = NamespaceName;
-        self.segments = new system.collections.List<string>();
+        self.segments = new Strings();
         self.is_special = false;
     }
 
@@ -28,7 +28,7 @@ public class Name
         assert(package =/= none);
         self.package = package;
         self.kind = NamespaceName;
-        self.segments = new system.collections.List<string>();
+        self.segments = new Strings();
         self.is_special = false;
     }
 
@@ -40,12 +40,12 @@ public class Name
         assert(string_byte_length(name) > 0);
         self.package = qualifier.package;
         self.kind = kind;
-        let segments: mut system.collections.List<string> = new system.collections.List<string>();
+        let segments: mut Strings = new Strings();
         for let segment: string in qualifier.segments
         {
-            segments.add(segment);
+            add_string(segments, segment);
         }
-        segments.add(name);
+        add_string(segments, name);
         self.segments = segments;
         self.is_special = false;
     }
@@ -56,12 +56,12 @@ public class Name
         assert(string_byte_length(name) > 0);
         self.package = qualifier.package;
         self.kind = kind;
-        let segments: mut system.collections.List<string> = new system.collections.List<string>();
+        let segments: mut Strings = new Strings();
         for let segment: string in qualifier.segments
         {
-            segments.add(segment);
+            add_string(segments, segment);
         }
-        segments.add(name);
+        add_string(segments, name);
         self.segments = segments;
         self.is_special = is_special;
     }
@@ -72,12 +72,12 @@ public class Name
         assert(string_byte_length(name) > 0);
         self.package = qualifier.package;
         self.kind = kind;
-        let segments: mut system.collections.List<string> = new system.collections.List<string>();
+        let segments: mut Strings = new Strings();
         for let segment: string in qualifier.segments
         {
-            segments.add(segment);
+            add_string(segments, segment);
         }
-        segments.add(name);
+        add_string(segments, name);
         self.segments = segments;
         self.is_special = true;
     }
@@ -85,7 +85,7 @@ public class Name
     public new(
         package: Package_Name?,
         kind: int,
-        segments: system.collections.List<string>,
+        segments: Strings,
         is_special: bool)
     {
         self.package = package;
