@@ -405,10 +405,6 @@ struct system__collections__List__1
     T *_Nonnull values;
     int32 count__;
     int32 capacity__;
-
-    // Adamant Members
-    void add__1(T value);
-    void clear__0() { count__ = {0}; }
 };
 
 template<typename T>
@@ -443,25 +439,6 @@ template<typename T>
 void clear_list__1(system__collections__List__1<T> *_Nonnull list)
 {
     list->count__ = (int32){0};
-}
-
-template<typename T>
-void system__collections__List__1<T>::add__1(T value)
-{
-    if(count__.value >= capacity__.value)
-    {
-        int32_t new_capacity = capacity__.value == 0 ? 16 : capacity__.value * 2;
-        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
-        // Needed if T is a value type to avoid needing a default constructor
-        T* new_values = (T*)new char[new_capacity * sizeof(T)];
-        memcpy(new_values, values, count__.value * sizeof(T));
-        if(capacity__.value != 0)
-            delete[] values; // delete the old array
-        values = new_values;
-        capacity__ = (int32){new_capacity};
-    }
-    values[count__.value] = value;
-    count__.value++;
 }
 
 template<typename T>
