@@ -252,6 +252,7 @@ typedef struct Strings__0 Strings__0;
 typedef struct int__0iter int__0iter;
 typedef struct Ints__0 Ints__0;
 typedef struct void_ptr__0iter void_ptr__0iter;
+typedef struct system__collections__List__1 system__collections__List__1;
 
 inline void_ptr allocate__1(int32 bytes)
 {

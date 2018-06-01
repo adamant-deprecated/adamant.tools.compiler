@@ -49,10 +49,11 @@ public class Syntax_Node
         self.kind = type;
         self.is_missing = false;
         // TODO enforce that list is not empty, for now we rely on `children[0]` failing
-        self.source = children[0].source;
-        self.start = children[0].start;
-        let lastChild: Syntax_Node = children[children.count - 1];
-        self.byte_length = lastChild.start - self.start + lastChild.byte_length;
+        let first_child: Syntax_Node = children[0];
+        self.source = first_child.source;
+        self.start = first_child.start;
+        let last_child: Syntax_Node = children[children.count - 1];
+        self.byte_length = last_child.start - self.start + last_child.byte_length;
         self.children = children;
         self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
@@ -90,10 +91,11 @@ public class Syntax_Node
         self.kind = SkippedTokens;
         self.is_missing = false;
         // TODO enforce that list is not empty, for now we rely on `children[0]` failing
-        self.source = skipped_nodes[0].source;
-        self.start = skipped_nodes[0].start;
-        let lastChild: Syntax_Node = skipped_nodes[skipped_nodes.count - 1];
-        self.byte_length = lastChild.start - self.start + lastChild.byte_length;
+        let first_child: Syntax_Node = skipped_nodes[0];
+        self.source = first_child.source;
+        self.start = first_child.start;
+        let last_child: Syntax_Node = skipped_nodes[skipped_nodes.count - 1];
+        self.byte_length = last_child.start - self.start + last_child.byte_length;
         self.children = new system.collections.List<Syntax_Node>();
         self.node_diagnostics = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(self.start, self.byte_length);
@@ -101,7 +103,7 @@ public class Syntax_Node
     }
 }
 
-public get_text(syntax: Syntax_Node) -> string
+public get_syntax_text(syntax: Syntax_Node) -> string
 {
     return substring(syntax.source.text, syntax.start, syntax.byte_length);
 }

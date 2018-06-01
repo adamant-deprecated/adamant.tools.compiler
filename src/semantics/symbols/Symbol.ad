@@ -24,18 +24,18 @@ public class Symbol
         self.children = new system.collections.List<Symbol>();
     }
 
-    public new identifier(name: string, declarations: system.collections.List<Semantic_Node>)
-    {
-        assert(string_byte_length(name) > 0);
-        assert(declarations =/= none, "name="+name);
-        self.name = name;
-        self.kind = IdentifierSymbol;
-        self.is_special_name = false;
-        self.of_type = none;
-        self.declares_type = none;
-        self.declarations = declarations;
-        self.children = new system.collections.List<Symbol>();
-    }
+    // public new identifier(name: string, declarations: system.collections.List<Semantic_Node>)
+    // {
+    //     assert(string_byte_length(name) > 0);
+    //     assert(declarations =/= none, "name="+name);
+    //     self.name = name;
+    //     self.kind = IdentifierSymbol;
+    //     self.is_special_name = false;
+    //     self.of_type = none;
+    //     self.declares_type = none;
+    //     self.declarations = declarations;
+    //     self.children = new system.collections.List<Symbol>();
+    // }
 
     public new identifier(name: string, children: system.collections.List<Symbol>)
     {

@@ -66,8 +66,8 @@ public build_semantic_node(
         let function_name: Syntax_Node = first_child_syntax(syntax, Identifier);
         add_item(children, build_semantic_node(builder, function_name, name_table, scope));
 
-        let function_scope: mut Name_Subtable = find(scope, get_text(function_name));
-        assert(function_scope =/= none, "get_text(function_name)="+get_text(function_name));
+        let function_scope: mut Name_Subtable = find(scope, get_syntax_text(function_name));
+        assert(function_scope =/= none, "get_syntax_text(function_name)="+get_syntax_text(function_name));
 
         let parameters: Syntax_Node = first_child_syntax(syntax, ParameterList);
         // TODO it is really only the parameters that are in this scope, the types aren't
@@ -77,7 +77,7 @@ public build_semantic_node(
         add_item(children, build_type_name_semantic_node(builder, return_type, name_table, scope));
 
         let function_type: Type = new Type(FunctionType, function_scope.name, false);
-        // debug_write_line("Binding function `"+get_text(function_name)+"` with type `"+full_name(function_type.name)+"`, scope `"+full_name(function_scope.name)+"`");
+        // debug_write_line("Binding function `"+get_syntax_text(function_name)+"` with type `"+full_name(function_type.name)+"`, scope `"+full_name(function_scope.name)+"`");
         bind_type(function_scope, function_type);
         let body: Syntax_Node = first_child_syntax(syntax, Block);
         if body =/= none
@@ -93,8 +93,8 @@ public build_semantic_node(
     {
         let type_name: Syntax_Node = first_child_syntax(syntax, Identifier);
         add_item(children, build_semantic_node(builder, type_name, name_table, scope));
-        let type_scope: Name_Subtable = find(scope, get_text(type_name));
-        assert(type_scope =/= none, "get_text(type_name)="+get_text(type_name));
+        let type_scope: Name_Subtable = find(scope, get_syntax_text(type_name));
+        assert(type_scope =/= none, "get_syntax_text(type_name)="+get_syntax_text(type_name));
 
         for let member: Syntax_Node in members(syntax)
         {
@@ -111,7 +111,7 @@ public build_semantic_node(
         let constructor_name: Syntax_Node? = first_child_syntax(syntax, Identifier);
         if constructor_name =/= none
         {
-            full_name = "new_" + get_text(constructor_name);
+            full_name = "new_" + get_syntax_text(constructor_name);
             add_item(children, new Semantic_Node.token(constructor_name));
         }
 
@@ -133,7 +133,7 @@ public build_semantic_node(
     }
     else if syntax.kind == IdentifierName
     {
-        let name_scope: Name_Subtable = lookup(scope, get_text(syntax));
+        let name_scope: Name_Subtable = lookup(scope, get_syntax_text(syntax));
         if name_scope == none
         {
             let node: mut Semantic_Node = new Semantic_Node.token(syntax);
@@ -144,8 +144,8 @@ public build_semantic_node(
         else
         {
             // let place: int = syntax.start;
-            // debug_write_line("Building identifier `"+get_text(syntax)+"` at "+place+", scope `"+full_name(name_scope.name)+'`');
-            // assert(name_scope.type =/= none, get_text(syntax));
+            // debug_write_line("Building identifier `"+get_syntax_text(syntax)+"` at "+place+", scope `"+full_name(name_scope.name)+'`');
+            // assert(name_scope.type =/= none, get_syntax_text(syntax));
             if name_scope.type == none
             {
                 // TODO this case exists because of out of order declarations, fix it
@@ -174,7 +174,7 @@ public build_semantic_node(
         {
             // debug_write_line("Getting scope for type name `"+full_name(lhs.of_type.name)+"`");
             let access_scope: Name_Subtable = get_name(name_table, lhs.of_type.name);
-            let member_scope: Name_Subtable = find(access_scope, get_text(member_name));
+            let member_scope: Name_Subtable = find(access_scope, get_syntax_text(member_name));
 
             if member_scope == none
             {
@@ -228,10 +228,10 @@ public build_semantic_node(
         add_item(children, new Semantic_Node.token(identifier));
         let type_syntax: Syntax_Node = syntax.children[3];
         let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
-        assert(type_node.referenced_type =/= none, get_text(type_node));
-        let variable_scope: mut Name_Subtable = lookup(scope, get_text(identifier));
-        assert(variable_scope =/= none, get_text(syntax));
-        // debug_write_line("Binding variable `"+get_text(identifier)+"` with type `"+full_name(type_node.referenced_type.name)+"`, full scope is `"+full_name(variable_scope.name)+"`");
+        assert(type_node.referenced_type =/= none, get_node_text(type_node));
+        let variable_scope: mut Name_Subtable = lookup(scope, get_syntax_text(identifier));
+        assert(variable_scope =/= none, get_syntax_text(syntax));
+        // debug_write_line("Binding variable `"+get_syntax_text(identifier)+"` with type `"+full_name(type_node.referenced_type.name)+"`, full scope is `"+full_name(variable_scope.name)+"`");
         bind_type(variable_scope, type_node.referenced_type);
         // Now we have to do the same binding in the specific package instead of the 'any' package
         bind_type(as_mut(get_name(name_table, variable_scope.name)), type_node.referenced_type);
@@ -343,10 +343,10 @@ public build_parameters_semantic_node(
             // Because a parameter can have `var` at the beginning, the position of the type isn't constant
             let type_syntax: Syntax_Node = parameter.children[parameter.children.count - 1];
             let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
-            assert(type_node.referenced_type =/= none, get_text(parameter));
+            assert(type_node.referenced_type =/= none, get_syntax_text(parameter));
             add_item(children, type_node);
-            let parameter_scope: mut Name_Subtable = lookup(scope, get_text(identifier));
-            assert(parameter_scope =/= none, get_text(identifier));
+            let parameter_scope: mut Name_Subtable = lookup(scope, get_syntax_text(identifier));
+            assert(parameter_scope =/= none, get_syntax_text(identifier));
             bind_type(parameter_scope, type_node.referenced_type);
             add_item(parameter_nodes, new Semantic_Node.of_type(type_node.referenced_type, parameter, children));
         }
@@ -380,7 +380,7 @@ public build_type_name_semantic_node(
 
     if syntax.kind == PredefinedType
     {
-        let primitive_name: string = get_text(syntax.children[0]);
+        let primitive_name: string = get_syntax_text(syntax.children[0]);
         let primitive_entry: Name_Subtable? = lookup_special(scope, primitive_name); // TODO this should be lookup type. Types are separate
         assert(primitive_entry =/= none, "No entry for primitive `"+primitive_name+"`");
         return new Semantic_Node.referencing_type(primitive_entry.type, syntax, children);
@@ -388,7 +388,7 @@ public build_type_name_semantic_node(
     else if syntax.kind == IdentifierName
     {
         if syntax.is_missing { return new Semantic_Node.token(syntax); }
-        let name: string = get_text(syntax);
+        let name: string = get_syntax_text(syntax);
         let entry: Name_Subtable? = lookup(scope, name); // TODO this should be lookup type. Types are separate
         if entry == none
         {
@@ -429,7 +429,7 @@ public build_type_name_semantic_node(
                 let containing_scope: Name_Subtable = get_name(name_table, containing_type.name);
                 // `containing_scope` shouldn't be none, because we looked it up to get the name
                 assert(containing_scope =/= none, full_name(containing_type.name));
-                let referenced_scope: Name_Subtable = find(containing_scope, get_text(name_syntax));
+                let referenced_scope: Name_Subtable = find(containing_scope, get_syntax_text(name_syntax));
 
                 if referenced_scope == none
                 {
@@ -469,7 +469,7 @@ public build_type_name_semantic_node(
                 let containing_scope: Name_Subtable = get_name(name_table, containing_type.name);
                 // `containing_scope` shouldn't be none, because we looked it up to get the name
                 assert(containing_scope =/= none, full_name(containing_type.name));
-                let referenced_scope: Name_Subtable = find(containing_scope, get_text(name_syntax));
+                let referenced_scope: Name_Subtable = find(containing_scope, get_syntax_text(name_syntax));
 
                 if referenced_scope == none
                 {
@@ -605,7 +605,7 @@ public build_constructor_name_semantic_node(
     -> Semantic_Node
 {
     if syntax.kind == QualifiedName
-        and syntax.children[2].kind == IdentifierName
+        and as_syntax(syntax.children[2]).kind == IdentifierName // as_syntax() needed for now for void_ptr from list
     {
         let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
         let qualifier: Syntax_Node = syntax.children[0];
@@ -613,9 +613,9 @@ public build_constructor_name_semantic_node(
         let type_node: Semantic_Node = build_type_name_semantic_node(builder, qualifier, name_table, scope);
         add_item(children, type_node);
         let name: Syntax_Node = syntax.children[2];
-        let constructor_name: string = "new_" + get_text(name);
+        let constructor_name: string = "new_" + get_syntax_text(name);
         let referenced_type: Type = type_node.referenced_type;
-        assert(referenced_type =/= none, "no referenced type for `"+get_text(type_node)+"`");
+        assert(referenced_type =/= none, "no referenced type for `"+get_node_text(type_node)+"`");
         let constructor_scope: Name_Subtable? = lookup_special(get_name(name_table, referenced_type.name), constructor_name);
         if constructor_scope =/= none
         {
@@ -628,17 +628,22 @@ public build_constructor_name_semantic_node(
     return build_type_name_semantic_node(builder, syntax, name_table, scope);
 }
 
+public as_syntax(syntax: Syntax_Node) -> Syntax_Node
+{
+    return syntax;
+}
+
 public add_resolution_error(node: mut Semantic_Node) -> void
 {
-    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not resolve name `" + get_text(node) + "`"));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not resolve name `" + get_node_text(node) + "`"));
 }
 
 public add_resolution_error(node: mut Semantic_Node, qualifier: Semantic_Node) -> void
 {
-    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not resolve name `" + get_text(node) + "` because qualifier `" + get_text(qualifier) +"` could not be resolved."));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not resolve name `" + get_node_text(node) + "` because qualifier `" + get_node_text(qualifier) +"` could not be resolved."));
 }
 
 public add_could_not_determine_type_error(node: mut Semantic_Node) -> void
 {
-    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not determine type for `" + get_text(node) + "`"));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not determine type for `" + get_node_text(node) + "`"));
 }

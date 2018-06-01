@@ -121,7 +121,7 @@ public get_text_span(node: Semantic_Node) -> Text_Span
     return new Text_Span(node.start, node.byte_length);
 }
 
-public get_text(node: Semantic_Node) -> string
+public get_node_text(node: Semantic_Node) -> string
 {
     if node.source == none { return "$No Source$"; }
     return substring(node.source.text, node.start, node.byte_length);
