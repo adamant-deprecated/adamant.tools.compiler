@@ -200,10 +200,10 @@ public convert_type_name(type: Type, include_type_parameters: bool) -> mut syste
         cpp_type.Append(mangle_name(type));
     }
 
-    if type.type_parameters.count > 0 and include_type_parameters
-    {
-        convert_type_parameters(cpp_type, type);
-    }
+    // if type.type_parameters.count > 0 and include_type_parameters
+    // {
+    //     convert_type_parameters(cpp_type, type);
+    // }
     return cpp_type;
 }
 
@@ -363,12 +363,12 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, "__");
         let argument_list: Semantic_Node = syntax.children[1];
         write(builder, int_to_string(node_argument_count(argument_list)));
-        if type.type_parameters.count > 0
-        {
-            let params: mut system.text.String_Builder = new system.text.String_Builder();
-            convert_type_parameters(params, type);
-            write(builder, params.ToString());
-        }
+        // if type.type_parameters.count > 0
+        // {
+        //     let params: mut system.text.String_Builder = new system.text.String_Builder();
+        //     convert_type_parameters(params, type);
+        //     write(builder, params.ToString());
+        // }
 
         if type.is_value_type
             { convert_expression(argument_list, builder); }

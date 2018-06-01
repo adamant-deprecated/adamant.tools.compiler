@@ -21,7 +21,7 @@ Test__0 *_Nonnull Test__0__0new__0(Test__0 *_Nonnull self) { return self; }
 
 void main__0()
 {
-	system__collections__List__1<Test__0 const *_Nonnull> const *_Nonnull const values__ = system__collections__List__1__0new__0<Test__0 const *_Nonnull>(allocate(sizeof(system__collections__List__1<Test__0 const *_Nonnull>)));
+	system__collections__List__1 const *_Nonnull const values__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1__0op__element(values__, ((int32){0}));
 }
 

@@ -24,7 +24,7 @@ Test__0 const *_Nullable Func__1(Test__0 const *_Nullable const x__)
 {
 	Test__0 const *_Nullable const t__ = none;
 	system__text__String_Builder__0 *_Nullable const sb__ = none;
-	system__collections__List__1<Test__0 const *_Nullable> const *_Nonnull const l__ = system__collections__List__1__0new__0<Test__0 const *_Nullable>(allocate(sizeof(system__collections__List__1<Test__0 const *_Nullable>)));
+	system__collections__List__1 const *_Nonnull const l__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	Test__0 *_Nullable const m__ = none;
 	return none;
 }

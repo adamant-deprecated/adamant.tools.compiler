@@ -399,16 +399,14 @@ inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)
     return iter->values[iter->current];
 }
 
-template<typename T>
 struct system__collections__List__1
 {
-    T *_Nonnull values;
+    void_ptr *_Nonnull values;
     int32 count__;
     int32 capacity__;
 };
 
-template<typename T>
-system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(system__collections__List__1<T> *_Nonnull self)
+inline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self)
 {
     self->values = NULL;
     self->count__ = {0};
@@ -416,55 +414,34 @@ system__collections__List__1<T> *_Nonnull system__collections__List__1__0new__0(
     return self;
 }
 
-template<typename T, typename TValue>
-void add_item__2(system__collections__List__1<T> *_Nonnull list, TValue value)
-{
-    if(list->count__.value >= list->capacity__.value)
-    {
-        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;
-        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
-        // Needed if T is a value type to avoid needing a default constructor
-        T* new_values = (T*)new char[new_capacity * sizeof(T)];
-        memcpy(new_values, list->values, list->count__.value * sizeof(T));
-        if(list->capacity__.value != 0)
-            delete[] list->values; // delete the old array
-        list->values = new_values;
-        list->capacity__ = (int32){new_capacity};
-    }
-    list->values[list->count__.value] = value;
-    list->count__.value++;
-}
+void add_item__2(system__collections__List__1 *_Nonnull list, void_ptr value);
 
-template<typename T>
-void clear_list__1(system__collections__List__1<T> *_Nonnull list)
+inline void clear_list__1(system__collections__List__1 *_Nonnull list)
 {
     list->count__ = (int32){0};
 }
 
-template<typename T>
-T system__collections__List__1__0op__element(system__collections__List__1<T> const*_Nonnull list, int32 const index)
+inline void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)
 {
     lib_assert(index.value >= 0 && index.value < list->count__.value);
     return list->values[index.value];
 }
 
-template<typename T>
-void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1<T> const *_Nonnull list)
+inline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list)
 {
     return (void_ptr__0iter)
     {
-        .values = (void_ptr*_Nonnull)list->values, // force cast could be bad if T is not a pointer
+        .values = list->values,
         .current = -1,
         .count = list->count__.value
     };
 }
 
-template<typename T>
-void_ptr__0iter void_ptr__0iterate(system__collections__List__1<T> const *_Nonnull list)
+inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list)
 {
     return (void_ptr__0iter)
     {
-        .values = (void_ptr*_Nonnull)list->values, // force cast could be bad if T is not a pointer
+        .values = list->values,
         .current = -1,
         .count = list->count__.value
     };

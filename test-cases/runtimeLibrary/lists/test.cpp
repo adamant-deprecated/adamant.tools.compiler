@@ -30,7 +30,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 
 	console__->WriteLine__0();
 	clear_strings__1(strings__);
-	system__collections__List__1<system__text__String_Builder__0 *_Nonnull> *_Nonnull const builders__ = system__collections__List__1__0new__0<system__text__String_Builder__0 *_Nonnull>(allocate(sizeof(system__collections__List__1<system__text__String_Builder__0 *_Nonnull>)));
+	system__collections__List__1 *_Nonnull const builders__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(builders__, system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){7,(uint8_t const*)"sb[0]: "})));
 	add_item__2(builders__, system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){7,(uint8_t const*)"sb[1]: "})));
 	for (void_ptr__0iter iter = system__collections__List__1__0iterate(builders__); void_ptr__0next(&iter);)
