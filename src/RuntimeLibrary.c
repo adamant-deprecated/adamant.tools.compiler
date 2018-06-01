@@ -4,7 +4,7 @@
 // Static Checks
 // -----------------------------------------------------------------------------
 
-inline void static_checks()
+static inline void static_checks()
 {
     // Because we assume we can cast from char* to uint8_t* they need to be the same size
     _Static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
@@ -41,7 +41,12 @@ void lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_
     }
 }
 
-inline int32 int32_from(int32_t v) { return (int32){ v }; }
+extern inline void_ptr allocate(size_t bytes);
+
+static inline int32 int32_from(int32_t v)
+{
+    return (int32){ v };
+}
 
 // TODO change this to something like byte_from
 uint8_t code_point__to_char(code_point v)
@@ -68,6 +73,12 @@ string string_from_cstr(char const* s)
 // Primitive Types
 // -----------------------------------------------------------------------------
 
+extern inline _Bool cond(BOOL cond);
+extern inline BOOL bool_from(_Bool b);
+extern inline BOOL bool_op(_Bool b);
+extern inline _Bool bool_arg(BOOL b);
+extern inline BOOL BOOL__0op__not(BOOL b);
+
 string bool_to_string__1(BOOL b)
 {
     if(cond(b))
@@ -75,6 +86,19 @@ string bool_to_string__1(BOOL b)
     else
         return (string){5,(uint8_t const*)"false"};
 }
+
+extern inline void op__add_assign(int32*_Nonnull lhs, int32 rhs);
+extern inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs);
+extern inline int32 int32__0op__neg(int32 v);
+extern inline int32 int32__0op__add(int32 lhs, int32 rhs);
+extern inline int32 int32__0op__sub(int32 lhs, int32 rhs);
+extern inline int32 int32__0op__mul(int32 lhs, int32 rhs);
+extern inline int32 int32__0op__div(int32 lhs, int32 rhs);
+extern inline int32 int32__0op__remainder(int32 lhs, int32 rhs);
+extern inline BOOL int32__0op__lt(int32 lhs, int32 rhs);
+extern inline BOOL int32__0op__lte(int32 lhs, int32 rhs);
+extern inline BOOL int32__0op__gt(int32 lhs, int32 rhs);
+extern inline BOOL int32__0op__gte(int32 lhs, int32 rhs);
 
 string int_to_string__1(int32 i)
 {
@@ -105,6 +129,12 @@ code_point int_to_code_point__1(int32 i)
     lib_assert(i.value >= 0);
     return (code_point){(uint32_t)i.value};
 }
+
+extern inline BOOL code_point__0op__lt(code_point lhs, code_point rhs);
+extern inline BOOL code_point__0op__lte(code_point lhs, code_point rhs);
+extern inline BOOL code_point__0op__gt(code_point lhs, code_point rhs);
+extern inline BOOL code_point__0op__gte(code_point lhs, code_point rhs);
+extern inline int32 code_point_as_int__1(code_point c);
 
 string code_point_to_string__1(code_point c)
 {
@@ -192,6 +222,9 @@ BOOL string__0op__gte(string lhs, string rhs)
     return result;
 }
 
+extern inline code_point string__0__0op__element(string value, int32 index);
+extern inline int32 string_byte_length__1(string s);
+
 string substring__3(string s, int32 start, int32 length)
 {
     // You can ask for a zero length substring at the end of the string
@@ -199,6 +232,9 @@ string substring__3(string s, int32 start, int32 length)
     lib_assert(start.value+length.value <= s.byte_length.value);
     return (string){length, s.bytes + start.value};
 }
+
+extern inline string substring__2(string s, int32 start);
+
 string string_replace__3(string s, string old_value, string new_value)
 {
     // We make one one the stack then manually call the constructor
@@ -241,8 +277,31 @@ int32 string_last_index_of__2(string s, code_point c)
 }
 
 // -----------------------------------------------------------------------------
+// Operators
+// -----------------------------------------------------------------------------
+
+extern inline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs);
+extern inline BOOL int32__0op__equal(int32 lhs, int32 rhs);
+extern inline BOOL code_point__0op__equal(code_point lhs, code_point rhs);
+extern BOOL string__0op__equal(string lhs, string rhs);
+// TODO this currently exists becuase of the compare `none`, it shouldn't exist
+extern inline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs);
+extern inline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs);
+
+extern inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs);
+extern inline BOOL int32__0op__not_equal(int32 lhs, int32 rhs);
+extern inline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs);
+extern inline BOOL string__0op__not_equal(string lhs, string rhs);
+// TODO this currently exists becuase of the compare `none`, it shouldn't exist
+extern inline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);
+extern inline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);
+
+// -----------------------------------------------------------------------------
 // Standard Library
 // -----------------------------------------------------------------------------
+
+extern inline void_ptr allocate__1(int32 bytes);
+extern inline void free__1(const_void_ptr object);
 
 void assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)
 {
@@ -326,6 +385,8 @@ _Bool string__0next(string__0iter*_Nonnull iter)
     return true;
 }
 
+extern inline string string__0current(string__0iter const*_Nonnull iter);
+
 Strings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)
 {
     self->values = NULL;
@@ -333,6 +394,9 @@ Strings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)
     self->capacity__ = (int32){0};
     return self;
 }
+
+extern inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index);
+extern inline void clear_strings__1(Strings__0 *_Nonnull strings);
 
 void add_string__2(Strings__0 *_Nonnull strings, string value)
 {
@@ -352,6 +416,9 @@ void add_string__2(Strings__0 *_Nonnull strings, string value)
     strings->count__.value++;
 }
 
+extern inline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings);
+extern inline string__0iter string__0iterate(Strings__0 const *_Nonnull strings);
+
 _Bool int__0next(int__0iter*_Nonnull iter)
 {
     iter->current++;
@@ -363,6 +430,8 @@ _Bool int__0next(int__0iter*_Nonnull iter)
     return true;
 }
 
+extern inline int32 int__0current(int__0iter const*_Nonnull iter);
+
 Ints__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)
 {
     self->values = NULL;
@@ -370,6 +439,9 @@ Ints__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)
     self->capacity__ = (int32){0};
     return self;
 }
+
+extern inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index);
+extern inline void clear_ints__1(Ints__0 *_Nonnull ints);
 
 void add_int__2(Ints__0 *_Nonnull ints, int32 value)
 {
@@ -389,6 +461,9 @@ void add_int__2(Ints__0 *_Nonnull ints, int32 value)
     ints->count__.value++;
 }
 
+extern inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints);
+extern inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints);
+
 _Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)
 {
     iter->current++;
@@ -399,6 +474,10 @@ _Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)
     }
     return true;
 }
+
+extern inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter);
+
+extern inline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self);
 
 void add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value)
 {
@@ -416,6 +495,11 @@ void add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr val
     list->values[list->count__.value] = (void*_Nullable)(void const*_Nullable)value; // TODO hack, we cast away const
     list->count__.value++;
 }
+
+extern inline void clear_list__1(system__collections__List__1 *_Nonnull list);
+extern inline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index);
+extern inline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list);
+extern inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list);
 
 void console_write__2(system__console__Console__0 *_Nonnull console, string value)
 {
@@ -439,6 +523,10 @@ system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char c
         self->values[i] = string_from_cstr(argv[i+1]);
     return self;
 }
+
+
+extern inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index);
+extern inline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments);
 
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string fileName)
 {
@@ -500,6 +588,8 @@ void ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)
         sb->capacity = new_capacity;
     }
 }
+
+extern inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self);
 
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value)
 {

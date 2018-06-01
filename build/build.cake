@@ -553,7 +553,7 @@ ConsoleCommand CompileC(string[] sourceGlobs, FilePath output, FilePath includeD
     var wd = MakeAbsolute(Directory("."));
     var sources = string.Join(" ", sourceGlobs.SelectMany(glob => GetFiles(glob)).Select(file => wd.GetRelativePath(file)));
 
-    return Command("clang", "-x c " + sources + " -o " + output + options);
+    return Command("clang", sources + " -o " + output + options);
 }
 
 bool IsOutOfDate(FilePath file, string commit)
