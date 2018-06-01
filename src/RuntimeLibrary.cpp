@@ -108,7 +108,9 @@ code_point int_to_code_point__1(int32 i)
 
 string code_point_to_string__1(code_point c)
 {
-    return (string){1, (uint8_t[]){ code_point__to_char(c) }};
+    uint8_t* bytes = allocate(sizeof(uint8_t));
+    *bytes = code_point__to_char(c);
+    return (string){1, bytes};
 }
 
 string string__0new__0()
