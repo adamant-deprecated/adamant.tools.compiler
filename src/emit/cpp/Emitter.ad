@@ -1197,9 +1197,9 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     else if declaration.kind == EnumDeclaration
     {
         let enum_name: string = get_node_text(first_child(declaration, Identifier));
-        write_line(emitter.type_declarations, "enum class " + enum_name + "_;");
+        write_line(emitter.type_declarations, "typedef enum " + enum_name + "_ " + enum_name +"_;");
         element_separator_line(emitter.class_declarations);
-        write_line(emitter.class_declarations, "enum class " + enum_name + "_");
+        write_line(emitter.class_declarations, "enum " + enum_name + "_");
         begin_block(emitter.class_declarations);
         for let member: Semantic_Node in declaration.children
         {
