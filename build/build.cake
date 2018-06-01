@@ -524,14 +524,13 @@ ConsoleCommand CompileC(string[] sourceGlobs, FilePath output, FilePath includeD
 {
     // Compiler Options Explained:
     // -std=c11 use the C 2011 standard (newest fully finalized)
-    // -fno-rtti : disables runtime type information
-    // -fno-exceptions : disables exceptions because we are trying to move toward C
-    var options =  " -std=c11 ";
+    // -fsanitize=undefined perform runtime checks for undefined behavior
+    // -Wall -Wno-missing-braces all warnings (except one annoying one)
+    var options = " -std=c11 -fsanitize=undefined -Wall -Wno-missing-braces ";
 
     // Additional options that can be useful:
-    // Include runtime checks: -fsanitize=undefined
-    // All warnings (except one annoying one): -Wall -Wno-missing-braces
-    // Disable Microsoft Extensions: -fno-ms-extensions
+    // -fsanitize=address perform runtime address safety checks
+    // -fno-ms-extensions disable Microsoft extensions
     //  Note: With this, headers don't compile on windows, but it catches some errors that the standard
     //          says should be errors and are caught on linux.
 
