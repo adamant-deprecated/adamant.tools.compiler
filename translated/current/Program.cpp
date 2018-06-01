@@ -2874,7 +2874,6 @@ Syntax_Node__0 const *_Nonnull parse_parameter_list__1(Compilation_Unit_Parser__
 			}
 			else
 			{
-				BOOL const mutableBinding__ = int32__0op__equal(parser__->token__->kind__, VarKeyword__);
 				if (cond(int32__0op__equal(parser__->token__->kind__, VarKeyword__)))
 				{
 					add_item__2(parameterChildren__, expect_token__2(parser__, VarKeyword__));
@@ -3751,7 +3750,7 @@ string emit__1(Emitter__0 *_Nonnull const emitter__)
 
 	emit_entry_point_adapter__1(emitter__);
 	int32 const total_size__ = int32__0op__add(int32__0op__add(int32__0op__add(int32__0op__add(int32__0op__add(((int32){0}), byte_length__1(emitter__->type_declarations__)), byte_length__1(emitter__->function_declarations__)), byte_length__1(emitter__->class_declarations__)), byte_length__1(emitter__->global_definitions__)), byte_length__1(emitter__->definitions__));
-	system__text__String_Builder__0 *_Nonnull const cpp_code__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
+	system__text__String_Builder__0 *_Nonnull const cpp_code__ = system__text__String_Builder__0__0new__with_capacity__1(allocate(sizeof(system__text__String_Builder__0)), total_size__);
 	sb_append__2(cpp_code__, to_string__1(emitter__->type_declarations__));
 	sb_append__2(cpp_code__, to_string__1(emitter__->function_declarations__));
 	sb_append__2(cpp_code__, to_string__1(emitter__->class_declarations__));
@@ -6107,7 +6106,6 @@ void can_get_Optional_class_from_name_with_package__0()
 	Source_Text__0 const *_Nonnull const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){9,(uint8_t const*)"//test.ad"}), ((string){19,(uint8_t const*)"// test source text"}));
 	Syntax_Node__0 const *_Nonnull const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
 	Name_Table__0 const *_Nonnull const name_table__ = build_name_table__3(name__, package_syntax__, references__);
-	Package_Name__0 const *_Nonnull const package_name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){11,(uint8_t const*)"$primitives"}));
 	Name__0 const *_Nonnull const adamant_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){7,(uint8_t const*)"adamant"}));
 	Name__0 const *_Nonnull const language_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace_name__, NamespaceName__, ((string){8,(uint8_t const*)"language"}));
 	assert__1(never__0op__not_equal(get_name__2(name_table__, language_namespace_name__), none));
