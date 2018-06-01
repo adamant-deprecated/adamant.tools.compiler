@@ -7,71 +7,16 @@
 #include <stdio.h>
 #include <stdint.h>
 
-// TODO C: Consider using *_s versions of standard lib functions
+// TODO Consider using *_s versions of standard lib functions
 
 // -----------------------------------------------------------------------------
-// C++ Compatibility
+// Library Utils
 // -----------------------------------------------------------------------------
-// This section defines things that make C++ behave more like C so we can make
-// the transition to C.
-#ifdef __cplusplus
-
-// Use `_Bool` as the native bool type
-#define _Bool bool
-
-// This type is used to emulate C style void pointers in C++. That is, they
-// implictly convert to/from other pointer types.
-class void_ptr
-{
-private:
-    void *_Nullable ptr;
-public:
-    template<class T>
-    void_ptr(T *_Nullable value) : ptr((void *_Nullable)value) {}
-    template<class T>
-    operator T *_Nullable() const { return (T *)ptr; }
-
-    _Bool operator==(void_ptr rhs) const { return ptr == rhs.ptr; }
-    template<class T>
-    _Bool operator==(T *_Nullable rhs) const { return ptr == rhs; }
-
-    _Bool operator!=(void_ptr rhs) const { return ptr != rhs.ptr; }
-    template<class T>
-    _Bool operator!=(T *_Nullable rhs) const { return ptr != rhs; }
-};
-
-class const_void_ptr
-{
-private:
-    void const*_Nullable ptr;
-public:
-    const_void_ptr(void_ptr value) : ptr((void *_Nullable)value) {}
-    template<class T>
-    const_void_ptr(T const*_Nullable value) : ptr((void *_Nullable)value) {}
-    template<class T>
-    operator T const*_Nullable() const { return (T const*)ptr; }
-
-    _Bool operator==(const_void_ptr rhs) const { return ptr == rhs.ptr; }
-    template<class T>
-    _Bool operator==(T const*_Nullable rhs) const { return ptr == rhs; }
-
-    _Bool operator!=(const_void_ptr rhs) const { return ptr != rhs.ptr; }
-    template<class T>
-    _Bool operator!=(T const*_Nullable rhs) const { return ptr != rhs; }
-};
-
-#else
 
 typedef void*_Nullable void_ptr;
 typedef void const*_Nullable const_void_ptr;
 static const _Bool true=1;
 static const _Bool false=0;
-
-#endif
-
-// -----------------------------------------------------------------------------
-// Library Utils
-// -----------------------------------------------------------------------------
 
 #define lib_assert(condition) lib_assert1(condition, #condition)
 void lib_assert1(const _Bool condition, char const *_Nonnull code);
