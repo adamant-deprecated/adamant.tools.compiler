@@ -38,7 +38,7 @@ public class Syntax_Node
         self.start = child.start;
         self.byte_length = child.byte_length;
         let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        children.add(child);
+        add_item(children, child);
         self.children = children;
         self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
@@ -67,7 +67,7 @@ public class Syntax_Node
         self.children = new system.collections.List<Syntax_Node>();
         self.node_diagnostics = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(start, 0);
-        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + int_to_string(type)));
+        add_item(self.node_diagnostics, new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + int_to_string(type)));
     }
 
     public new skipped(skipped_node: Syntax_Node)
@@ -78,11 +78,11 @@ public class Syntax_Node
         self.start = skipped_node.start;
         self.byte_length = skipped_node.byte_length;
         let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        children.add(skipped_node);
+        add_item(children, skipped_node);
         self.children = children;
         self.node_diagnostics = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(skipped_node.start, skipped_node.byte_length);
-        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + int_to_string(skipped_node.kind)));
+        add_item(self.node_diagnostics, new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + int_to_string(skipped_node.kind)));
     }
 
     public new skipped(skipped_nodes: system.collections.List<Syntax_Node>)
@@ -97,7 +97,7 @@ public class Syntax_Node
         self.children = new system.collections.List<Syntax_Node>();
         self.node_diagnostics = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(self.start, self.byte_length);
-        self.node_diagnostics.add(new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + int_to_string(skipped_nodes.count) + " unexpected token(s)"));
+        add_item(self.node_diagnostics, new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + int_to_string(skipped_nodes.count) + " unexpected token(s)"));
     }
 }
 
@@ -128,7 +128,7 @@ public has_child(syntax: Syntax_Node, type: int) -> bool
 
 public add(syntax: Syntax_Node, diagnostic: Diagnostic) -> void
 {
-    syntax.node_diagnostics.add(diagnostic);
+    add_item(syntax.node_diagnostics, diagnostic);
 }
 
 // We are returning ownership of the list, so they can mutate it if wanted
@@ -143,7 +143,7 @@ public collect_syntax_diagnostics(syntax: Syntax_Node, diagnostics: mut system.c
 {
     for let diagnostic: Diagnostic in syntax.node_diagnostics
     {
-        diagnostics.add(diagnostic);
+        add_item(diagnostics, diagnostic);
     }
 
     for let child: Syntax_Node in syntax.children
@@ -163,7 +163,7 @@ public members(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
             or child.kind == FieldDeclaration
             or child.kind == MethodDeclaration
         {
-            members.add(child);
+            add_item(members, child);
         }
     }
     return members;
@@ -179,7 +179,7 @@ public parameters(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
         if child.kind == Parameter
             or child.kind == SelfParameter
         {
-            parameters.add(child);
+            add_item(parameters, child);
         }
     }
     return parameters;
@@ -195,7 +195,7 @@ public statements(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
         if child.kind =/= LeftBrace
             and child.kind =/= RightBrace
         {
-            statements.add(child);
+            add_item(statements, child);
         }
     }
     return statements;

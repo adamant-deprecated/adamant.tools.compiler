@@ -112,7 +112,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
             {
                 console.WriteLine("  " + resourceFilePath);
             }
-            resources.add(read_source(resourceFilePath));
+            add_item(resources, read_source(resourceFilePath));
         }
     }
 
@@ -128,7 +128,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
         {
             console.WriteLine("  " + sourceFilePath);
         }
-        sources.add(read_source(sourceFilePath));
+        add_item(sources, read_source(sourceFilePath));
     }
 
     let package: Package = compile(sources);

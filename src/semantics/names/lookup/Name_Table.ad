@@ -16,7 +16,7 @@ public add_package(name_table: mut Name_Table, package_name: Package_Name) -> Na
 {
     // TODO deal with duplicate package names
     let subtable: mut Name_Subtable = new Name_Subtable.global_namespace(name_table, package_name);
-    name_table.packages.add(subtable);
+    add_item(name_table.packages, subtable);
     return subtable.name;
 }
 

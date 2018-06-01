@@ -45,11 +45,11 @@ public add_subtable(scope: mut Name_Subtable, name: Name, type: Type) -> void
     {
         if scope.name.package == none and type =/= none and type.kind == NamespaceType
         {
-            scope.subtables.add(new Name_Subtable(scope, remove_package(name), remove_type_package(type)));
+            add_item(scope.subtables, new Name_Subtable(scope, remove_package(name), remove_type_package(type)));
         }
         else
         {
-            scope.subtables.add(new Name_Subtable(scope, name, type));
+            add_item(scope.subtables, new Name_Subtable(scope, name, type));
         }
         return;
     }

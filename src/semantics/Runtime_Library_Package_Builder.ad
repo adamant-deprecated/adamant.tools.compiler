@@ -25,34 +25,34 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
 
     // global symbols
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "allocate")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "free")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "bool_to_string")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "int_to_string")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "int_to_hex_string")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "hex_string_to_int")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "int_to_code_point")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "code_point_to_string")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "string_byte_length")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "substring")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "string_replace")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "string_index_of")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "string_last_index_of")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "code_point_as_int")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "NOT_IMPLEMENTED")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "UNREACHABLE")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "assert")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "debug_write")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "debug_write_line")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "get_resource")));
-    symbols.add(build_class_symbol(global_namespace, "Strings"));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "clear_strings")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "add_string")));
-    symbols.add(build_class_symbol(global_namespace, "Ints"));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "clear_ints")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "add_int")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "clear_list")));
-    symbols.add(build_function_symbol(new Name(global_namespace, FunctionName, "add_item")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "allocate")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "free")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "bool_to_string")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "int_to_string")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "int_to_hex_string")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "hex_string_to_int")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "int_to_code_point")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "code_point_to_string")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "string_byte_length")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "substring")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "string_replace")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "string_index_of")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "string_last_index_of")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "code_point_as_int")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "NOT_IMPLEMENTED")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "UNREACHABLE")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "assert")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "debug_write")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "debug_write_line")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "get_resource")));
+    add_item(symbols, build_class_symbol(global_namespace, "Strings"));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "clear_strings")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "add_string")));
+    add_item(symbols, build_class_symbol(global_namespace, "Ints"));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "clear_ints")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "add_int")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "clear_list")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "add_item")));
 
     // system
     let system_namespace: Name = new Name(global_namespace, NamespaceName, "system");
@@ -62,33 +62,33 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     let collections_namespace: Name = new Name(system_namespace, NamespaceName, "collections");
     let collections_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
     let list_type_parameters: mut system.collections.List<Type> = new system.collections.List<Type>();
-    list_type_parameters.add(new Type.parameter("T"));
-    collections_symbols.add(build_generic_class_symbol(collections_namespace, "List", list_type_parameters));
-    system_symbols.add(build_namespace_symbol(collections_namespace, collections_symbols));
+    add_item(list_type_parameters, new Type.parameter("T"));
+    add_item(collections_symbols, build_generic_class_symbol(collections_namespace, "List", list_type_parameters));
+    add_item(system_symbols, build_namespace_symbol(collections_namespace, collections_symbols));
 
     // system.console
     let console_namespace: Name = new Name(system_namespace, NamespaceName, "console");
     let console_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    console_symbols.add(build_class_symbol(console_namespace, "Console"));
-    console_symbols.add(build_class_symbol(console_namespace, "Arguments"));
-    system_symbols.add(build_namespace_symbol(console_namespace, console_symbols));
+    add_item(console_symbols, build_class_symbol(console_namespace, "Console"));
+    add_item(console_symbols, build_class_symbol(console_namespace, "Arguments"));
+    add_item(system_symbols, build_namespace_symbol(console_namespace, console_symbols));
 
     // system.io
     let io_namespace: Name = new Name(system_namespace, NamespaceName, "io");
     let io_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    io_symbols.add(build_class_symbol(io_namespace, "File_Reader"));
-    io_symbols.add(build_class_symbol(io_namespace, "File_Writer"));
-    system_symbols.add(build_namespace_symbol(io_namespace, io_symbols));
+    add_item(io_symbols, build_class_symbol(io_namespace, "File_Reader"));
+    add_item(io_symbols, build_class_symbol(io_namespace, "File_Writer"));
+    add_item(system_symbols, build_namespace_symbol(io_namespace, io_symbols));
 
     // system.text
     let text_namespace: Name = new Name(system_namespace, NamespaceName, "text");
     let text_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
     let string_builder_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    string_builder_symbols.add(build_constructor_symbol("with_capacity"));
-    text_symbols.add(build_class_symbol(text_namespace, "String_Builder", string_builder_symbols));
-    system_symbols.add(build_namespace_symbol(text_namespace, text_symbols));
+    add_item(string_builder_symbols, build_constructor_symbol("with_capacity"));
+    add_item(text_symbols, build_class_symbol(text_namespace, "String_Builder", string_builder_symbols));
+    add_item(system_symbols, build_namespace_symbol(text_namespace, text_symbols));
 
-    symbols.add(build_namespace_symbol(system_namespace, system_symbols));
+    add_item(symbols, build_namespace_symbol(system_namespace, system_symbols));
 
     return symbols;
 }

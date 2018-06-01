@@ -5,7 +5,7 @@ public parse_package(sources: system.collections.List<Source_Text>) -> Syntax_No
     {
         let token_stream: mut Token_Stream = lexically_analyze(source);
         let compilation_unit_parser: mut Compilation_Unit_Parser = new Compilation_Unit_Parser(token_stream);
-        children.add(parse(compilation_unit_parser));
+        add_item(children, parse(compilation_unit_parser));
     }
     return new Syntax_Node(PackageNode, children);
 }

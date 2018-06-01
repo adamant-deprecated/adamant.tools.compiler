@@ -7,8 +7,8 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
     let primitives_package: Package = build_primitives_package();
     let runtime_package: Package = build_runtime_library_package();
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
-    references.add(new Package_Reference(primitives_package));
-    references.add(new Package_Reference(runtime_package));
+    add_item(references, new Package_Reference(primitives_package));
+    add_item(references, new Package_Reference(runtime_package));
 
     let name_table: Name_Table = build_name_table(name, package_syntax, references);
     let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();

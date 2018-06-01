@@ -27,41 +27,41 @@ public build_primitive_symbols(package_name: Package_Name) -> mut system.collect
     let global_namespace: Name = new Name.global_namespace(package_name);
     let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
 
-    symbols.add(build_adamant_language_namespace_symbol(global_namespace));
-    symbols.add(build_primitive_symbol("void", global_namespace));
-    symbols.add(build_primitive_symbol("never", global_namespace));
+    add_item(symbols, build_adamant_language_namespace_symbol(global_namespace));
+    add_item(symbols, build_primitive_symbol("void", global_namespace));
+    add_item(symbols, build_primitive_symbol("never", global_namespace));
 
-    symbols.add(build_primitive_symbol("bool", global_namespace));
-    symbols.add(build_primitive_symbol("code_point", global_namespace));
-    symbols.add(build_primitive_symbol("string", global_namespace));
+    add_item(symbols, build_primitive_symbol("bool", global_namespace));
+    add_item(symbols, build_primitive_symbol("code_point", global_namespace));
+    add_item(symbols, build_primitive_symbol("string", global_namespace));
 
-    symbols.add(build_primitive_symbol("int8", global_namespace));
-    symbols.add(build_primitive_symbol("int16", global_namespace));
-    symbols.add(build_primitive_symbol("int", global_namespace));
-    symbols.add(build_primitive_symbol("int64", global_namespace));
-    symbols.add(build_primitive_symbol("int128", global_namespace));
+    add_item(symbols, build_primitive_symbol("int8", global_namespace));
+    add_item(symbols, build_primitive_symbol("int16", global_namespace));
+    add_item(symbols, build_primitive_symbol("int", global_namespace));
+    add_item(symbols, build_primitive_symbol("int64", global_namespace));
+    add_item(symbols, build_primitive_symbol("int128", global_namespace));
 
-    symbols.add(build_primitive_symbol("byte", global_namespace));
-    symbols.add(build_primitive_symbol("uint16", global_namespace));
-    symbols.add(build_primitive_symbol("uint", global_namespace));
-    symbols.add(build_primitive_symbol("uint64", global_namespace));
-    symbols.add(build_primitive_symbol("uint128", global_namespace));
+    add_item(symbols, build_primitive_symbol("byte", global_namespace));
+    add_item(symbols, build_primitive_symbol("uint16", global_namespace));
+    add_item(symbols, build_primitive_symbol("uint", global_namespace));
+    add_item(symbols, build_primitive_symbol("uint64", global_namespace));
+    add_item(symbols, build_primitive_symbol("uint128", global_namespace));
 
-    symbols.add(build_primitive_symbol("float32", global_namespace));
-    symbols.add(build_primitive_symbol("float", global_namespace));
-    symbols.add(build_primitive_symbol("float128", global_namespace));
+    add_item(symbols, build_primitive_symbol("float32", global_namespace));
+    add_item(symbols, build_primitive_symbol("float", global_namespace));
+    add_item(symbols, build_primitive_symbol("float128", global_namespace));
 
     build_fixed_point_primitives(symbols, 8, global_namespace);
     build_fixed_point_primitives(symbols, 16, global_namespace);
     build_fixed_point_primitives(symbols, 32, global_namespace);
     build_fixed_point_primitives(symbols, 64, global_namespace);
 
-    symbols.add(build_primitive_symbol("decimal32", global_namespace));
-    symbols.add(build_primitive_symbol("decimal", global_namespace));
-    symbols.add(build_primitive_symbol("decimal128", global_namespace));
+    add_item(symbols, build_primitive_symbol("decimal32", global_namespace));
+    add_item(symbols, build_primitive_symbol("decimal", global_namespace));
+    add_item(symbols, build_primitive_symbol("decimal128", global_namespace));
 
-    symbols.add(build_primitive_symbol("size", global_namespace));
-    symbols.add(build_primitive_symbol("offset", global_namespace));
+    add_item(symbols, build_primitive_symbol("size", global_namespace));
+    add_item(symbols, build_primitive_symbol("offset", global_namespace));
 
     return symbols;
 }
@@ -71,9 +71,9 @@ public build_adamant_language_namespace_symbol(global_namespace: Name) -> Symbol
     let adamant_namespace: Name = new Name(global_namespace, NamespaceName, "adamant");
     let language_namespace: Name = new Name(adamant_namespace, NamespaceName, "language");
     let language_children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    language_children.add(build_optional_type_symbol(language_namespace));
+    add_item(language_children, build_optional_type_symbol(language_namespace));
     let adamant_children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    adamant_children.add(new Symbol.identifier(unqualified_name(language_namespace), language_children));
+    add_item(adamant_children, new Symbol.identifier(unqualified_name(language_namespace), language_children));
     return new Symbol.identifier(unqualified_name(adamant_namespace), adamant_children);
 }
 
@@ -81,7 +81,7 @@ public build_optional_type_symbol(language_namespace: Name) -> Symbol
 {
     let optional_name: Name = new Name(language_namespace, TypeName, "optional");
     let type_parameters: mut system.collections.List<Type> = new system.collections.List<Type>();
-    type_parameters.add(new Type(TypeParameterType, new Name(optional_name, TypeParameterName, "T"), true));
+    add_item(type_parameters, new Type(TypeParameterType, new Name(optional_name, TypeParameterName, "T"), true));
     let type: Type = new Type.primitive(optional_name, type_parameters);
     let declarations: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     let children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
@@ -105,7 +105,7 @@ public build_fixed_point_primitives(
     // TODO implement when language features make it easier
     // for let i: usize in 1..usize-1
     // {
-    // 	symbols.add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
-    // 	symbols.add(new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
+    // 	add_item(symbols, new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
+    // 	add_item(symbols, new_Symbol_primitive("fixed"+i+"."+(bitLength-i)));
     // }
 }

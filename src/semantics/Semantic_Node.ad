@@ -144,7 +144,7 @@ public children_of_kind(node: Semantic_Node, kind: int) -> system.collections.Li
     {
         if child.kind == kind
         {
-            children.add(child);
+            add_item(children, child);
         }
     }
     return children;
@@ -161,7 +161,7 @@ public node_members(node: Semantic_Node) -> system.collections.List<Semantic_Nod
             or child.kind == FieldDeclaration
             or child.kind == MethodDeclaration
         {
-            members.add(child);
+            add_item(members, child);
         }
     }
     return members;
@@ -177,7 +177,7 @@ public node_statements(node: Semantic_Node) -> system.collections.List<Semantic_
         if child.kind =/= LeftBrace
             and child.kind =/= RightBrace
         {
-            statements.add(child);
+            add_item(statements, child);
         }
     }
     return statements;
@@ -193,7 +193,7 @@ public node_parameters(node: Semantic_Node) -> system.collections.List<Semantic_
         if child.kind == Parameter
             or child.kind == SelfParameter
         {
-            parameters.add(child);
+            add_item(parameters, child);
         }
     }
     return parameters;
@@ -247,7 +247,7 @@ public node_has_child(node: Semantic_Node, kind: int) -> bool
 
 public add_diagnostic(node: mut Semantic_Node, diagnostic: Diagnostic) -> void
 {
-    node.node_diagnostics.add(diagnostic);
+    add_item(node.node_diagnostics, diagnostic);
 }
 
 public diagnostics(node: Semantic_Node) -> system.collections.List<Diagnostic>
@@ -259,7 +259,7 @@ public collect_diagnostics(node: Semantic_Node, diagnostics: mut system.collecti
 {
     for let diagnostic: Diagnostic in node.node_diagnostics
     {
-        diagnostics.add(diagnostic);
+        add_item(diagnostics, diagnostic);
     }
 
     for let child: Semantic_Node in node.children

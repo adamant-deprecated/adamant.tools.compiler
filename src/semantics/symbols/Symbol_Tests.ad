@@ -6,7 +6,7 @@ public unit_test_Symbol() -> void
 public Package_symbol_children_can_be_found_by_name_and_kind() -> void
 {
     let children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    children.add(new Symbol.identifier("child"));
+    add_item(children, new Symbol.identifier("child"));
     let package_with_children: Symbol = new Symbol.package("package", children);
     assert(get_child(package_with_children, "child", IdentifierSymbol) =/= none);
 }
