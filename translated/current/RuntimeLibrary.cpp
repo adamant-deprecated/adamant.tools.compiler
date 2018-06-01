@@ -436,14 +436,6 @@ void console_write_line__1(system__console__Console__0 *_Nonnull console)
     printf("\n");
 }
 
-// system__console__Arguments__0::system__console__Arguments__0(int argc, char const *const * argv)
-//     : count__((int32){argc-1})
-// {
-//     values = new string[count__.value];
-//     for (int i = 0; i < count__.value; i++)
-//         values[i] = string_from_cstr(argv[i+1]);
-// }
-
 system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv)
 {
     system__console__Arguments__0 *_Nonnull self = allocate(sizeof(system__console__Arguments__0));
@@ -460,6 +452,21 @@ system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system_
     self->file= fopen(fname, "rb"); // TODO check for error
     delete[] fname;
     return self;
+}
+
+string file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)
+{
+    fseek(reader->file, 0, SEEK_END);
+    auto length = ftell(reader->file);
+    fseek(reader->file, 0, SEEK_SET);
+    auto buffer = new uint8_t[length];
+    length = fread(buffer, sizeof(uint8_t), length, reader->file);
+    return (string){(int32_t)length, buffer};
+}
+
+void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)
+{
+    fclose(reader->file);
 }
 
 string system__io__File_Reader__0::ReadToEndSync__0()
@@ -483,6 +490,15 @@ system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system_
     self->file = fopen(fname, "wb"); // TODO check error
     delete[] fname;
     return self;
+}
+
+void file_write__1(system__io__File_Writer__0 *_Nonnull writer, string value)
+{
+    fwrite(value.Buffer, sizeof(char), value.byte_length.value, writer->file);
+}
+void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)
+{
+    fclose(writer->file);
 }
 
 void system__io__File_Writer__0::Write__1(const string& value)
