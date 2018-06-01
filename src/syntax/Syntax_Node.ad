@@ -44,7 +44,7 @@ public class Syntax_Node
     }
 
     // TODO we want to take ownership of the child list
-    public new(type: int, children: system.collections.List<Syntax_Node>)
+    public new with_children(type: int, children: system.collections.List<Syntax_Node>)
     {
         self.kind = type;
         self.is_missing = false;
@@ -86,7 +86,7 @@ public class Syntax_Node
         add_item(self.node_diagnostics, new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + int_to_string(skipped_node.kind)));
     }
 
-    public new skipped(skipped_nodes: system.collections.List<Syntax_Node>)
+    public new skipped_many(skipped_nodes: system.collections.List<Syntax_Node>)
     {
         self.kind = SkippedTokens;
         self.is_missing = false;
@@ -134,7 +134,7 @@ public add(syntax: Syntax_Node, diagnostic: Diagnostic) -> void
 }
 
 // We are returning ownership of the list, so they can mutate it if wanted
-public all_diagnostics(syntax: Syntax_Node) -> mut system.collections.List<Diagnostic>
+public all_node_diagnostics(syntax: Syntax_Node) -> mut system.collections.List<Diagnostic>
 {
     var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
     collect_syntax_diagnostics(syntax, diagnostics);

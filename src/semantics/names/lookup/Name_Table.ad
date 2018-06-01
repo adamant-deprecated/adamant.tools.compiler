@@ -21,24 +21,24 @@ public add_package(name_table: mut Name_Table, package_name: Package_Name) -> Na
 }
 
 // Adds a name to the `Name_Table`
-public add_name(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> Name
+public add_symbol_name(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> Name
 {
     var name: Name; // make this let when I can
     if symbol.declares_type =/= none
     {
         name = new Name(parent, TypeName, symbol.name, symbol.is_special_name);
-        add_name(name_table, name, symbol.declares_type);
+        add_type_name(name_table, name, symbol.declares_type);
     }
     else
     {
         // TODO this could be something besides a function name
         name = new Name(parent, FunctionName, symbol.name, symbol.is_special_name);
-        add_name(name_table, name, symbol.of_type);
+        add_type_name(name_table, name, symbol.of_type);
     }
     return name;
 }
 
-public add_name(name_table: mut Name_Table, name: Name, type: Type) -> void
+public add_type_name(name_table: mut Name_Table, name: Name, type: Type?) -> void
 {
     add_subtable(name_table.any_package, name, type);
     for let package: mut Name_Subtable in name_table.packages

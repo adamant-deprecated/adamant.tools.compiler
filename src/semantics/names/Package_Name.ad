@@ -14,7 +14,7 @@ public class Package_Name
 }
 
 // TODO getter
-public full_name(package_name: Package_Name) -> string
+public full_package_name(package_name: Package_Name) -> string
 {
     return package_name.unqualified;
 }

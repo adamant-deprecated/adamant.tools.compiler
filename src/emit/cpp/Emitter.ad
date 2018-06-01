@@ -177,11 +177,11 @@ public convert_primitive_type_name(type: Type) -> string
 }
 
 // Converts a type to C++
-public convert_type_name(type_node: Semantic_Node) -> mut system.text.String_Builder
-{
-    assert(type_node.referenced_type =/= none, get_node_text(type_node));
-    return convert_type_name(type_node.referenced_type);
-}
+// public convert_type_node_name(type_node: Semantic_Node) -> mut system.text.String_Builder
+// {
+//     assert(type_node.referenced_type =/= none, get_node_text(type_node));
+//     return convert_type_name(type_node.referenced_type);
+// }
 
 public convert_type_name(type: Type) -> mut system.text.String_Builder
 {

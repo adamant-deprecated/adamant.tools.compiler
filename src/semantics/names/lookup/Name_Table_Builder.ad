@@ -31,7 +31,7 @@ public add_referenced(
 
 public add_symbol(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> void
 {
-    let name: Name = add_name(name_table, parent, symbol);
+    let name: Name = add_symbol_name(name_table, parent, symbol);
     for let child: Symbol in symbol.children
     {
         add_symbol(/*mut*/ name_table, name, child);
@@ -88,7 +88,7 @@ public add_syntax(
             { type_kind = ValueType; }
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let type: Type = new Type(type_kind, name, true);
-        add_name(name_table, name, type);
+        add_type_name(name_table, name, type);
         for let member: Syntax_Node in members(syntax)
         {
             add_syntax(name_table, name, member);
@@ -108,21 +108,21 @@ public add_syntax(
         let self_name: Name = new Name.special(name, VariableName, "self");
         let self_type: Type = get_name(name_table, parent).type;
         assert(self_type =/= none);
-        add_name(name_table, self_name, self_type); // need variable to avoid ambiguity about types
+        add_type_name(name_table, self_name, self_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == FieldDeclaration
     {
         let unqualified_name: string = get_syntax_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let no_type: Type? = none; // we don't have a type for functions yet
-        add_name(name_table, name, no_type);
+        add_type_name(name_table, name, no_type);
     }
     else if syntax.kind == EnumDeclaration
     {
         let unqualified_name: string = get_syntax_text(first_child_syntax(syntax, Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let type: Type = new Type(ReferenceType, name, true);
-        add_name(name_table, name, type);
+        add_type_name(name_table, name, type);
         // TODO Add enum member symbols
     }
     else if syntax.kind == GlobalDeclaration
@@ -130,7 +130,7 @@ public add_syntax(
         let unqualified_name: string = get_syntax_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let no_type: Type? = none; // we don't have a type for functions yet
-        add_name(name_table, name, no_type);
+        add_type_name(name_table, name, no_type);
     }
     else if syntax.kind == Block
     {
@@ -150,7 +150,7 @@ public add_syntax(
         let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
         let name: Name = new Name(parent, VariableName, get_syntax_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
-        add_name(name_table, name, no_type); // need variable to avoid ambiguity about types
+        add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
         add_syntax(name_table, parent, first_child_syntax(syntax, Block));
     }
     else if syntax.kind == IfStatement
@@ -180,21 +180,21 @@ public add_syntax(
         let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
         let name: Name = new Name(parent, VariableName, get_syntax_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
-        add_name(name_table, name, no_type); // need variable to avoid ambiguity about types
+        add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == Parameter
     {
         let identifier: Syntax_Node = first_child_syntax(syntax, Identifier);
         let name: Name = new Name(parent, VariableName, get_syntax_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
-        add_name(name_table, name, no_type); // need variable to avoid ambiguity about types
+        add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == SelfParameter
     {
         let name: Name = new Name.special(parent, VariableName, "self");
         let self_type: Type = get_name(name_table, parent).parent.type;
         assert(self_type =/= none);
-        add_name(name_table, name, self_type); // need variable to avoid ambiguity about types
+        add_type_name(name_table, name, self_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == ExpressionStatement
         or syntax.kind == ReturnStatement
@@ -217,7 +217,7 @@ public add_function(
     -> void
 {
     let no_type: Type? = none; // we don't have a type for functions yet
-    add_name(name_table, name, no_type); // ambiguous unless we type the variable first
+    add_type_name(name_table, name, no_type); // ambiguous unless we type the variable first
 
     let parameters_syntax: Syntax_Node = first_child_syntax(function, ParameterList);
     for let parameter: Syntax_Node in parameters(parameters_syntax)

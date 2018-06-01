@@ -38,7 +38,7 @@ public /*mut*/ class Name_Subtable
     }
 }
 
-public add_subtable(scope: mut Name_Subtable, name: Name, type: Type) -> void
+public add_subtable(scope: mut Name_Subtable, name: Name, type: Type?) -> void
 {
     assert(is_qualified_by(name, scope.name), "\""+full_name(name)+"\" is not a child of \""+full_name(scope.name)+"\"");
     if qualifier_is(name, scope.name)

@@ -7,5 +7,5 @@ public parse_package(sources: system.collections.List<Source_Text>) -> Syntax_No
         let compilation_unit_parser: mut Compilation_Unit_Parser = new Compilation_Unit_Parser(token_stream);
         add_item(children, parse(compilation_unit_parser));
     }
-    return new Syntax_Node(PackageNode, children);
+    return new Syntax_Node.with_children(PackageNode, children);
 }

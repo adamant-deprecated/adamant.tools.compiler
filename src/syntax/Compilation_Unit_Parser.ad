@@ -83,14 +83,14 @@ public parse_type_name(parser: mut Compilation_Unit_Parser) -> Syntax_Node
                 add_item(genericNameChildren, parse_type(parser));
                 // TODO support multiple type arguments
                 add_item(genericNameChildren, expect_token(parser, GreaterThan));
-                add_item(children, new Syntax_Node(GenericName, genericNameChildren));
+                add_item(children, new Syntax_Node.with_children(GenericName, genericNameChildren));
             }
             else
             {
                 add_item(children, new Syntax_Node(IdentifierName, identifier));
             }
 
-            type = new Syntax_Node(QualifiedName, children);
+            type = new Syntax_Node.with_children(QualifiedName, children);
         }
 
         return type;
@@ -105,12 +105,12 @@ public parse_non_optional_type(parser: mut Compilation_Unit_Parser) -> Syntax_No
     {
         add_item(children, expect_token(parser, MutableKeyword));
         add_item(children, parse_type_name(parser));
-        return new Syntax_Node(MutableType, children);
+        return new Syntax_Node.with_children(MutableType, children);
     }
     else
     {
         add_item(children, parse_type_name(parser));
-        return new Syntax_Node(ImmutableType, children);
+        return new Syntax_Node.with_children(ImmutableType, children);
     }
 }
 
@@ -123,7 +123,7 @@ public parse_type(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         add_item(children, type);
         add_item(children, expect_token(parser, Question));
-        type = new Syntax_Node(ImmutableType, new Syntax_Node(OptionalType, children));
+        type = new Syntax_Node(ImmutableType, new Syntax_Node.with_children(OptionalType, children));
     }
 
     return type;
@@ -141,74 +141,74 @@ public parse_atom(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         add_item(children, expect_token(parser, NewKeyword));
         add_item(children, parse_type_name(parser));
         add_item(children, parse_call_arguments(parser));
-        return new Syntax_Node(NewExpression, children);
+        return new Syntax_Node.with_children(NewExpression, children);
     }
     if parser.token.kind == NotOperator
     {
         add_item(children, expect_token(parser, NotOperator));
         add_item(children, parse_expression(parser, 8));
-        return new Syntax_Node(NotExpression, children);
+        return new Syntax_Node.with_children(NotExpression, children);
     }
     if parser.token.kind == LeftParen
     {
         add_item(children, expect_token(parser, LeftParen));
         add_item(children, parse_expression(parser));
         add_item(children, expect_token(parser, RightParen));
-        return new Syntax_Node(ParenthesizedExpression, children);
+        return new Syntax_Node.with_children(ParenthesizedExpression, children);
     }
     if parser.token.kind == Pipe
     {
         add_item(children, expect_token(parser, Pipe));
         add_item(children, parse_expression(parser));
         add_item(children, expect_token(parser, Pipe));
-        return new Syntax_Node(MagnitudeExpression, children);
+        return new Syntax_Node.with_children(MagnitudeExpression, children);
     }
     if parser.token.kind == Minus
     {
         // Unary Minus
         add_item(children, expect_token(parser, Minus));
         add_item(children, parse_expression(parser, 8));
-        return new Syntax_Node(NegateExpression, children);
+        return new Syntax_Node.with_children(NegateExpression, children);
     }
     if parser.token.kind == NoneKeyword
     {
         add_item(children, expect_token(parser, NoneKeyword));
-        return new Syntax_Node(NoneLiteralExpression, children);
+        return new Syntax_Node.with_children(NoneLiteralExpression, children);
     }
     if parser.token.kind == SelfKeyword
     {
         add_item(children, expect_token(parser, SelfKeyword));
-        return new Syntax_Node(SelfExpression, children);
+        return new Syntax_Node.with_children(SelfExpression, children);
     }
     if parser.token.kind == TrueKeyword
     {
         add_item(children, expect_token(parser, TrueKeyword));
-        return new Syntax_Node(TrueLiteralExpression, children);
+        return new Syntax_Node.with_children(TrueLiteralExpression, children);
     }
     if parser.token.kind == FalseKeyword
     {
         add_item(children, expect_token(parser, FalseKeyword));
-        return new Syntax_Node(FalseLiteralExpression, children);
+        return new Syntax_Node.with_children(FalseLiteralExpression, children);
     }
     if parser.token.kind == Number
     {
         add_item(children, expect_token(parser, Number));
-        return new Syntax_Node(NumericLiteralExpression, children);
+        return new Syntax_Node.with_children(NumericLiteralExpression, children);
     }
     if parser.token.kind == Identifier
     {
         add_item(children, expect_token(parser, Identifier));
-        return new Syntax_Node(IdentifierName, children);
+        return new Syntax_Node.with_children(IdentifierName, children);
     }
     if parser.token.kind == StringLiteral
     {
         add_item(children, expect_token(parser, StringLiteral));
-        return new Syntax_Node(StringLiteralExpression, children);
+        return new Syntax_Node.with_children(StringLiteralExpression, children);
     }
     if parser.token.kind == CodePointLiteral
     {
         add_item(children, expect_token(parser, CodePointLiteral));
-        return new Syntax_Node(CodePointLiteralExpression, children);
+        return new Syntax_Node.with_children(CodePointLiteralExpression, children);
     }
 
     // Missing an atom, assume it should have been an identifier
@@ -231,7 +231,7 @@ public parse_call_arguments(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         }
     }
     add_item(children, expect_token(parser, RightParen));
-    return new Syntax_Node(ArgumentList, children);
+    return new Syntax_Node.with_children(ArgumentList, children);
 }
 
 // Operator Precedence
@@ -385,11 +385,11 @@ public parse_expression(parser: mut Compilation_Unit_Parser, minPrecedence: int)
             if leftAssociative
                 { precedence += 1; }
             add_item(children, parse_expression(parser, precedence));
-            expression = new Syntax_Node(expressionType, children);
+            expression = new Syntax_Node.with_children(expressionType, children);
         }
         else
         {
-            expression = new Syntax_Node(expressionType, children);
+            expression = new Syntax_Node.with_children(expressionType, children);
         }
     }
 }
@@ -411,20 +411,20 @@ public parse_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             add_item(children, parse_expression(parser));
         }
         add_item(children, expect_token(parser, Semicolon));
-        return new Syntax_Node(ReturnStatement, children);
+        return new Syntax_Node.with_children(ReturnStatement, children);
     }
     if parser.token.kind == LoopKeyword
     {
         add_item(children, expect_token(parser, LoopKeyword));
         add_item(children, parse_block(parser));
-        return new Syntax_Node(LoopStatement, children);
+        return new Syntax_Node.with_children(LoopStatement, children);
     }
     if parser.token.kind == WhileKeyword
     {
         add_item(children, expect_token(parser, WhileKeyword));
         add_item(children, parse_expression(parser));
         add_item(children, parse_block(parser));
-        return new Syntax_Node(WhileStatement, children);
+        return new Syntax_Node.with_children(WhileStatement, children);
     }
     if parser.token.kind == ForKeyword
     {
@@ -433,7 +433,7 @@ public parse_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         add_item(children, expect_token(parser, InKeyword));
         add_item(children, parse_expression(parser));
         add_item(children, parse_block(parser));
-        return new Syntax_Node(ForStatement, children);
+        return new Syntax_Node.with_children(ForStatement, children);
     }
     if parser.token.kind == DoKeyword
     {
@@ -442,7 +442,7 @@ public parse_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         add_item(children, expect_token(parser, WhileKeyword));
         add_item(children, parse_expression(parser));
         add_item(children, expect_token(parser, Semicolon));
-        return new Syntax_Node(DoWhileStatement, children);
+        return new Syntax_Node.with_children(DoWhileStatement, children);
     }
     if parser.token.kind == IfKeyword
     {
@@ -452,19 +452,19 @@ public parse_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     {
         add_item(children, expect_token(parser, BreakKeyword));
         add_item(children, expect_token(parser, Semicolon));
-        return new Syntax_Node(BreakStatement, children);
+        return new Syntax_Node.with_children(BreakStatement, children);
     }
     if parser.token.kind == ContinueKeyword
     {
         add_item(children, expect_token(parser, ContinueKeyword));
         add_item(children, expect_token(parser, Semicolon));
-        return new Syntax_Node(ContinueStatement, children);
+        return new Syntax_Node.with_children(ContinueStatement, children);
     }
     if parser.token.kind == VarKeyword or parser.token.kind == LetKeyword
     {
         add_item(children, parse_variable_declaration(parser, true));
         add_item(children, expect_token(parser, Semicolon));
-        return new Syntax_Node(LocalDeclarationStatement, children);
+        return new Syntax_Node.with_children(LocalDeclarationStatement, children);
     }
     if parser.token.kind == LeftBrace
     {
@@ -474,7 +474,7 @@ public parse_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     // Assume it is an expression statement
     add_item(children, parse_expression(parser));
     add_item(children, expect_token(parser, Semicolon));
-    return new Syntax_Node(ExpressionStatement, children);
+    return new Syntax_Node.with_children(ExpressionStatement, children);
 }
 
 public parse_if_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
@@ -492,10 +492,10 @@ public parse_if_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             { add_item(elseChildren, parse_if_statement(parser)); }
         else
             { add_item(elseChildren, parse_block(parser));}
-        add_item(children, new Syntax_Node(ElseClause, elseChildren));
+        add_item(children, new Syntax_Node.with_children(ElseClause, elseChildren));
     }
 
-    return new Syntax_Node(IfStatement, children);
+    return new Syntax_Node.with_children(IfStatement, children);
 }
 
 public parse_variable_declaration(parser: mut Compilation_Unit_Parser, allowInitializer: bool) -> Syntax_Node
@@ -517,7 +517,7 @@ public parse_variable_declaration(parser: mut Compilation_Unit_Parser, allowInit
         add_item(children, parse_expression(parser));
     }
 
-    return new Syntax_Node(VariableDeclaration, children);
+    return new Syntax_Node.with_children(VariableDeclaration, children);
 }
 
 public parse_block(parser: mut Compilation_Unit_Parser) -> Syntax_Node
@@ -543,11 +543,11 @@ public parse_block(parser: mut Compilation_Unit_Parser) -> Syntax_Node
                 if currentTokenType == Semicolon
                     { break; }
             }
-            add_item(children, new Syntax_Node.skipped(skipped));
+            add_item(children, new Syntax_Node.skipped_many(skipped));
         }
     }
     add_item(children, expect_token(parser, RightBrace));
-    return new Syntax_Node(Block, children);
+    return new Syntax_Node.with_children(Block, children);
 }
 
 public parse_parameter_list(parser: mut Compilation_Unit_Parser) -> Syntax_Node
@@ -568,7 +568,7 @@ public parse_parameter_list(parser: mut Compilation_Unit_Parser) -> Syntax_Node
                     { add_item(parameterChildren, expect_token(parser, MutableKeyword)); }
 
                 add_item(parameterChildren, expect_token(parser, SelfKeyword));
-                add_item(children, new Syntax_Node(SelfParameter, parameterChildren));
+                add_item(children, new Syntax_Node.with_children(SelfParameter, parameterChildren));
             }
             else
             {
@@ -579,7 +579,7 @@ public parse_parameter_list(parser: mut Compilation_Unit_Parser) -> Syntax_Node
                 add_item(parameterChildren, expect_token(parser, Colon));
                 let type: Syntax_Node = parse_type(parser);
                 add_item(parameterChildren, type);
-                add_item(children, new Syntax_Node(Parameter, parameterChildren));
+                add_item(children, new Syntax_Node.with_children(Parameter, parameterChildren));
             }
 
             if parser.token.kind == Comma
@@ -589,7 +589,7 @@ public parse_parameter_list(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         }
     }
     add_item(children, expect_token(parser, RightParen));
-    return new Syntax_Node(ParameterList, children);
+    return new Syntax_Node.with_children(ParameterList, children);
 }
 
 public parse_member_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
@@ -617,7 +617,7 @@ public parse_member_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_N
             { add_item(children, expect_token(parser, Identifier)); }
         add_item(children, parse_parameter_list(parser));
         add_item(children, parse_block(parser));
-        return new Syntax_Node(ConstructorDeclaration, children);
+        return new Syntax_Node.with_children(ConstructorDeclaration, children);
     }
 
     if parser.token.kind == VarKeyword
@@ -625,7 +625,7 @@ public parse_member_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_N
     {
         add_item(children, parse_variable_declaration(parser, false));
         add_item(children, expect_token(parser, Semicolon));
-        return new Syntax_Node(FieldDeclaration, children);
+        return new Syntax_Node.with_children(FieldDeclaration, children);
     }
 
     // Method Declaration
@@ -634,7 +634,7 @@ public parse_member_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_N
     add_item(children, expect_token(parser, Arrow));
     add_item(children, parse_type(parser));
     add_item(children, parse_block(parser));
-    return new Syntax_Node(MethodDeclaration, children);
+    return new Syntax_Node.with_children(MethodDeclaration, children);
 }
 
 public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
@@ -659,7 +659,7 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     {
         add_item(children, parse_variable_declaration(parser, true));
         add_item(children, expect_token(parser, Semicolon));
-        return new Syntax_Node(GlobalDeclaration, children);
+        return new Syntax_Node.with_children(GlobalDeclaration, children);
     }
 
     if parser.token.kind == ClassKeyword
@@ -679,7 +679,7 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             }
         }
         add_item(children, expect_token(parser, RightBrace));
-        return new Syntax_Node(ClassDeclaration, children);
+        return new Syntax_Node.with_children(ClassDeclaration, children);
     }
 
     if parser.token.kind == StructKeyword
@@ -699,7 +699,7 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             }
         }
         add_item(children, expect_token(parser, RightBrace));
-        return new Syntax_Node(StructDeclaration, children);
+        return new Syntax_Node.with_children(StructDeclaration, children);
     }
 
     if parser.token.kind == EnumKeyword
@@ -722,11 +722,11 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             {
                 add_item(memberChildren, expect_token(parser, Comma));
             }
-            add_item(children, new Syntax_Node(EnumMemberDeclaration, memberChildren));
+            add_item(children, new Syntax_Node.with_children(EnumMemberDeclaration, memberChildren));
         }
 
         add_item(children, expect_token(parser, RightBrace));
-        return new Syntax_Node(EnumDeclaration, children);
+        return new Syntax_Node.with_children(EnumDeclaration, children);
     }
 
     // Function Declaration
@@ -735,7 +735,7 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     add_item(children, expect_token(parser, Arrow));
     add_item(children, parse_type(parser));
     add_item(children, parse_block(parser));
-    return new Syntax_Node(FunctionDeclaration, children);
+    return new Syntax_Node.with_children(FunctionDeclaration, children);
 }
 
 public parse_compilation_unit(parser: mut Compilation_Unit_Parser) -> Syntax_Node
@@ -753,5 +753,5 @@ public parse_compilation_unit(parser: mut Compilation_Unit_Parser) -> Syntax_Nod
         }
     }
     add_item(children, expect_token(parser, EndOfFileToken));
-    return new Syntax_Node(CompilationUnit, children);
+    return new Syntax_Node.with_children(CompilationUnit, children);
 }

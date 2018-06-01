@@ -406,7 +406,7 @@ bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)
     return true;
 }
 
-void add_item__2(system__collections__List__1 *_Nonnull list, void_ptr value)
+void add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value)
 {
     if(list->count__.value >= list->capacity__.value)
     {
@@ -419,7 +419,7 @@ void add_item__2(system__collections__List__1 *_Nonnull list, void_ptr value)
         list->values = new_values;
         list->capacity__ = (int32){new_capacity};
     }
-    list->values[list->count__.value] = value;
+    list->values[list->count__.value] = (void*_Nullable)(void const*_Nullable)value; // TODO hack, we cast away const
     list->count__.value++;
 }
 
@@ -446,7 +446,7 @@ system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char c
     return self;
 }
 
-system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName)
+system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string fileName)
 {
     char const *_Nonnull fname = cstr_from(fileName);
     self->file= fopen(fname, "rb"); // TODO check for error
@@ -468,7 +468,7 @@ void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)
     fclose(reader->file);
 }
 
-system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string& fileName)
+system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string fileName)
 {
     char const *_Nonnull fname = cstr_from(fileName);
     self->file = fopen(fname, "wb"); // TODO check error
@@ -507,7 +507,7 @@ void ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)
     }
 }
 
-system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string const & value)
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value)
 {
     system__text__String_Builder__0__0new__0(self);
     ensure_sb_capacity(self, value.byte_length.value);
@@ -523,7 +523,7 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
     return self;
 }
 
-void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string const & value)
+void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)
 {
     int32_t new_length = sb->byte_length__.value + value.byte_length.value;
     ensure_sb_capacity(sb, new_length);
@@ -539,7 +539,7 @@ void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text_
     sb->byte_length__.value = new_length;
 }
 
-void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string const& value)
+void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value)
 {
     int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;
     ensure_sb_capacity(sb, new_length);

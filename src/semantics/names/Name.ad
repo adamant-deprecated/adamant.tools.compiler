@@ -82,7 +82,7 @@ public class Name
         self.is_special = true;
     }
 
-    public new(
+    public new exactly(
         package: Package_Name?,
         kind: int,
         segments: Strings,
@@ -105,7 +105,7 @@ public full_name(name: Name) -> string
 {
     var result: string = "";
     if name.package =/= none
-        { result = full_name(name.package); }
+        { result = full_package_name(name.package); }
 
     result = result + "::";
     // TODO need string join
@@ -135,8 +135,8 @@ public is_qualified_by(name: Name, qualifier: Name) -> bool
         and qualifier.package =/= none
     {
         // Hack put name in variable so compiler can figure out the types for not equal expression
-        let full_package_name: string = full_name(name.package);
-        if full_package_name =/= full_name(qualifier.package)
+        let full_package_name: string = full_package_name(name.package);
+        if full_package_name =/= full_package_name(qualifier.package)
             { return false; }
     }
 
@@ -168,8 +168,8 @@ public names(name: Name, other: Name) -> bool
     if name.package =/= none
     {
         // Hack put name in variable so compiler can figure out the types for not equal expression
-        let full_package_name: string = full_name(name.package);
-        if (other.package == none or full_package_name =/= full_name(other.package))
+        let full_package_name: string = full_package_name(name.package);
+        if (other.package == none or full_package_name =/= full_package_name(other.package))
             { return false; }
     }
 
@@ -194,5 +194,5 @@ public remove_package(name: Name) -> Name
     if name.package == none
         { return name; }
     else
-        { return new Name(none, name.kind, name.segments, name.is_special); }
+        { return new Name.exactly(none, name.kind, name.segments, name.is_special); }
 }

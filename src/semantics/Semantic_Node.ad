@@ -255,7 +255,7 @@ public diagnostics(node: Semantic_Node) -> system.collections.List<Diagnostic>
     return node.node_diagnostics;
 }
 
-public collect_diagnostics(node: Semantic_Node, diagnostics: mut system.collections.List<Diagnostic>) -> void
+public collect_node_diagnostics(node: Semantic_Node, diagnostics: mut system.collections.List<Diagnostic>) -> void
 {
     for let diagnostic: Diagnostic in node.node_diagnostics
     {
@@ -264,6 +264,6 @@ public collect_diagnostics(node: Semantic_Node, diagnostics: mut system.collecti
 
     for let child: Semantic_Node in node.children
     {
-        collect_diagnostics(child, diagnostics);
+        collect_node_diagnostics(child, diagnostics);
     }
 }

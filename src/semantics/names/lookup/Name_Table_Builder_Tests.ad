@@ -12,8 +12,9 @@ public table_contains_referenced_child_names() -> void
     let runtime_package: Package = build_runtime_library_package();
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     add_item(references, new Package_Reference(runtime_package));
+    let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
 
-    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
     let name_table: Name_Table = build_name_table(name, package_syntax, references);
     let namespace: Name_Subtable = find(name_table.any_package, "system");
     assert(find(namespace, "console") =/= none);
@@ -32,8 +33,9 @@ public can_get_root_namespace_from_name() -> void
     let runtime_package: Package = build_runtime_library_package();
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     add_item(references, new Package_Reference(runtime_package));
+    let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
 
-    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
     let name_table: Name_Table = build_name_table(name, package_syntax, references);
     let namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
     assert(get_name(name_table, namespace_name) =/= none);
@@ -45,8 +47,9 @@ public can_get_Console_class_from_name_without_package() -> void
     let runtime_package: Package = build_runtime_library_package();
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     add_item(references, new Package_Reference(runtime_package));
+    let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
 
-    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
     let name_table: Name_Table = build_name_table(name, package_syntax, references);
 
     let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
@@ -61,8 +64,9 @@ public can_get_Optional_class_from_name_with_package() -> void
     let primitives_package: Package = build_primitives_package();
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     add_item(references, new Package_Reference(primitives_package));
+    let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
 
-    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, none, 0, 0);
+    let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
     let name_table: Name_Table = build_name_table(name, package_syntax, references);
 
     let package_name: Package_Name = new Package_Name("$primitives");
