@@ -77,7 +77,7 @@ Task("Build-Previous")
             });
         CleanDirectory("target/previous");
 
-        // When we pull the C++ source from the other branch, it is in these
+        // When we pull the C source from the other branch, it is in these
         // directories so we have to clean them out.
         CleanDirectory("translated/current");
         CleanDirectory("target/current");
@@ -90,9 +90,9 @@ Task("Build-Previous")
         GitUnstage(".", new FilePath[] { "translated" });
         MoveDirectory("translated/current", "translated/previous");
 
-        Information("Compiling previous C++");
+        Information("Compiling previous C");
         EnsureDirectoryExists("target/previous");
-        CompileCpp("translated/previous/*.cpp", "target/previous/Program").Run();
+        CompileC("translated/previous/*.cpp", "target/previous/Program").Run();
         SaveVersionInfo("target/previous/Program", sourceCommit);
     });
 
@@ -103,13 +103,13 @@ Task("Build-Current")
         CleanDirectory("translated/current");
         CleanDirectory("target/current");
 
-        Information("Compiling Adamant to C++");
+        Information("Compiling Adamant to C");
         EnsureDirectoryExists("translated/current");
         CompileAdamant("previous", "current").Run();
 
-        Information("Compiling current C++");
+        Information("Compiling current C");
         EnsureDirectoryExists("target/current");
-        CompileCpp("translated/current/*.cpp", "target/current/Program").Run();
+        CompileC("translated/current/*.cpp", "target/current/Program").Run();
     });
 
 Task("Unit-Test-Current")
@@ -133,13 +133,13 @@ Task("Build-Bootstrapped")
         CleanDirectory("translated/bootstrapped");
         CleanDirectory("target/bootstrapped");
 
-        Information("Compiling Adamant to C++");
+        Information("Compiling Adamant to C");
         EnsureDirectoryExists("translated/bootstrapped");
         CompileAdamant("current", "bootstrapped").Run();
 
-        Information("Compiling bootstrapped C++");
+        Information("Compiling bootstrapped C");
         EnsureDirectoryExists("target/bootstrapped");
-        CompileCpp("translated/bootstrapped/*.cpp", "target/bootstrapped/Program").Run();
+        CompileC("translated/bootstrapped/*.cpp", "target/bootstrapped/Program").Run();
     });
 
 Task("Unit-Test-Bootstrapped")
@@ -163,13 +163,13 @@ Task("Build-Double-Bootstrapped")
         CleanDirectory("translated/double-bootstrapped");
         CleanDirectory("target/double-bootstrapped");
 
-        Information("Compiling Adamant to C++");
+        Information("Compiling Adamant to C");
         EnsureDirectoryExists("translated/double-bootstrapped");
         CompileAdamant("bootstrapped", "double-bootstrapped").Run();
 
-        Information("Compiling double-bootstrapped C++");
+        Information("Compiling double-bootstrapped C");
         EnsureDirectoryExists("target/double-bootstrapped");
-        CompileCpp("translated/double-bootstrapped/*.cpp", "target/double-bootstrapped/Program").Run();
+        CompileC("translated/double-bootstrapped/*.cpp", "target/double-bootstrapped/Program").Run();
 
         Information("Verifying bootstrapped and double-bootstrapped are equal");
         var bootstrappedFiles = GetFiles("translated/bootstrapped/**/*");
@@ -220,7 +220,7 @@ Task("Build-Expected")
             var outputDir = Directory("target") + relativePath.GetDirectory();
             EnsureDirectoryExists(outputDir);
             var output = outputDir + relativePath.GetFilenameWithoutExtension();
-            CompileCpp(new []{ relativePath.ToString(), "src/*.cpp" }, output, "src").Run();
+            CompileC(new []{ relativePath.ToString(), "src/*.cpp" }, output, "src").Run();
         }
         Information("Compiled {0} Test Case Expected Outputs", testCases.Count);
     });
@@ -436,13 +436,13 @@ void Test(string version)
             if(!FileExists(output))
             {
                 Error("  {0} [FAIL]", testCaseName);
-                Information("    C++ output does not exist.");
+                Information("    C output does not exist.");
                 caseFailed = true;
             }
             else if(FileReadText(expectedCpp) != FileReadText(output))
             {
                 Error("  {0} [FAIL]", testCaseName);
-                Information("    C++ does not match expected.");
+                Information("    C does not match expected.");
                 caseFailed = true;
             }
         }
@@ -515,18 +515,18 @@ ConsoleCommand CompileAdamant(FilePath compiler, IEnumerable<FilePath> sources, 
     return Command(compiler, string.Join(" ", relativeSources) + " -o " + output + string.Concat(relativeResources.Select(r => " -r " + r)));
 }
 
-ConsoleCommand CompileCpp(string sourceGlob, FilePath output, FilePath includeDirectory = null)
+ConsoleCommand CompileC(string sourceGlob, FilePath output, FilePath includeDirectory = null)
 {
-    return CompileCpp(new [] { sourceGlob }, output, includeDirectory);
+    return CompileC(new [] { sourceGlob }, output, includeDirectory);
 }
 
-ConsoleCommand CompileCpp(string[] sourceGlobs, FilePath output, FilePath includeDirectory = null)
+ConsoleCommand CompileC(string[] sourceGlobs, FilePath output, FilePath includeDirectory = null)
 {
     // Compiler Options Explained:
-    // -std=c++14 use the C++ 2014 standard (newest fully finalized)
+    // -std=c11 use the C 2011 standard (newest fully finalized)
     // -fno-rtti : disables runtime type information
     // -fno-exceptions : disables exceptions because we are trying to move toward C
-    var options =  " -std=c++14 -fno-rtti -fno-exceptions ";
+    var options =  " -std=c11 ";
 
     // Additional options that can be useful:
     // Include runtime checks: -fsanitize=undefined
@@ -551,7 +551,7 @@ ConsoleCommand CompileCpp(string[] sourceGlobs, FilePath output, FilePath includ
     var wd = MakeAbsolute(Directory("."));
     var sources = string.Join(" ", sourceGlobs.SelectMany(glob => GetFiles(glob)).Select(file => wd.GetRelativePath(file)));
 
-    return Command("clang++", sources + " -o " + output + options);
+    return Command("clang", "-x c " + sources + " -o " + output + options);
 }
 
 bool IsOutOfDate(FilePath file, string commit)
