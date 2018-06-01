@@ -54,7 +54,7 @@ char const * cstr_from(string value)
 {
     int32_t length = value.byte_length.value;
     char* bytes = allocate(length + 1);
-    memcpy(bytes, value.Buffer, length);
+    memcpy(bytes, value.bytes, length);
     bytes[length] = 0;
     return bytes;
 }
@@ -138,8 +138,8 @@ string string__0op__add(string lhs, string rhs)
     int new_length = lhs.byte_length.value + rhs.byte_length.value;
     uint8_t* chars = allocate(new_length);
     size_t offset = sizeof(uint8_t) * lhs.byte_length.value;
-    memcpy(chars, lhs.Buffer, offset);
-    memcpy(chars + offset, rhs.Buffer, rhs.byte_length.value);
+    memcpy(chars, lhs.bytes, offset);
+    memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);
     return (string){new_length, chars};
 }
 
@@ -149,7 +149,7 @@ BOOL string__0op__equal(string lhs, string rhs)
         return FALSE;
 
     for (int i = 0; i < lhs.byte_length.value; i++)
-        if (lhs.Buffer[i] != rhs.Buffer[i])
+        if (lhs.bytes[i] != rhs.bytes[i])
             return FALSE;
 
     return TRUE;
@@ -197,7 +197,7 @@ string substring__3(string s, int32 start, int32 length)
     // You can ask for a zero length substring at the end of the string
     lib_assert(start.value <= s.byte_length.value);
     lib_assert(start.value+length.value <= s.byte_length.value);
-    return (string){length, s.Buffer + start.value};
+    return (string){length, s.bytes + start.value};
 }
 string string_replace__3(string s, string old_value, string new_value)
 {
@@ -223,7 +223,7 @@ int32 string_index_of__2(string s, code_point c)
 {
     uint8_t value = code_point__to_char(c);
     for(int i = 0; i < s.byte_length.value; i++)
-        if(s.Buffer[i] == value)
+        if(s.bytes[i] == value)
             return int32_from(i);
 
     // TODO we should return `int?` and return `none` in this case
@@ -233,7 +233,7 @@ int32 string_last_index_of__2(string s, code_point c)
 {
     uint8_t value = code_point__to_char(c);
     for(int i = s.byte_length.value - 1; i >= 0; i--)
-        if(s.Buffer[i] == value)
+        if(s.bytes[i] == value)
             return int32_from(i);
 
     // TODO we should return `int?` and return `none` in this case
@@ -304,11 +304,11 @@ string get_resource__1(string name)
 
 void debug_write__1(string value)
 {
-    fprintf(stderr, "%.*s", value.byte_length.value, value.Buffer);
+    fprintf(stderr, "%.*s", value.byte_length.value, value.bytes);
 }
 void debug_write_line__1(string value)
 {
-    fprintf(stderr, "%.*s\n", value.byte_length.value, value.Buffer);
+    fprintf(stderr, "%.*s\n", value.byte_length.value, value.bytes);
 }
 void debug_write_line__0()
 {
@@ -419,11 +419,11 @@ void add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr val
 
 void console_write__2(system__console__Console__0 *_Nonnull console, string value)
 {
-    printf("%.*s", value.byte_length.value, value.Buffer);
+    printf("%.*s", value.byte_length.value, value.bytes);
 }
 void console_write_line__2(system__console__Console__0 *_Nonnull console, string value)
 {
-    printf("%.*s\n", value.byte_length.value, value.Buffer);
+    printf("%.*s\n", value.byte_length.value, value.bytes);
 }
 void console_write_line__1(system__console__Console__0 *_Nonnull console)
 {
@@ -472,7 +472,7 @@ system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system_
 
 void file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value)
 {
-    fwrite(value.Buffer, sizeof(char), value.byte_length.value, writer->file);
+    fwrite(value.bytes, sizeof(char), value.byte_length.value, writer->file);
 }
 void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)
 {
@@ -505,7 +505,7 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
 {
     system__text__String_Builder__0__0new__0(self);
     ensure_sb_capacity(self, value.byte_length.value);
-    memcpy(self->bytes, value.Buffer, value.byte_length.value);
+    memcpy(self->bytes, value.bytes, value.byte_length.value);
     self->byte_length__.value = value.byte_length.value;
     return self;
 }
@@ -521,7 +521,7 @@ void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)
 {
     int32_t new_length = sb->byte_length__.value + value.byte_length.value;
     ensure_sb_capacity(sb, new_length);
-    memcpy(sb->bytes+sb->byte_length__.value, value.Buffer, value.byte_length.value);
+    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);
     sb->byte_length__.value = new_length;
 }
 
@@ -537,7 +537,7 @@ void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string valu
 {
     int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;
     ensure_sb_capacity(sb, new_length);
-    memcpy(sb->bytes+sb->byte_length__.value, value.Buffer, value.byte_length.value);
+    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);
     sb->bytes[new_length-1] = '\n';
     sb->byte_length__.value = new_length;
 }

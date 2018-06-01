@@ -187,7 +187,7 @@ struct string
     // not the correct implementation.
 
     // don't use chars because C's handling of chars sucks
-    uint8_t const *_Nonnull Buffer; // TODO use byte and rename to `bytes`
+    uint8_t const *_Nonnull bytes;
 };
 
 string string__0new__0();
@@ -202,7 +202,7 @@ BOOL string__0op__gte(string lhs, string rhs);
 inline code_point string__0__0op__element(string value, int32 index)
 {
     lib_assert(index.value >= 0 && index.value < value.byte_length.value);
-    return (code_point){value.Buffer[index.value]};
+    return (code_point){value.bytes[index.value]};
 }
 
 inline int32 string_byte_length__1(string s) { return s.byte_length; }
