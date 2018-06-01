@@ -492,7 +492,7 @@ system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system_
     return self;
 }
 
-void file_write__1(system__io__File_Writer__0 *_Nonnull writer, string value)
+void file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value)
 {
     fwrite(value.Buffer, sizeof(char), value.byte_length.value, writer->file);
 }

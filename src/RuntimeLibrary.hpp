@@ -505,7 +505,7 @@ struct system__io__File_Writer__0
 };
 
 system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string& fileName);
-void file_write__1(system__io__File_Writer__0 *_Nonnull writer, string value);
+void file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);
 void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);
 
 struct system__text__String_Builder__0
