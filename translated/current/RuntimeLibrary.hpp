@@ -253,6 +253,8 @@ typedef struct int__0iter int__0iter;
 typedef struct Ints__0 Ints__0;
 typedef struct void_ptr__0iter void_ptr__0iter;
 typedef struct system__collections__List__1 system__collections__List__1;
+typedef struct system__console__Console__0 system__console__Console__0;
+typedef struct system__console__Arguments__0 system__console__Arguments__0;
 
 inline void_ptr allocate__1(int32 bytes)
 {
@@ -410,8 +412,8 @@ struct system__collections__List__1
 inline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self)
 {
     self->values = NULL;
-    self->count__ = {0};
-    self->capacity__ = {0};
+    self->count__ = (int32){0};
+    self->capacity__ = (int32){0};
     return self;
 }
 
@@ -448,29 +450,33 @@ inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_N
     };
 }
 
-class system__console__Console__0
+struct system__console__Console__0
 {
-public:
     void Write__1(string value);
     void WriteLine__1(string value);
     void WriteLine__0();
 };
 
+void console_write__2(system__console__Console__0 *_Nonnull console, string value);
+void console_write_line__2(system__console__Console__0 *_Nonnull console, string value);
+void console_write_line__1(system__console__Console__0 *_Nonnull console);
+
 struct system__console__Arguments__0
 {
     string *_Nonnull values;
+    int32 count__;
 
     system__console__Arguments__0(int argc, char const *_Nonnull const *_Nonnull argv);
 
-    const int Count;
-
     // Adamant Members
-    int32 op__magnitude() const { return (int32){Count}; }
+    int32 op__magnitude() const { return count__; }
 };
+
+system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);
 
 inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)
 {
-    lib_assert(index.value >= 0 && index.value < arguments->Count);
+    lib_assert(index.value >= 0 && index.value < arguments->count__.value);
     return arguments->values[index.value];
 }
 
@@ -480,7 +486,7 @@ inline string__0iter system__console__Arguments__0__0iterate(system__console__Ar
     {
         .values = arguments->values,
         .current = -1,
-        .count = arguments->Count
+        .count = arguments->count__.value
     };
 }
 
