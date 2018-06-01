@@ -572,7 +572,6 @@ public parse_parameter_list(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             }
             else
             {
-                let mutableBinding: bool = parser.token.kind == VarKeyword;
                 if parser.token.kind == VarKeyword
                     { add_item(parameterChildren, expect_token(parser, VarKeyword)); }
                 add_item(parameterChildren, expect_token(parser, Identifier));

@@ -51,7 +51,7 @@ public emit(emitter: mut Emitter) -> string
         + byte_length(emitter.class_declarations)
         + byte_length(emitter.global_definitions)
         + byte_length(emitter.definitions);
-    let cpp_code: mut system.text.String_Builder = new system.text.String_Builder()/*.with_capacity(total_size)*/;
+    let cpp_code: mut system.text.String_Builder = new system.text.String_Builder.with_capacity(total_size);
     sb_append(cpp_code, to_string(emitter.type_declarations));
     sb_append(cpp_code, to_string(emitter.function_declarations));
     sb_append(cpp_code, to_string(emitter.class_declarations));

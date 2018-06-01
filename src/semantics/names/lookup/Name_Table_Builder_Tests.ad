@@ -69,7 +69,6 @@ public can_get_Optional_class_from_name_with_package() -> void
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
     let name_table: Name_Table = build_name_table(name, package_syntax, references);
 
-    let package_name: Package_Name = new Package_Name("$primitives");
     let adamant_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "adamant");
     let language_namespace_name: Name = new Name(adamant_namespace_name, NamespaceName, "language");
     assert(get_name(name_table, language_namespace_name) =/= none);
