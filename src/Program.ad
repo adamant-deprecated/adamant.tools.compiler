@@ -50,7 +50,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
 
     let sourceFilePaths: mut Strings = new Strings();
     let resourceFilePaths: mut Strings = new Strings();
-    var outputFilePath: string = "";
+    var output_file_path: string = "";
     var verbose: bool = false;
     var argType: int = 0; // 0=source file, 1=resource file, 2=output file
     for let arg: string in args
@@ -81,7 +81,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
         }
         else if argType == 2 // output file
         {
-            outputFilePath = arg;
+            output_file_path = arg;
             argType = 0;
         }
 
@@ -92,7 +92,7 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
     {
         console_write_line(console, "Adamant Compiler v0.1.0");
     }
-    if sourceFilePaths.count == 0 or outputFilePath == ""
+    if sourceFilePaths.count == 0 or output_file_path == ""
     {
         console_write_line(console, "Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
         return UsageError;
@@ -148,32 +148,32 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
     if verbose
     {
         console_write(console, "Output: ");
-        console_write_line(console, outputFilePath);
+        console_write_line(console, output_file_path);
     }
     // TODO should be `new mut`
-    let outputFile: mut system.io.File_Writer = new system.io.File_Writer(outputFilePath);
-    outputFile.Write(translated);
-    outputFile.Close();
+    let outputFile: mut system.io.File_Writer = new system.io.File_Writer(output_file_path);
+    file_write(outputFile, translated);
+    close_file_writer(outputFile);
 
     // Write RuntimeLibrary
-    var outputDirPath: string = outputFilePath;
-    var index: int = string_last_index_of(outputDirPath, '/');
+    var output_dir_path: string = output_file_path;
+    var index: int = string_last_index_of(output_dir_path, '/');
     if index =/= -1
-        { outputDirPath = substring(outputDirPath, 0, index+1); }
-    index = string_last_index_of(outputDirPath, '\\');
+        { output_dir_path = substring(output_dir_path, 0, index+1); }
+    index = string_last_index_of(output_dir_path, '\\');
     if index =/= -1
-        { outputDirPath = substring(outputDirPath, 0, index+1); }
+        { output_dir_path = substring(output_dir_path, 0, index+1); }
     if verbose
     {
         console_write(console, "Outputting RuntimeLibrary to: ");
-        console_write_line(console, outputDirPath);
+        console_write_line(console, output_dir_path);
     }
-    var resourceFile: mut system.io.File_Writer = new system.io.File_Writer(outputDirPath+"RuntimeLibrary.hpp");
-    resourceFile.Write(get_resource("RuntimeLibrary.hpp"));
-    resourceFile.Close();
-    resourceFile = new system.io.File_Writer(outputDirPath+"RuntimeLibrary.cpp");
-    resourceFile.Write(get_resource("RuntimeLibrary.cpp"));
-    resourceFile.Close();
+    var resource_file: mut system.io.File_Writer = new system.io.File_Writer(output_dir_path+"RuntimeLibrary.hpp");
+    file_write(resource_file, get_resource("RuntimeLibrary.hpp"));
+    close_file_writer(resource_file);
+    resource_file = new system.io.File_Writer(output_dir_path+"RuntimeLibrary.cpp");
+    file_write(resource_file, get_resource("RuntimeLibrary.cpp"));
+    close_file_writer(resource_file);
 
     return Success;
 }
@@ -182,7 +182,7 @@ public read_source(path: string) -> Source_Text
 {
     // TODO should be `mut new` or `new mut`, whichever is decided to be the correct syntax
     let file: mut system.io.File_Reader = new system.io.File_Reader(path);
-    let contents: string = file.ReadToEndSync();
-    file.Close(); // TODO this should automatically be handled
+    let contents: string = file_read_to_end(file);
+    close_file_reader(file); // TODO this should automatically be handled
     return new Source_Text("<default>", path, contents);
 }
