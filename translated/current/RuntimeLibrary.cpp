@@ -406,6 +406,23 @@ bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)
     return true;
 }
 
+void add_item__2(system__collections__List__1 *_Nonnull list, void_ptr value)
+{
+    if(list->count__.value >= list->capacity__.value)
+    {
+        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;
+        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+        void_ptr* new_values = (void_ptr*)new char[new_capacity * sizeof(void_ptr)];
+        memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));
+        if(list->capacity__.value != 0)
+            delete[] list->values; // delete the old array
+        list->values = new_values;
+        list->capacity__ = (int32){new_capacity};
+    }
+    list->values[list->count__.value] = value;
+    list->count__.value++;
+}
+
 void system__console__Console__0::Write__1(string value)
 {
     printf("%.*s", value.byte_length.value, value.Buffer);
