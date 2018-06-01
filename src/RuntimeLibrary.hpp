@@ -508,17 +508,6 @@ struct system__text__String_Builder__0
     uint8_t *_Nullable bytes;
     int capacity;
     int32 byte_length__;
-
-    // Adamant Members
-    // TODO byte_length should be a property
-    int32 byte_length__0() const { return byte_length__; }
-    void Append__1(string const & value);
-    void Append__1(system__text__String_Builder__0 const *_Nonnull value);
-    void AppendLine__1(string const& value);
-    void AppendLine__0();
-    void Remove__2(int32 start, int32 length);
-    void Remove__1(int32 start);
-    string ToString__0();
 };
 
 void ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);

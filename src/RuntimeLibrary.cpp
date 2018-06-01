@@ -204,15 +204,15 @@ string string_replace__3(string s, string old_value, string new_value)
     for(int i=0; i < limit; i++)
         if(cond(string__0op__equal(substring__3(s, int32_from(i), old_value.byte_length), old_value)))
         {
-            builder.Append__1(substring__3(s, int32_from(last_index), int32_from(i-last_index)));
-            builder.Append__1(new_value);
+            sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(i-last_index)));
+            sb_append__2(&builder, new_value);
             i += old_value.byte_length.value; // skip over the value we just matched
             last_index = i;
             i--; // we need i-- to offset the i++ that is about to happen
         }
 
-    builder.Append__1(substring__3(s, int32_from(last_index), int32_from(s.byte_length.value - last_index)));
-    return builder.ToString__0();
+    sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(s.byte_length.value - last_index)));
+    return sb_to_string__1(&builder);
 }
 int32 string_index_of__2(string s, code_point c)
 {
@@ -530,13 +530,6 @@ void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string const & v
     memcpy(sb->bytes+sb->byte_length__.value, value.Buffer, value.byte_length.value);
     sb->byte_length__.value = new_length;
 }
-void system__text__String_Builder__0::Append__1(string const & value)
-{
-    int new_length = byte_length__.value + value.byte_length.value;
-    ensure_sb_capacity(this, new_length);
-    memcpy(bytes+byte_length__.value, value.Buffer, value.byte_length.value);
-    byte_length__.value = new_length;
-}
 
 void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value)
 {
@@ -544,13 +537,6 @@ void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text_
     ensure_sb_capacity(sb, new_length);
     memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);
     sb->byte_length__.value = new_length;
-}
-void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 const *_Nonnull value)
-{
-    int new_length = byte_length__.value + value->byte_length__.value;
-    ensure_sb_capacity(this, new_length);
-    memcpy(bytes+byte_length__.value, value->bytes, value->byte_length__.value);
-    byte_length__.value = new_length;
 }
 
 void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string const& value)
@@ -561,14 +547,6 @@ void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string cons
     sb->bytes[new_length-1] = '\n';
     sb->byte_length__.value = new_length;
 }
-void system__text__String_Builder__0::AppendLine__1(string const & value)
-{
-    int new_length = byte_length__.value + value.byte_length.value + 1;
-    ensure_sb_capacity(this, new_length);
-    memcpy(bytes+byte_length__.value, value.Buffer, value.byte_length.value);
-    bytes[new_length-1] = '\n';
-    byte_length__.value = new_length;
-}
 
 void sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb)
 {
@@ -576,13 +554,6 @@ void sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb)
     ensure_sb_capacity(sb, new_length);
     sb->bytes[new_length-1] = '\n';
     sb->byte_length__.value = new_length;
-}
-void system__text__String_Builder__0::AppendLine__0()
-{
-    int new_length = byte_length__.value + 1;
-    ensure_sb_capacity(this, new_length);
-    bytes[new_length-1] = '\n';
-    byte_length__.value = new_length;
 }
 
 void sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length)
@@ -595,26 +566,11 @@ void sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int
     memmove(sb->bytes+start.value, sb->bytes+end, sb->byte_length__.value-end);
     sb->byte_length__.value -= length.value;
 }
-void system__text__String_Builder__0::Remove__2(int32 start, int32 length)
-{
-    lib_assert(start.value < this->byte_length__.value);
-
-    int end = start.value + length.value;
-    lib_assert(end <= this->byte_length__.value); // less than or equal because end is one past the end of the remove
-
-    memmove(bytes+start.value, bytes+end, this->byte_length__.value-end);
-    this->byte_length__.value -= length.value;
-}
 
 void sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start)
 {
     lib_assert(start.value < sb->byte_length__.value);
     sb->byte_length__.value = start.value;
-}
-void system__text__String_Builder__0::Remove__1(int32 start)
-{
-    lib_assert(start.value < byte_length__.value);
-    byte_length__.value = start.value;
 }
 
 string sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)
@@ -624,14 +580,5 @@ string sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)
     sb->bytes = 0;
     sb->byte_length__.value = 0;
     sb->capacity = 0;
-    return result;
-}
-string system__text__String_Builder__0::ToString__0()
-{
-    string result = {byte_length__.value, bytes};
-    // give up ownership of bytes
-    bytes = 0;
-    byte_length__.value = 0;
-    capacity = 0;
     return result;
 }

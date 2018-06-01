@@ -16,40 +16,40 @@ public class Source_File_Builder
 
 public error(file: mut Source_File_Builder, message: string) -> void
 {
-    file.code.Append(format_error(message));
+    sb_append(file.code, format_error(message));
 }
 
 public begin_line(file: mut Source_File_Builder, value: string) -> void
 {
-    file.code.Append(file.indent);
-    file.code.Append(value);
+    sb_append_sb(file.code, file.indent);
+    sb_append(file.code, value);
     file.firstElement = file.afterBlock = false;
 }
 
 public write(file: mut Source_File_Builder, value: string) -> void
 {
-    file.code.Append(value);
+    sb_append(file.code, value);
     file.firstElement = file.afterBlock = false;
 }
 
 public end_line(file: mut Source_File_Builder, value: string) -> void
 {
-    file.code.Append(value);
-    file.code.AppendLine(); // TODO need to think about the handling of newlines
+    sb_append(file.code, value);
+    sb_append_line(file.code); // TODO need to think about the handling of newlines
     file.firstElement = file.afterBlock = false;
 }
 
 public write_line(file: mut Source_File_Builder, value: string) -> void
 {
-    file.code.Append(file.indent);
-    file.code.Append(value);
-    file.code.AppendLine();
+    sb_append_sb(file.code, file.indent);
+    sb_append(file.code, value);
+    sb_append_line(file.code);
     file.firstElement = file.afterBlock = false;
 }
 
 public blank_line(file: mut Source_File_Builder) -> void
 {
-    file.code.AppendLine();
+    sb_append_line(file.code);
     file.firstElement = true;
     file.afterBlock = false;
 }
@@ -58,7 +58,7 @@ public element_separator_line(file: mut Source_File_Builder) -> void
 {
     if not file.firstElement
     {
-        file.code.AppendLine();
+        sb_append_line(file.code);
         file.firstElement = true;
         file.afterBlock = false;
     }
@@ -68,7 +68,7 @@ public statement_separator_line(file: mut Source_File_Builder) -> void
 {
     if file.afterBlock
     {
-        file.code.AppendLine();
+        sb_append_line(file.code);
         file.firstElement = true;
         file.afterBlock = false;
     }
@@ -78,7 +78,7 @@ public statement_separator_line(file: mut Source_File_Builder) -> void
 public begin_block(file: mut Source_File_Builder) -> void
 {
     write_line(file, "{");
-    file.indent.Append("\t");
+    sb_append(file.indent, "\t");
     file.firstElement = file.afterBlock = false;
 }
 
@@ -86,7 +86,7 @@ public begin_block(file: mut Source_File_Builder) -> void
 // @ensures IndentDepth == old(IndentDepth)-1
 public end_block(file: mut Source_File_Builder) -> void
 {
-    file.indent.Remove(0, 1);
+    sb_remove(file.indent, 0, 1);
     write_line(file, "}");
     file.afterBlock = true;
 }
@@ -95,16 +95,16 @@ public end_block(file: mut Source_File_Builder) -> void
 // @ensures IndentDepth == old(IndentDepth)-1
 public end_block_with_semicolon(file: mut Source_File_Builder) -> void
 {
-    file.indent.Remove(0, 1);
+    sb_remove(file.indent, 0, 1);
     write_line(file, "};");
 }
 
 public byte_length(file: Source_File_Builder) -> int
 {
-    return file.code.byte_length();
+    return file.code.byte_length;
 }
 
 public to_string(file: mut Source_File_Builder) -> string
 {
-    return file.code.ToString();
+    return sb_to_string(file.code);
 }
