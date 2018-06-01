@@ -1,6 +1,6 @@
 # Translation
 
-This document describes the translation of Adamant into C++ and gives reasons for the particular C++ construct chosen to represent Adamant constructs.
+This document describes the translation of Adamant into C and gives reasons for the particular C construct chosen to represent Adamant constructs.
 
 ## `const` Keyword
 
@@ -8,7 +8,7 @@ Whenever `const` is used, it is placed after the thing it is making constant so 
 
 ## Identifiers
 
-Identifiers in Adamant programs are translated to the same identifier followed by an underscore `_` character. This ensures that Adamant identifiers will never conflict with C++ keywords or components of the runtime (such as operator methods). It also prevents accidental use of C++ features. For example, at one point during compiler development, the C++ `this` keyword was used from inside Adamant code when it should have been the `self` keyword instead.
+Identifiers in Adamant programs are translated to the same identifier followed by an underscore `_` character. This ensures that Adamant identifiers will never conflict with C keywords or components of the runtime (such as operator methods). It also prevents accidental use of C features. For example, at one point during compiler development, the C `this` keyword was used from inside Adamant code when it should have been the `self` keyword instead.
 
 ## Trailing Return Type Declaration
 

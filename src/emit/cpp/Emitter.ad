@@ -176,7 +176,7 @@ public convert_primitive_type_name(type: Type) -> string
     }
 }
 
-// Converts a type to C++
+// Converts a type to C
 // public convert_type_node_name(type_node: Semantic_Node) -> mut system.text.String_Builder
 // {
 //     assert(type_node.referenced_type =/= none, get_node_text(type_node));
@@ -233,7 +233,7 @@ public convert_reference_type(mutable_binding: bool, var type: Type, nullable: b
     return sb_to_string(c_type);
 }
 
-// Converts a type to C++
+// Converts a type to C
 public convert_type(mutable_binding: bool, var type: Type, optional: bool) -> string
 {
     assert(type =/= none);
@@ -1227,7 +1227,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let parameters: string = convert_parameter_list(emitter, parameters_node, is_main);
         let return_type_node: Semantic_Node = declaration.children[3];
         let c_type: string = convert_type(true, return_type_node);
-        // Write out the function declaration for C++ so we can call functions defined after others
+        // Write out the function declaration for C so we can call functions defined after others
         write_line(emitter.function_declarations, c_type + " " + name + parameters + ";");
         element_separator_line(emitter.definitions);
         write_line(emitter.definitions, c_type + " " + name + parameters);

@@ -2,7 +2,7 @@
 
 * Code is in ASCII encoding.
 * The first command line parameter is the input file, the second the output file.
-* The output is C++ code.
+* The output is C code.
 * Top-level functions
 * All memory is leaked and never deleted
 * Primitive types:

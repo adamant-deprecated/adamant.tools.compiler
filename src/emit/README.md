@@ -1,6 +1,6 @@
 # `adamant.tools.compiler.emit.c`
 
-Emit C++ code for the semantic tree.
+Emit C code for the semantic tree.
 
 ## Name Mangling
 

@@ -1,7 +1,7 @@
 # Compiled Binaries
 /target/
 
-# Translated C++ that shouldn't be committed
+# Translated C that shouldn't be committed
 /translated/
 
 # VS Code Files
