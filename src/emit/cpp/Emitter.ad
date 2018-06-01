@@ -1127,12 +1127,12 @@ public emit_default_constructor(emitter: mut Emitter, type_name: string, is_valu
     // Constructor Declaration
     write_line(emitter.function_declarations, constructor_signature + ";");
 
-     // Constructor definition
+    // Constructor definition
     element_separator_line(emitter.definitions);
     begin_line(emitter.definitions, constructor_signature);
     // TODO I probably need to do the default initialization
     if is_value_type
-        { end_line(emitter.definitions, " { return {}; }"); }
+        { end_line(emitter.definitions, " { return (" + return_type + "){}; }"); }
     else
         { end_line(emitter.definitions, " { return self; }"); }
 }
@@ -1197,26 +1197,25 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     else if declaration.kind == EnumDeclaration
     {
         let enum_name: string = get_node_text(first_child(declaration, Identifier));
-        write_line(emitter.type_declarations, "typedef enum " + enum_name + "_ " + enum_name +"_;");
-        element_separator_line(emitter.class_declarations);
-        write_line(emitter.class_declarations, "enum " + enum_name + "_");
-        begin_block(emitter.class_declarations);
+        write_line(emitter.type_declarations, "enum " + enum_name + "_");
+        begin_block(emitter.type_declarations);
         for let member: Semantic_Node in declaration.children
         {
             if member.kind == EnumMemberDeclaration
             {
                 let member_name: string = get_node_text(member.children[0]);
-                begin_line(emitter.class_declarations, member_name + "_");
+                begin_line(emitter.type_declarations, member_name + "_");
                 let member_value: Semantic_Node? = first_child(member, Number);
                 if member_value =/= none
                 {
-                    write(emitter.class_declarations, " = ");
-                    write(emitter.class_declarations, get_node_text(member_value));
+                    write(emitter.type_declarations, " = ");
+                    write(emitter.type_declarations, get_node_text(member_value));
                 }
-                end_line(emitter.class_declarations, ",");
+                end_line(emitter.type_declarations, ",");
             }
         }
-        end_block_with_semicolon(emitter.class_declarations);
+        end_block_with_semicolon(emitter.type_declarations);
+        write_line(emitter.type_declarations, "typedef enum " + enum_name + "_ " + enum_name +"_;");
     }
     else if declaration.kind == FunctionDeclaration
     {

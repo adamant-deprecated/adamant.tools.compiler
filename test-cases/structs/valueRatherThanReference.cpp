@@ -25,7 +25,7 @@ struct Value_Type__0
 
 Reference_Type__0 *_Nonnull Reference_Type__0__0new__0(Reference_Type__0 *_Nonnull self) { return self; }
 
-Value_Type__0 Value_Type__0__0new__0() { return {}; }
+Value_Type__0 Value_Type__0__0new__0() { return (Value_Type__0){}; }
 
 void main__0()
 {

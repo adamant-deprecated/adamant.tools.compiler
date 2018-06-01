@@ -1,13 +1,6 @@
 #include "RuntimeLibrary.hpp"
 
 // Type Declarations
-typedef enum day_of_week_ day_of_week_;
-
-// Function Declarations
-void main__0();
-
-// Class Declarations
-
 enum day_of_week_
 {
 	Sunday_ = 0,
@@ -18,6 +11,12 @@ enum day_of_week_
 	Friday_,
 	Saturday_,
 };
+typedef enum day_of_week_ day_of_week_;
+
+// Function Declarations
+void main__0();
+
+// Class Declarations
 
 // Global Definitions
 

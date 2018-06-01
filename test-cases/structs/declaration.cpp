@@ -12,7 +12,6 @@ void main__0();
 struct Test__0
 {
 	string name__;
-	string method__0() const;
 };
 
 // Global Definitions
@@ -26,16 +25,9 @@ Test__0 Test__0__0new__1(string const name__)
 	return self;
 }
 
-string Test__0::method__0() const
-{
-	auto self = this;
-	return name__;
-}
-
 void main__0()
 {
 	Test__0 const t__ = Test__0__0new__1(((string){3,(uint8_t const*)"Bob"}));
-	t__.method__0();
 }
 
 // Entry Point Adapter

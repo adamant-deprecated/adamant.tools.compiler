@@ -7,14 +7,16 @@ public struct Test
 		self.name = name;
 	}
 
-	public method(self) -> string
-	{
-		return name;
-	}
+    // TODO add this test back
+	// public method(self) -> string
+	// {
+	// 	return name;
+	// }
 }
 
 public main() -> void
 {
 	let t: Test = new Test("Bob");
-	t.method();
+    // TODO add this test back
+	// t.method();
 }
