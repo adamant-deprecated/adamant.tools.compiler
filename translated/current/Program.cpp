@@ -4911,7 +4911,7 @@ void emit_default_constructor__3(Emitter__0 *_Nonnull const emitter__, string co
 	begin_line__2(emitter__->definitions__, constructor_signature__);
 	if (cond(is_value_type__))
 	{
-		end_line__2(emitter__->definitions__, ((string){15,(uint8_t const*)" { return {}; }"}));
+		end_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){11,(uint8_t const*)" { return ("}), return_type__), ((string){6,(uint8_t const*)"){}; }"})));
 	}
 	else
 	{
@@ -4985,29 +4985,28 @@ void emit_declaration__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 
 	else if (cond(int32__0op__equal(declaration__->kind__, EnumDeclaration__)))
 	{
 		string const enum_name__ = get_node_text__1(first_child__2(declaration__, Identifier__));
-		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(((string){11,(uint8_t const*)"enum class "}), enum_name__), ((string){2,(uint8_t const*)"_;"})));
-		element_separator_line__1(emitter__->class_declarations__);
-		write_line__2(emitter__->class_declarations__, string__0op__add(string__0op__add(((string){11,(uint8_t const*)"enum class "}), enum_name__), ((string){1,(uint8_t const*)"_"})));
-		begin_block__1(emitter__->class_declarations__);
+		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(((string){5,(uint8_t const*)"enum "}), enum_name__), ((string){1,(uint8_t const*)"_"})));
+		begin_block__1(emitter__->type_declarations__);
 		for (void_ptr__0iter iter = system__collections__List__1__0iterate(declaration__->children__); void_ptr__0next(&iter);)
 		{
 			Semantic_Node__0 const *_Nonnull const member__ = void_ptr__0current(&iter);
 			if (cond(int32__0op__equal(member__->kind__, EnumMemberDeclaration__)))
 			{
 				string const member_name__ = get_node_text__1(system__collections__List__1__0op__element(member__->children__, ((int32){0})));
-				begin_line__2(emitter__->class_declarations__, string__0op__add(member_name__, ((string){1,(uint8_t const*)"_"})));
+				begin_line__2(emitter__->type_declarations__, string__0op__add(member_name__, ((string){1,(uint8_t const*)"_"})));
 				Semantic_Node__0 const *_Nullable const member_value__ = first_child__2(member__, Number__);
 				if (cond(void_ptr__0op__not_equal(member_value__, none)))
 				{
-					write__2(emitter__->class_declarations__, ((string){3,(uint8_t const*)" = "}));
-					write__2(emitter__->class_declarations__, get_node_text__1(member_value__));
+					write__2(emitter__->type_declarations__, ((string){3,(uint8_t const*)" = "}));
+					write__2(emitter__->type_declarations__, get_node_text__1(member_value__));
 				}
 
-				end_line__2(emitter__->class_declarations__, ((string){1,(uint8_t const*)","}));
+				end_line__2(emitter__->type_declarations__, ((string){1,(uint8_t const*)","}));
 			}
 		}
 
-		end_block_with_semicolon__1(emitter__->class_declarations__);
+		end_block_with_semicolon__1(emitter__->type_declarations__);
+		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){13,(uint8_t const*)"typedef enum "}), enum_name__), ((string){2,(uint8_t const*)"_ "})), enum_name__), ((string){2,(uint8_t const*)"_;"})));
 	}
 	else if (cond(int32__0op__equal(declaration__->kind__, FunctionDeclaration__)))
 	{
