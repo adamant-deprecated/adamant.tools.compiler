@@ -487,9 +487,6 @@ inline string__0iter system__console__Arguments__0__0iterate(system__console__Ar
 struct system__io__File_Reader__0
 {
     FILE *_Nonnull file;
-
-    string ReadToEndSync__0();
-    void Close__0();
 };
 
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName);
@@ -499,9 +496,6 @@ void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);
 struct system__io__File_Writer__0
 {
     FILE *_Nonnull file;
-
-    void Write__1(const string& value);
-    void Close__0();
 };
 
 system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string& fileName);

@@ -463,25 +463,9 @@ string file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)
     length = fread(buffer, sizeof(uint8_t), length, reader->file);
     return (string){(int32_t)length, buffer};
 }
-
 void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)
 {
     fclose(reader->file);
-}
-
-string system__io__File_Reader__0::ReadToEndSync__0()
-{
-    fseek(file, 0, SEEK_END);
-    auto length = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    auto buffer = new uint8_t[length];
-    length = fread(buffer, sizeof(uint8_t), length, file);
-    return (string){(int32_t)length, buffer};
-}
-
-void system__io__File_Reader__0::Close__0()
-{
-    fclose(file);
 }
 
 system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string& fileName)
@@ -499,16 +483,6 @@ void file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value)
 void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)
 {
     fclose(writer->file);
-}
-
-void system__io__File_Writer__0::Write__1(const string& value)
-{
-    fwrite(value.Buffer, sizeof(char), value.byte_length.value, file);
-}
-
-void system__io__File_Writer__0::Close__0()
-{
-    fclose(file);
 }
 
 void system__text__String_Builder__0::ensure_capacity(int needed)
