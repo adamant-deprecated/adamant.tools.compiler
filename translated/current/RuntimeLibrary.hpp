@@ -536,7 +536,7 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
 void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string const & value);
 void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);
 void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string const& value);
-void sb_append_ine__1(system__text__String_Builder__0 *_Nonnull sb);
+void sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb);
 void sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);
 void sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);
 string sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb);
