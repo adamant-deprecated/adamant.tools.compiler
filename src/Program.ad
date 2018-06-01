@@ -18,8 +18,8 @@ public write(console: mut system.console.Console, diagnostics: system.collection
         else
             { severity = "Error"; }
 
-        console.WriteLine(diagnostic.source.path+":"+int_to_string(position.line)+":"+int_to_string(position.column)+" "+severity+":");
-        console.WriteLine("  "+diagnostic.message);
+        console_write_line(console, diagnostic.source.path+":"+int_to_string(position.line)+":"+int_to_string(position.column)+" "+severity+":");
+        console_write_line(console, "  "+diagnostic.message);
     }
 }
 
@@ -42,7 +42,7 @@ public let DataError: int = 65;
 
 public main(console: mut system.console.Console, args: system.console.Arguments) -> int
 {
-    if |args| == 1 and args[0] == "--unit-test"
+    if args.count == 1 and args[0] == "--unit-test"
     {
         run_unit_tests(console);
         return 0;
@@ -90,11 +90,11 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
 
     if verbose
     {
-        console.WriteLine("Adamant Compiler v0.1.0");
+        console_write_line(console, "Adamant Compiler v0.1.0");
     }
     if sourceFilePaths.count == 0 or outputFilePath == ""
     {
-        console.WriteLine("Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
+        console_write_line(console, "Args: <Input File(s)> -o <OutputFile> -r <Resource File>");
         return UsageError;
     }
 
@@ -104,13 +104,13 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
     {
         if verbose
         {
-            console.WriteLine("Reading Resources:");
+            console_write_line(console, "Reading Resources:");
         }
         for let resourceFilePath: string in resourceFilePaths
         {
             if verbose
             {
-                console.WriteLine("  " + resourceFilePath);
+                console_write_line(console, "  " + resourceFilePath);
             }
             add_item(resources, read_source(resourceFilePath));
         }
@@ -119,14 +119,14 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
     // Read Source(s)
     if(verbose)
     {
-        console.WriteLine("Compiling:");
+        console_write_line(console, "Compiling:");
     }
     let sources: mut system.collections.List<Source_Text> = new system.collections.List<Source_Text>();
     for let sourceFilePath: string in sourceFilePaths
     {
         if(verbose)
         {
-            console.WriteLine("  " + sourceFilePath);
+            console_write_line(console, "  " + sourceFilePath);
         }
         add_item(sources, read_source(sourceFilePath));
     }
@@ -147,8 +147,8 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
     // Write output
     if verbose
     {
-        console.Write("Output: ");
-        console.WriteLine(outputFilePath);
+        console_write(console, "Output: ");
+        console_write_line(console, outputFilePath);
     }
     // TODO should be `new mut`
     let outputFile: mut system.io.File_Writer = new system.io.File_Writer(outputFilePath);
@@ -165,8 +165,8 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
         { outputDirPath = substring(outputDirPath, 0, index+1); }
     if verbose
     {
-        console.Write("Outputting RuntimeLibrary to: ");
-        console.WriteLine(outputDirPath);
+        console_write(console, "Outputting RuntimeLibrary to: ");
+        console_write_line(console, outputDirPath);
     }
     var resourceFile: mut system.io.File_Writer = new system.io.File_Writer(outputDirPath+"RuntimeLibrary.hpp");
     resourceFile.Write(get_resource("RuntimeLibrary.hpp"));

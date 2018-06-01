@@ -423,21 +423,6 @@ void add_item__2(system__collections__List__1 *_Nonnull list, void_ptr value)
     list->count__.value++;
 }
 
-void system__console__Console__0::Write__1(string value)
-{
-    printf("%.*s", value.byte_length.value, value.Buffer);
-}
-
-void system__console__Console__0::WriteLine__1(string value)
-{
-    printf("%.*s\n", value.byte_length.value, value.Buffer);
-}
-
-void system__console__Console__0::WriteLine__0()
-{
-    printf("\n");
-}
-
 void console_write__2(system__console__Console__0 *_Nonnull console, string value)
 {
     printf("%.*s", value.byte_length.value, value.Buffer);
@@ -451,13 +436,13 @@ void console_write_line__1(system__console__Console__0 *_Nonnull console)
     printf("\n");
 }
 
-system__console__Arguments__0::system__console__Arguments__0(int argc, char const *const * argv)
-    : count__((int32){argc-1})
-{
-    values = new string[count__.value];
-    for (int i = 0; i < count__.value; i++)
-        values[i] = string_from_cstr(argv[i+1]);
-}
+// system__console__Arguments__0::system__console__Arguments__0(int argc, char const *const * argv)
+//     : count__((int32){argc-1})
+// {
+//     values = new string[count__.value];
+//     for (int i = 0; i < count__.value; i++)
+//         values[i] = string_from_cstr(argv[i+1]);
+// }
 
 system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv)
 {

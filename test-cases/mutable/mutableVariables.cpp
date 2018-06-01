@@ -32,6 +32,6 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 // Entry Point Adapter
 int32_t main(int argc, char const *const * argv)
 {
-	main__1(new system__console__Console__0());
+	main__1(allocate(sizeof(system__console__Console__0)));
 	return 0;
 }

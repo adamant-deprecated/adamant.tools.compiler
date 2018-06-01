@@ -6,29 +6,29 @@ public main(console: mut system.console.Console) -> void
 
 	// Equal
 	r = v == n;
-	console.WriteLine("v == n: " + r);
+	console_write_line(console, "v == n: " + r);
 	r = n == v;
-	console.WriteLine("n == v: " + r);
+	console_write_line(console, "n == v: " + r);
 	r = n == n;
-	console.WriteLine("n == n: " + r);
+	console_write_line(console, "n == n: " + r);
 	r = 42 == none;
-	console.WriteLine("42 == none: " + r);
+	console_write_line(console, "42 == none: " + r);
 	r = none == 42;
-	console.WriteLine("none == 42: " + r);
+	console_write_line(console, "none == 42: " + r);
 	r = none == none;
-	console.WriteLine("none == none: " + r);
+	console_write_line(console, "none == none: " + r);
 
 	// Not Equal
 	r = v =/= n;
-	console.WriteLine("v =/= n: " + r);
+	console_write_line(console, "v =/= n: " + r);
 	r = n =/= v;
-	console.WriteLine("n =/= v: " + r);
+	console_write_line(console, "n =/= v: " + r);
 	r = n =/= n;
-	console.WriteLine("n =/= n: " + r);
+	console_write_line(console, "n =/= n: " + r);
 	r = 42 =/= none;
-	console.WriteLine("42 =/= none: " + r);
+	console_write_line(console, "42 =/= none: " + r);
 	r = none =/= 42;
-	console.WriteLine("none =/= 42: " + r);
+	console_write_line(console, "none =/= 42: " + r);
 	r = none =/= none;
-	console.WriteLine("none =/= none: " + r);
+	console_write_line(console, "none =/= none: " + r);
 }

@@ -1,6 +1,6 @@
 public run_unit_tests(console: mut system.console.Console) -> void
 {
-    console.WriteLine("Running Unit Tests...");
+    console_write_line(console, "Running Unit Tests...");
 
     // core
     unit_test_Text_Position();

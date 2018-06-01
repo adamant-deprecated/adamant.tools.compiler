@@ -42,7 +42,7 @@ public:
 
 #else
 
-#define void_ptr void*_Nullable
+typedef void*_Nullable void_ptr;
 
 #endif
 
@@ -452,9 +452,6 @@ inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_N
 
 struct system__console__Console__0
 {
-    void Write__1(string value);
-    void WriteLine__1(string value);
-    void WriteLine__0();
 };
 
 void console_write__2(system__console__Console__0 *_Nonnull console, string value);
@@ -465,11 +462,6 @@ struct system__console__Arguments__0
 {
     string *_Nonnull values;
     int32 count__;
-
-    system__console__Arguments__0(int argc, char const *_Nonnull const *_Nonnull argv);
-
-    // Adamant Members
-    int32 op__magnitude() const { return count__; }
 };
 
 system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);
@@ -536,6 +528,5 @@ inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0
     self->length = 0;
     return self;
 }
-
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string const & value);
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);

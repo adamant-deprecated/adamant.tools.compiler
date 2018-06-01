@@ -1304,12 +1304,12 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
     // TODO should be `new mut`
     let args: mut system.text.String_Builder = new system.text.String_Builder();
     if emitter.main_function_accepts_console
-        { args.Append("new system__console__Console__0()"); }
+        { args.Append("allocate(sizeof(system__console__Console__0))"); }
     if emitter.main_function_accepts_args
     {
         if emitter.main_function_accepts_console
             { args.Append(", "); }
-        args.Append("new system__console__Arguments__0(argc, argv)");
+        args.Append("convert_arguments(argc, argv)");
     }
 
     if emitter.main_function_return_type == "void"
