@@ -40,9 +40,30 @@ public:
     _Bool operator!=(T *_Nullable rhs) const { return ptr != rhs; }
 };
 
+class const_void_ptr
+{
+private:
+    void const*_Nullable ptr;
+public:
+    const_void_ptr(void_ptr value) : ptr((void *_Nullable)value) {}
+    template<class T>
+    const_void_ptr(T const*_Nullable value) : ptr((void *_Nullable)value) {}
+    template<class T>
+    operator T const*_Nullable() const { return (T const*)ptr; }
+
+    _Bool operator==(const_void_ptr rhs) const { return ptr == rhs.ptr; }
+    template<class T>
+    _Bool operator==(T const*_Nullable rhs) const { return ptr == rhs; }
+
+    _Bool operator!=(const_void_ptr rhs) const { return ptr != rhs.ptr; }
+    template<class T>
+    _Bool operator!=(T const*_Nullable rhs) const { return ptr != rhs; }
+};
+
 #else
 
 typedef void*_Nullable void_ptr;
+typedef void const*_Nullable const_void_ptr;
 
 #endif
 
@@ -83,7 +104,7 @@ struct optional__never
 };
 
 // TODO this is a hack for now, the type of `none` should be `never?`
-static const void_ptr none = (void*)0;
+static const void_ptr none = (void*_Nullable)0;
 
 // For now, use `BOOL` as the emitted type
 // TODO C: switch `BOOL` to `bool`
@@ -207,11 +228,11 @@ inline BOOL code_point__0op__equal(code_point lhs, code_point rhs)
 }
 BOOL string__0op__equal(string lhs, string rhs);
 // TODO this currently exists becuase of the compare `none`, it shouldn't exist
-inline BOOL never__0op__equal(void_ptr lhs, void_ptr rhs)
+inline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs)
 {
     return bool_from(lhs == rhs);
 }
-inline BOOL void_ptr__0op__equal(void_ptr lhs, void_ptr rhs)
+inline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs)
 {
     return bool_from(lhs == rhs);
 }
@@ -233,11 +254,11 @@ inline BOOL string__0op__not_equal(string lhs, string rhs)
     return BOOL__0op__not(string__0op__equal(lhs, rhs));
 }
 // TODO this currently exists becuase of the compare `none`, it shouldn't exist
-inline BOOL never__0op__not_equal(void_ptr lhs, void_ptr rhs)
+inline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)
 {
     return bool_from(lhs != rhs);
 }
-inline BOOL void_ptr__0op__not_equal(void_ptr lhs, void_ptr rhs)
+inline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)
 {
     return bool_from(lhs != rhs);
 }
@@ -264,9 +285,10 @@ inline void_ptr allocate__1(int32 bytes)
     return malloc(bytes.value);
 }
 
-inline void free__1(void_ptr object)
+inline void free__1(const_void_ptr object)
 {
-    free(object);
+    // TODO hack cast away const
+    free((void*_Nonnull)(void const*_Nonnull)object);
 }
 
 #define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)
@@ -420,14 +442,15 @@ inline system__collections__List__1 *_Nonnull system__collections__List__1__0new
     return self;
 }
 
-void add_item__2(system__collections__List__1 *_Nonnull list, void_ptr value);
+// TODO hack that we take const_void_ptr but then treat it as mutable
+void add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value);
 
 inline void clear_list__1(system__collections__List__1 *_Nonnull list)
 {
     list->count__ = (int32){0};
 }
 
-inline void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)
+inline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)
 {
     lib_assert(index.value >= 0 && index.value < list->count__.value);
     return list->values[index.value];
@@ -490,7 +513,7 @@ struct system__io__File_Reader__0
     FILE *_Nonnull file;
 };
 
-system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName);
+system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string fileName);
 string file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);
 void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);
 
@@ -499,7 +522,7 @@ struct system__io__File_Writer__0
     FILE *_Nonnull file;
 };
 
-system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string& fileName);
+system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string fileName);
 void file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);
 void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);
 
@@ -508,17 +531,6 @@ struct system__text__String_Builder__0
     uint8_t *_Nullable bytes;
     int capacity;
     int32 byte_length__;
-
-    // Adamant Members
-    // TODO byte_length should be a property
-    int32 byte_length__0() const { return byte_length__; }
-    void Append__1(string const & value);
-    void Append__1(system__text__String_Builder__0 const *_Nonnull value);
-    void AppendLine__1(string const& value);
-    void AppendLine__0();
-    void Remove__2(int32 start, int32 length);
-    void Remove__1(int32 start);
-    string ToString__0();
 };
 
 void ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);
@@ -530,12 +542,12 @@ inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0
     self->byte_length__ = (int32){0};
     return self;
 }
-system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string const & value);
+system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value);
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);
 
-void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string const & value);
+void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value);
 void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);
-void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string const& value);
+void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value);
 void sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb);
 void sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);
 void sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);
