@@ -92,7 +92,7 @@ Task("Build-Previous")
 
         Information("Compiling previous C");
         EnsureDirectoryExists("target/previous");
-        CompileC("translated/previous/*.c*", "target/previous/Program").Run();
+        CompileC("translated/previous/*.c", "target/previous/Program").Run();
         SaveVersionInfo("target/previous/Program", sourceCommit);
     });
 
@@ -109,7 +109,7 @@ Task("Build-Current")
 
         Information("Compiling current C");
         EnsureDirectoryExists("target/current");
-        CompileC("translated/current/*.c*", "target/current/Program").Run();
+        CompileC("translated/current/*.c", "target/current/Program").Run();
     });
 
 Task("Unit-Test-Current")
