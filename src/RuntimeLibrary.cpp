@@ -50,10 +50,10 @@ uint8_t code_point__to_char(code_point v)
 char const * cstr_from(string value)
 {
     int32_t length = value.byte_length.value;
-    char* buffer = new char[length + 1];
-    memcpy(buffer, value.Buffer, length);
-    buffer[length] = 0;
-    return buffer;
+    char* bytes = new char[length + 1];
+    memcpy(bytes, value.Buffer, length);
+    bytes[length] = 0;
+    return bytes;
 }
 
 string string_from_cstr(char const* s)
@@ -75,18 +75,18 @@ string bool_to_string__1(BOOL b)
 
 string int_to_string__1(int32 i)
 {
-    uint8_t* buffer = new uint8_t[12]; // -2,147,483,648 plus null terminator
-    int length = sprintf((char*)buffer, "%d", i.value);
+    uint8_t* bytes = new uint8_t[12]; // -2,147,483,648 plus null terminator
+    int length = sprintf((char*)bytes, "%d", i.value);
     lib_assert(length > 0);
-    return (string){length, buffer};
+    return (string){length, bytes};
 }
 string int_to_hex_string__1(int32 i)
 {
     lib_assert(i.value >= 0);
-    uint8_t* buffer = new uint8_t[9]; // FF_FF_FF_FF plus null terminator
-    int length = sprintf((char*)buffer, "%X", i.value);
+    uint8_t* bytes = new uint8_t[9]; // FF_FF_FF_FF plus null terminator
+    int length = sprintf((char*)bytes, "%X", i.value);
     lib_assert(length > 0);
-    return (string){length, buffer};
+    return (string){length, bytes};
 }
 
 int32 hex_string_to_int__1(string s)
@@ -120,12 +120,12 @@ string string__0new__1(string value)
 
 string string__0new__2(code_point c, int32 repeat)
 {
-    uint8_t* buffer = new uint8_t[repeat.value];
+    uint8_t* bytes = new uint8_t[repeat.value];
     uint8_t ch = code_point__to_char(c);
     for (int i = 0; i < repeat.value; i++)
-        buffer[i] = ch;
+        bytes[i] = ch;
 
-    return (string){repeat, buffer};
+    return (string){repeat, bytes};
 }
 
 string string__0op__add(string lhs, string rhs)
@@ -345,7 +345,7 @@ void add_string__2(Strings__0 *_Nonnull strings, string value)
     if(strings->count__.value >= strings->capacity__.value)
     {
         int32_t new_capacity = strings->capacity__.value == 0 ? 16 : strings->capacity__.value * 2;
-        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         string* new_values = (string*)new char[new_capacity * sizeof(string)];
         memcpy(new_values, strings->values, strings->count__.value * sizeof(string));
@@ -382,7 +382,7 @@ void add_int__2(Ints__0 *_Nonnull ints, int32 value)
     if(ints->count__.value >= ints->capacity__.value)
     {
         int32_t new_capacity = ints->capacity__.value == 0 ? 16 : ints->capacity__.value * 2;
-        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         int32* new_values = (int32*)new char[new_capacity * sizeof(int32)];
         memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));
@@ -411,7 +411,7 @@ void add_item__2(system__collections__List__1 *_Nonnull list, void_ptr value)
     if(list->count__.value >= list->capacity__.value)
     {
         int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;
-        // Allocate uninitalized buffer (note `sizeof(char) == 1` always)
+        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         void_ptr* new_values = (void_ptr*)new char[new_capacity * sizeof(void_ptr)];
         memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));
         if(list->capacity__.value != 0)
@@ -459,9 +459,9 @@ string file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)
     fseek(reader->file, 0, SEEK_END);
     auto length = ftell(reader->file);
     fseek(reader->file, 0, SEEK_SET);
-    auto buffer = new uint8_t[length];
-    length = fread(buffer, sizeof(uint8_t), length, reader->file);
-    return (string){(int32_t)length, buffer};
+    uint8_t*_Nonnull bytes = new uint8_t[length];
+    length = fread(bytes, sizeof(uint8_t), length, reader->file);
+    return (string){(int32_t)length, bytes};
 }
 void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)
 {
@@ -485,100 +485,153 @@ void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)
     fclose(writer->file);
 }
 
-void system__text__String_Builder__0::ensure_capacity(int needed)
+void ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)
 {
-    int new_capacity = capacity == 0 ? 128 : capacity;
+    int new_capacity = sb->capacity == 0 ? 128 : sb->capacity;
     while(new_capacity < needed)
     {
         new_capacity *= 2;
     }
 
-    if(new_capacity > capacity)
+    if(new_capacity > sb->capacity)
     {
         uint8_t* new_buffer = new uint8_t[new_capacity];
-        if(length > 0)
-            memcpy(new_buffer, buffer, length*sizeof(uint8_t));
+        if(sb->byte_length__.value > 0)
+            memcpy(new_buffer, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));
 
-        if(capacity > 0)
-            delete[] buffer;
+        if(sb->capacity > 0)
+            delete[] sb->bytes;
 
-        buffer = new_buffer;
-        capacity = new_capacity;
+        sb->bytes = new_buffer;
+        sb->capacity = new_capacity;
     }
 }
 
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string const & value)
 {
     system__text__String_Builder__0__0new__0(self);
-    self->ensure_capacity(value.byte_length.value);
-    memcpy(self->buffer, value.Buffer, value.byte_length.value);
-    self->length = value.byte_length.value;
+    ensure_sb_capacity(self, value.byte_length.value);
+    memcpy(self->bytes, value.Buffer, value.byte_length.value);
+    self->byte_length__.value = value.byte_length.value;
     return self;
 }
 
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity)
 {
     system__text__String_Builder__0__0new__0(self);
-    self->ensure_capacity(capacity.value);
+    ensure_sb_capacity(self, capacity.value);
     return self;
 }
 
+void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string const & value)
+{
+    int32_t new_length = sb->byte_length__.value + value.byte_length.value;
+    ensure_sb_capacity(sb, new_length);
+    memcpy(sb->bytes+sb->byte_length__.value, value.Buffer, value.byte_length.value);
+    sb->byte_length__.value = new_length;
+}
 void system__text__String_Builder__0::Append__1(string const & value)
 {
-    int new_length = length + value.byte_length.value;
-    ensure_capacity(new_length);
-    memcpy(buffer+length, value.Buffer, value.byte_length.value);
-    length = new_length;
+    int new_length = byte_length__.value + value.byte_length.value;
+    ensure_sb_capacity(this, new_length);
+    memcpy(bytes+byte_length__.value, value.Buffer, value.byte_length.value);
+    byte_length__.value = new_length;
 }
 
+void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value)
+{
+    int32_t new_length = sb->byte_length__.value + value->byte_length__.value;
+    ensure_sb_capacity(sb, new_length);
+    memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);
+    sb->byte_length__.value = new_length;
+}
 void system__text__String_Builder__0::Append__1(system__text__String_Builder__0 const *_Nonnull value)
 {
-    int new_length = length + value->length;
-    ensure_capacity(new_length);
-    memcpy(buffer+length, value->buffer, value->length);
-    length = new_length;
+    int new_length = byte_length__.value + value->byte_length__.value;
+    ensure_sb_capacity(this, new_length);
+    memcpy(bytes+byte_length__.value, value->bytes, value->byte_length__.value);
+    byte_length__.value = new_length;
 }
 
+void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string const& value)
+{
+    int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;
+    ensure_sb_capacity(sb, new_length);
+    memcpy(sb->bytes+sb->byte_length__.value, value.Buffer, value.byte_length.value);
+    sb->bytes[new_length-1] = '\n';
+    sb->byte_length__.value = new_length;
+}
 void system__text__String_Builder__0::AppendLine__1(string const & value)
 {
-    int new_length = length + value.byte_length.value + 1;
-    ensure_capacity(new_length);
-    memcpy(buffer+length, value.Buffer, value.byte_length.value);
-    buffer[new_length-1] = '\n';
-    length = new_length;
+    int new_length = byte_length__.value + value.byte_length.value + 1;
+    ensure_sb_capacity(this, new_length);
+    memcpy(bytes+byte_length__.value, value.Buffer, value.byte_length.value);
+    bytes[new_length-1] = '\n';
+    byte_length__.value = new_length;
 }
 
+void sb_append_ine__1(system__text__String_Builder__0 *_Nonnull sb)
+{
+    int32_t new_length = sb->byte_length__.value + 1;
+    ensure_sb_capacity(sb, new_length);
+    sb->bytes[new_length-1] = '\n';
+    sb->byte_length__.value = new_length;
+}
 void system__text__String_Builder__0::AppendLine__0()
 {
-    int new_length = length + 1;
-    ensure_capacity(new_length);
-    buffer[new_length-1] = '\n';
-    length = new_length;
+    int new_length = byte_length__.value + 1;
+    ensure_sb_capacity(this, new_length);
+    bytes[new_length-1] = '\n';
+    byte_length__.value = new_length;
 }
 
+void sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length)
+{
+    lib_assert(start.value < sb->byte_length__.value);
+
+    int32_t end = start.value + length.value;
+    lib_assert(end <= sb->byte_length__.value); // less than or equal because end is one past the end of the remove
+
+    memmove(sb->bytes+start.value, sb->bytes+end, sb->byte_length__.value-end);
+    sb->byte_length__.value -= length.value;
+}
 void system__text__String_Builder__0::Remove__2(int32 start, int32 length)
 {
-    lib_assert(start.value < this->length);
+    lib_assert(start.value < this->byte_length__.value);
 
     int end = start.value + length.value;
-    lib_assert(end <= this->length); // less than or equal because end is one past the end of the remove
+    lib_assert(end <= this->byte_length__.value); // less than or equal because end is one past the end of the remove
 
-    memmove(buffer+start.value, buffer+end, this->length-end);
-    this->length -= length.value;
+    memmove(bytes+start.value, bytes+end, this->byte_length__.value-end);
+    this->byte_length__.value -= length.value;
 }
 
+void sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start)
+{
+    lib_assert(start.value < sb->byte_length__.value);
+    sb->byte_length__.value = start.value;
+}
 void system__text__String_Builder__0::Remove__1(int32 start)
 {
-    lib_assert(start.value < length);
-    length = start.value;
+    lib_assert(start.value < byte_length__.value);
+    byte_length__.value = start.value;
 }
 
+string sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)
+{
+    string result = {sb->byte_length__.value, sb->bytes};
+    // give up ownership of bytes
+    sb->bytes = 0;
+    sb->byte_length__.value = 0;
+    sb->capacity = 0;
+    return result;
+}
 string system__text__String_Builder__0::ToString__0()
 {
-    string result = {length, buffer};
-    // give up ownership of buffer
-    buffer = 0;
-    length = 0;
+    string result = {byte_length__.value, bytes};
+    // give up ownership of bytes
+    bytes = 0;
+    byte_length__.value = 0;
     capacity = 0;
     return result;
 }

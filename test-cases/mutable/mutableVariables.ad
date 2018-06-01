@@ -12,5 +12,5 @@ public Func(var x: int, y: int) -> mut system.text.String_Builder
 
 public main(console: mut system.console.Console) -> void
 {
-    console_write_line(console, Func(1, 2).ToString());
+    console_write_line(console, sb_to_string(Func(1, 2)));
 }

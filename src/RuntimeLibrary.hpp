@@ -257,6 +257,7 @@ typedef struct system__console__Console__0 system__console__Console__0;
 typedef struct system__console__Arguments__0 system__console__Arguments__0;
 typedef struct system__io__File_Reader__0 system__io__File_Reader__0;
 typedef struct system__io__File_Writer__0 system__io__File_Writer__0;
+typedef struct system__text__String_Builder__0 system__text__String_Builder__0;
 
 inline void_ptr allocate__1(int32 bytes)
 {
@@ -504,14 +505,13 @@ void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);
 
 struct system__text__String_Builder__0
 {
-    uint8_t *_Nullable buffer;
+    uint8_t *_Nullable bytes;
     int capacity;
-    int length;
-    void ensure_capacity(int needed);
+    int32 byte_length__;
 
     // Adamant Members
     // TODO byte_length should be a property
-    int32 byte_length__0() const { return (int32){length}; }
+    int32 byte_length__0() const { return byte_length__; }
     void Append__1(string const & value);
     void Append__1(system__text__String_Builder__0 const *_Nonnull value);
     void AppendLine__1(string const& value);
@@ -521,12 +521,22 @@ struct system__text__String_Builder__0
     string ToString__0();
 };
 
+void ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);
+
 inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self)
 {
-    self->buffer = 0;
+    self->bytes = 0;
     self->capacity = 0;
-    self->length = 0;
+    self->byte_length__ = (int32){0};
     return self;
 }
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string const & value);
 system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);
+
+void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string const & value);
+void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);
+void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string const& value);
+void sb_append_ine__1(system__text__String_Builder__0 *_Nonnull sb);
+void sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);
+void sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);
+string sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb);

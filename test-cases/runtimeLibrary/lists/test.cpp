@@ -36,13 +36,13 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 	for (void_ptr__0iter iter = system__collections__List__1__0iterate(builders__); void_ptr__0next(&iter);)
 	{
 		system__text__String_Builder__0 *_Nonnull const sb__ = void_ptr__0current(&iter);
-		sb__->Append__1(((string){5,(uint8_t const*)"value"}));
+		sb_append__2(sb__, ((string){5,(uint8_t const*)"value"}));
 	}
 
 	for (void_ptr__0iter iter = system__collections__List__1__0iterate(builders__); void_ptr__0next(&iter);)
 	{
 		system__text__String_Builder__0 *_Nonnull const sb__ = void_ptr__0current(&iter);
-		console_write_line__2(console__, sb__->ToString__0());
+		console_write_line__2(console__, sb_to_string__1(sb__));
 	}
 
 	clear_list__1(builders__);

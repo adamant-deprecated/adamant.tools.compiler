@@ -23,11 +23,11 @@ public main(console: mut system.console.Console) -> void
 	add_item(builders, new system.text.String_Builder("sb[1]: "));
 	for let sb: mut system.text.String_Builder in builders
 	{
-		sb.Append("value");
+		sb_append(sb, "value");
 	}
 	for let sb: mut system.text.String_Builder in builders
 	{
-		console_write_line(console, sb.ToString());
+		console_write_line(console, sb_to_string(sb));
 	}
     clear_list(builders);
 }
