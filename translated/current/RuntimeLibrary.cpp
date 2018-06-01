@@ -4,17 +4,20 @@
 // Static Checks
 // -----------------------------------------------------------------------------
 
-// Because we assume we can cast from char* to uint8_t* they need to be the same size
-static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
+inline void static_checks()
+{
+    // Because we assume we can cast from char* to uint8_t* they need to be the same size
+    _Static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
 
-// Because we assume we can cast from uint8_t* to byte* they need to be the same size
-static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
+    // Because we assume we can cast from uint8_t* to byte* they need to be the same size
+    _Static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
 
-// Testing that the style we use for literals can be used as a const
-// const code_point test_code_point = ((code_point){0xFF});
-// TODO: C allows string literals that are one byte shorter than the array so no null terminator
-// TODO: C also has UTF-8 literals u8"hello"
-// const string test_string = ((string){5,(uint8_t const[]){0x34,0x7F,0x45,0xaf,0x69}});
+    // Testing that the style we use for literals can be used as a const
+    // const code_point test_code_point = ((code_point){0xFF});
+    // TODO: C allows string literals that are one byte shorter than the array so no null terminator
+    // TODO: C also has UTF-8 literals u8"hello"
+    // const string test_string = ((string){5,(uint8_t const[]){0x34,0x7F,0x45,0xaf,0x69}});
+}
 
 // -----------------------------------------------------------------------------
 // Library Utils
@@ -50,7 +53,7 @@ uint8_t code_point__to_char(code_point v)
 char const * cstr_from(string value)
 {
     int32_t length = value.byte_length.value;
-    char* bytes = new char[length + 1];
+    char* bytes = allocate(length + 1);
     memcpy(bytes, value.Buffer, length);
     bytes[length] = 0;
     return bytes;
@@ -75,7 +78,7 @@ string bool_to_string__1(BOOL b)
 
 string int_to_string__1(int32 i)
 {
-    uint8_t* bytes = new uint8_t[12]; // -2,147,483,648 plus null terminator
+    uint8_t* bytes = allocate(12); // -2,147,483,648 plus null terminator
     int length = sprintf((char*)bytes, "%d", i.value);
     lib_assert(length > 0);
     return (string){length, bytes};
@@ -83,7 +86,7 @@ string int_to_string__1(int32 i)
 string int_to_hex_string__1(int32 i)
 {
     lib_assert(i.value >= 0);
-    uint8_t* bytes = new uint8_t[9]; // FF_FF_FF_FF plus null terminator
+    uint8_t* bytes = allocate(9); // FF_FF_FF_FF plus null terminator
     int length = sprintf((char*)bytes, "%X", i.value);
     lib_assert(length > 0);
     return (string){length, bytes};
@@ -93,7 +96,7 @@ int32 hex_string_to_int__1(string s)
 {
     char const* cstr = cstr_from(s);
     int32_t i = strtoul(cstr, NULL, 16);
-    delete[] cstr;
+    free__1(cstr);
     return (int32){i};
 }
 
@@ -105,7 +108,9 @@ code_point int_to_code_point__1(int32 i)
 
 string code_point_to_string__1(code_point c)
 {
-    return (string){1, new uint8_t[1] { code_point__to_char(c) }};
+    uint8_t* bytes = allocate(sizeof(uint8_t));
+    *bytes = code_point__to_char(c);
+    return (string){1, bytes};
 }
 
 string string__0new__0()
@@ -120,7 +125,7 @@ string string__0new__1(string value)
 
 string string__0new__2(code_point c, int32 repeat)
 {
-    uint8_t* bytes = new uint8_t[repeat.value];
+    uint8_t* bytes = allocate(repeat.value);
     uint8_t ch = code_point__to_char(c);
     for (int i = 0; i < repeat.value; i++)
         bytes[i] = ch;
@@ -131,7 +136,7 @@ string string__0new__2(code_point c, int32 repeat)
 string string__0op__add(string lhs, string rhs)
 {
     int new_length = lhs.byte_length.value + rhs.byte_length.value;
-    uint8_t* chars = new uint8_t[new_length];
+    uint8_t* chars = allocate(new_length);
     size_t offset = sizeof(uint8_t) * lhs.byte_length.value;
     memcpy(chars, lhs.Buffer, offset);
     memcpy(chars + offset, rhs.Buffer, rhs.byte_length.value);
@@ -155,8 +160,8 @@ BOOL string__0op__lt(string lhs, string rhs)
     char const* left = cstr_from(lhs);
     char const* right = cstr_from(rhs);
     _Bool result = strcmp(left, right) < 0;
-    delete[] left;
-    delete[] right;
+    free__1(left);
+    free__1(right);
     return bool_from(result);
 }
 BOOL string__0op__lte(string lhs, string rhs)
@@ -164,8 +169,8 @@ BOOL string__0op__lte(string lhs, string rhs)
     char const* left = cstr_from(lhs);
     char const* right = cstr_from(rhs);
     _Bool result = strcmp(left, right) <= 0;
-    delete[] left;
-    delete[] right;
+    free__1(left);
+    free__1(right);
     return bool_from(result);
 }
 BOOL string__0op__gt(string lhs, string rhs)
@@ -173,8 +178,8 @@ BOOL string__0op__gt(string lhs, string rhs)
     char const* left = cstr_from(lhs);
     char const* right = cstr_from(rhs);
     BOOL result = bool_from(strcmp(left, right) > 0);
-    delete[] left;
-    delete[] right;
+    free__1(left);
+    free__1(right);
     return result;
 }
 BOOL string__0op__gte(string lhs, string rhs)
@@ -182,8 +187,8 @@ BOOL string__0op__gte(string lhs, string rhs)
     char const* left = cstr_from(lhs);
     char const* right = cstr_from(rhs);
     BOOL result = bool_from(strcmp(left, right) >= 0);
-    delete[] left;
-    delete[] right;
+    free__1(left);
+    free__1(right);
     return result;
 }
 
@@ -235,17 +240,6 @@ int32 string_last_index_of__2(string s, code_point c)
     return int32_from(-1);
 }
 
-// Operator used when we put strings into a map for resource manager
-_Bool operator < (string const & lhs, string const & rhs)
-{
-    char const* left = cstr_from(lhs);
-    char const* right = cstr_from(rhs);
-    _Bool result = strcmp(left, right) < 0;
-    delete[] left;
-    delete[] right;
-    return result;
-}
-
 // -----------------------------------------------------------------------------
 // Standard Library
 // -----------------------------------------------------------------------------
@@ -286,9 +280,9 @@ _Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull f
     exit(70);
 }
 
-int32_t resource_count = 0;
-string resource_name[1024];
-string resource_value[1024];
+static int32_t resource_count = 0;
+static string resource_name[1024];
+static string resource_value[1024];
 
 void add_resource(string name, string value)
 {
@@ -321,7 +315,7 @@ void debug_write_line__0()
     fprintf(stderr, "\n");
 }
 
-bool string__0next(string__0iter*_Nonnull iter)
+_Bool string__0next(string__0iter*_Nonnull iter)
 {
     iter->current++;
     if(iter->current >= iter->count)
@@ -335,8 +329,8 @@ bool string__0next(string__0iter*_Nonnull iter)
 Strings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)
 {
     self->values = NULL;
-    self->count__ = {0};
-    self->capacity__ = {0};
+    self->count__ = (int32){0};
+    self->capacity__ = (int32){0};
     return self;
 }
 
@@ -347,18 +341,18 @@ void add_string__2(Strings__0 *_Nonnull strings, string value)
         int32_t new_capacity = strings->capacity__.value == 0 ? 16 : strings->capacity__.value * 2;
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
-        string* new_values = (string*)new char[new_capacity * sizeof(string)];
+        string* new_values = allocate(new_capacity * sizeof(string));
         memcpy(new_values, strings->values, strings->count__.value * sizeof(string));
         if(strings->capacity__.value != 0)
-            delete[] strings->values; // delete the old array
+            free__1(strings->values); // delete the old array
         strings->values = new_values;
-        strings->capacity__ = {new_capacity};
+        strings->capacity__ = (int32){new_capacity};
     }
     strings->values[strings->count__.value] = value;
     strings->count__.value++;
 }
 
-bool int__0next(int__0iter*_Nonnull iter)
+_Bool int__0next(int__0iter*_Nonnull iter)
 {
     iter->current++;
     if(iter->current >= iter->count)
@@ -372,8 +366,8 @@ bool int__0next(int__0iter*_Nonnull iter)
 Ints__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)
 {
     self->values = NULL;
-    self->count__ = {0};
-    self->capacity__ = {0};
+    self->count__ = (int32){0};
+    self->capacity__ = (int32){0};
     return self;
 }
 
@@ -384,18 +378,18 @@ void add_int__2(Ints__0 *_Nonnull ints, int32 value)
         int32_t new_capacity = ints->capacity__.value == 0 ? 16 : ints->capacity__.value * 2;
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
-        int32* new_values = (int32*)new char[new_capacity * sizeof(int32)];
+        int32* new_values = allocate(new_capacity * sizeof(int32));
         memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));
         if(ints->capacity__.value != 0)
-            delete[] ints->values; // delete the old array
+            free__1(ints->values); // delete the old array
         ints->values = new_values;
-        ints->capacity__ = {new_capacity};
+        ints->capacity__ = (int32){new_capacity};
     }
     ints->values[ints->count__.value] = value;
     ints->count__.value++;
 }
 
-bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)
+_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)
 {
     iter->current++;
     if(iter->current >= iter->count)
@@ -412,10 +406,10 @@ void add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr val
     {
         int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
-        void_ptr* new_values = (void_ptr*)new char[new_capacity * sizeof(void_ptr)];
+        void_ptr* new_values = allocate(new_capacity * sizeof(void_ptr));
         memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));
         if(list->capacity__.value != 0)
-            delete[] list->values; // delete the old array
+            free__1(list->values); // delete the old array
         list->values = new_values;
         list->capacity__ = (int32){new_capacity};
     }
@@ -440,7 +434,7 @@ system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char c
 {
     system__console__Arguments__0 *_Nonnull self = allocate(sizeof(system__console__Arguments__0));
     self->count__ = (int32){argc-1};
-    self->values = new string[self->count__.value];
+    self->values = allocate(self->count__.value * sizeof(string));
     for (int i = 0; i < self->count__.value; i++)
         self->values[i] = string_from_cstr(argv[i+1]);
     return self;
@@ -450,16 +444,16 @@ system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system_
 {
     char const *_Nonnull fname = cstr_from(fileName);
     self->file= fopen(fname, "rb"); // TODO check for error
-    delete[] fname;
+    free__1(fname);
     return self;
 }
 
 string file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)
 {
     fseek(reader->file, 0, SEEK_END);
-    auto length = ftell(reader->file);
+    long int length = ftell(reader->file);
     fseek(reader->file, 0, SEEK_SET);
-    uint8_t*_Nonnull bytes = new uint8_t[length];
+    uint8_t*_Nonnull bytes = allocate(length);
     length = fread(bytes, sizeof(uint8_t), length, reader->file);
     return (string){(int32_t)length, bytes};
 }
@@ -472,7 +466,7 @@ system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system_
 {
     char const *_Nonnull fname = cstr_from(fileName);
     self->file = fopen(fname, "wb"); // TODO check error
-    delete[] fname;
+    free__1(fname);
     return self;
 }
 
@@ -495,12 +489,12 @@ void ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)
 
     if(new_capacity > sb->capacity)
     {
-        uint8_t* new_buffer = new uint8_t[new_capacity];
+        uint8_t* new_buffer =  allocate(new_capacity);
         if(sb->byte_length__.value > 0)
             memcpy(new_buffer, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));
 
         if(sb->capacity > 0)
-            delete[] sb->bytes;
+            free__1(sb->bytes);
 
         sb->bytes = new_buffer;
         sb->capacity = new_capacity;

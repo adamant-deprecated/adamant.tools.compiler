@@ -64,6 +64,8 @@ public:
 
 typedef void*_Nullable void_ptr;
 typedef void const*_Nullable const_void_ptr;
+static const _Bool true=1;
+static const _Bool false=0;
 
 #endif
 
