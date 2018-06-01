@@ -570,7 +570,7 @@ void system__text__String_Builder__0::AppendLine__1(string const & value)
     byte_length__.value = new_length;
 }
 
-void sb_append_ine__1(system__text__String_Builder__0 *_Nonnull sb)
+void sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb)
 {
     int32_t new_length = sb->byte_length__.value + 1;
     ensure_sb_capacity(sb, new_length);
