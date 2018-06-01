@@ -526,7 +526,7 @@ ConsoleCommand CompileC(string[] sourceGlobs, FilePath output, FilePath includeD
     // -std=c11 use the C 2011 standard (newest fully finalized)
     // -fsanitize=undefined perform runtime checks for undefined behavior
     // -Wall -Wno-missing-braces all warnings (except one annoying one)
-    var options = " -std=c11 -fsanitize=undefined -Wall -Wno-missing-braces ";
+    var options = " -std=c11 -fsanitize=undefined ";
 
     // Additional options that can be useful:
     // -fsanitize=address perform runtime address safety checks
