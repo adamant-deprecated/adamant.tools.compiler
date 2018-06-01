@@ -1,13 +1,13 @@
 public main(console: mut system.console.Console) -> void
 {
     var i: int = 0;
-    console.WriteLine(int_to_string(i)+": 0x"+int_to_hex_string(i));
+    console_write_line(console, int_to_string(i)+": 0x"+int_to_hex_string(i));
     i = 15;
-    console.WriteLine(int_to_string(i)+": 0x"+int_to_hex_string(i));
+    console_write_line(console, int_to_string(i)+": 0x"+int_to_hex_string(i));
     i = 255;
-    console.WriteLine(int_to_string(i)+": 0x"+int_to_hex_string(i));
+    console_write_line(console, int_to_string(i)+": 0x"+int_to_hex_string(i));
     i = 512;
-    console.WriteLine(int_to_string(i)+": 0x"+int_to_hex_string(i));
+    console_write_line(console, int_to_string(i)+": 0x"+int_to_hex_string(i));
     i = 2147483647;
-    console.WriteLine(int_to_string(i)+": 0x"+int_to_hex_string(i));
+    console_write_line(console, int_to_string(i)+": 0x"+int_to_hex_string(i));
 }

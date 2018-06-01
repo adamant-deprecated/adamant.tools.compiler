@@ -6,16 +6,16 @@ public main(console: mut system.console.Console) -> void
 
 	if strings.count =/= 2
 	{
-		console.WriteLine("List length not 2!");
+		console_write_line(console, "List length not 2!");
 	}
 
-	console.WriteLine("strings[0]="+strings[0]);
+	console_write_line(console, "strings[0]="+strings[0]);
 
 	for let s: string in strings
 	{
-		console.WriteLine(s);
+		console_write_line(console, s);
 	}
-	console.WriteLine();
+	console_write_line(console);
 	clear_strings(strings);
 
 	let builders: mut system.collections.List<mut system.text.String_Builder> = new system.collections.List<mut system.text.String_Builder>();
@@ -27,7 +27,7 @@ public main(console: mut system.console.Console) -> void
 	}
 	for let sb: mut system.text.String_Builder in builders
 	{
-		console.WriteLine(sb.ToString());
+		console_write_line(console, sb.ToString());
 	}
     clear_list(builders);
 }

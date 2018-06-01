@@ -6,29 +6,29 @@ public main(console: mut system.console.Console) -> void
 
 	// Equal
 	r = v == n;
-	console.WriteLine("v == n: " + bool_to_string(r));
+	console_write_line(console, "v == n: " + bool_to_string(r));
 	r = n == v;
-	console.WriteLine("n == v: " + bool_to_string(r));
+	console_write_line(console, "n == v: " + bool_to_string(r));
 	r = n == n;
-	console.WriteLine("n == n: " + bool_to_string(r));
+	console_write_line(console, "n == n: " + bool_to_string(r));
 	r = n == none;
-	console.WriteLine("n == none: " + bool_to_string(r));
+	console_write_line(console, "n == none: " + bool_to_string(r));
 	r = none == n;
-	console.WriteLine("none == n: " + bool_to_string(r));
+	console_write_line(console, "none == n: " + bool_to_string(r));
 	r = none == none;
-	console.WriteLine("none == none: " + bool_to_string(r));
+	console_write_line(console, "none == none: " + bool_to_string(r));
 
 	// Not Equal
 	r = v =/= n;
-	console.WriteLine("v =/= n: " + bool_to_string(r));
+	console_write_line(console, "v =/= n: " + bool_to_string(r));
 	r = n =/= v;
-	console.WriteLine("n =/= v: " + bool_to_string(r));
+	console_write_line(console, "n =/= v: " + bool_to_string(r));
 	r = n =/= n;
-	console.WriteLine("n =/= n: " + bool_to_string(r));
+	console_write_line(console, "n =/= n: " + bool_to_string(r));
 	r = n =/= none;
-	console.WriteLine("n =/= none: " + bool_to_string(r));
+	console_write_line(console, "n =/= none: " + bool_to_string(r));
 	r = none =/= n;
-	console.WriteLine("none =/= n: " + bool_to_string(r));
+	console_write_line(console, "none =/= n: " + bool_to_string(r));
 	r = none =/= none;
-	console.WriteLine("none =/= none: " + bool_to_string(r));
+	console_write_line(console, "none =/= none: " + bool_to_string(r));
 }

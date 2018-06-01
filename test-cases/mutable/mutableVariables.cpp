@@ -26,7 +26,7 @@ system__text__String_Builder__0 *_Nonnull Func__2(int32 x__, int32 const y__)
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	console__->WriteLine__1(Func__2(((int32){1}), ((int32){2}))->ToString__0());
+	console_write_line__2(console__, Func__2(((int32){1}), ((int32){2}))->ToString__0());
 }
 
 // Entry Point Adapter

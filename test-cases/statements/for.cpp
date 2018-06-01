@@ -16,7 +16,7 @@ void main__2(system__console__Console__0 *_Nonnull const console__, system__cons
 	for (string__0iter iter = system__console__Arguments__0__0iterate(args__); string__0next(&iter);)
 	{
 		string const arg__ = string__0current(&iter);
-		console__->WriteLine__1(arg__);
+		console_write_line__2(console__, arg__);
 	}
 }
 

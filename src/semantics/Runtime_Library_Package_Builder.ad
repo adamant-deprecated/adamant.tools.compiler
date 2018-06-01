@@ -53,6 +53,8 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "add_int")));
     add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "clear_list")));
     add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "add_item")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "console_write")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "console_write_line")));
 
     // system
     let system_namespace: Name = new Name(global_namespace, NamespaceName, "system");

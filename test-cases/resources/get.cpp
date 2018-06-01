@@ -13,8 +13,8 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
-	console__->Write__1(get_resource__1(((string){10,(uint8_t const*)"hello.rsrc"})));
-	console__->Write__1(get_resource__1(((string){10,(uint8_t const*)"world.rsrc"})));
+	console_write__2(console__, get_resource__1(((string){10,(uint8_t const*)"hello.rsrc"})));
+	console_write__2(console__, get_resource__1(((string){10,(uint8_t const*)"world.rsrc"})));
 }
 
 // Entry Point Adapter

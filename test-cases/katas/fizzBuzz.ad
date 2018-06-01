@@ -8,20 +8,20 @@ public main(console: mut system.console.Console) -> void
 		{
 			if x % 5 == 0
 			{
-				console.WriteLine("FizzBuzz");
+				console_write_line(console, "FizzBuzz");
 			}
 			else
 			{
-				console.WriteLine("Fizz");
+				console_write_line(console, "Fizz");
 			}
 		}
 		else if x % 5 == 0
 		{
-			console.WriteLine("Buzz");
+			console_write_line(console, "Buzz");
 		}
 		else
 		{
-			console.WriteLine(int_to_string(x));
+			console_write_line(console, int_to_string(x));
 		}
 
 		x += 1;

@@ -2,6 +2,6 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
 {
 	for let arg: string in args
 	{
-		console.WriteLine(arg);
+		console_write_line(console, arg);
 	}
 }

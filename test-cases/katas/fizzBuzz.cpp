@@ -20,20 +20,20 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 		{
 			if (cond(int32__0op__equal(int32__0op__remainder(x__, ((int32){5})), ((int32){0}))))
 			{
-				console__->WriteLine__1(((string){8,(uint8_t const*)"FizzBuzz"}));
+				console_write_line__2(console__, ((string){8,(uint8_t const*)"FizzBuzz"}));
 			}
 			else
 			{
-				console__->WriteLine__1(((string){4,(uint8_t const*)"Fizz"}));
+				console_write_line__2(console__, ((string){4,(uint8_t const*)"Fizz"}));
 			}
 		}
 		else if (cond(int32__0op__equal(int32__0op__remainder(x__, ((int32){5})), ((int32){0}))))
 		{
-			console__->WriteLine__1(((string){4,(uint8_t const*)"Buzz"}));
+			console_write_line__2(console__, ((string){4,(uint8_t const*)"Buzz"}));
 		}
 		else
 		{
-			console__->WriteLine__1(int_to_string__1(x__));
+			console_write_line__2(console__, int_to_string__1(x__));
 		}
 
 		op__add_assign(&(x__), ((int32){1}));

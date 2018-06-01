@@ -1,7 +1,7 @@
 public main(console: mut system.console.Console) -> void
 {
     let s: string = "A good Test String!";
-    console.WriteLine(substring(s, 2, 4));
-    console.WriteLine(substring(s, 12));
-    console.WriteLine(substring(s, 19, 0)); // edge case, zero length string at end
+    console_write_line(console, substring(s, 2, 4));
+    console_write_line(console, substring(s, 12));
+    console_write_line(console, substring(s, 19, 0)); // edge case, zero length string at end
 }

@@ -457,21 +457,26 @@ struct system__console__Console__0
     void WriteLine__0();
 };
 
+void console_write__2(system__console__Console__0 *_Nonnull console, string value);
+void console_write_line__2(system__console__Console__0 *_Nonnull console, string value);
+void console_write_line__1(system__console__Console__0 *_Nonnull console);
+
 struct system__console__Arguments__0
 {
     string *_Nonnull values;
+    int32 count__;
 
     system__console__Arguments__0(int argc, char const *_Nonnull const *_Nonnull argv);
 
-    const int Count;
-
     // Adamant Members
-    int32 op__magnitude() const { return (int32){Count}; }
+    int32 op__magnitude() const { return count__; }
 };
+
+system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);
 
 inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)
 {
-    lib_assert(index.value >= 0 && index.value < arguments->Count);
+    lib_assert(index.value >= 0 && index.value < arguments->count__.value);
     return arguments->values[index.value];
 }
 
@@ -481,7 +486,7 @@ inline string__0iter system__console__Arguments__0__0iterate(system__console__Ar
     {
         .values = arguments->values,
         .current = -1,
-        .count = arguments->Count
+        .count = arguments->count__.value
     };
 }
 

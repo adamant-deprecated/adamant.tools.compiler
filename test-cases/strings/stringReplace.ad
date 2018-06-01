@@ -1,6 +1,6 @@
 public main(console: mut system.console.Console) -> void
 {
     let s: string = "A good good Test String!";
-    console.WriteLine(s);
-    console.WriteLine(string_replace(s, "good", "bad"));
+    console_write_line(console, s);
+    console_write_line(console, string_replace(s, "good", "bad"));
 }

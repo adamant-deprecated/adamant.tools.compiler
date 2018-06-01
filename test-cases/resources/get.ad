@@ -1,5 +1,5 @@
 public main(console: mut system.console.Console) -> void
 {
-	console.Write(get_resource("hello.rsrc"));
-	console.Write(get_resource("world.rsrc"));
+    console_write(console, get_resource("hello.rsrc"));
+    console_write(console, get_resource("world.rsrc"));
 }

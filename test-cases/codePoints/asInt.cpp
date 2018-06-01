@@ -14,11 +14,11 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 void main__1(system__console__Console__0 *_Nonnull const console__)
 {
 	code_point c__ = ((code_point){/*a*/0x61});
-	console__->WriteLine__1(string__0op__add(string__0op__add(string__0op__add(((string){1,(uint8_t const*)"'"}), code_point_to_string__1(c__)), ((string){3,(uint8_t const*)"': "})), int_to_string__1(code_point_as_int__1(c__))));
+	console_write_line__2(console__, string__0op__add(string__0op__add(string__0op__add(((string){1,(uint8_t const*)"'"}), code_point_to_string__1(c__)), ((string){3,(uint8_t const*)"': "})), int_to_string__1(code_point_as_int__1(c__))));
 	c__ = ((code_point){/*z*/0x7A});
-	console__->WriteLine__1(string__0op__add(string__0op__add(string__0op__add(((string){1,(uint8_t const*)"'"}), code_point_to_string__1(c__)), ((string){3,(uint8_t const*)"': "})), int_to_string__1(code_point_as_int__1(c__))));
+	console_write_line__2(console__, string__0op__add(string__0op__add(string__0op__add(((string){1,(uint8_t const*)"'"}), code_point_to_string__1(c__)), ((string){3,(uint8_t const*)"': "})), int_to_string__1(code_point_as_int__1(c__))));
 	c__ = ((code_point){/*\\*/0x5C});
-	console__->WriteLine__1(string__0op__add(string__0op__add(string__0op__add(((string){1,(uint8_t const*)"'"}), code_point_to_string__1(c__)), ((string){3,(uint8_t const*)"': "})), int_to_string__1(code_point_as_int__1(c__))));
+	console_write_line__2(console__, string__0op__add(string__0op__add(string__0op__add(((string){1,(uint8_t const*)"'"}), code_point_to_string__1(c__)), ((string){3,(uint8_t const*)"': "})), int_to_string__1(code_point_as_int__1(c__))));
 }
 
 // Entry Point Adapter
