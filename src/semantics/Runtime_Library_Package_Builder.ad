@@ -55,6 +55,10 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "add_item")));
     add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "console_write")));
     add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "console_write_line")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "file_read_to_end")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "close_file_reader")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "file_write")));
+    add_item(symbols, build_function_symbol(new Name(global_namespace, FunctionName, "close_file_writer")));
 
     // system
     let system_namespace: Name = new Name(global_namespace, NamespaceName, "system");

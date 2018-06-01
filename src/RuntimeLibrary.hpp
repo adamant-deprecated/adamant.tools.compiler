@@ -255,6 +255,8 @@ typedef struct void_ptr__0iter void_ptr__0iter;
 typedef struct system__collections__List__1 system__collections__List__1;
 typedef struct system__console__Console__0 system__console__Console__0;
 typedef struct system__console__Arguments__0 system__console__Arguments__0;
+typedef struct system__io__File_Reader__0 system__io__File_Reader__0;
+typedef struct system__io__File_Writer__0 system__io__File_Writer__0;
 
 inline void_ptr allocate__1(int32 bytes)
 {
@@ -491,6 +493,8 @@ struct system__io__File_Reader__0
 };
 
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, const string& fileName);
+string file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);
+void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);
 
 struct system__io__File_Writer__0
 {
@@ -501,6 +505,8 @@ struct system__io__File_Writer__0
 };
 
 system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, const string& fileName);
+void file_write__1(system__io__File_Writer__0 *_Nonnull writer, string value);
+void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);
 
 struct system__text__String_Builder__0
 {
