@@ -1,3 +1,3 @@
 70
 1
-Function main__0 not yet implemented, test-cases/runtimeLibrary/notImplemented.cpp, line 16
+Function main__0 not yet implemented, test-cases/runtimeLibrary/notImplemented.c, line 16

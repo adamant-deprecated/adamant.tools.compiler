@@ -10,8 +10,8 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{cpp,rsrc}]
+[*.{c,cpp,rsrc}]
 end_of_line = lf
 
-[*.{bat,cs,csproj,sln}]
+[*.{bat}]
 end_of_line = crlf

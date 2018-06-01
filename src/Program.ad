@@ -168,11 +168,11 @@ public main(console: mut system.console.Console, args: system.console.Arguments)
         console_write(console, "Outputting RuntimeLibrary to: ");
         console_write_line(console, output_dir_path);
     }
-    var resource_file: mut system.io.File_Writer = new system.io.File_Writer(output_dir_path+"RuntimeLibrary.hpp");
-    file_write(resource_file, get_resource("RuntimeLibrary.hpp"));
+    var resource_file: mut system.io.File_Writer = new system.io.File_Writer(output_dir_path+"RuntimeLibrary.h");
+    file_write(resource_file, get_resource("RuntimeLibrary.h"));
     close_file_writer(resource_file);
-    resource_file = new system.io.File_Writer(output_dir_path+"RuntimeLibrary.cpp");
-    file_write(resource_file, get_resource("RuntimeLibrary.cpp"));
+    resource_file = new system.io.File_Writer(output_dir_path+"RuntimeLibrary.c");
+    file_write(resource_file, get_resource("RuntimeLibrary.c"));
     close_file_writer(resource_file);
 
     return Success;

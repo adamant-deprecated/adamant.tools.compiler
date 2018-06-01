@@ -5,6 +5,7 @@
 *.md        text
 *.bat       text eol=crlf
 *.cpp       text eol=lf
+*.c         text eol=lf
 *.h         text eol=lf
 *.rsrc      text eol=lf
 *.sh        text eol=lf

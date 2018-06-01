@@ -1,4 +1,4 @@
-# `adamant.tools.compiler.emit.cpp`
+# `adamant.tools.compiler.emit.c`
 
 Emit C++ code for the semantic tree.
 

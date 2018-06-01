@@ -85,14 +85,14 @@ Task("Build-Previous")
         Information("Getting source for previous");
         Verbose("Checking out translated from previous source branch"); // Git commands don't have verbose output
         GitCheckout(".", "translated/" + sourceCommit, new FilePath[] { "translated" });
-        // Git checkout stanges the changes, we don't want that
+        // Git checkout stages the changes, we don't want that
         Verbose("Unstaging files staged by checkout"); // Git commands don't have verbose output
         GitUnstage(".", new FilePath[] { "translated" });
         MoveDirectory("translated/current", "translated/previous");
 
         Information("Compiling previous C");
         EnsureDirectoryExists("target/previous");
-        CompileC("translated/previous/*.cpp", "target/previous/Program").Run();
+        CompileC("translated/previous/*.c*", "target/previous/Program").Run();
         SaveVersionInfo("target/previous/Program", sourceCommit);
     });
 
@@ -109,7 +109,7 @@ Task("Build-Current")
 
         Information("Compiling current C");
         EnsureDirectoryExists("target/current");
-        CompileC("translated/current/*.cpp", "target/current/Program").Run();
+        CompileC("translated/current/*.c*", "target/current/Program").Run();
     });
 
 Task("Unit-Test-Current")
@@ -139,7 +139,7 @@ Task("Build-Bootstrapped")
 
         Information("Compiling bootstrapped C");
         EnsureDirectoryExists("target/bootstrapped");
-        CompileC("translated/bootstrapped/*.cpp", "target/bootstrapped/Program").Run();
+        CompileC("translated/bootstrapped/*.c", "target/bootstrapped/Program").Run();
     });
 
 Task("Unit-Test-Bootstrapped")
@@ -169,7 +169,7 @@ Task("Build-Double-Bootstrapped")
 
         Information("Compiling double-bootstrapped C");
         EnsureDirectoryExists("target/double-bootstrapped");
-        CompileC("translated/double-bootstrapped/*.cpp", "target/double-bootstrapped/Program").Run();
+        CompileC("translated/double-bootstrapped/*.c", "target/double-bootstrapped/Program").Run();
 
         Information("Verifying bootstrapped and double-bootstrapped are equal");
         var bootstrappedFiles = GetFiles("translated/bootstrapped/**/*");
@@ -210,7 +210,7 @@ Task("Build-Expected")
         CleanDirectory("target/test-cases");
 
         var wd = MakeAbsolute(Directory("."));
-        var testCases = GetFiles("test-cases/**/*.cpp").ToList();
+        var testCases = GetFiles("test-cases/**/*.c").ToList();
         if(testName != null)
             testCases = testCases.Where(c => c.FullPath.Contains(testName)).ToList();
         Information("Found {0} Test Case Expected Outputs", testCases.Count);
@@ -220,7 +220,7 @@ Task("Build-Expected")
             var outputDir = Directory("target") + relativePath.GetDirectory();
             EnsureDirectoryExists(outputDir);
             var output = outputDir + relativePath.GetFilenameWithoutExtension();
-            CompileC(new []{ relativePath.ToString(), "src/*.cpp" }, output, "src").Run();
+            CompileC(new []{ relativePath.ToString(), "src/*.c" }, output, "src").Run();
         }
         Information("Compiled {0} Test Case Expected Outputs", testCases.Count);
     });
@@ -422,7 +422,7 @@ void Test(string version)
     foreach(var testCase in testCases)
     {
         var testCaseName = testCasesDir.GetRelativePath(testCase);
-        var output = outputDir + testCaseName.ChangeExtension("cpp");
+        var output = outputDir + testCaseName.ChangeExtension("c");
         EnsureDirectoryExists(output.Path.GetDirectory());
         var resources = GetFiles(testCase.GetDirectory().ToString() + "/*.rsrc");
         var actual = CompileAdamant(compiler, new [] { testCase }, output, resources).Test();
@@ -431,7 +431,7 @@ void Test(string version)
         var expectedFile = testCase.ChangeExtension(".compile.txt");
         var expected = FileExists(expectedFile) ? ReadResultFile(expectedFile) : DefaultResult();
 
-        var expectedCpp = testCase.ChangeExtension(".cpp");
+        var expectedC = testCase.ChangeExtension(".c");
         var caseFailed = TestResult(testCaseName, expected, actual);
 
         if(!caseFailed && actual.ExitCode == 0)
@@ -442,7 +442,7 @@ void Test(string version)
                 Information("    C output does not exist.");
                 caseFailed = true;
             }
-            else if(FileReadText(expectedCpp) != FileReadText(output))
+            else if(FileReadText(expectedC) != FileReadText(output))
             {
                 Error("  {0} [FAIL]", testCaseName);
                 Information("    C does not match expected.");
@@ -500,8 +500,8 @@ ConsoleCommand CompileAdamant(string sourceVersion, string targetVersion)
 {
     var compiler = string.Format("target/{0}/Program", sourceVersion);
     var sources = GetFiles("src/**/*.ad");
-    var output = string.Format("translated/{0}/Program.cpp", targetVersion);
-    var resources = new FilePath[] { "src/RuntimeLibrary.cpp", "src/RuntimeLibrary.hpp" };
+    var output = string.Format("translated/{0}/Program.c", targetVersion);
+    var resources = new FilePath[] { "src/RuntimeLibrary.c", "src/RuntimeLibrary.h" };
     return CompileAdamant(compiler, sources, output, resources);
 }
 
