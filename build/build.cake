@@ -231,7 +231,10 @@ Task("Test-Expected")
     .Does(() =>
     {
         var wd = MakeAbsolute(Directory("."));
-        var testCases = GetFiles("target/test-cases/**/*");
+        var testCases = GetFiles("target/test-cases/**/*")
+                        // We need to exclude lib files etc, but on linux, the exe has no extension
+                        .Where(path => !path.HasExtension || path.GetExtension() == ".exe")
+                        .ToList();
         var testCasesDir = Directory("test-cases");
         var targetTestCasesDir = MakeAbsolute(Directory("target/test-cases"));
         Information("Found {0} Test Cases to Execute", testCases.Count);
