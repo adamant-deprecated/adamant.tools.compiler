@@ -1,5 +1,4 @@
 #include "RuntimeLibrary.hpp"
-#include <assert.h>
 
 // -----------------------------------------------------------------------------
 // Static Checks
