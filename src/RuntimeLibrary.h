@@ -15,8 +15,6 @@
 
 typedef void*_Nullable void_ptr;
 typedef void const*_Nullable const_void_ptr;
-static const _Bool true=1;
-static const _Bool false=0;
 
 #define lib_assert(condition) lib_assert1(condition, #condition)
 void lib_assert1(const _Bool condition, char const *_Nonnull code);
@@ -51,7 +49,7 @@ struct optional__never
 };
 
 // TODO this is a hack for now, the type of `none` should be `never?`
-static const void_ptr none = (void*_Nullable)0;
+static const void_ptr none = NULL;
 
 // For now, use `BOOL` as the emitted type
 // TODO C: switch `BOOL` to `bool`
@@ -127,9 +125,10 @@ string code_point_to_string__1(code_point c);
 
 struct string
 {
-    int32 byte_length; // TODO rename to just byte_length, though there will be a byte_length
-    // property in the future, it doesn't make sense to directly expose it right now because this is
+    // Though there will be a byte_length property in the future,
+    // it doesn't make sense to directly expose it right now because this is
     // not the correct implementation.
+    int32 byte_length;
 
     // don't use chars because C's handling of chars sucks
     uint8_t const *_Nonnull bytes;
@@ -235,7 +234,7 @@ inline void_ptr allocate__1(int32 bytes)
 inline void free__1(const_void_ptr object)
 {
     // TODO hack cast away const
-    free((void*_Nonnull)(void const*_Nonnull)object);
+    free((void*_Nonnull)object);
 }
 
 #define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)
