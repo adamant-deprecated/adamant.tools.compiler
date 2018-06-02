@@ -24,6 +24,9 @@ static inline void static_checks()
 // Library Utils
 // -----------------------------------------------------------------------------
 
+static const _Bool _true=1;
+static const _Bool _false=0;
+
 void lib_assert1(const _Bool condition, char const *_Nonnull code)
 {
     if(!condition)
@@ -358,7 +361,7 @@ string get_resource__1(string name)
         if(cond(string__0op__equal(resource_name[i], name)))
             return resource_value[i];
 
-    lib_assert_msg(false, cstr_from(name));
+    lib_assert_msg(_false, cstr_from(name));
     UNREACHABLE__0();
 }
 
@@ -381,9 +384,9 @@ _Bool string__0next(string__0iter*_Nonnull iter)
     if(iter->current >= iter->count)
     {
         iter->current = iter->count; // prevent current from further increase
-        return false;
+        return _false;
     }
-    return true;
+    return _true;
 }
 
 extern inline string string__0current(string__0iter const*_Nonnull iter);
@@ -426,9 +429,9 @@ _Bool int__0next(int__0iter*_Nonnull iter)
     if(iter->current >= iter->count)
     {
         iter->current = iter->count; // prevent current from further increase
-        return false;
+        return _false;
     }
-    return true;
+    return _true;
 }
 
 extern inline int32 int__0current(int__0iter const*_Nonnull iter);
@@ -471,9 +474,9 @@ _Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)
     if(iter->current >= iter->count)
     {
         iter->current = iter->count; // prevent current from further increase
-        return false;
+        return _false;
     }
-    return true;
+    return _true;
 }
 
 extern inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter);
