@@ -339,7 +339,9 @@ Task("Commit-Translated")
         var currentCommitMessage = GitLogLookup(".", currentCommit).Message;
         // Allow empty commits so we can make a properly named commit to match each commit
         var message = string.Format("Translated files for {0} '{1}'", currentCommit, currentCommitMessage);
-        Command("git", string.Format("commit -m \"{0}\" --allow-empty --untracked-files=no", message)).Run();
+        var messageLines = message.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        var messageOptions = string.Join(" ", messageLines.Select(line => string.Format("-m \"{0}\"", line)));
+        Command("git", string.Format("commit {0} --allow-empty --untracked-files=no", messageOptions)).Run();
 
         var tag = "translated/"+currentCommit;
         if(GitTagExists(tag))
