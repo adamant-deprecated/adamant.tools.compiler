@@ -1,13 +1,6 @@
-// On windows this disables warnings about using fopen_s instead of fopen
-// It must be defined before including the headers.
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include <stdint.h>
-
-// TODO Consider using *_s versions of standard lib functions
+#include <stdio.h>
 
 // -----------------------------------------------------------------------------
 // Library Utils
@@ -231,6 +224,7 @@ inline void_ptr allocate__1(int32 bytes)
     return malloc(bytes.value);
 }
 
+// TODO rename dellocate()
 inline void free__1(const_void_ptr object)
 {
     // TODO hack cast away const
