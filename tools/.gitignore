@@ -1,0 +1,8 @@
+# Cake Build Related Files
+Addins/
+Cake.Bakery/
+
+# SCons Related files
+
+## Compiled Python Cache
+*.pyc

@@ -7,8 +7,5 @@
 # VS Code Files
 .vscode/
 
-# Build Related Files
-tools/
-
 # OSX Files
 .DS_Store

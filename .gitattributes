@@ -9,3 +9,6 @@
 *.rsrc      text eol=lf
 *.sh        text eol=lf
 *.yml       text eol=lf
+
+# exclude tools from determining language of the repo on github
+tools/* linguist-vendored
