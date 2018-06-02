@@ -1,3 +1,9 @@
+// On windows this disables warnings about using fopen_s instead of fopen
+// It must be defined before including the headers.
+// Note that we can't switch to the "secure" functions because they don't
+// compile in linux on Travis CI
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
