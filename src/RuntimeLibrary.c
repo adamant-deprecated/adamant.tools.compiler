@@ -13,10 +13,11 @@ static inline void static_checks()
     _Static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
 
     // Testing that the style we use for literals can be used as a const
-    // const code_point test_code_point = ((code_point){0xFF});
+    const code_point test_code_point = ((code_point){0xFF});
     // TODO: C allows string literals that are one byte shorter than the array so no null terminator
     // TODO: C also has UTF-8 literals u8"hello"
-    // const string test_string = ((string){5,(uint8_t const[]){0x34,0x7F,0x45,0xaf,0x69}});
+    // TODO change the emitted literals?
+    const string test_string = ((string){5,(uint8_t const[]){u8"hello"}});
 }
 
 // -----------------------------------------------------------------------------
