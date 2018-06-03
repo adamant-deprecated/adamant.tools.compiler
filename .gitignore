@@ -9,6 +9,7 @@
 
 # Build Related Files
 tools/
+__pycache__/
 
 # OSX Files
 .DS_Store
