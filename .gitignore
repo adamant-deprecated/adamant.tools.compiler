@@ -9,6 +9,7 @@
 
 # Build Related Files
 tools/
+.tup/
 
 # OSX Files
 .DS_Store
