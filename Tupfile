@@ -1,0 +1,1 @@
+: |> py -3 build/building-commit-hash.py %o |> building-commit.sha1
