@@ -9,3 +9,9 @@
 
 # OSX Files
 .DS_Store
+
+# SCons Related files
+.sconsign.dblite
+
+## Compiled Python Cache
+*.pyc
