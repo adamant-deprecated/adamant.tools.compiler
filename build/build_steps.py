@@ -4,6 +4,8 @@
 from termcolor import colored
 from make import *
 from git import Repo
+from distutils.dir_util import copy_tree
+import glob, shutil
 
 build_path = 'target2'
 
@@ -16,6 +18,24 @@ def build_previous():
     translated_commit = checkout_translated()
     step = start_step('Build Previous')
     ensure_directory_exists(previous_path)
+    hash_file = os.path.join(previous_path, 'commit.sha1')
+    try:
+        with open(hash_file, 'r') as f:
+            current_hash = f.read()
+        if current_hash == translated_commit.hexsha:
+            print('  Previous already built for commit {}'.format(translated_commit.hexsha))
+            print('  Previous is up to date, skipping build')
+            end_step(step)
+            return None
+    except:
+        pass
+    clean_directory(previous_path)
+    # Copy files from the repo to the 'previous dir'
+    for file in glob.glob(os.path.join(translated_repo_path, '**', '*.c'), recursive=True) \
+            + glob.glob(os.path.join(translated_repo_path, '**', '*.h'), recursive=True):
+        print(file)
+        shutil.copy(file, previous_path)
+
     end_step(step)
 
 def clean():

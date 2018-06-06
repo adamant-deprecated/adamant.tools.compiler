@@ -2,8 +2,9 @@
 
 import sys
 
-if (sys.version_info < (3, 0)):
-    print('Python Verion >=3.0 required')
+# Note 3.5 is needed for glob('**')
+if (sys.version_info < (3, 5)):
+    print('Python Verion >=3.5 required')
     exit(1)
 
 import colorama, argparse
