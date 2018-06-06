@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdnoreturn.h>
 
 // -----------------------------------------------------------------------------
 // Library Utils
@@ -244,11 +245,11 @@ void assert2(const BOOL condition, char const *_Nonnull code, const string messa
 
 #define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED0(__func__, __FILE__, __LINE__)
 #define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED1(message, __func__, __FILE__, __LINE__)
-_Noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
-_Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
+noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
+noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
 
 #define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)
-_Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
+noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);
 
 string get_resource__1(string resource_name);
 void add_resource(string name, string value);

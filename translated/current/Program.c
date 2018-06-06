@@ -129,17 +129,17 @@ Symbol__0 const *_Nonnull build_symbols__2(Package_Name__0 const *_Nonnull const
 Compilation_Unit_Parser__0 *_Nonnull Compilation_Unit_Parser__0__0new__1(Compilation_Unit_Parser__0 *_Nonnull self, Token_Stream__0 *_Nonnull const token_stream__);
 Syntax_Node__0 const *_Nonnull parse__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nullable accept_token__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
-Syntax_Node__0 const *_Nonnull expect_token__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, int32 const tokenType__);
+Syntax_Node__0 const *_Nonnull expect_token__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, int32 const token_type__);
 Syntax_Node__0 const *_Nonnull parse_type_name__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nonnull parse_non_optional_type__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nonnull parse_type__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nonnull parse_atom__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nonnull parse_call_arguments__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
-Syntax_Node__0 const *_Nonnull parse_expression__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, int32 const minPrecedence__);
+Syntax_Node__0 const *_Nonnull parse_expression__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, int32 const min_precedence__);
 Syntax_Node__0 const *_Nonnull parse_expression__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nonnull parse_statement__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nonnull parse_if_statement__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
-Syntax_Node__0 const *_Nonnull parse_variable_declaration__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, BOOL const allowInitializer__);
+Syntax_Node__0 const *_Nonnull parse_variable_declaration__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, BOOL const allow_initializer__);
 Syntax_Node__0 const *_Nonnull parse_block__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nonnull parse_parameter_list__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
 Syntax_Node__0 const *_Nonnull parse_member_declaration__1(Compilation_Unit_Parser__0 *_Nonnull const parser__);
@@ -148,7 +148,7 @@ Syntax_Node__0 const *_Nonnull parse_compilation_unit__1(Compilation_Unit_Parser
 Token_Stream__0 *_Nonnull lexically_analyze__1(Source_Text__0 const *_Nonnull const source__);
 Syntax_Node__0 const *_Nonnull parse_package__1(system__collections__List__1 const *_Nonnull const sources__);
 Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__4(Syntax_Node__0 *_Nonnull self, int32 const type__, Source_Text__0 const *_Nonnull const source__, int32 const start__, int32 const length__);
-Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__5(Syntax_Node__0 *_Nonnull self, int32 const type__, BOOL const isMissing__, Source_Text__0 const *_Nonnull const source__, int32 const start__, int32 const length__);
+Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__5(Syntax_Node__0 *_Nonnull self, int32 const type__, BOOL const is_missing__, Source_Text__0 const *_Nonnull const source__, int32 const start__, int32 const length__);
 Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__2(Syntax_Node__0 *_Nonnull self, int32 const type__, Syntax_Node__0 const *_Nonnull const child__);
 Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__with_children__2(Syntax_Node__0 *_Nonnull self, int32 const type__, system__collections__List__1 const *_Nonnull const children__);
 Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__missing__3(Syntax_Node__0 *_Nonnull self, int32 const type__, Source_Text__0 const *_Nonnull const source__, int32 const start__);
@@ -320,8 +320,8 @@ struct Source_File_Builder__0
 {
 	system__text__String_Builder__0 *_Nonnull code__;
 	system__text__String_Builder__0 *_Nonnull indent__;
-	BOOL firstElement__;
-	BOOL afterBlock__;
+	BOOL first_element__;
+	BOOL after_block__;
 };
 
 struct Compilation_Unit__0
@@ -677,23 +677,23 @@ int32 main__2(system__console__Console__0 *_Nonnull const console__, system__con
 		return ((int32){0});
 	}
 
-	Strings__0 *_Nonnull const sourceFilePaths__ = Strings__0__0new__0(allocate(sizeof(Strings__0)));
-	Strings__0 *_Nonnull const resourceFilePaths__ = Strings__0__0new__0(allocate(sizeof(Strings__0)));
+	Strings__0 *_Nonnull const source_file_paths__ = Strings__0__0new__0(allocate(sizeof(Strings__0)));
+	Strings__0 *_Nonnull const resource_file_paths__ = Strings__0__0new__0(allocate(sizeof(Strings__0)));
 	string output_file_path__ = ((string){0,(uint8_t const*)""});
 	BOOL verbose__ = FALSE;
-	int32 argType__ = ((int32){0});
+	int32 arg_type__ = ((int32){0});
 	for (string__0iter iter = system__console__Arguments__0__0iterate(args__); string__0next(&iter);)
 	{
 		string const arg__ = string__0current(&iter);
-		if (cond(int32__0op__equal(argType__, ((int32){0}))))
+		if (cond(int32__0op__equal(arg_type__, ((int32){0}))))
 		{
 			if (cond(string__0op__equal(arg__, ((string){2,(uint8_t const*)"-r"}))))
 			{
-				argType__ = ((int32){1});
+				arg_type__ = ((int32){1});
 			}
 			else if (cond(string__0op__equal(arg__, ((string){2,(uint8_t const*)"-o"}))))
 			{
-				argType__ = ((int32){2});
+				arg_type__ = ((int32){2});
 			}
 			else if (cond(bool_op(bool_arg(string__0op__equal(arg__, ((string){2,(uint8_t const*)"-v"}))) || bool_arg(string__0op__equal(arg__, ((string){9,(uint8_t const*)"--verbose"}))))))
 			{
@@ -701,18 +701,18 @@ int32 main__2(system__console__Console__0 *_Nonnull const console__, system__con
 			}
 			else
 			{
-				add_string__2(sourceFilePaths__, arg__);
+				add_string__2(source_file_paths__, arg__);
 			}
 		}
-		else if (cond(int32__0op__equal(argType__, ((int32){1}))))
+		else if (cond(int32__0op__equal(arg_type__, ((int32){1}))))
 		{
-			add_string__2(resourceFilePaths__, arg__);
-			argType__ = ((int32){0});
+			add_string__2(resource_file_paths__, arg__);
+			arg_type__ = ((int32){0});
 		}
-		else if (cond(int32__0op__equal(argType__, ((int32){2}))))
+		else if (cond(int32__0op__equal(arg_type__, ((int32){2}))))
 		{
 			output_file_path__ = arg__;
-			argType__ = ((int32){0});
+			arg_type__ = ((int32){0});
 		}
 	}
 
@@ -721,29 +721,29 @@ int32 main__2(system__console__Console__0 *_Nonnull const console__, system__con
 		console_write_line__2(console__, ((string){23,(uint8_t const*)"Adamant Compiler v0.1.0"}));
 	}
 
-	if (cond(bool_op(bool_arg(int32__0op__equal(sourceFilePaths__->count__, ((int32){0}))) || bool_arg(string__0op__equal(output_file_path__, ((string){0,(uint8_t const*)""}))))))
+	if (cond(bool_op(bool_arg(int32__0op__equal(source_file_paths__->count__, ((int32){0}))) || bool_arg(string__0op__equal(output_file_path__, ((string){0,(uint8_t const*)""}))))))
 	{
-		console_write_line__2(console__, ((string){56,(uint8_t const*)"Args: <Input File(s)> -o <OutputFile> -r <Resource File>"}));
+		console_write_line__2(console__, ((string){57,(uint8_t const*)"Args: <Input File(s)> -o <Output File> -r <Resource File>"}));
 		return UsageError__;
 	}
 
 	system__collections__List__1 *_Nonnull const resources__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	if (cond(int32__0op__gt(resourceFilePaths__->count__, ((int32){0}))))
+	if (cond(int32__0op__gt(resource_file_paths__->count__, ((int32){0}))))
 	{
 		if (cond(verbose__))
 		{
 			console_write_line__2(console__, ((string){18,(uint8_t const*)"Reading Resources:"}));
 		}
 
-		for (string__0iter iter = Strings__0__0iterate(resourceFilePaths__); string__0next(&iter);)
+		for (string__0iter iter = Strings__0__0iterate(resource_file_paths__); string__0next(&iter);)
 		{
-			string const resourceFilePath__ = string__0current(&iter);
+			string const resource_file_path__ = string__0current(&iter);
 			if (cond(verbose__))
 			{
-				console_write_line__2(console__, string__0op__add(((string){2,(uint8_t const*)"  "}), resourceFilePath__));
+				console_write_line__2(console__, string__0op__add(((string){2,(uint8_t const*)"  "}), resource_file_path__));
 			}
 
-			add_item__2(resources__, read_source__1(resourceFilePath__));
+			add_item__2(resources__, read_source__1(resource_file_path__));
 		}
 	}
 
@@ -753,15 +753,15 @@ int32 main__2(system__console__Console__0 *_Nonnull const console__, system__con
 	}
 
 	system__collections__List__1 *_Nonnull const sources__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	for (string__0iter iter = Strings__0__0iterate(sourceFilePaths__); string__0next(&iter);)
+	for (string__0iter iter = Strings__0__0iterate(source_file_paths__); string__0next(&iter);)
 	{
-		string const sourceFilePath__ = string__0current(&iter);
+		string const source_file_path__ = string__0current(&iter);
 		if (cond(verbose__))
 		{
-			console_write_line__2(console__, string__0op__add(((string){2,(uint8_t const*)"  "}), sourceFilePath__));
+			console_write_line__2(console__, string__0op__add(((string){2,(uint8_t const*)"  "}), source_file_path__));
 		}
 
-		add_item__2(sources__, read_source__1(sourceFilePath__));
+		add_item__2(sources__, read_source__1(source_file_path__));
 	}
 
 	Package__0 const *_Nonnull const package__ = compile__1(sources__);
@@ -780,9 +780,9 @@ int32 main__2(system__console__Console__0 *_Nonnull const console__, system__con
 		console_write_line__2(console__, output_file_path__);
 	}
 
-	system__io__File_Writer__0 *_Nonnull const outputFile__ = system__io__File_Writer__0__0new__1(allocate(sizeof(system__io__File_Writer__0)), output_file_path__);
-	file_write__2(outputFile__, translated__);
-	close_file_writer__1(outputFile__);
+	system__io__File_Writer__0 *_Nonnull const output_file__ = system__io__File_Writer__0__0new__1(allocate(sizeof(system__io__File_Writer__0)), output_file_path__);
+	file_write__2(output_file__, translated__);
+	close_file_writer__1(output_file__);
 	string output_dir_path__ = output_file_path__;
 	int32 index__ = string_last_index_of__2(output_dir_path__, ((code_point){/*/*/0x2F}));
 	if (cond(int32__0op__not_equal(index__, int32__0op__neg(((int32){1})))))
@@ -1022,8 +1022,8 @@ Source_File_Builder__0 *_Nonnull Source_File_Builder__0__0new__0(Source_File_Bui
 {
 	self->code__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
 	self->indent__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
-	self->firstElement__ = TRUE;
-	self->afterBlock__ = TRUE;
+	self->first_element__ = TRUE;
+	self->after_block__ = TRUE;
 	return self;
 }
 
@@ -1036,20 +1036,20 @@ void begin_line__2(Source_File_Builder__0 *_Nonnull const file__, string const v
 {
 	sb_append_sb__2(file__->code__, file__->indent__);
 	sb_append__2(file__->code__, value__);
-	file__->firstElement__ = file__->afterBlock__ = FALSE;
+	file__->first_element__ = file__->after_block__ = FALSE;
 }
 
 void write__2(Source_File_Builder__0 *_Nonnull const file__, string const value__)
 {
 	sb_append__2(file__->code__, value__);
-	file__->firstElement__ = file__->afterBlock__ = FALSE;
+	file__->first_element__ = file__->after_block__ = FALSE;
 }
 
 void end_line__2(Source_File_Builder__0 *_Nonnull const file__, string const value__)
 {
 	sb_append__2(file__->code__, value__);
 	sb_append_line__1(file__->code__);
-	file__->firstElement__ = file__->afterBlock__ = FALSE;
+	file__->first_element__ = file__->after_block__ = FALSE;
 }
 
 void write_line__2(Source_File_Builder__0 *_Nonnull const file__, string const value__)
@@ -1057,33 +1057,33 @@ void write_line__2(Source_File_Builder__0 *_Nonnull const file__, string const v
 	sb_append_sb__2(file__->code__, file__->indent__);
 	sb_append__2(file__->code__, value__);
 	sb_append_line__1(file__->code__);
-	file__->firstElement__ = file__->afterBlock__ = FALSE;
+	file__->first_element__ = file__->after_block__ = FALSE;
 }
 
 void blank_line__1(Source_File_Builder__0 *_Nonnull const file__)
 {
 	sb_append_line__1(file__->code__);
-	file__->firstElement__ = TRUE;
-	file__->afterBlock__ = FALSE;
+	file__->first_element__ = TRUE;
+	file__->after_block__ = FALSE;
 }
 
 void element_separator_line__1(Source_File_Builder__0 *_Nonnull const file__)
 {
-	if (cond(BOOL__0op__not(file__->firstElement__)))
+	if (cond(BOOL__0op__not(file__->first_element__)))
 	{
 		sb_append_line__1(file__->code__);
-		file__->firstElement__ = TRUE;
-		file__->afterBlock__ = FALSE;
+		file__->first_element__ = TRUE;
+		file__->after_block__ = FALSE;
 	}
 }
 
 void statement_separator_line__1(Source_File_Builder__0 *_Nonnull const file__)
 {
-	if (cond(file__->afterBlock__))
+	if (cond(file__->after_block__))
 	{
 		sb_append_line__1(file__->code__);
-		file__->firstElement__ = TRUE;
-		file__->afterBlock__ = FALSE;
+		file__->first_element__ = TRUE;
+		file__->after_block__ = FALSE;
 	}
 }
 
@@ -1091,14 +1091,14 @@ void begin_block__1(Source_File_Builder__0 *_Nonnull const file__)
 {
 	write_line__2(file__, ((string){1,(uint8_t const*)"{"}));
 	sb_append__2(file__->indent__, ((string){1,(uint8_t const*)"\t"}));
-	file__->firstElement__ = file__->afterBlock__ = FALSE;
+	file__->first_element__ = file__->after_block__ = FALSE;
 }
 
 void end_block__1(Source_File_Builder__0 *_Nonnull const file__)
 {
 	sb_remove__3(file__->indent__, ((int32){0}), ((int32){1}));
 	write_line__2(file__, ((string){1,(uint8_t const*)"}"}));
-	file__->afterBlock__ = TRUE;
+	file__->after_block__ = TRUE;
 }
 
 void end_block_with_semicolon__1(Source_File_Builder__0 *_Nonnull const file__)
@@ -2344,16 +2344,16 @@ Syntax_Node__0 const *_Nullable accept_token__1(Compilation_Unit_Parser__0 *_Non
 	return node__;
 }
 
-Syntax_Node__0 const *_Nonnull expect_token__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, int32 const tokenType__)
+Syntax_Node__0 const *_Nonnull expect_token__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, int32 const token_type__)
 {
 	if (cond(void_ptr__0op__equal(parser__->token__, none)))
 	{
-		return Syntax_Node__0__0new__missing__3(allocate(sizeof(Syntax_Node__0)), tokenType__, parser__->token_stream__->source__, source_byte_length__1(parser__->token_stream__->source__));
+		return Syntax_Node__0__0new__missing__3(allocate(sizeof(Syntax_Node__0)), token_type__, parser__->token_stream__->source__, source_byte_length__1(parser__->token_stream__->source__));
 	}
 
-	if (cond(bool_op(bool_arg(void_ptr__0op__equal(parser__->token__, none)) || bool_arg(int32__0op__not_equal(parser__->token__->kind__, tokenType__)))))
+	if (cond(bool_op(bool_arg(void_ptr__0op__equal(parser__->token__, none)) || bool_arg(int32__0op__not_equal(parser__->token__->kind__, token_type__)))))
 	{
-		return Syntax_Node__0__0new__missing__3(allocate(sizeof(Syntax_Node__0)), tokenType__, parser__->token_stream__->source__, parser__->token__->start__);
+		return Syntax_Node__0__0new__missing__3(allocate(sizeof(Syntax_Node__0)), token_type__, parser__->token_stream__->source__, parser__->token__->start__);
 	}
 
 	Syntax_Node__0 const *_Nullable const node__ = parser__->token__;
@@ -2378,12 +2378,12 @@ Syntax_Node__0 const *_Nonnull parse_type_name__1(Compilation_Unit_Parser__0 *_N
 			Syntax_Node__0 const *_Nonnull const identifier__ = expect_token__2(parser__, Identifier__);
 			if (cond(int32__0op__equal(parser__->token__->kind__, LessThan__)))
 			{
-				system__collections__List__1 *_Nonnull const genericNameChildren__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-				add_item__2(genericNameChildren__, Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, identifier__));
-				add_item__2(genericNameChildren__, expect_token__2(parser__, LessThan__));
-				add_item__2(genericNameChildren__, parse_type__1(parser__));
-				add_item__2(genericNameChildren__, expect_token__2(parser__, GreaterThan__));
-				add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), GenericName__, genericNameChildren__));
+				system__collections__List__1 *_Nonnull const generic_name_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+				add_item__2(generic_name_children__, Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, identifier__));
+				add_item__2(generic_name_children__, expect_token__2(parser__, LessThan__));
+				add_item__2(generic_name_children__, parse_type__1(parser__));
+				add_item__2(generic_name_children__, expect_token__2(parser__, GreaterThan__));
+				add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), GenericName__, generic_name_children__));
 			}
 			else
 			{
@@ -2535,7 +2535,7 @@ Syntax_Node__0 const *_Nonnull parse_call_arguments__1(Compilation_Unit_Parser__
 	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ArgumentList__, children__);
 }
 
-Syntax_Node__0 const *_Nonnull parse_expression__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, int32 const minPrecedence__)
+Syntax_Node__0 const *_Nonnull parse_expression__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, int32 const min_precedence__)
 {
 	Syntax_Node__0 const *_Nonnull expression__ = parse_atom__1(parser__);
 	for (;;)
@@ -2543,129 +2543,129 @@ Syntax_Node__0 const *_Nonnull parse_expression__2(Compilation_Unit_Parser__0 *_
 		system__collections__List__1 *_Nonnull const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 		add_item__2(children__, expression__);
 		int32 precedence__;
-		BOOL leftAssociative__;
-		BOOL suffixOperator__ = FALSE;
-		int32 expressionType__;
-		if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Equals__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, PlusEquals__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, MinusEquals__)))) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){1}))))))
+		BOOL left_associative__;
+		BOOL suffix_operator__ = FALSE;
+		int32 expression_type__;
+		if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Equals__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, PlusEquals__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, MinusEquals__)))) && bool_arg(int32__0op__lte(min_precedence__, ((int32){1}))))))
 		{
 			precedence__ = ((int32){1});
-			leftAssociative__ = FALSE;
+			left_associative__ = FALSE;
 			add_item__2(children__, accept_token__1(parser__));
-			expressionType__ = AssignmentExpression__;
+			expression_type__ = AssignmentExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, OrKeyword__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){2}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, OrKeyword__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){2}))))))
 		{
 			precedence__ = ((int32){2});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, OrKeyword__));
-			expressionType__ = OrExpression__;
+			expression_type__ = OrExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, AndKeyword__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){3}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, AndKeyword__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){3}))))))
 		{
 			precedence__ = ((int32){3});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, AndKeyword__));
-			expressionType__ = AndExpression__;
+			expression_type__ = AndExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, EqualsEquals__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){4}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, EqualsEquals__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){4}))))))
 		{
 			precedence__ = ((int32){4});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, EqualsEquals__));
-			expressionType__ = EqualExpression__;
+			expression_type__ = EqualExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, EqualsSlashEquals__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){4}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, EqualsSlashEquals__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){4}))))))
 		{
 			precedence__ = ((int32){4});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, EqualsSlashEquals__));
-			expressionType__ = NotEqualExpression__;
+			expression_type__ = NotEqualExpression__;
 		}
-		else if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, LessThan__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, LessThanEquals__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, GreaterThan__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, GreaterThanEquals__)))) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){5}))))))
+		else if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, LessThan__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, LessThanEquals__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, GreaterThan__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, GreaterThanEquals__)))) && bool_arg(int32__0op__lte(min_precedence__, ((int32){5}))))))
 		{
 			precedence__ = ((int32){5});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, accept_token__1(parser__));
-			expressionType__ = ComparisonExpression__;
+			expression_type__ = ComparisonExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Plus__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){6}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Plus__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){6}))))))
 		{
 			precedence__ = ((int32){6});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, Plus__));
-			expressionType__ = AddExpression__;
+			expression_type__ = AddExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Minus__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){6}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Minus__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){6}))))))
 		{
 			precedence__ = ((int32){6});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, Minus__));
-			expressionType__ = SubtractExpression__;
+			expression_type__ = SubtractExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Asterisk__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){7}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Asterisk__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){7}))))))
 		{
 			precedence__ = ((int32){7});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, Asterisk__));
-			expressionType__ = MultiplyExpression__;
+			expression_type__ = MultiplyExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Slash__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){7}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Slash__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){7}))))))
 		{
 			precedence__ = ((int32){7});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, Slash__));
-			expressionType__ = DivideExpression__;
+			expression_type__ = DivideExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Percent__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){7}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Percent__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){7}))))))
 		{
 			precedence__ = ((int32){7});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, Percent__));
-			expressionType__ = RemainderExpression__;
+			expression_type__ = RemainderExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, LeftParen__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){9}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, LeftParen__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){9}))))))
 		{
 			precedence__ = ((int32){9});
-			leftAssociative__ = TRUE;
-			suffixOperator__ = TRUE;
+			left_associative__ = TRUE;
+			suffix_operator__ = TRUE;
 			add_item__2(children__, parse_call_arguments__1(parser__));
-			expressionType__ = InvocationExpression__;
+			expression_type__ = InvocationExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Dot__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){9}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, Dot__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){9}))))))
 		{
 			precedence__ = ((int32){9});
-			leftAssociative__ = TRUE;
+			left_associative__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, Dot__));
-			expressionType__ = MemberAccessExpression__;
+			expression_type__ = MemberAccessExpression__;
 		}
-		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, LeftBracket__)) && bool_arg(int32__0op__lte(minPrecedence__, ((int32){9}))))))
+		else if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, LeftBracket__)) && bool_arg(int32__0op__lte(min_precedence__, ((int32){9}))))))
 		{
 			precedence__ = ((int32){9});
-			leftAssociative__ = TRUE;
-			suffixOperator__ = TRUE;
+			left_associative__ = TRUE;
+			suffix_operator__ = TRUE;
 			add_item__2(children__, expect_token__2(parser__, LeftBracket__));
 			add_item__2(children__, parse_expression__1(parser__));
 			add_item__2(children__, expect_token__2(parser__, RightBracket__));
-			expressionType__ = ElementAccessExpression__;
+			expression_type__ = ElementAccessExpression__;
 		}
 		else
 		{
 			return expression__;
 		}
 
-		if (cond(BOOL__0op__not(suffixOperator__)))
+		if (cond(BOOL__0op__not(suffix_operator__)))
 		{
-			if (cond(leftAssociative__))
+			if (cond(left_associative__))
 			{
 				op__add_assign(&(precedence__), ((int32){1}));
 			}
 
 			add_item__2(children__, parse_expression__2(parser__, precedence__));
-			expression__ = Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), expressionType__, children__);
+			expression__ = Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), expression_type__, children__);
 		}
 		else
 		{
-			expression__ = Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), expressionType__, children__);
+			expression__ = Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), expression_type__, children__);
 		}
 	}
 }
@@ -2769,24 +2769,24 @@ Syntax_Node__0 const *_Nonnull parse_if_statement__1(Compilation_Unit_Parser__0 
 	add_item__2(children__, parse_block__1(parser__));
 	if (cond(int32__0op__equal(parser__->token__->kind__, ElseKeyword__)))
 	{
-		system__collections__List__1 *_Nonnull const elseChildren__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-		add_item__2(elseChildren__, expect_token__2(parser__, ElseKeyword__));
+		system__collections__List__1 *_Nonnull const else_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+		add_item__2(else_children__, expect_token__2(parser__, ElseKeyword__));
 		if (cond(int32__0op__equal(parser__->token__->kind__, IfKeyword__)))
 		{
-			add_item__2(elseChildren__, parse_if_statement__1(parser__));
+			add_item__2(else_children__, parse_if_statement__1(parser__));
 		}
 		else
 		{
-			add_item__2(elseChildren__, parse_block__1(parser__));
+			add_item__2(else_children__, parse_block__1(parser__));
 		}
 
-		add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ElseClause__, elseChildren__));
+		add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ElseClause__, else_children__));
 	}
 
 	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), IfStatement__, children__);
 }
 
-Syntax_Node__0 const *_Nonnull parse_variable_declaration__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, BOOL const allowInitializer__)
+Syntax_Node__0 const *_Nonnull parse_variable_declaration__2(Compilation_Unit_Parser__0 *_Nonnull const parser__, BOOL const allow_initializer__)
 {
 	system__collections__List__1 *_Nonnull const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, LetKeyword__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, VarKeyword__)))))
@@ -2801,7 +2801,7 @@ Syntax_Node__0 const *_Nonnull parse_variable_declaration__2(Compilation_Unit_Pa
 	add_item__2(children__, expect_token__2(parser__, Identifier__));
 	add_item__2(children__, expect_token__2(parser__, Colon__));
 	add_item__2(children__, parse_type__1(parser__));
-	if (cond(bool_op(bool_arg(allowInitializer__) && bool_arg(int32__0op__equal(parser__->token__->kind__, Equals__)))))
+	if (cond(bool_op(bool_arg(allow_initializer__) && bool_arg(int32__0op__equal(parser__->token__->kind__, Equals__)))))
 	{
 		add_item__2(children__, expect_token__2(parser__, Equals__));
 		add_item__2(children__, parse_expression__1(parser__));
@@ -2816,16 +2816,16 @@ Syntax_Node__0 const *_Nonnull parse_block__1(Compilation_Unit_Parser__0 *_Nonnu
 	add_item__2(children__, expect_token__2(parser__, LeftBrace__));
 	while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
 	{
-		Syntax_Node__0 const *_Nonnull const startToken__ = parser__->token__;
+		Syntax_Node__0 const *_Nonnull const start_token__ = parser__->token__;
 		add_item__2(children__, parse_statement__1(parser__));
-		if (cond(void_ptr__0op__equal(parser__->token__, startToken__)))
+		if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 		{
 			system__collections__List__1 *_Nonnull const skipped__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 			while (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, LeftBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)))) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
 			{
-				int32 const currentTokenType__ = parser__->token__->kind__;
+				int32 const current_token_type__ = parser__->token__->kind__;
 				add_item__2(skipped__, accept_token__1(parser__));
-				if (cond(int32__0op__equal(currentTokenType__, Semicolon__)))
+				if (cond(int32__0op__equal(current_token_type__, Semicolon__)))
 				{
 					break;
 				}
@@ -2847,29 +2847,29 @@ Syntax_Node__0 const *_Nonnull parse_parameter_list__1(Compilation_Unit_Parser__
 	{
 		for (;;)
 		{
-			system__collections__List__1 *_Nonnull const parameterChildren__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+			system__collections__List__1 *_Nonnull const parameter_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 			if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, MutableKeyword__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, SelfKeyword__)))))
 			{
 				if (cond(int32__0op__equal(parser__->token__->kind__, MutableKeyword__)))
 				{
-					add_item__2(parameterChildren__, expect_token__2(parser__, MutableKeyword__));
+					add_item__2(parameter_children__, expect_token__2(parser__, MutableKeyword__));
 				}
 
-				add_item__2(parameterChildren__, expect_token__2(parser__, SelfKeyword__));
-				add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), SelfParameter__, parameterChildren__));
+				add_item__2(parameter_children__, expect_token__2(parser__, SelfKeyword__));
+				add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), SelfParameter__, parameter_children__));
 			}
 			else
 			{
 				if (cond(int32__0op__equal(parser__->token__->kind__, VarKeyword__)))
 				{
-					add_item__2(parameterChildren__, expect_token__2(parser__, VarKeyword__));
+					add_item__2(parameter_children__, expect_token__2(parser__, VarKeyword__));
 				}
 
-				add_item__2(parameterChildren__, expect_token__2(parser__, Identifier__));
-				add_item__2(parameterChildren__, expect_token__2(parser__, Colon__));
+				add_item__2(parameter_children__, expect_token__2(parser__, Identifier__));
+				add_item__2(parameter_children__, expect_token__2(parser__, Colon__));
 				Syntax_Node__0 const *_Nonnull const type__ = parse_type__1(parser__);
-				add_item__2(parameterChildren__, type__);
-				add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), Parameter__, parameterChildren__));
+				add_item__2(parameter_children__, type__);
+				add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), Parameter__, parameter_children__));
 			}
 
 			if (cond(int32__0op__equal(parser__->token__->kind__, Comma__)))
@@ -2953,9 +2953,9 @@ Syntax_Node__0 const *_Nonnull parse_declaration__1(Compilation_Unit_Parser__0 *
 		add_item__2(children__, expect_token__2(parser__, LeftBrace__));
 		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
 		{
-			Syntax_Node__0 const *_Nonnull const startToken__ = parser__->token__;
+			Syntax_Node__0 const *_Nonnull const start_token__ = parser__->token__;
 			add_item__2(children__, parse_member_declaration__1(parser__));
-			if (cond(void_ptr__0op__equal(parser__->token__, startToken__)))
+			if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 			{
 				add_item__2(children__, Syntax_Node__0__0new__skipped__1(allocate(sizeof(Syntax_Node__0)), accept_token__1(parser__)));
 			}
@@ -2972,9 +2972,9 @@ Syntax_Node__0 const *_Nonnull parse_declaration__1(Compilation_Unit_Parser__0 *
 		add_item__2(children__, expect_token__2(parser__, LeftBrace__));
 		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
 		{
-			Syntax_Node__0 const *_Nonnull const startToken__ = parser__->token__;
+			Syntax_Node__0 const *_Nonnull const start_token__ = parser__->token__;
 			add_item__2(children__, parse_member_declaration__1(parser__));
-			if (cond(void_ptr__0op__equal(parser__->token__, startToken__)))
+			if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 			{
 				add_item__2(children__, Syntax_Node__0__0new__skipped__1(allocate(sizeof(Syntax_Node__0)), accept_token__1(parser__)));
 			}
@@ -2992,20 +2992,20 @@ Syntax_Node__0 const *_Nonnull parse_declaration__1(Compilation_Unit_Parser__0 *
 		add_item__2(children__, expect_token__2(parser__, LeftBrace__));
 		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
 		{
-			system__collections__List__1 *_Nonnull const memberChildren__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-			add_item__2(memberChildren__, expect_token__2(parser__, Identifier__));
+			system__collections__List__1 *_Nonnull const member_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+			add_item__2(member_children__, expect_token__2(parser__, Identifier__));
 			if (cond(int32__0op__equal(parser__->token__->kind__, Equals__)))
 			{
-				add_item__2(memberChildren__, expect_token__2(parser__, Equals__));
-				add_item__2(memberChildren__, expect_token__2(parser__, Number__));
+				add_item__2(member_children__, expect_token__2(parser__, Equals__));
+				add_item__2(member_children__, expect_token__2(parser__, Number__));
 			}
 
 			if (cond(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)))
 			{
-				add_item__2(memberChildren__, expect_token__2(parser__, Comma__));
+				add_item__2(member_children__, expect_token__2(parser__, Comma__));
 			}
 
-			add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), EnumMemberDeclaration__, memberChildren__));
+			add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), EnumMemberDeclaration__, member_children__));
 		}
 
 		add_item__2(children__, expect_token__2(parser__, RightBrace__));
@@ -3025,9 +3025,9 @@ Syntax_Node__0 const *_Nonnull parse_compilation_unit__1(Compilation_Unit_Parser
 	system__collections__List__1 *_Nonnull const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	while (cond(bool_op(bool_arg(void_ptr__0op__not_equal(parser__->token__, none)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
 	{
-		Syntax_Node__0 const *_Nonnull const startToken__ = parser__->token__;
+		Syntax_Node__0 const *_Nonnull const start_token__ = parser__->token__;
 		add_item__2(children__, parse_declaration__1(parser__));
-		if (cond(void_ptr__0op__equal(parser__->token__, startToken__)))
+		if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 		{
 			add_item__2(children__, Syntax_Node__0__0new__skipped__1(allocate(sizeof(Syntax_Node__0)), accept_token__1(parser__)));
 		}
@@ -3068,10 +3068,10 @@ Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__4(Syntax_Node__0 *_Nonnull self, 
 	return self;
 }
 
-Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__5(Syntax_Node__0 *_Nonnull self, int32 const type__, BOOL const isMissing__, Source_Text__0 const *_Nonnull const source__, int32 const start__, int32 const length__)
+Syntax_Node__0 *_Nonnull Syntax_Node__0__0new__5(Syntax_Node__0 *_Nonnull self, int32 const type__, BOOL const is_missing__, Source_Text__0 const *_Nonnull const source__, int32 const start__, int32 const length__)
 {
 	self->kind__ = type__;
-	self->is_missing__ = isMissing__;
+	self->is_missing__ = is_missing__;
 	self->source__ = source__;
 	self->start__ = start__;
 	self->byte_length__ = length__;
@@ -3292,65 +3292,65 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 	int32 end__ = int32__0op__neg(((int32){1}));
 	while (cond(int32__0op__lt(tokens__->position__, source_byte_length__1(tokens__->source__))))
 	{
-		code_point const curChar__ = string__0__0op__element(tokens__->source__->text__, tokens__->position__);
-		if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(code_point__0op__equal(curChar__, ((code_point){/* */0x20}))) || bool_arg(code_point__0op__equal(curChar__, ((code_point){/*\t*/0x9}))))) || bool_arg(code_point__0op__equal(curChar__, ((code_point){/*\n*/0xA}))))) || bool_arg(code_point__0op__equal(curChar__, ((code_point){/*\r*/0xD}))))))
+		code_point const cur_char__ = string__0__0op__element(tokens__->source__->text__, tokens__->position__);
+		if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(code_point__0op__equal(cur_char__, ((code_point){/* */0x20}))) || bool_arg(code_point__0op__equal(cur_char__, ((code_point){/*\t*/0x9}))))) || bool_arg(code_point__0op__equal(cur_char__, ((code_point){/*\n*/0xA}))))) || bool_arg(code_point__0op__equal(cur_char__, ((code_point){/*\r*/0xD}))))))
 		{
 			op__add_assign(&(tokens__->position__), ((int32){1}));
 			continue;
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*{*/0x7B}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*{*/0x7B}))))
 		{
 			return new_operator_token__2(tokens__, LeftBrace__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*}*/0x7D}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*}*/0x7D}))))
 		{
 			return new_operator_token__2(tokens__, RightBrace__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*(*/0x28}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*(*/0x28}))))
 		{
 			return new_operator_token__2(tokens__, LeftParen__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*)*/0x29}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*)*/0x29}))))
 		{
 			return new_operator_token__2(tokens__, RightParen__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*;*/0x3B}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*;*/0x3B}))))
 		{
 			return new_operator_token__2(tokens__, Semicolon__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*,*/0x2C}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*,*/0x2C}))))
 		{
 			return new_operator_token__2(tokens__, Comma__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*.*/0x2E}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*.*/0x2E}))))
 		{
 			return new_operator_token__2(tokens__, Dot__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*:*/0x3A}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*:*/0x3A}))))
 		{
 			return new_operator_token__2(tokens__, Colon__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*[*/0x5B}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*[*/0x5B}))))
 		{
 			return new_operator_token__2(tokens__, LeftBracket__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*]*/0x5D}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*]*/0x5D}))))
 		{
 			return new_operator_token__2(tokens__, RightBracket__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*?*/0x3F}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*?*/0x3F}))))
 		{
 			return new_operator_token__2(tokens__, Question__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*|*/0x7C}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*|*/0x7C}))))
 		{
 			return new_operator_token__2(tokens__, Pipe__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/***/0x2A}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/***/0x2A}))))
 		{
 			return new_operator_token__2(tokens__, Asterisk__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*=*/0x3D}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*=*/0x3D}))))
 		{
 			if (cond(bool_op(bool_arg(int32__0op__lt(int32__0op__add(tokens__->position__, ((int32){1})), source_byte_length__1(tokens__->source__))) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, int32__0op__add(tokens__->position__, ((int32){1}))), ((code_point){/*=*/0x3D}))))))
 			{
@@ -3364,7 +3364,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 
 			return new_operator_token__2(tokens__, Equals__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*+*/0x2B}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*+*/0x2B}))))
 		{
 			if (cond(bool_op(bool_arg(int32__0op__lt(int32__0op__add(tokens__->position__, ((int32){1})), source_byte_length__1(tokens__->source__))) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, int32__0op__add(tokens__->position__, ((int32){1}))), ((code_point){/*=*/0x3D}))))))
 			{
@@ -3373,7 +3373,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 
 			return new_operator_token__2(tokens__, Plus__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*-*/0x2D}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*-*/0x2D}))))
 		{
 			if (cond(bool_op(bool_arg(int32__0op__lt(int32__0op__add(tokens__->position__, ((int32){1})), source_byte_length__1(tokens__->source__))) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, int32__0op__add(tokens__->position__, ((int32){1}))), ((code_point){/*>*/0x3E}))))))
 			{
@@ -3387,7 +3387,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 
 			return new_operator_token__2(tokens__, Minus__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*/*/0x2F}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*/*/0x2F}))))
 		{
 			if (cond(bool_op(bool_arg(int32__0op__lt(int32__0op__add(tokens__->position__, ((int32){1})), source_byte_length__1(tokens__->source__))) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, int32__0op__add(tokens__->position__, ((int32){1}))), ((code_point){/*/*/0x2F}))))))
 			{
@@ -3402,10 +3402,10 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 			if (cond(bool_op(bool_arg(int32__0op__lt(int32__0op__add(tokens__->position__, ((int32){1})), source_byte_length__1(tokens__->source__))) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, int32__0op__add(tokens__->position__, ((int32){1}))), ((code_point){/***/0x2A}))))))
 			{
 				op__add_assign(&(tokens__->position__), ((int32){2}));
-				BOOL lastCharStar__ = FALSE;
-				while (cond(bool_op(bool_arg(int32__0op__lt(tokens__->position__, source_byte_length__1(tokens__->source__))) && bool_arg(BOOL__0op__not(bool_op(bool_arg(lastCharStar__) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, tokens__->position__), ((code_point){/*/*/0x2F})))))))))
+				BOOL last_char_star__ = FALSE;
+				while (cond(bool_op(bool_arg(int32__0op__lt(tokens__->position__, source_byte_length__1(tokens__->source__))) && bool_arg(BOOL__0op__not(bool_op(bool_arg(last_char_star__) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, tokens__->position__), ((code_point){/*/*/0x2F})))))))))
 				{
-					lastCharStar__ = code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, tokens__->position__), ((code_point){/***/0x2A}));
+					last_char_star__ = code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, tokens__->position__), ((code_point){/***/0x2A}));
 					op__add_assign(&(tokens__->position__), ((int32){1}));
 				}
 
@@ -3415,11 +3415,11 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 
 			return new_operator_token__2(tokens__, Slash__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*%*/0x25}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*%*/0x25}))))
 		{
 			return new_operator_token__2(tokens__, Percent__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*<*/0x3C}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*<*/0x3C}))))
 		{
 			if (cond(bool_op(bool_arg(int32__0op__lt(int32__0op__add(tokens__->position__, ((int32){1})), source_byte_length__1(tokens__->source__))) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, int32__0op__add(tokens__->position__, ((int32){1}))), ((code_point){/*=*/0x3D}))))))
 			{
@@ -3428,7 +3428,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 
 			return new_operator_token__2(tokens__, LessThan__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*>*/0x3E}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*>*/0x3E}))))
 		{
 			if (cond(bool_op(bool_arg(int32__0op__lt(int32__0op__add(tokens__->position__, ((int32){1})), source_byte_length__1(tokens__->source__))) && bool_arg(code_point__0op__equal(string__0__0op__element(tokens__->source__->text__, int32__0op__add(tokens__->position__, ((int32){1}))), ((code_point){/*=*/0x3D}))))))
 			{
@@ -3437,7 +3437,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 
 			return new_operator_token__2(tokens__, GreaterThan__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*"*/0x22}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*"*/0x22}))))
 		{
 			end__ = int32__0op__add(tokens__->position__, ((int32){1}));
 			BOOL escaped__ = FALSE;
@@ -3450,7 +3450,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 			op__add_assign(&(end__), ((int32){1}));
 			return new_token__3(tokens__, StringLiteral__, end__);
 		}
-		else if (cond(code_point__0op__equal(curChar__, ((code_point){/*\'*/0x27}))))
+		else if (cond(code_point__0op__equal(cur_char__, ((code_point){/*\'*/0x27}))))
 		{
 			end__ = int32__0op__add(tokens__->position__, ((int32){1}));
 			BOOL escaped__ = FALSE;
@@ -3465,7 +3465,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 		}
 		else
 		{
-			if (cond(is_identifier_char__1(curChar__)))
+			if (cond(is_identifier_char__1(cur_char__)))
 			{
 				end__ = int32__0op__add(tokens__->position__, ((int32){1}));
 				while (cond(is_identifier_char__1(string__0__0op__element(tokens__->source__->text__, end__))))
@@ -3476,7 +3476,7 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 				return new_identifier_or_keyword_token__2(tokens__, end__);
 			}
 
-			if (cond(is_number_char__1(curChar__)))
+			if (cond(is_number_char__1(cur_char__)))
 			{
 				end__ = int32__0op__add(tokens__->position__, ((int32){1}));
 				while (cond(is_number_char__1(string__0__0op__element(tokens__->source__->text__, end__))))
@@ -3487,8 +3487,8 @@ Syntax_Node__0 const *_Nullable next_token__1(Token_Stream__0 *_Nonnull const to
 				return new_token__3(tokens__, Number__, end__);
 			}
 
-			Text_Span__0 const *_Nonnull diagnosticSpan__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, ((int32){1}));
-			add_item__2(tokens__->diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnosticSpan__, string__0op__add(string__0op__add(((string){19,(uint8_t const*)"Invalid character `"}), code_point_to_string__1(curChar__)), ((string){1,(uint8_t const*)"`"}))));
+			Text_Span__0 const *_Nonnull diagnostic_span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, ((int32){1}));
+			add_item__2(tokens__->diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnostic_span__, string__0op__add(string__0op__add(((string){19,(uint8_t const*)"Invalid character `"}), code_point_to_string__1(cur_char__)), ((string){1,(uint8_t const*)"`"}))));
 			tokens__->position__ = end__;
 		}
 	}
@@ -3657,8 +3657,8 @@ Syntax_Node__0 const *_Nonnull new_identifier_or_keyword_token__2(Token_Stream__
 		type__ = Identifier__;
 		if (cond(bool_op(bool_arg(int32__0op__gt(string_byte_length__1(value__), ((int32){1}))) && bool_arg(code_point__0op__equal(string__0__0op__element(value__, int32__0op__sub(string_byte_length__1(value__), ((int32){1}))), ((code_point){/*_*/0x5F}))))))
 		{
-			Text_Span__0 const *_Nonnull diagnosticSpan__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, int32__0op__sub(end__, tokens__->position__));
-			add_item__2(tokens__->diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnosticSpan__, string__0op__add(string__0op__add(((string){49,(uint8_t const*)"Identifiers ending with underscore are reserved `"}), value__), ((string){1,(uint8_t const*)"`"}))));
+			Text_Span__0 const *_Nonnull diagnostic_span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, int32__0op__sub(end__, tokens__->position__));
+			add_item__2(tokens__->diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnostic_span__, string__0op__add(string__0op__add(((string){49,(uint8_t const*)"Identifiers ending with underscore are reserved `"}), value__), ((string){1,(uint8_t const*)"`"}))));
 		}
 	}
 
@@ -4690,10 +4690,10 @@ void emit_statement__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 co
 			convert_expression__2(system__collections__List__1__0op__element(if_statement__->children__, ((int32){1})), emitter__->definitions__);
 			end_line__2(emitter__->definitions__, ((string){2,(uint8_t const*)"))"}));
 			emit_statement__2(emitter__, system__collections__List__1__0op__element(if_statement__->children__, ((int32){2})));
-			Semantic_Node__0 const *_Nullable const elseClause__ = first_child__2(if_statement__, ElseClause__);
-			if (cond(void_ptr__0op__not_equal(elseClause__, none)))
+			Semantic_Node__0 const *_Nullable const else_clause__ = first_child__2(if_statement__, ElseClause__);
+			if (cond(void_ptr__0op__not_equal(else_clause__, none)))
 			{
-				if_statement__ = first_child__2(elseClause__, IfStatement__);
+				if_statement__ = first_child__2(else_clause__, IfStatement__);
 				if (cond(void_ptr__0op__not_equal(if_statement__, none)))
 				{
 					begin_line__2(emitter__->definitions__, ((string){5,(uint8_t const*)"else "}));
@@ -4701,7 +4701,7 @@ void emit_statement__2(Emitter__0 *_Nonnull const emitter__, Semantic_Node__0 co
 				else
 				{
 					write_line__2(emitter__->definitions__, ((string){4,(uint8_t const*)"else"}));
-					emit_statement__2(emitter__, system__collections__List__1__0op__element(elseClause__->children__, ((int32){1})));
+					emit_statement__2(emitter__, system__collections__List__1__0op__element(else_clause__->children__, ((int32){1})));
 					break;
 				}
 			}
@@ -4850,15 +4850,15 @@ void emit_member_declaration__4(Emitter__0 *_Nonnull const emitter__, Semantic_N
 			static_modifier__ = ((string){7,(uint8_t const*)"static "});
 		}
 
-		string constModifier__ = ((string){0,(uint8_t const*)""});
+		string const_modifier__ = ((string){0,(uint8_t const*)""});
 		if (cond(bool_op(bool_arg(BOOL__0op__not(mutable_self__)) && bool_arg(BOOL__0op__not(is_associated_function__)))))
 		{
-			constModifier__ = ((string){6,(uint8_t const*)" const"});
+			const_modifier__ = ((string){6,(uint8_t const*)" const"});
 		}
 
-		write_line__2(emitter__->class_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(static_modifier__, c_type__), ((string){1,(uint8_t const*)" "})), method_name__), parameters__), constModifier__), ((string){1,(uint8_t const*)";"})));
+		write_line__2(emitter__->class_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(static_modifier__, c_type__), ((string){1,(uint8_t const*)" "})), method_name__), parameters__), const_modifier__), ((string){1,(uint8_t const*)";"})));
 		element_separator_line__1(emitter__->definitions__);
-		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){1,(uint8_t const*)" "})), class_name__), ((string){2,(uint8_t const*)"::"})), method_name__), parameters__), constModifier__));
+		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){1,(uint8_t const*)" "})), class_name__), ((string){2,(uint8_t const*)"::"})), method_name__), parameters__), const_modifier__));
 		Semantic_Node__0 const *_Nonnull const block__ = first_child__2(member__, Block__);
 		emit_method_body__3(emitter__, block__, is_associated_function__);
 	}
@@ -6095,8 +6095,8 @@ void can_get_Optional_class_from_name_with_package__0()
 // Entry Point Adapter
 int32_t main(int argc, char const *const * argv)
 {
-	add_resource((string){16,(uint8_t const*)"RuntimeLibrary.c"}, (string){23349,(uint8_t const*)"#include \"RuntimeLibrary.h\"\n\n#include <string.h>\n\n// -----------------------------------------------------------------------------\n// Static Checks\n// -----------------------------------------------------------------------------\n\nstatic inline void static_checks()\n{\n    // Because we assume we can cast from char* to uint8_t* they need to be the same size\n    _Static_assert(sizeof(char) == sizeof(uint8_t), \"chars must be 8 bits\");\n\n    // Because we assume we can cast from uint8_t* to byte* they need to be the same size\n    _Static_assert(sizeof(uint8_t) == sizeof(byte), \"bytes must be 8 bits\");\n\n    // Testing that the style we use for literals can be used as a const\n    const code_point test_code_point = ((code_point){0xFF});\n    // TODO: C allows string literals that are one byte shorter than the array so no null terminator\n    // TODO: C also has UTF-8 literals u8\"hello\"\n    // TODO change the emitted literals?\n    const string test_string = ((string){5,(uint8_t const[]){u8\"hello\"}});\n}\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\nstatic const _Bool _true=1;\nstatic const _Bool _false=0;\n\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s\", code);\n        exit(70);\n    }\n}\n\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s, %s\", code, message);\n        exit(70);\n    }\n}\n\nextern inline void_ptr allocate(size_t bytes);\n\nstatic inline int32 int32_from(int32_t v)\n{\n    return (int32){ v };\n}\n\n// TODO change this to something like byte_from\nuint8_t code_point__to_char(code_point v)\n{\n    lib_assert(v.value <= 0xFF);\n    return v.value;\n}\n\nchar const * cstr_from(string value)\n{\n    int32_t length = value.byte_length.value;\n    char* bytes = allocate(length + 1);\n    memcpy(bytes, value.bytes, length);\n    bytes[length] = 0;\n    return bytes;\n}\n\nstring string_from_cstr(char const* s)\n{\n    return (string){(int32_t)strlen(s), (uint8_t const*)s};\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\nextern inline _Bool cond(BOOL cond);\nextern inline BOOL bool_from(_Bool b);\nextern inline BOOL bool_op(_Bool b);\nextern inline _Bool bool_arg(BOOL b);\nextern inline BOOL BOOL__0op__not(BOOL b);\n\nstring bool_to_string__1(BOOL b)\n{\n    if(cond(b))\n        return (string){4,(uint8_t const*)\"true\"};\n    else\n        return (string){5,(uint8_t const*)\"false\"};\n}\n\nextern inline void op__add_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline int32 int32__0op__neg(int32 v);\nextern inline int32 int32__0op__add(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__sub(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__mul(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__div(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__remainder(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lte(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gte(int32 lhs, int32 rhs);\n\nstring int_to_string__1(int32 i)\n{\n    uint8_t* bytes = allocate(12); // -2,147,483,648 plus null terminator\n    int length = sprintf((char*)bytes, \"%d\", i.value);\n    lib_assert(length > 0);\n    return (string){length, bytes};\n}\nstring int_to_hex_string__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    uint8_t* bytes = allocate(9); // FF_FF_FF_FF plus null terminator\n    int length = sprintf((char*)bytes, \"%X\", i.value);\n    lib_assert(length > 0);\n    return (string){length, bytes};\n}\n\nint32 hex_string_to_int__1(string s)\n{\n    char const* cstr = cstr_from(s);\n    int32_t i = strtoul(cstr, NULL, 16);\n    free__1(cstr);\n    return (int32){i};\n}\n\ncode_point int_to_code_point__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    return (code_point){(uint32_t)i.value};\n}\n\nextern inline BOOL code_point__0op__lt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__lte(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gte(code_point lhs, code_point rhs);\nextern inline int32 code_point_as_int__1(code_point c);\n\nstring code_point_to_string__1(code_point c)\n{\n    uint8_t* bytes = allocate(sizeof(uint8_t));\n    *bytes = code_point__to_char(c);\n    return (string){1, bytes};\n}\n\nstring string__0new__0()\n{\n    return (string){0, 0};\n}\n\nstring string__0new__1(string value)\n{\n    return value;\n}\n\nstring string__0new__2(code_point c, int32 repeat)\n{\n    uint8_t* bytes = allocate(repeat.value);\n    uint8_t ch = code_point__to_char(c);\n    for (int i = 0; i < repeat.value; i++)\n        bytes[i] = ch;\n\n    return (string){repeat, bytes};\n}\n\nstring string__0op__add(string lhs, string rhs)\n{\n    int new_length = lhs.byte_length.value + rhs.byte_length.value;\n    uint8_t* chars = allocate(new_length);\n    size_t offset = sizeof(uint8_t) * lhs.byte_length.value;\n    memcpy(chars, lhs.bytes, offset);\n    memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);\n    return (string){new_length, chars};\n}\n\nBOOL string__0op__equal(string lhs, string rhs)\n{\n    if (lhs.byte_length.value != rhs.byte_length.value)\n        return FALSE;\n\n    for (int i = 0; i < lhs.byte_length.value; i++)\n        if (lhs.bytes[i] != rhs.bytes[i])\n            return FALSE;\n\n    return TRUE;\n}\n\nBOOL string__0op__lt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) < 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__lte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) <= 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__gt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) > 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\nBOOL string__0op__gte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) >= 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\n\nextern inline code_point string__0__0op__element(string value, int32 index);\nextern inline int32 string_byte_length__1(string s);\n\nstring substring__3(string s, int32 start, int32 length)\n{\n    // You can ask for a zero length substring at the end of the string\n    lib_assert(start.value <= s.byte_length.value);\n    lib_assert(start.value+length.value <= s.byte_length.value);\n    return (string){length, s.bytes + start.value};\n}\n\nextern inline string substring__2(string s, int32 start);\n\nstring string_replace__3(string s, string old_value, string new_value)\n{\n    // We make one one the stack then manually call the constructor\n    system__text__String_Builder__0 builder;\n    system__text__String_Builder__0__0new__with_capacity__1(&builder, s.byte_length);\n    int limit = s.byte_length.value - old_value.byte_length.value + 1;\n    int last_index = 0;\n    for(int i=0; i < limit; i++)\n        if(cond(string__0op__equal(substring__3(s, int32_from(i), old_value.byte_length), old_value)))\n        {\n            sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(i-last_index)));\n            sb_append__2(&builder, new_value);\n            i += old_value.byte_length.value; // skip over the value we just matched\n            last_index = i;\n            i--; // we need i-- to offset the i++ that is about to happen\n        }\n\n    sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(s.byte_length.value - last_index)));\n    return sb_to_string__1(&builder);\n}\nint32 string_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = 0; i < s.byte_length.value; i++)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\nint32 string_last_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = s.byte_length.value - 1; i >= 0; i--)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\nextern inline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__equal(code_point lhs, code_point rhs);\nextern BOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\n\nextern inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__not_equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs);\nextern inline BOOL string__0op__not_equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n\nextern inline void_ptr allocate__1(int32 bytes);\nextern inline void free__1(const_void_ptr object);\n\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, file %s, line %i\", code, file, line);\n        exit(70);\n    }\n}\n\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, %s, file %s, line %i\", code, cstr_from(message), file, line);\n        exit(70);\n    }\n}\n\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, %s, line %i\", function, cstr_from(message), file, line);\n    exit(70);\n}\n\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Reached \\\"UNREACHABLE\\\" statement in function %s, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nstatic int32_t resource_count = 0;\nstatic string resource_name[1024];\nstatic string resource_value[1024];\n\nvoid add_resource(string name, string value)\n{\n    lib_assert_msg(resource_count < 1024, \"only 1024 resources are currently supported\");\n    resource_name[resource_count] = name;\n    resource_value[resource_count] = value;\n    resource_count += 1;\n}\n\nstring get_resource__1(string name)\n{\n    for(int32_t i=0; i < resource_count; i++)\n        if(cond(string__0op__equal(resource_name[i], name)))\n            return resource_value[i];\n\n    lib_assert_msg(_false, cstr_from(name));\n    UNREACHABLE__0();\n}\n\nvoid debug_write__1(string value)\n{\n    fprintf(stderr, \"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__1(string value)\n{\n    fprintf(stderr, \"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__0()\n{\n    fprintf(stderr, \"\\n\");\n}\n\n_Bool string__0next(string__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline string string__0current(string__0iter const*_Nonnull iter);\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index);\nextern inline void clear_strings__1(Strings__0 *_Nonnull strings);\n\nvoid add_string__2(Strings__0 *_Nonnull strings, string value)\n{\n    if(strings->count__.value >= strings->capacity__.value)\n    {\n        int32_t new_capacity = strings->capacity__.value == 0 ? 16 : strings->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        string* new_values = allocate(new_capacity * sizeof(string));\n        memcpy(new_values, strings->values, strings->count__.value * sizeof(string));\n        if(strings->capacity__.value != 0)\n            free__1(strings->values); // delete the old array\n        strings->values = new_values;\n        strings->capacity__ = (int32){new_capacity};\n    }\n    strings->values[strings->count__.value] = value;\n    strings->count__.value++;\n}\n\nextern inline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings);\nextern inline string__0iter string__0iterate(Strings__0 const *_Nonnull strings);\n\n_Bool int__0next(int__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline int32 int__0current(int__0iter const*_Nonnull iter);\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index);\nextern inline void clear_ints__1(Ints__0 *_Nonnull ints);\n\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value)\n{\n    if(ints->count__.value >= ints->capacity__.value)\n    {\n        int32_t new_capacity = ints->capacity__.value == 0 ? 16 : ints->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        int32* new_values = allocate(new_capacity * sizeof(int32));\n        memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));\n        if(ints->capacity__.value != 0)\n            free__1(ints->values); // delete the old array\n        ints->values = new_values;\n        ints->capacity__ = (int32){new_capacity};\n    }\n    ints->values[ints->count__.value] = value;\n    ints->count__.value++;\n}\n\nextern inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints);\nextern inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints);\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter);\n\nextern inline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self);\n\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value)\n{\n    if(list->count__.value >= list->capacity__.value)\n    {\n        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        void_ptr* new_values = allocate(new_capacity * sizeof(void_ptr));\n        memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));\n        if(list->capacity__.value != 0)\n            free__1(list->values); // delete the old array\n        list->values = new_values;\n        list->capacity__ = (int32){new_capacity};\n    }\n    list->values[list->count__.value] = (void*_Nullable)value; // TODO hack, we cast away const\n    list->count__.value++;\n}\n\nextern inline void clear_list__1(system__collections__List__1 *_Nonnull list);\nextern inline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index);\nextern inline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list);\nextern inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list);\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console)\n{\n    printf(\"\\n\");\n}\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv)\n{\n    system__console__Arguments__0 *_Nonnull self = allocate(sizeof(system__console__Arguments__0));\n    self->count__ = (int32){argc-1};\n    self->values = allocate(self->count__.value * sizeof(string));\n    for (int i = 0; i < self->count__.value; i++)\n        self->values[i] = string_from_cstr(argv[i+1]);\n    return self;\n}\n\nextern inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index);\nextern inline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments);\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string fileName)\n{\n    char const *_Nonnull fname = cstr_from(fileName);\n    self->file= fopen(fname, \"rb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fseek(reader->file, 0, SEEK_END);\n    long int length = ftell(reader->file);\n    fseek(reader->file, 0, SEEK_SET);\n    uint8_t*_Nonnull bytes = allocate(length);\n    length = fread(bytes, sizeof(uint8_t), length, reader->file);\n    return (string){(int32_t)length, bytes};\n}\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fclose(reader->file);\n}\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string fileName)\n{\n    char const *_Nonnull fname = cstr_from(fileName);\n    self->file = fopen(fname, \"wb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value)\n{\n    fwrite(value.bytes, sizeof(char), value.byte_length.value, writer->file);\n}\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)\n{\n    fclose(writer->file);\n}\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)\n{\n    int new_capacity = sb->capacity == 0 ? 128 : sb->capacity;\n    while(new_capacity < needed)\n    {\n        new_capacity *= 2;\n    }\n\n    if(new_capacity > sb->capacity)\n    {\n        uint8_t* new_buffer =  allocate(new_capacity);\n        if(sb->byte_length__.value > 0)\n            memcpy(new_buffer, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));\n\n        if(sb->capacity > 0)\n            free__1(sb->bytes);\n\n        sb->bytes = new_buffer;\n        sb->capacity = new_capacity;\n    }\n}\n\nextern inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self);\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, value.byte_length.value);\n    memcpy(self->bytes, value.bytes, value.byte_length.value);\n    self->byte_length__.value = value.byte_length.value;\n    return self;\n}\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, capacity.value);\n    return self;\n}\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value)\n{\n    int32_t new_length = sb->byte_length__.value + value->byte_length__.value;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    int32_t new_length = sb->byte_length__.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n\n    int32_t end = start.value + length.value;\n    lib_assert(end <= sb->byte_length__.value); // less than or equal because end is one past the end of the remove\n\n    memmove(sb->bytes+start.value, sb->bytes+end, sb->byte_length__.value-end);\n    sb->byte_length__.value -= length.value;\n}\n\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n    sb->byte_length__.value = start.value;\n}\n\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    string result = {sb->byte_length__.value, sb->bytes};\n    // give up ownership of bytes\n    sb->bytes = 0;\n    sb->byte_length__.value = 0;\n    sb->capacity = 0;\n    return result;\n}\n"});
-	add_resource((string){16,(uint8_t const*)"RuntimeLibrary.h"}, (string){16889,(uint8_t const*)"// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n// Note that we can't switch to the \"secure\" functions because they don't\n// compile in linux on Travis CI\n#define _CRT_SECURE_NO_WARNINGS\n\n#include <stdlib.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <stdnoreturn.h>\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\ntypedef void*_Nullable void_ptr;\ntypedef void const*_Nullable const_void_ptr;\n\n#define lib_assert(condition) lib_assert1(condition, #condition)\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code);\n#define lib_assert_msg(condition, message) lib_assert2(condition, #condition, message)\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message);\n\ninline void_ptr allocate(size_t bytes)\n{\n    return malloc(bytes);\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\ntypedef struct never never;\ntypedef struct optional__never optional__never;\ntypedef struct BOOL BOOL;\ntypedef struct int32 int32;\ntypedef struct byte byte;\ntypedef struct code_point code_point;\ntypedef struct string string;\n\n// `never` type\nstruct never\n{\n};\n\n// `never?` type\nstruct optional__never\n{\n};\n\n// TODO this is a hack for now, the type of `none` should be `never?`\nstatic const void_ptr none = NULL;\n\n// For now, use `BOOL` as the emitted type\n// TODO C: switch `BOOL` to `bool`\n// TODO C: switch `TRUE` to `true`\n// TODO C: switch `FALSE` to `false`\n\n// `bool` type\nstruct BOOL\n{\n    _Bool value;\n};\n\nstatic const BOOL TRUE = { 1 };\nstatic const BOOL FALSE = { 0 };\n\n// Function used in conditions to make them take `bool`\ninline _Bool cond(BOOL cond) { return cond.value; }\n\n// Used by runtime for converting to bool\ninline BOOL bool_from(_Bool b) { return (BOOL){ b }; }\n\n// Wrap a bool operation that is bool based\ninline BOOL bool_op(_Bool b) { return (BOOL){ b }; }\n// Convert the arguments of a logical operation to bool\ninline _Bool bool_arg(BOOL b) { return b.value; }\n\ninline BOOL BOOL__0op__not(BOOL b) { return (BOOL){ !b.value }; }\n\nstring bool_to_string__1(BOOL b);\n\n// `int` type\nstruct int32\n{\n    int32_t value;\n};\n\ninline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }\ninline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }\ninline int32 int32__0op__neg(int32 v) { return (int32){-v.value}; }\ninline int32 int32__0op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }\ninline int32 int32__0op__sub(int32 lhs, int32 rhs) { return (int32){ lhs.value - rhs.value}; }\ninline int32 int32__0op__mul(int32 lhs, int32 rhs) { return (int32){ lhs.value * rhs.value}; }\ninline int32 int32__0op__div(int32 lhs, int32 rhs) { return (int32){ lhs.value / rhs.value}; }\ninline int32 int32__0op__remainder(int32 lhs, int32 rhs) { return (int32){ lhs.value % rhs.value}; }\ninline BOOL int32__0op__lt(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }\n\nstring int_to_string__1(int32 i);\nstring int_to_hex_string__1(int32 i);\nint32 hex_string_to_int__1(string s);\ncode_point int_to_code_point__1(int32 i);\n\nstruct byte\n{\n    uint8_t value;\n};\n\nstruct code_point\n{\n    // don't use something like char32_t because C's handling of chars sucks\n    uint32_t value;\n};\n\ninline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }\n\ninline int32 code_point_as_int__1(code_point c) { return (int32){(int32_t)c.value}; }\nstring code_point_to_string__1(code_point c);\n\nstruct string\n{\n    // Though there will be a byte_length property in the future,\n    // it doesn't make sense to directly expose it right now because this is\n    // not the correct implementation.\n    int32 byte_length;\n\n    // don't use chars because C's handling of chars sucks\n    uint8_t const *_Nonnull bytes;\n};\n\nstring string__0new__0();\nstring string__0new__1(string value);\nstring string__0new__2(code_point c, int32 repeat);\n\nstring string__0op__add(string lhs, string rhs);\nBOOL string__0op__lt(string lhs, string rhs);\nBOOL string__0op__lte(string lhs, string rhs);\nBOOL string__0op__gt(string lhs, string rhs);\nBOOL string__0op__gte(string lhs, string rhs);\ninline code_point string__0__0op__element(string value, int32 index)\n{\n    lib_assert(index.value >= 0 && index.value < value.byte_length.value);\n    return (code_point){value.bytes[index.value]};\n}\n\ninline int32 string_byte_length__1(string s) { return s.byte_length; }\nstring substring__3(string s, int32 start, int32 length);\ninline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length.value-start.value}); }\nstring string_replace__3(string s, string old_value, string new_value);\nint32 string_index_of__2(string s, code_point c);\nint32 string_last_index_of__2(string s, code_point c);\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL int32__0op__equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL code_point__0op__equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\nBOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\ninline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\n\ninline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL int32__0op__not_equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL string__0op__not_equal(string lhs, string rhs)\n{\n    return BOOL__0op__not(string__0op__equal(lhs, rhs));\n}\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\ninline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\ntypedef struct string__0iter string__0iter;\ntypedef struct Strings__0 Strings__0;\ntypedef struct int__0iter int__0iter;\ntypedef struct Ints__0 Ints__0;\ntypedef struct void_ptr__0iter void_ptr__0iter;\ntypedef struct system__collections__List__1 system__collections__List__1;\ntypedef struct system__console__Console__0 system__console__Console__0;\ntypedef struct system__console__Arguments__0 system__console__Arguments__0;\ntypedef struct system__io__File_Reader__0 system__io__File_Reader__0;\ntypedef struct system__io__File_Writer__0 system__io__File_Writer__0;\ntypedef struct system__text__String_Builder__0 system__text__String_Builder__0;\n\ninline void_ptr allocate__1(int32 bytes)\n{\n    return malloc(bytes.value);\n}\n\n// TODO rename dellocate()\ninline void free__1(const_void_ptr object)\n{\n    // TODO hack cast away const\n    free((void*_Nonnull)object);\n}\n\n#define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)\n#define assert__2(condition, message) assert2(condition, #condition, message, __FILE__, __LINE__)\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line);\n\n#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED0(__func__, __FILE__, __LINE__)\n#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED1(message, __func__, __FILE__, __LINE__)\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\n#define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\nstring get_resource__1(string resource_name);\nvoid add_resource(string name, string value);\n\nvoid debug_write__1(string value);\nvoid debug_write_line__1(string value);\nvoid debug_write_line__0();\n\nstruct string__0iter\n{\n    string *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool string__0next(string__0iter*_Nonnull iter);\ninline string string__0current(string__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Strings__0\n{\n    string *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self);\ninline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < strings->count__.value);\n    return strings->values[index.value];\n}\ninline void clear_strings__1(Strings__0 *_Nonnull strings)\n{\n    strings->count__ = (int32){0};\n}\nvoid add_string__2(Strings__0 *_Nonnull strings, string value);\ninline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\ninline string__0iter string__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\n\nstruct int__0iter\n{\n    int32 *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool int__0next(int__0iter*_Nonnull iter);\ninline int32 int__0current(int__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Ints__0\n{\n    int32 *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self);\ninline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < ints->count__.value);\n    return ints->values[index.value];\n}\ninline void clear_ints__1(Ints__0 *_Nonnull ints)\n{\n    ints->count__ = (int32){0};\n}\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value);\ninline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\ninline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\n\nstruct void_ptr__0iter\n{\n    void_ptr *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);\ninline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct system__collections__List__1\n{\n    void_ptr *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\ninline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\n// TODO hack that we take const_void_ptr but then treat it as mutable\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value);\n\ninline void clear_list__1(system__collections__List__1 *_Nonnull list)\n{\n    list->count__ = (int32){0};\n}\n\ninline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < list->count__.value);\n    return list->values[index.value];\n}\n\ninline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\ninline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\nstruct system__console__Console__0\n{\n};\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console);\n\nstruct system__console__Arguments__0\n{\n    string *_Nonnull values;\n    int32 count__;\n};\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);\n\ninline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < arguments->count__.value);\n    return arguments->values[index.value];\n}\n\ninline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments)\n{\n    return (string__0iter)\n    {\n        .values = arguments->values,\n        .current = -1,\n        .count = arguments->count__.value\n    };\n}\n\nstruct system__io__File_Reader__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string fileName);\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);\n\nstruct system__io__File_Writer__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string fileName);\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);\n\nstruct system__text__String_Builder__0\n{\n    uint8_t *_Nullable bytes;\n    int capacity;\n    int32 byte_length__;\n};\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);\n\ninline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self)\n{\n    self->bytes = 0;\n    self->capacity = 0;\n    self->byte_length__ = (int32){0};\n    return self;\n}\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value);\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb);\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb);\n"});
+	add_resource((string){16,(uint8_t const*)"RuntimeLibrary.c"}, (string){23353,(uint8_t const*)"#include \"RuntimeLibrary.h\"\n\n#include <string.h>\n\n// -----------------------------------------------------------------------------\n// Static Checks\n// -----------------------------------------------------------------------------\n\nstatic inline void static_checks()\n{\n    // Because we assume we can cast from char* to uint8_t* they need to be the same size\n    _Static_assert(sizeof(char) == sizeof(uint8_t), \"chars must be 8 bits\");\n\n    // Because we assume we can cast from uint8_t* to byte* they need to be the same size\n    _Static_assert(sizeof(uint8_t) == sizeof(byte), \"bytes must be 8 bits\");\n\n    // Testing that the style we use for literals can be used as a const\n    const code_point test_code_point = ((code_point){0xFF});\n    // TODO: C allows string literals that are one byte shorter than the array so no null terminator\n    // TODO: C also has UTF-8 literals u8\"hello\"\n    // TODO change the emitted literals?\n    const string test_string = ((string){5,(uint8_t const[]){u8\"hello\"}});\n}\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\nstatic const _Bool _true=1;\nstatic const _Bool _false=0;\n\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s\", code);\n        exit(70);\n    }\n}\n\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s, %s\", code, message);\n        exit(70);\n    }\n}\n\nextern inline void_ptr allocate(size_t bytes);\n\nstatic inline int32 int32_from(int32_t v)\n{\n    return (int32){ v };\n}\n\n// TODO change this to something like byte_from\nuint8_t code_point__to_char(code_point v)\n{\n    lib_assert(v.value <= 0xFF);\n    return v.value;\n}\n\nchar const * cstr_from(string value)\n{\n    int32_t length = value.byte_length.value;\n    char* bytes = allocate(length + 1);\n    memcpy(bytes, value.bytes, length);\n    bytes[length] = 0;\n    return bytes;\n}\n\nstring string_from_cstr(char const* s)\n{\n    return (string){(int32_t)strlen(s), (uint8_t const*)s};\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\nextern inline _Bool cond(BOOL cond);\nextern inline BOOL bool_from(_Bool b);\nextern inline BOOL bool_op(_Bool b);\nextern inline _Bool bool_arg(BOOL b);\nextern inline BOOL BOOL__0op__not(BOOL b);\n\nstring bool_to_string__1(BOOL b)\n{\n    if(cond(b))\n        return (string){4,(uint8_t const*)\"true\"};\n    else\n        return (string){5,(uint8_t const*)\"false\"};\n}\n\nextern inline void op__add_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline int32 int32__0op__neg(int32 v);\nextern inline int32 int32__0op__add(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__sub(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__mul(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__div(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__remainder(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lte(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gte(int32 lhs, int32 rhs);\n\nstring int_to_string__1(int32 i)\n{\n    uint8_t* bytes = allocate(12); // -2,147,483,648 plus null terminator\n    int length = sprintf((char*)bytes, \"%d\", i.value);\n    lib_assert(length > 0);\n    return (string){length, bytes};\n}\nstring int_to_hex_string__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    uint8_t* bytes = allocate(9); // FF_FF_FF_FF plus null terminator\n    int length = sprintf((char*)bytes, \"%X\", i.value);\n    lib_assert(length > 0);\n    return (string){length, bytes};\n}\n\nint32 hex_string_to_int__1(string s)\n{\n    char const* cstr = cstr_from(s);\n    int32_t i = strtoul(cstr, NULL, 16);\n    free__1(cstr);\n    return (int32){i};\n}\n\ncode_point int_to_code_point__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    return (code_point){(uint32_t)i.value};\n}\n\nextern inline BOOL code_point__0op__lt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__lte(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gte(code_point lhs, code_point rhs);\nextern inline int32 code_point_as_int__1(code_point c);\n\nstring code_point_to_string__1(code_point c)\n{\n    uint8_t* bytes = allocate(sizeof(uint8_t));\n    *bytes = code_point__to_char(c);\n    return (string){1, bytes};\n}\n\nstring string__0new__0()\n{\n    return (string){0, 0};\n}\n\nstring string__0new__1(string value)\n{\n    return value;\n}\n\nstring string__0new__2(code_point c, int32 repeat)\n{\n    uint8_t* bytes = allocate(repeat.value);\n    uint8_t ch = code_point__to_char(c);\n    for (int i = 0; i < repeat.value; i++)\n        bytes[i] = ch;\n\n    return (string){repeat, bytes};\n}\n\nstring string__0op__add(string lhs, string rhs)\n{\n    int new_length = lhs.byte_length.value + rhs.byte_length.value;\n    uint8_t* chars = allocate(new_length);\n    size_t offset = sizeof(uint8_t) * lhs.byte_length.value;\n    memcpy(chars, lhs.bytes, offset);\n    memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);\n    return (string){new_length, chars};\n}\n\nBOOL string__0op__equal(string lhs, string rhs)\n{\n    if (lhs.byte_length.value != rhs.byte_length.value)\n        return FALSE;\n\n    for (int i = 0; i < lhs.byte_length.value; i++)\n        if (lhs.bytes[i] != rhs.bytes[i])\n            return FALSE;\n\n    return TRUE;\n}\n\nBOOL string__0op__lt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) < 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__lte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) <= 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__gt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) > 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\nBOOL string__0op__gte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) >= 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\n\nextern inline code_point string__0__0op__element(string value, int32 index);\nextern inline int32 string_byte_length__1(string s);\n\nstring substring__3(string s, int32 start, int32 length)\n{\n    // You can ask for a zero length substring at the end of the string\n    lib_assert(start.value <= s.byte_length.value);\n    lib_assert(start.value+length.value <= s.byte_length.value);\n    return (string){length, s.bytes + start.value};\n}\n\nextern inline string substring__2(string s, int32 start);\n\nstring string_replace__3(string s, string old_value, string new_value)\n{\n    // We make one one the stack then manually call the constructor\n    system__text__String_Builder__0 builder;\n    system__text__String_Builder__0__0new__with_capacity__1(&builder, s.byte_length);\n    int limit = s.byte_length.value - old_value.byte_length.value + 1;\n    int last_index = 0;\n    for(int i=0; i < limit; i++)\n        if(cond(string__0op__equal(substring__3(s, int32_from(i), old_value.byte_length), old_value)))\n        {\n            sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(i-last_index)));\n            sb_append__2(&builder, new_value);\n            i += old_value.byte_length.value; // skip over the value we just matched\n            last_index = i;\n            i--; // we need i-- to offset the i++ that is about to happen\n        }\n\n    sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(s.byte_length.value - last_index)));\n    return sb_to_string__1(&builder);\n}\nint32 string_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = 0; i < s.byte_length.value; i++)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\nint32 string_last_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = s.byte_length.value - 1; i >= 0; i--)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\nextern inline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__equal(code_point lhs, code_point rhs);\nextern BOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\n\nextern inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__not_equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs);\nextern inline BOOL string__0op__not_equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n\nextern inline void_ptr allocate__1(int32 bytes);\nextern inline void free__1(const_void_ptr object);\n\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, file %s, line %i\", code, file, line);\n        exit(70);\n    }\n}\n\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, %s, file %s, line %i\", code, cstr_from(message), file, line);\n        exit(70);\n    }\n}\n\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, %s, line %i\", function, cstr_from(message), file, line);\n    exit(70);\n}\n\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Reached \\\"UNREACHABLE\\\" statement in function %s, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nstatic int32_t resource_count = 0;\nstatic string resource_name[1024];\nstatic string resource_value[1024];\n\nvoid add_resource(string name, string value)\n{\n    lib_assert_msg(resource_count < 1024, \"only 1024 resources are currently supported\");\n    resource_name[resource_count] = name;\n    resource_value[resource_count] = value;\n    resource_count += 1;\n}\n\nstring get_resource__1(string name)\n{\n    for(int32_t i=0; i < resource_count; i++)\n        if(cond(string__0op__equal(resource_name[i], name)))\n            return resource_value[i];\n\n    lib_assert_msg(_false, cstr_from(name));\n    UNREACHABLE__0();\n}\n\nvoid debug_write__1(string value)\n{\n    fprintf(stderr, \"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__1(string value)\n{\n    fprintf(stderr, \"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__0()\n{\n    fprintf(stderr, \"\\n\");\n}\n\n_Bool string__0next(string__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline string string__0current(string__0iter const*_Nonnull iter);\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index);\nextern inline void clear_strings__1(Strings__0 *_Nonnull strings);\n\nvoid add_string__2(Strings__0 *_Nonnull strings, string value)\n{\n    if(strings->count__.value >= strings->capacity__.value)\n    {\n        int32_t new_capacity = strings->capacity__.value == 0 ? 16 : strings->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        string* new_values = allocate(new_capacity * sizeof(string));\n        memcpy(new_values, strings->values, strings->count__.value * sizeof(string));\n        if(strings->capacity__.value != 0)\n            free__1(strings->values); // delete the old array\n        strings->values = new_values;\n        strings->capacity__ = (int32){new_capacity};\n    }\n    strings->values[strings->count__.value] = value;\n    strings->count__.value++;\n}\n\nextern inline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings);\nextern inline string__0iter string__0iterate(Strings__0 const *_Nonnull strings);\n\n_Bool int__0next(int__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline int32 int__0current(int__0iter const*_Nonnull iter);\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index);\nextern inline void clear_ints__1(Ints__0 *_Nonnull ints);\n\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value)\n{\n    if(ints->count__.value >= ints->capacity__.value)\n    {\n        int32_t new_capacity = ints->capacity__.value == 0 ? 16 : ints->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        int32* new_values = allocate(new_capacity * sizeof(int32));\n        memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));\n        if(ints->capacity__.value != 0)\n            free__1(ints->values); // delete the old array\n        ints->values = new_values;\n        ints->capacity__ = (int32){new_capacity};\n    }\n    ints->values[ints->count__.value] = value;\n    ints->count__.value++;\n}\n\nextern inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints);\nextern inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints);\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter);\n\nextern inline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self);\n\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value)\n{\n    if(list->count__.value >= list->capacity__.value)\n    {\n        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        void_ptr* new_values = allocate(new_capacity * sizeof(void_ptr));\n        memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));\n        if(list->capacity__.value != 0)\n            free__1(list->values); // delete the old array\n        list->values = new_values;\n        list->capacity__ = (int32){new_capacity};\n    }\n    list->values[list->count__.value] = (void*_Nullable)value; // TODO hack, we cast away const\n    list->count__.value++;\n}\n\nextern inline void clear_list__1(system__collections__List__1 *_Nonnull list);\nextern inline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index);\nextern inline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list);\nextern inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list);\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console)\n{\n    printf(\"\\n\");\n}\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv)\n{\n    system__console__Arguments__0 *_Nonnull self = allocate(sizeof(system__console__Arguments__0));\n    self->count__ = (int32){argc-1};\n    self->values = allocate(self->count__.value * sizeof(string));\n    for (int i = 0; i < self->count__.value; i++)\n        self->values[i] = string_from_cstr(argv[i+1]);\n    return self;\n}\n\nextern inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index);\nextern inline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments);\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name)\n{\n    char const *_Nonnull fname = cstr_from(file_name);\n    self->file= fopen(fname, \"rb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fseek(reader->file, 0, SEEK_END);\n    long int length = ftell(reader->file);\n    fseek(reader->file, 0, SEEK_SET);\n    uint8_t*_Nonnull bytes = allocate(length);\n    length = fread(bytes, sizeof(uint8_t), length, reader->file);\n    return (string){(int32_t)length, bytes};\n}\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fclose(reader->file);\n}\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name)\n{\n    char const *_Nonnull fname = cstr_from(file_name);\n    self->file = fopen(fname, \"wb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value)\n{\n    fwrite(value.bytes, sizeof(char), value.byte_length.value, writer->file);\n}\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)\n{\n    fclose(writer->file);\n}\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)\n{\n    int new_capacity = sb->capacity == 0 ? 128 : sb->capacity;\n    while(new_capacity < needed)\n    {\n        new_capacity *= 2;\n    }\n\n    if(new_capacity > sb->capacity)\n    {\n        uint8_t* new_buffer =  allocate(new_capacity);\n        if(sb->byte_length__.value > 0)\n            memcpy(new_buffer, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));\n\n        if(sb->capacity > 0)\n            free__1(sb->bytes);\n\n        sb->bytes = new_buffer;\n        sb->capacity = new_capacity;\n    }\n}\n\nextern inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self);\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, value.byte_length.value);\n    memcpy(self->bytes, value.bytes, value.byte_length.value);\n    self->byte_length__.value = value.byte_length.value;\n    return self;\n}\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, capacity.value);\n    return self;\n}\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value)\n{\n    int32_t new_length = sb->byte_length__.value + value->byte_length__.value;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    int32_t new_length = sb->byte_length__.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n\n    int32_t end = start.value + length.value;\n    lib_assert(end <= sb->byte_length__.value); // less than or equal because end is one past the end of the remove\n\n    memmove(sb->bytes+start.value, sb->bytes+end, sb->byte_length__.value-end);\n    sb->byte_length__.value -= length.value;\n}\n\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n    sb->byte_length__.value = start.value;\n}\n\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    string result = {sb->byte_length__.value, sb->bytes};\n    // give up ownership of bytes\n    sb->bytes = 0;\n    sb->byte_length__.value = 0;\n    sb->capacity = 0;\n    return result;\n}\n"});
+	add_resource((string){16,(uint8_t const*)"RuntimeLibrary.h"}, (string){16891,(uint8_t const*)"// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n// Note that we can't switch to the \"secure\" functions because they don't\n// compile in linux on Travis CI\n#define _CRT_SECURE_NO_WARNINGS\n\n#include <stdlib.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <stdnoreturn.h>\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\ntypedef void*_Nullable void_ptr;\ntypedef void const*_Nullable const_void_ptr;\n\n#define lib_assert(condition) lib_assert1(condition, #condition)\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code);\n#define lib_assert_msg(condition, message) lib_assert2(condition, #condition, message)\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message);\n\ninline void_ptr allocate(size_t bytes)\n{\n    return malloc(bytes);\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\ntypedef struct never never;\ntypedef struct optional__never optional__never;\ntypedef struct BOOL BOOL;\ntypedef struct int32 int32;\ntypedef struct byte byte;\ntypedef struct code_point code_point;\ntypedef struct string string;\n\n// `never` type\nstruct never\n{\n};\n\n// `never?` type\nstruct optional__never\n{\n};\n\n// TODO this is a hack for now, the type of `none` should be `never?`\nstatic const void_ptr none = NULL;\n\n// For now, use `BOOL` as the emitted type\n// TODO C: switch `BOOL` to `bool`\n// TODO C: switch `TRUE` to `true`\n// TODO C: switch `FALSE` to `false`\n\n// `bool` type\nstruct BOOL\n{\n    _Bool value;\n};\n\nstatic const BOOL TRUE = { 1 };\nstatic const BOOL FALSE = { 0 };\n\n// Function used in conditions to make them take `bool`\ninline _Bool cond(BOOL cond) { return cond.value; }\n\n// Used by runtime for converting to bool\ninline BOOL bool_from(_Bool b) { return (BOOL){ b }; }\n\n// Wrap a bool operation that is bool based\ninline BOOL bool_op(_Bool b) { return (BOOL){ b }; }\n// Convert the arguments of a logical operation to bool\ninline _Bool bool_arg(BOOL b) { return b.value; }\n\ninline BOOL BOOL__0op__not(BOOL b) { return (BOOL){ !b.value }; }\n\nstring bool_to_string__1(BOOL b);\n\n// `int` type\nstruct int32\n{\n    int32_t value;\n};\n\ninline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }\ninline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }\ninline int32 int32__0op__neg(int32 v) { return (int32){-v.value}; }\ninline int32 int32__0op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }\ninline int32 int32__0op__sub(int32 lhs, int32 rhs) { return (int32){ lhs.value - rhs.value}; }\ninline int32 int32__0op__mul(int32 lhs, int32 rhs) { return (int32){ lhs.value * rhs.value}; }\ninline int32 int32__0op__div(int32 lhs, int32 rhs) { return (int32){ lhs.value / rhs.value}; }\ninline int32 int32__0op__remainder(int32 lhs, int32 rhs) { return (int32){ lhs.value % rhs.value}; }\ninline BOOL int32__0op__lt(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }\n\nstring int_to_string__1(int32 i);\nstring int_to_hex_string__1(int32 i);\nint32 hex_string_to_int__1(string s);\ncode_point int_to_code_point__1(int32 i);\n\nstruct byte\n{\n    uint8_t value;\n};\n\nstruct code_point\n{\n    // don't use something like char32_t because C's handling of chars sucks\n    uint32_t value;\n};\n\ninline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }\n\ninline int32 code_point_as_int__1(code_point c) { return (int32){(int32_t)c.value}; }\nstring code_point_to_string__1(code_point c);\n\nstruct string\n{\n    // Though there will be a byte_length property in the future,\n    // it doesn't make sense to directly expose it right now because this is\n    // not the correct implementation.\n    int32 byte_length;\n\n    // don't use chars because C's handling of chars sucks\n    uint8_t const *_Nonnull bytes;\n};\n\nstring string__0new__0();\nstring string__0new__1(string value);\nstring string__0new__2(code_point c, int32 repeat);\n\nstring string__0op__add(string lhs, string rhs);\nBOOL string__0op__lt(string lhs, string rhs);\nBOOL string__0op__lte(string lhs, string rhs);\nBOOL string__0op__gt(string lhs, string rhs);\nBOOL string__0op__gte(string lhs, string rhs);\ninline code_point string__0__0op__element(string value, int32 index)\n{\n    lib_assert(index.value >= 0 && index.value < value.byte_length.value);\n    return (code_point){value.bytes[index.value]};\n}\n\ninline int32 string_byte_length__1(string s) { return s.byte_length; }\nstring substring__3(string s, int32 start, int32 length);\ninline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length.value-start.value}); }\nstring string_replace__3(string s, string old_value, string new_value);\nint32 string_index_of__2(string s, code_point c);\nint32 string_last_index_of__2(string s, code_point c);\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL int32__0op__equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL code_point__0op__equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\nBOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\ninline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\n\ninline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL int32__0op__not_equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL string__0op__not_equal(string lhs, string rhs)\n{\n    return BOOL__0op__not(string__0op__equal(lhs, rhs));\n}\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\ninline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\ntypedef struct string__0iter string__0iter;\ntypedef struct Strings__0 Strings__0;\ntypedef struct int__0iter int__0iter;\ntypedef struct Ints__0 Ints__0;\ntypedef struct void_ptr__0iter void_ptr__0iter;\ntypedef struct system__collections__List__1 system__collections__List__1;\ntypedef struct system__console__Console__0 system__console__Console__0;\ntypedef struct system__console__Arguments__0 system__console__Arguments__0;\ntypedef struct system__io__File_Reader__0 system__io__File_Reader__0;\ntypedef struct system__io__File_Writer__0 system__io__File_Writer__0;\ntypedef struct system__text__String_Builder__0 system__text__String_Builder__0;\n\ninline void_ptr allocate__1(int32 bytes)\n{\n    return malloc(bytes.value);\n}\n\n// TODO rename dellocate()\ninline void free__1(const_void_ptr object)\n{\n    // TODO hack cast away const\n    free((void*_Nonnull)object);\n}\n\n#define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)\n#define assert__2(condition, message) assert2(condition, #condition, message, __FILE__, __LINE__)\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line);\n\n#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED0(__func__, __FILE__, __LINE__)\n#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED1(message, __func__, __FILE__, __LINE__)\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\n#define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\nstring get_resource__1(string resource_name);\nvoid add_resource(string name, string value);\n\nvoid debug_write__1(string value);\nvoid debug_write_line__1(string value);\nvoid debug_write_line__0();\n\nstruct string__0iter\n{\n    string *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool string__0next(string__0iter*_Nonnull iter);\ninline string string__0current(string__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Strings__0\n{\n    string *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self);\ninline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < strings->count__.value);\n    return strings->values[index.value];\n}\ninline void clear_strings__1(Strings__0 *_Nonnull strings)\n{\n    strings->count__ = (int32){0};\n}\nvoid add_string__2(Strings__0 *_Nonnull strings, string value);\ninline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\ninline string__0iter string__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\n\nstruct int__0iter\n{\n    int32 *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool int__0next(int__0iter*_Nonnull iter);\ninline int32 int__0current(int__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Ints__0\n{\n    int32 *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self);\ninline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < ints->count__.value);\n    return ints->values[index.value];\n}\ninline void clear_ints__1(Ints__0 *_Nonnull ints)\n{\n    ints->count__ = (int32){0};\n}\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value);\ninline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\ninline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\n\nstruct void_ptr__0iter\n{\n    void_ptr *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);\ninline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct system__collections__List__1\n{\n    void_ptr *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\ninline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\n// TODO hack that we take const_void_ptr but then treat it as mutable\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value);\n\ninline void clear_list__1(system__collections__List__1 *_Nonnull list)\n{\n    list->count__ = (int32){0};\n}\n\ninline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < list->count__.value);\n    return list->values[index.value];\n}\n\ninline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\ninline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\nstruct system__console__Console__0\n{\n};\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console);\n\nstruct system__console__Arguments__0\n{\n    string *_Nonnull values;\n    int32 count__;\n};\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);\n\ninline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < arguments->count__.value);\n    return arguments->values[index.value];\n}\n\ninline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments)\n{\n    return (string__0iter)\n    {\n        .values = arguments->values,\n        .current = -1,\n        .count = arguments->count__.value\n    };\n}\n\nstruct system__io__File_Reader__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name);\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);\n\nstruct system__io__File_Writer__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name);\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);\n\nstruct system__text__String_Builder__0\n{\n    uint8_t *_Nullable bytes;\n    int capacity;\n    int32 byte_length__;\n};\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);\n\ninline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self)\n{\n    self->bytes = 0;\n    self->capacity = 0;\n    self->byte_length__ = (int32){0};\n    return self;\n}\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value);\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb);\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb);\n"});
 
 	return main__2(allocate(sizeof(system__console__Console__0)), convert_arguments(argc, argv)).value;
 }

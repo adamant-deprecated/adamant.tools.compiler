@@ -327,19 +327,19 @@ void assert2(const BOOL condition, char const *_Nonnull code, const string messa
     }
 }
 
-_Noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
+noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
     printf("Function %s not yet implemented, %s, line %i", function, file, line);
     exit(70);
 }
 
-_Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
+noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
     printf("Function %s not yet implemented, %s, %s, line %i", function, cstr_from(message), file, line);
     exit(70);
 }
 
-_Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
+noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
     printf("Reached \"UNREACHABLE\" statement in function %s, %s, line %i", function, file, line);
     exit(70);
