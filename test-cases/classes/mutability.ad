@@ -3,12 +3,12 @@ public /* mut */ class Mutable_Object
 {
 }
 
-public class immutable_object
+public class Immutable_object
 {
 }
 
 public main() -> void
 {
-	let m: Mutable_Object = new Mutable_Object();
-	let i: immutable_object = new immutable_object();
+    let m: Mutable_Object = new Mutable_Object();
+    let i: Immutable_object = new Immutable_object();
 }
