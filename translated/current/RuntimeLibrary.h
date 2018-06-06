@@ -460,7 +460,7 @@ struct system__io__File_Reader__0
     FILE *_Nonnull file;
 };
 
-system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string fileName);
+system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name);
 string file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);
 void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);
 
@@ -469,7 +469,7 @@ struct system__io__File_Writer__0
     FILE *_Nonnull file;
 };
 
-system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string fileName);
+system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name);
 void file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);
 void close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);
 
