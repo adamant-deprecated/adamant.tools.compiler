@@ -33,7 +33,7 @@ void lib_assert1(const _Bool condition, char const *_Nonnull code)
 {
     if(!condition)
     {
-        printf_s("Assertion failed: %s", code);
+        printf("Assertion failed: %s", code);
         exit(70);
     }
 }
@@ -42,7 +42,7 @@ void lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_
 {
     if(!condition)
     {
-        printf_s("Assertion failed: %s, %s", code, message);
+        printf("Assertion failed: %s, %s", code, message);
         exit(70);
     }
 }
@@ -65,7 +65,7 @@ char const * cstr_from(string value)
 {
     int32_t length = value.byte_length.value;
     char* bytes = allocate(length + 1);
-    memcpy_s(bytes, length + 1, value.bytes, length);
+    memcpy(bytes, value.bytes, length);
     bytes[length] = 0;
     return bytes;
 }
@@ -109,7 +109,7 @@ extern inline BOOL int32__0op__gte(int32 lhs, int32 rhs);
 string int_to_string__1(int32 i)
 {
     uint8_t* bytes = allocate(12); // -2,147,483,648 plus null terminator
-    int length = sprintf_s((char*)bytes, 12, "%d", i.value);
+    int length = sprintf((char*)bytes, "%d", i.value);
     lib_assert(length > 0);
     return (string){length, bytes};
 }
@@ -117,7 +117,7 @@ string int_to_hex_string__1(int32 i)
 {
     lib_assert(i.value >= 0);
     uint8_t* bytes = allocate(9); // FF_FF_FF_FF plus null terminator
-    int length = sprintf_s((char*)bytes, 9, "%X", i.value);
+    int length = sprintf((char*)bytes, "%X", i.value);
     lib_assert(length > 0);
     return (string){length, bytes};
 }
@@ -174,8 +174,8 @@ string string__0op__add(string lhs, string rhs)
     int new_length = lhs.byte_length.value + rhs.byte_length.value;
     uint8_t* chars = allocate(new_length);
     size_t offset = sizeof(uint8_t) * lhs.byte_length.value;
-    memcpy_s(chars, new_length, lhs.bytes, offset);
-    memcpy_s(chars + offset, new_length - offset, rhs.bytes, rhs.byte_length.value);
+    memcpy(chars, lhs.bytes, offset);
+    memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);
     return (string){new_length, chars};
 }
 
@@ -313,7 +313,7 @@ void assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnu
 {
     if(!condition.value)
     {
-        printf_s("Assertion failed: %s, file %s, line %i", code, file, line);
+        printf("Assertion failed: %s, file %s, line %i", code, file, line);
         exit(70);
     }
 }
@@ -322,26 +322,26 @@ void assert2(const BOOL condition, char const *_Nonnull code, const string messa
 {
     if(!condition.value)
     {
-        printf_s("Assertion failed: %s, %s, file %s, line %i", code, cstr_from(message), file, line);
+        printf("Assertion failed: %s, %s, file %s, line %i", code, cstr_from(message), file, line);
         exit(70);
     }
 }
 
 _Noreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf_s("Function %s not yet implemented, %s, line %i", function, file, line);
+    printf("Function %s not yet implemented, %s, line %i", function, file, line);
     exit(70);
 }
 
 _Noreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf_s("Function %s not yet implemented, %s, %s, line %i", function, cstr_from(message), file, line);
+    printf("Function %s not yet implemented, %s, %s, line %i", function, cstr_from(message), file, line);
     exit(70);
 }
 
 _Noreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)
 {
-    printf_s("Reached \"UNREACHABLE\" statement in function %s, %s, line %i", function, file, line);
+    printf("Reached \"UNREACHABLE\" statement in function %s, %s, line %i", function, file, line);
     exit(70);
 }
 
@@ -369,15 +369,15 @@ string get_resource__1(string name)
 
 void debug_write__1(string value)
 {
-    fprintf_s(stderr, "%.*s", value.byte_length.value, value.bytes);
+    fprintf(stderr, "%.*s", value.byte_length.value, value.bytes);
 }
 void debug_write_line__1(string value)
 {
-    fprintf_s(stderr, "%.*s\n", value.byte_length.value, value.bytes);
+    fprintf(stderr, "%.*s\n", value.byte_length.value, value.bytes);
 }
 void debug_write_line__0()
 {
-    fprintf_s(stderr, "\n");
+    fprintf(stderr, "\n");
 }
 
 _Bool string__0next(string__0iter*_Nonnull iter)
@@ -412,7 +412,7 @@ void add_string__2(Strings__0 *_Nonnull strings, string value)
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         string* new_values = allocate(new_capacity * sizeof(string));
-        memcpy_s(new_values, new_capacity * sizeof(string), strings->values, strings->count__.value * sizeof(string));
+        memcpy(new_values, strings->values, strings->count__.value * sizeof(string));
         if(strings->capacity__.value != 0)
             free__1(strings->values); // delete the old array
         strings->values = new_values;
@@ -457,7 +457,7 @@ void add_int__2(Ints__0 *_Nonnull ints, int32 value)
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         int32* new_values = allocate(new_capacity * sizeof(int32));
-        memcpy_s(new_values, new_capacity * sizeof(int32), ints->values, ints->count__.value * sizeof(int32));
+        memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));
         if(ints->capacity__.value != 0)
             free__1(ints->values); // delete the old array
         ints->values = new_values;
@@ -492,7 +492,7 @@ void add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr val
         int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         void_ptr* new_values = allocate(new_capacity * sizeof(void_ptr));
-        memcpy_s(new_values, new_capacity * sizeof(void_ptr), list->values, list->count__.value * sizeof(void_ptr));
+        memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));
         if(list->capacity__.value != 0)
             free__1(list->values); // delete the old array
         list->values = new_values;
@@ -509,15 +509,15 @@ extern inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 co
 
 void console_write__2(system__console__Console__0 *_Nonnull console, string value)
 {
-    printf_s("%.*s", value.byte_length.value, value.bytes);
+    printf("%.*s", value.byte_length.value, value.bytes);
 }
 void console_write_line__2(system__console__Console__0 *_Nonnull console, string value)
 {
-    printf_s("%.*s\n", value.byte_length.value, value.bytes);
+    printf("%.*s\n", value.byte_length.value, value.bytes);
 }
 void console_write_line__1(system__console__Console__0 *_Nonnull console)
 {
-    printf_s("\n");
+    printf("\n");
 }
 
 system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv)
@@ -536,15 +536,7 @@ extern inline string__0iter system__console__Arguments__0__0iterate(system__cons
 system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string fileName)
 {
     char const *_Nonnull fname = cstr_from(fileName);
-    // TODO report error up to caller
-    errno_t err;
-    if( (err = fopen_s(&self->file, fname, "rb")) ) // extra parens silences warning about assignment
-    {
-        char err_msg[1024];
-        strerror_s(err_msg, sizeof(err_msg), err);
-        fprintf_s(stderr, "cannot open file for read '%s': %s\n", fname, err_msg);
-        lib_assert(_false);
-    }
+    self->file= fopen(fname, "rb"); // TODO report error up to caller
     free__1(fname);
     return self;
 }
@@ -566,15 +558,7 @@ void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)
 system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string fileName)
 {
     char const *_Nonnull fname = cstr_from(fileName);
-    // TODO report error up to caller
-    errno_t err;
-    if( (err = fopen_s(&self->file, fname, "wb")) ) // extra parens silences warning about assignment
-    {
-        char err_msg[1024];
-        strerror_s(err_msg, sizeof(err_msg), err);
-        fprintf_s(stderr, "cannot open file for write '%s': %s\n", fname, err_msg);
-        lib_assert(_false);
-    }
+    self->file = fopen(fname, "wb"); // TODO report error up to caller
     free__1(fname);
     return self;
 }
@@ -600,7 +584,7 @@ void ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)
     {
         uint8_t* new_buffer =  allocate(new_capacity);
         if(sb->byte_length__.value > 0)
-            memcpy_s(new_buffer, new_capacity, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));
+            memcpy(new_buffer, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));
 
         if(sb->capacity > 0)
             free__1(sb->bytes);
@@ -616,7 +600,7 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
 {
     system__text__String_Builder__0__0new__0(self);
     ensure_sb_capacity(self, value.byte_length.value);
-    memcpy_s(self->bytes, self->capacity, value.bytes, value.byte_length.value);
+    memcpy(self->bytes, value.bytes, value.byte_length.value);
     self->byte_length__.value = value.byte_length.value;
     return self;
 }
@@ -632,7 +616,7 @@ void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)
 {
     int32_t new_length = sb->byte_length__.value + value.byte_length.value;
     ensure_sb_capacity(sb, new_length);
-    memcpy_s(sb->bytes+sb->byte_length__.value, sb->capacity-sb->byte_length__.value, value.bytes, value.byte_length.value);
+    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);
     sb->byte_length__.value = new_length;
 }
 
@@ -640,7 +624,7 @@ void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text_
 {
     int32_t new_length = sb->byte_length__.value + value->byte_length__.value;
     ensure_sb_capacity(sb, new_length);
-    memcpy_s(sb->bytes+sb->byte_length__.value, sb->capacity-sb->byte_length__.value, value->bytes, value->byte_length__.value);
+    memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);
     sb->byte_length__.value = new_length;
 }
 
@@ -648,7 +632,7 @@ void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string valu
 {
     int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;
     ensure_sb_capacity(sb, new_length);
-    memcpy_s(sb->bytes+sb->byte_length__.value, sb->capacity-sb->byte_length__.value, value.bytes, value.byte_length.value);
+    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);
     sb->bytes[new_length-1] = '\n';
     sb->byte_length__.value = new_length;
 }
@@ -668,7 +652,7 @@ void sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int
     int32_t end = start.value + length.value;
     lib_assert(end <= sb->byte_length__.value); // less than or equal because end is one past the end of the remove
 
-    memmove_s(sb->bytes+start.value, sb->capacity-start.value, sb->bytes+end, sb->byte_length__.value-end);
+    memmove(sb->bytes+start.value, sb->bytes+end, sb->byte_length__.value-end);
     sb->byte_length__.value -= length.value;
 }
 

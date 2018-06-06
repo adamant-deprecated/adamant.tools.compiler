@@ -593,7 +593,6 @@ int32 const PackageNode__ = ((int32){118});
 int32 const Percent__ = ((int32){119});
 int32 const RemainderExpression__ = ((int32){120});
 int32 const Pipe__ = ((int32){121});
-int32 const MagnitudeExpression__ = ((int32){122});
 int32 const Asterisk__ = ((int32){123});
 int32 const MultiplyExpression__ = ((int32){124});
 int32 const DivideExpression__ = ((int32){125});
@@ -1980,11 +1979,6 @@ Semantic_Node__0 const *_Nonnull build_semantic_node__4(Semantic_Tree_Builder__0
 		add_item__2(children__, build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), name_table__, scope__));
 		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__, syntax__, children__);
 	}
-	else if (cond(int32__0op__equal(syntax__->kind__, MagnitudeExpression__)))
-	{
-		add_item__2(children__, build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), name_table__, scope__));
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__, syntax__, children__);
-	}
 	else if (cond(int32__0op__equal(syntax__->kind__, AddExpression__)))
 	{
 		Semantic_Node__0 const *_Nonnull const lhs__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), name_table__, scope__);
@@ -2457,14 +2451,6 @@ Syntax_Node__0 const *_Nonnull parse_atom__1(Compilation_Unit_Parser__0 *_Nonnul
 		add_item__2(children__, parse_expression__1(parser__));
 		add_item__2(children__, expect_token__2(parser__, RightParen__));
 		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ParenthesizedExpression__, children__);
-	}
-
-	if (cond(int32__0op__equal(parser__->token__->kind__, Pipe__)))
-	{
-		add_item__2(children__, expect_token__2(parser__, Pipe__));
-		add_item__2(children__, parse_expression__1(parser__));
-		add_item__2(children__, expect_token__2(parser__, Pipe__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MagnitudeExpression__, children__);
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, Minus__)))
@@ -4145,13 +4131,6 @@ void convert_expression__2(Semantic_Node__0 const *_Nonnull const syntax__, Sour
 		write__2(builder__, ((string){15,(uint8_t const*)"BOOL__0op__not("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), builder__);
 		write__2(builder__, ((string){1,(uint8_t const*)")"}));
-	}
-	else if (cond(int32__0op__equal(syntax__->kind__, MagnitudeExpression__)))
-	{
-		Semantic_Node__0 const *_Nonnull const expression_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
-		convert_expression__2(expression_node__, builder__);
-		convert_member_access__2(expression_node__, builder__);
-		write__2(builder__, ((string){15,(uint8_t const*)"op__magnitude()"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ParenthesizedExpression__)))
 	{
