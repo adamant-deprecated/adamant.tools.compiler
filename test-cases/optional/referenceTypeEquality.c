@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-void main__1(system__console__Console__0 *_Nonnull const console__);
+void mut main__1(system__console__Console__0 mut ref const console__);
 
 // Class Declarations
 
@@ -11,11 +11,11 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 // Definitions
 
-void main__1(system__console__Console__0 *_Nonnull const console__)
+void mut main__1(system__console__Console__0 mut ref const console__)
 {
-	system__text__String_Builder__0 const *_Nonnull const v__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
-	system__text__String_Builder__0 const *_Nullable const n__ = none;
-	BOOL r__;
+	system__text__String_Builder__0 const ref const v__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
+	system__text__String_Builder__0 const opt_ref const n__ = none;
+	BOOL mut r__;
 	r__ = void_ptr__0op__equal(v__, n__);
 	console_write_line__2(console__, string__0op__add(((string){8,(uint8_t const*)"v == n: "}), bool_to_string__1(r__)));
 	r__ = void_ptr__0op__equal(n__, v__);
@@ -43,7 +43,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	main__1(allocate(sizeof(system__console__Console__0)));
 	return 0;

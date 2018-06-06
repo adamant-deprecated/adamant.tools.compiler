@@ -202,12 +202,12 @@ public convert_type_name(type: Type, include_type_parameters: bool) -> mut syste
 
     // if type.type_parameters.count > 0 and include_type_parameters
     // {
-    //     convert_type_parameters(c_type, type);
+    //     convert_type_name_parameters(c_type, type);
     // }
     return c_type;
 }
 
-public convert_type_parameters(builder: mut system.text.String_Builder, type: Type) -> void
+public convert_type_name_parameters(builder: mut system.text.String_Builder, type: Type) -> void
 {
     sb_append(builder, "<");
     var first: bool = true;
@@ -223,13 +223,18 @@ public convert_type_parameters(builder: mut system.text.String_Builder, type: Ty
 public convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
 {
     let c_type: mut system.text.String_Builder = convert_type_name(type);
-    if not type.is_mutable { sb_append(c_type, " const"); }
-    sb_append(c_type, " *");
-    if nullable
-        { sb_append(c_type, "_Nullable"); }
+    if type.is_mutable
+        { sb_append(c_type, " mut"); }
     else
-        { sb_append(c_type, "_Nonnull"); }
-    if not mutable_binding { sb_append(c_type, " const") ; }
+        { sb_append(c_type, " const"); }
+    if nullable
+        { sb_append(c_type, " opt_ref"); }
+    else
+        { sb_append(c_type, " ref"); }
+    if mutable_binding
+        { sb_append(c_type, " mut"); }
+    else
+        { sb_append(c_type, " const"); }
     return sb_to_string(c_type);
 }
 
@@ -244,11 +249,11 @@ public convert_type(mutable_binding: bool, var type: Type, optional: bool) -> st
         if optional_type.is_value_type
         {
             // optional<T> is a const struct
-            let c_type: mut system.text.String_Builder = new system.text.String_Builder("p_optional<");
+            let c_type: mut system.text.String_Builder = new system.text.String_Builder("optional__");
+            if  mutable_binding or type.is_mutable
+                { sb_append(c_type, "0mut__"); }
             sb_append(c_type, convert_type(true, optional_type, true));
-            sb_append(c_type, ">");
-            if not mutable_binding and not type.is_mutable
-                { sb_append(c_type, " const"); }
+
             return  sb_to_string(c_type);
         }
         else
@@ -261,7 +266,9 @@ public convert_type(mutable_binding: bool, var type: Type, optional: bool) -> st
         if type.is_value_type
         {
             let c_type: mut system.text.String_Builder = convert_type_name(type);
-            if not mutable_binding and not type.is_mutable
+            if mutable_binding or type.is_mutable
+                { sb_append(c_type, " mut"); }
+            else
                 { sb_append(c_type, " const"); }
             return sb_to_string(c_type);
         }
@@ -870,7 +877,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         //      }
         // Emit:
         //
-        //      for(T__0iter iter = T__0iterate(expr); T__0next(iter);)
+        //      for(T__0iter mut iter = T__0iterate(expr); T__0next(iter);)
         //      {
         //          T x = T__0current(iter);
         //          body
@@ -899,7 +906,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         // for statement
         begin_line(emitter.definitions, "for (");
         write(emitter.definitions, iterator_type);
-        write(emitter.definitions, "__0iter iter = ");
+        write(emitter.definitions, "__0iter mut iter = ");
         write(emitter.definitions, iteratable_type);
         write(emitter.definitions, "__0iterate(");
         convert_expression(iterator_expression, emitter.definitions);
@@ -1041,12 +1048,12 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
             constructor_full_name = constructor_full_name + constructor_name + "__";
         }
         constructor_full_name = constructor_full_name + int_to_string(parameters_node.children.count);
-        var return_type: string = class_name;
+        var return_type: string = class_name + " mut";
         if not is_value_type
-            { return_type = return_type + " *_Nonnull"; }
+            { return_type = return_type + " ref mut"; }
         var constructor_parameters: string;
         if not is_value_type
-            { constructor_parameters = convert_method_parameter_list(emitter, parameters_node, return_type); }
+            { constructor_parameters = convert_method_parameter_list(emitter, parameters_node, class_name + " mut ref const"); }
         else
             { constructor_parameters = convert_parameter_list(emitter, parameters_node); }
 
@@ -1066,7 +1073,9 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         let variable_declaration: Semantic_Node = first_child(member, VariableDeclaration);
         let field_name: string = get_node_text(first_child(variable_declaration, Identifier));
         let field_type: Semantic_Node = variable_declaration.children[2];
-        let c_type: string = convert_type(true, field_type); // because we need to assign them in constructors don't mark fields const
+        // because we need to assign them in constructors don't mark fields const
+        // TODO it might be better to just not emit a mutability specifier on these types to avoid confusion
+        let c_type: string = convert_type(true, field_type);
         write_line(emitter.class_declarations, c_type + " " + mangle_field_name(field_name) + ";");
     }
     else if member.kind == MethodDeclaration
@@ -1105,14 +1114,15 @@ public emit_default_constructor(emitter: mut Emitter, type_name: string, is_valu
 {
     let default_constructor_name: string = type_name + "__0new__0";
 
-    var return_type: string = type_name;
+    // TODO if the type is inherently immutable then we need to emit `const` instead
+    var return_type: string = type_name + " mut";
     if not is_value_type
-        { return_type = return_type + " *_Nonnull"; }
+        { return_type = return_type + " ref mut"; }
 
     // Constructor Signature
     var constructor_signature: string = return_type + " " + default_constructor_name + "(";
     if not is_value_type
-        { constructor_signature = constructor_signature + return_type + " self"; }
+        { constructor_signature = constructor_signature + type_name + " mut ref const self"; }
     constructor_signature = constructor_signature + ")";
 
     // Constructor Declaration
@@ -1268,7 +1278,7 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
 {
     element_separator_line(emitter.definitions);
     write_line(emitter.definitions, "// Entry Point Adapter");
-    write_line(emitter.definitions, "int32_t main(int argc, char const *const * argv)");
+    write_line(emitter.definitions, "int32_t main(int argc, char const ptr const ptr argv)");
     begin_block(emitter.definitions);
 
     for let resource: Source_Text in emitter.resources
@@ -1302,7 +1312,7 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
         sb_append(args, "convert_arguments(argc, argv)");
     }
 
-    if emitter.main_function_return_type == "void"
+    if emitter.main_function_return_type == "void mut"
     {
         write_line(emitter.definitions, emitter.main_function_name + "(" + sb_to_string(args) + ");");
         write_line(emitter.definitions, "return 0;");

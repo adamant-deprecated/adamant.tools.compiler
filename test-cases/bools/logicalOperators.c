@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-BOOL True__0();
-void main__0();
+BOOL mut True__0();
+void mut main__0();
 
 // Class Declarations
 
@@ -12,14 +12,14 @@ void main__0();
 
 // Definitions
 
-BOOL True__0()
+BOOL mut True__0()
 {
 	return TRUE;
 }
 
-void main__0()
+void mut main__0()
 {
-	BOOL x__;
+	BOOL mut x__;
 	x__ = bool_op(bool_arg(TRUE) && bool_arg(FALSE));
 	x__ = bool_op(bool_arg(TRUE) || bool_arg(FALSE));
 	x__ = BOOL__0op__not(TRUE);
@@ -27,7 +27,7 @@ void main__0()
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	main__0();
 	return 0;

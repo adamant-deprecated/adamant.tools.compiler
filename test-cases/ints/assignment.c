@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-int32 main__0();
+int32 mut main__0();
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ int32 main__0();
 
 // Definitions
 
-int32 main__0()
+int32 mut main__0()
 {
-	int32 result__;
+	int32 mut result__;
 	result__ = ((int32){40});
 	op__add_assign(&(result__), ((int32){3}));
 	op__sub_assign(&(result__), ((int32){1}));
@@ -21,7 +21,7 @@ int32 main__0()
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	return main__0().value;
 }

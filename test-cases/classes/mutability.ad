@@ -1,14 +1,14 @@
 // TODO add `mut` keyword
-public /* mut */ class Mutable_Object
+public /* mut */ class Mutable_Class
 {
 }
 
-public class Immutable_object
+public class Immutable_Class
 {
 }
 
 public main() -> void
 {
-    let m: Mutable_Object = new Mutable_Object();
-    let i: Immutable_object = new Immutable_object();
+    let m: Mutable_Class = new Mutable_Class();
+    let i: Immutable_Class = new Immutable_Class();
 }

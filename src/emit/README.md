@@ -46,3 +46,17 @@ Since all names are mangled, we are free to use C style names without concern fo
 * Optional: `optional__` + the_type_that_is_optional
 * True & False: `TRUE`, `FALSE`
 * None: `none`
+
+## References and Pointers
+
+The above name mangling produces a base name for the value type. However, classes are passed by reference and there are also references to variables. These are converted to pointers in C. However, for clarity, a number of macros have been defined. This allows the use of the clang `_Nonnull` and `_Nullable` extensions without cluttering the code with them. The macros are:
+
+* `ref` expands to `*_Nonnull restrict` i.e. a non-null pointer
+* `opt_ref` stands for optional references and expands to `*_Nullable restrict`
+* `ptr` expands to `*_Nonnull` i.e. a non-null pointer
+* `opt_ptr` stands for optional pointer and expands to `*_Nullable`
+* `mut` stands for mutable and expands to empty string. It is used as a marker for non-constant types
+
+For clarity we follow the convention of always writing types in C from right-to-left. This ensures that types can be read off in one direction, even if it is odd that they are read right-to-left. For example, `var x: ref mut int` becomes `int32 mut ref mut x`. Note that classes declare references types, but when emitted to C, the variables types explicitly state they are references. For example, `let sb: mut String_Builder` becomes `String_Builder mut ref const sb`. Even for types that aren't references, the reverse order is followed. For example, `let x: int` becomes `int const x`.
+
+Here `ref var` and `ref mut` are treated as identical. This is in part because they can't really be distinguished in C's type system. However, it is also because it seems likely that they will be unified in Adamant eventually.

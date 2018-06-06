@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-void main__1(system__console__Console__0 *_Nonnull const console__);
+void mut main__1(system__console__Console__0 mut ref const console__);
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ void main__1(system__console__Console__0 *_Nonnull const console__);
 
 // Definitions
 
-void main__1(system__console__Console__0 *_Nonnull const console__)
+void mut main__1(system__console__Console__0 mut ref const console__)
 {
-	int32 x__ = ((int32){1});
+	int32 mut x__ = ((int32){1});
 	for (;;)
 	{
 		if (cond(int32__0op__equal(int32__0op__remainder(x__, ((int32){3})), ((int32){0}))))
@@ -45,7 +45,7 @@ void main__1(system__console__Console__0 *_Nonnull const console__)
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	main__1(allocate(sizeof(system__console__Console__0)));
 	return 0;

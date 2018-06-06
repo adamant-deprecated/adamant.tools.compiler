@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-void main__0();
+void mut main__0();
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ void main__0();
 
 // Definitions
 
-void main__0()
+void mut main__0()
 {
-	BOOL x__;
+	BOOL mut x__;
 	x__ = string__0op__lt(((string){1,(uint8_t const*)"a"}), ((string){1,(uint8_t const*)"b"}));
 	x__ = string__0op__lte(((string){1,(uint8_t const*)"a"}), ((string){1,(uint8_t const*)"b"}));
 	x__ = string__0op__gt(((string){1,(uint8_t const*)"a"}), ((string){1,(uint8_t const*)"b"}));
@@ -21,7 +21,7 @@ void main__0()
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	main__0();
 	return 0;

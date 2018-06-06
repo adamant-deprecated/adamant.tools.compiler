@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-void main__0();
+void mut main__0();
 
 // Class Declarations
 
@@ -11,15 +11,15 @@ void main__0();
 
 // Definitions
 
-void main__0()
+void mut main__0()
 {
-	string s__ = ((string){2,(uint8_t const*)"\"\\"});
-	code_point c__ = ((code_point){/*\'*/0x27});
+	string mut s__ = ((string){2,(uint8_t const*)"\"\\"});
+	code_point mut c__ = ((code_point){/*\'*/0x27});
 	c__ = ((code_point){/*\\*/0x5C});
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	main__0();
 	return 0;

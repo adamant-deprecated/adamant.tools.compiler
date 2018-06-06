@@ -3,7 +3,7 @@
 // Type Declarations
 
 // Function Declarations
-void main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__);
+void mut main__2(system__console__Console__0 mut ref const console__, system__console__Arguments__0 const ref const args__);
 
 // Class Declarations
 
@@ -11,9 +11,9 @@ void main__2(system__console__Console__0 *_Nonnull const console__, system__cons
 
 // Definitions
 
-void main__2(system__console__Console__0 *_Nonnull const console__, system__console__Arguments__0 const *_Nonnull const args__)
+void mut main__2(system__console__Console__0 mut ref const console__, system__console__Arguments__0 const ref const args__)
 {
-	for (string__0iter iter = system__console__Arguments__0__0iterate(args__); string__0next(&iter);)
+	for (string__0iter mut iter = system__console__Arguments__0__0iterate(args__); string__0next(&iter);)
 	{
 		string const arg__ = string__0current(&iter);
 		console_write_line__2(console__, arg__);
@@ -21,7 +21,7 @@ void main__2(system__console__Console__0 *_Nonnull const console__, system__cons
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	main__2(allocate(sizeof(system__console__Console__0)), convert_arguments(argc, argv));
 	return 0;

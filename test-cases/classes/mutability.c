@@ -1,21 +1,21 @@
 #include "RuntimeLibrary.h"
 
 // Type Declarations
-typedef struct Mutable_Object__0 Mutable_Object__0;
-typedef struct Immutable_object__0 Immutable_object__0;
+typedef struct Mutable_Class__0 Mutable_Class__0;
+typedef struct Immutable_Class__0 Immutable_Class__0;
 
 // Function Declarations
-Mutable_Object__0 *_Nonnull Mutable_Object__0__0new__0(Mutable_Object__0 *_Nonnull self);
-Immutable_object__0 *_Nonnull Immutable_object__0__0new__0(Immutable_object__0 *_Nonnull self);
-void main__0();
+Mutable_Class__0 mut ref mut Mutable_Class__0__0new__0(Mutable_Class__0 mut ref const self);
+Immutable_Class__0 mut ref mut Immutable_Class__0__0new__0(Immutable_Class__0 mut ref const self);
+void mut main__0();
 
 // Class Declarations
 
-struct Mutable_Object__0
+struct Mutable_Class__0
 {
 };
 
-struct Immutable_object__0
+struct Immutable_Class__0
 {
 };
 
@@ -23,18 +23,18 @@ struct Immutable_object__0
 
 // Definitions
 
-Mutable_Object__0 *_Nonnull Mutable_Object__0__0new__0(Mutable_Object__0 *_Nonnull self) { return self; }
+Mutable_Class__0 mut ref mut Mutable_Class__0__0new__0(Mutable_Class__0 mut ref const self) { return self; }
 
-Immutable_object__0 *_Nonnull Immutable_object__0__0new__0(Immutable_object__0 *_Nonnull self) { return self; }
+Immutable_Class__0 mut ref mut Immutable_Class__0__0new__0(Immutable_Class__0 mut ref const self) { return self; }
 
-void main__0()
+void mut main__0()
 {
-	Mutable_Object__0 const *_Nonnull const m__ = Mutable_Object__0__0new__0(allocate(sizeof(Mutable_Object__0)));
-	Immutable_object__0 const *_Nonnull const i__ = Immutable_object__0__0new__0(allocate(sizeof(Immutable_object__0)));
+	Mutable_Class__0 const ref const m__ = Mutable_Class__0__0new__0(allocate(sizeof(Mutable_Class__0)));
+	Immutable_Class__0 const ref const i__ = Immutable_Class__0__0new__0(allocate(sizeof(Immutable_Class__0)));
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	main__0();
 	return 0;

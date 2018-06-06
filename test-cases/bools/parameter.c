@@ -3,8 +3,8 @@
 // Type Declarations
 
 // Function Declarations
-BOOL Func__1(BOOL const value__);
-void main__0();
+BOOL mut Func__1(BOOL const value__);
+void mut main__0();
 
 // Class Declarations
 
@@ -12,18 +12,18 @@ void main__0();
 
 // Definitions
 
-BOOL Func__1(BOOL const value__)
+BOOL mut Func__1(BOOL const value__)
 {
 	return FALSE;
 }
 
-void main__0()
+void mut main__0()
 {
 	Func__1(TRUE);
 }
 
 // Entry Point Adapter
-int32_t main(int argc, char const *const * argv)
+int32_t main(int argc, char const ptr const ptr argv)
 {
 	main__0();
 	return 0;
