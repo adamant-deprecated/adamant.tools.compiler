@@ -13,6 +13,7 @@ void mut main__0();
 
 struct C__0
 {
+	int32_t type_id;
 	string mut name__;
 	int32 mut kind__;
 };
@@ -23,6 +24,7 @@ struct C__0
 
 C__0 mut ref mut C__0__0new__1(C__0 mut ref const self, string const name__)
 {
+	self->type_id = -1333424097;
 	self->name__ = name__;
 	self->kind__ = ((int32){0});
 	return self;
@@ -30,6 +32,7 @@ C__0 mut ref mut C__0__0new__1(C__0 mut ref const self, string const name__)
 
 C__0 mut ref mut C__0__0new__one__1(C__0 mut ref const self, string const name__)
 {
+	self->type_id = -1333424097;
 	self->name__ = name__;
 	self->kind__ = ((int32){1});
 	return self;
@@ -37,6 +40,7 @@ C__0 mut ref mut C__0__0new__one__1(C__0 mut ref const self, string const name__
 
 C__0 mut ref mut C__0__0new__two__1(C__0 mut ref const self, string const name__)
 {
+	self->type_id = -1333424097;
 	self->name__ = name__;
 	self->kind__ = ((int32){2});
 	return self;

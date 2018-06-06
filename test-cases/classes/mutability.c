@@ -13,19 +13,21 @@ void mut main__0();
 
 struct Mutable_Class__0
 {
+	int32_t type_id;
 };
 
 struct Immutable_Class__0
 {
+	int32_t type_id;
 };
 
 // Global Definitions
 
 // Definitions
 
-Mutable_Class__0 mut ref mut Mutable_Class__0__0new__0(Mutable_Class__0 mut ref const self) { return self; }
+Mutable_Class__0 mut ref mut Mutable_Class__0__0new__0(Mutable_Class__0 mut ref const self) { self->type_id = 26974994; return self; }
 
-Immutable_Class__0 mut ref mut Immutable_Class__0__0new__0(Immutable_Class__0 mut ref const self) { return self; }
+Immutable_Class__0 mut ref mut Immutable_Class__0__0new__0(Immutable_Class__0 mut ref const self) { self->type_id = -1808719288; return self; }
 
 void mut main__0()
 {

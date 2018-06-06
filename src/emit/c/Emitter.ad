@@ -1025,6 +1025,11 @@ public emit_constructor_body(emitter: mut Emitter, block: Semantic_Node, self_ty
     {
         write_line(emitter.definitions, self_type + " self;");
     }
+    else
+    {
+        let type_id: string = int_to_string(hash_type_id(self_type));
+        write_line(emitter.definitions, "self->type_id = " + type_id + ";");
+    }
     for let statement: Semantic_Node in node_statements(block)
     {
         emit_statement(emitter, statement);
@@ -1135,7 +1140,28 @@ public emit_default_constructor(emitter: mut Emitter, type_name: string, is_valu
     if is_value_type
         { end_line(emitter.definitions, " { return (" + return_type + "){}; }"); }
     else
-        { end_line(emitter.definitions, " { return self; }"); }
+    {
+        let type_id: string = int_to_string(hash_type_id(type_name));
+        end_line(emitter.definitions, " { self->type_id = " + type_id + "; return self; }");
+    }
+}
+
+/// A bad hash based on djb2 (reduced to 32 bit and using signed)
+public hash_type_id(mangled_name: string) -> int
+{
+    var hash: int = 5381;
+
+    // We can't for loop over the code_points of a string yet
+    var i: int = 0;
+    let byte_length: int = string_byte_length(mangled_name);
+    while i < byte_length
+    {
+        let c: int = code_point_as_int(mangled_name[i]);
+        hash = c + hash * 33; /* ((hash << 32) + hash) + c */
+        i += 1;
+    }
+
+    return hash;
 }
 
 public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> void
@@ -1162,6 +1188,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         element_separator_line(emitter.class_declarations);
         write_line(emitter.class_declarations, "struct " + class_name);
         begin_block(emitter.class_declarations);
+        write_line(emitter.class_declarations, "int32_t type_id;");
         var has_constructors: bool = false;
         for let member: Semantic_Node in node_members(declaration)
         {
@@ -1227,6 +1254,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         if is_main { emitter.main_function_name = name; }
         let parameters: string = convert_parameter_list(emitter, parameters_node, is_main);
         let return_type_node: Semantic_Node = declaration.children[3];
+        // TODO const/mut doesn't really apply to the outer level of return types. This matches C.
         let c_type: string = convert_type(true, return_type_node);
         // Write out the function declaration for C so we can call functions defined after others
         write_line(emitter.function_declarations, c_type + " " + name + parameters + ";");

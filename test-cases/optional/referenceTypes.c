@@ -12,13 +12,14 @@ void mut main__1(system__console__Console__0 mut ref const console__);
 
 struct Test__0
 {
+	int32_t type_id;
 };
 
 // Global Definitions
 
 // Definitions
 
-Test__0 mut ref mut Test__0__0new__0(Test__0 mut ref const self) { return self; }
+Test__0 mut ref mut Test__0__0new__0(Test__0 mut ref const self) { self->type_id = 970379955; return self; }
 
 Test__0 const opt_ref mut Func__1(Test__0 const opt_ref const x__)
 {
