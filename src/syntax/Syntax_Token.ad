@@ -8,9 +8,9 @@
     public let byte_length: int; // TODO Is this byte length?
     //public Text: string;
 
-    public new(tokenType: Token_Type, source: Source_Text, start: int, length: int)
+    public new(token_type: Token_Type, source: Source_Text, start: int, length: int)
     {
-        TokenType = tokenType;
+        TokenType = token_type;
         self.source = source;
         self.start = start;
         byte_length = length;

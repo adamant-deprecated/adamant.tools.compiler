@@ -4,10 +4,10 @@ public Func(var x: int, y: int) -> mut system.text.String_Builder
     let i: int = x + 2;
     var j: int = y - 23;
     j = i;
-    let stringA: mut system.text.String_Builder = new system.text.String_Builder("Hello");
-    var stringB: system.text.String_Builder;
-    stringB = stringA;
-    return stringA;
+    let string_a: mut system.text.String_Builder = new system.text.String_Builder("Hello");
+    var string_b: system.text.String_Builder;
+    string_b = string_a;
+    return string_a;
 }
 
 public main(console: mut system.console.Console) -> void

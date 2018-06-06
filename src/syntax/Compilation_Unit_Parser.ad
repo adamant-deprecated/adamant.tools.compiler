@@ -32,16 +32,16 @@ public accept_token(parser: mut Compilation_Unit_Parser) -> Syntax_Node?
     return node;
 }
 
-public expect_token(parser: mut Compilation_Unit_Parser, tokenType: int) -> Syntax_Node
+public expect_token(parser: mut Compilation_Unit_Parser, token_type: int) -> Syntax_Node
 {
     if parser.token == none
     {
-        return new Syntax_Node.missing(tokenType, parser.token_stream.source, source_byte_length(parser.token_stream.source));
+        return new Syntax_Node.missing(token_type, parser.token_stream.source, source_byte_length(parser.token_stream.source));
     }
 
-    if parser.token == none or parser.token.kind =/= tokenType
+    if parser.token == none or parser.token.kind =/= token_type
     {
-        return new Syntax_Node.missing(tokenType, parser.token_stream.source, parser.token.start);
+        return new Syntax_Node.missing(token_type, parser.token_stream.source, parser.token.start);
     }
 
     let node: Syntax_Node? = parser.token;
@@ -77,13 +77,13 @@ public parse_type_name(parser: mut Compilation_Unit_Parser) -> Syntax_Node
             if parser.token.kind == LessThan
             {
                 // Generic Name
-                let genericNameChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-                add_item(genericNameChildren, new Syntax_Node(IdentifierName, identifier));
-                add_item(genericNameChildren, expect_token(parser, LessThan));
-                add_item(genericNameChildren, parse_type(parser));
+                let generic_name_children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+                add_item(generic_name_children, new Syntax_Node(IdentifierName, identifier));
+                add_item(generic_name_children, expect_token(parser, LessThan));
+                add_item(generic_name_children, parse_type(parser));
                 // TODO support multiple type arguments
-                add_item(genericNameChildren, expect_token(parser, GreaterThan));
-                add_item(children, new Syntax_Node.with_children(GenericName, genericNameChildren));
+                add_item(generic_name_children, expect_token(parser, GreaterThan));
+                add_item(children, new Syntax_Node.with_children(GenericName, generic_name_children));
             }
             else
             {
@@ -237,7 +237,7 @@ public parse_call_arguments(parser: mut Compilation_Unit_Parser) -> Syntax_Node
 // 7 Multiplicative: * / %
 // 8 Unary: - not
 // 9 Primary: f() . []
-public parse_expression(parser: mut Compilation_Unit_Parser, minPrecedence: int) -> Syntax_Node
+public parse_expression(parser: mut Compilation_Unit_Parser, min_precedence: int) -> Syntax_Node
 {
     var expression: Syntax_Node = parse_atom(parser);
 
@@ -247,142 +247,142 @@ public parse_expression(parser: mut Compilation_Unit_Parser, minPrecedence: int)
         add_item(children, expression);
 
         var precedence: int;
-        var leftAssociative: bool;
-        var suffixOperator: bool = false;
-        var expressionType: int;
-        if (parser.token.kind == Equals or parser.token.kind == PlusEquals or parser.token.kind == MinusEquals) and minPrecedence <= 1
+        var left_associative: bool;
+        var suffix_operator: bool = false;
+        var expression_type: int;
+        if (parser.token.kind == Equals or parser.token.kind == PlusEquals or parser.token.kind == MinusEquals) and min_precedence <= 1
         {
             // Assignment
             precedence = 1;
-            leftAssociative = false;
+            left_associative = false;
             add_item(children, accept_token(parser));
-            expressionType = AssignmentExpression;
+            expression_type = AssignmentExpression;
         }
-        else if parser.token.kind == OrKeyword and minPrecedence <= 2
+        else if parser.token.kind == OrKeyword and min_precedence <= 2
         {
             // logical or
             precedence = 2;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, OrKeyword));
-            expressionType = OrExpression;
+            expression_type = OrExpression;
         }
-        else if parser.token.kind == AndKeyword and minPrecedence <= 3
+        else if parser.token.kind == AndKeyword and min_precedence <= 3
         {
             // logical and
             precedence = 3;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, AndKeyword));
-            expressionType = AndExpression;
+            expression_type = AndExpression;
         }
-        else if parser.token.kind == EqualsEquals and minPrecedence <= 4
+        else if parser.token.kind == EqualsEquals and min_precedence <= 4
         {
             // equal
             precedence = 4;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, EqualsEquals));
-            expressionType = EqualExpression;
+            expression_type = EqualExpression;
         }
-        else if parser.token.kind == EqualsSlashEquals and minPrecedence <= 4
+        else if parser.token.kind == EqualsSlashEquals and min_precedence <= 4
         {
             // not equal
             precedence = 4;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, EqualsSlashEquals));
-            expressionType = NotEqualExpression;
+            expression_type = NotEqualExpression;
         }
-        else if (parser.token.kind == LessThan or parser.token.kind == LessThanEquals or parser.token.kind == GreaterThan or parser.token.kind == GreaterThanEquals) and minPrecedence <= 5
+        else if (parser.token.kind == LessThan or parser.token.kind == LessThanEquals or parser.token.kind == GreaterThan or parser.token.kind == GreaterThanEquals) and min_precedence <= 5
         {
             // relational operators
             precedence = 5;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, accept_token(parser));
-            expressionType = ComparisonExpression;
+            expression_type = ComparisonExpression;
         }
-        else if parser.token.kind == Plus and minPrecedence <= 6
+        else if parser.token.kind == Plus and min_precedence <= 6
         {
             // Additive
             precedence = 6;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, Plus));
-            expressionType = AddExpression;
+            expression_type = AddExpression;
         }
-        else if parser.token.kind == Minus and minPrecedence <= 6
+        else if parser.token.kind == Minus and min_precedence <= 6
         {
             // Additive
             precedence = 6;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, Minus));
-            expressionType = SubtractExpression;
+            expression_type = SubtractExpression;
         }
-        else if parser.token.kind == Asterisk and minPrecedence <= 7
+        else if parser.token.kind == Asterisk and min_precedence <= 7
         {
             // Multiplicative
             precedence = 7;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, Asterisk));
-            expressionType = MultiplyExpression;
+            expression_type = MultiplyExpression;
         }
-        else if parser.token.kind == Slash and minPrecedence <= 7
+        else if parser.token.kind == Slash and min_precedence <= 7
         {
             // Multiplicative
             precedence = 7;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, Slash));
-            expressionType = DivideExpression;
+            expression_type = DivideExpression;
         }
-        else if parser.token.kind == Percent and minPrecedence <= 7
+        else if parser.token.kind == Percent and min_precedence <= 7
         {
             // Multiplicative
             precedence = 7;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, Percent));
-            expressionType = RemainderExpression;
+            expression_type = RemainderExpression;
         }
-        else if parser.token.kind == LeftParen and minPrecedence <= 9
+        else if parser.token.kind == LeftParen and min_precedence <= 9
         {
             // Invocation Expression
             precedence = 9;
-            leftAssociative = true;
-            suffixOperator = true;
+            left_associative = true;
+            suffix_operator = true;
 
             add_item(children, parse_call_arguments(parser));
-            expressionType = InvocationExpression;
+            expression_type = InvocationExpression;
         }
-        else if parser.token.kind == Dot and minPrecedence <= 9
+        else if parser.token.kind == Dot and min_precedence <= 9
         {
             // Member Access
             precedence = 9;
-            leftAssociative = true;
+            left_associative = true;
             add_item(children, expect_token(parser, Dot));
-            expressionType = MemberAccessExpression;
+            expression_type = MemberAccessExpression;
         }
-        else if parser.token.kind == LeftBracket and minPrecedence <= 9
+        else if parser.token.kind == LeftBracket and min_precedence <= 9
         {
             // Element Access
             precedence = 9;
-            leftAssociative = true;
-            suffixOperator = true;
+            left_associative = true;
+            suffix_operator = true;
 
             add_item(children, expect_token(parser, LeftBracket));
             add_item(children, parse_expression(parser));
             add_item(children, expect_token(parser, RightBracket));
-            expressionType = ElementAccessExpression;
+            expression_type = ElementAccessExpression;
         }
         else
         {
             return expression;
         }
 
-        if not suffixOperator
+        if not suffix_operator
         {
-            if leftAssociative
+            if left_associative
                 { precedence += 1; }
             add_item(children, parse_expression(parser, precedence));
-            expression = new Syntax_Node.with_children(expressionType, children);
+            expression = new Syntax_Node.with_children(expression_type, children);
         }
         else
         {
-            expression = new Syntax_Node.with_children(expressionType, children);
+            expression = new Syntax_Node.with_children(expression_type, children);
         }
     }
 }
@@ -479,19 +479,19 @@ public parse_if_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     add_item(children, parse_block(parser));
     if parser.token.kind == ElseKeyword
     {
-        let elseChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        add_item(elseChildren, expect_token(parser, ElseKeyword));
+        let else_children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+        add_item(else_children, expect_token(parser, ElseKeyword));
         if parser.token.kind == IfKeyword
-            { add_item(elseChildren, parse_if_statement(parser)); }
+            { add_item(else_children, parse_if_statement(parser)); }
         else
-            { add_item(elseChildren, parse_block(parser));}
-        add_item(children, new Syntax_Node.with_children(ElseClause, elseChildren));
+            { add_item(else_children, parse_block(parser));}
+        add_item(children, new Syntax_Node.with_children(ElseClause, else_children));
     }
 
     return new Syntax_Node.with_children(IfStatement, children);
 }
 
-public parse_variable_declaration(parser: mut Compilation_Unit_Parser, allowInitializer: bool) -> Syntax_Node
+public parse_variable_declaration(parser: mut Compilation_Unit_Parser, allow_initializer: bool) -> Syntax_Node
 {
     let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
 
@@ -504,7 +504,7 @@ public parse_variable_declaration(parser: mut Compilation_Unit_Parser, allowInit
     add_item(children, expect_token(parser, Colon));
     add_item(children, parse_type(parser));
 
-    if allowInitializer and parser.token.kind == Equals
+    if allow_initializer and parser.token.kind == Equals
     {
         add_item(children, expect_token(parser, Equals));
         add_item(children, parse_expression(parser));
@@ -519,9 +519,9 @@ public parse_block(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     add_item(children, expect_token(parser, LeftBrace));
     while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
     {
-        let startToken: Syntax_Node = parser.token;
+        let start_token: Syntax_Node = parser.token;
         add_item(children, parse_statement(parser));
-        if parser.token == startToken
+        if parser.token == start_token
         {
             // We have not advanced at all when trying to parse a statement.
             // Better skip some tokens to get unstuck
@@ -530,10 +530,10 @@ public parse_block(parser: mut Compilation_Unit_Parser) -> Syntax_Node
                 and parser.token.kind =/= RightBrace
                 and parser.token.kind =/= EndOfFileToken
             {
-                let currentTokenType: int = parser.token.kind;
+                let current_token_type: int = parser.token.kind;
                 add_item(skipped, accept_token(parser));
                 // If we hit a semicolon, assume that was the end of the statement
-                if currentTokenType == Semicolon
+                if current_token_type == Semicolon
                     { break; }
             }
             add_item(children, new Syntax_Node.skipped_many(skipped));
@@ -552,26 +552,26 @@ public parse_parameter_list(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     {
         loop
         {
-            let parameterChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+            let parameter_children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
             if parser.token.kind == MutableKeyword
                 or parser.token.kind == SelfKeyword
             {
-                // SelfParameter
+                // Self Parameter
                 if parser.token.kind == MutableKeyword
-                    { add_item(parameterChildren, expect_token(parser, MutableKeyword)); }
+                    { add_item(parameter_children, expect_token(parser, MutableKeyword)); }
 
-                add_item(parameterChildren, expect_token(parser, SelfKeyword));
-                add_item(children, new Syntax_Node.with_children(SelfParameter, parameterChildren));
+                add_item(parameter_children, expect_token(parser, SelfKeyword));
+                add_item(children, new Syntax_Node.with_children(SelfParameter, parameter_children));
             }
             else
             {
                 if parser.token.kind == VarKeyword
-                    { add_item(parameterChildren, expect_token(parser, VarKeyword)); }
-                add_item(parameterChildren, expect_token(parser, Identifier));
-                add_item(parameterChildren, expect_token(parser, Colon));
+                    { add_item(parameter_children, expect_token(parser, VarKeyword)); }
+                add_item(parameter_children, expect_token(parser, Identifier));
+                add_item(parameter_children, expect_token(parser, Colon));
                 let type: Syntax_Node = parse_type(parser);
-                add_item(parameterChildren, type);
-                add_item(children, new Syntax_Node.with_children(Parameter, parameterChildren));
+                add_item(parameter_children, type);
+                add_item(children, new Syntax_Node.with_children(Parameter, parameter_children));
             }
 
             if parser.token.kind == Comma
@@ -661,9 +661,9 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         add_item(children, expect_token(parser, LeftBrace));
         while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
         {
-            let startToken: Syntax_Node = parser.token;
+            let start_token: Syntax_Node = parser.token;
             add_item(children, parse_member_declaration(parser));
-            if parser.token == startToken
+            if parser.token == start_token
             {
                 // We have not advanced at all when trying to parse a member.
                 // Skip a token to try to see if we can find the start of a member.
@@ -681,9 +681,9 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         add_item(children, expect_token(parser, LeftBrace));
         while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
         {
-            let startToken: Syntax_Node = parser.token;
+            let start_token: Syntax_Node = parser.token;
             add_item(children, parse_member_declaration(parser));
-            if parser.token == startToken
+            if parser.token == start_token
             {
                 // We have not advanced at all when trying to parse a member.
                 // Skip a token to try to see if we can find the start of a member.
@@ -703,18 +703,18 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax_Node
 
         while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
         {
-            let memberChildren: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-            add_item(memberChildren, expect_token(parser, Identifier));
+            let member_children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+            add_item(member_children, expect_token(parser, Identifier));
             if parser.token.kind == Equals
             {
-                add_item(memberChildren, expect_token(parser, Equals));
-                add_item(memberChildren, expect_token(parser, Number));
+                add_item(member_children, expect_token(parser, Equals));
+                add_item(member_children, expect_token(parser, Number));
             }
             if parser.token.kind =/= RightBrace
             {
-                add_item(memberChildren, expect_token(parser, Comma));
+                add_item(member_children, expect_token(parser, Comma));
             }
-            add_item(children, new Syntax_Node.with_children(EnumMemberDeclaration, memberChildren));
+            add_item(children, new Syntax_Node.with_children(EnumMemberDeclaration, member_children));
         }
 
         add_item(children, expect_token(parser, RightBrace));
@@ -735,9 +735,9 @@ public parse_compilation_unit(parser: mut Compilation_Unit_Parser) -> Syntax_Nod
     let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
     while parser.token =/= none and parser.token.kind =/= EndOfFileToken
     {
-        let startToken: Syntax_Node = parser.token;
+        let start_token: Syntax_Node = parser.token;
         add_item(children, parse_declaration(parser));
-        if parser.token == startToken
+        if parser.token == start_token
         {
             // We have not advanced at all when trying to parse a declaration.
             // Skip a token to try to see if we can find the start of a declaration.

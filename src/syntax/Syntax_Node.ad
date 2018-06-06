@@ -4,7 +4,7 @@ public class Syntax_Node
     public let is_missing: bool;
     public let source: Source_Text;
     public let start: int;
-    public let byte_length: int; // TODO is this ByteLength?
+    public let byte_length: int; // TODO is this byte_length?
     public let children: system.collections.List<Syntax_Node>;
     public let node_diagnostics: mut system.collections.List<Diagnostic>;
 
@@ -19,10 +19,10 @@ public class Syntax_Node
         self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
-    public new(type: int, isMissing: bool, source: Source_Text, start: int, length: int)
+    public new(type: int, is_missing: bool, source: Source_Text, start: int, length: int)
     {
         self.kind = type;
-        self.is_missing = isMissing;
+        self.is_missing = is_missing;
         self.source = source;
         self.start = start;
         self.byte_length = length;

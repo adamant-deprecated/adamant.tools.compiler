@@ -1,16 +1,16 @@
 public class Source_File_Builder
 {
     public let code: mut system.text.String_Builder;
-    public let indent: mut system.text.String_Builder; // TODO expose length as IndentDepth
-    public var firstElement: bool; // TODO expose public getter
-    public var afterBlock: bool; // TODO expose public getter
+    public let indent: mut system.text.String_Builder; // TODO expose length as `indent_depth`
+    public var first_element: bool; // TODO expose public getter
+    public var after_block: bool; // TODO expose public getter
 
     public new()
     {
         self.code = new system.text.String_Builder();
         self.indent = new system.text.String_Builder();
-        self.firstElement = true;
-        self.afterBlock = true;
+        self.first_element = true;
+        self.after_block = true;
     }
 }
 
@@ -23,20 +23,20 @@ public begin_line(file: mut Source_File_Builder, value: string) -> void
 {
     sb_append_sb(file.code, file.indent);
     sb_append(file.code, value);
-    file.firstElement = file.afterBlock = false;
+    file.first_element = file.after_block = false;
 }
 
 public write(file: mut Source_File_Builder, value: string) -> void
 {
     sb_append(file.code, value);
-    file.firstElement = file.afterBlock = false;
+    file.first_element = file.after_block = false;
 }
 
 public end_line(file: mut Source_File_Builder, value: string) -> void
 {
     sb_append(file.code, value);
     sb_append_line(file.code); // TODO need to think about the handling of newlines
-    file.firstElement = file.afterBlock = false;
+    file.first_element = file.after_block = false;
 }
 
 public write_line(file: mut Source_File_Builder, value: string) -> void
@@ -44,55 +44,55 @@ public write_line(file: mut Source_File_Builder, value: string) -> void
     sb_append_sb(file.code, file.indent);
     sb_append(file.code, value);
     sb_append_line(file.code);
-    file.firstElement = file.afterBlock = false;
+    file.first_element = file.after_block = false;
 }
 
 public blank_line(file: mut Source_File_Builder) -> void
 {
     sb_append_line(file.code);
-    file.firstElement = true;
-    file.afterBlock = false;
+    file.first_element = true;
+    file.after_block = false;
 }
 
 public element_separator_line(file: mut Source_File_Builder) -> void
 {
-    if not file.firstElement
+    if not file.first_element
     {
         sb_append_line(file.code);
-        file.firstElement = true;
-        file.afterBlock = false;
+        file.first_element = true;
+        file.after_block = false;
     }
 }
 
 public statement_separator_line(file: mut Source_File_Builder) -> void
 {
-    if file.afterBlock
+    if file.after_block
     {
         sb_append_line(file.code);
-        file.firstElement = true;
-        file.afterBlock = false;
+        file.first_element = true;
+        file.after_block = false;
     }
 }
 
-// @ensures IndentDepth == old(IndentDepth)+1
+// @ensures `indent_depth` == old(`indent_depth`)+1
 public begin_block(file: mut Source_File_Builder) -> void
 {
     write_line(file, "{");
     sb_append(file.indent, "\t");
-    file.firstElement = file.afterBlock = false;
+    file.first_element = file.after_block = false;
 }
 
-// @requires IndentDepth > 0
-// @ensures IndentDepth == old(IndentDepth)-1
+// @requires `indent_depth` > 0
+// @ensures `indent_depth` == old(`indent_depth`)-1
 public end_block(file: mut Source_File_Builder) -> void
 {
     sb_remove(file.indent, 0, 1);
     write_line(file, "}");
-    file.afterBlock = true;
+    file.after_block = true;
 }
 
-// @requires IndentDepth > 0
-// @ensures IndentDepth == old(IndentDepth)-1
+// @requires `indent_depth` > 0
+// @ensures `indent_depth` == old(`indent_depth`)-1
 public end_block_with_semicolon(file: mut Source_File_Builder) -> void
 {
     sb_remove(file.indent, 0, 1);

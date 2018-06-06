@@ -24,42 +24,42 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
     var end: int = -1;
     while tokens.position < source_byte_length(tokens.source)
     {
-        let curChar: code_point = tokens.source.text[tokens.position];
-        if curChar == ' '
-            or curChar == '\t'
-            or curChar == '\n'
-            or curChar == '\r'
+        let cur_char: code_point = tokens.source.text[tokens.position];
+        if cur_char == ' '
+            or cur_char == '\t'
+            or cur_char == '\n'
+            or cur_char == '\r'
         {
             tokens.position += 1;
             continue;
         }
-        else if curChar == '{'
+        else if cur_char == '{'
             { return new_operator_token(tokens, LeftBrace); }
-        else if curChar == '}'
+        else if cur_char == '}'
             { return new_operator_token(tokens, RightBrace); }
-        else if curChar == '('
+        else if cur_char == '('
             { return new_operator_token(tokens, LeftParen); }
-        else if curChar == ')'
+        else if cur_char == ')'
             { return new_operator_token(tokens, RightParen); }
-        else if curChar == ';'
+        else if cur_char == ';'
             { return new_operator_token(tokens, Semicolon); }
-        else if curChar == ','
+        else if cur_char == ','
             { return new_operator_token(tokens, Comma); }
-        else if curChar == '.'
+        else if cur_char == '.'
             { return new_operator_token(tokens, Dot); }
-        else if curChar == ':'
+        else if cur_char == ':'
             { return new_operator_token(tokens, Colon); }
-        else if curChar == '['
+        else if cur_char == '['
             { return new_operator_token(tokens, LeftBracket); }
-        else if curChar == ']'
+        else if cur_char == ']'
             { return new_operator_token(tokens, RightBracket); }
-        else if curChar == '?'
+        else if cur_char == '?'
             { return new_operator_token(tokens, Question); }
-        else if curChar == '|'
+        else if cur_char == '|'
             { return new_operator_token(tokens, Pipe); }
-        else if curChar == '*'
+        else if cur_char == '*'
             { return new_operator_token(tokens, Asterisk); }
-        else if curChar == '='
+        else if cur_char == '='
         {
             if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
             {
@@ -78,7 +78,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             // it is `=`
             return new_operator_token(tokens, Equals);
         }
-        else if curChar == '+'
+        else if cur_char == '+'
         {
             if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
             {
@@ -89,7 +89,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             // it is `+`
             return new_operator_token(tokens, Plus);
         }
-        else if curChar == '-'
+        else if cur_char == '-'
         {
             if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '>'
             {
@@ -104,7 +104,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             // it is `-`
             return new_operator_token(tokens, Minus);
         }
-        else if curChar == '/'
+        else if cur_char == '/'
         {
             if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '/'
             {
@@ -121,10 +121,10 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             {
                 // it is a block comment `/*`
                 tokens.position += 2; // move past the start
-                var lastCharStar: bool = false;
-                while tokens.position < source_byte_length(tokens.source) and not (lastCharStar and tokens.source.text[tokens.position] == '/')
+                var last_char_star: bool = false;
+                while tokens.position < source_byte_length(tokens.source) and not (last_char_star and tokens.source.text[tokens.position] == '/')
                 {
-                    lastCharStar = tokens.source.text[tokens.position] == '*';
+                    last_char_star = tokens.source.text[tokens.position] == '*';
                     tokens.position += 1;
                 }
 
@@ -135,9 +135,9 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             // it is `/`
             return new_operator_token(tokens, Slash);
         }
-        else if curChar == '%'
+        else if cur_char == '%'
             { return new_operator_token(tokens, Percent); }
-        else if curChar == '<'
+        else if cur_char == '<'
         {
             if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
             {
@@ -147,7 +147,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             // it is `<`
             return new_operator_token(tokens, LessThan);
         }
-        else if curChar == '>'
+        else if cur_char == '>'
         {
             if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
             {
@@ -157,7 +157,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             // it is `>`
             return new_operator_token(tokens, GreaterThan);
         }
-        else if curChar == '"'
+        else if cur_char == '"'
         {
             end = tokens.position + 1;
             var escaped: bool = false;
@@ -170,7 +170,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             end += 1; // To include the close quote
             return new_token(tokens, StringLiteral, end);
         }
-        else if curChar == '\''
+        else if cur_char == '\''
         {
             end = tokens.position + 1;
             var escaped: bool = false;
@@ -185,7 +185,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
         }
         else
         {
-            if is_identifier_char(curChar)
+            if is_identifier_char(cur_char)
             {
                 end = tokens.position + 1;
                 while is_identifier_char(tokens.source.text[end])
@@ -194,7 +194,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
                 }
                 return new_identifier_or_keyword_token(tokens, end);
             }
-            if is_number_char(curChar)
+            if is_number_char(cur_char)
             {
                 end = tokens.position + 1;
                 while is_number_char(tokens.source.text[end])
@@ -205,8 +205,8 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             }
 
             // Add an error to the next token
-            var diagnosticSpan: Text_Span = new Text_Span(tokens.position, 1);
-            add_item(tokens.diagnostics, new Diagnostic(CompilationError, Lexing, tokens.source, diagnosticSpan, "Invalid character `" + code_point_to_string(curChar) + "`"));
+            var diagnostic_span: Text_Span = new Text_Span(tokens.position, 1);
+            add_item(tokens.diagnostics, new Diagnostic(CompilationError, Lexing, tokens.source, diagnostic_span, "Invalid character `" + code_point_to_string(cur_char) + "`"));
             // Skip past the character and continue lexing
             tokens.position = end;
         }
@@ -306,8 +306,8 @@ public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Sy
         type = Identifier;
         if string_byte_length(value) > 1 and value[string_byte_length(value)-1] == '_'
         {
-            var diagnosticSpan: Text_Span = new Text_Span(tokens.position, end - tokens.position);
-            add_item(tokens.diagnostics, new Diagnostic(CompilationError, Lexing, tokens.source, diagnosticSpan,
+            var diagnostic_span: Text_Span = new Text_Span(tokens.position, end - tokens.position);
+            add_item(tokens.diagnostics, new Diagnostic(CompilationError, Lexing, tokens.source, diagnostic_span,
                 "Identifiers ending with underscore are reserved `"+value+"`"));
         }
     }

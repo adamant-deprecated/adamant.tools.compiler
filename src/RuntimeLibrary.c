@@ -533,9 +533,9 @@ system__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char c
 extern inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index);
 extern inline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments);
 
-system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string fileName)
+system__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name)
 {
-    char const *_Nonnull fname = cstr_from(fileName);
+    char const *_Nonnull fname = cstr_from(file_name);
     self->file= fopen(fname, "rb"); // TODO report error up to caller
     free__1(fname);
     return self;
@@ -555,9 +555,9 @@ void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)
     fclose(reader->file);
 }
 
-system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string fileName)
+system__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name)
 {
-    char const *_Nonnull fname = cstr_from(fileName);
+    char const *_Nonnull fname = cstr_from(file_name);
     self->file = fopen(fname, "wb"); // TODO report error up to caller
     free__1(fname);
     return self;

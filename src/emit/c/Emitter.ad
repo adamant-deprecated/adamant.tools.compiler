@@ -942,10 +942,10 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
             convert_expression(if_statement.children[1], emitter.definitions);
             end_line(emitter.definitions, "))");
             emit_statement(emitter, if_statement.children[2]); // Block Statement
-            let elseClause: Semantic_Node? = first_child(if_statement, ElseClause);
-            if elseClause =/= none
+            let else_clause: Semantic_Node? = first_child(if_statement, ElseClause);
+            if else_clause =/= none
             {
-                if_statement = first_child(elseClause, IfStatement);
+                if_statement = first_child(else_clause, IfStatement);
                 if if_statement =/= none
                 {
                     begin_line(emitter.definitions, "else ");
@@ -953,7 +953,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
                 else
                 {
                     write_line(emitter.definitions, "else");
-                    emit_statement(emitter, elseClause.children[1]); // Block Statement
+                    emit_statement(emitter, else_clause.children[1]); // Block Statement
                     break;
                 }
             }
@@ -1086,12 +1086,12 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         var static_modifier: string = "";
         if is_associated_function
             { static_modifier = "static "; }
-        var constModifier: string = "";
+        var const_modifier: string = "";
         if not mutable_self and not is_associated_function
-            { constModifier = " const"; }
-        write_line(emitter.class_declarations, static_modifier + c_type + " " + method_name + parameters + constModifier + ";");
+            { const_modifier = " const"; }
+        write_line(emitter.class_declarations, static_modifier + c_type + " " + method_name + parameters + const_modifier + ";");
         element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, c_type + " " + class_name + "::" + method_name + parameters + constModifier);
+        write_line(emitter.definitions, c_type + " " + class_name + "::" + method_name + parameters + const_modifier);
         let block: Semantic_Node = first_child(member, Block);
         emit_method_body(emitter, block, is_associated_function);
     }
