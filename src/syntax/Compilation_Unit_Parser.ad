@@ -156,13 +156,6 @@ public parse_atom(parser: mut Compilation_Unit_Parser) -> Syntax_Node
         add_item(children, expect_token(parser, RightParen));
         return new Syntax_Node.with_children(ParenthesizedExpression, children);
     }
-    if parser.token.kind == Pipe
-    {
-        add_item(children, expect_token(parser, Pipe));
-        add_item(children, parse_expression(parser));
-        add_item(children, expect_token(parser, Pipe));
-        return new Syntax_Node.with_children(MagnitudeExpression, children);
-    }
     if parser.token.kind == Minus
     {
         // Unary Minus

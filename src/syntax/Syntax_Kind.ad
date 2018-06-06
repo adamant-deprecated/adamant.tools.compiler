@@ -122,7 +122,6 @@ public let PackageNode: int = 118;
 public let Percent: int = 119; // `⧼Expression⧽ % ⧼Expression⧽`
 public let RemainderExpression: int = 120;
 public let Pipe: int = 121; // `|`
-public let MagnitudeExpression: int = 122; // `|⧼Expression⧽|`
 public let Asterisk: int = 123; // `*`
 public let MultiplyExpression: int = 124; // `⧼Expression⧽ * ⧼Expression⧽`
 public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`

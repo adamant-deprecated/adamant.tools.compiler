@@ -280,11 +280,6 @@ public build_semantic_node(
         add_item(children, build_semantic_node(builder, syntax.children[1], name_table, scope));
         return new Semantic_Node.of_type(lookup_special(scope, "int").type, syntax, children);
     }
-    else if syntax.kind == MagnitudeExpression
-    {
-        add_item(children, build_semantic_node(builder, syntax.children[1], name_table, scope));
-        return new Semantic_Node.of_type(lookup_special(scope, "int").type, syntax, children);
-    }
     else if syntax.kind == AddExpression
     {
         let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);

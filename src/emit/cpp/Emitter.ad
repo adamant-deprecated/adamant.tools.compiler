@@ -401,15 +401,6 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
-    else if syntax.kind == MagnitudeExpression
-    {
-        // TODO there is no longer a magnitude operator in the language
-        // Pipes were removed during semantic tree build
-        let expression_node: Semantic_Node = syntax.children[0];
-        convert_expression(expression_node, builder);
-        convert_member_access(expression_node, builder);
-        write(builder, "op__magnitude()");
-    }
     else if syntax.kind == ParenthesizedExpression
     {
         convert_expression(syntax.children[1], builder);
