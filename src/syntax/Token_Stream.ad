@@ -211,7 +211,7 @@ public next_token(tokens: mut Token_Stream) -> Token?
                 {
                     end += 1;
                 }
-                return new_token(tokens, Number, end);
+                return new_token(tokens, Integer, end);
             }
 
             // Add an error to the next token
@@ -347,6 +347,21 @@ public new_token(tokens: mut Token_Stream, kind: int, end: int) -> Token
     clear_list(tokens.diagnostics);
 
     let token: Token = new Token(kind, tokens.source, tokens.position, end - tokens.position, token_diagnostics);
+
+    tokens.position = end;
+    return token;
+}
+
+public new_token(tokens: mut Token_Stream, kind: int, end: int, value: string) -> Token
+{
+    let token_diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
+    for let diagnostic: Diagnostic in tokens.diagnostics
+    {
+        add_item(token_diagnostics, diagnostic);
+    }
+    clear_list(tokens.diagnostics);
+
+    let token: Token = new Token(kind, tokens.source, tokens.position, end - tokens.position, token_diagnostics, value);
 
     tokens.position = end;
     return token;

@@ -1,0 +1,22 @@
+public class Integer_Literal_Expression
+{
+    // `Program_Fragment` fields
+    public let syntax: Syntax;
+    public let is_missing: bool;
+    public let source: Source_Text;
+    public let start: int;
+    public let byte_length: int;
+    public let children: system.collections.List<Program_Fragment>;
+    public let diagnostics: system.collections.List<Diagnostic>;
+
+    // `Expression` fields
+    /// The type of an expression (or variable) before any implicit conversions
+    public let of_type: Type;
+
+    public let value: int; // TODO this should be of type `integer`
+}
+
+public integer_literal_expression_as_expression(expression: Integer_Literal_Expression) -> Literal_Expression
+{
+    return as_any(expression);
+}

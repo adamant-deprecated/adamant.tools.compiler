@@ -185,10 +185,10 @@ public parse_atom(parser: mut Compilation_Unit_Parser) -> Syntax
         add_item(children, expect_token(parser, FalseKeyword));
         return syntax_node_as_syntax(new Syntax_Node.with_children(FalseLiteralExpression, children));
     }
-    if parser.token.kind == Number
+    if parser.token.kind == Integer
     {
-        add_item(children, expect_token(parser, Number));
-        return syntax_node_as_syntax(new Syntax_Node.with_children(NumericLiteralExpression, children));
+        add_item(children, expect_token(parser, Integer));
+        return syntax_node_as_syntax(new Syntax_Node.with_children(IntegerLiteralExpression, children));
     }
     if parser.token.kind == Identifier
     {
@@ -750,7 +750,7 @@ public parse_declaration(parser: mut Compilation_Unit_Parser) -> Syntax
             if parser.token.kind == Equals
             {
                 add_item(member_children, expect_token(parser, Equals));
-                add_item(member_children, expect_token(parser, Number));
+                add_item(member_children, expect_token(parser, Integer));
             }
             if parser.token.kind =/= RightBrace
             {

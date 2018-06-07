@@ -12,7 +12,12 @@ public class Token // : Syntax
     public let children: system.collections.List<Syntax_Node>;
     public let value: string; // TODO this should be optional string, but for now we use empty string
 
-    public new(kind: int, source: Source_Text, start: int, byte_length: int, diagnostics: system.collections.List<Diagnostic>)
+    public new(
+        kind: int,
+        source: Source_Text,
+        start: int,
+        byte_length: int,
+        diagnostics: system.collections.List<Diagnostic>)
     {
         self.is_missing = false;
         self.source = source;
@@ -23,6 +28,25 @@ public class Token // : Syntax
         self.kind = kind;
         self.children = new system.collections.List<Syntax_Node>();
         self.value = "";
+    }
+
+    public new(
+        kind: int,
+        source: Source_Text,
+        start: int,
+        byte_length: int,
+        diagnostics: system.collections.List<Diagnostic>,
+        value: string)
+    {
+        self.is_missing = false;
+        self.source = source;
+        self.start = start;
+        self.byte_length = byte_length;
+        self.diagnostics = diagnostics;
+
+        self.kind = kind;
+        self.children = new system.collections.List<Syntax_Node>();
+        self.value = value;
     }
 
     public new missing(kind: int, source: Source_Text, start: int)

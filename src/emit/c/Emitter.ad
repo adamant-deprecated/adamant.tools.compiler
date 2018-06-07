@@ -438,7 +438,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         write(builder, "self");
     }
-    else if syntax.kind == NumericLiteralExpression
+    else if syntax.kind == IntegerLiteralExpression
     {
         // Extra parens are needed in some weird cases with macros
         write(builder, "((int32){" + get_semantic_node_text(syntax) + "})");
@@ -1264,7 +1264,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
             {
                 let member_name: string = get_semantic_node_text(member.children[0]);
                 begin_line(emitter.type_declarations, member_name + "_");
-                let member_value: Semantic_Node? = first_child(member, Number);
+                let member_value: Semantic_Node? = first_child(member, Integer);
                 if member_value =/= none
                 {
                     write(emitter.type_declarations, " = ");

@@ -271,7 +271,7 @@ public build_semantic_node(
         // TODO rather than looking up the type, directly use the one in the package
         return new Semantic_Node.of_type(lookup_special(scope, "code_point").type, syntax, children);
     }
-    else if syntax.kind == NumericLiteralExpression
+    else if syntax.kind == IntegerLiteralExpression
     {
         // TODO rather than looking up the type, directly use the one in the package
         return new Semantic_Node.of_type(lookup_special(scope, "int").type, syntax, children);
