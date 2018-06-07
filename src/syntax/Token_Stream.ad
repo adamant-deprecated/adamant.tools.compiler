@@ -211,7 +211,7 @@ public next_token(tokens: mut Token_Stream) -> Token?
                 {
                     end += 1;
                 }
-                return new_token(tokens, Integer, end);
+                return new_token(tokens, Integer, end, substring(tokens.source.text, tokens.position, end - tokens.position));
             }
 
             // Add an error to the next token

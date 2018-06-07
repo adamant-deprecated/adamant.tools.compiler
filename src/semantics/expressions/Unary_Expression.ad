@@ -11,7 +11,7 @@ public /* abstract */ class Unary_Expression
 
     // `Expression` fields
     /// The type of an expression (or variable) before any implicit conversions
-    public let of_type: Type;
+    public let type: Type;
 
     // `Unary_Expression` fields
     public let operand: Expression;

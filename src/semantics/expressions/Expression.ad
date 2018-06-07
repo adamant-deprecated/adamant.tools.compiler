@@ -11,7 +11,7 @@ public /* abstract */ class Expression // : Program_Fragment
 
     // `Expression` fields
     /// The type of an expression (or variable) before any implicit conversions
-    public let of_type: Type;
+    public let type: Type;
 
     // NOTE: there is no "converted_type" like in roslyn. The idea is to have implicit conversion nodes inserted into the tree as needed.
 }
