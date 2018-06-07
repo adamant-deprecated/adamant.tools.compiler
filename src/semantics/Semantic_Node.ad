@@ -1,7 +1,7 @@
 public class Semantic_Node // : Program_Fragment
 {
     // `Program_Fragment` fields
-    public let syntax: Syntax_Node;
+    public let syntax: Syntax;
     public let is_missing: bool;
     public let source: Source_Text;
     public let start: int;
@@ -23,7 +23,7 @@ public class Semantic_Node // : Program_Fragment
     public new token(token: Token)
     {
         assert(token =/= none);
-        self.syntax = as_any(token);
+        self.syntax = token_as_syntax(token);
         self.kind = token.kind;
         self.is_missing = token.is_missing;
         self.source = token.source;
@@ -37,15 +37,15 @@ public class Semantic_Node // : Program_Fragment
     }
 
     /// Construct a concrete mirror of a `Syntax_Node`
-    public new concrete(syntax: Syntax_Node)
+    public new concrete(node: Syntax_Node)
     {
-        assert(syntax =/= none);
-        self.syntax = as_any(syntax);
-        self.kind = syntax.kind;
-        self.is_missing = syntax.is_missing;
-        self.source = syntax.source;
-        self.start = syntax.start;
-        self.byte_length = syntax.byte_length;
+        assert(node =/= none);
+        self.syntax = syntax_node_as_syntax(node);
+        self.kind = node.kind;
+        self.is_missing = node.is_missing;
+        self.source = node.source;
+        self.start = node.start;
+        self.byte_length = node.byte_length;
         self.children = new system.collections.List<Semantic_Node>();
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
@@ -54,15 +54,15 @@ public class Semantic_Node // : Program_Fragment
     }
 
     /// Construct a concrete mirror of a `Syntax_Node`
-    public new concrete(syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
+    public new concrete(node: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
-        assert(syntax =/= none);
-        self.syntax = syntax;
-        self.kind = syntax.kind;
-        self.is_missing = syntax.is_missing;
-        self.source = syntax.source;
-        self.start = syntax.start;
-        self.byte_length = syntax.byte_length;
+        assert(node =/= none);
+        self.syntax = syntax_node_as_syntax(node);
+        self.kind = node.kind;
+        self.is_missing = node.is_missing;
+        self.source = node.source;
+        self.start = node.start;
+        self.byte_length = node.byte_length;
         self.children = children;
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
@@ -70,16 +70,16 @@ public class Semantic_Node // : Program_Fragment
         self.referenced_type = none;
     }
 
-    public new of_type(of_type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
+    public new of_type(of_type: Type, node: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
         assert(of_type =/= none);
-        assert(syntax =/= none);
-        self.syntax = syntax;
-        self.kind = syntax.kind;
-        self.is_missing = syntax.is_missing;
-        self.source = syntax.source;
-        self.start = syntax.start;
-        self.byte_length = syntax.byte_length;
+        assert(node =/= none);
+        self.syntax = syntax_node_as_syntax(node);
+        self.kind = node.kind;
+        self.is_missing = node.is_missing;
+        self.source = node.source;
+        self.start = node.start;
+        self.byte_length = node.byte_length;
         self.children = children;
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = of_type;
@@ -87,16 +87,16 @@ public class Semantic_Node // : Program_Fragment
         self.referenced_type = none;
     }
 
-    public new declares_type(type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
+    public new declares_type(type: Type, node: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
         assert(type =/= none);
-        assert(syntax =/= none);
-        self.syntax = syntax;
-        self.kind = syntax.kind;
-        self.is_missing = syntax.is_missing;
-        self.source = syntax.source;
-        self.start = syntax.start;
-        self.byte_length = syntax.byte_length;
+        assert(node =/= none);
+        self.syntax = syntax_node_as_syntax(node);
+        self.kind = node.kind;
+        self.is_missing = node.is_missing;
+        self.source = node.source;
+        self.start = node.start;
+        self.byte_length = node.byte_length;
         self.children = children;
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
@@ -104,16 +104,16 @@ public class Semantic_Node // : Program_Fragment
         self.referenced_type = none;
     }
 
-    public new referencing_type(type: Type, syntax: Syntax_Node, children: system.collections.List<Semantic_Node>)
+    public new referencing_type(type: Type, node: Syntax_Node, children: system.collections.List<Semantic_Node>)
     {
         assert(type =/= none);
-        assert(syntax =/= none);
-        self.syntax = syntax;
-        self.kind = syntax.kind;
-        self.is_missing = syntax.is_missing;
-        self.source = syntax.source;
-        self.start = syntax.start;
-        self.byte_length = syntax.byte_length;
+        assert(node =/= none);
+        self.syntax = syntax_node_as_syntax(node);
+        self.kind = node.kind;
+        self.is_missing = node.is_missing;
+        self.source = node.source;
+        self.start = node.start;
+        self.byte_length = node.byte_length;
         self.children = children;
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
