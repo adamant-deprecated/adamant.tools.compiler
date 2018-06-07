@@ -1,5 +1,0 @@
-public main() -> void
-{
-    // TODO this is the wrong operator for this
-    var x: int = |-1|;
-}
