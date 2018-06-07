@@ -86,7 +86,7 @@ public build_semantic_node(
         }
 
         // TODO what about the function type?
-        return new Semantic_Node.concrete(syntax, children);
+        return new Semantic_Node.concrete_with_children(syntax, children);
     }
     else if syntax.kind == ClassDeclaration
         or syntax.kind == StructDeclaration
@@ -129,17 +129,17 @@ public build_semantic_node(
         }
 
         // TODO what about the function type?
-        return new Semantic_Node.concrete(syntax, children);
+        return new Semantic_Node.concrete_with_children(syntax, children);
     }
     else if syntax.kind == IdentifierName
     {
         let name_scope: Name_Subtable = lookup(scope, get_syntax_node_text(syntax));
         if name_scope == none
         {
-            let node: mut Semantic_Node = new Semantic_Node.concrete(syntax);
             if not syntax.is_missing
-                { add_resolution_error(node); }
-            return node;
+                { return new Semantic_Node.concrete(syntax, resolution_error(syntax)); }
+            else
+                { return new Semantic_Node.concrete(syntax); }
         }
         else
         {
@@ -149,7 +149,7 @@ public build_semantic_node(
             if name_scope.type == none
             {
                 // TODO this case exists because of out of order declarations, fix it
-                return new Semantic_Node.concrete(syntax, children);
+                return new Semantic_Node.concrete_with_children(syntax, children);
             }
             else
             {
@@ -180,7 +180,7 @@ public build_semantic_node(
             {
                 rhs = new Semantic_Node.concrete(member_name);
                 // TODO this should be an error
-                // add_resolution_error(rhs);
+                // resolution_error(rhs);
             }
             else
             {
@@ -201,7 +201,7 @@ public build_semantic_node(
         add_item(children, rhs);
         if rhs.of_type == none
         {
-            return new Semantic_Node.concrete(syntax, children);
+            return new Semantic_Node.concrete_with_children(syntax, children);
         }
         else
         {
@@ -212,13 +212,13 @@ public build_semantic_node(
     {
         add_item(children, build_constructor_name_semantic_node(builder, syntax.children[1], name_table, scope)); // Type
         add_item(children, build_semantic_node(builder, first_child_syntax_node(syntax, ArgumentList), name_table, scope)); // Call Arguments
-        return new Semantic_Node.concrete(syntax, children);
+        return new Semantic_Node.concrete_with_children(syntax, children);
     }
     else if syntax.kind == LocalDeclarationStatement
     {
         let variable_declaration_syntax: Syntax_Node = first_child_syntax_node(syntax, VariableDeclaration);
         add_item(children, build_semantic_node(builder, variable_declaration_syntax, name_table, scope));
-        return new Semantic_Node.concrete(syntax, children);
+        return new Semantic_Node.concrete_with_children(syntax, children);
     }
     else if syntax.kind == VariableDeclaration
     {
@@ -241,7 +241,7 @@ public build_semantic_node(
             let initalizer: Syntax_Node = syntax.children[5];
             add_item(children, build_semantic_node(builder, initalizer, name_table, scope));
         }
-        return new Semantic_Node.concrete(syntax, children);
+        return new Semantic_Node.concrete_with_children(syntax, children);
     }
     else if syntax.kind == MatchPattern
     {
@@ -253,7 +253,7 @@ public build_semantic_node(
         let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
         // TODO set the type in the name table
         add_item(children, type_node);
-        return new Semantic_Node.concrete(syntax, children);
+        return new Semantic_Node.concrete_with_children(syntax, children);
     }
     else if syntax.kind == TrueLiteralExpression
         or syntax.kind == FalseLiteralExpression
@@ -323,7 +323,7 @@ public build_semantic_node(
         {
             add_item(children, build_semantic_node(builder, child_syntax, name_table, scope));
         }
-        return new Semantic_Node.concrete(syntax, children);
+        return new Semantic_Node.concrete_with_children(syntax, children);
         // NOT_IMPLEMENTED("syntax.kind="+int_to_string(syntax.kind));
     }
 }
@@ -365,7 +365,7 @@ public build_parameters_semantic_node(
             {
                 add_item(children, new Semantic_Node.concrete(child_syntax));
             }
-            add_item(parameter_nodes, new Semantic_Node.concrete(parameter, children));
+            add_item(parameter_nodes, new Semantic_Node.concrete_with_children(parameter, children));
         }
         else
         {
@@ -373,7 +373,7 @@ public build_parameters_semantic_node(
         }
     }
 
-    return new Semantic_Node.concrete(parameters_syntax, parameter_nodes);
+    return new Semantic_Node.concrete_with_children(parameters_syntax, parameter_nodes);
 }
 
 public build_type_name_semantic_node(
@@ -399,9 +399,7 @@ public build_type_name_semantic_node(
         let entry: Name_Subtable? = lookup(scope, name); // TODO this should be lookup type. Types are separate
         if entry == none
         {
-            let node: mut Semantic_Node = new Semantic_Node.concrete(syntax);
-            add_resolution_error(node);
-            return node;
+            return new Semantic_Node.concrete(syntax, resolution_error(syntax));
         }
         else
         {
@@ -425,10 +423,9 @@ public build_type_name_semantic_node(
                 // This means we aren't sure about the qualifier (i.e. type unknown)
                 add_could_not_determine_type_error(qualifier);
 
-                let name_node: mut Semantic_Node = new Semantic_Node.concrete(name_syntax);
-                add_resolution_error(name_node, qualifier);
+                let name_node: Semantic_Node = new Semantic_Node.concrete(name_syntax, resolution_error(name_syntax, qualifier));
                 add_item(children, name_node);
-                return new Semantic_Node.concrete(syntax, children);
+                return new Semantic_Node.concrete_with_children(syntax, children);
             }
             else
             {
@@ -440,10 +437,9 @@ public build_type_name_semantic_node(
 
                 if referenced_scope == none
                 {
-                    let name_node: mut Semantic_Node = new Semantic_Node.concrete(name_syntax);
-                    add_resolution_error(name_node, qualifier);
+                    let name_node: Semantic_Node = new Semantic_Node.concrete(name_syntax, resolution_error(name_syntax, qualifier));
                     add_item(children, name_node);
-                    return new Semantic_Node.concrete(syntax, children);
+                    return new Semantic_Node.concrete_with_children(syntax, children);
                 }
 
                 let referenced_type: Type = referenced_scope.type;
@@ -462,13 +458,12 @@ public build_type_name_semantic_node(
                 // This means we aren't sure about the qualifier (i.e. type unknown)
                 add_could_not_determine_type_error(qualifier);
 
-                let name_node: mut Semantic_Node = new Semantic_Node.concrete(name_syntax);
-                add_resolution_error(name_node, qualifier);
+                let name_node: Semantic_Node = new Semantic_Node.concrete(name_syntax, resolution_error(name_syntax, qualifier));
                 add_item(generic_name_children, name_node);
                 build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
-                let qualified_name: mut Semantic_Node = new Semantic_Node.concrete(qualified_syntax, generic_name_children);
+                let qualified_name: mut Semantic_Node = new Semantic_Node.concrete_with_children(qualified_syntax, generic_name_children);
                 add_item(children, qualified_name);
-                return new Semantic_Node.concrete(syntax, children);
+                return new Semantic_Node.concrete_with_children(syntax, children);
             }
             else
             {
@@ -480,13 +475,12 @@ public build_type_name_semantic_node(
 
                 if referenced_scope == none
                 {
-                    let name_node: mut Semantic_Node = new Semantic_Node.concrete(name_syntax);
-                    add_resolution_error(name_node, qualifier);
+                    let name_node: Semantic_Node = new Semantic_Node.concrete(name_syntax, resolution_error(name_syntax, qualifier));
                     add_item(generic_name_children, name_node);
                     build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
-                    let qualified_name: mut Semantic_Node = new Semantic_Node.concrete(qualified_syntax, generic_name_children);
+                    let qualified_name: mut Semantic_Node = new Semantic_Node.concrete_with_children(qualified_syntax, generic_name_children);
                     add_item(children, qualified_name);
-                    return new Semantic_Node.concrete(syntax, children);
+                    return new Semantic_Node.concrete_with_children(syntax, children);
                 }
 
                 let referenced_type_name: Type = referenced_scope.type;
@@ -513,7 +507,7 @@ public build_type_name_semantic_node(
         if inner_type.referenced_type == none
         {
             add_could_not_determine_type_error(inner_type);
-            return new Semantic_Node.concrete(syntax, children);
+            return new Semantic_Node.concrete_with_children(syntax, children);
         }
         let type: Type = make_mutable_type(inner_type.referenced_type);
         return new Semantic_Node.referencing_type(type, syntax, children);
@@ -525,7 +519,7 @@ public build_type_name_semantic_node(
         if inner_type.referenced_type == none
         {
             add_could_not_determine_type_error(inner_type);
-            return new Semantic_Node.concrete(syntax, children);
+            return new Semantic_Node.concrete_with_children(syntax, children);
         }
         let type: Type = make_immutable_type(inner_type.referenced_type);
         return new Semantic_Node.referencing_type(type, syntax, children);
@@ -537,7 +531,7 @@ public build_type_name_semantic_node(
         if inner_type.referenced_type == none
         {
             add_could_not_determine_type_error(inner_type);
-            return new Semantic_Node.concrete(syntax, children);
+            return new Semantic_Node.concrete_with_children(syntax, children);
         }
         let type: Type = build_optional_type(builder, name_table, inner_type.referenced_type);
         return new Semantic_Node.referencing_type(type, syntax, children);
@@ -550,7 +544,7 @@ public build_type_name_semantic_node(
         // {
         // 	add_item(children, build_type_name_semantic_node(builder, child_syntax, name_table, scope));
         // }
-        // return new Semantic_Node.concrete(syntax, children);
+        // return new Semantic_Node.concrete_with_children(syntax, children);
         let place: int = syntax.start;
         NOT_IMPLEMENTED("syntax.kind="+int_to_string(syntax.kind)+" at "+int_to_string(place));
     }
@@ -628,7 +622,7 @@ public build_constructor_name_semantic_node(
         {
             add_item(children, new Semantic_Node.token(name));
             // Need referenced name etc
-            return new Semantic_Node.concrete(syntax, children);
+            return new Semantic_Node.concrete_with_children(syntax, children);
         }
     }
 
@@ -640,14 +634,14 @@ public as_syntax_node(syntax: Syntax_Node) -> Syntax_Node
     return syntax;
 }
 
-public add_resolution_error(node: mut Semantic_Node) -> void
+public resolution_error(node: Syntax_Node) -> Diagnostic
 {
-    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_semantic_node_text_span(node), "Could not resolve name `" + get_semantic_node_text(node) + "`"));
+    return new Diagnostic(FatalCompilationError, Analysis, node.source, get_syntax_node_text_span(node), "Could not resolve name `" + get_syntax_node_text(node) + "`");
 }
 
-public add_resolution_error(node: mut Semantic_Node, qualifier: Semantic_Node) -> void
+public resolution_error(node: Syntax_Node, qualifier: Semantic_Node) -> Diagnostic
 {
-    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_semantic_node_text_span(node), "Could not resolve name `" + get_semantic_node_text(node) + "` because qualifier `" + get_semantic_node_text(qualifier) +"` could not be resolved."));
+    return new Diagnostic(FatalCompilationError, Analysis, node.source, get_syntax_node_text_span(node), "Could not resolve name `" + get_syntax_node_text(node) + "` because qualifier `" + get_semantic_node_text(qualifier) +"` could not be resolved.");
 }
 
 public add_could_not_determine_type_error(node: mut Semantic_Node) -> void

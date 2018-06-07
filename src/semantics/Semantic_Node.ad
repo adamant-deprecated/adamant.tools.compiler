@@ -54,7 +54,26 @@ public class Semantic_Node // : Program_Fragment
     }
 
     /// Construct a concrete mirror of a `Syntax_Node`
-    public new concrete(node: Syntax_Node, children: system.collections.List<Program_Fragment>)
+    public new concrete(node: Syntax_Node, diagnostic: Diagnostic)
+    {
+        assert(node =/= none);
+        self.syntax = syntax_node_as_syntax(node);
+        self.kind = node.kind;
+        self.is_missing = node.is_missing;
+        self.source = node.source;
+        self.start = node.start;
+        self.byte_length = node.byte_length;
+        self.children = new system.collections.List<Program_Fragment>();
+        let diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
+        add_item(diagnostics, diagnostic);
+        self.diagnostics = diagnostics;
+        self.of_type = none;
+        self.declares_type = none;
+        self.referenced_type = none;
+    }
+
+    /// Construct a concrete mirror of a `Syntax_Node`
+    public new concrete_with_children(node: Syntax_Node, children: system.collections.List<Program_Fragment>)
     {
         assert(node =/= none);
         self.syntax = syntax_node_as_syntax(node);

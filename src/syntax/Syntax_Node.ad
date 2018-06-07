@@ -104,6 +104,11 @@ public syntax_node_as_syntax(node: Syntax_Node) -> Syntax
     return as_any(node);
 }
 
+public get_syntax_node_text_span(node: Syntax_Node) -> Text_Span
+{
+    return new Text_Span(node.start, node.byte_length);
+}
+
 public get_syntax_node_text(syntax: Syntax_Node) -> string
 {
     return substring(syntax.source.text, syntax.start, syntax.byte_length);
