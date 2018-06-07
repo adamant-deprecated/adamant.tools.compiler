@@ -61,18 +61,28 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
             { return new_operator_token(tokens, Asterisk); }
         else if cur_char == '='
         {
-            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '='
+            if tokens.position + 1 < source_byte_length(tokens.source)
             {
-                // it is `==`
-                return new_operator_token(tokens, EqualsEquals, 2);
-            }
+                let next_char: code_point = tokens.source.text[tokens.position + 1];
+                if next_char == '='
+                {
+                    // it is `==`
+                    return new_operator_token(tokens, EqualsEquals, 2);
+                }
 
-            if tokens.position + 2 < source_byte_length(tokens.source)
-                and tokens.source.text[tokens.position + 1] == '/'
-                and tokens.source.text[tokens.position + 2] == '='
-            {
-                // it is `=/=`
-                return new_operator_token(tokens, EqualsSlashEquals, 3);
+                if next_char == '>'
+                {
+                    // it is `=>`
+                    return new_operator_token(tokens, FatArrow, 2);
+                }
+
+                if tokens.position + 2 < source_byte_length(tokens.source)
+                    and next_char == '/'
+                    and tokens.source.text[tokens.position + 2] == '='
+                {
+                    // it is `=/=`
+                    return new_operator_token(tokens, EqualsSlashEquals, 3);
+                }
             }
 
             // it is `=`
@@ -301,6 +311,8 @@ public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Sy
         { type = StructKeyword; }
     else if value == "none"
         { type = NoneKeyword; }
+    else if value == "match"
+        { type = MatchKeyword; }
     else
     {
         type = Identifier;

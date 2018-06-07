@@ -1,5 +1,13 @@
 #include "RuntimeLibrary.h"
 
+// Type ID Declarations
+enum Type_ID
+{
+	never__0Type__ID = 0,
+	Test__0__0Type_ID,
+};
+typedef enum Type_ID Type_ID;
+
 // Type Declarations
 typedef struct Test__0 Test__0;
 
@@ -12,14 +20,14 @@ void mut main__1(system__console__Console__0 mut ref const console__);
 
 struct Test__0
 {
-	int32_t type_id;
+	Type_ID type_id;
 };
 
 // Global Definitions
 
 // Definitions
 
-Test__0 mut ref mut Test__0__0new__0(Test__0 mut ref const self) { self->type_id = 970379955; return self; }
+Test__0 mut ref mut Test__0__0new__0(Test__0 mut ref const self) { self->type_id = Test__0__0Type_ID; return self; }
 
 Test__0 const opt_ref mut Func__1(Test__0 const opt_ref const x__)
 {

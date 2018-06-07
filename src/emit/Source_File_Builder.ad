@@ -82,6 +82,13 @@ public begin_block(file: mut Source_File_Builder) -> void
     file.first_element = file.after_block = false;
 }
 
+public begin_block_with(file: mut Source_File_Builder, value: string) -> void
+{
+    write_line(file, value);
+    sb_append(file.indent, "\t");
+    file.first_element = file.after_block = false;
+}
+
 // @requires `indent_depth` > 0
 // @ensures `indent_depth` == old(`indent_depth`)-1
 public end_block(file: mut Source_File_Builder) -> void
@@ -97,6 +104,12 @@ public end_block_with_semicolon(file: mut Source_File_Builder) -> void
 {
     sb_remove(file.indent, 0, 1);
     write_line(file, "};");
+}
+
+public end_block_with(file: mut Source_File_Builder, value: string) -> void
+{
+    sb_remove(file.indent, 0, 1);
+    write_line(file, value);
 }
 
 public byte_length(file: Source_File_Builder) -> int

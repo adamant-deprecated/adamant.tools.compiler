@@ -122,6 +122,7 @@ public let PackageNode: int = 118;
 public let Percent: int = 119; // `⧼Expression⧽ % ⧼Expression⧽`
 public let RemainderExpression: int = 120;
 public let Pipe: int = 121; // `|`
+public let FatArrow: int = 122; // `=>`
 public let Asterisk: int = 123; // `*`
 public let MultiplyExpression: int = 124; // `⧼Expression⧽ * ⧼Expression⧽`
 public let DivideExpression: int = 125; // `⧼Expression⧽ / ⧼Expression⧽`
@@ -129,3 +130,7 @@ public let NoneKeyword: int = 126; // `none`
 public let StructDeclaration: int = 127;
 public let ImmutableType: int = 128; // `⧼Type⧽` without `mut` before it
 public let NamespaceDeclaration: int = 129;
+public let MatchKeyword: int = 130; // `match`
+public let MatchStatement: int = 131;
+public let MatchArm: int = 134;
+public let MatchPattern: int = 135;

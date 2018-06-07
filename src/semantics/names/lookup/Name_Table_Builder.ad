@@ -162,6 +162,26 @@ public add_syntax(
             add_syntax(name_table, parent, else_clause);
         }
     }
+    else if syntax.kind == MatchStatement
+    {
+        for let child: Syntax_Node in syntax.children
+        {
+            if child.kind == MatchArm
+            {
+                add_syntax(name_table, parent, child);
+            }
+        }
+    }
+    else if syntax.kind == MatchArm
+    {
+        // TODO: we actually need unnamed scopes for these variables
+        let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, MatchPattern), Identifier);
+        let name: Name = new Name(parent, VariableName, get_syntax_text(identifier));
+        let no_type: Type? = none; // Haven't bound the type yet
+        add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
+
+        add_syntax(name_table, parent, first_child_syntax(syntax, Block));
+    }
     else if syntax.kind == ElseClause
     {
         // This might be a good place for some kind of coalesce operator

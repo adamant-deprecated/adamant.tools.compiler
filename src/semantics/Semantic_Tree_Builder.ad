@@ -243,6 +243,18 @@ public build_semantic_node(
         }
         return new Semantic_Node.concrete(syntax, children);
     }
+    else if syntax.kind == MatchPattern
+    {
+        let identifier: Syntax_Node = syntax.children[0]; // i.e. `let` or `var`
+        add_item(children, new Semantic_Node.token(identifier));
+        let colon: Syntax_Node = syntax.children[1]; // i.e. `let` or `var`
+        add_item(children, new Semantic_Node.token(colon));
+        let type_syntax: Syntax_Node = syntax.children[2];
+        let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
+        // TODO set the type in the name table
+        add_item(children, type_node);
+        return new Semantic_Node.concrete(syntax, children);
+    }
     else if syntax.kind == TrueLiteralExpression
         or syntax.kind == FalseLiteralExpression
     {

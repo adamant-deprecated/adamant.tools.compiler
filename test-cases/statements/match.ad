@@ -1,0 +1,29 @@
+public class A
+{
+    public let value_a: int;
+
+    public new()
+    {
+        self.value_a = 1;
+    }
+}
+
+public class B
+{
+    public let value_b: int;
+
+    public new()
+    {
+        self.value_b = 2;
+    }
+}
+
+public main() -> int
+{
+    let v: B = new B();
+    match v
+    {
+        a: A => { return a.value_a; },
+        b: B => { return b.value_b; }
+    }
+}

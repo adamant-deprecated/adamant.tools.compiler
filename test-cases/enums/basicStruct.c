@@ -1,5 +1,12 @@
 #include "RuntimeLibrary.h"
 
+// Type ID Declarations
+enum Type_ID
+{
+	never__0Type__ID = 0,
+};
+typedef enum Type_ID Type_ID;
+
 // Type Declarations
 enum day_of_week_
 {

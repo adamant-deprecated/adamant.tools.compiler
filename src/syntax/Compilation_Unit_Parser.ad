@@ -392,6 +392,22 @@ public parse_expression(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     return parse_expression(parser, 1);
 }
 
+public parse_match_arm(parser: mut Compilation_Unit_Parser) -> Syntax_Node
+{
+    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+
+    // Parse Match Pattern
+    let pattern_children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    add_item(pattern_children, expect_token(parser, Identifier));
+    add_item(pattern_children, expect_token(parser, Colon));
+    add_item(pattern_children, parse_type(parser));
+    add_item(children, new Syntax_Node.with_children(MatchPattern, pattern_children));
+
+    add_item(children, expect_token(parser, FatArrow));
+    add_item(children, parse_block(parser));
+    return new Syntax_Node.with_children(MatchArm, children);
+}
+
 public parse_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
 {
     let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
@@ -440,6 +456,30 @@ public parse_statement(parser: mut Compilation_Unit_Parser) -> Syntax_Node
     if parser.token.kind == IfKeyword
     {
         return parse_if_statement(parser);
+    }
+    if parser.token.kind == MatchKeyword
+    {
+        add_item(children, expect_token(parser, MatchKeyword));
+        add_item(children, parse_expression(parser));
+        add_item(children, expect_token(parser, LeftBrace));
+        while parser.token.kind =/= RightBrace and parser.token.kind =/= EndOfFileToken
+        {
+            let start_token: Syntax_Node = parser.token;
+            add_item(children, parse_match_arm(parser));
+            if parser.token == start_token
+            {
+                // We have not advanced at all when trying to parse a member.
+                // Skip a token to try to see if we can find the start of a member.
+                add_item(children, new Syntax_Node.skipped(accept_token(parser)));
+            }
+            if parser.token.kind == Comma
+                { add_item(children, expect_token(parser, Comma)); }
+            else
+                { break; }
+        }
+        add_item(children, expect_token(parser, RightBrace));
+
+        return new Syntax_Node.with_children(MatchStatement, children);
     }
     if parser.token.kind == BreakKeyword
     {

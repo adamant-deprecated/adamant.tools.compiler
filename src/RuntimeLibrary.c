@@ -8,6 +8,9 @@
 
 static inline void static_checks()
 {
+    // Note: for some reason I haven't been able to get static_assert()
+    // using assert.h to work without giving a warning.
+
     // Because we assume we can cast from char* to uint8_t* they need to be the same size
     _Static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
 
@@ -20,6 +23,17 @@ static inline void static_checks()
     // TODO: C also has UTF-8 literals u8"hello"
     // TODO change the emitted literals?
     const string test_string = ((string){5,(uint8_t const[]){u8"hello"}});
+}
+
+// -----------------------------------------------------------------------------
+// Emit Support
+// -----------------------------------------------------------------------------
+// These are things which make emitting easier or clearer
+
+noreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line)
+{
+    printf("Non-exhustive match. Type_ID=%i not covered in function %s in %s, line %i", type_id, function, file, line);
+    exit(70);
 }
 
 // -----------------------------------------------------------------------------
