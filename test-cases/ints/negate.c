@@ -20,7 +20,7 @@ void mut main__0();
 
 void mut main__0()
 {
-	int32 mut x__ = ((int32){1});
+	int32 mut x__ = int32__0op__neg(((int32){1}));
 	int32 mut y__ = int32__0op__neg(x__);
 }
 
