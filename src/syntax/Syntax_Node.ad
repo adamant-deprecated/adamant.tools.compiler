@@ -109,16 +109,6 @@ public get_syntax_node_text(syntax: Syntax_Node) -> string
     return substring(syntax.source.text, syntax.start, syntax.byte_length);
 }
 
-public first_child_syntax(syntax: Syntax_Node, kind: int) -> Syntax_Node?
-{
-    for let child: Syntax_Node in syntax.children
-    {
-        if child.kind == kind
-            { return child; }
-    }
-    return none;
-}
-
 public first_child_token(syntax: Syntax_Node, kind: int) -> Token?
 {
     for let child: Syntax_Node in syntax.children
@@ -127,6 +117,19 @@ public first_child_token(syntax: Syntax_Node, kind: int) -> Token?
         {
             token: Token => { if token.kind == kind { return token; } },
             node: Syntax_Node => { }
+        }
+    }
+    return none;
+}
+
+public first_child_syntax_node(syntax: Syntax_Node, kind: int) -> Syntax_Node?
+{
+    for let child: Syntax_Node in syntax.children
+    {
+        match child
+        {
+            node: Syntax_Node => { if node.kind == kind { return node; } },
+            token: Token => { }
         }
     }
     return none;
@@ -213,9 +216,9 @@ public statements(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
 }
 
 // TODO this should only be on things that would have access modifiers
-public access_modifier(syntax: Syntax_Node) -> Syntax_Node?
+public access_modifier(syntax: Syntax_Node) -> Token?
 {
-    for let child: Syntax_Node in syntax.children
+    for let child: Token in syntax.children
     {
         if child.kind == PublicKeyword
             or child.kind == ProtectedKeyword

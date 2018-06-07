@@ -1,10 +1,11 @@
 public /* abstract */ class Program_Fragment
 {
+    // `Program_Fragment` fields
     public let syntax: Syntax;
     public let is_missing: bool;
     public let source: Source_Text;
     public let start: int;
     public let byte_length: int;
-    public let children: system.collections.List<Semantic_Node>;
+    public let children: system.collections.List<Program_Fragment>;
     public let diagnostics: system.collections.List<Diagnostic>;
 }

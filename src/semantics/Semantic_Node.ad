@@ -1,5 +1,6 @@
 public class Semantic_Node // : Program_Fragment
 {
+    // `Program_Fragment` fields
     public let syntax: Syntax_Node;
     public let is_missing: bool;
     public let source: Source_Text;
