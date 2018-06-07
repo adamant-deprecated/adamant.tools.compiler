@@ -6,7 +6,7 @@ public class Semantic_Node // : Program_Fragment
     public let source: Source_Text;
     public let start: int;
     public let byte_length: int;
-    public let children: system.collections.List<Semantic_Node>;
+    public let children: system.collections.List<Program_Fragment>;
     public let diagnostics: mut system.collections.List<Diagnostic>;
 
     /// The type of an expression (or variable) before any implicit conversions
@@ -29,7 +29,7 @@ public class Semantic_Node // : Program_Fragment
         self.source = token.source;
         self.start = token.start;
         self.byte_length = token.byte_length;
-        self.children = new system.collections.List<Semantic_Node>();
+        self.children = new system.collections.List<Program_Fragment>();
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.declares_type = none;
@@ -46,7 +46,7 @@ public class Semantic_Node // : Program_Fragment
         self.source = node.source;
         self.start = node.start;
         self.byte_length = node.byte_length;
-        self.children = new system.collections.List<Semantic_Node>();
+        self.children = new system.collections.List<Program_Fragment>();
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.declares_type = none;
@@ -54,7 +54,7 @@ public class Semantic_Node // : Program_Fragment
     }
 
     /// Construct a concrete mirror of a `Syntax_Node`
-    public new concrete(node: Syntax_Node, children: system.collections.List<Semantic_Node>)
+    public new concrete(node: Syntax_Node, children: system.collections.List<Program_Fragment>)
     {
         assert(node =/= none);
         self.syntax = syntax_node_as_syntax(node);
@@ -70,7 +70,7 @@ public class Semantic_Node // : Program_Fragment
         self.referenced_type = none;
     }
 
-    public new of_type(of_type: Type, node: Syntax_Node, children: system.collections.List<Semantic_Node>)
+    public new of_type(of_type: Type, node: Syntax_Node, children: system.collections.List<Program_Fragment>)
     {
         assert(of_type =/= none);
         assert(node =/= none);
@@ -87,7 +87,7 @@ public class Semantic_Node // : Program_Fragment
         self.referenced_type = none;
     }
 
-    public new declares_type(type: Type, node: Syntax_Node, children: system.collections.List<Semantic_Node>)
+    public new declares_type(type: Type, node: Syntax_Node, children: system.collections.List<Program_Fragment>)
     {
         assert(type =/= none);
         assert(node =/= none);
@@ -104,7 +104,7 @@ public class Semantic_Node // : Program_Fragment
         self.referenced_type = none;
     }
 
-    public new referencing_type(type: Type, node: Syntax_Node, children: system.collections.List<Semantic_Node>)
+    public new referencing_type(type: Type, node: Syntax_Node, children: system.collections.List<Program_Fragment>)
     {
         assert(type =/= none);
         assert(node =/= none);
@@ -140,10 +140,13 @@ public get_semantic_node_text(node: Semantic_Node) -> string
 
 public first_child(node: Semantic_Node, kind: int) -> Semantic_Node?
 {
-    for let child: Semantic_Node in node.children
+    for let child: Program_Fragment in node.children
     {
-        if child.kind == kind
-            { return child; }
+        match child
+        {
+            node: Semantic_Node => { if node.kind == kind { return node; } },
+            e: Expression => {}
+        }
     }
     return none;
 }
@@ -151,11 +154,12 @@ public first_child(node: Semantic_Node, kind: int) -> Semantic_Node?
 public children_of_kind(node: Semantic_Node, kind: int) -> system.collections.List<Semantic_Node>
 {
     let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-    for let child: Semantic_Node in node.children
+    for let child: Program_Fragment in node.children
     {
-        if child.kind == kind
+        match child
         {
-            add_item(children, child);
+            node: Semantic_Node => { if node.kind == kind { add_item(children, node); } },
+            e: Expression => {}
         }
     }
     return children;
@@ -165,14 +169,21 @@ public children_of_kind(node: Semantic_Node, kind: int) -> system.collections.Li
 public node_members(node: Semantic_Node) -> system.collections.List<Semantic_Node>
 {
     let members: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-    for let child: Semantic_Node in node.children
+    for let child: Program_Fragment in node.children
     {
-        // TODO fix this to a more reliable means of telling what should be visited
-        if child.kind == ConstructorDeclaration
-            or child.kind == FieldDeclaration
-            or child.kind == MethodDeclaration
+        match child
         {
-            add_item(members, child);
+            node: Semantic_Node =>
+            {
+                // TODO fix this to a more reliable means of telling what should be visited
+                if node.kind == ConstructorDeclaration
+                    or node.kind == FieldDeclaration
+                    or node.kind == MethodDeclaration
+                {
+                    add_item(members, node);
+                }
+            },
+            e: Expression => {}
         }
     }
     return members;
@@ -182,13 +193,20 @@ public node_members(node: Semantic_Node) -> system.collections.List<Semantic_Nod
 public node_statements(node: Semantic_Node) -> system.collections.List<Semantic_Node>
 {
     let statements: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-    for let child: Semantic_Node in node.children
+    for let child: Program_Fragment in node.children
     {
-        // TODO fix this to a more reliable means of telling what should be visited
-        if child.kind =/= LeftBrace
-            and child.kind =/= RightBrace
+        match child
         {
-            add_item(statements, child);
+            node: Semantic_Node =>
+            {
+                // TODO fix this to a more reliable means of telling what should be visited
+                if node.kind =/= LeftBrace
+                    and node.kind =/= RightBrace
+                {
+                    add_item(statements, node);
+                }
+            },
+            e: Expression => {}
         }
     }
     return statements;
@@ -198,13 +216,20 @@ public node_statements(node: Semantic_Node) -> system.collections.List<Semantic_
 public node_parameters(node: Semantic_Node) -> system.collections.List<Semantic_Node>
 {
     let parameters: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
-    for let child: Semantic_Node in node.children
+    for let child: Program_Fragment in node.children
     {
-        // TODO fix this to a more reliable means of telling what should be visited
-        if child.kind == Parameter
-            or child.kind == SelfParameter
+        match child
         {
-            add_item(parameters, child);
+            node: Semantic_Node =>
+            {
+                // TODO fix this to a more reliable means of telling what should be visited
+                if node.kind == Parameter
+                    or node.kind == SelfParameter
+                {
+                    add_item(parameters, node);
+                }
+            },
+            e: Expression => {}
         }
     }
     return parameters;
@@ -214,16 +239,23 @@ public node_parameters(node: Semantic_Node) -> system.collections.List<Semantic_
 public node_argument_count(node: Semantic_Node) -> int
 {
     var count: int = 0;
-    for let child: Semantic_Node in node.children
+    for let child: Program_Fragment in node.children
     {
-        // TODO fix this to a more reliable means of telling what should be visited
-        if child.kind == LeftParen
-            or child.kind == RightParen
-            or child.kind == Comma
+        match child
         {
-            continue;
+            node: Semantic_Node =>
+            {
+                // TODO fix this to a more reliable means of telling what should be visited
+                if node.kind == LeftParen
+                    or node.kind == RightParen
+                    or node.kind == Comma
+                {
+                    continue; // TODO does this work correctly inside `match`?
+                }
+                count += 1;
+            },
+            e: Expression => {}
         }
-        count += 1;
     }
     return count;
 }
@@ -231,15 +263,22 @@ public node_argument_count(node: Semantic_Node) -> int
 // TODO this should only be on things with access modifiers
 public node_access_modifier(node: Semantic_Node) -> Semantic_Node?
 {
-    for let child: Semantic_Node in node.children
+    for let child: Program_Fragment in node.children
     {
-        // TODO fix this to a more reliable means of telling what should be visited
-        if child.kind == PublicKeyword
-            or child.kind == ProtectedKeyword
-            or child.kind == PrivateKeyword
-            or child.kind == InternalKeyword
+        match child
         {
-            return child;
+            node: Semantic_Node =>
+            {
+                // TODO fix this to a more reliable means of telling what should be visited
+                if node.kind == PublicKeyword
+                    or node.kind == ProtectedKeyword
+                    or node.kind == PrivateKeyword
+                    or node.kind == InternalKeyword
+                {
+                    return node;
+                }
+            },
+            e: Expression => {}
         }
     }
 
@@ -248,10 +287,17 @@ public node_access_modifier(node: Semantic_Node) -> Semantic_Node?
 
 public node_has_child(node: Semantic_Node, kind: int) -> bool
 {
-    for let child: Semantic_Node in node.children
+    for let child: Program_Fragment in node.children
     {
-        if child.kind == kind
-            { return true; }
+        match child
+        {
+            node: Semantic_Node =>
+            {
+                if node.kind == kind
+                    { return true; }
+            },
+            e: Expression => {}
+        }
     }
     return false;
 }
