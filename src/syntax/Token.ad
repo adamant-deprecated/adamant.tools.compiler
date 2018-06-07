@@ -5,20 +5,25 @@ public class Token
     public let source: Source_Text;
     public let start: int;
     public let byte_length: int;
-    public let node_diagnostics: system.collections.List<Diagnostic>;
+    public let diagnostics: system.collections.List<Diagnostic>;
 
     public let kind: int;
     public let value: string; // TODO this should be optional string, but for now we use empty string
 
-    public new(kind: int, source: Source_Text, start: int, byte_length: int)
+    public new(kind: int, source: Source_Text, start: int, byte_length: int, diagnostics: system.collections.List<Diagnostic>)
     {
         self.is_missing = false;
         self.source = source;
         self.start = start;
         self.byte_length = byte_length;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = diagnostics;
 
         self.kind = kind;
         self.value = "";
     }
+}
+
+public get_token_text(token: Token) -> string
+{
+    return substring(token.source.text, token.start, token.byte_length);
 }

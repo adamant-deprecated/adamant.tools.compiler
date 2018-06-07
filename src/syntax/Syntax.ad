@@ -4,5 +4,14 @@ public /*abstract*/ class Syntax
     public let source: Source_Text;
     public let start: int;
     public let byte_length: int;
-    public let node_diagnostics: system.collections.List<Diagnostic>;
+    public let diagnostics: system.collections.List<Diagnostic>;
+}
+
+public syntax_to_string(syntax: Syntax) -> string
+{
+    match syntax
+    {
+        token: Token => { return "Token.kind="+int_to_string(token.kind)+", \""+get_token_text(token)+"\""; },
+        node: Syntax_Node => { return "Syntax_Node.kind="+int_to_string(node.kind)+", \""+get_syntax_text(node)+"\""; }
+    }
 }
