@@ -11,8 +11,10 @@ enum Type_ID
 	Text_Span__0__0Type_ID,
 	Source_File_Builder__0__0Type_ID,
 	Compilation_Unit__0__0Type_ID,
+	Expression__0__0Type_ID,
 	Package__0__0Type_ID,
 	Package_Reference__0__0Type_ID,
+	Program_Fragment__0__0Type_ID,
 	Semantic_Node__0__0Type_ID,
 	Semantic_Tree_Builder__0__0Type_ID,
 	Compilation_Unit_Parser__0__0Type_ID,
@@ -39,8 +41,10 @@ typedef struct Text_Position__0 Text_Position__0;
 typedef struct Text_Span__0 Text_Span__0;
 typedef struct Source_File_Builder__0 Source_File_Builder__0;
 typedef struct Compilation_Unit__0 Compilation_Unit__0;
+typedef struct Expression__0 Expression__0;
 typedef struct Package__0 Package__0;
 typedef struct Package_Reference__0 Package_Reference__0;
+typedef struct Program_Fragment__0 Program_Fragment__0;
 typedef struct Semantic_Node__0 Semantic_Node__0;
 typedef struct Semantic_Tree_Builder__0 Semantic_Tree_Builder__0;
 typedef struct Compilation_Unit_Parser__0 Compilation_Unit_Parser__0;
@@ -97,6 +101,8 @@ int32 mut byte_length__1(Source_File_Builder__0 const ref const file__);
 string mut to_string__1(Source_File_Builder__0 mut ref const file__);
 Compilation_Unit__0 mut ref mut Compilation_Unit__0__0new__2(Compilation_Unit__0 mut ref const self, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const declarations__);
 void mut collect_diagnostics__2(Compilation_Unit__0 const ref const compilation_unit__, system__collections__List__1 mut ref const diagnostics__);
+Expression__0 mut ref mut Expression__0__0new__0(Expression__0 mut ref const self);
+Program_Fragment__0 const ref mut expression_as_program_fragment__1(Expression__0 const ref const expression__);
 Package__0 mut ref mut Package__0__0new__4(Package__0 mut ref const self, Package_Name__0 const ref const name__, system__collections__List__1 const ref const references__, system__collections__List__1 const ref const compilation_units__, Symbol__0 const ref const symbol__);
 system__collections__List__1 const ref mut all_diagnostics__1(Package__0 const ref const package__);
 Package_Reference__0 mut ref mut Package_Reference__0__0new__1(Package_Reference__0 mut ref const self, Package__0 const ref const package__);
@@ -114,6 +120,7 @@ void mut Package_symbol_has_package_name__0();
 void mut Package_symbol_has_children__0();
 void mut Package_contains_the_string_type__0();
 void mut Package_contains_optional_type__0();
+Program_Fragment__0 mut ref mut Program_Fragment__0__0new__0(Program_Fragment__0 mut ref const self);
 Package__0 const ref mut build_runtime_library_package__0();
 system__collections__List__1 mut ref mut build_runtime_library_symbols__1(Package_Name__0 const ref const package_name__);
 Symbol__0 const ref mut build_function_symbol__1(Name__0 const ref const name__);
@@ -129,13 +136,16 @@ void mut Console_namespace_contains_Console_class__0();
 void mut System_namespace_contains_collections_namespace__0();
 void mut Collections_namespace_contains_List_class__0();
 Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const package_syntax__);
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const syntax__);
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__2(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__);
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__of_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const of_type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__);
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__declares_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__);
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__referencing_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__);
-Text_Span__0 const ref mut get_text_span__1(Semantic_Node__0 const ref const node__);
-string mut get_node_text__1(Semantic_Node__0 const ref const node__);
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 mut ref const self, Token__0 const ref const token__);
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__1(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const node__);
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__2(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const node__, Diagnostic__0 const ref const diagnostic__);
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete_with_children__2(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const node__, system__collections__List__1 const ref const children__);
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__of_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const of_type__, Syntax_Node__0 const ref const node__, system__collections__List__1 const ref const children__);
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__declares_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const node__, system__collections__List__1 const ref const children__);
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__referencing_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const node__, system__collections__List__1 const ref const children__);
+Program_Fragment__0 const ref mut semantic_node_as_program_fragment__1(Semantic_Node__0 const ref const node__);
+Text_Span__0 const ref mut get_semantic_node_text_span__1(Semantic_Node__0 const ref const node__);
+string mut get_semantic_node_text__1(Semantic_Node__0 const ref const node__);
 Semantic_Node__0 const opt_ref mut first_child__2(Semantic_Node__0 const ref const node__, int32 const kind__);
 system__collections__List__1 const ref mut children_of_kind__2(Semantic_Node__0 const ref const node__, int32 const kind__);
 system__collections__List__1 const ref mut node_members__1(Semantic_Node__0 const ref const node__);
@@ -144,7 +154,6 @@ system__collections__List__1 const ref mut node_parameters__1(Semantic_Node__0 c
 int32 mut node_argument_count__1(Semantic_Node__0 const ref const node__);
 Semantic_Node__0 const opt_ref mut node_access_modifier__1(Semantic_Node__0 const ref const node__);
 BOOL mut node_has_child__2(Semantic_Node__0 const ref const node__, int32 const kind__);
-void mut add_diagnostic__2(Semantic_Node__0 mut ref const node__, Diagnostic__0 const ref const diagnostic__);
 system__collections__List__1 const ref mut diagnostics__1(Semantic_Node__0 const ref const node__);
 void mut collect_node_diagnostics__2(Semantic_Node__0 const ref const node__, system__collections__List__1 mut ref const diagnostics__);
 Semantic_Tree_Builder__0 mut ref mut Semantic_Tree_Builder__0__0new__0(Semantic_Tree_Builder__0 mut ref const self);
@@ -156,59 +165,63 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 Type__0 const ref mut build_optional_type__3(Semantic_Tree_Builder__0 const ref const builder__, Name_Table__0 const ref const name_table__, Type__0 const ref const base_type__);
 system__collections__List__1 const ref mut build_type_arguments_semantic_node__5(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__, system__collections__List__1 mut ref const children__);
 Semantic_Node__0 const ref mut build_constructor_name_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__);
-Syntax_Node__0 const ref mut as_syntax__1(Syntax_Node__0 const ref const syntax__);
-void mut add_resolution_error__1(Semantic_Node__0 mut ref const node__);
-void mut add_resolution_error__2(Semantic_Node__0 mut ref const node__, Semantic_Node__0 const ref const qualifier__);
-void mut add_could_not_determine_type_error__1(Semantic_Node__0 mut ref const node__);
+Syntax_Node__0 const ref mut as_syntax_node__1(Syntax_Node__0 const ref const syntax__);
+Diagnostic__0 const ref mut resolution_error__1(Syntax_Node__0 const ref const node__);
+Diagnostic__0 const ref mut resolution_error__2(Syntax_Node__0 const ref const node__, Semantic_Node__0 const ref const qualifier__);
 Symbol__0 const ref mut build_symbols__2(Package_Name__0 const ref const package_name__, system__collections__List__1 const ref const compilation_units__);
 Compilation_Unit_Parser__0 mut ref mut Compilation_Unit_Parser__0__0new__1(Compilation_Unit_Parser__0 mut ref const self, Token_Stream__0 mut ref const token_stream__);
-Syntax_Node__0 const ref mut parse__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const opt_ref mut accept_token__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut expect_token__2(Compilation_Unit_Parser__0 mut ref const parser__, int32 const token_type__);
-Syntax_Node__0 const ref mut parse_type_name__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_non_optional_type__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_type__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_atom__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_call_arguments__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_expression__2(Compilation_Unit_Parser__0 mut ref const parser__, int32 const min_precedence__);
-Syntax_Node__0 const ref mut parse_expression__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_match_arm__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_if_statement__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_variable_declaration__2(Compilation_Unit_Parser__0 mut ref const parser__, BOOL const allow_initializer__);
-Syntax_Node__0 const ref mut parse_block__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_parameter_list__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_member_declaration__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut ref const parser__);
-Syntax_Node__0 const ref mut parse_compilation_unit__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Token__0 const opt_ref mut accept_token__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Token__0 const ref mut expect_token__2(Compilation_Unit_Parser__0 mut ref const parser__, int32 const kind__);
+Syntax__0 const ref mut parse_type_name__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_non_optional_type__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_type__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_atom__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_call_arguments__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_expression__2(Compilation_Unit_Parser__0 mut ref const parser__, int32 const min_precedence__);
+Syntax__0 const ref mut parse_expression__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_match_arm__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_if_statement__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_variable_declaration__2(Compilation_Unit_Parser__0 mut ref const parser__, BOOL const allow_initializer__);
+Syntax__0 const ref mut parse_block__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_parameter_list__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_member_declaration__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut ref const parser__);
+Syntax__0 const ref mut parse_compilation_unit__1(Compilation_Unit_Parser__0 mut ref const parser__);
 Token_Stream__0 mut ref mut lexically_analyze__1(Source_Text__0 const ref const source__);
-Syntax_Node__0 const ref mut parse_package__1(system__collections__List__1 const ref const sources__);
+Syntax__0 const ref mut parse_package__1(system__collections__List__1 const ref const sources__);
 Syntax__0 mut ref mut Syntax__0__0new__0(Syntax__0 mut ref const self);
+string mut syntax_to_string__1(Syntax__0 const ref const syntax__);
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__4(Syntax_Node__0 mut ref const self, int32 const type__, Source_Text__0 const ref const source__, int32 const start__, int32 const length__);
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__5(Syntax_Node__0 mut ref const self, int32 const type__, BOOL const is_missing__, Source_Text__0 const ref const source__, int32 const start__, int32 const length__);
-Syntax_Node__0 mut ref mut Syntax_Node__0__0new__2(Syntax_Node__0 mut ref const self, int32 const type__, Syntax_Node__0 const ref const child__);
+Syntax_Node__0 mut ref mut Syntax_Node__0__0new__2(Syntax_Node__0 mut ref const self, int32 const type__, Syntax__0 const ref const child__);
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__with_children__2(Syntax_Node__0 mut ref const self, int32 const type__, system__collections__List__1 const ref const children__);
-Syntax_Node__0 mut ref mut Syntax_Node__0__0new__missing__3(Syntax_Node__0 mut ref const self, int32 const type__, Source_Text__0 const ref const source__, int32 const start__);
-Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped__1(Syntax_Node__0 mut ref const self, Syntax_Node__0 const ref const skipped_node__);
-Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped_many__1(Syntax_Node__0 mut ref const self, system__collections__List__1 const ref const skipped_nodes__);
-string mut get_syntax_text__1(Syntax_Node__0 const ref const syntax__);
-Syntax_Node__0 const opt_ref mut first_child_syntax__2(Syntax_Node__0 const ref const syntax__, int32 const type__);
+Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped__1(Syntax_Node__0 mut ref const self, Token__0 const ref const token__);
+Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped_many__1(Syntax_Node__0 mut ref const self, system__collections__List__1 const ref const tokens__);
+Syntax__0 const ref mut syntax_node_as_syntax__1(Syntax_Node__0 const ref const node__);
+Text_Span__0 const ref mut get_syntax_node_text_span__1(Syntax_Node__0 const ref const node__);
+string mut get_syntax_node_text__1(Syntax_Node__0 const ref const syntax__);
+Token__0 const opt_ref mut first_child_token__2(Syntax_Node__0 const ref const syntax__, int32 const kind__);
+Syntax_Node__0 const opt_ref mut first_child_syntax_node__2(Syntax_Node__0 const ref const syntax__, int32 const kind__);
 BOOL mut has_child__2(Syntax_Node__0 const ref const syntax__, int32 const type__);
-void mut add__2(Syntax_Node__0 const ref const syntax__, Diagnostic__0 const ref const diagnostic__);
 system__collections__List__1 mut ref mut all_node_diagnostics__1(Syntax_Node__0 const ref const syntax__);
 void mut collect_syntax_diagnostics__2(Syntax_Node__0 const ref const syntax__, system__collections__List__1 mut ref const diagnostics__);
 system__collections__List__1 const ref mut members__1(Syntax_Node__0 const ref const syntax__);
 system__collections__List__1 const ref mut parameters__1(Syntax_Node__0 const ref const syntax__);
 system__collections__List__1 const ref mut statements__1(Syntax_Node__0 const ref const syntax__);
-Syntax_Node__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref const syntax__);
-Token__0 mut ref mut Token__0__0new__4(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__);
+Token__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref const syntax__);
+Token__0 mut ref mut Token__0__0new__5(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__, system__collections__List__1 const ref const diagnostics__);
+Token__0 mut ref mut Token__0__0new__missing__3(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__);
+Syntax__0 const ref mut token_as_syntax__1(Token__0 const ref const token__);
+string mut get_token_text__1(Token__0 const ref const token__);
 Token_Stream__0 mut ref mut Token_Stream__0__0new__1(Token_Stream__0 mut ref const self, Source_Text__0 const ref const source__);
-Syntax_Node__0 const opt_ref mut next_token__1(Token_Stream__0 mut ref const tokens__);
-Syntax_Node__0 const opt_ref mut end_of_file_token__1(Token_Stream__0 mut ref const tokens__);
-Syntax_Node__0 const ref mut new_identifier_or_keyword_token__2(Token_Stream__0 mut ref const tokens__, int32 const end__);
-Syntax_Node__0 const ref mut new_operator_token__2(Token_Stream__0 mut ref const tokens__, int32 const type__);
-Syntax_Node__0 const ref mut new_operator_token__3(Token_Stream__0 mut ref const tokens__, int32 const type__, int32 const length__);
-Syntax_Node__0 const ref mut new_token__3(Token_Stream__0 mut ref const tokens__, int32 const type__, int32 const end__);
+Token__0 const opt_ref mut next_token__1(Token_Stream__0 mut ref const tokens__);
+Token__0 const opt_ref mut end_of_file_token__1(Token_Stream__0 mut ref const tokens__);
+Token__0 const ref mut new_identifier_or_keyword_token__2(Token_Stream__0 mut ref const tokens__, int32 const end__);
+Token__0 const ref mut new_operator_token__2(Token_Stream__0 mut ref const tokens__, int32 const kind__);
+Token__0 const ref mut new_operator_token__3(Token_Stream__0 mut ref const tokens__, int32 const kind__, int32 const length__);
+Token__0 const ref mut new_token__3(Token_Stream__0 mut ref const tokens__, int32 const kind__, int32 const end__);
 BOOL mut is_identifier_char__1(code_point const c__);
 BOOL mut is_number_char__1(code_point const c__);
 Diagnostic__0 mut ref mut Diagnostic__0__0new__5(Diagnostic__0 mut ref const self, int32 const level__, int32 const phase__, Source_Text__0 const ref const source__, Text_Span__0 const ref const span__, string const message__);
@@ -376,6 +389,19 @@ struct Compilation_Unit__0
 	system__collections__List__1 const ref mut declarations__;
 };
 
+struct Expression__0
+{
+	Type_ID type_id;
+	Syntax__0 const ref mut syntax__;
+	BOOL mut is_missing__;
+	Source_Text__0 const ref mut source__;
+	int32 mut start__;
+	int32 mut byte_length__;
+	system__collections__List__1 const ref mut children__;
+	system__collections__List__1 const ref mut diagnostics__;
+	Type__0 const ref mut of_type__;
+};
+
 struct Package__0
 {
 	Type_ID type_id;
@@ -392,21 +418,32 @@ struct Package_Reference__0
 	Package__0 const ref mut package__;
 };
 
-struct Semantic_Node__0
+struct Program_Fragment__0
 {
 	Type_ID type_id;
-	Syntax_Node__0 const ref mut syntax__;
-	int32 mut kind__;
+	Syntax__0 const ref mut syntax__;
 	BOOL mut is_missing__;
 	Source_Text__0 const ref mut source__;
 	int32 mut start__;
 	int32 mut byte_length__;
 	system__collections__List__1 const ref mut children__;
-	system__collections__List__1 mut ref mut node_diagnostics__;
+	system__collections__List__1 const ref mut diagnostics__;
+};
+
+struct Semantic_Node__0
+{
+	Type_ID type_id;
+	Syntax__0 const ref mut syntax__;
+	BOOL mut is_missing__;
+	Source_Text__0 const ref mut source__;
+	int32 mut start__;
+	int32 mut byte_length__;
+	system__collections__List__1 const ref mut children__;
+	system__collections__List__1 const ref mut diagnostics__;
 	Type__0 const opt_ref mut of_type__;
-	Type__0 const opt_ref mut converted_type__;
 	Type__0 const opt_ref mut declares_type__;
 	Type__0 const opt_ref mut referenced_type__;
+	int32 mut kind__;
 };
 
 struct Semantic_Tree_Builder__0
@@ -419,8 +456,8 @@ struct Compilation_Unit_Parser__0
 {
 	Type_ID type_id;
 	Token_Stream__0 mut ref mut token_stream__;
-	Syntax_Node__0 const opt_ref mut token__;
-	Syntax_Node__0 const opt_ref mut compilation_unit__;
+	Token__0 const opt_ref mut token__;
+	Syntax__0 const opt_ref mut compilation_unit__;
 };
 
 struct Syntax__0
@@ -430,7 +467,7 @@ struct Syntax__0
 	Source_Text__0 const ref mut source__;
 	int32 mut start__;
 	int32 mut byte_length__;
-	system__collections__List__1 const ref mut node_diagnostics__;
+	system__collections__List__1 const ref mut diagnostics__;
 };
 
 struct Syntax_Node__0
@@ -440,7 +477,7 @@ struct Syntax_Node__0
 	Source_Text__0 const ref mut source__;
 	int32 mut start__;
 	int32 mut byte_length__;
-	system__collections__List__1 mut ref mut node_diagnostics__;
+	system__collections__List__1 mut ref mut diagnostics__;
 	int32 mut kind__;
 	system__collections__List__1 const ref mut children__;
 };
@@ -452,8 +489,9 @@ struct Token__0
 	Source_Text__0 const ref mut source__;
 	int32 mut start__;
 	int32 mut byte_length__;
-	system__collections__List__1 const ref mut node_diagnostics__;
+	system__collections__List__1 const ref mut diagnostics__;
 	int32 mut kind__;
+	system__collections__List__1 const ref mut children__;
 	string mut value__;
 };
 
@@ -555,6 +593,7 @@ struct Name_Table__0
 int32 const Success__ = ((int32){0});
 int32 const UsageError__ = ((int32){64});
 int32 const DataError__ = ((int32){65});
+int32 const SkippedTokens__ = ((int32){99999});
 int32 const IdentifierName__ = ((int32){35});
 int32 const GenericName__ = ((int32){36});
 int32 const QualifiedName__ = ((int32){37});
@@ -621,8 +660,7 @@ int32 const NamespaceDeclaration__ = ((int32){129});
 int32 const MatchStatement__ = ((int32){131});
 int32 const MatchArm__ = ((int32){134});
 int32 const MatchPattern__ = ((int32){135});
-int32 const SkippedTokens__ = ((int32){99999});
-int32 const EndOfFileToken__ = ((int32){0});
+int32 const EndOfFile__ = ((int32){0});
 int32 const LeftBrace__ = ((int32){1});
 int32 const RightBrace__ = ((int32){2});
 int32 const LeftParen__ = ((int32){3});
@@ -715,8 +753,8 @@ int32 const FunctionType__ = ((int32){5});
 
 Package__0 const ref mut compile__1(system__collections__List__1 const ref const sources__)
 {
-	Syntax_Node__0 const ref const package_syntax__ = parse_package__1(sources__);
-	Package__0 const ref const package__ = analyze_semantics__1(package_syntax__);
+	Syntax__0 const ref const package_syntax__ = parse_package__1(sources__);
+	Package__0 const ref const package__ = analyze_semantics__1(as_any__1(package_syntax__));
 	return package__;
 }
 
@@ -1245,6 +1283,13 @@ void mut collect_diagnostics__2(Compilation_Unit__0 const ref const compilation_
 	}
 }
 
+Expression__0 mut ref mut Expression__0__0new__0(Expression__0 mut ref const self) { self->type_id = Expression__0__0Type_ID; return self; }
+
+Program_Fragment__0 const ref mut expression_as_program_fragment__1(Expression__0 const ref const expression__)
+{
+	return as_any__1(expression__);
+}
+
 Package__0 mut ref mut Package__0__0new__4(Package__0 mut ref const self, Package_Name__0 const ref const name__, system__collections__List__1 const ref const references__, system__collections__List__1 const ref const compilation_units__, Symbol__0 const ref const symbol__)
 {
 	self->type_id = Package__0__0Type_ID;
@@ -1420,6 +1465,8 @@ void mut Package_contains_optional_type__0()
 	Symbol__0 const opt_ref const optional_symbol__ = get_child__3(langauge_symbol__, ((string){8,(uint8_t const*)"optional"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(optional_symbol__, none));
 }
+
+Program_Fragment__0 mut ref mut Program_Fragment__0__0new__0(Program_Fragment__0 mut ref const self) { self->type_id = Program_Fragment__0__0Type_ID; return self; }
 
 Package__0 const ref mut build_runtime_library_package__0()
 {
@@ -1613,110 +1660,148 @@ Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const pac
 	return package__;
 }
 
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const syntax__)
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 mut ref const self, Token__0 const ref const token__)
 {
 	self->type_id = Semantic_Node__0__0Type_ID;
-	assert__1(void_ptr__0op__not_equal(syntax__, none));
-	self->syntax__ = syntax__;
-	self->kind__ = syntax__->kind__;
-	self->is_missing__ = syntax__->is_missing__;
-	self->source__ = syntax__->source__;
-	self->start__ = syntax__->start__;
-	self->byte_length__ = syntax__->byte_length__;
+	assert__1(void_ptr__0op__not_equal(token__, none));
+	self->syntax__ = token_as_syntax__1(token__);
+	self->kind__ = token__->kind__;
+	self->is_missing__ = token__->is_missing__;
+	self->source__ = token__->source__;
+	self->start__ = token__->start__;
+	self->byte_length__ = token__->byte_length__;
 	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->of_type__ = none;
-	self->converted_type__ = none;
 	self->declares_type__ = none;
 	self->referenced_type__ = none;
 	return self;
 }
 
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__2(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__)
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__1(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const node__)
 {
 	self->type_id = Semantic_Node__0__0Type_ID;
-	assert__1(void_ptr__0op__not_equal(syntax__, none));
-	self->syntax__ = syntax__;
-	self->kind__ = syntax__->kind__;
-	self->is_missing__ = syntax__->is_missing__;
-	self->source__ = syntax__->source__;
-	self->start__ = syntax__->start__;
-	self->byte_length__ = syntax__->byte_length__;
-	self->children__ = children__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	assert__1(void_ptr__0op__not_equal(node__, none));
+	self->syntax__ = syntax_node_as_syntax__1(node__);
+	self->kind__ = node__->kind__;
+	self->is_missing__ = node__->is_missing__;
+	self->source__ = node__->source__;
+	self->start__ = node__->start__;
+	self->byte_length__ = node__->byte_length__;
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->of_type__ = none;
-	self->converted_type__ = none;
 	self->declares_type__ = none;
 	self->referenced_type__ = none;
 	return self;
 }
 
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__of_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const of_type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__)
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__2(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const node__, Diagnostic__0 const ref const diagnostic__)
+{
+	self->type_id = Semantic_Node__0__0Type_ID;
+	assert__1(void_ptr__0op__not_equal(node__, none));
+	self->syntax__ = syntax_node_as_syntax__1(node__);
+	self->kind__ = node__->kind__;
+	self->is_missing__ = node__->is_missing__;
+	self->source__ = node__->source__;
+	self->start__ = node__->start__;
+	self->byte_length__ = node__->byte_length__;
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	system__collections__List__1 mut ref const diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	add_item__2(diagnostics__, diagnostic__);
+	self->diagnostics__ = diagnostics__;
+	self->of_type__ = none;
+	self->declares_type__ = none;
+	self->referenced_type__ = none;
+	return self;
+}
+
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete_with_children__2(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const node__, system__collections__List__1 const ref const children__)
+{
+	self->type_id = Semantic_Node__0__0Type_ID;
+	assert__1(void_ptr__0op__not_equal(node__, none));
+	self->syntax__ = syntax_node_as_syntax__1(node__);
+	self->kind__ = node__->kind__;
+	self->is_missing__ = node__->is_missing__;
+	self->source__ = node__->source__;
+	self->start__ = node__->start__;
+	self->byte_length__ = node__->byte_length__;
+	self->children__ = children__;
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->of_type__ = none;
+	self->declares_type__ = none;
+	self->referenced_type__ = none;
+	return self;
+}
+
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__of_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const of_type__, Syntax_Node__0 const ref const node__, system__collections__List__1 const ref const children__)
 {
 	self->type_id = Semantic_Node__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(of_type__, none));
-	assert__1(void_ptr__0op__not_equal(syntax__, none));
-	self->syntax__ = syntax__;
-	self->kind__ = syntax__->kind__;
-	self->is_missing__ = syntax__->is_missing__;
-	self->source__ = syntax__->source__;
-	self->start__ = syntax__->start__;
-	self->byte_length__ = syntax__->byte_length__;
+	assert__1(void_ptr__0op__not_equal(node__, none));
+	self->syntax__ = syntax_node_as_syntax__1(node__);
+	self->kind__ = node__->kind__;
+	self->is_missing__ = node__->is_missing__;
+	self->source__ = node__->source__;
+	self->start__ = node__->start__;
+	self->byte_length__ = node__->byte_length__;
 	self->children__ = children__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->of_type__ = of_type__;
-	self->converted_type__ = of_type__;
 	self->declares_type__ = none;
 	self->referenced_type__ = none;
 	return self;
 }
 
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__declares_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__)
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__declares_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const node__, system__collections__List__1 const ref const children__)
 {
 	self->type_id = Semantic_Node__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(type__, none));
-	assert__1(void_ptr__0op__not_equal(syntax__, none));
-	self->syntax__ = syntax__;
-	self->kind__ = syntax__->kind__;
-	self->is_missing__ = syntax__->is_missing__;
-	self->source__ = syntax__->source__;
-	self->start__ = syntax__->start__;
-	self->byte_length__ = syntax__->byte_length__;
+	assert__1(void_ptr__0op__not_equal(node__, none));
+	self->syntax__ = syntax_node_as_syntax__1(node__);
+	self->kind__ = node__->kind__;
+	self->is_missing__ = node__->is_missing__;
+	self->source__ = node__->source__;
+	self->start__ = node__->start__;
+	self->byte_length__ = node__->byte_length__;
 	self->children__ = children__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->of_type__ = none;
-	self->converted_type__ = none;
 	self->declares_type__ = type__;
 	self->referenced_type__ = none;
 	return self;
 }
 
-Semantic_Node__0 mut ref mut Semantic_Node__0__0new__referencing_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__)
+Semantic_Node__0 mut ref mut Semantic_Node__0__0new__referencing_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const node__, system__collections__List__1 const ref const children__)
 {
 	self->type_id = Semantic_Node__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(type__, none));
-	assert__1(void_ptr__0op__not_equal(syntax__, none));
-	self->syntax__ = syntax__;
-	self->kind__ = syntax__->kind__;
-	self->is_missing__ = syntax__->is_missing__;
-	self->source__ = syntax__->source__;
-	self->start__ = syntax__->start__;
-	self->byte_length__ = syntax__->byte_length__;
+	assert__1(void_ptr__0op__not_equal(node__, none));
+	self->syntax__ = syntax_node_as_syntax__1(node__);
+	self->kind__ = node__->kind__;
+	self->is_missing__ = node__->is_missing__;
+	self->source__ = node__->source__;
+	self->start__ = node__->start__;
+	self->byte_length__ = node__->byte_length__;
 	self->children__ = children__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->of_type__ = none;
-	self->converted_type__ = none;
 	self->declares_type__ = none;
 	self->referenced_type__ = type__;
 	return self;
 }
 
-Text_Span__0 const ref mut get_text_span__1(Semantic_Node__0 const ref const node__)
+Program_Fragment__0 const ref mut semantic_node_as_program_fragment__1(Semantic_Node__0 const ref const node__)
+{
+	return as_any__1(node__);
+}
+
+Text_Span__0 const ref mut get_semantic_node_text_span__1(Semantic_Node__0 const ref const node__)
 {
 	return Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), node__->start__, node__->byte_length__);
 }
 
-string mut get_node_text__1(Semantic_Node__0 const ref const node__)
+string mut get_semantic_node_text__1(Semantic_Node__0 const ref const node__)
 {
 	if (cond(void_ptr__0op__equal(node__->source__, none)))
 	{
@@ -1730,11 +1815,27 @@ Semantic_Node__0 const opt_ref mut first_child__2(Semantic_Node__0 const ref con
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->children__); void_ptr__0next(&iter);)
 	{
-		Semantic_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(int32__0op__equal(child__->kind__, kind__)))
+		Program_Fragment__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			return child__;
-		}
+			case Semantic_Node__0__0Type_ID:
+			{
+				Semantic_Node__0 const ref const node__ = match_value;
+				if (cond(int32__0op__equal(node__->kind__, kind__)))
+				{
+					return node__;
+				}
+			}
+			break;
+			case Expression__0__0Type_ID:
+			{
+				Expression__0 const ref const e__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return none;
@@ -1745,11 +1846,27 @@ system__collections__List__1 const ref mut children_of_kind__2(Semantic_Node__0 
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->children__); void_ptr__0next(&iter);)
 	{
-		Semantic_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(int32__0op__equal(child__->kind__, kind__)))
+		Program_Fragment__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			add_item__2(children__, child__);
-		}
+			case Semantic_Node__0__0Type_ID:
+			{
+				Semantic_Node__0 const ref const node__ = match_value;
+				if (cond(int32__0op__equal(node__->kind__, kind__)))
+				{
+					add_item__2(children__, node__);
+				}
+			}
+			break;
+			case Expression__0__0Type_ID:
+			{
+				Expression__0 const ref const e__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return children__;
@@ -1760,11 +1877,27 @@ system__collections__List__1 const ref mut node_members__1(Semantic_Node__0 cons
 	system__collections__List__1 mut ref const members__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->children__); void_ptr__0next(&iter);)
 	{
-		Semantic_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(child__->kind__, ConstructorDeclaration__)) || bool_arg(int32__0op__equal(child__->kind__, FieldDeclaration__)))) || bool_arg(int32__0op__equal(child__->kind__, MethodDeclaration__)))))
+		Program_Fragment__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			add_item__2(members__, child__);
-		}
+			case Semantic_Node__0__0Type_ID:
+			{
+				Semantic_Node__0 const ref const node__ = match_value;
+				if (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(node__->kind__, ConstructorDeclaration__)) || bool_arg(int32__0op__equal(node__->kind__, FieldDeclaration__)))) || bool_arg(int32__0op__equal(node__->kind__, MethodDeclaration__)))))
+				{
+					add_item__2(members__, node__);
+				}
+			}
+			break;
+			case Expression__0__0Type_ID:
+			{
+				Expression__0 const ref const e__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return members__;
@@ -1775,11 +1908,27 @@ system__collections__List__1 const ref mut node_statements__1(Semantic_Node__0 c
 	system__collections__List__1 mut ref const statements__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->children__); void_ptr__0next(&iter);)
 	{
-		Semantic_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(bool_op(bool_arg(int32__0op__not_equal(child__->kind__, LeftBrace__)) && bool_arg(int32__0op__not_equal(child__->kind__, RightBrace__)))))
+		Program_Fragment__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			add_item__2(statements__, child__);
-		}
+			case Semantic_Node__0__0Type_ID:
+			{
+				Semantic_Node__0 const ref const node__ = match_value;
+				if (cond(bool_op(bool_arg(int32__0op__not_equal(node__->kind__, LeftBrace__)) && bool_arg(int32__0op__not_equal(node__->kind__, RightBrace__)))))
+				{
+					add_item__2(statements__, node__);
+				}
+			}
+			break;
+			case Expression__0__0Type_ID:
+			{
+				Expression__0 const ref const e__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return statements__;
@@ -1790,11 +1939,27 @@ system__collections__List__1 const ref mut node_parameters__1(Semantic_Node__0 c
 	system__collections__List__1 mut ref const parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->children__); void_ptr__0next(&iter);)
 	{
-		Semantic_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(bool_op(bool_arg(int32__0op__equal(child__->kind__, Parameter__)) || bool_arg(int32__0op__equal(child__->kind__, SelfParameter__)))))
+		Program_Fragment__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			add_item__2(parameters__, child__);
-		}
+			case Semantic_Node__0__0Type_ID:
+			{
+				Semantic_Node__0 const ref const node__ = match_value;
+				if (cond(bool_op(bool_arg(int32__0op__equal(node__->kind__, Parameter__)) || bool_arg(int32__0op__equal(node__->kind__, SelfParameter__)))))
+				{
+					add_item__2(parameters__, node__);
+				}
+			}
+			break;
+			case Expression__0__0Type_ID:
+			{
+				Expression__0 const ref const e__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return parameters__;
@@ -1805,13 +1970,29 @@ int32 mut node_argument_count__1(Semantic_Node__0 const ref const node__)
 	int32 mut count__ = ((int32){0});
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->children__); void_ptr__0next(&iter);)
 	{
-		Semantic_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(child__->kind__, LeftParen__)) || bool_arg(int32__0op__equal(child__->kind__, RightParen__)))) || bool_arg(int32__0op__equal(child__->kind__, Comma__)))))
+		Program_Fragment__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			continue;
-		}
+			case Semantic_Node__0__0Type_ID:
+			{
+				Semantic_Node__0 const ref const node__ = match_value;
+				if (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(node__->kind__, LeftParen__)) || bool_arg(int32__0op__equal(node__->kind__, RightParen__)))) || bool_arg(int32__0op__equal(node__->kind__, Comma__)))))
+				{
+					continue;
+				}
 
-		op__add_assign(&(count__), ((int32){1}));
+				op__add_assign(&(count__), ((int32){1}));
+			}
+			break;
+			case Expression__0__0Type_ID:
+			{
+				Expression__0 const ref const e__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return count__;
@@ -1821,11 +2002,27 @@ Semantic_Node__0 const opt_ref mut node_access_modifier__1(Semantic_Node__0 cons
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->children__); void_ptr__0next(&iter);)
 	{
-		Semantic_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(child__->kind__, PublicKeyword__)) || bool_arg(int32__0op__equal(child__->kind__, ProtectedKeyword__)))) || bool_arg(int32__0op__equal(child__->kind__, PrivateKeyword__)))) || bool_arg(int32__0op__equal(child__->kind__, InternalKeyword__)))))
+		Program_Fragment__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			return child__;
-		}
+			case Semantic_Node__0__0Type_ID:
+			{
+				Semantic_Node__0 const ref const node__ = match_value;
+				if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(node__->kind__, PublicKeyword__)) || bool_arg(int32__0op__equal(node__->kind__, ProtectedKeyword__)))) || bool_arg(int32__0op__equal(node__->kind__, PrivateKeyword__)))) || bool_arg(int32__0op__equal(node__->kind__, InternalKeyword__)))))
+				{
+					return node__;
+				}
+			}
+			break;
+			case Expression__0__0Type_ID:
+			{
+				Expression__0 const ref const e__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return none;
@@ -1835,29 +2032,40 @@ BOOL mut node_has_child__2(Semantic_Node__0 const ref const node__, int32 const 
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->children__); void_ptr__0next(&iter);)
 	{
-		Semantic_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(int32__0op__equal(child__->kind__, kind__)))
+		Program_Fragment__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			return TRUE;
-		}
+			case Semantic_Node__0__0Type_ID:
+			{
+				Semantic_Node__0 const ref const node__ = match_value;
+				if (cond(int32__0op__equal(node__->kind__, kind__)))
+				{
+					return TRUE;
+				}
+			}
+			break;
+			case Expression__0__0Type_ID:
+			{
+				Expression__0 const ref const e__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return FALSE;
 }
 
-void mut add_diagnostic__2(Semantic_Node__0 mut ref const node__, Diagnostic__0 const ref const diagnostic__)
-{
-	add_item__2(node__->node_diagnostics__, diagnostic__);
-}
-
 system__collections__List__1 const ref mut diagnostics__1(Semantic_Node__0 const ref const node__)
 {
-	return node__->node_diagnostics__;
+	return node__->diagnostics__;
 }
 
 void mut collect_node_diagnostics__2(Semantic_Node__0 const ref const node__, system__collections__List__1 mut ref const diagnostics__)
 {
-	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->node_diagnostics__); void_ptr__0next(&iter);)
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(node__->diagnostics__); void_ptr__0next(&iter);)
 	{
 		Diagnostic__0 const ref const diagnostic__ = void_ptr__0current(&iter);
 		add_item__2(diagnostics__, diagnostic__);
@@ -1913,31 +2121,31 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, FunctionDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, MethodDeclaration__)))))
 	{
-		add_item__2(children__, build_semantic_node__4(builder__, access_modifier__1(syntax__), name_table__, scope__));
-		Syntax_Node__0 const ref const function_name__ = first_child_syntax__2(syntax__, Identifier__);
-		add_item__2(children__, build_semantic_node__4(builder__, function_name__, name_table__, scope__));
-		Name_Subtable__0 mut ref const function_scope__ = find__2(scope__, get_syntax_text__1(function_name__));
-		assert__2(void_ptr__0op__not_equal(function_scope__, none), string__0op__add(((string){31,(uint8_t const*)"get_syntax_text(function_name)="}), get_syntax_text__1(function_name__)));
-		Syntax_Node__0 const ref const parameters__ = first_child_syntax__2(syntax__, ParameterList__);
+		add_item__2(children__, build_semantic_node__4(builder__, as_any__1(access_modifier__1(syntax__)), name_table__, scope__));
+		Token__0 const ref const function_name__ = first_child_token__2(syntax__, Identifier__);
+		add_item__2(children__, build_semantic_node__4(builder__, as_any__1(function_name__), name_table__, scope__));
+		Name_Subtable__0 mut ref const function_scope__ = find__2(scope__, get_token_text__1(function_name__));
+		assert__2(void_ptr__0op__not_equal(function_scope__, none), string__0op__add(((string){36,(uint8_t const*)"get_syntax_node_text(function_name)="}), get_token_text__1(function_name__)));
+		Syntax_Node__0 const ref const parameters__ = first_child_syntax_node__2(syntax__, ParameterList__);
 		add_item__2(children__, build_parameters_semantic_node__4(builder__, parameters__, name_table__, function_scope__));
 		Syntax_Node__0 const ref const return_type__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){4}));
 		add_item__2(children__, build_type_name_semantic_node__4(builder__, return_type__, name_table__, scope__));
 		Type__0 const ref const function_type__ = Type__0__0new__3(allocate(sizeof(Type__0)), FunctionType__, function_scope__->name__, FALSE);
 		bind_type__2(function_scope__, function_type__);
-		Syntax_Node__0 const ref const body__ = first_child_syntax__2(syntax__, Block__);
+		Syntax_Node__0 const ref const body__ = first_child_syntax_node__2(syntax__, Block__);
 		if (cond(void_ptr__0op__not_equal(body__, none)))
 		{
 			add_item__2(children__, build_semantic_node__4(builder__, body__, name_table__, function_scope__));
 		}
 
-		return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+		return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 	}
 	else if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, ClassDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, StructDeclaration__)))))
 	{
-		Syntax_Node__0 const ref const type_name__ = first_child_syntax__2(syntax__, Identifier__);
-		add_item__2(children__, build_semantic_node__4(builder__, type_name__, name_table__, scope__));
-		Name_Subtable__0 const ref const type_scope__ = find__2(scope__, get_syntax_text__1(type_name__));
-		assert__2(void_ptr__0op__not_equal(type_scope__, none), string__0op__add(((string){27,(uint8_t const*)"get_syntax_text(type_name)="}), get_syntax_text__1(type_name__)));
+		Token__0 const ref const type_name__ = first_child_token__2(syntax__, Identifier__);
+		add_item__2(children__, build_semantic_node__4(builder__, as_any__1(type_name__), name_table__, scope__));
+		Name_Subtable__0 const ref const type_scope__ = find__2(scope__, get_token_text__1(type_name__));
+		assert__2(void_ptr__0op__not_equal(type_scope__, none), string__0op__add(((string){32,(uint8_t const*)"get_syntax_node_text(type_name)="}), get_token_text__1(type_name__)));
 		for (void_ptr__0iter mut iter = void_ptr__0iterate(members__1(syntax__)); void_ptr__0next(&iter);)
 		{
 			Syntax_Node__0 const ref const member__ = void_ptr__0current(&iter);
@@ -1948,45 +2156,46 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ConstructorDeclaration__)))
 	{
-		add_item__2(children__, build_semantic_node__4(builder__, access_modifier__1(syntax__), name_table__, scope__));
+		add_item__2(children__, build_semantic_node__4(builder__, as_any__1(access_modifier__1(syntax__)), name_table__, scope__));
 		string mut full_name__ = ((string){3,(uint8_t const*)"new"});
-		Syntax_Node__0 const opt_ref const constructor_name__ = first_child_syntax__2(syntax__, Identifier__);
+		Token__0 const opt_ref const constructor_name__ = first_child_token__2(syntax__, Identifier__);
 		if (cond(void_ptr__0op__not_equal(constructor_name__, none)))
 		{
-			full_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_syntax_text__1(constructor_name__));
+			full_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_token_text__1(constructor_name__));
 			add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), constructor_name__));
 		}
 
 		Name_Subtable__0 const ref const constructor_scope__ = find_special__2(scope__, full_name__);
 		assert__2(void_ptr__0op__not_equal(constructor_scope__, none), string__0op__add(((string){10,(uint8_t const*)"full_name="}), full_name__));
-		Syntax_Node__0 const ref const parameters__ = first_child_syntax__2(syntax__, ParameterList__);
+		Syntax_Node__0 const ref const parameters__ = first_child_syntax_node__2(syntax__, ParameterList__);
 		add_item__2(children__, build_parameters_semantic_node__4(builder__, parameters__, name_table__, constructor_scope__));
-		Syntax_Node__0 const ref const body__ = first_child_syntax__2(syntax__, Block__);
+		Syntax_Node__0 const ref const body__ = first_child_syntax_node__2(syntax__, Block__);
 		if (cond(void_ptr__0op__not_equal(body__, none)))
 		{
 			add_item__2(children__, build_semantic_node__4(builder__, body__, name_table__, constructor_scope__));
 		}
 
-		return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+		return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IdentifierName__)))
 	{
-		Name_Subtable__0 const ref const name_scope__ = lookup__2(scope__, get_syntax_text__1(syntax__));
+		Name_Subtable__0 const ref const name_scope__ = lookup__2(scope__, get_syntax_node_text__1(syntax__));
 		if (cond(void_ptr__0op__equal(name_scope__, none)))
 		{
-			Semantic_Node__0 mut ref const node__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), syntax__);
 			if (cond(BOOL__0op__not(syntax__->is_missing__)))
 			{
-				add_resolution_error__1(node__);
+				return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, resolution_error__1(syntax__));
 			}
-
-			return node__;
+			else
+			{
+				return Semantic_Node__0__0new__concrete__1(allocate(sizeof(Semantic_Node__0)), syntax__);
+			}
 		}
 		else
 		{
 			if (cond(never__0op__equal(name_scope__->type__, none)))
 			{
-				return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+				return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 			}
 			else
 			{
@@ -1998,26 +2207,26 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	{
 		Semantic_Node__0 const ref const lhs__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), name_table__, scope__);
 		add_item__2(children__, lhs__);
-		Semantic_Node__0 mut ref mut rhs__;
+		Semantic_Node__0 const ref mut rhs__;
 		Syntax_Node__0 const ref const member_name__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){2}));
 		if (cond(void_ptr__0op__equal(lhs__->of_type__, none)))
 		{
-			rhs__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), member_name__);
+			rhs__ = Semantic_Node__0__0new__concrete__1(allocate(sizeof(Semantic_Node__0)), member_name__);
 		}
 		else
 		{
 			Name_Subtable__0 const ref const access_scope__ = get_name__2(name_table__, lhs__->of_type__->name__);
-			Name_Subtable__0 const ref const member_scope__ = find__2(access_scope__, get_syntax_text__1(member_name__));
+			Name_Subtable__0 const ref const member_scope__ = find__2(access_scope__, get_syntax_node_text__1(member_name__));
 			if (cond(void_ptr__0op__equal(member_scope__, none)))
 			{
-				rhs__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), member_name__);
+				rhs__ = Semantic_Node__0__0new__concrete__1(allocate(sizeof(Semantic_Node__0)), member_name__);
 			}
 			else
 			{
 				system__collections__List__1 const ref const no_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 				if (cond(never__0op__equal(member_scope__->type__, none)))
 				{
-					rhs__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), member_name__);
+					rhs__ = Semantic_Node__0__0new__concrete__1(allocate(sizeof(Semantic_Node__0)), member_name__);
 				}
 				else
 				{
@@ -2029,7 +2238,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		add_item__2(children__, rhs__);
 		if (cond(void_ptr__0op__equal(rhs__->of_type__, none)))
 		{
-			return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+			return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 		}
 		else
 		{
@@ -2039,26 +2248,26 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	else if (cond(int32__0op__equal(syntax__->kind__, NewExpression__)))
 	{
 		add_item__2(children__, build_constructor_name_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), name_table__, scope__));
-		add_item__2(children__, build_semantic_node__4(builder__, first_child_syntax__2(syntax__, ArgumentList__), name_table__, scope__));
-		return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+		add_item__2(children__, build_semantic_node__4(builder__, first_child_syntax_node__2(syntax__, ArgumentList__), name_table__, scope__));
+		return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, LocalDeclarationStatement__)))
 	{
-		Syntax_Node__0 const ref const variable_declaration_syntax__ = first_child_syntax__2(syntax__, VariableDeclaration__);
+		Syntax_Node__0 const ref const variable_declaration_syntax__ = first_child_syntax_node__2(syntax__, VariableDeclaration__);
 		add_item__2(children__, build_semantic_node__4(builder__, variable_declaration_syntax__, name_table__, scope__));
-		return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+		return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, VariableDeclaration__)))
 	{
-		Syntax_Node__0 const ref const binding_syntax__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
+		Token__0 const ref const binding_syntax__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), binding_syntax__));
-		Syntax_Node__0 const ref const identifier__ = first_child_syntax__2(syntax__, Identifier__);
+		Token__0 const ref const identifier__ = first_child_token__2(syntax__, Identifier__);
 		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), identifier__));
 		Syntax_Node__0 const ref const type_syntax__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){3}));
 		Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, type_syntax__, name_table__, scope__);
-		assert__2(void_ptr__0op__not_equal(type_node__->referenced_type__, none), get_node_text__1(type_node__));
-		Name_Subtable__0 mut ref const variable_scope__ = lookup__2(scope__, get_syntax_text__1(identifier__));
-		assert__2(void_ptr__0op__not_equal(variable_scope__, none), get_syntax_text__1(syntax__));
+		assert__2(void_ptr__0op__not_equal(type_node__->referenced_type__, none), get_semantic_node_text__1(type_node__));
+		Name_Subtable__0 mut ref const variable_scope__ = lookup__2(scope__, get_token_text__1(identifier__));
+		assert__2(void_ptr__0op__not_equal(variable_scope__, none), get_syntax_node_text__1(syntax__));
 		bind_type__2(variable_scope__, type_node__->referenced_type__);
 		bind_type__2(as_mut__1(get_name__2(name_table__, variable_scope__->name__)), type_node__->referenced_type__);
 		add_item__2(children__, type_node__);
@@ -2068,18 +2277,18 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 			add_item__2(children__, build_semantic_node__4(builder__, initalizer__, name_table__, scope__));
 		}
 
-		return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+		return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, MatchPattern__)))
 	{
-		Syntax_Node__0 const ref const identifier__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
+		Token__0 const ref const identifier__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), identifier__));
-		Syntax_Node__0 const ref const colon__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
+		Token__0 const ref const colon__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
 		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), colon__));
 		Syntax_Node__0 const ref const type_syntax__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){2}));
 		Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, type_syntax__, name_table__, scope__);
 		add_item__2(children__, type_node__);
-		return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+		return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 	}
 	else if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, TrueLiteralExpression__)) || bool_arg(int32__0op__equal(syntax__->kind__, FalseLiteralExpression__)))))
 	{
@@ -2104,7 +2313,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, SelfExpression__)))
 	{
-		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), first_child_syntax__2(syntax__, SelfKeyword__)));
+		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), first_child_token__2(syntax__, SelfKeyword__)));
 		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"self"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NegateExpression__)))
@@ -2139,7 +2348,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	}
 	else if (cond(int32__0op__equal(syntax__->children__->count__, ((int32){0}))))
 	{
-		return Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), syntax__);
+		return Semantic_Node__0__0new__concrete__1(allocate(sizeof(Semantic_Node__0)), syntax__);
 	}
 	else
 	{
@@ -2149,7 +2358,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 			add_item__2(children__, build_semantic_node__4(builder__, child_syntax__, name_table__, scope__));
 		}
 
-		return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+		return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 	}
 }
 
@@ -2163,20 +2372,20 @@ Semantic_Node__0 mut ref mut build_parameters_semantic_node__4(Semantic_Tree_Bui
 		system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 		if (cond(int32__0op__equal(parameter__->kind__, Parameter__)))
 		{
-			Syntax_Node__0 const opt_ref const var_syntax__ = first_child_syntax__2(parameter__, VarKeyword__);
+			Token__0 const opt_ref const var_syntax__ = first_child_token__2(parameter__, VarKeyword__);
 			if (cond(void_ptr__0op__not_equal(var_syntax__, none)))
 			{
 				add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), var_syntax__));
 			}
 
-			Syntax_Node__0 const ref const identifier__ = first_child_syntax__2(parameter__, Identifier__);
+			Token__0 const ref const identifier__ = first_child_token__2(parameter__, Identifier__);
 			add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), identifier__));
 			Syntax_Node__0 const ref const type_syntax__ = system__collections__List__1__0op__element(parameter__->children__, int32__0op__sub(parameter__->children__->count__, ((int32){1})));
 			Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, type_syntax__, name_table__, scope__);
-			assert__2(void_ptr__0op__not_equal(type_node__->referenced_type__, none), get_syntax_text__1(parameter__));
+			assert__2(void_ptr__0op__not_equal(type_node__->referenced_type__, none), get_syntax_node_text__1(parameter__));
 			add_item__2(children__, type_node__);
-			Name_Subtable__0 mut ref const parameter_scope__ = lookup__2(scope__, get_syntax_text__1(identifier__));
-			assert__2(void_ptr__0op__not_equal(parameter_scope__, none), get_syntax_text__1(identifier__));
+			Name_Subtable__0 mut ref const parameter_scope__ = lookup__2(scope__, get_token_text__1(identifier__));
+			assert__2(void_ptr__0op__not_equal(parameter_scope__, none), get_token_text__1(identifier__));
 			bind_type__2(parameter_scope__, type_node__->referenced_type__);
 			add_item__2(parameter_nodes__, Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), type_node__->referenced_type__, parameter__, children__));
 		}
@@ -2185,10 +2394,10 @@ Semantic_Node__0 mut ref mut build_parameters_semantic_node__4(Semantic_Tree_Bui
 			for (void_ptr__0iter mut iter = void_ptr__0iterate(parameter__->children__); void_ptr__0next(&iter);)
 			{
 				Syntax_Node__0 const ref const child_syntax__ = void_ptr__0current(&iter);
-				add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), child_syntax__));
+				add_item__2(children__, Semantic_Node__0__0new__concrete__1(allocate(sizeof(Semantic_Node__0)), child_syntax__));
 			}
 
-			add_item__2(parameter_nodes__, Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), parameter__, children__));
+			add_item__2(parameter_nodes__, Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), parameter__, children__));
 		}
 		else
 		{
@@ -2196,7 +2405,7 @@ Semantic_Node__0 mut ref mut build_parameters_semantic_node__4(Semantic_Tree_Bui
 		}
 	}
 
-	return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), parameters_syntax__, parameter_nodes__);
+	return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), parameters_syntax__, parameter_nodes__);
 }
 
 Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__)
@@ -2204,7 +2413,7 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(int32__0op__equal(syntax__->kind__, PredefinedType__)))
 	{
-		string const primitive_name__ = get_syntax_text__1(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})));
+		string const primitive_name__ = get_syntax_node_text__1(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})));
 		Name_Subtable__0 const opt_ref const primitive_entry__ = lookup_special__2(scope__, primitive_name__);
 		assert__2(void_ptr__0op__not_equal(primitive_entry__, none), string__0op__add(string__0op__add(((string){24,(uint8_t const*)"No entry for primitive `"}), primitive_name__), ((string){1,(uint8_t const*)"`"})));
 		return Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), primitive_entry__->type__, syntax__, children__);
@@ -2213,16 +2422,14 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	{
 		if (cond(syntax__->is_missing__))
 		{
-			return Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), syntax__);
+			return Semantic_Node__0__0new__concrete__1(allocate(sizeof(Semantic_Node__0)), syntax__);
 		}
 
-		string const name__ = get_syntax_text__1(syntax__);
+		string const name__ = get_syntax_node_text__1(syntax__);
 		Name_Subtable__0 const opt_ref const entry__ = lookup__2(scope__, name__);
 		if (cond(void_ptr__0op__equal(entry__, none)))
 		{
-			Semantic_Node__0 mut ref const node__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), syntax__);
-			add_resolution_error__1(node__);
-			return node__;
+			return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, resolution_error__1(syntax__));
 		}
 		else
 		{
@@ -2232,7 +2439,7 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	else if (cond(int32__0op__equal(syntax__->kind__, QualifiedName__)))
 	{
 		Syntax_Node__0 const ref const qualifier_syntax__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
-		Semantic_Node__0 mut ref const qualifier__ = build_type_name_semantic_node__4(builder__, qualifier_syntax__, name_table__, scope__);
+		Semantic_Node__0 const ref const qualifier__ = build_type_name_semantic_node__4(builder__, qualifier_syntax__, name_table__, scope__);
 		add_item__2(children__, qualifier__);
 		Syntax_Node__0 const ref const qualified_syntax__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){2}));
 		if (cond(int32__0op__equal(qualified_syntax__->kind__, IdentifierName__)))
@@ -2240,24 +2447,21 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 			Syntax_Node__0 const ref const name_syntax__ = qualified_syntax__;
 			if (cond(void_ptr__0op__equal(qualifier__->referenced_type__, none)))
 			{
-				add_could_not_determine_type_error__1(qualifier__);
-				Semantic_Node__0 mut ref const name_node__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), name_syntax__);
-				add_resolution_error__2(name_node__, qualifier__);
+				Semantic_Node__0 const ref const name_node__ = Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), name_syntax__, resolution_error__2(name_syntax__, qualifier__));
 				add_item__2(children__, name_node__);
-				return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+				return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 			}
 			else
 			{
 				Type__0 const ref const containing_type__ = qualifier__->referenced_type__;
 				Name_Subtable__0 const ref const containing_scope__ = get_name__2(name_table__, containing_type__->name__);
 				assert__2(void_ptr__0op__not_equal(containing_scope__, none), full_name__1(containing_type__->name__));
-				Name_Subtable__0 const ref const referenced_scope__ = find__2(containing_scope__, get_syntax_text__1(name_syntax__));
+				Name_Subtable__0 const ref const referenced_scope__ = find__2(containing_scope__, get_syntax_node_text__1(name_syntax__));
 				if (cond(void_ptr__0op__equal(referenced_scope__, none)))
 				{
-					Semantic_Node__0 mut ref const name_node__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), name_syntax__);
-					add_resolution_error__2(name_node__, qualifier__);
+					Semantic_Node__0 const ref const name_node__ = Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), name_syntax__, resolution_error__2(name_syntax__, qualifier__));
 					add_item__2(children__, name_node__);
-					return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+					return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 				}
 
 				Type__0 const ref const referenced_type__ = referenced_scope__->type__;
@@ -2268,34 +2472,31 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 		}
 		else if (cond(int32__0op__equal(qualified_syntax__->kind__, GenericName__)))
 		{
-			Syntax_Node__0 const ref const name_syntax__ = first_child_syntax__2(qualified_syntax__, IdentifierName__);
+			Syntax_Node__0 const ref const name_syntax__ = first_child_syntax_node__2(qualified_syntax__, IdentifierName__);
 			system__collections__List__1 mut ref const generic_name_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 			if (cond(void_ptr__0op__equal(qualifier__->referenced_type__, none)))
 			{
-				add_could_not_determine_type_error__1(qualifier__);
-				Semantic_Node__0 mut ref const name_node__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), name_syntax__);
-				add_resolution_error__2(name_node__, qualifier__);
+				Semantic_Node__0 const ref const name_node__ = Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), name_syntax__, resolution_error__2(name_syntax__, qualifier__));
 				add_item__2(generic_name_children__, name_node__);
 				build_type_arguments_semantic_node__5(builder__, qualified_syntax__, name_table__, scope__, generic_name_children__);
-				Semantic_Node__0 mut ref const qualified_name__ = Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), qualified_syntax__, generic_name_children__);
+				Semantic_Node__0 mut ref const qualified_name__ = Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), qualified_syntax__, generic_name_children__);
 				add_item__2(children__, qualified_name__);
-				return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+				return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 			}
 			else
 			{
 				Type__0 const ref const containing_type__ = qualifier__->referenced_type__;
 				Name_Subtable__0 const ref const containing_scope__ = get_name__2(name_table__, containing_type__->name__);
 				assert__2(void_ptr__0op__not_equal(containing_scope__, none), full_name__1(containing_type__->name__));
-				Name_Subtable__0 const ref const referenced_scope__ = find__2(containing_scope__, get_syntax_text__1(name_syntax__));
+				Name_Subtable__0 const ref const referenced_scope__ = find__2(containing_scope__, get_syntax_node_text__1(name_syntax__));
 				if (cond(void_ptr__0op__equal(referenced_scope__, none)))
 				{
-					Semantic_Node__0 mut ref const name_node__ = Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), name_syntax__);
-					add_resolution_error__2(name_node__, qualifier__);
+					Semantic_Node__0 const ref const name_node__ = Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), name_syntax__, resolution_error__2(name_syntax__, qualifier__));
 					add_item__2(generic_name_children__, name_node__);
 					build_type_arguments_semantic_node__5(builder__, qualified_syntax__, name_table__, scope__, generic_name_children__);
-					Semantic_Node__0 mut ref const qualified_name__ = Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), qualified_syntax__, generic_name_children__);
+					Semantic_Node__0 mut ref const qualified_name__ = Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), qualified_syntax__, generic_name_children__);
 					add_item__2(children__, qualified_name__);
-					return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+					return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 				}
 
 				Type__0 const ref const referenced_type_name__ = referenced_scope__->type__;
@@ -2317,12 +2518,11 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, MutableType__)))
 	{
-		Semantic_Node__0 mut ref const inner_type__ = build_type_name_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), name_table__, scope__);
+		Semantic_Node__0 const ref const inner_type__ = build_type_name_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), name_table__, scope__);
 		add_item__2(children__, inner_type__);
 		if (cond(void_ptr__0op__equal(inner_type__->referenced_type__, none)))
 		{
-			add_could_not_determine_type_error__1(inner_type__);
-			return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+			return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 		}
 
 		Type__0 const ref const type__ = make_mutable_type__1(inner_type__->referenced_type__);
@@ -2330,12 +2530,11 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ImmutableType__)))
 	{
-		Semantic_Node__0 mut ref const inner_type__ = build_type_name_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), name_table__, scope__);
+		Semantic_Node__0 const ref const inner_type__ = build_type_name_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), name_table__, scope__);
 		add_item__2(children__, inner_type__);
 		if (cond(void_ptr__0op__equal(inner_type__->referenced_type__, none)))
 		{
-			add_could_not_determine_type_error__1(inner_type__);
-			return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+			return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 		}
 
 		Type__0 const ref const type__ = make_immutable_type__1(inner_type__->referenced_type__);
@@ -2343,12 +2542,11 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, OptionalType__)))
 	{
-		Semantic_Node__0 mut ref const inner_type__ = build_type_name_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), name_table__, scope__);
+		Semantic_Node__0 const ref const inner_type__ = build_type_name_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), name_table__, scope__);
 		add_item__2(children__, inner_type__);
 		if (cond(void_ptr__0op__equal(inner_type__->referenced_type__, none)))
 		{
-			add_could_not_determine_type_error__1(inner_type__);
-			return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+			return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 		}
 
 		Type__0 const ref const type__ = build_optional_type__3(builder__, name_table__, inner_type__->referenced_type__);
@@ -2405,45 +2603,40 @@ system__collections__List__1 const ref mut build_type_arguments_semantic_node__5
 
 Semantic_Node__0 const ref mut build_constructor_name_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__)
 {
-	if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, QualifiedName__)) && bool_arg(int32__0op__equal(as_syntax__1(system__collections__List__1__0op__element(syntax__->children__, ((int32){2})))->kind__, IdentifierName__)))))
+	if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, QualifiedName__)) && bool_arg(int32__0op__equal(as_syntax_node__1(system__collections__List__1__0op__element(syntax__->children__, ((int32){2})))->kind__, IdentifierName__)))))
 	{
 		system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 		Syntax_Node__0 const ref const qualifier__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, qualifier__, name_table__, scope__);
 		add_item__2(children__, type_node__);
-		Syntax_Node__0 const ref const name__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){2}));
-		string const constructor_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_syntax_text__1(name__));
+		Token__0 const ref const name__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){2}));
+		string const constructor_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_token_text__1(name__));
 		Type__0 const ref const referenced_type__ = type_node__->referenced_type__;
-		assert__2(void_ptr__0op__not_equal(referenced_type__, none), string__0op__add(string__0op__add(((string){24,(uint8_t const*)"no referenced type for `"}), get_node_text__1(type_node__)), ((string){1,(uint8_t const*)"`"})));
+		assert__2(void_ptr__0op__not_equal(referenced_type__, none), string__0op__add(string__0op__add(((string){24,(uint8_t const*)"no referenced type for `"}), get_semantic_node_text__1(type_node__)), ((string){1,(uint8_t const*)"`"})));
 		Name_Subtable__0 const opt_ref const constructor_scope__ = lookup_special__2(get_name__2(name_table__, referenced_type__->name__), constructor_name__);
 		if (cond(void_ptr__0op__not_equal(constructor_scope__, none)))
 		{
 			add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), name__));
-			return Semantic_Node__0__0new__concrete__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
+			return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 		}
 	}
 
 	return build_type_name_semantic_node__4(builder__, syntax__, name_table__, scope__);
 }
 
-Syntax_Node__0 const ref mut as_syntax__1(Syntax_Node__0 const ref const syntax__)
+Syntax_Node__0 const ref mut as_syntax_node__1(Syntax_Node__0 const ref const syntax__)
 {
 	return syntax__;
 }
 
-void mut add_resolution_error__1(Semantic_Node__0 mut ref const node__)
+Diagnostic__0 const ref mut resolution_error__1(Syntax_Node__0 const ref const node__)
 {
-	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__0op__add(string__0op__add(((string){24,(uint8_t const*)"Could not resolve name `"}), get_node_text__1(node__)), ((string){1,(uint8_t const*)"`"}))));
+	return Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_syntax_node_text_span__1(node__), string__0op__add(string__0op__add(((string){24,(uint8_t const*)"Could not resolve name `"}), get_syntax_node_text__1(node__)), ((string){1,(uint8_t const*)"`"})));
 }
 
-void mut add_resolution_error__2(Semantic_Node__0 mut ref const node__, Semantic_Node__0 const ref const qualifier__)
+Diagnostic__0 const ref mut resolution_error__2(Syntax_Node__0 const ref const node__, Semantic_Node__0 const ref const qualifier__)
 {
-	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){24,(uint8_t const*)"Could not resolve name `"}), get_node_text__1(node__)), ((string){21,(uint8_t const*)"` because qualifier `"})), get_node_text__1(qualifier__)), ((string){24,(uint8_t const*)"` could not be resolved."}))));
-}
-
-void mut add_could_not_determine_type_error__1(Semantic_Node__0 mut ref const node__)
-{
-	add_diagnostic__2(node__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_text_span__1(node__), string__0op__add(string__0op__add(((string){30,(uint8_t const*)"Could not determine type for `"}), get_node_text__1(node__)), ((string){1,(uint8_t const*)"`"}))));
+	return Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_syntax_node_text_span__1(node__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){24,(uint8_t const*)"Could not resolve name `"}), get_syntax_node_text__1(node__)), ((string){21,(uint8_t const*)"` because qualifier `"})), get_semantic_node_text__1(qualifier__)), ((string){24,(uint8_t const*)"` could not be resolved."})));
 }
 
 Symbol__0 const ref mut build_symbols__2(Package_Name__0 const ref const package_name__, system__collections__List__1 const ref const compilation_units__)
@@ -2460,7 +2653,7 @@ Compilation_Unit_Parser__0 mut ref mut Compilation_Unit_Parser__0__0new__1(Compi
 	return self;
 }
 
-Syntax_Node__0 const ref mut parse__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	if (cond(void_ptr__0op__equal(parser__->compilation_unit__, none)))
 	{
@@ -2471,49 +2664,51 @@ Syntax_Node__0 const ref mut parse__1(Compilation_Unit_Parser__0 mut ref const p
 	return parser__->compilation_unit__;
 }
 
-Syntax_Node__0 const opt_ref mut accept_token__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Token__0 const opt_ref mut accept_token__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
-	Syntax_Node__0 const opt_ref const node__ = parser__->token__;
+	Token__0 const opt_ref const token__ = parser__->token__;
 	parser__->token__ = next_token__1(parser__->token_stream__);
-	return node__;
+	return token__;
 }
 
-Syntax_Node__0 const ref mut expect_token__2(Compilation_Unit_Parser__0 mut ref const parser__, int32 const token_type__)
+Token__0 const ref mut expect_token__2(Compilation_Unit_Parser__0 mut ref const parser__, int32 const kind__)
 {
 	if (cond(void_ptr__0op__equal(parser__->token__, none)))
 	{
-		return Syntax_Node__0__0new__missing__3(allocate(sizeof(Syntax_Node__0)), token_type__, parser__->token_stream__->source__, source_byte_length__1(parser__->token_stream__->source__));
-	}
-
-	if (cond(bool_op(bool_arg(void_ptr__0op__equal(parser__->token__, none)) || bool_arg(int32__0op__not_equal(parser__->token__->kind__, token_type__)))))
-	{
-		return Syntax_Node__0__0new__missing__3(allocate(sizeof(Syntax_Node__0)), token_type__, parser__->token_stream__->source__, parser__->token__->start__);
-	}
-
-	Syntax_Node__0 const opt_ref const node__ = parser__->token__;
-	parser__->token__ = next_token__1(parser__->token_stream__);
-	return node__;
-}
-
-Syntax_Node__0 const ref mut parse_type_name__1(Compilation_Unit_Parser__0 mut ref const parser__)
-{
-	if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, CodePoint__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, String__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Int__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Bool__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Void__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, UnsignedInt__)))))
-	{
-		return Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), PredefinedType__, accept_token__1(parser__));
+		return Token__0__0new__missing__3(allocate(sizeof(Token__0)), kind__, parser__->token_stream__->source__, source_byte_length__1(parser__->token_stream__->source__));
 	}
 	else
 	{
-		Syntax_Node__0 const ref mut type__ = Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, expect_token__2(parser__, Identifier__));
+		if (cond(int32__0op__not_equal(parser__->token__->kind__, kind__)))
+		{
+			return Token__0__0new__missing__3(allocate(sizeof(Token__0)), kind__, parser__->token_stream__->source__, parser__->token__->start__);
+		}
+
+		Token__0 const ref const token__ = parser__->token__;
+		parser__->token__ = next_token__1(parser__->token_stream__);
+		return token__;
+	}
+}
+
+Syntax__0 const ref mut parse_type_name__1(Compilation_Unit_Parser__0 mut ref const parser__)
+{
+	if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, CodePoint__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, String__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Int__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Bool__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Void__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, UnsignedInt__)))))
+	{
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), PredefinedType__, token_as_syntax__1(accept_token__1(parser__))));
+	}
+	else
+	{
+		Syntax_Node__0 const ref mut type__ = Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, token_as_syntax__1(expect_token__2(parser__, Identifier__)));
 		while (cond(int32__0op__equal(parser__->token__->kind__, Dot__)))
 		{
 			system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 			add_item__2(children__, type__);
 			add_item__2(children__, expect_token__2(parser__, Dot__));
-			Syntax_Node__0 const ref const identifier__ = expect_token__2(parser__, Identifier__);
+			Token__0 const ref const identifier__ = expect_token__2(parser__, Identifier__);
 			if (cond(int32__0op__equal(parser__->token__->kind__, LessThan__)))
 			{
 				system__collections__List__1 mut ref const generic_name_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-				add_item__2(generic_name_children__, Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, identifier__));
+				add_item__2(generic_name_children__, Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, token_as_syntax__1(identifier__)));
 				add_item__2(generic_name_children__, expect_token__2(parser__, LessThan__));
 				add_item__2(generic_name_children__, parse_type__1(parser__));
 				add_item__2(generic_name_children__, expect_token__2(parser__, GreaterThan__));
@@ -2521,47 +2716,47 @@ Syntax_Node__0 const ref mut parse_type_name__1(Compilation_Unit_Parser__0 mut r
 			}
 			else
 			{
-				add_item__2(children__, Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, identifier__));
+				add_item__2(children__, Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, token_as_syntax__1(identifier__)));
 			}
 
 			type__ = Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), QualifiedName__, children__);
 		}
 
-		return type__;
+		return syntax_node_as_syntax__1(type__);
 	}
 }
 
-Syntax_Node__0 const ref mut parse_non_optional_type__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_non_optional_type__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(int32__0op__equal(parser__->token__->kind__, MutableKeyword__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, MutableKeyword__));
 		add_item__2(children__, parse_type_name__1(parser__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MutableType__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MutableType__, children__));
 	}
 	else
 	{
 		add_item__2(children__, parse_type_name__1(parser__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ImmutableType__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ImmutableType__, children__));
 	}
 }
 
-Syntax_Node__0 const ref mut parse_type__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_type__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
-	Syntax_Node__0 const ref mut type__ = parse_non_optional_type__1(parser__);
+	Syntax__0 const ref mut type__ = parse_non_optional_type__1(parser__);
 	while (cond(int32__0op__equal(parser__->token__->kind__, Question__)))
 	{
 		system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 		add_item__2(children__, type__);
 		add_item__2(children__, expect_token__2(parser__, Question__));
-		type__ = Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), ImmutableType__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), OptionalType__, children__));
+		type__ = syntax_node_as_syntax__1(Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), ImmutableType__, syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), OptionalType__, children__))));
 	}
 
 	return type__;
 }
 
-Syntax_Node__0 const ref mut parse_atom__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_atom__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(int32__0op__equal(parser__->token__->kind__, NewKeyword__)))
@@ -2569,14 +2764,14 @@ Syntax_Node__0 const ref mut parse_atom__1(Compilation_Unit_Parser__0 mut ref co
 		add_item__2(children__, expect_token__2(parser__, NewKeyword__));
 		add_item__2(children__, parse_type_name__1(parser__));
 		add_item__2(children__, parse_call_arguments__1(parser__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NewExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NewExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, NotOperator__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, NotOperator__));
 		add_item__2(children__, parse_expression__2(parser__, ((int32){8})));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NotExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NotExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, LeftParen__)))
@@ -2584,68 +2779,68 @@ Syntax_Node__0 const ref mut parse_atom__1(Compilation_Unit_Parser__0 mut ref co
 		add_item__2(children__, expect_token__2(parser__, LeftParen__));
 		add_item__2(children__, parse_expression__1(parser__));
 		add_item__2(children__, expect_token__2(parser__, RightParen__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ParenthesizedExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ParenthesizedExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, Minus__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, Minus__));
 		add_item__2(children__, parse_expression__2(parser__, ((int32){8})));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NegateExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NegateExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, NoneKeyword__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, NoneKeyword__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NoneLiteralExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NoneLiteralExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, SelfKeyword__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, SelfKeyword__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), SelfExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), SelfExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, TrueKeyword__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, TrueKeyword__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), TrueLiteralExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), TrueLiteralExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, FalseKeyword__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, FalseKeyword__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), FalseLiteralExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), FalseLiteralExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, Number__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, Number__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NumericLiteralExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), NumericLiteralExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, Identifier__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, Identifier__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, StringLiteral__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, StringLiteral__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), StringLiteralExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), StringLiteralExpression__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, CodePointLiteral__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, CodePointLiteral__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), CodePointLiteralExpression__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), CodePointLiteralExpression__, children__));
 	}
 
-	return Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, expect_token__2(parser__, Identifier__));
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), IdentifierName__, token_as_syntax__1(expect_token__2(parser__, Identifier__))));
 }
 
-Syntax_Node__0 const ref mut parse_call_arguments__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_call_arguments__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(children__, expect_token__2(parser__, LeftParen__));
@@ -2666,12 +2861,12 @@ Syntax_Node__0 const ref mut parse_call_arguments__1(Compilation_Unit_Parser__0 
 	}
 
 	add_item__2(children__, expect_token__2(parser__, RightParen__));
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ArgumentList__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ArgumentList__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_expression__2(Compilation_Unit_Parser__0 mut ref const parser__, int32 const min_precedence__)
+Syntax__0 const ref mut parse_expression__2(Compilation_Unit_Parser__0 mut ref const parser__, int32 const min_precedence__)
 {
-	Syntax_Node__0 const ref mut expression__ = parse_atom__1(parser__);
+	Syntax__0 const ref mut expression__ = parse_atom__1(parser__);
 	for (;;)
 	{
 		system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -2795,21 +2990,21 @@ Syntax_Node__0 const ref mut parse_expression__2(Compilation_Unit_Parser__0 mut 
 			}
 
 			add_item__2(children__, parse_expression__2(parser__, precedence__));
-			expression__ = Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), expression_type__, children__);
+			expression__ = syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), expression_type__, children__));
 		}
 		else
 		{
-			expression__ = Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), expression_type__, children__);
+			expression__ = syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), expression_type__, children__));
 		}
 	}
 }
 
-Syntax_Node__0 const ref mut parse_expression__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_expression__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	return parse_expression__2(parser__, ((int32){1}));
 }
 
-Syntax_Node__0 const ref mut parse_match_arm__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_match_arm__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 mut ref const pattern_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -2819,10 +3014,10 @@ Syntax_Node__0 const ref mut parse_match_arm__1(Compilation_Unit_Parser__0 mut r
 	add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MatchPattern__, pattern_children__));
 	add_item__2(children__, expect_token__2(parser__, FatArrow__));
 	add_item__2(children__, parse_block__1(parser__));
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MatchArm__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MatchArm__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(int32__0op__equal(parser__->token__->kind__, ReturnKeyword__)))
@@ -2834,14 +3029,14 @@ Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut r
 		}
 
 		add_item__2(children__, expect_token__2(parser__, Semicolon__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ReturnStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ReturnStatement__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, LoopKeyword__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, LoopKeyword__));
 		add_item__2(children__, parse_block__1(parser__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), LoopStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), LoopStatement__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, WhileKeyword__)))
@@ -2849,7 +3044,7 @@ Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut r
 		add_item__2(children__, expect_token__2(parser__, WhileKeyword__));
 		add_item__2(children__, parse_expression__1(parser__));
 		add_item__2(children__, parse_block__1(parser__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), WhileStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), WhileStatement__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, ForKeyword__)))
@@ -2859,7 +3054,7 @@ Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut r
 		add_item__2(children__, expect_token__2(parser__, InKeyword__));
 		add_item__2(children__, parse_expression__1(parser__));
 		add_item__2(children__, parse_block__1(parser__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ForStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ForStatement__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, DoKeyword__)))
@@ -2869,7 +3064,7 @@ Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut r
 		add_item__2(children__, expect_token__2(parser__, WhileKeyword__));
 		add_item__2(children__, parse_expression__1(parser__));
 		add_item__2(children__, expect_token__2(parser__, Semicolon__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), DoWhileStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), DoWhileStatement__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, IfKeyword__)))
@@ -2882,9 +3077,9 @@ Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut r
 		add_item__2(children__, expect_token__2(parser__, MatchKeyword__));
 		add_item__2(children__, parse_expression__1(parser__));
 		add_item__2(children__, expect_token__2(parser__, LeftBrace__));
-		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
+		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFile__)))))
 		{
-			Syntax_Node__0 const ref const start_token__ = parser__->token__;
+			Token__0 const opt_ref const start_token__ = parser__->token__;
 			add_item__2(children__, parse_match_arm__1(parser__));
 			if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 			{
@@ -2902,28 +3097,28 @@ Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut r
 		}
 
 		add_item__2(children__, expect_token__2(parser__, RightBrace__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MatchStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MatchStatement__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, BreakKeyword__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, BreakKeyword__));
 		add_item__2(children__, expect_token__2(parser__, Semicolon__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), BreakStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), BreakStatement__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, ContinueKeyword__)))
 	{
 		add_item__2(children__, expect_token__2(parser__, ContinueKeyword__));
 		add_item__2(children__, expect_token__2(parser__, Semicolon__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ContinueStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ContinueStatement__, children__));
 	}
 
 	if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, VarKeyword__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, LetKeyword__)))))
 	{
 		add_item__2(children__, parse_variable_declaration__2(parser__, TRUE));
 		add_item__2(children__, expect_token__2(parser__, Semicolon__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), LocalDeclarationStatement__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), LocalDeclarationStatement__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, LeftBrace__)))
@@ -2933,10 +3128,10 @@ Syntax_Node__0 const ref mut parse_statement__1(Compilation_Unit_Parser__0 mut r
 
 	add_item__2(children__, parse_expression__1(parser__));
 	add_item__2(children__, expect_token__2(parser__, Semicolon__));
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ExpressionStatement__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ExpressionStatement__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_if_statement__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_if_statement__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(children__, expect_token__2(parser__, IfKeyword__));
@@ -2958,10 +3153,10 @@ Syntax_Node__0 const ref mut parse_if_statement__1(Compilation_Unit_Parser__0 mu
 		add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ElseClause__, else_children__));
 	}
 
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), IfStatement__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), IfStatement__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_variable_declaration__2(Compilation_Unit_Parser__0 mut ref const parser__, BOOL const allow_initializer__)
+Syntax__0 const ref mut parse_variable_declaration__2(Compilation_Unit_Parser__0 mut ref const parser__, BOOL const allow_initializer__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, LetKeyword__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, VarKeyword__)))))
@@ -2982,21 +3177,21 @@ Syntax_Node__0 const ref mut parse_variable_declaration__2(Compilation_Unit_Pars
 		add_item__2(children__, parse_expression__1(parser__));
 	}
 
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), VariableDeclaration__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), VariableDeclaration__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_block__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_block__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(children__, expect_token__2(parser__, LeftBrace__));
-	while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
+	while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFile__)))))
 	{
-		Syntax_Node__0 const ref const start_token__ = parser__->token__;
+		Token__0 const opt_ref const start_token__ = parser__->token__;
 		add_item__2(children__, parse_statement__1(parser__));
 		if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 		{
 			system__collections__List__1 mut ref const skipped__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-			while (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, LeftBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)))) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
+			while (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, LeftBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)))) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFile__)))))
 			{
 				int32 const current_token_type__ = parser__->token__->kind__;
 				add_item__2(skipped__, accept_token__1(parser__));
@@ -3011,10 +3206,10 @@ Syntax_Node__0 const ref mut parse_block__1(Compilation_Unit_Parser__0 mut ref c
 	}
 
 	add_item__2(children__, expect_token__2(parser__, RightBrace__));
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), Block__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), Block__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_parameter_list__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_parameter_list__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(children__, expect_token__2(parser__, LeftParen__));
@@ -3042,7 +3237,7 @@ Syntax_Node__0 const ref mut parse_parameter_list__1(Compilation_Unit_Parser__0 
 
 				add_item__2(parameter_children__, expect_token__2(parser__, Identifier__));
 				add_item__2(parameter_children__, expect_token__2(parser__, Colon__));
-				Syntax_Node__0 const ref const type__ = parse_type__1(parser__);
+				Syntax__0 const ref const type__ = parse_type__1(parser__);
 				add_item__2(parameter_children__, type__);
 				add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), Parameter__, parameter_children__));
 			}
@@ -3059,10 +3254,10 @@ Syntax_Node__0 const ref mut parse_parameter_list__1(Compilation_Unit_Parser__0 
 	}
 
 	add_item__2(children__, expect_token__2(parser__, RightParen__));
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ParameterList__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ParameterList__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_member_declaration__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_member_declaration__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, PublicKeyword__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, ProtectedKeyword__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, InternalKeyword__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, PrivateKeyword__)))))
@@ -3084,14 +3279,14 @@ Syntax_Node__0 const ref mut parse_member_declaration__1(Compilation_Unit_Parser
 
 		add_item__2(children__, parse_parameter_list__1(parser__));
 		add_item__2(children__, parse_block__1(parser__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ConstructorDeclaration__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ConstructorDeclaration__, children__));
 	}
 
 	if (cond(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, VarKeyword__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, LetKeyword__)))))
 	{
 		add_item__2(children__, parse_variable_declaration__2(parser__, FALSE));
 		add_item__2(children__, expect_token__2(parser__, Semicolon__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), FieldDeclaration__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), FieldDeclaration__, children__));
 	}
 
 	add_item__2(children__, expect_token__2(parser__, Identifier__));
@@ -3099,10 +3294,10 @@ Syntax_Node__0 const ref mut parse_member_declaration__1(Compilation_Unit_Parser
 	add_item__2(children__, expect_token__2(parser__, Arrow__));
 	add_item__2(children__, parse_type__1(parser__));
 	add_item__2(children__, parse_block__1(parser__));
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MethodDeclaration__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MethodDeclaration__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, PublicKeyword__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, ProtectedKeyword__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, InternalKeyword__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, PrivateKeyword__)))))
@@ -3118,7 +3313,7 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 	{
 		add_item__2(children__, parse_variable_declaration__2(parser__, TRUE));
 		add_item__2(children__, expect_token__2(parser__, Semicolon__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), GlobalDeclaration__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), GlobalDeclaration__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, ClassKeyword__)))
@@ -3126,9 +3321,9 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 		add_item__2(children__, expect_token__2(parser__, ClassKeyword__));
 		add_item__2(children__, expect_token__2(parser__, Identifier__));
 		add_item__2(children__, expect_token__2(parser__, LeftBrace__));
-		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
+		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFile__)))))
 		{
-			Syntax_Node__0 const ref const start_token__ = parser__->token__;
+			Token__0 const opt_ref const start_token__ = parser__->token__;
 			add_item__2(children__, parse_member_declaration__1(parser__));
 			if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 			{
@@ -3137,7 +3332,7 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 		}
 
 		add_item__2(children__, expect_token__2(parser__, RightBrace__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ClassDeclaration__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), ClassDeclaration__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, StructKeyword__)))
@@ -3145,9 +3340,9 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 		add_item__2(children__, expect_token__2(parser__, StructKeyword__));
 		add_item__2(children__, expect_token__2(parser__, Identifier__));
 		add_item__2(children__, expect_token__2(parser__, LeftBrace__));
-		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
+		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFile__)))))
 		{
-			Syntax_Node__0 const ref const start_token__ = parser__->token__;
+			Token__0 const opt_ref const start_token__ = parser__->token__;
 			add_item__2(children__, parse_member_declaration__1(parser__));
 			if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 			{
@@ -3156,7 +3351,7 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 		}
 
 		add_item__2(children__, expect_token__2(parser__, RightBrace__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), StructDeclaration__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), StructDeclaration__, children__));
 	}
 
 	if (cond(int32__0op__equal(parser__->token__->kind__, EnumKeyword__)))
@@ -3165,7 +3360,7 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 		add_item__2(children__, expect_token__2(parser__, StructKeyword__));
 		add_item__2(children__, expect_token__2(parser__, Identifier__));
 		add_item__2(children__, expect_token__2(parser__, LeftBrace__));
-		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
+		while (cond(bool_op(bool_arg(int32__0op__not_equal(parser__->token__->kind__, RightBrace__)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFile__)))))
 		{
 			system__collections__List__1 mut ref const member_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 			add_item__2(member_children__, expect_token__2(parser__, Identifier__));
@@ -3184,7 +3379,7 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 		}
 
 		add_item__2(children__, expect_token__2(parser__, RightBrace__));
-		return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), EnumDeclaration__, children__);
+		return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), EnumDeclaration__, children__));
 	}
 
 	add_item__2(children__, expect_token__2(parser__, Identifier__));
@@ -3192,15 +3387,15 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 	add_item__2(children__, expect_token__2(parser__, Arrow__));
 	add_item__2(children__, parse_type__1(parser__));
 	add_item__2(children__, parse_block__1(parser__));
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), FunctionDeclaration__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), FunctionDeclaration__, children__));
 }
 
-Syntax_Node__0 const ref mut parse_compilation_unit__1(Compilation_Unit_Parser__0 mut ref const parser__)
+Syntax__0 const ref mut parse_compilation_unit__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	while (cond(bool_op(bool_arg(void_ptr__0op__not_equal(parser__->token__, none)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFileToken__)))))
+	while (cond(bool_op(bool_arg(void_ptr__0op__not_equal(parser__->token__, none)) && bool_arg(int32__0op__not_equal(parser__->token__->kind__, EndOfFile__)))))
 	{
-		Syntax_Node__0 const ref const start_token__ = parser__->token__;
+		Token__0 const opt_ref const start_token__ = parser__->token__;
 		add_item__2(children__, parse_declaration__1(parser__));
 		if (cond(void_ptr__0op__equal(parser__->token__, start_token__)))
 		{
@@ -3208,8 +3403,8 @@ Syntax_Node__0 const ref mut parse_compilation_unit__1(Compilation_Unit_Parser__
 		}
 	}
 
-	add_item__2(children__, expect_token__2(parser__, EndOfFileToken__));
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), CompilationUnit__, children__);
+	add_item__2(children__, expect_token__2(parser__, EndOfFile__));
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), CompilationUnit__, children__));
 }
 
 Token_Stream__0 mut ref mut lexically_analyze__1(Source_Text__0 const ref const source__)
@@ -3217,7 +3412,7 @@ Token_Stream__0 mut ref mut lexically_analyze__1(Source_Text__0 const ref const 
 	return Token_Stream__0__0new__1(allocate(sizeof(Token_Stream__0)), source__);
 }
 
-Syntax_Node__0 const ref mut parse_package__1(system__collections__List__1 const ref const sources__)
+Syntax__0 const ref mut parse_package__1(system__collections__List__1 const ref const sources__)
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(sources__); void_ptr__0next(&iter);)
@@ -3228,10 +3423,32 @@ Syntax_Node__0 const ref mut parse_package__1(system__collections__List__1 const
 		add_item__2(children__, parse__1(compilation_unit_parser__));
 	}
 
-	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), PackageNode__, children__);
+	return syntax_node_as_syntax__1(Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), PackageNode__, children__));
 }
 
 Syntax__0 mut ref mut Syntax__0__0new__0(Syntax__0 mut ref const self) { self->type_id = Syntax__0__0Type_ID; return self; }
+
+string mut syntax_to_string__1(Syntax__0 const ref const syntax__)
+{
+	/* match */ { void const ref const match_value = syntax__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Token__0__0Type_ID:
+		{
+			Token__0 const ref const token__ = match_value;
+			return string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){11,(uint8_t const*)"Token.kind="}), int_to_string__1(token__->kind__)), ((string){3,(uint8_t const*)", \""})), get_token_text__1(token__)), ((string){1,(uint8_t const*)"\""}));
+		}
+		break;
+		case Syntax_Node__0__0Type_ID:
+		{
+			Syntax_Node__0 const ref const node__ = match_value;
+			return string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){17,(uint8_t const*)"Syntax_Node.kind="}), int_to_string__1(node__->kind__)), ((string){3,(uint8_t const*)", \""})), get_syntax_node_text__1(node__)), ((string){1,(uint8_t const*)"\""}));
+		}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
+}
 
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__4(Syntax_Node__0 mut ref const self, int32 const type__, Source_Text__0 const ref const source__, int32 const start__, int32 const length__)
 {
@@ -3240,7 +3457,7 @@ Syntax_Node__0 mut ref mut Syntax_Node__0__0new__4(Syntax_Node__0 mut ref const 
 	self->source__ = source__;
 	self->start__ = start__;
 	self->byte_length__ = length__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->kind__ = type__;
 	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return self;
@@ -3253,20 +3470,20 @@ Syntax_Node__0 mut ref mut Syntax_Node__0__0new__5(Syntax_Node__0 mut ref const 
 	self->source__ = source__;
 	self->start__ = start__;
 	self->byte_length__ = length__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->kind__ = type__;
 	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return self;
 }
 
-Syntax_Node__0 mut ref mut Syntax_Node__0__0new__2(Syntax_Node__0 mut ref const self, int32 const type__, Syntax_Node__0 const ref const child__)
+Syntax_Node__0 mut ref mut Syntax_Node__0__0new__2(Syntax_Node__0 mut ref const self, int32 const type__, Syntax__0 const ref const child__)
 {
 	self->type_id = Syntax_Node__0__0Type_ID;
 	self->is_missing__ = child__->is_missing__;
 	self->source__ = child__->source__;
 	self->start__ = child__->start__;
 	self->byte_length__ = child__->byte_length__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->kind__ = type__;
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(children__, child__);
@@ -3279,79 +3496,123 @@ Syntax_Node__0 mut ref mut Syntax_Node__0__0new__with_children__2(Syntax_Node__0
 	self->type_id = Syntax_Node__0__0Type_ID;
 	self->kind__ = type__;
 	self->is_missing__ = FALSE;
-	Syntax_Node__0 const ref const first_child__ = system__collections__List__1__0op__element(children__, ((int32){0}));
+	Syntax__0 const ref const first_child__ = system__collections__List__1__0op__element(children__, ((int32){0}));
 	self->source__ = first_child__->source__;
 	self->start__ = first_child__->start__;
-	Syntax_Node__0 const ref const last_child__ = system__collections__List__1__0op__element(children__, int32__0op__sub(children__->count__, ((int32){1})));
+	Syntax__0 const ref const last_child__ = system__collections__List__1__0op__element(children__, int32__0op__sub(children__->count__, ((int32){1})));
 	self->byte_length__ = int32__0op__add(int32__0op__sub(last_child__->start__, self->start__), last_child__->byte_length__);
 	self->children__ = children__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return self;
 }
 
-Syntax_Node__0 mut ref mut Syntax_Node__0__0new__missing__3(Syntax_Node__0 mut ref const self, int32 const type__, Source_Text__0 const ref const source__, int32 const start__)
+Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped__1(Syntax_Node__0 mut ref const self, Token__0 const ref const token__)
 {
 	self->type_id = Syntax_Node__0__0Type_ID;
-	self->kind__ = type__;
-	self->is_missing__ = TRUE;
-	self->source__ = source__;
-	self->start__ = start__;
-	self->byte_length__ = ((int32){0});
-	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	Text_Span__0 const ref const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), start__, ((int32){0}));
-	add_item__2(self->node_diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, source__, span__, string__0op__add(((string){22,(uint8_t const*)"Missing token of type "}), int_to_string__1(type__))));
-	return self;
-}
-
-Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped__1(Syntax_Node__0 mut ref const self, Syntax_Node__0 const ref const skipped_node__)
-{
-	self->type_id = Syntax_Node__0__0Type_ID;
+	self->is_missing__ = token__->is_missing__;
+	self->source__ = token__->source__;
+	self->start__ = token__->start__;
+	self->byte_length__ = token__->byte_length__;
+	system__collections__List__1 mut ref const diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	Text_Span__0 const ref const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), token__->start__, token__->byte_length__);
+	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, token__->source__, span__, string__0op__add(((string){33,(uint8_t const*)"Skipped unexpected token of kind "}), int_to_string__1(token__->kind__))));
+	self->diagnostics__ = diagnostics__;
 	self->kind__ = SkippedTokens__;
-	self->is_missing__ = skipped_node__->is_missing__;
-	self->source__ = skipped_node__->source__;
-	self->start__ = skipped_node__->start__;
-	self->byte_length__ = skipped_node__->byte_length__;
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(children__, skipped_node__);
+	add_item__2(children__, token__);
 	self->children__ = children__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	Text_Span__0 const ref const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), skipped_node__->start__, skipped_node__->byte_length__);
-	add_item__2(self->node_diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, skipped_node__->source__, span__, string__0op__add(((string){33,(uint8_t const*)"Skipped unexpected token of type "}), int_to_string__1(skipped_node__->kind__))));
 	return self;
 }
 
-Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped_many__1(Syntax_Node__0 mut ref const self, system__collections__List__1 const ref const skipped_nodes__)
+Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped_many__1(Syntax_Node__0 mut ref const self, system__collections__List__1 const ref const tokens__)
 {
 	self->type_id = Syntax_Node__0__0Type_ID;
-	self->kind__ = SkippedTokens__;
 	self->is_missing__ = FALSE;
-	Syntax_Node__0 const ref const first_child__ = system__collections__List__1__0op__element(skipped_nodes__, ((int32){0}));
+	assert__1(int32__0op__gt(tokens__->count__, ((int32){0})));
+	Syntax_Node__0 const ref const first_child__ = system__collections__List__1__0op__element(tokens__, ((int32){0}));
 	self->source__ = first_child__->source__;
 	self->start__ = first_child__->start__;
-	Syntax_Node__0 const ref const last_child__ = system__collections__List__1__0op__element(skipped_nodes__, int32__0op__sub(skipped_nodes__->count__, ((int32){1})));
+	Syntax_Node__0 const ref const last_child__ = system__collections__List__1__0op__element(tokens__, int32__0op__sub(tokens__->count__, ((int32){1})));
 	self->byte_length__ = int32__0op__add(int32__0op__sub(last_child__->start__, self->start__), last_child__->byte_length__);
-	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	system__collections__List__1 mut ref const diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	Text_Span__0 const ref const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), self->start__, self->byte_length__);
-	add_item__2(self->node_diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, self->source__, span__, string__0op__add(string__0op__add(((string){8,(uint8_t const*)"Skipped "}), int_to_string__1(skipped_nodes__->count__)), ((string){20,(uint8_t const*)" unexpected token(s)"}))));
+	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, self->source__, span__, string__0op__add(string__0op__add(((string){8,(uint8_t const*)"Skipped "}), int_to_string__1(tokens__->count__)), ((string){20,(uint8_t const*)" unexpected token(s)"}))));
+	self->diagnostics__ = diagnostics__;
+	self->kind__ = SkippedTokens__;
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return self;
 }
 
-string mut get_syntax_text__1(Syntax_Node__0 const ref const syntax__)
+Syntax__0 const ref mut syntax_node_as_syntax__1(Syntax_Node__0 const ref const node__)
+{
+	return as_any__1(node__);
+}
+
+Text_Span__0 const ref mut get_syntax_node_text_span__1(Syntax_Node__0 const ref const node__)
+{
+	return Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), node__->start__, node__->byte_length__);
+}
+
+string mut get_syntax_node_text__1(Syntax_Node__0 const ref const syntax__)
 {
 	return substring__3(syntax__->source__->text__, syntax__->start__, syntax__->byte_length__);
 }
 
-Syntax_Node__0 const opt_ref mut first_child_syntax__2(Syntax_Node__0 const ref const syntax__, int32 const type__)
+Token__0 const opt_ref mut first_child_token__2(Syntax_Node__0 const ref const syntax__, int32 const kind__)
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
 		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
-		if (cond(int32__0op__equal(child__->kind__, type__)))
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			return child__;
-		}
+			case Token__0__0Type_ID:
+			{
+				Token__0 const ref const token__ = match_value;
+				if (cond(int32__0op__equal(token__->kind__, kind__)))
+				{
+					return token__;
+				}
+			}
+			break;
+			case Syntax_Node__0__0Type_ID:
+			{
+				Syntax_Node__0 const ref const node__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
+	}
+
+	return none;
+}
+
+Syntax_Node__0 const opt_ref mut first_child_syntax_node__2(Syntax_Node__0 const ref const syntax__, int32 const kind__)
+{
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
+	{
+		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		/* match */ { void const ref const match_value = child__;
+		   switch(*(Type_ID const ref)match_value)
+		{
+			case Syntax_Node__0__0Type_ID:
+			{
+				Syntax_Node__0 const ref const node__ = match_value;
+				if (cond(int32__0op__equal(node__->kind__, kind__)))
+				{
+					return node__;
+				}
+			}
+			break;
+			case Token__0__0Type_ID:
+			{
+				Token__0 const ref const token__ = match_value;
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 	}
 
 	return none;
@@ -3371,11 +3632,6 @@ BOOL mut has_child__2(Syntax_Node__0 const ref const syntax__, int32 const type_
 	return FALSE;
 }
 
-void mut add__2(Syntax_Node__0 const ref const syntax__, Diagnostic__0 const ref const diagnostic__)
-{
-	add_item__2(syntax__->node_diagnostics__, diagnostic__);
-}
-
 system__collections__List__1 mut ref mut all_node_diagnostics__1(Syntax_Node__0 const ref const syntax__)
 {
 	system__collections__List__1 mut ref mut diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -3385,7 +3641,7 @@ system__collections__List__1 mut ref mut all_node_diagnostics__1(Syntax_Node__0 
 
 void mut collect_syntax_diagnostics__2(Syntax_Node__0 const ref const syntax__, system__collections__List__1 mut ref const diagnostics__)
 {
-	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->node_diagnostics__); void_ptr__0next(&iter);)
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->diagnostics__); void_ptr__0next(&iter);)
 	{
 		Diagnostic__0 const ref const diagnostic__ = void_ptr__0current(&iter);
 		add_item__2(diagnostics__, diagnostic__);
@@ -3443,11 +3699,11 @@ system__collections__List__1 const ref mut statements__1(Syntax_Node__0 const re
 	return statements__;
 }
 
-Syntax_Node__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref const syntax__)
+Token__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref const syntax__)
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
-		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		Token__0 const ref const child__ = void_ptr__0current(&iter);
 		if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(child__->kind__, PublicKeyword__)) || bool_arg(int32__0op__equal(child__->kind__, ProtectedKeyword__)))) || bool_arg(int32__0op__equal(child__->kind__, InternalKeyword__)))) || bool_arg(int32__0op__equal(child__->kind__, PrivateKeyword__)))))
 		{
 			return child__;
@@ -3457,17 +3713,45 @@ Syntax_Node__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref con
 	return none;
 }
 
-Token__0 mut ref mut Token__0__0new__4(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__)
+Token__0 mut ref mut Token__0__0new__5(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__, system__collections__List__1 const ref const diagnostics__)
 {
 	self->type_id = Token__0__0Type_ID;
 	self->is_missing__ = FALSE;
 	self->source__ = source__;
 	self->start__ = start__;
 	self->byte_length__ = byte_length__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->diagnostics__ = diagnostics__;
 	self->kind__ = kind__;
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->value__ = ((string){0,(uint8_t const*)""});
 	return self;
+}
+
+Token__0 mut ref mut Token__0__0new__missing__3(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__)
+{
+	self->type_id = Token__0__0Type_ID;
+	self->is_missing__ = TRUE;
+	self->source__ = source__;
+	self->start__ = start__;
+	self->byte_length__ = ((int32){0});
+	system__collections__List__1 mut ref const diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	Text_Span__0 const ref const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), start__, ((int32){0}));
+	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, source__, span__, string__0op__add(((string){22,(uint8_t const*)"Missing token of kind "}), int_to_string__1(kind__))));
+	self->diagnostics__ = diagnostics__;
+	self->kind__ = kind__;
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->value__ = ((string){0,(uint8_t const*)""});
+	return self;
+}
+
+Syntax__0 const ref mut token_as_syntax__1(Token__0 const ref const token__)
+{
+	return as_any__1(token__);
+}
+
+string mut get_token_text__1(Token__0 const ref const token__)
+{
+	return substring__3(token__->source__->text__, token__->start__, token__->byte_length__);
 }
 
 Token_Stream__0 mut ref mut Token_Stream__0__0new__1(Token_Stream__0 mut ref const self, Source_Text__0 const ref const source__)
@@ -3480,7 +3764,7 @@ Token_Stream__0 mut ref mut Token_Stream__0__0new__1(Token_Stream__0 mut ref con
 	return self;
 }
 
-Syntax_Node__0 const opt_ref mut next_token__1(Token_Stream__0 mut ref const tokens__)
+Token__0 const opt_ref mut next_token__1(Token_Stream__0 mut ref const tokens__)
 {
 	if (cond(int32__0op__gte(tokens__->position__, source_byte_length__1(tokens__->source__))))
 	{
@@ -3703,7 +3987,7 @@ Syntax_Node__0 const opt_ref mut next_token__1(Token_Stream__0 mut ref const tok
 	return end_of_file_token__1(tokens__);
 }
 
-Syntax_Node__0 const opt_ref mut end_of_file_token__1(Token_Stream__0 mut ref const tokens__)
+Token__0 const opt_ref mut end_of_file_token__1(Token_Stream__0 mut ref const tokens__)
 {
 	if (cond(tokens__->end_of_file__))
 	{
@@ -3711,161 +3995,161 @@ Syntax_Node__0 const opt_ref mut end_of_file_token__1(Token_Stream__0 mut ref co
 	}
 
 	tokens__->end_of_file__ = TRUE;
-	return new_token__3(tokens__, EndOfFileToken__, tokens__->position__);
+	return new_token__3(tokens__, EndOfFile__, tokens__->position__);
 }
 
-Syntax_Node__0 const ref mut new_identifier_or_keyword_token__2(Token_Stream__0 mut ref const tokens__, int32 const end__)
+Token__0 const ref mut new_identifier_or_keyword_token__2(Token_Stream__0 mut ref const tokens__, int32 const end__)
 {
 	int32 const length__ = int32__0op__sub(end__, tokens__->position__);
 	string const value__ = substring__3(tokens__->source__->text__, tokens__->position__, length__);
-	int32 mut type__;
+	int32 mut kind__;
 	if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"new"}))))
 	{
-		type__ = NewKeyword__;
+		kind__ = NewKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"not"}))))
 	{
-		type__ = NotOperator__;
+		kind__ = NotOperator__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"null"}))))
 	{
-		type__ = NullReservedWord__;
+		kind__ = NullReservedWord__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"self"}))))
 	{
-		type__ = SelfKeyword__;
+		kind__ = SelfKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"true"}))))
 	{
-		type__ = TrueKeyword__;
+		kind__ = TrueKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"false"}))))
 	{
-		type__ = FalseKeyword__;
+		kind__ = FalseKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"mut"}))))
 	{
-		type__ = MutableKeyword__;
+		kind__ = MutableKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){10,(uint8_t const*)"code_point"}))))
 	{
-		type__ = CodePoint__;
+		kind__ = CodePoint__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){6,(uint8_t const*)"string"}))))
 	{
-		type__ = String__;
+		kind__ = String__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"int"}))))
 	{
-		type__ = Int__;
+		kind__ = Int__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"bool"}))))
 	{
-		type__ = Bool__;
+		kind__ = Bool__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"void"}))))
 	{
-		type__ = Void__;
+		kind__ = Void__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"uint"}))))
 	{
-		type__ = UnsignedInt__;
+		kind__ = UnsignedInt__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"var"}))))
 	{
-		type__ = VarKeyword__;
+		kind__ = VarKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"and"}))))
 	{
-		type__ = AndKeyword__;
+		kind__ = AndKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){2,(uint8_t const*)"or"}))))
 	{
-		type__ = OrKeyword__;
+		kind__ = OrKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){6,(uint8_t const*)"return"}))))
 	{
-		type__ = ReturnKeyword__;
+		kind__ = ReturnKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"loop"}))))
 	{
-		type__ = LoopKeyword__;
+		kind__ = LoopKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"while"}))))
 	{
-		type__ = WhileKeyword__;
+		kind__ = WhileKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"for"}))))
 	{
-		type__ = ForKeyword__;
+		kind__ = ForKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"let"}))))
 	{
-		type__ = LetKeyword__;
+		kind__ = LetKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){2,(uint8_t const*)"in"}))))
 	{
-		type__ = InKeyword__;
+		kind__ = InKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){2,(uint8_t const*)"do"}))))
 	{
-		type__ = DoKeyword__;
+		kind__ = DoKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){2,(uint8_t const*)"if"}))))
 	{
-		type__ = IfKeyword__;
+		kind__ = IfKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"else"}))))
 	{
-		type__ = ElseKeyword__;
+		kind__ = ElseKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"break"}))))
 	{
-		type__ = BreakKeyword__;
+		kind__ = BreakKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){8,(uint8_t const*)"continue"}))))
 	{
-		type__ = ContinueKeyword__;
+		kind__ = ContinueKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){7,(uint8_t const*)"private"}))))
 	{
-		type__ = PrivateKeyword__;
+		kind__ = PrivateKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){9,(uint8_t const*)"protected"}))))
 	{
-		type__ = ProtectedKeyword__;
+		kind__ = ProtectedKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){6,(uint8_t const*)"public"}))))
 	{
-		type__ = PublicKeyword__;
+		kind__ = PublicKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){8,(uint8_t const*)"internal"}))))
 	{
-		type__ = InternalKeyword__;
+		kind__ = InternalKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"class"}))))
 	{
-		type__ = ClassKeyword__;
+		kind__ = ClassKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"enum"}))))
 	{
-		type__ = EnumKeyword__;
+		kind__ = EnumKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){6,(uint8_t const*)"struct"}))))
 	{
-		type__ = StructKeyword__;
+		kind__ = StructKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"none"}))))
 	{
-		type__ = NoneKeyword__;
+		kind__ = NoneKeyword__;
 	}
 	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"match"}))))
 	{
-		type__ = MatchKeyword__;
+		kind__ = MatchKeyword__;
 	}
 	else
 	{
-		type__ = Identifier__;
+		kind__ = Identifier__;
 		if (cond(bool_op(bool_arg(int32__0op__gt(string_byte_length__1(value__), ((int32){1}))) && bool_arg(code_point__0op__equal(string__0__0op__element(value__, int32__0op__sub(string_byte_length__1(value__), ((int32){1}))), ((code_point){/*_*/0x5F}))))))
 		{
 			Text_Span__0 const ref mut diagnostic_span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, int32__0op__sub(end__, tokens__->position__));
@@ -3873,29 +4157,30 @@ Syntax_Node__0 const ref mut new_identifier_or_keyword_token__2(Token_Stream__0 
 		}
 	}
 
-	return new_token__3(tokens__, type__, end__);
+	return new_token__3(tokens__, kind__, end__);
 }
 
-Syntax_Node__0 const ref mut new_operator_token__2(Token_Stream__0 mut ref const tokens__, int32 const type__)
+Token__0 const ref mut new_operator_token__2(Token_Stream__0 mut ref const tokens__, int32 const kind__)
 {
-	return new_token__3(tokens__, type__, int32__0op__add(tokens__->position__, ((int32){1})));
+	return new_token__3(tokens__, kind__, int32__0op__add(tokens__->position__, ((int32){1})));
 }
 
-Syntax_Node__0 const ref mut new_operator_token__3(Token_Stream__0 mut ref const tokens__, int32 const type__, int32 const length__)
+Token__0 const ref mut new_operator_token__3(Token_Stream__0 mut ref const tokens__, int32 const kind__, int32 const length__)
 {
-	return new_token__3(tokens__, type__, int32__0op__add(tokens__->position__, length__));
+	return new_token__3(tokens__, kind__, int32__0op__add(tokens__->position__, length__));
 }
 
-Syntax_Node__0 const ref mut new_token__3(Token_Stream__0 mut ref const tokens__, int32 const type__, int32 const end__)
+Token__0 const ref mut new_token__3(Token_Stream__0 mut ref const tokens__, int32 const kind__, int32 const end__)
 {
-	Syntax_Node__0 mut ref const token__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), type__, tokens__->source__, tokens__->position__, int32__0op__sub(end__, tokens__->position__));
+	system__collections__List__1 mut ref const token_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(tokens__->diagnostics__); void_ptr__0next(&iter);)
 	{
 		Diagnostic__0 const ref const diagnostic__ = void_ptr__0current(&iter);
-		add__2(token__, diagnostic__);
+		add_item__2(token_diagnostics__, diagnostic__);
 	}
 
 	clear_list__1(tokens__->diagnostics__);
+	Token__0 const ref const token__ = Token__0__0new__5(allocate(sizeof(Token__0)), kind__, tokens__->source__, tokens__->position__, int32__0op__sub(end__, tokens__->position__), token_diagnostics__);
 	tokens__->position__ = end__;
 	return token__;
 }
@@ -4226,7 +4511,7 @@ string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref mut t
 
 string mut convert_type__2(BOOL const mutable_binding__, Semantic_Node__0 const ref const type_node__)
 {
-	assert__2(void_ptr__0op__not_equal(type_node__->referenced_type__, none), get_node_text__1(type_node__));
+	assert__2(void_ptr__0op__not_equal(type_node__->referenced_type__, none), get_semantic_node_text__1(type_node__));
 	return convert_type__3(mutable_binding__, type_node__->referenced_type__, FALSE);
 }
 
@@ -4258,17 +4543,17 @@ string mut convert_parameter_list__4(Emitter__0 mut ref const emitter__, Semanti
 		Semantic_Node__0 const ref const type_node__ = system__collections__List__1__0op__element(parameter__->children__, int32__0op__sub(parameter__->children__->count__, ((int32){1})));
 		sb_append__2(builder__, convert_type__2(mutable_binding__, type_node__));
 		sb_append__2(builder__, ((string){1,(uint8_t const*)" "}));
-		sb_append__2(builder__, mangle_field_name__1(get_node_text__1(first_child__2(parameter__, Identifier__))));
+		sb_append__2(builder__, mangle_field_name__1(get_semantic_node_text__1(first_child__2(parameter__, Identifier__))));
 		if (cond(is_main_function__))
 		{
 			string mut type_string__;
 			if (cond(int32__0op__equal(type_node__->kind__, MutableType__)))
 			{
-				type_string__ = get_node_text__1(system__collections__List__1__0op__element(type_node__->children__, ((int32){0})));
+				type_string__ = get_semantic_node_text__1(system__collections__List__1__0op__element(type_node__->children__, ((int32){0})));
 			}
 			else
 			{
-				type_string__ = get_node_text__1(type_node__);
+				type_string__ = get_semantic_node_text__1(type_node__);
 			}
 
 			if (cond(string__0op__equal(type_string__, ((string){22,(uint8_t const*)"system.console.Console"}))))
@@ -4313,13 +4598,13 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 			Semantic_Node__0 const ref const name_node__ = system__collections__List__1__0op__element(type_node__->children__, ((int32){1}));
 			if (cond(bool_op(bool_arg(int32__0op__equal(name_node__->kind__, IdentifierName__)) && bool_arg(void_ptr__0op__equal(name_node__->referenced_type__, none)))))
 			{
-				constructor_name__ = string__0op__add(((string){2,(uint8_t const*)"__"}), get_node_text__1(name_node__));
+				constructor_name__ = string__0op__add(((string){2,(uint8_t const*)"__"}), get_semantic_node_text__1(name_node__));
 				type_node__ = system__collections__List__1__0op__element(type_node__->children__, ((int32){0}));
 			}
 		}
 
 		Type__0 const ref const type__ = type_node__->referenced_type__;
-		assert__2(void_ptr__0op__not_equal(type__, none), get_node_text__1(type_node__));
+		assert__2(void_ptr__0op__not_equal(type__, none), get_semantic_node_text__1(type_node__));
 		write__2(builder__, sb_to_string__1(convert_type_name__2(type__, FALSE)));
 		write__2(builder__, ((string){6,(uint8_t const*)"__0new"}));
 		write__2(builder__, constructor_name__);
@@ -4385,7 +4670,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NumericLiteralExpression__)))
 	{
-		write__2(builder__, string__0op__add(string__0op__add(((string){9,(uint8_t const*)"((int32){"}), get_node_text__1(syntax__)), ((string){2,(uint8_t const*)"})"})));
+		write__2(builder__, string__0op__add(string__0op__add(((string){9,(uint8_t const*)"((int32){"}), get_semantic_node_text__1(syntax__)), ((string){2,(uint8_t const*)"})"})));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, TrueLiteralExpression__)))
 	{
@@ -4397,17 +4682,17 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, CodePointLiteralExpression__)))
 	{
-		string const raw_value__ = get_node_text__1(syntax__);
+		string const raw_value__ = get_semantic_node_text__1(syntax__);
 		code_point const code_point_value__ = code_point_literal_value__1(raw_value__);
 		write__2(builder__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){16,(uint8_t const*)"((code_point){/*"}), substring__3(raw_value__, ((int32){1}), int32__0op__sub(string_byte_length__1(raw_value__), ((int32){2})))), ((string){4,(uint8_t const*)"*/0x"})), int_to_hex_string__1(code_point_as_int__1(code_point_value__))), ((string){2,(uint8_t const*)"})"})));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IdentifierName__)))
 	{
-		write__2(builder__, mangle_field_name__1(get_node_text__1(syntax__)));
+		write__2(builder__, mangle_field_name__1(get_semantic_node_text__1(syntax__)));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, StringLiteralExpression__)))
 	{
-		string const value__ = get_node_text__1(syntax__);
+		string const value__ = get_semantic_node_text__1(syntax__);
 		write__2(builder__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){10,(uint8_t const*)"((string){"}), int_to_string__1(literal_length__1(value__))), ((string){17,(uint8_t const*)",(uint8_t const*)"})), value__), ((string){2,(uint8_t const*)"})"})));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, AssignmentExpression__)))
@@ -4418,7 +4703,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 		{
 			convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
 			write__2(builder__, ((string){1,(uint8_t const*)" "}));
-			write__2(builder__, get_node_text__1(system__collections__List__1__0op__element(syntax__->children__, ((int32){1}))));
+			write__2(builder__, get_semantic_node_text__1(system__collections__List__1__0op__element(syntax__->children__, ((int32){1}))));
 			write__2(builder__, ((string){1,(uint8_t const*)" "}));
 			convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), builder__);
 		}
@@ -4853,11 +5138,11 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 	{
 		Semantic_Node__0 const ref const variable_declaration__ = first_child__2(statement__, VariableDeclaration__);
 		BOOL const mutable_binding__ = node_has_child__2(variable_declaration__, VarKeyword__);
-		string const variable_name__ = get_node_text__1(first_child__2(variable_declaration__, Identifier__));
+		string const variable_name__ = get_semantic_node_text__1(first_child__2(variable_declaration__, Identifier__));
 		Semantic_Node__0 const ref const variable_type_node__ = system__collections__List__1__0op__element(variable_declaration__->children__, ((int32){2}));
 		Semantic_Node__0 const ref const iterator_expression__ = system__collections__List__1__0op__element(statement__->children__, ((int32){3}));
 		Type__0 const ref const iterator_over_type__ = variable_type_node__->referenced_type__;
-		assert__2(void_ptr__0op__not_equal(iterator_over_type__, none), get_node_text__1(variable_type_node__));
+		assert__2(void_ptr__0op__not_equal(iterator_over_type__, none), get_semantic_node_text__1(variable_type_node__));
 		string mut iterator_type__;
 		if (cond(iterator_over_type__->is_primitive__))
 		{
@@ -4958,9 +5243,9 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 			{
 				Semantic_Node__0 const ref const match_pattern__ = first_child__2(match_arm__, MatchPattern__);
 				Semantic_Node__0 const ref const match_variable_type_node__ = system__collections__List__1__0op__element(match_pattern__->children__, ((int32){2}));
-				string const variable_name__ = get_node_text__1(first_child__2(match_pattern__, Identifier__));
+				string const variable_name__ = get_semantic_node_text__1(first_child__2(match_pattern__, Identifier__));
 				Semantic_Node__0 const ref const match_block__ = first_child__2(match_arm__, Block__);
-				assert__2(void_ptr__0op__not_equal(match_variable_type_node__->referenced_type__, none), get_node_text__1(match_variable_type_node__));
+				assert__2(void_ptr__0op__not_equal(match_variable_type_node__->referenced_type__, none), get_semantic_node_text__1(match_variable_type_node__));
 				string const type_name__ = sb_to_string__1(convert_type_name__1(match_variable_type_node__->referenced_type__));
 				write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){5,(uint8_t const*)"case "}), type_name__), ((string){11,(uint8_t const*)"__0Type_ID:"})));
 				begin_block__1(emitter__->definitions__);
@@ -4994,7 +5279,7 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 	else if (cond(int32__0op__equal(statement__->kind__, LocalDeclarationStatement__)))
 	{
 		Semantic_Node__0 const ref const variable_declaration__ = first_child__2(statement__, VariableDeclaration__);
-		string const variable_name__ = get_node_text__1(first_child__2(variable_declaration__, Identifier__));
+		string const variable_name__ = get_semantic_node_text__1(first_child__2(variable_declaration__, Identifier__));
 		Semantic_Node__0 const ref const variable_type__ = system__collections__List__1__0op__element(variable_declaration__->children__, ((int32){2}));
 		BOOL const mutable_binding__ = node_has_child__2(variable_declaration__, VarKeyword__);
 		begin_line__2(emitter__->definitions__, convert_type__2(mutable_binding__, variable_type__));
@@ -5068,7 +5353,7 @@ void mut emit_member_declaration__4(Emitter__0 mut ref const emitter__, Semantic
 		Semantic_Node__0 const opt_ref const constructor_name_node__ = first_child__2(member__, Identifier__);
 		if (cond(void_ptr__0op__not_equal(constructor_name_node__, none)))
 		{
-			string const constructor_name__ = get_node_text__1(constructor_name_node__);
+			string const constructor_name__ = get_semantic_node_text__1(constructor_name_node__);
 			new_function_name__ = string__0op__add(string__0op__add(new_function_name__, ((string){2,(uint8_t const*)"__"})), constructor_name__);
 			constructor_full_name__ = string__0op__add(string__0op__add(constructor_full_name__, constructor_name__), ((string){2,(uint8_t const*)"__"}));
 		}
@@ -5099,7 +5384,7 @@ void mut emit_member_declaration__4(Emitter__0 mut ref const emitter__, Semantic
 	else if (cond(int32__0op__equal(member__->kind__, FieldDeclaration__)))
 	{
 		Semantic_Node__0 const ref const variable_declaration__ = first_child__2(member__, VariableDeclaration__);
-		string const field_name__ = get_node_text__1(first_child__2(variable_declaration__, Identifier__));
+		string const field_name__ = get_semantic_node_text__1(first_child__2(variable_declaration__, Identifier__));
 		Semantic_Node__0 const ref const field_type__ = system__collections__List__1__0op__element(variable_declaration__->children__, ((int32){2}));
 		string const c_type__ = convert_type__2(TRUE, field_type__);
 		write_line__2(emitter__->class_declarations__, string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){1,(uint8_t const*)" "})), mangle_field_name__1(field_name__)), ((string){1,(uint8_t const*)";"})));
@@ -5114,7 +5399,7 @@ void mut emit_member_declaration__4(Emitter__0 mut ref const emitter__, Semantic
 			op__sub_assign(&(parameter_count__), ((int32){1}));
 		}
 
-		string const method_name__ = mangle_function_name__2(get_node_text__1(first_child__2(member__, Identifier__)), parameter_count__);
+		string const method_name__ = mangle_function_name__2(get_semantic_node_text__1(first_child__2(member__, Identifier__)), parameter_count__);
 		string const parameters__ = convert_parameter_list__2(emitter__, parameters_node__);
 		BOOL const is_associated_function__ = void_ptr__0op__equal(self_parameter__, none);
 		BOOL const mutable_self__ = bool_op(bool_arg(BOOL__0op__not(is_associated_function__)) && bool_arg(node_has_child__2(self_parameter__, MutableKeyword__)));
@@ -5178,7 +5463,7 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 	if (cond(int32__0op__equal(declaration__->kind__, GlobalDeclaration__)))
 	{
 		Semantic_Node__0 const ref const variable_declaration__ = first_child__2(declaration__, VariableDeclaration__);
-		string const variable_name__ = get_node_text__1(first_child__2(variable_declaration__, Identifier__));
+		string const variable_name__ = get_semantic_node_text__1(first_child__2(variable_declaration__, Identifier__));
 		Semantic_Node__0 const ref const variable_type__ = system__collections__List__1__0op__element(variable_declaration__->children__, ((int32){2}));
 		BOOL const mutable_binding__ = node_has_child__2(variable_declaration__, VarKeyword__);
 		string const c_type__ = convert_type__2(mutable_binding__, variable_type__);
@@ -5191,7 +5476,7 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 	else if (cond(int32__0op__equal(declaration__->kind__, ClassDeclaration__)))
 	{
 		Type__0 const ref const declared_type__ = declaration__->declares_type__;
-		assert__2(void_ptr__0op__not_equal(declared_type__, none), get_node_text__1(first_child__2(declaration__, Identifier__)));
+		assert__2(void_ptr__0op__not_equal(declared_type__, none), get_semantic_node_text__1(first_child__2(declaration__, Identifier__)));
 		string const class_name__ = mangle_name__1(declared_type__);
 		write_line__2(emitter__->type_id_declaration__, string__0op__add(class_name__, ((string){11,(uint8_t const*)"__0Type_ID,"})));
 		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){15,(uint8_t const*)"typedef struct "}), class_name__), ((string){1,(uint8_t const*)" "})), class_name__), ((string){1,(uint8_t const*)";"})));
@@ -5217,7 +5502,7 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 	else if (cond(int32__0op__equal(declaration__->kind__, StructDeclaration__)))
 	{
 		Type__0 const ref const declared_type__ = declaration__->declares_type__;
-		assert__2(void_ptr__0op__not_equal(declared_type__, none), get_node_text__1(first_child__2(declaration__, Identifier__)));
+		assert__2(void_ptr__0op__not_equal(declared_type__, none), get_semantic_node_text__1(first_child__2(declaration__, Identifier__)));
 		string const struct_name__ = mangle_name__1(declared_type__);
 		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){15,(uint8_t const*)"typedef struct "}), struct_name__), ((string){1,(uint8_t const*)" "})), struct_name__), ((string){1,(uint8_t const*)";"})));
 		element_separator_line__1(emitter__->class_declarations__);
@@ -5240,7 +5525,7 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 	}
 	else if (cond(int32__0op__equal(declaration__->kind__, EnumDeclaration__)))
 	{
-		string const enum_name__ = get_node_text__1(first_child__2(declaration__, Identifier__));
+		string const enum_name__ = get_semantic_node_text__1(first_child__2(declaration__, Identifier__));
 		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(((string){5,(uint8_t const*)"enum "}), enum_name__), ((string){1,(uint8_t const*)"_"})));
 		begin_block__1(emitter__->type_declarations__);
 		for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(declaration__->children__); void_ptr__0next(&iter);)
@@ -5248,13 +5533,13 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 			Semantic_Node__0 const ref const member__ = void_ptr__0current(&iter);
 			if (cond(int32__0op__equal(member__->kind__, EnumMemberDeclaration__)))
 			{
-				string const member_name__ = get_node_text__1(system__collections__List__1__0op__element(member__->children__, ((int32){0})));
+				string const member_name__ = get_semantic_node_text__1(system__collections__List__1__0op__element(member__->children__, ((int32){0})));
 				begin_line__2(emitter__->type_declarations__, string__0op__add(member_name__, ((string){1,(uint8_t const*)"_"})));
 				Semantic_Node__0 const opt_ref const member_value__ = first_child__2(member__, Number__);
 				if (cond(void_ptr__0op__not_equal(member_value__, none)))
 				{
 					write__2(emitter__->type_declarations__, ((string){3,(uint8_t const*)" = "}));
-					write__2(emitter__->type_declarations__, get_node_text__1(member_value__));
+					write__2(emitter__->type_declarations__, get_semantic_node_text__1(member_value__));
 				}
 
 				end_line__2(emitter__->type_declarations__, ((string){1,(uint8_t const*)","}));
@@ -5267,7 +5552,7 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 	else if (cond(int32__0op__equal(declaration__->kind__, FunctionDeclaration__)))
 	{
 		Semantic_Node__0 const ref const parameters_node__ = first_child__2(declaration__, ParameterList__);
-		string mut name__ = get_node_text__1(first_child__2(declaration__, Identifier__));
+		string mut name__ = get_semantic_node_text__1(first_child__2(declaration__, Identifier__));
 		BOOL const is_main__ = string__0op__equal(name__, ((string){4,(uint8_t const*)"main"}));
 		name__ = mangle_function_name__2(name__, parameters_node__->children__->count__);
 		if (cond(is_main__))
@@ -5293,7 +5578,7 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 
 		emit_statement__2(emitter__, first_child__2(declaration__, Block__));
 	}
-	else if (cond(int32__0op__equal(declaration__->kind__, EndOfFileToken__)))
+	else if (cond(int32__0op__equal(declaration__->kind__, EndOfFile__)))
 	{
 	}
 	else
@@ -6187,12 +6472,12 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 {
 	if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, FunctionDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, MethodDeclaration__)))))
 	{
-		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, FunctionName__, get_syntax_text__1(first_child_syntax__2(syntax__, Identifier__)));
+		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, FunctionName__, get_token_text__1(first_child_token__2(syntax__, Identifier__)));
 		add_function__3(name_table__, name__, syntax__);
 	}
 	else if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, ClassDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, StructDeclaration__)))))
 	{
-		string const unqualified_name__ = get_syntax_text__1(first_child_syntax__2(syntax__, Identifier__));
+		string const unqualified_name__ = get_token_text__1(first_child_token__2(syntax__, Identifier__));
 		int32 mut type_kind__;
 		if (cond(int32__0op__equal(syntax__->kind__, ClassDeclaration__)))
 		{
@@ -6215,10 +6500,10 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	else if (cond(int32__0op__equal(syntax__->kind__, ConstructorDeclaration__)))
 	{
 		string mut full_name__ = ((string){3,(uint8_t const*)"new"});
-		Syntax_Node__0 const opt_ref const constructor_name__ = first_child_syntax__2(syntax__, Identifier__);
+		Token__0 const opt_ref const constructor_name__ = first_child_token__2(syntax__, Identifier__);
 		if (cond(void_ptr__0op__not_equal(constructor_name__, none)))
 		{
-			full_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_syntax_text__1(constructor_name__));
+			full_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_token_text__1(constructor_name__));
 		}
 
 		Name__0 const ref const name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), parent__, FunctionName__, full_name__);
@@ -6230,21 +6515,21 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, FieldDeclaration__)))
 	{
-		string const unqualified_name__ = get_syntax_text__1(first_child_syntax__2(first_child_syntax__2(syntax__, VariableDeclaration__), Identifier__));
+		string const unqualified_name__ = get_token_text__1(first_child_token__2(first_child_syntax_node__2(syntax__, VariableDeclaration__), Identifier__));
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, TypeName__, unqualified_name__);
 		Type__0 const opt_ref const no_type__ = none;
 		add_type_name__3(name_table__, name__, no_type__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, EnumDeclaration__)))
 	{
-		string const unqualified_name__ = get_syntax_text__1(first_child_syntax__2(syntax__, Identifier__));
+		string const unqualified_name__ = get_token_text__1(first_child_token__2(syntax__, Identifier__));
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, TypeName__, unqualified_name__);
 		Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), ReferenceType__, name__, TRUE);
 		add_type_name__3(name_table__, name__, type__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, GlobalDeclaration__)))
 	{
-		string const unqualified_name__ = get_syntax_text__1(first_child_syntax__2(first_child_syntax__2(syntax__, VariableDeclaration__), Identifier__));
+		string const unqualified_name__ = get_token_text__1(first_child_token__2(first_child_syntax_node__2(syntax__, VariableDeclaration__), Identifier__));
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, TypeName__, unqualified_name__);
 		Type__0 const opt_ref const no_type__ = none;
 		add_type_name__3(name_table__, name__, no_type__);
@@ -6259,20 +6544,20 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	}
 	else if (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, LoopStatement__)) || bool_arg(int32__0op__equal(syntax__->kind__, WhileStatement__)))) || bool_arg(int32__0op__equal(syntax__->kind__, DoWhileStatement__)))))
 	{
-		add_syntax__3(name_table__, parent__, first_child_syntax__2(syntax__, Block__));
+		add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ForStatement__)))
 	{
-		Syntax_Node__0 const ref const identifier__ = first_child_syntax__2(first_child_syntax__2(syntax__, VariableDeclaration__), Identifier__);
-		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_syntax_text__1(identifier__));
+		Token__0 const ref const identifier__ = first_child_token__2(first_child_syntax_node__2(syntax__, VariableDeclaration__), Identifier__);
+		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_token_text__1(identifier__));
 		Type__0 const opt_ref const no_type__ = none;
 		add_type_name__3(name_table__, name__, no_type__);
-		add_syntax__3(name_table__, parent__, first_child_syntax__2(syntax__, Block__));
+		add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IfStatement__)))
 	{
-		add_syntax__3(name_table__, parent__, first_child_syntax__2(syntax__, Block__));
-		Syntax_Node__0 const opt_ref const else_clause__ = first_child_syntax__2(syntax__, ElseClause__);
+		add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__));
+		Syntax_Node__0 const opt_ref const else_clause__ = first_child_syntax_node__2(syntax__, ElseClause__);
 		if (cond(void_ptr__0op__not_equal(else_clause__, none)))
 		{
 			add_syntax__3(name_table__, parent__, else_clause__);
@@ -6291,35 +6576,35 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, MatchArm__)))
 	{
-		Syntax_Node__0 const ref const identifier__ = first_child_syntax__2(first_child_syntax__2(syntax__, MatchPattern__), Identifier__);
-		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_syntax_text__1(identifier__));
+		Token__0 const ref const identifier__ = first_child_token__2(first_child_syntax_node__2(syntax__, MatchPattern__), Identifier__);
+		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_token_text__1(identifier__));
 		Type__0 const opt_ref const no_type__ = none;
 		add_type_name__3(name_table__, name__, no_type__);
-		add_syntax__3(name_table__, parent__, first_child_syntax__2(syntax__, Block__));
+		add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ElseClause__)))
 	{
-		Syntax_Node__0 const opt_ref const block__ = first_child_syntax__2(syntax__, Block__);
+		Syntax_Node__0 const opt_ref const block__ = first_child_syntax_node__2(syntax__, Block__);
 		if (cond(void_ptr__0op__not_equal(block__, none)))
 		{
 			add_syntax__3(name_table__, parent__, block__);
 		}
 		else
 		{
-			add_syntax__3(name_table__, parent__, first_child_syntax__2(syntax__, IfStatement__));
+			add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, IfStatement__));
 		}
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, LocalDeclarationStatement__)))
 	{
-		Syntax_Node__0 const ref const identifier__ = first_child_syntax__2(first_child_syntax__2(syntax__, VariableDeclaration__), Identifier__);
-		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_syntax_text__1(identifier__));
+		Token__0 const ref const identifier__ = first_child_token__2(first_child_syntax_node__2(syntax__, VariableDeclaration__), Identifier__);
+		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_token_text__1(identifier__));
 		Type__0 const opt_ref const no_type__ = none;
 		add_type_name__3(name_table__, name__, no_type__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, Parameter__)))
 	{
-		Syntax_Node__0 const ref const identifier__ = first_child_syntax__2(syntax__, Identifier__);
-		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_syntax_text__1(identifier__));
+		Token__0 const ref const identifier__ = first_child_token__2(syntax__, Identifier__);
+		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_token_text__1(identifier__));
 		Type__0 const opt_ref const no_type__ = none;
 		add_type_name__3(name_table__, name__, no_type__);
 	}
@@ -6330,7 +6615,7 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 		assert__1(void_ptr__0op__not_equal(self_type__, none));
 		add_type_name__3(name_table__, name__, self_type__);
 	}
-	else if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, ExpressionStatement__)) || bool_arg(int32__0op__equal(syntax__->kind__, ReturnStatement__)))) || bool_arg(int32__0op__equal(syntax__->kind__, BreakStatement__)))) || bool_arg(int32__0op__equal(syntax__->kind__, ContinueStatement__)))) || bool_arg(int32__0op__equal(syntax__->kind__, EndOfFileToken__)))))
+	else if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, ExpressionStatement__)) || bool_arg(int32__0op__equal(syntax__->kind__, ReturnStatement__)))) || bool_arg(int32__0op__equal(syntax__->kind__, BreakStatement__)))) || bool_arg(int32__0op__equal(syntax__->kind__, ContinueStatement__)))) || bool_arg(int32__0op__equal(syntax__->kind__, EndOfFile__)))))
 	{
 	}
 	else
@@ -6343,14 +6628,14 @@ void mut add_function__3(Name_Table__0 mut ref const name_table__, Name__0 const
 {
 	Type__0 const opt_ref const no_type__ = none;
 	add_type_name__3(name_table__, name__, no_type__);
-	Syntax_Node__0 const ref const parameters_syntax__ = first_child_syntax__2(function__, ParameterList__);
+	Syntax_Node__0 const ref const parameters_syntax__ = first_child_syntax_node__2(function__, ParameterList__);
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(parameters__1(parameters_syntax__)); void_ptr__0next(&iter);)
 	{
 		Syntax_Node__0 const ref const parameter__ = void_ptr__0current(&iter);
 		add_syntax__3(name_table__, name__, parameter__);
 	}
 
-	Syntax_Node__0 const ref const body__ = first_child_syntax__2(function__, Block__);
+	Syntax_Node__0 const ref const body__ = first_child_syntax_node__2(function__, Block__);
 	add_syntax__3(name_table__, name__, body__);
 }
 
