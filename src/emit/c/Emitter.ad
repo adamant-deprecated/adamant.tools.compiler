@@ -260,7 +260,9 @@ public convert_type(mutable_binding: bool, var type: Type, optional: bool) -> st
         {
             // optional<T> is a const struct
             let c_type: mut system.text.String_Builder = new system.text.String_Builder("optional__");
-            if  mutable_binding or type.is_mutable
+            if mutable_binding
+                { sb_append(c_type, "0var__"); }
+            if type.is_mutable
                 { sb_append(c_type, "0mut__"); }
             sb_append(c_type, convert_type(true, optional_type, true));
 

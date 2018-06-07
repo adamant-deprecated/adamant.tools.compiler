@@ -1,0 +1,69 @@
+public let SkippedTokens: int = 99999; // Problem with -1 around const in C
+public let EndOfFileToken: int = 0;
+public let LeftBrace: int = 1; // `{`
+public let RightBrace: int = 2; // `}`
+public let LeftParen: int = 3; // `(`
+public let RightParen: int = 4; // `)`
+public let Semicolon: int = 5; // `;`
+public let Comma: int = 6; // `,`
+public let Dot: int = 7; // `.`
+public let Colon: int = 8; // `:`
+public let LeftBracket: int = 9; // `[`
+public let RightBracket: int = 10; // `]`
+public let Question: int = 11; // `?`
+public let EqualsEquals: int = 12; // `==`
+public let Equals: int = 13; // `=`
+public let PlusEquals: int = 14; // `+=`
+public let Plus: int = 15; // `+`
+public let Arrow: int = 16; // `->`
+public let MinusEquals: int = 17; // `-=`
+public let Minus: int = 18; // `-`
+public let Slash: int = 19; // `/`
+public let EqualsSlashEquals: int = 20; // `=/=`
+public let LessThanEquals: int = 21; // `<=`
+public let LessThan: int = 22; // `<`
+public let GreaterThanEquals: int = 23; // `>=`
+public let GreaterThan: int = 24; // `>`
+public let StringLiteral: int = 25;
+public let CodePointLiteral: int = 26;
+public let Identifier: int = 27;
+public let Number: int = 28;
+public let NewKeyword: int = 29; // `new`
+public let NotOperator: int = 30; // `not`
+public let NullReservedWord: int = 31; // `null`
+public let SelfKeyword: int = 32; // `self`
+public let TrueKeyword: int = 33; // `true`
+public let FalseKeyword: int = 34; // `false`
+public let MutableKeyword: int = 39; // `mut`
+public let PredefinedType: int = 41;
+public let CodePoint: int = 42; // `code_point`
+public let String: int = 43; // `string`
+public let Int: int = 44; // `int`
+public let Bool: int = 45; // `bool`
+public let Void: int = 46; // `void`
+public let UnsignedInt: int = 47; // `uint`
+public let VarKeyword: int = 51; // `var`
+public let ReturnKeyword: int = 78; // `return`
+public let LoopKeyword: int = 80; // `loop`
+public let WhileKeyword: int = 83; // `while`
+public let ForKeyword: int = 85; // `for`
+public let LetKeyword: int = 87; // `let`
+public let InKeyword: int = 90; // `in`
+public let DoKeyword: int = 91; // `do`
+public let IfKeyword: int = 93; // `if`
+public let ElseKeyword: int = 94; // `else`
+public let BreakKeyword: int = 97; // `break`
+public let ContinueKeyword: int = 99; // `continue`
+public let PublicKeyword: int = 102; // `public`
+public let ProtectedKeyword: int = 103; // `protected`
+public let InternalKeyword: int = 104; // `internal`
+public let PrivateKeyword: int = 105; // `private`
+public let ClassKeyword: int = 110; // `class`
+public let EnumKeyword: int = 112; // `enum`
+public let StructKeyword: int = 113; // `struct`
+public let Percent: int = 119; // `%`
+public let Pipe: int = 121; // `|`
+public let FatArrow: int = 122; // `=>`
+public let Asterisk: int = 123; // `*`
+public let NoneKeyword: int = 126; // `none`
+public let MatchKeyword: int = 130; // `match`

@@ -1,7 +1,10 @@
-public Func(x: string?, y: uint?) -> int?
+// TODO test optional of custom struct types
+
+public Func(x: string?, y: int?) -> int?
 {
 	let z: int? = none;
-	let d: int?? = none;
+    // TODO test double optional
+	// let d: int?? = none;
 	return none;
 }
 

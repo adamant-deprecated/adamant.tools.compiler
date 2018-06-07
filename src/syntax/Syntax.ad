@@ -1,0 +1,8 @@
+public /*abstract*/ class Syntax
+{
+    public let is_missing: bool;
+    public let source: Source_Text;
+    public let start: int;
+    public let byte_length: int;
+    public let node_diagnostics: system.collections.List<Diagnostic>;
+}

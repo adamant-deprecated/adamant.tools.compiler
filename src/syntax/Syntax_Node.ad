@@ -1,46 +1,51 @@
-public class Syntax_Node
+public class Syntax_Node // : Syntax
 {
-    public let kind: int;
+    // NOTE this section must match the fields of Syntax
     public let is_missing: bool;
     public let source: Source_Text;
     public let start: int;
-    public let byte_length: int; // TODO is this byte_length?
-    public let children: system.collections.List<Syntax_Node>;
+    public let byte_length: int;
     public let node_diagnostics: mut system.collections.List<Diagnostic>;
+
+    public let kind: int;
+    public let children: system.collections.List<Syntax_Node>;
 
     public new(type: int, source: Source_Text, start: int, length: int)
     {
-        self.kind = type;
         self.is_missing = false;
         self.source = source;
         self.start = start;
         self.byte_length = length;
-        self.children = new system.collections.List<Syntax_Node>();
         self.node_diagnostics = new system.collections.List<Diagnostic>();
+
+        self.kind = type;
+        self.children = new system.collections.List<Syntax_Node>();
     }
 
     public new(type: int, is_missing: bool, source: Source_Text, start: int, length: int)
     {
-        self.kind = type;
         self.is_missing = is_missing;
         self.source = source;
         self.start = start;
         self.byte_length = length;
-        self.children = new system.collections.List<Syntax_Node>();
         self.node_diagnostics = new system.collections.List<Diagnostic>();
+
+        self.kind = type;
+        self.children = new system.collections.List<Syntax_Node>();
     }
 
     public new(type: int, child: Syntax_Node)
     {
-        self.kind = type;
         self.is_missing = child.is_missing;
         self.source = child.source;
         self.start = child.start;
         self.byte_length = child.byte_length;
+        self.node_diagnostics = new system.collections.List<Diagnostic>();
+
+        self.kind = type;
         let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
         add_item(children, child);
         self.children = children;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
     }
 
     // TODO we want to take ownership of the child list
