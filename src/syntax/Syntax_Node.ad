@@ -5,10 +5,10 @@ public class Syntax_Node // : Syntax
     public let source: Source_Text;
     public let start: int;
     public let byte_length: int;
-    public let node_diagnostics: mut system.collections.List<Diagnostic>;
+    public let diagnostics: mut system.collections.List<Diagnostic>;
 
     public let kind: int;
-    public let children: system.collections.List<Syntax_Node>;
+    public let children: system.collections.List<Syntax>;
 
     public new(type: int, source: Source_Text, start: int, length: int)
     {
@@ -16,10 +16,10 @@ public class Syntax_Node // : Syntax
         self.source = source;
         self.start = start;
         self.byte_length = length;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
 
         self.kind = type;
-        self.children = new system.collections.List<Syntax_Node>();
+        self.children = new system.collections.List<Syntax>();
     }
 
     public new(type: int, is_missing: bool, source: Source_Text, start: int, length: int)
@@ -28,84 +28,80 @@ public class Syntax_Node // : Syntax
         self.source = source;
         self.start = start;
         self.byte_length = length;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
 
         self.kind = type;
-        self.children = new system.collections.List<Syntax_Node>();
+        self.children = new system.collections.List<Syntax>();
     }
 
-    public new(type: int, child: Syntax_Node)
+    public new(type: int, child: Syntax)
     {
         self.is_missing = child.is_missing;
         self.source = child.source;
         self.start = child.start;
         self.byte_length = child.byte_length;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
 
         self.kind = type;
-        let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+        let children: mut system.collections.List<Syntax> = new system.collections.List<Syntax>();
         add_item(children, child);
         self.children = children;
     }
 
     // TODO we want to take ownership of the child list
-    public new with_children(type: int, children: system.collections.List<Syntax_Node>)
+    public new with_children(type: int, children: system.collections.List<Syntax>)
     {
         self.kind = type;
         self.is_missing = false;
         // TODO enforce that list is not empty, for now we rely on `children[0]` failing
-        let first_child: Syntax_Node = children[0];
+        let first_child: Syntax = children[0];
         self.source = first_child.source;
         self.start = first_child.start;
-        let last_child: Syntax_Node = children[children.count - 1];
+        let last_child: Syntax = children[children.count - 1];
         self.byte_length = last_child.start - self.start + last_child.byte_length;
         self.children = children;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
     }
 
-    public new missing(type: int, source: Source_Text, start: int)
+    public new skipped(token: Token)
     {
-        self.kind = type;
-        self.is_missing = true;
-        self.source = source;
-        self.start = start;
-        self.byte_length = 0;
-        self.children = new system.collections.List<Syntax_Node>();
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
-        let span: Text_Span = new Text_Span(start, 0);
-        add_item(self.node_diagnostics, new Diagnostic(CompilationError, Parsing, source, span, "Missing token of type " + int_to_string(type)));
-    }
+        self.is_missing = token.is_missing;
+        self.source = token.source;
+        self.start = token.start;
+        self.byte_length = token.byte_length;
+        let diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
+        let span: Text_Span = new Text_Span(token.start, token.byte_length);
+        add_item(diagnostics, new Diagnostic(CompilationError, Parsing, token.source, span, "Skipped unexpected token of kind " + int_to_string(token.kind)));
+        self.diagnostics = diagnostics;
 
-    public new skipped(skipped_node: Syntax_Node)
-    {
         self.kind = SkippedTokens;
-        self.is_missing = skipped_node.is_missing;
-        self.source = skipped_node.source;
-        self.start = skipped_node.start;
-        self.byte_length = skipped_node.byte_length;
         let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-        add_item(children, skipped_node);
+        add_item(children, token);
         self.children = children;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
-        let span: Text_Span = new Text_Span(skipped_node.start, skipped_node.byte_length);
-        add_item(self.node_diagnostics, new Diagnostic(CompilationError, Parsing, skipped_node.source, span, "Skipped unexpected token of type " + int_to_string(skipped_node.kind)));
     }
 
-    public new skipped_many(skipped_nodes: system.collections.List<Syntax_Node>)
+    public new skipped_many(tokens: system.collections.List<Token>)
     {
-        self.kind = SkippedTokens;
         self.is_missing = false;
-        // TODO enforce that list is not empty, for now we rely on `children[0]` failing
-        let first_child: Syntax_Node = skipped_nodes[0];
+        assert(tokens.count > 0);
+        let first_child: Syntax_Node = tokens[0];
         self.source = first_child.source;
         self.start = first_child.start;
-        let last_child: Syntax_Node = skipped_nodes[skipped_nodes.count - 1];
+        let last_child: Syntax_Node = tokens[tokens.count - 1];
         self.byte_length = last_child.start - self.start + last_child.byte_length;
-        self.children = new system.collections.List<Syntax_Node>();
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        let diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
         let span: Text_Span = new Text_Span(self.start, self.byte_length);
-        add_item(self.node_diagnostics, new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + int_to_string(skipped_nodes.count) + " unexpected token(s)"));
+        add_item(diagnostics, new Diagnostic(CompilationError, Parsing, self.source, span, "Skipped " + int_to_string(tokens.count) + " unexpected token(s)"));
+        self.diagnostics = diagnostics;
+
+        self.kind = SkippedTokens;
+        self.children = new system.collections.List<Syntax_Node>();
     }
+}
+
+public syntax_node_as_syntax(node: Syntax_Node) -> Syntax
+{
+    return as_any(node);
 }
 
 public get_syntax_text(syntax: Syntax_Node) -> string
@@ -133,11 +129,6 @@ public has_child(syntax: Syntax_Node, type: int) -> bool
     return false;
 }
 
-public add(syntax: Syntax_Node, diagnostic: Diagnostic) -> void
-{
-    add_item(syntax.node_diagnostics, diagnostic);
-}
-
 // We are returning ownership of the list, so they can mutate it if wanted
 public all_node_diagnostics(syntax: Syntax_Node) -> mut system.collections.List<Diagnostic>
 {
@@ -148,7 +139,7 @@ public all_node_diagnostics(syntax: Syntax_Node) -> mut system.collections.List<
 
 public collect_syntax_diagnostics(syntax: Syntax_Node, diagnostics: mut system.collections.List<Diagnostic>) -> void
 {
-    for let diagnostic: Diagnostic in syntax.node_diagnostics
+    for let diagnostic: Diagnostic in syntax.diagnostics
     {
         add_item(diagnostics, diagnostic);
     }

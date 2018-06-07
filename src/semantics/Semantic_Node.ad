@@ -12,7 +12,7 @@ public class Semantic_Node
     public let start: int;
     public let byte_length: int;
     public let children: system.collections.List<Semantic_Node>;
-    public let node_diagnostics: mut system.collections.List<Diagnostic>;
+    public let diagnostics: mut system.collections.List<Diagnostic>;
 
     /// The type of an expression (or variable) before any implicit conversions
     public let of_type: Type?;
@@ -36,7 +36,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = new system.collections.List<Semantic_Node>();
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
@@ -54,7 +54,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
@@ -72,7 +72,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = of_type;
         self.converted_type = of_type;
         self.declares_type = none;
@@ -90,7 +90,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = type;
@@ -108,7 +108,7 @@ public class Semantic_Node
         self.start = syntax.start;
         self.byte_length = syntax.byte_length;
         self.children = children;
-        self.node_diagnostics = new system.collections.List<Diagnostic>();
+        self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
         self.converted_type = none;
         self.declares_type = none;
@@ -247,17 +247,17 @@ public node_has_child(node: Semantic_Node, kind: int) -> bool
 
 public add_diagnostic(node: mut Semantic_Node, diagnostic: Diagnostic) -> void
 {
-    add_item(node.node_diagnostics, diagnostic);
+    add_item(node.diagnostics, diagnostic);
 }
 
 public diagnostics(node: Semantic_Node) -> system.collections.List<Diagnostic>
 {
-    return node.node_diagnostics;
+    return node.diagnostics;
 }
 
 public collect_node_diagnostics(node: Semantic_Node, diagnostics: mut system.collections.List<Diagnostic>) -> void
 {
-    for let diagnostic: Diagnostic in node.node_diagnostics
+    for let diagnostic: Diagnostic in node.diagnostics
     {
         add_item(diagnostics, diagnostic);
     }

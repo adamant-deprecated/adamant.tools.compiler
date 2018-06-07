@@ -1,8 +1,8 @@
 65
 6
 test-cases/functions/semicolonAfterReturnType.ad:1:22 Error:
-  Missing token of type 1
+  Missing token of kind 1
 test-cases/functions/semicolonAfterReturnType.ad:1:22 Error:
-  Missing token of type 27
+  Missing token of kind 27
 test-cases/functions/semicolonAfterReturnType.ad:4:1 Error:
-  Missing token of type 2
+  Missing token of kind 2

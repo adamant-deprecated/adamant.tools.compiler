@@ -14,7 +14,7 @@ public class Token_Stream
     }
 }
 
-public next_token(tokens: mut Token_Stream) -> Syntax_Node?
+public next_token(tokens: mut Token_Stream) -> Token?
 {
     if tokens.position >= source_byte_length(tokens.source)
     {
@@ -225,7 +225,7 @@ public next_token(tokens: mut Token_Stream) -> Syntax_Node?
     return end_of_file_token(tokens);
 }
 
-public end_of_file_token(tokens: mut Token_Stream) -> Syntax_Node?
+public end_of_file_token(tokens: mut Token_Stream) -> Token?
 {
     if tokens.end_of_file
         { return none; }
@@ -233,89 +233,89 @@ public end_of_file_token(tokens: mut Token_Stream) -> Syntax_Node?
     // Mark that we have returned the end of file token
     tokens.end_of_file = true;
     // The end of file token provides something to attach any final errors to
-    return new_token(tokens, EndOfFileToken, tokens.position);
+    return new_token(tokens, EndOfFile, tokens.position);
 }
 
-public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Syntax_Node
+public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Token
 {
     let length: int = end-tokens.position;
     let value: string = substring(tokens.source.text, tokens.position, length);
-    var type: int;
+    var kind: int;
     if value == "new"
-        { type = NewKeyword; }
+        { kind = NewKeyword; }
     else if value == "not"
-        { type = NotOperator; }
+        { kind = NotOperator; }
     else if value == "null"
-        { type = NullReservedWord; }
+        { kind = NullReservedWord; }
     else if value == "self"
-        { type = SelfKeyword; }
+        { kind = SelfKeyword; }
     else if value == "true"
-        { type = TrueKeyword; }
+        { kind = TrueKeyword; }
     else if value == "false"
-        { type = FalseKeyword; }
+        { kind = FalseKeyword; }
     else if value == "mut"
-        { type = MutableKeyword; }
+        { kind = MutableKeyword; }
     else if value == "code_point"
-        { type = CodePoint; }
+        { kind = CodePoint; }
     else if value == "string"
-        { type = String; }
+        { kind = String; }
     else if value == "int"
-        { type = Int; }
+        { kind = Int; }
     else if value == "bool"
-        { type = Bool; }
+        { kind = Bool; }
     else if value == "void"
-        { type = Void; }
+        { kind = Void; }
     else if value == "uint"
-        { type = UnsignedInt; }
+        { kind = UnsignedInt; }
     else if value == "var"
-        { type = VarKeyword; }
+        { kind = VarKeyword; }
     else if value == "and"
-        { type = AndKeyword; }
+        { kind = AndKeyword; }
     else if value == "or"
-        { type = OrKeyword; }
+        { kind = OrKeyword; }
     else if value == "return"
-        { type = ReturnKeyword; }
+        { kind = ReturnKeyword; }
     else if value == "loop"
-        { type = LoopKeyword; }
+        { kind = LoopKeyword; }
     else if value == "while"
-        { type = WhileKeyword; }
+        { kind = WhileKeyword; }
     else if value == "for"
-        { type = ForKeyword; }
+        { kind = ForKeyword; }
     else if value == "let"
-        { type = LetKeyword; }
+        { kind = LetKeyword; }
     else if value == "in"
-        { type = InKeyword; }
+        { kind = InKeyword; }
     else if value == "do"
-        { type = DoKeyword; }
+        { kind = DoKeyword; }
     else if value == "if"
-        { type = IfKeyword; }
+        { kind = IfKeyword; }
     else if value == "else"
-        { type = ElseKeyword; }
+        { kind = ElseKeyword; }
     else if value == "break"
-        { type = BreakKeyword; }
+        { kind = BreakKeyword; }
     else if value == "continue"
-        { type = ContinueKeyword; }
+        { kind = ContinueKeyword; }
     else if value == "private"
-        { type = PrivateKeyword; }
+        { kind = PrivateKeyword; }
     else if value == "protected"
-        { type = ProtectedKeyword; }
+        { kind = ProtectedKeyword; }
     else if value == "public"
-        { type = PublicKeyword; }
+        { kind = PublicKeyword; }
     else if value == "internal"
-        { type = InternalKeyword; }
+        { kind = InternalKeyword; }
     else if value == "class"
-        { type = ClassKeyword; }
+        { kind = ClassKeyword; }
     else if value == "enum"
-        { type = EnumKeyword; }
+        { kind = EnumKeyword; }
     else if value == "struct"
-        { type = StructKeyword; }
+        { kind = StructKeyword; }
     else if value == "none"
-        { type = NoneKeyword; }
+        { kind = NoneKeyword; }
     else if value == "match"
-        { type = MatchKeyword; }
+        { kind = MatchKeyword; }
     else
     {
-        type = Identifier;
+        kind = Identifier;
         if string_byte_length(value) > 1 and value[string_byte_length(value)-1] == '_'
         {
             var diagnostic_span: Text_Span = new Text_Span(tokens.position, end - tokens.position);
@@ -324,28 +324,29 @@ public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> Sy
         }
     }
 
-    return new_token(tokens, type, end);
+    return new_token(tokens, kind, end);
 }
 
-public new_operator_token(tokens: mut Token_Stream, type: int) -> Syntax_Node
+public new_operator_token(tokens: mut Token_Stream, kind: int) -> Token
 {
-    return new_token(tokens, type, tokens.position + 1);
+    return new_token(tokens, kind, tokens.position + 1);
 }
 
-public new_operator_token(tokens: mut Token_Stream, type: int, length: int) -> Syntax_Node
+public new_operator_token(tokens: mut Token_Stream, kind: int, length: int) -> Token
 {
-    return new_token(tokens, type, tokens.position + length);
+    return new_token(tokens, kind, tokens.position + length);
 }
 
-public new_token(tokens: mut Token_Stream, type: int, end: int) -> Syntax_Node
+public new_token(tokens: mut Token_Stream, kind: int, end: int) -> Token
 {
-    let token: mut Syntax_Node = new Syntax_Node(type, tokens.source, tokens.position, end - tokens.position);
-
+    let token_diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
     for let diagnostic: Diagnostic in tokens.diagnostics
     {
-        add(token, diagnostic);
+        add_item(token_diagnostics, diagnostic);
     }
     clear_list(tokens.diagnostics);
+
+    let token: Token = new Token(kind, tokens.source, tokens.position, end - tokens.position, token_diagnostics);
 
     tokens.position = end;
     return token;

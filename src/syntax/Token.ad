@@ -1,4 +1,4 @@
-public class Token
+public class Token // : Syntax
 {
     // NOTE this section must match the fields of Syntax
     public let is_missing: bool;
@@ -8,6 +8,8 @@ public class Token
     public let diagnostics: system.collections.List<Diagnostic>;
 
     public let kind: int;
+    // TODO remove `children` for now, it allows a Token to be memory identical to a Syntax_Node
+    public let children: system.collections.List<Syntax_Node>;
     public let value: string; // TODO this should be optional string, but for now we use empty string
 
     public new(kind: int, source: Source_Text, start: int, byte_length: int, diagnostics: system.collections.List<Diagnostic>)
@@ -19,8 +21,30 @@ public class Token
         self.diagnostics = diagnostics;
 
         self.kind = kind;
+        self.children = new system.collections.List<Syntax_Node>();
         self.value = "";
     }
+
+    public new missing(kind: int, source: Source_Text, start: int)
+    {
+        self.is_missing = true;
+        self.source = source;
+        self.start = start;
+        self.byte_length = 0;
+        let diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
+        let span: Text_Span = new Text_Span(start, 0);
+        add_item(diagnostics, new Diagnostic(CompilationError, Parsing, source, span, "Missing token of kind " + int_to_string(kind)));
+        self.diagnostics = diagnostics;
+
+        self.kind = kind;
+        self.children = new system.collections.List<Syntax_Node>();
+        self.value = "";
+    }
+}
+
+public token_as_syntax(token: Token) -> Syntax
+{
+    return as_any(token);
 }
 
 public get_token_text(token: Token) -> string

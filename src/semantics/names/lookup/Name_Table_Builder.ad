@@ -220,7 +220,7 @@ public add_syntax(
         or syntax.kind == ReturnStatement
         or syntax.kind == BreakStatement
         or syntax.kind == ContinueStatement
-        or syntax.kind == EndOfFileToken
+        or syntax.kind == EndOfFile
     {
         // ignore these
     }

@@ -1299,7 +1299,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         }
         emit_statement(emitter, first_child(declaration, Block));
     }
-    else if declaration.kind == EndOfFileToken
+    else if declaration.kind == EndOfFile
     {
         // Ignore the end of file
     }

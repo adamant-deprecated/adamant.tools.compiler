@@ -1,11 +1,11 @@
-public parse_package(sources: system.collections.List<Source_Text>) -> Syntax_Node
+public parse_package(sources: system.collections.List<Source_Text>) -> Syntax
 {
-    let children: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    let children: mut system.collections.List<Syntax> = new system.collections.List<Syntax>();
     for let source: Source_Text in sources
     {
         let token_stream: mut Token_Stream = lexically_analyze(source);
         let compilation_unit_parser: mut Compilation_Unit_Parser = new Compilation_Unit_Parser(token_stream);
         add_item(children, parse(compilation_unit_parser));
     }
-    return new Syntax_Node.with_children(PackageNode, children);
+    return syntax_node_as_syntax(new Syntax_Node.with_children(PackageNode, children));
 }

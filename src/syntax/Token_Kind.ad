@@ -1,5 +1,4 @@
-public let SkippedTokens: int = 99999; // Problem with -1 around const in C
-public let EndOfFileToken: int = 0;
+public let EndOfFile: int = 0;
 public let LeftBrace: int = 1; // `{`
 public let RightBrace: int = 2; // `}`
 public let LeftParen: int = 3; // `(`
