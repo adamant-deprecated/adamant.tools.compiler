@@ -8,19 +8,16 @@ public class Semantic_Node // : Program_Fragment
     public let children: system.collections.List<Semantic_Node>;
     public let diagnostics: mut system.collections.List<Diagnostic>;
 
-    public let kind: int;
-
     /// The type of an expression (or variable) before any implicit conversions
     public let of_type: Type?;
-
-    /// The type of an expression after any implicit conversions
-    public let converted_type: Type?;
 
     /// For declarations, the type that is being declared (created)
     public let declares_type: Type?;
 
     /// For type names, the type that is being referenced
     public let referenced_type: Type?;
+
+    public let kind: int;
 
     public new token(token: Token)
     {
@@ -34,7 +31,6 @@ public class Semantic_Node // : Program_Fragment
         self.children = new system.collections.List<Semantic_Node>();
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
-        self.converted_type = none;
         self.declares_type = none;
         self.referenced_type = none;
     }
@@ -52,7 +48,6 @@ public class Semantic_Node // : Program_Fragment
         self.children = new system.collections.List<Semantic_Node>();
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
-        self.converted_type = none;
         self.declares_type = none;
         self.referenced_type = none;
     }
@@ -70,7 +65,6 @@ public class Semantic_Node // : Program_Fragment
         self.children = children;
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
-        self.converted_type = none;
         self.declares_type = none;
         self.referenced_type = none;
     }
@@ -88,7 +82,6 @@ public class Semantic_Node // : Program_Fragment
         self.children = children;
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = of_type;
-        self.converted_type = of_type;
         self.declares_type = none;
         self.referenced_type = none;
     }
@@ -106,7 +99,6 @@ public class Semantic_Node // : Program_Fragment
         self.children = children;
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
-        self.converted_type = none;
         self.declares_type = type;
         self.referenced_type = none;
     }
@@ -124,7 +116,6 @@ public class Semantic_Node // : Program_Fragment
         self.children = children;
         self.diagnostics = new system.collections.List<Diagnostic>();
         self.of_type = none;
-        self.converted_type = none;
         self.declares_type = none;
         self.referenced_type = type;
     }
