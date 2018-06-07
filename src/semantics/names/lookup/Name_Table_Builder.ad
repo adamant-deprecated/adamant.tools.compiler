@@ -74,13 +74,13 @@ public add_syntax(
     if syntax.kind == FunctionDeclaration
         or syntax.kind == MethodDeclaration
     {
-        let name: Name = new Name(parent, FunctionName, get_syntax_text(first_child_syntax(syntax, Identifier)));
+        let name: Name = new Name(parent, FunctionName, get_token_text(first_child_token(syntax, Identifier)));
         add_function(name_table, name, syntax);
     }
     else if syntax.kind == ClassDeclaration
         or syntax.kind == StructDeclaration
     {
-        let unqualified_name: string = get_syntax_text(first_child_syntax(syntax, Identifier));
+        let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
         var type_kind: int;
         if syntax.kind == ClassDeclaration
             { type_kind = ReferenceType; }
@@ -97,9 +97,9 @@ public add_syntax(
     else if syntax.kind == ConstructorDeclaration
     {
         var full_name: string = "new";
-        let constructor_name: Syntax_Node? = first_child_syntax(syntax, Identifier);
+        let constructor_name: Token? = first_child_token(syntax, Identifier);
         if constructor_name =/= none
-            { full_name = "new_" + get_syntax_text(constructor_name); }
+            { full_name = "new_" + get_token_text(constructor_name); }
         let name: Name = new Name.special(parent, FunctionName, full_name);
 
         add_function(name_table, name, syntax);
@@ -112,14 +112,14 @@ public add_syntax(
     }
     else if syntax.kind == FieldDeclaration
     {
-        let unqualified_name: string = get_syntax_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
+        let unqualified_name: string = get_token_text(first_child_token(first_child_syntax(syntax, VariableDeclaration), Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let no_type: Type? = none; // we don't have a type for functions yet
         add_type_name(name_table, name, no_type);
     }
     else if syntax.kind == EnumDeclaration
     {
-        let unqualified_name: string = get_syntax_text(first_child_syntax(syntax, Identifier));
+        let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let type: Type = new Type(ReferenceType, name, true);
         add_type_name(name_table, name, type);
@@ -127,7 +127,7 @@ public add_syntax(
     }
     else if syntax.kind == GlobalDeclaration
     {
-        let unqualified_name: string = get_syntax_text(first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier));
+        let unqualified_name: string = get_token_text(first_child_token(first_child_syntax(syntax, VariableDeclaration), Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
         let no_type: Type? = none; // we don't have a type for functions yet
         add_type_name(name_table, name, no_type);
@@ -147,8 +147,8 @@ public add_syntax(
     }
     else if syntax.kind == ForStatement
     {
-        let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
-        let name: Name = new Name(parent, VariableName, get_syntax_text(identifier));
+        let identifier: Token = first_child_token(first_child_syntax(syntax, VariableDeclaration), Identifier);
+        let name: Name = new Name(parent, VariableName, get_token_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
         add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
         add_syntax(name_table, parent, first_child_syntax(syntax, Block));
@@ -175,8 +175,8 @@ public add_syntax(
     else if syntax.kind == MatchArm
     {
         // TODO: we actually need unnamed scopes for these variables
-        let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, MatchPattern), Identifier);
-        let name: Name = new Name(parent, VariableName, get_syntax_text(identifier));
+        let identifier: Token = first_child_token(first_child_syntax(syntax, MatchPattern), Identifier);
+        let name: Name = new Name(parent, VariableName, get_token_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
         add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
 
@@ -197,15 +197,15 @@ public add_syntax(
     }
     else if syntax.kind == LocalDeclarationStatement
     {
-        let identifier: Syntax_Node = first_child_syntax(first_child_syntax(syntax, VariableDeclaration), Identifier);
-        let name: Name = new Name(parent, VariableName, get_syntax_text(identifier));
+        let identifier: Token = first_child_token(first_child_syntax(syntax, VariableDeclaration), Identifier);
+        let name: Name = new Name(parent, VariableName, get_token_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
         add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
     }
     else if syntax.kind == Parameter
     {
-        let identifier: Syntax_Node = first_child_syntax(syntax, Identifier);
-        let name: Name = new Name(parent, VariableName, get_syntax_text(identifier));
+        let identifier: Token = first_child_token(syntax, Identifier);
+        let name: Name = new Name(parent, VariableName, get_token_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
         add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
     }

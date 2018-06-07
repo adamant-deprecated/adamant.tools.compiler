@@ -12,6 +12,6 @@ public syntax_to_string(syntax: Syntax) -> string
     match syntax
     {
         token: Token => { return "Token.kind="+int_to_string(token.kind)+", \""+get_token_text(token)+"\""; },
-        node: Syntax_Node => { return "Syntax_Node.kind="+int_to_string(node.kind)+", \""+get_syntax_text(node)+"\""; }
+        node: Syntax_Node => { return "Syntax_Node.kind="+int_to_string(node.kind)+", \""+get_syntax_node_text(node)+"\""; }
     }
 }

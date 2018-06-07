@@ -8,7 +8,7 @@ public class Token // : Syntax
     public let diagnostics: system.collections.List<Diagnostic>;
 
     public let kind: int;
-    // TODO remove `children` for now, it allows a Token to be memory identical to a Syntax_Node
+    // TODO remove `children`. For now, it allows a Token to be memory identical to a Syntax_Node
     public let children: system.collections.List<Syntax_Node>;
     public let value: string; // TODO this should be optional string, but for now we use empty string
 

@@ -104,17 +104,30 @@ public syntax_node_as_syntax(node: Syntax_Node) -> Syntax
     return as_any(node);
 }
 
-public get_syntax_text(syntax: Syntax_Node) -> string
+public get_syntax_node_text(syntax: Syntax_Node) -> string
 {
     return substring(syntax.source.text, syntax.start, syntax.byte_length);
 }
 
-public first_child_syntax(syntax: Syntax_Node, type: int) -> Syntax_Node?
+public first_child_syntax(syntax: Syntax_Node, kind: int) -> Syntax_Node?
 {
     for let child: Syntax_Node in syntax.children
     {
-        if child.kind == type
+        if child.kind == kind
             { return child; }
+    }
+    return none;
+}
+
+public first_child_token(syntax: Syntax_Node, kind: int) -> Token?
+{
+    for let child: Syntax_Node in syntax.children
+    {
+        match child
+        {
+            token: Token => { if token.kind == kind { return token; } },
+            node: Syntax_Node => { }
+        }
     }
     return none;
 }
