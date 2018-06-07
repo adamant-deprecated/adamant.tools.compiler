@@ -7,7 +7,7 @@ public class Semantic_Node // : Program_Fragment
     public let start: int;
     public let byte_length: int;
     public let children: system.collections.List<Program_Fragment>;
-    public let diagnostics: mut system.collections.List<Diagnostic>;
+    public let diagnostics: system.collections.List<Diagnostic>;
 
     /// The type of an expression (or variable) before any implicit conversions
     public let of_type: Type?;
@@ -321,10 +321,10 @@ public node_has_child(node: Semantic_Node, kind: int) -> bool
     return false;
 }
 
-public add_diagnostic(node: mut Semantic_Node, diagnostic: Diagnostic) -> void
-{
-    add_item(node.diagnostics, diagnostic);
-}
+// public add_diagnostic(node: mut Semantic_Node, diagnostic: Diagnostic) -> void
+// {
+//     add_item(node.diagnostics, diagnostic);
+// }
 
 public diagnostics(node: Semantic_Node) -> system.collections.List<Diagnostic>
 {
