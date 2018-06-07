@@ -320,6 +320,9 @@ extern inline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr r
 // Standard Library
 // -----------------------------------------------------------------------------
 
+extern inline void const ref as_any(void const ref const value);
+extern inline void mut ref as_any_mut(void mut ref const value);
+
 extern inline void_ptr allocate__1(int32 bytes);
 extern inline void free__1(const_void_ptr object);
 

@@ -4,21 +4,29 @@
 enum Type_ID
 {
 	never__0Type__ID = 0,
+	Base__0__0Type_ID,
 	A__0__0Type_ID,
 	B__0__0Type_ID,
 };
 typedef enum Type_ID Type_ID;
 
 // Type Declarations
+typedef struct Base__0 Base__0;
 typedef struct A__0 A__0;
 typedef struct B__0 B__0;
 
 // Function Declarations
+Base__0 mut ref mut Base__0__0new__0(Base__0 mut ref const self);
 A__0 mut ref mut A__0__0new__0(A__0 mut ref const self);
 B__0 mut ref mut B__0__0new__0(B__0 mut ref const self);
 int32 mut main__0();
 
 // Class Declarations
+
+struct Base__0
+{
+	Type_ID type_id;
+};
 
 struct A__0
 {
@@ -36,6 +44,8 @@ struct B__0
 
 // Definitions
 
+Base__0 mut ref mut Base__0__0new__0(Base__0 mut ref const self) { self->type_id = Base__0__0Type_ID; return self; }
+
 A__0 mut ref mut A__0__0new__0(A__0 mut ref const self)
 {
 	self->type_id = A__0__0Type_ID;
@@ -52,7 +62,8 @@ B__0 mut ref mut B__0__0new__0(B__0 mut ref const self)
 
 int32 mut main__0()
 {
-	B__0 const ref const v__ = B__0__0new__0(allocate(sizeof(B__0)));
+	Base__0 mut ref const v_mut__ = as_any_mut__1(A__0__0new__0(allocate(sizeof(A__0))));
+	Base__0 const ref const v__ = as_any__1(B__0__0new__0(allocate(sizeof(B__0))));
 	/* match */ { void const ref const match_value = v__;
 	   switch(*(Type_ID const ref)match_value)
 	{

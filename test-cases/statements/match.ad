@@ -1,3 +1,7 @@
+public class Base
+{
+}
+
 public class A
 {
     public let value_a: int;
@@ -20,7 +24,8 @@ public class B
 
 public main() -> int
 {
-    let v: B = new B();
+    let v_mut: mut Base = as_any_mut(new A());
+    let v: Base = as_any(new B());
     match v
     {
         a: A => { return a.value_a; },

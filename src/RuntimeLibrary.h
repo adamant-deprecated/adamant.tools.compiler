@@ -240,6 +240,16 @@ typedef struct system__io__File_Reader__0 system__io__File_Reader__0;
 typedef struct system__io__File_Writer__0 system__io__File_Writer__0;
 typedef struct system__text__String_Builder__0 system__text__String_Builder__0;
 
+inline void const ref as_any__1(void const ref const value)
+{
+    return value;
+}
+
+inline void mut ref as_any_mut__1(void mut ref const value)
+{
+    return value;
+}
+
 inline void_ptr allocate__1(int32 bytes)
 {
     return malloc(bytes.value);
