@@ -228,7 +228,7 @@ public build_semantic_node(
         add_item(children, new Semantic_Node.token(identifier));
         let type_syntax: Syntax_Node = syntax.children[3];
         let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
-        assert(type_node.referenced_type =/= none, get_node_text(type_node));
+        assert(type_node.referenced_type =/= none, get_semantic_node_text(type_node));
         let variable_scope: mut Name_Subtable = lookup(scope, get_token_text(identifier));
         assert(variable_scope =/= none, get_syntax_node_text(syntax));
         // debug_write_line("Binding variable `"+get_syntax_node_text(identifier)+"` with type `"+full_name(type_node.referenced_type.name)+"`, full scope is `"+full_name(variable_scope.name)+"`");
@@ -622,7 +622,7 @@ public build_constructor_name_semantic_node(
         let name: Token = syntax.children[2];
         let constructor_name: string = "new_" + get_token_text(name);
         let referenced_type: Type = type_node.referenced_type;
-        assert(referenced_type =/= none, "no referenced type for `"+get_node_text(type_node)+"`");
+        assert(referenced_type =/= none, "no referenced type for `"+get_semantic_node_text(type_node)+"`");
         let constructor_scope: Name_Subtable? = lookup_special(get_name(name_table, referenced_type.name), constructor_name);
         if constructor_scope =/= none
         {
@@ -642,15 +642,15 @@ public as_syntax_node(syntax: Syntax_Node) -> Syntax_Node
 
 public add_resolution_error(node: mut Semantic_Node) -> void
 {
-    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not resolve name `" + get_node_text(node) + "`"));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_semantic_node_text_span(node), "Could not resolve name `" + get_semantic_node_text(node) + "`"));
 }
 
 public add_resolution_error(node: mut Semantic_Node, qualifier: Semantic_Node) -> void
 {
-    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not resolve name `" + get_node_text(node) + "` because qualifier `" + get_node_text(qualifier) +"` could not be resolved."));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_semantic_node_text_span(node), "Could not resolve name `" + get_semantic_node_text(node) + "` because qualifier `" + get_semantic_node_text(qualifier) +"` could not be resolved."));
 }
 
 public add_could_not_determine_type_error(node: mut Semantic_Node) -> void
 {
-    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_text_span(node), "Could not determine type for `" + get_node_text(node) + "`"));
+    add_diagnostic(node, new Diagnostic(FatalCompilationError, Analysis, node.source, get_semantic_node_text_span(node), "Could not determine type for `" + get_semantic_node_text(node) + "`"));
 }

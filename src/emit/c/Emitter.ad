@@ -189,7 +189,7 @@ public convert_primitive_type_name(type: Type) -> string
 // Converts a type to C
 // public convert_type_node_name(type_node: Semantic_Node) -> mut system.text.String_Builder
 // {
-//     assert(type_node.referenced_type =/= none, get_node_text(type_node));
+//     assert(type_node.referenced_type =/= none, get_semantic_node_text(type_node));
 //     return convert_type_name(type_node.referenced_type);
 // }
 
@@ -293,7 +293,7 @@ public convert_type(mutable_binding: bool, var type: Type, optional: bool) -> st
 
 public convert_type(mutable_binding: bool, type_node: Semantic_Node) -> string
 {
-    assert(type_node.referenced_type =/= none, get_node_text(type_node));
+    assert(type_node.referenced_type =/= none, get_semantic_node_text(type_node));
     return convert_type(mutable_binding, type_node.referenced_type, false); // not optional
 }
 
@@ -320,15 +320,15 @@ public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, s
         let type_node: Semantic_Node = parameter.children[parameter.children.count - 1];
         sb_append(builder, convert_type(mutable_binding, type_node));
         sb_append(builder, " ");
-        sb_append(builder, mangle_field_name(get_node_text(first_child(parameter, Identifier))));
+        sb_append(builder, mangle_field_name(get_semantic_node_text(first_child(parameter, Identifier))));
 
         if is_main_function
         {
             var type_string: string;
             if type_node.kind == MutableType
-                { type_string = get_node_text(type_node.children[0]); }
+                { type_string = get_semantic_node_text(type_node.children[0]); }
             else
-                { type_string = get_node_text(type_node); }
+                { type_string = get_semantic_node_text(type_node); }
             if type_string == "system.console.Console"
                 { emitter.main_function_accepts_console = true; }
             if type_string == "system.console.Arguments"
@@ -369,13 +369,13 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
                 and name_node.referenced_type == none
             {
                 // Named constructor
-                constructor_name = "__" + get_node_text(name_node);
+                constructor_name = "__" + get_semantic_node_text(name_node);
                 type_node = type_node.children[0];
             }
         }
 
         let type: Type = type_node.referenced_type;
-        assert(type =/= none, get_node_text(type_node));
+        assert(type =/= none, get_semantic_node_text(type_node));
         write(builder, sb_to_string(convert_type_name(type, false)));
         write(builder, "__0new");
         write(builder, constructor_name);
@@ -441,7 +441,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == NumericLiteralExpression
     {
         // Extra parens are needed in some weird cases with macros
-        write(builder, "((int32){" + get_node_text(syntax) + "})");
+        write(builder, "((int32){" + get_semantic_node_text(syntax) + "})");
     }
     else if syntax.kind == TrueLiteralExpression
     {
@@ -455,18 +455,18 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         // Extra parens are needed in some weird cases with macros
         // TODO write this out as hex or something
-        let raw_value: string = get_node_text(syntax);
+        let raw_value: string = get_semantic_node_text(syntax);
         let code_point_value: code_point = code_point_literal_value(raw_value);
         write(builder, "((code_point){/*" + substring(raw_value, 1, string_byte_length(raw_value)-2)
             + "*/0x" + int_to_hex_string(code_point_as_int(code_point_value)) + "})");
     }
     else if syntax.kind == IdentifierName
     {
-        write(builder, mangle_field_name(get_node_text(syntax)));
+        write(builder, mangle_field_name(get_semantic_node_text(syntax)));
     }
     else if syntax.kind == StringLiteralExpression
     {
-        let value: string = get_node_text(syntax);
+        let value: string = get_semantic_node_text(syntax);
         // Extra parens are needed in some weird cases with macros
         write(builder, "((string){" + int_to_string(literal_length(value)) + ",(uint8_t const*)" + value + "})");
     }
@@ -478,7 +478,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         {
             convert_expression(syntax.children[0], builder);
             write(builder, " ");
-            write(builder, get_node_text(syntax.children[1]));
+            write(builder, get_semantic_node_text(syntax.children[1]));
             write(builder, " ");
             convert_expression(syntax.children[2], builder);
         }
@@ -898,11 +898,11 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
 
         let variable_declaration: Semantic_Node = first_child(statement, VariableDeclaration);
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
-        let variable_name: string = get_node_text(first_child(variable_declaration, Identifier));
+        let variable_name: string = get_semantic_node_text(first_child(variable_declaration, Identifier));
         let variable_type_node: Semantic_Node = variable_declaration.children[2];
         let iterator_expression: Semantic_Node = statement.children[3];
         let iterator_over_type: Type = variable_type_node.referenced_type;
-        assert(iterator_over_type =/= none, get_node_text(variable_type_node));
+        assert(iterator_over_type =/= none, get_semantic_node_text(variable_type_node));
         var iterator_type: string;
         if iterator_over_type.is_primitive
             { iterator_type = convert_primitive_type_name(iterator_over_type); }
@@ -994,9 +994,9 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
             {
                 let match_pattern: Semantic_Node = first_child(match_arm, MatchPattern);
                 let match_variable_type_node: Semantic_Node = match_pattern.children[2];
-                let variable_name: string = get_node_text(first_child(match_pattern, Identifier));
+                let variable_name: string = get_semantic_node_text(first_child(match_pattern, Identifier));
                 let match_block: Semantic_Node = first_child(match_arm, Block);
-                assert(match_variable_type_node.referenced_type =/= none, get_node_text(match_variable_type_node));
+                assert(match_variable_type_node.referenced_type =/= none, get_semantic_node_text(match_variable_type_node));
                 let type_name: string = sb_to_string(convert_type_name(match_variable_type_node.referenced_type));
                 write_line(emitter.definitions, "case " + type_name + "__0Type_ID:");
                 begin_block(emitter.definitions);
@@ -1029,7 +1029,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
     else if statement.kind == LocalDeclarationStatement
     {
         let variable_declaration: Semantic_Node = first_child(statement, VariableDeclaration);
-        let variable_name: string = get_node_text(first_child(variable_declaration, Identifier));
+        let variable_name: string = get_semantic_node_text(first_child(variable_declaration, Identifier));
         let variable_type: Semantic_Node = variable_declaration.children[2];
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
         begin_line(emitter.definitions, convert_type(mutable_binding, variable_type));
@@ -1097,7 +1097,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         let constructor_name_node: Semantic_Node? = first_child(member, Identifier);
         if constructor_name_node =/= none
         {
-            let constructor_name: string = get_node_text(constructor_name_node);
+            let constructor_name: string = get_semantic_node_text(constructor_name_node);
             new_function_name = new_function_name + "__" + constructor_name;
             constructor_full_name = constructor_full_name + constructor_name + "__";
         }
@@ -1125,7 +1125,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
     else if member.kind == FieldDeclaration
     {
         let variable_declaration: Semantic_Node = first_child(member, VariableDeclaration);
-        let field_name: string = get_node_text(first_child(variable_declaration, Identifier));
+        let field_name: string = get_semantic_node_text(first_child(variable_declaration, Identifier));
         let field_type: Semantic_Node = variable_declaration.children[2];
         // because we need to assign them in constructors don't mark fields const
         // TODO it might be better to just not emit a mutability specifier on these types to avoid confusion
@@ -1140,7 +1140,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         // For now we ignore the self parameter because the caller can't tell if it is a method or function call
         if self_parameter =/= none
             { parameter_count -= 1; }
-        let method_name: string = mangle_function_name(get_node_text(first_child(member, Identifier)), parameter_count);
+        let method_name: string = mangle_function_name(get_semantic_node_text(first_child(member, Identifier)), parameter_count);
         let parameters: string = convert_parameter_list(emitter, parameters_node);
         let is_associated_function: bool = self_parameter == none;
         let mutable_self: bool = not is_associated_function and node_has_child(self_parameter, MutableKeyword);
@@ -1199,7 +1199,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     if declaration.kind == GlobalDeclaration
     {
         let variable_declaration: Semantic_Node = first_child(declaration, VariableDeclaration);
-        let variable_name: string = get_node_text(first_child(variable_declaration, Identifier));
+        let variable_name: string = get_semantic_node_text(first_child(variable_declaration, Identifier));
         let variable_type: Semantic_Node = variable_declaration.children[2];
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
         let c_type: string = convert_type(mutable_binding, variable_type);
@@ -1212,7 +1212,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     else if declaration.kind == ClassDeclaration
     {
         let declared_type: Type = declaration.declares_type;
-        assert(declared_type =/= none, get_node_text(first_child(declaration, Identifier)));
+        assert(declared_type =/= none, get_semantic_node_text(first_child(declaration, Identifier)));
         let class_name: string = mangle_name(declared_type);
         write_line(emitter.type_id_declaration, class_name + "__0Type_ID,");
         write_line(emitter.type_declarations, "typedef struct " + class_name + " " + class_name + ";");
@@ -1235,7 +1235,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     else if declaration.kind == StructDeclaration
     {
         let declared_type: Type = declaration.declares_type;
-        assert(declared_type =/= none, get_node_text(first_child(declaration, Identifier)));
+        assert(declared_type =/= none, get_semantic_node_text(first_child(declaration, Identifier)));
         let struct_name: string = mangle_name(declared_type);
         write_line(emitter.type_declarations, "typedef struct " + struct_name + " " + struct_name + ";");
         element_separator_line(emitter.class_declarations);
@@ -1255,20 +1255,20 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     }
     else if declaration.kind == EnumDeclaration
     {
-        let enum_name: string = get_node_text(first_child(declaration, Identifier));
+        let enum_name: string = get_semantic_node_text(first_child(declaration, Identifier));
         write_line(emitter.type_declarations, "enum " + enum_name + "_");
         begin_block(emitter.type_declarations);
         for let member: Semantic_Node in declaration.children
         {
             if member.kind == EnumMemberDeclaration
             {
-                let member_name: string = get_node_text(member.children[0]);
+                let member_name: string = get_semantic_node_text(member.children[0]);
                 begin_line(emitter.type_declarations, member_name + "_");
                 let member_value: Semantic_Node? = first_child(member, Number);
                 if member_value =/= none
                 {
                     write(emitter.type_declarations, " = ");
-                    write(emitter.type_declarations, get_node_text(member_value));
+                    write(emitter.type_declarations, get_semantic_node_text(member_value));
                 }
                 end_line(emitter.type_declarations, ",");
             }
@@ -1279,7 +1279,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
     else if declaration.kind == FunctionDeclaration
     {
         let parameters_node: Semantic_Node = first_child(declaration, ParameterList);
-        var name: string = get_node_text(first_child(declaration, Identifier));
+        var name: string = get_semantic_node_text(first_child(declaration, Identifier));
         let is_main: bool = name == "main";
         name = mangle_function_name(name, parameters_node.children.count);
         if is_main { emitter.main_function_name = name; }

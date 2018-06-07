@@ -1,18 +1,14 @@
-// Long term, the idea is to have a tree that implements the interface of the
-// syntax tree, but adds additional methods and functionality
-//
-// But perhaps it would be better to have a tree that is very different from the
-// syntax tree and fully abstracts away the syntax while still being linked to it.
-public class Semantic_Node
+public class Semantic_Node // : Program_Fragment
 {
     public let syntax: Syntax_Node;
-    public let kind: int;
     public let is_missing: bool;
     public let source: Source_Text;
     public let start: int;
     public let byte_length: int;
     public let children: system.collections.List<Semantic_Node>;
     public let diagnostics: mut system.collections.List<Diagnostic>;
+
+    public let kind: int;
 
     /// The type of an expression (or variable) before any implicit conversions
     public let of_type: Type?;
@@ -134,12 +130,17 @@ public class Semantic_Node
     }
 }
 
-public get_text_span(node: Semantic_Node) -> Text_Span
+public semantic_node_as_program_fragment(node: Semantic_Node) -> Program_Fragment
+{
+    return as_any(node);
+}
+
+public get_semantic_node_text_span(node: Semantic_Node) -> Text_Span
 {
     return new Text_Span(node.start, node.byte_length);
 }
 
-public get_node_text(node: Semantic_Node) -> string
+public get_semantic_node_text(node: Semantic_Node) -> string
 {
     if node.source == none { return "$No Source$"; }
     return substring(node.source.text, node.start, node.byte_length);
