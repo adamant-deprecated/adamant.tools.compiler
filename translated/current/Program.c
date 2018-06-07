@@ -1,5 +1,36 @@
 #include "RuntimeLibrary.h"
 
+// Type ID Declarations
+enum Type_ID
+{
+	never__0Type__ID = 0,
+	Source_Text__0__0Type_ID,
+	Text_Line__0__0Type_ID,
+	Text_Lines__0__0Type_ID,
+	Text_Position__0__0Type_ID,
+	Text_Span__0__0Type_ID,
+	Source_File_Builder__0__0Type_ID,
+	Compilation_Unit__0__0Type_ID,
+	Package__0__0Type_ID,
+	Package_Reference__0__0Type_ID,
+	Semantic_Node__0__0Type_ID,
+	Semantic_Tree_Builder__0__0Type_ID,
+	Compilation_Unit_Parser__0__0Type_ID,
+	Syntax__0__0Type_ID,
+	Syntax_Node__0__0Type_ID,
+	Token__0__0Type_ID,
+	Token_Stream__0__0Type_ID,
+	Diagnostic__0__0Type_ID,
+	Emitter__0__0Type_ID,
+	Name__0__0Type_ID,
+	Package_Name__0__0Type_ID,
+	Symbol__0__0Type_ID,
+	Type__0__0Type_ID,
+	Name_Subtable__0__0Type_ID,
+	Name_Table__0__0Type_ID,
+};
+typedef enum Type_ID Type_ID;
+
 // Type Declarations
 typedef struct Source_Text__0 Source_Text__0;
 typedef struct Text_Line__0 Text_Line__0;
@@ -13,7 +44,9 @@ typedef struct Package_Reference__0 Package_Reference__0;
 typedef struct Semantic_Node__0 Semantic_Node__0;
 typedef struct Semantic_Tree_Builder__0 Semantic_Tree_Builder__0;
 typedef struct Compilation_Unit_Parser__0 Compilation_Unit_Parser__0;
+typedef struct Syntax__0 Syntax__0;
 typedef struct Syntax_Node__0 Syntax_Node__0;
+typedef struct Token__0 Token__0;
 typedef struct Token_Stream__0 Token_Stream__0;
 typedef struct Diagnostic__0 Diagnostic__0;
 typedef struct Emitter__0 Emitter__0;
@@ -150,6 +183,7 @@ Syntax_Node__0 const ref mut parse_declaration__1(Compilation_Unit_Parser__0 mut
 Syntax_Node__0 const ref mut parse_compilation_unit__1(Compilation_Unit_Parser__0 mut ref const parser__);
 Token_Stream__0 mut ref mut lexically_analyze__1(Source_Text__0 const ref const source__);
 Syntax_Node__0 const ref mut parse_package__1(system__collections__List__1 const ref const sources__);
+Syntax__0 mut ref mut Syntax__0__0new__0(Syntax__0 mut ref const self);
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__4(Syntax_Node__0 mut ref const self, int32 const type__, Source_Text__0 const ref const source__, int32 const start__, int32 const length__);
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__5(Syntax_Node__0 mut ref const self, int32 const type__, BOOL const is_missing__, Source_Text__0 const ref const source__, int32 const start__, int32 const length__);
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__2(Syntax_Node__0 mut ref const self, int32 const type__, Syntax_Node__0 const ref const child__);
@@ -167,6 +201,7 @@ system__collections__List__1 const ref mut members__1(Syntax_Node__0 const ref c
 system__collections__List__1 const ref mut parameters__1(Syntax_Node__0 const ref const syntax__);
 system__collections__List__1 const ref mut statements__1(Syntax_Node__0 const ref const syntax__);
 Syntax_Node__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref const syntax__);
+Token__0 mut ref mut Token__0__0new__4(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__);
 Token_Stream__0 mut ref mut Token_Stream__0__0new__1(Token_Stream__0 mut ref const self, Source_Text__0 const ref const source__);
 Syntax_Node__0 const opt_ref mut next_token__1(Token_Stream__0 mut ref const tokens__);
 Syntax_Node__0 const opt_ref mut end_of_file_token__1(Token_Stream__0 mut ref const tokens__);
@@ -287,6 +322,7 @@ void mut can_get_Optional_class_from_name_with_package__0();
 
 struct Source_Text__0
 {
+	Type_ID type_id;
 	string mut package__;
 	string mut path__;
 	string mut name__;
@@ -296,6 +332,7 @@ struct Source_Text__0
 
 struct Text_Line__0
 {
+	Type_ID type_id;
 	Source_Text__0 const ref mut source__;
 	int32 mut start__;
 	int32 mut byte_length__;
@@ -303,12 +340,14 @@ struct Text_Line__0
 
 struct Text_Lines__0
 {
+	Type_ID type_id;
 	Source_Text__0 const ref mut source__;
 	Ints__0 const ref mut start_of_line__;
 };
 
 struct Text_Position__0
 {
+	Type_ID type_id;
 	int32 mut character_offset__;
 	int32 mut line__;
 	int32 mut column__;
@@ -316,12 +355,14 @@ struct Text_Position__0
 
 struct Text_Span__0
 {
+	Type_ID type_id;
 	int32 mut start__;
 	int32 mut byte_length__;
 };
 
 struct Source_File_Builder__0
 {
+	Type_ID type_id;
 	system__text__String_Builder__0 mut ref mut code__;
 	system__text__String_Builder__0 mut ref mut indent__;
 	BOOL mut first_element__;
@@ -330,12 +371,14 @@ struct Source_File_Builder__0
 
 struct Compilation_Unit__0
 {
+	Type_ID type_id;
 	Syntax_Node__0 const ref mut syntax__;
 	system__collections__List__1 const ref mut declarations__;
 };
 
 struct Package__0
 {
+	Type_ID type_id;
 	Package_Name__0 const ref mut name__;
 	system__collections__List__1 const ref mut references__;
 	system__collections__List__1 const ref mut compilation_units__;
@@ -344,12 +387,14 @@ struct Package__0
 
 struct Package_Reference__0
 {
+	Type_ID type_id;
 	string mut name__;
 	Package__0 const ref mut package__;
 };
 
 struct Semantic_Node__0
 {
+	Type_ID type_id;
 	Syntax_Node__0 const ref mut syntax__;
 	int32 mut kind__;
 	BOOL mut is_missing__;
@@ -366,29 +411,55 @@ struct Semantic_Node__0
 
 struct Semantic_Tree_Builder__0
 {
+	Type_ID type_id;
 	Name__0 const ref mut optional_type_name__;
 };
 
 struct Compilation_Unit_Parser__0
 {
+	Type_ID type_id;
 	Token_Stream__0 mut ref mut token_stream__;
 	Syntax_Node__0 const opt_ref mut token__;
 	Syntax_Node__0 const opt_ref mut compilation_unit__;
 };
 
-struct Syntax_Node__0
+struct Syntax__0
 {
-	int32 mut kind__;
+	Type_ID type_id;
 	BOOL mut is_missing__;
 	Source_Text__0 const ref mut source__;
 	int32 mut start__;
 	int32 mut byte_length__;
-	system__collections__List__1 const ref mut children__;
+	system__collections__List__1 const ref mut node_diagnostics__;
+};
+
+struct Syntax_Node__0
+{
+	Type_ID type_id;
+	BOOL mut is_missing__;
+	Source_Text__0 const ref mut source__;
+	int32 mut start__;
+	int32 mut byte_length__;
 	system__collections__List__1 mut ref mut node_diagnostics__;
+	int32 mut kind__;
+	system__collections__List__1 const ref mut children__;
+};
+
+struct Token__0
+{
+	Type_ID type_id;
+	BOOL mut is_missing__;
+	Source_Text__0 const ref mut source__;
+	int32 mut start__;
+	int32 mut byte_length__;
+	system__collections__List__1 const ref mut node_diagnostics__;
+	int32 mut kind__;
+	string mut value__;
 };
 
 struct Token_Stream__0
 {
+	Type_ID type_id;
 	Source_Text__0 const ref mut source__;
 	int32 mut position__;
 	system__collections__List__1 mut ref mut diagnostics__;
@@ -397,6 +468,7 @@ struct Token_Stream__0
 
 struct Diagnostic__0
 {
+	Type_ID type_id;
 	int32 mut level__;
 	int32 mut phase__;
 	Source_Text__0 const ref mut source__;
@@ -407,6 +479,7 @@ struct Diagnostic__0
 
 struct Emitter__0
 {
+	Type_ID type_id;
 	Package__0 const ref mut package__;
 	system__collections__List__1 const ref mut resources__;
 	Source_File_Builder__0 mut ref mut includes__;
@@ -424,6 +497,7 @@ struct Emitter__0
 
 struct Name__0
 {
+	Type_ID type_id;
 	Package_Name__0 const opt_ref mut package__;
 	int32 mut kind__;
 	Strings__0 const ref mut segments__;
@@ -432,11 +506,13 @@ struct Name__0
 
 struct Package_Name__0
 {
+	Type_ID type_id;
 	string mut unqualified__;
 };
 
 struct Symbol__0
 {
+	Type_ID type_id;
 	string mut name__;
 	BOOL mut is_special_name__;
 	int32 mut kind__;
@@ -448,6 +524,7 @@ struct Symbol__0
 
 struct Type__0
 {
+	Type_ID type_id;
 	int32 mut kind__;
 	Name__0 const ref mut name__;
 	system__collections__List__1 const ref mut type_parameters__;
@@ -459,6 +536,7 @@ struct Type__0
 
 struct Name_Subtable__0
 {
+	Type_ID type_id;
 	Name_Table__0 const ref mut name_table__;
 	Name_Subtable__0 const opt_ref mut parent__;
 	Name__0 const ref mut name__;
@@ -468,6 +546,7 @@ struct Name_Subtable__0
 
 struct Name_Table__0
 {
+	Type_ID type_id;
 	Name_Subtable__0 mut ref mut any_package__;
 	system__collections__List__1 mut ref mut packages__;
 };
@@ -476,6 +555,72 @@ struct Name_Table__0
 int32 const Success__ = ((int32){0});
 int32 const UsageError__ = ((int32){64});
 int32 const DataError__ = ((int32){65});
+int32 const IdentifierName__ = ((int32){35});
+int32 const GenericName__ = ((int32){36});
+int32 const QualifiedName__ = ((int32){37});
+int32 const PackageQualifiedName__ = ((int32){38});
+int32 const OptionalType__ = ((int32){40});
+int32 const ParameterList__ = ((int32){48});
+int32 const Parameter__ = ((int32){49});
+int32 const SelfParameter__ = ((int32){50});
+int32 const MutableType__ = ((int32){52});
+int32 const NewExpression__ = ((int32){53});
+int32 const ArgumentList__ = ((int32){54});
+int32 const NotExpression__ = ((int32){55});
+int32 const ParenthesizedExpression__ = ((int32){56});
+int32 const NoneLiteralExpression__ = ((int32){57});
+int32 const SelfExpression__ = ((int32){58});
+int32 const TrueLiteralExpression__ = ((int32){59});
+int32 const FalseLiteralExpression__ = ((int32){60});
+int32 const StringLiteralExpression__ = ((int32){61});
+int32 const CodePointLiteralExpression__ = ((int32){62});
+int32 const NumericLiteralExpression__ = ((int32){63});
+int32 const AssignmentExpression__ = ((int32){64});
+int32 const OrExpression__ = ((int32){65});
+int32 const AndExpression__ = ((int32){66});
+int32 const EqualExpression__ = ((int32){67});
+int32 const NotEqualExpression__ = ((int32){68});
+int32 const AndKeyword__ = ((int32){69});
+int32 const OrKeyword__ = ((int32){70});
+int32 const ComparisonExpression__ = ((int32){71});
+int32 const AddExpression__ = ((int32){72});
+int32 const SubtractExpression__ = ((int32){73});
+int32 const InvocationExpression__ = ((int32){74});
+int32 const MemberAccessExpression__ = ((int32){75});
+int32 const ElementAccessExpression__ = ((int32){76});
+int32 const NegateExpression__ = ((int32){77});
+int32 const ReturnStatement__ = ((int32){79});
+int32 const LoopStatement__ = ((int32){81});
+int32 const Block__ = ((int32){82});
+int32 const WhileStatement__ = ((int32){84});
+int32 const ForStatement__ = ((int32){86});
+int32 const VariableDeclaration__ = ((int32){88});
+int32 const LocalDeclarationStatement__ = ((int32){89});
+int32 const DoWhileStatement__ = ((int32){92});
+int32 const IfStatement__ = ((int32){95});
+int32 const ElseClause__ = ((int32){96});
+int32 const BreakStatement__ = ((int32){98});
+int32 const ContinueStatement__ = ((int32){100});
+int32 const ExpressionStatement__ = ((int32){101});
+int32 const ConstructorDeclaration__ = ((int32){106});
+int32 const FieldDeclaration__ = ((int32){107});
+int32 const MethodDeclaration__ = ((int32){108});
+int32 const GlobalDeclaration__ = ((int32){109});
+int32 const ClassDeclaration__ = ((int32){111});
+int32 const EnumDeclaration__ = ((int32){114});
+int32 const EnumMemberDeclaration__ = ((int32){115});
+int32 const FunctionDeclaration__ = ((int32){116});
+int32 const CompilationUnit__ = ((int32){117});
+int32 const PackageNode__ = ((int32){118});
+int32 const RemainderExpression__ = ((int32){120});
+int32 const MultiplyExpression__ = ((int32){124});
+int32 const DivideExpression__ = ((int32){125});
+int32 const StructDeclaration__ = ((int32){127});
+int32 const ImmutableType__ = ((int32){128});
+int32 const NamespaceDeclaration__ = ((int32){129});
+int32 const MatchStatement__ = ((int32){131});
+int32 const MatchArm__ = ((int32){134});
+int32 const MatchPattern__ = ((int32){135});
 int32 const SkippedTokens__ = ((int32){99999});
 int32 const EndOfFileToken__ = ((int32){0});
 int32 const LeftBrace__ = ((int32){1});
@@ -512,12 +657,7 @@ int32 const NullReservedWord__ = ((int32){31});
 int32 const SelfKeyword__ = ((int32){32});
 int32 const TrueKeyword__ = ((int32){33});
 int32 const FalseKeyword__ = ((int32){34});
-int32 const IdentifierName__ = ((int32){35});
-int32 const GenericName__ = ((int32){36});
-int32 const QualifiedName__ = ((int32){37});
-int32 const PackageQualifiedName__ = ((int32){38});
 int32 const MutableKeyword__ = ((int32){39});
-int32 const OptionalType__ = ((int32){40});
 int32 const PredefinedType__ = ((int32){41});
 int32 const CodePoint__ = ((int32){42});
 int32 const String__ = ((int32){43});
@@ -525,92 +665,31 @@ int32 const Int__ = ((int32){44});
 int32 const Bool__ = ((int32){45});
 int32 const Void__ = ((int32){46});
 int32 const UnsignedInt__ = ((int32){47});
-int32 const ParameterList__ = ((int32){48});
-int32 const Parameter__ = ((int32){49});
-int32 const SelfParameter__ = ((int32){50});
 int32 const VarKeyword__ = ((int32){51});
-int32 const MutableType__ = ((int32){52});
-int32 const NewExpression__ = ((int32){53});
-int32 const ArgumentList__ = ((int32){54});
-int32 const NotExpression__ = ((int32){55});
-int32 const ParenthesizedExpression__ = ((int32){56});
-int32 const NoneLiteralExpression__ = ((int32){57});
-int32 const SelfExpression__ = ((int32){58});
-int32 const TrueLiteralExpression__ = ((int32){59});
-int32 const FalseLiteralExpression__ = ((int32){60});
-int32 const StringLiteralExpression__ = ((int32){61});
-int32 const CodePointLiteralExpression__ = ((int32){62});
-int32 const NumericLiteralExpression__ = ((int32){63});
-int32 const AssignmentExpression__ = ((int32){64});
-int32 const OrExpression__ = ((int32){65});
-int32 const AndExpression__ = ((int32){66});
-int32 const EqualExpression__ = ((int32){67});
-int32 const NotEqualExpression__ = ((int32){68});
-int32 const AndKeyword__ = ((int32){69});
-int32 const OrKeyword__ = ((int32){70});
-int32 const ComparisonExpression__ = ((int32){71});
-int32 const AddExpression__ = ((int32){72});
-int32 const SubtractExpression__ = ((int32){73});
-int32 const InvocationExpression__ = ((int32){74});
-int32 const MemberAccessExpression__ = ((int32){75});
-int32 const ElementAccessExpression__ = ((int32){76});
-int32 const NegateExpression__ = ((int32){77});
 int32 const ReturnKeyword__ = ((int32){78});
-int32 const ReturnStatement__ = ((int32){79});
 int32 const LoopKeyword__ = ((int32){80});
-int32 const LoopStatement__ = ((int32){81});
-int32 const Block__ = ((int32){82});
 int32 const WhileKeyword__ = ((int32){83});
-int32 const WhileStatement__ = ((int32){84});
 int32 const ForKeyword__ = ((int32){85});
-int32 const ForStatement__ = ((int32){86});
 int32 const LetKeyword__ = ((int32){87});
-int32 const VariableDeclaration__ = ((int32){88});
-int32 const LocalDeclarationStatement__ = ((int32){89});
 int32 const InKeyword__ = ((int32){90});
 int32 const DoKeyword__ = ((int32){91});
-int32 const DoWhileStatement__ = ((int32){92});
 int32 const IfKeyword__ = ((int32){93});
 int32 const ElseKeyword__ = ((int32){94});
-int32 const IfStatement__ = ((int32){95});
-int32 const ElseClause__ = ((int32){96});
 int32 const BreakKeyword__ = ((int32){97});
-int32 const BreakStatement__ = ((int32){98});
 int32 const ContinueKeyword__ = ((int32){99});
-int32 const ContinueStatement__ = ((int32){100});
-int32 const ExpressionStatement__ = ((int32){101});
 int32 const PublicKeyword__ = ((int32){102});
 int32 const ProtectedKeyword__ = ((int32){103});
 int32 const InternalKeyword__ = ((int32){104});
 int32 const PrivateKeyword__ = ((int32){105});
-int32 const ConstructorDeclaration__ = ((int32){106});
-int32 const FieldDeclaration__ = ((int32){107});
-int32 const MethodDeclaration__ = ((int32){108});
-int32 const GlobalDeclaration__ = ((int32){109});
 int32 const ClassKeyword__ = ((int32){110});
-int32 const ClassDeclaration__ = ((int32){111});
 int32 const EnumKeyword__ = ((int32){112});
 int32 const StructKeyword__ = ((int32){113});
-int32 const EnumDeclaration__ = ((int32){114});
-int32 const EnumMemberDeclaration__ = ((int32){115});
-int32 const FunctionDeclaration__ = ((int32){116});
-int32 const CompilationUnit__ = ((int32){117});
-int32 const PackageNode__ = ((int32){118});
 int32 const Percent__ = ((int32){119});
-int32 const RemainderExpression__ = ((int32){120});
 int32 const Pipe__ = ((int32){121});
 int32 const FatArrow__ = ((int32){122});
 int32 const Asterisk__ = ((int32){123});
-int32 const MultiplyExpression__ = ((int32){124});
-int32 const DivideExpression__ = ((int32){125});
 int32 const NoneKeyword__ = ((int32){126});
-int32 const StructDeclaration__ = ((int32){127});
-int32 const ImmutableType__ = ((int32){128});
-int32 const NamespaceDeclaration__ = ((int32){129});
 int32 const MatchKeyword__ = ((int32){130});
-int32 const MatchStatement__ = ((int32){131});
-int32 const MatchArm__ = ((int32){134});
-int32 const MatchPattern__ = ((int32){135});
 int32 const Lexing__ = ((int32){1});
 int32 const Parsing__ = ((int32){2});
 int32 const Analysis__ = ((int32){3});
@@ -844,6 +923,7 @@ void mut run_unit_tests__1(system__console__Console__0 mut ref const console__)
 
 Source_Text__0 mut ref mut Source_Text__0__0new__3(Source_Text__0 mut ref const self, string const package__, string const path__, string const text__)
 {
+	self->type_id = Source_Text__0__0Type_ID;
 	self->package__ = package__;
 	self->path__ = path__;
 	string mut name__ = path__;
@@ -928,6 +1008,7 @@ Text_Position__0 const ref mut position_of_start__2(Source_Text__0 const ref con
 
 Text_Line__0 mut ref mut Text_Line__0__0new__3(Text_Line__0 mut ref const self, Source_Text__0 const ref const source__, int32 const start__, int32 const length__)
 {
+	self->type_id = Text_Line__0__0Type_ID;
 	self->source__ = source__;
 	self->start__ = start__;
 	self->byte_length__ = length__;
@@ -936,6 +1017,7 @@ Text_Line__0 mut ref mut Text_Line__0__0new__3(Text_Line__0 mut ref const self, 
 
 Text_Line__0 mut ref mut Text_Line__0__0new__spanning__3(Text_Line__0 mut ref const self, Source_Text__0 const ref const source__, int32 const start__, int32 const end__)
 {
+	self->type_id = Text_Line__0__0Type_ID;
 	self->source__ = source__;
 	self->start__ = start__;
 	self->byte_length__ = int32__0op__sub(end__, start__);
@@ -944,6 +1026,7 @@ Text_Line__0 mut ref mut Text_Line__0__0new__spanning__3(Text_Line__0 mut ref co
 
 Text_Lines__0 mut ref mut Text_Lines__0__0new__2(Text_Lines__0 mut ref const self, Source_Text__0 const ref const source__, Ints__0 const ref const start_of_line__)
 {
+	self->type_id = Text_Lines__0__0Type_ID;
 	self->source__ = source__;
 	self->start_of_line__ = start_of_line__;
 	return self;
@@ -998,6 +1081,7 @@ int32 mut line_containing_offset__2(Text_Lines__0 const ref const lines__, int32
 
 Text_Position__0 mut ref mut Text_Position__0__0new__3(Text_Position__0 mut ref const self, int32 const character_offset__, int32 const line__, int32 const column__)
 {
+	self->type_id = Text_Position__0__0Type_ID;
 	self->character_offset__ = character_offset__;
 	self->line__ = line__;
 	self->column__ = column__;
@@ -1019,6 +1103,7 @@ void mut Text_Position_retains_given_offeset_line_and_column__0()
 
 Text_Span__0 mut ref mut Text_Span__0__0new__2(Text_Span__0 mut ref const self, int32 const start__, int32 const length__)
 {
+	self->type_id = Text_Span__0__0Type_ID;
 	self->start__ = start__;
 	self->byte_length__ = length__;
 	return self;
@@ -1031,6 +1116,7 @@ string mut format_error__1(string const message__)
 
 Source_File_Builder__0 mut ref mut Source_File_Builder__0__0new__0(Source_File_Builder__0 mut ref const self)
 {
+	self->type_id = Source_File_Builder__0__0Type_ID;
 	self->code__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
 	self->indent__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
 	self->first_element__ = TRUE;
@@ -1143,6 +1229,7 @@ string mut to_string__1(Source_File_Builder__0 mut ref const file__)
 
 Compilation_Unit__0 mut ref mut Compilation_Unit__0__0new__2(Compilation_Unit__0 mut ref const self, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const declarations__)
 {
+	self->type_id = Compilation_Unit__0__0Type_ID;
 	self->syntax__ = syntax__;
 	self->declarations__ = declarations__;
 	return self;
@@ -1160,6 +1247,7 @@ void mut collect_diagnostics__2(Compilation_Unit__0 const ref const compilation_
 
 Package__0 mut ref mut Package__0__0new__4(Package__0 mut ref const self, Package_Name__0 const ref const name__, system__collections__List__1 const ref const references__, system__collections__List__1 const ref const compilation_units__, Symbol__0 const ref const symbol__)
 {
+	self->type_id = Package__0__0Type_ID;
 	self->name__ = name__;
 	self->references__ = references__;
 	self->compilation_units__ = compilation_units__;
@@ -1181,6 +1269,7 @@ system__collections__List__1 const ref mut all_diagnostics__1(Package__0 const r
 
 Package_Reference__0 mut ref mut Package_Reference__0__0new__1(Package_Reference__0 mut ref const self, Package__0 const ref const package__)
 {
+	self->type_id = Package_Reference__0__0Type_ID;
 	self->name__ = package__->name__->unqualified__;
 	self->package__ = package__;
 	return self;
@@ -1188,6 +1277,7 @@ Package_Reference__0 mut ref mut Package_Reference__0__0new__1(Package_Reference
 
 Package_Reference__0 mut ref mut Package_Reference__0__0new__2(Package_Reference__0 mut ref const self, string const name__, Package__0 const ref const package__)
 {
+	self->type_id = Package_Reference__0__0Type_ID;
 	self->name__ = name__;
 	self->package__ = package__;
 	return self;
@@ -1523,6 +1613,7 @@ Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const pac
 
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const syntax__)
 {
+	self->type_id = Semantic_Node__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(syntax__, none));
 	self->syntax__ = syntax__;
 	self->kind__ = syntax__->kind__;
@@ -1541,6 +1632,7 @@ Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 m
 
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__2(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Semantic_Node__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(syntax__, none));
 	self->syntax__ = syntax__;
 	self->kind__ = syntax__->kind__;
@@ -1559,6 +1651,7 @@ Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__2(Semantic_Node__
 
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__of_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const of_type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Semantic_Node__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(of_type__, none));
 	assert__1(void_ptr__0op__not_equal(syntax__, none));
 	self->syntax__ = syntax__;
@@ -1578,6 +1671,7 @@ Semantic_Node__0 mut ref mut Semantic_Node__0__0new__of_type__3(Semantic_Node__0
 
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__declares_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Semantic_Node__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(type__, none));
 	assert__1(void_ptr__0op__not_equal(syntax__, none));
 	self->syntax__ = syntax__;
@@ -1597,6 +1691,7 @@ Semantic_Node__0 mut ref mut Semantic_Node__0__0new__declares_type__3(Semantic_N
 
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__referencing_type__3(Semantic_Node__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const syntax__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Semantic_Node__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(type__, none));
 	assert__1(void_ptr__0op__not_equal(syntax__, none));
 	self->syntax__ = syntax__;
@@ -1775,6 +1870,7 @@ void mut collect_node_diagnostics__2(Semantic_Node__0 const ref const node__, sy
 
 Semantic_Tree_Builder__0 mut ref mut Semantic_Tree_Builder__0__0new__0(Semantic_Tree_Builder__0 mut ref const self)
 {
+	self->type_id = Semantic_Tree_Builder__0__0Type_ID;
 	Package_Name__0 const ref const primitives_package__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){11,(uint8_t const*)"$primitives"}));
 	Name__0 const ref const global_namespace__ = Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), primitives_package__);
 	Name__0 const ref const adamant_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){7,(uint8_t const*)"adamant"}));
@@ -2356,6 +2452,7 @@ Symbol__0 const ref mut build_symbols__2(Package_Name__0 const ref const package
 
 Compilation_Unit_Parser__0 mut ref mut Compilation_Unit_Parser__0__0new__1(Compilation_Unit_Parser__0 mut ref const self, Token_Stream__0 mut ref const token_stream__)
 {
+	self->type_id = Compilation_Unit_Parser__0__0Type_ID;
 	self->token_stream__ = token_stream__;
 	self->compilation_unit__ = none;
 	return self;
@@ -3132,46 +3229,52 @@ Syntax_Node__0 const ref mut parse_package__1(system__collections__List__1 const
 	return Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), PackageNode__, children__);
 }
 
+Syntax__0 mut ref mut Syntax__0__0new__0(Syntax__0 mut ref const self) { self->type_id = Syntax__0__0Type_ID; return self; }
+
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__4(Syntax_Node__0 mut ref const self, int32 const type__, Source_Text__0 const ref const source__, int32 const start__, int32 const length__)
 {
-	self->kind__ = type__;
+	self->type_id = Syntax_Node__0__0Type_ID;
 	self->is_missing__ = FALSE;
 	self->source__ = source__;
 	self->start__ = start__;
 	self->byte_length__ = length__;
-	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->kind__ = type__;
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return self;
 }
 
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__5(Syntax_Node__0 mut ref const self, int32 const type__, BOOL const is_missing__, Source_Text__0 const ref const source__, int32 const start__, int32 const length__)
 {
-	self->kind__ = type__;
+	self->type_id = Syntax_Node__0__0Type_ID;
 	self->is_missing__ = is_missing__;
 	self->source__ = source__;
 	self->start__ = start__;
 	self->byte_length__ = length__;
-	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->kind__ = type__;
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return self;
 }
 
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__2(Syntax_Node__0 mut ref const self, int32 const type__, Syntax_Node__0 const ref const child__)
 {
-	self->kind__ = type__;
+	self->type_id = Syntax_Node__0__0Type_ID;
 	self->is_missing__ = child__->is_missing__;
 	self->source__ = child__->source__;
 	self->start__ = child__->start__;
 	self->byte_length__ = child__->byte_length__;
+	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->kind__ = type__;
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(children__, child__);
 	self->children__ = children__;
-	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return self;
 }
 
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__with_children__2(Syntax_Node__0 mut ref const self, int32 const type__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Syntax_Node__0__0Type_ID;
 	self->kind__ = type__;
 	self->is_missing__ = FALSE;
 	Syntax_Node__0 const ref const first_child__ = system__collections__List__1__0op__element(children__, ((int32){0}));
@@ -3186,6 +3289,7 @@ Syntax_Node__0 mut ref mut Syntax_Node__0__0new__with_children__2(Syntax_Node__0
 
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__missing__3(Syntax_Node__0 mut ref const self, int32 const type__, Source_Text__0 const ref const source__, int32 const start__)
 {
+	self->type_id = Syntax_Node__0__0Type_ID;
 	self->kind__ = type__;
 	self->is_missing__ = TRUE;
 	self->source__ = source__;
@@ -3200,6 +3304,7 @@ Syntax_Node__0 mut ref mut Syntax_Node__0__0new__missing__3(Syntax_Node__0 mut r
 
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped__1(Syntax_Node__0 mut ref const self, Syntax_Node__0 const ref const skipped_node__)
 {
+	self->type_id = Syntax_Node__0__0Type_ID;
 	self->kind__ = SkippedTokens__;
 	self->is_missing__ = skipped_node__->is_missing__;
 	self->source__ = skipped_node__->source__;
@@ -3216,6 +3321,7 @@ Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped__1(Syntax_Node__0 mut r
 
 Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped_many__1(Syntax_Node__0 mut ref const self, system__collections__List__1 const ref const skipped_nodes__)
 {
+	self->type_id = Syntax_Node__0__0Type_ID;
 	self->kind__ = SkippedTokens__;
 	self->is_missing__ = FALSE;
 	Syntax_Node__0 const ref const first_child__ = system__collections__List__1__0op__element(skipped_nodes__, ((int32){0}));
@@ -3349,8 +3455,22 @@ Syntax_Node__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref con
 	return none;
 }
 
+Token__0 mut ref mut Token__0__0new__4(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__)
+{
+	self->type_id = Token__0__0Type_ID;
+	self->is_missing__ = FALSE;
+	self->source__ = source__;
+	self->start__ = start__;
+	self->byte_length__ = byte_length__;
+	self->node_diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->kind__ = kind__;
+	self->value__ = ((string){0,(uint8_t const*)""});
+	return self;
+}
+
 Token_Stream__0 mut ref mut Token_Stream__0__0new__1(Token_Stream__0 mut ref const self, Source_Text__0 const ref const source__)
 {
+	self->type_id = Token_Stream__0__0Type_ID;
 	self->source__ = source__;
 	self->position__ = ((int32){0});
 	self->diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -3790,6 +3910,7 @@ BOOL mut is_number_char__1(code_point const c__)
 
 Diagnostic__0 mut ref mut Diagnostic__0__0new__5(Diagnostic__0 mut ref const self, int32 const level__, int32 const phase__, Source_Text__0 const ref const source__, Text_Span__0 const ref const span__, string const message__)
 {
+	self->type_id = Diagnostic__0__0Type_ID;
 	self->level__ = level__;
 	self->phase__ = phase__;
 	self->source__ = source__;
@@ -3801,6 +3922,7 @@ Diagnostic__0 mut ref mut Diagnostic__0__0new__5(Diagnostic__0 mut ref const sel
 
 Emitter__0 mut ref mut Emitter__0__0new__2(Emitter__0 mut ref const self, Package__0 const ref const package__, system__collections__List__1 const ref const resources__)
 {
+	self->type_id = Emitter__0__0Type_ID;
 	self->package__ = package__;
 	self->resources__ = resources__;
 	return self;
@@ -4059,7 +4181,12 @@ string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref mut t
 		if (cond(optional_type__->is_value_type__))
 		{
 			system__text__String_Builder__0 mut ref const c_type__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){10,(uint8_t const*)"optional__"}));
-			if (cond(bool_op(bool_arg(mutable_binding__) || bool_arg(type__->is_mutable__))))
+			if (cond(mutable_binding__))
+			{
+				sb_append__2(c_type__, ((string){6,(uint8_t const*)"0var__"}));
+			}
+
+			if (cond(type__->is_mutable__))
 			{
 				sb_append__2(c_type__, ((string){6,(uint8_t const*)"0mut__"}));
 			}
@@ -5267,6 +5394,7 @@ void mut emit_postamble__1(Emitter__0 mut ref const emitter__)
 
 Name__0 mut ref mut Name__0__0new__global_namespace__0(Name__0 mut ref const self)
 {
+	self->type_id = Name__0__0Type_ID;
 	self->package__ = none;
 	self->kind__ = NamespaceName__;
 	self->segments__ = Strings__0__0new__0(allocate(sizeof(Strings__0)));
@@ -5276,6 +5404,7 @@ Name__0 mut ref mut Name__0__0new__global_namespace__0(Name__0 mut ref const sel
 
 Name__0 mut ref mut Name__0__0new__global_namespace__1(Name__0 mut ref const self, Package_Name__0 const ref const package__)
 {
+	self->type_id = Name__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(package__, none));
 	self->package__ = package__;
 	self->kind__ = NamespaceName__;
@@ -5286,6 +5415,7 @@ Name__0 mut ref mut Name__0__0new__global_namespace__1(Name__0 mut ref const sel
 
 Name__0 mut ref mut Name__0__0new__3(Name__0 mut ref const self, Name__0 const ref const qualifier__, int32 const kind__, string const name__)
 {
+	self->type_id = Name__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(qualifier__, none));
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
 	self->package__ = qualifier__->package__;
@@ -5305,6 +5435,7 @@ Name__0 mut ref mut Name__0__0new__3(Name__0 mut ref const self, Name__0 const r
 
 Name__0 mut ref mut Name__0__0new__4(Name__0 mut ref const self, Name__0 const ref const qualifier__, int32 const kind__, string const name__, BOOL const is_special__)
 {
+	self->type_id = Name__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(qualifier__, none));
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
 	self->package__ = qualifier__->package__;
@@ -5324,6 +5455,7 @@ Name__0 mut ref mut Name__0__0new__4(Name__0 mut ref const self, Name__0 const r
 
 Name__0 mut ref mut Name__0__0new__special__3(Name__0 mut ref const self, Name__0 const ref const qualifier__, int32 const kind__, string const name__)
 {
+	self->type_id = Name__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(qualifier__, none));
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
 	self->package__ = qualifier__->package__;
@@ -5343,6 +5475,7 @@ Name__0 mut ref mut Name__0__0new__special__3(Name__0 mut ref const self, Name__
 
 Name__0 mut ref mut Name__0__0new__exactly__4(Name__0 mut ref const self, Package_Name__0 const opt_ref const package__, int32 const kind__, Strings__0 const ref const segments__, BOOL const is_special__)
 {
+	self->type_id = Name__0__0Type_ID;
 	self->package__ = package__;
 	self->kind__ = kind__;
 	self->segments__ = segments__;
@@ -5491,6 +5624,7 @@ void mut name_with_unspecified_package_names_itself__0()
 
 Package_Name__0 mut ref mut Package_Name__0__0new__1(Package_Name__0 mut ref const self, string const name__)
 {
+	self->type_id = Package_Name__0__0Type_ID;
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
 	self->unqualified__ = name__;
 	return self;
@@ -5503,6 +5637,7 @@ string mut full_package_name__1(Package_Name__0 const ref const package_name__)
 
 Symbol__0 mut ref mut Symbol__0__0new__identifier__1(Symbol__0 mut ref const self, string const name__)
 {
+	self->type_id = Symbol__0__0Type_ID;
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
 	self->name__ = name__;
 	self->kind__ = IdentifierSymbol__;
@@ -5516,6 +5651,7 @@ Symbol__0 mut ref mut Symbol__0__0new__identifier__1(Symbol__0 mut ref const sel
 
 Symbol__0 mut ref mut Symbol__0__0new__identifier__2(Symbol__0 mut ref const self, string const name__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Symbol__0__0Type_ID;
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
 	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
 	self->name__ = name__;
@@ -5530,6 +5666,7 @@ Symbol__0 mut ref mut Symbol__0__0new__identifier__2(Symbol__0 mut ref const sel
 
 Symbol__0 mut ref mut Symbol__0__0new__constructor__2(Symbol__0 mut ref const self, string const name__, system__collections__List__1 const ref const declarations__)
 {
+	self->type_id = Symbol__0__0Type_ID;
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
 	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
 	self->name__ = name__;
@@ -5544,6 +5681,7 @@ Symbol__0 mut ref mut Symbol__0__0new__constructor__2(Symbol__0 mut ref const se
 
 Symbol__0 mut ref mut Symbol__0__0new__package__2(Symbol__0 mut ref const self, string const name__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Symbol__0__0Type_ID;
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
 	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
 	self->name__ = name__;
@@ -5558,6 +5696,7 @@ Symbol__0 mut ref mut Symbol__0__0new__package__2(Symbol__0 mut ref const self, 
 
 Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self, Type__0 const ref const declares_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Symbol__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(declares_type__, none));
 	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), unqualified_name__1(declares_type__->name__)));
 	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), unqualified_name__1(declares_type__->name__)));
@@ -5572,6 +5711,7 @@ Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self
 
 Symbol__0 mut ref mut Symbol__0__0new__of_type__4(Symbol__0 mut ref const self, string const name__, Type__0 const ref const of_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__)
 {
+	self->type_id = Symbol__0__0Type_ID;
 	assert__2(void_ptr__0op__not_equal(of_type__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
 	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
 	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
@@ -5613,6 +5753,7 @@ void mut Package_symbol_children_can_be_found_by_name_and_kind__0()
 
 Type__0 mut ref mut Type__0__0new__3(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, BOOL const is_mutable__)
 {
+	self->type_id = Type__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(name__, none));
 	self->kind__ = kind__;
 	self->name__ = name__;
@@ -5626,6 +5767,7 @@ Type__0 mut ref mut Type__0__0new__3(Type__0 mut ref const self, int32 const kin
 
 Type__0 mut ref mut Type__0__0new__parameter__1(Type__0 mut ref const self, string const name__)
 {
+	self->type_id = Type__0__0Type_ID;
 	self->kind__ = TypeParameterType__;
 	self->name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), TypeParameterName__, name__);
 	self->type_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -5638,6 +5780,7 @@ Type__0 mut ref mut Type__0__0new__parameter__1(Type__0 mut ref const self, stri
 
 Type__0 mut ref mut Type__0__0new__4(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, system__collections__List__1 const ref const type_parameters__, BOOL const is_mutable__)
 {
+	self->type_id = Type__0__0Type_ID;
 	self->kind__ = kind__;
 	self->name__ = name__;
 	self->type_parameters__ = type_parameters__;
@@ -5650,6 +5793,7 @@ Type__0 mut ref mut Type__0__0new__4(Type__0 mut ref const self, int32 const kin
 
 Type__0 mut ref mut Type__0__0new__primitive__1(Type__0 mut ref const self, Name__0 const ref const name__)
 {
+	self->type_id = Type__0__0Type_ID;
 	self->kind__ = ValueType__;
 	self->name__ = name__;
 	self->type_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -5662,6 +5806,7 @@ Type__0 mut ref mut Type__0__0new__primitive__1(Type__0 mut ref const self, Name
 
 Type__0 mut ref mut Type__0__0new__primitive__2(Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const type_parameters__)
 {
+	self->type_id = Type__0__0Type_ID;
 	self->kind__ = ValueType__;
 	self->name__ = name__;
 	self->type_parameters__ = type_parameters__;
@@ -5674,6 +5819,7 @@ Type__0 mut ref mut Type__0__0new__primitive__2(Type__0 mut ref const self, Name
 
 Type__0 mut ref mut Type__0__0new__namespace__1(Type__0 mut ref const self, Name__0 const ref const name__)
 {
+	self->type_id = Type__0__0Type_ID;
 	self->kind__ = NamespaceType__;
 	self->name__ = name__;
 	self->is_primitive__ = FALSE;
@@ -5686,6 +5832,7 @@ Type__0 mut ref mut Type__0__0new__namespace__1(Type__0 mut ref const self, Name
 
 Type__0 mut ref mut Type__0__0new__generic__2(Type__0 mut ref const self, Type__0 const ref const definition__, system__collections__List__1 const ref const type_arguments__)
 {
+	self->type_id = Type__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(definition__, none));
 	assert__2(void_ptr__0op__not_equal(type_arguments__, none), full_name__1(definition__->name__));
 	assert__2(int32__0op__equal(definition__->type_parameters__->count__, type_arguments__->count__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(full_name__1(definition__->name__), ((string){1,(uint8_t const*)" "})), int_to_string__1(definition__->type_parameters__->count__)), ((string){7,(uint8_t const*)" given "})), int_to_string__1(type_arguments__->count__)));
@@ -5701,6 +5848,7 @@ Type__0 mut ref mut Type__0__0new__generic__2(Type__0 mut ref const self, Type__
 
 Type__0 mut ref mut Type__0__0new__6(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, system__collections__List__1 const ref const type_parameters__, BOOL const is_primitive__, BOOL const is_potentially_mutable__, BOOL const is_mutable__)
 {
+	self->type_id = Type__0__0Type_ID;
 	self->kind__ = kind__;
 	self->name__ = name__;
 	self->type_parameters__ = type_parameters__;
@@ -5737,6 +5885,7 @@ Type__0 const ref mut remove_type_package__1(Type__0 const ref const type__)
 
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__1(Name_Subtable__0 mut ref const self, Name_Table__0 const ref const name_table__)
 {
+	self->type_id = Name_Subtable__0__0Type_ID;
 	self->name_table__ = name_table__;
 	self->parent__ = none;
 	self->name__ = Name__0__0new__global_namespace__0(allocate(sizeof(Name__0)));
@@ -5747,6 +5896,7 @@ Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__1(Name_Su
 
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__2(Name_Subtable__0 mut ref const self, Name_Table__0 const ref const name_table__, Package_Name__0 const ref const package_name__)
 {
+	self->type_id = Name_Subtable__0__0Type_ID;
 	self->name_table__ = name_table__;
 	self->parent__ = none;
 	self->name__ = Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), package_name__);
@@ -5757,6 +5907,7 @@ Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__2(Name_Su
 
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__3(Name_Subtable__0 mut ref const self, Name_Subtable__0 const ref const parent__, Name__0 const ref const name__, Type__0 const ref const type__)
 {
+	self->type_id = Name_Subtable__0__0Type_ID;
 	self->name_table__ = parent__->name_table__;
 	self->parent__ = parent__;
 	self->name__ = name__;
@@ -5910,6 +6061,7 @@ void mut namespace_contains_added_name__0()
 
 Name_Table__0 mut ref mut Name_Table__0__0new__0(Name_Table__0 mut ref const self)
 {
+	self->type_id = Name_Table__0__0Type_ID;
 	self->any_package__ = Name_Subtable__0__0new__global_namespace__1(allocate(sizeof(Name_Subtable__0)), self);
 	self->packages__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return self;
