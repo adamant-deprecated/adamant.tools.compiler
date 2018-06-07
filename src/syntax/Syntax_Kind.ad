@@ -20,15 +20,13 @@ public let StringLiteralExpression: int = 61;
 public let CodePointLiteralExpression: int = 62;
 public let IntegerLiteralExpression: int = 63;
 public let AssignmentExpression: int = 64;
-public let OrExpression: int = 65;
-public let AndExpression: int = 66;
-public let EqualExpression: int = 67;
-public let NotEqualExpression: int = 68;
-public let AndKeyword: int = 69; // `and`
-public let OrKeyword: int = 70; // `or`
-public let ComparisonExpression: int = 71;
-public let AddExpression: int = 72;
-public let SubtractExpression: int = 73;
+public let OrExpression: int = 65; // `⧼Expression⧽ or ⧼Expression⧽`
+public let AndExpression: int = 66; // `⧼Expression⧽ and ⧼Expression⧽`
+public let EqualExpression: int = 67; // `⧼Expression⧽ == ⧼Expression⧽`
+public let NotEqualExpression: int = 68; // `⧼Expression⧽ =/= ⧼Expression⧽`
+public let ComparisonExpression: int = 71; // `⧼Expression⧽ > ⧼Expression⧽`, `⧼Expression⧽ >= ⧼Expression⧽`, `⧼Expression⧽ < ⧼Expression⧽`, `⧼Expression⧽ <= ⧼Expression⧽`
+public let AddExpression: int = 72; // `⧼Expression⧽ + ⧼Expression⧽`
+public let SubtractExpression: int = 73; // `⧼Expression⧽ - ⧼Expression⧽`
 public let InvocationExpression: int = 74;
 public let MemberAccessExpression: int = 75;
 public let ElementAccessExpression: int = 76;

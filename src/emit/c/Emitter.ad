@@ -417,12 +417,12 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         // TODO change to other functions based on argument type
         write(builder, "BOOL__0op__not(");
-        convert_expression(syntax.children[1], builder);
+        convert_expression(syntax.children[0], builder);
         write(builder, ")");
     }
     else if syntax.kind == ParenthesizedExpression
     {
-        convert_expression(syntax.children[1], builder);
+        convert_expression(syntax.children[0], builder);
     }
     else if syntax.kind == NegateExpression
     {
@@ -507,7 +507,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == EqualExpression
     {
         let lhs_node: Semantic_Node = syntax.children[0];
-        let rhs_node: Semantic_Node = syntax.children[2];
+        let rhs_node: Semantic_Node = syntax.children[1];
         var type: Type = lhs_node.of_type;
         if type == none { type = rhs_node.of_type; }
         if type =/= none
@@ -534,7 +534,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == NotEqualExpression
     {
         let lhs_node: Semantic_Node = syntax.children[0];
-        let rhs_node: Semantic_Node = syntax.children[2];
+        let rhs_node: Semantic_Node = syntax.children[1];
         var type: Type = lhs_node.of_type;
         if type == none { type = rhs_node.of_type; }
         if type =/= none
@@ -638,7 +638,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, "int32__0op__mul(");
         convert_expression(syntax.children[0], builder);
         write(builder, ", ");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
     else if syntax.kind == DivideExpression
@@ -646,7 +646,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, "int32__0op__div(");
         convert_expression(syntax.children[0], builder);
         write(builder, ", ");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
     else if syntax.kind == RemainderExpression
@@ -654,7 +654,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, "int32__0op__remainder(");
         convert_expression(syntax.children[0], builder);
         write(builder, ", ");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(syntax.children[1], builder);
         write(builder, ")");
     }
     else if syntax.kind == OrExpression
@@ -666,7 +666,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, "bool_op(bool_arg(");
         convert_expression(syntax.children[0], builder);
         write(builder, ") || bool_arg(");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(syntax.children[1], builder);
         write(builder, "))");
     }
     else if syntax.kind == AndExpression
@@ -678,7 +678,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         write(builder, "bool_op(bool_arg(");
         convert_expression(syntax.children[0], builder);
         write(builder, ") && bool_arg(");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(syntax.children[1], builder);
         write(builder, "))");
     }
     else if syntax.kind == InvocationExpression

@@ -244,7 +244,7 @@ public new_identifier_or_keyword_token(tokens: mut Token_Stream, end: int) -> To
     if value == "new"
         { kind = NewKeyword; }
     else if value == "not"
-        { kind = NotOperator; }
+        { kind = NotKeyword; }
     else if value == "null"
         { kind = NullReservedWord; }
     else if value == "self"

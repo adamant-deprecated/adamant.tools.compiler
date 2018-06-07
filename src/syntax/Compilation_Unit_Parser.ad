@@ -145,9 +145,9 @@ public parse_atom(parser: mut Compilation_Unit_Parser) -> Syntax
         add_item(children, parse_call_arguments(parser));
         return syntax_node_as_syntax(new Syntax_Node.with_children(NewExpression, children));
     }
-    if parser.token.kind == NotOperator
+    if parser.token.kind == NotKeyword
     {
-        add_item(children, expect_token(parser, NotOperator));
+        add_item(children, expect_token(parser, NotKeyword));
         add_item(children, parse_expression(parser, 8));
         return syntax_node_as_syntax(new Syntax_Node.with_children(NotExpression, children));
     }
