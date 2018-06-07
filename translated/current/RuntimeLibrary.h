@@ -10,6 +10,17 @@
 #include <stdnoreturn.h>
 
 // -----------------------------------------------------------------------------
+// Emit Support
+// -----------------------------------------------------------------------------
+// These are things which make emitting easier or clearer
+
+#define ref *_Nonnull restrict
+#define opt_ref *_Nullable restrict
+#define ptr *_Nonnull
+#define opt_ptr *_Nullable
+#define mut
+
+// -----------------------------------------------------------------------------
 // Library Utils
 // -----------------------------------------------------------------------------
 
