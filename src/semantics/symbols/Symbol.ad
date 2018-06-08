@@ -1,16 +1,16 @@
 /// Symbols are a tree referencing semantic nodes that are used to look up names.
 /// they don't internally store names so that they are not interdependent.
-public class Symbol
+public /* abstract */ class Symbol
 {
     public let name: string;
+    public let children: system.collections.List<Symbol>;
+    public let declarations: system.collections.List<Program_Fragment>;
+
     public let is_special_name: bool;
+
     public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
     public let of_type: Type; // for variables and parameters, the type of the value they represent
     public let declares_type: Type; // for class/struct/enum symbols, the type being declared
-    // TODO declarations should be immutable
-    public let declarations: system.collections.List<Semantic_Node>;
-    // TODO children should be immutable
-    public let children: system.collections.List<Symbol>;
 
     public new identifier(name: string)
     {
@@ -20,22 +20,9 @@ public class Symbol
         self.is_special_name = false;
         self.of_type = none;
         self.declares_type = none;
-        self.declarations = new system.collections.List<Semantic_Node>();
+        self.declarations = new system.collections.List<Program_Fragment>();
         self.children = new system.collections.List<Symbol>();
     }
-
-    // public new identifier(name: string, declarations: system.collections.List<Semantic_Node>)
-    // {
-    //     assert(string_byte_length(name) > 0);
-    //     assert(declarations =/= none, "name="+name);
-    //     self.name = name;
-    //     self.kind = IdentifierSymbol;
-    //     self.is_special_name = false;
-    //     self.of_type = none;
-    //     self.declares_type = none;
-    //     self.declarations = declarations;
-    //     self.children = new system.collections.List<Symbol>();
-    // }
 
     public new identifier(name: string, children: system.collections.List<Symbol>)
     {
@@ -46,11 +33,11 @@ public class Symbol
         self.is_special_name = false;
         self.of_type = none;
         self.declares_type = none;
-        self.declarations = new system.collections.List<Semantic_Node>();
+        self.declarations = new system.collections.List<Program_Fragment>();
         self.children = children;
     }
 
-    public new constructor(name: string, declarations: system.collections.List<Semantic_Node>)
+    public new constructor(name: string, declarations: system.collections.List<Program_Fragment>)
     {
         assert(string_byte_length(name) > 0);
         assert(declarations =/= none, "name="+name);
@@ -72,19 +59,20 @@ public class Symbol
         self.is_special_name = false;
         self.of_type = none;
         self.declares_type = none;
-        self.declarations = new system.collections.List<Semantic_Node>();
+        self.declarations = new system.collections.List<Program_Fragment>();
         self.children = children;
     }
 
     public new declaring(
         declares_type: Type,
-        declarations: system.collections.List<Semantic_Node>,
+        declarations: system.collections.List<Program_Fragment>,
         children: system.collections.List<Symbol>)
     {
         assert(declares_type =/= none);
         assert(declarations =/= none, "name="+unqualified_name(declares_type.name));
         assert(children =/= none, "name="+unqualified_name(declares_type.name));
         self.name = unqualified_name(declares_type.name);
+        self.kind = IdentifierSymbol;
         self.is_special_name = declares_type.name.is_special;
         self.of_type = none;
         self.declares_type = declares_type;
@@ -95,13 +83,14 @@ public class Symbol
     public new of_type(
         name: string,
         of_type: Type,
-        declarations: system.collections.List<Semantic_Node>,
+        declarations: system.collections.List<Program_Fragment>,
         children: system.collections.List<Symbol>)
     {
         assert(of_type =/= none, "name="+name);
         assert(declarations =/= none, "name="+name);
         assert(children =/= none, "name="+name);
         self.name = name;
+        self.kind = IdentifierSymbol;
         self.is_special_name = false;
         self.of_type = of_type;
         self.declares_type = none;
@@ -111,8 +100,9 @@ public class Symbol
 }
 
 // TODO change to operator []
-public get_child(symbol: Symbol, name: string, kind: int) -> Symbol?
+public get_child_symbol(symbol: Symbol, name: string, kind: int) -> Symbol?
 {
+    assert(symbol =/= none);
     for let child: Symbol in symbol.children
     {
         if child.name == name and child.kind == kind

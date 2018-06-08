@@ -1,7 +1,7 @@
 public compile(sources: system.collections.List<Source_Text>) -> Package
 {
-    let package_syntax: Syntax = parse_package(sources);
-    let package: Package = analyze_semantics(as_any(package_syntax));
+    let package_syntax: Syntax_Node = parse_package(sources);
+    let package: Package = analyze_semantics(package_syntax);
     return package;
 }
 

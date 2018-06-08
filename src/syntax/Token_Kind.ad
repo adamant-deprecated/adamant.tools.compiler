@@ -68,3 +68,4 @@ public let FatArrow: int = 122; // `=>`
 public let Asterisk: int = 123; // `*`
 public let NoneKeyword: int = 126; // `none`
 public let MatchKeyword: int = 130; // `match`
+public let AbstractKeyword: int = 136; // `abstract`

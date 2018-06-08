@@ -1,4 +1,4 @@
-public parse_package(sources: system.collections.List<Source_Text>) -> Syntax
+public parse_package(sources: system.collections.List<Source_Text>) -> Syntax_Node
 {
     let children: mut system.collections.List<Syntax> = new system.collections.List<Syntax>();
     for let source: Source_Text in sources
@@ -7,5 +7,5 @@ public parse_package(sources: system.collections.List<Source_Text>) -> Syntax
         let compilation_unit_parser: mut Compilation_Unit_Parser = new Compilation_Unit_Parser(token_stream);
         add_item(children, parse(compilation_unit_parser));
     }
-    return syntax_node_as_syntax(new Syntax_Node.with_children(PackageNode, children));
+    return new Syntax_Node.with_children(PackageNode, children);
 }

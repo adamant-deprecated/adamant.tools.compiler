@@ -41,17 +41,17 @@ public Package_symbol_has_children() -> void
 public Package_contains_the_string_type() -> void
 {
     let package: Package = build_primitives_package();
-    let string_symbol: Symbol = get_child(package.symbol, "string", IdentifierSymbol);
+    let string_symbol: Symbol = get_child_symbol(package.symbol, "string", IdentifierSymbol);
     assert(string_symbol =/= none);
 }
 
 public Package_contains_optional_type() -> void
 {
     let package: Package = build_primitives_package();
-    let adamant_symbol: Symbol? = get_child(package.symbol, "adamant", IdentifierSymbol);
+    let adamant_symbol: Symbol? = get_child_symbol(package.symbol, "adamant", IdentifierSymbol);
     assert(adamant_symbol =/= none);
-    let langauge_symbol: Symbol? = get_child(adamant_symbol, "language", IdentifierSymbol);
+    let langauge_symbol: Symbol? = get_child_symbol(adamant_symbol, "language", IdentifierSymbol);
     assert(langauge_symbol =/= none);
-    let optional_symbol: Symbol? = get_child(langauge_symbol, "optional", IdentifierSymbol);
+    let optional_symbol: Symbol? = get_child_symbol(langauge_symbol, "optional", IdentifierSymbol);
     assert(optional_symbol =/= none);
 }

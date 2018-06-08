@@ -10,8 +10,8 @@ public build_runtime_library_package() -> Package
     // The runtime package has no compilation units because it has no source
     let compilation_units: system.collections.List<Compilation_Unit> = new system.collections.List<Compilation_Unit>();
 
-    let symbols: mut system.collections.List<Symbol> = build_runtime_library_symbols(name);
-    assert(symbols.count > 0, "symbols.count=" + int_to_string(symbols.count));
+    let symbols: system.collections.List<Symbol> = build_runtime_library_symbols(name);
+    assert(symbols.count == 42, "symbols.count=" + int_to_string(symbols.count));
 
     let package_symbol: Symbol = new Symbol.package(name.unqualified, symbols);
     assert(package_symbol.children.count > 0, "package_symbol.children.count=" + int_to_string(package_symbol.children.count));
