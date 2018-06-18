@@ -59,6 +59,17 @@ public next_token(tokens: mut Token_Stream) -> Token?
             { return new_operator_token(tokens, Pipe); }
         else if cur_char == '*'
             { return new_operator_token(tokens, Asterisk); }
+        else if cur_char == '^'
+        {
+            if tokens.position + 1 < source_byte_length(tokens.source) and tokens.source.text[tokens.position + 1] == '.'
+            {
+                // it is `^.`
+                return new_operator_token(tokens, CaretDot, 2);
+            }
+
+            // It is `^`
+            return new_operator_token(tokens, Caret);
+        }
         else if cur_char == '='
         {
             if tokens.position + 1 < source_byte_length(tokens.source)
