@@ -9,8 +9,8 @@ public /* abstract */ class Symbol
     public let is_special_name: bool;
 
     public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
-    public let of_type: Type; // for variables and parameters, the type of the value they represent
-    public let declares_type: Type; // for class/struct/enum symbols, the type being declared
+    public let of_type: Type?; // for variables and parameters, the type of the value they represent
+    public let declares_type: Type?; // for class/struct/enum symbols, the type being declared
 
     public new identifier(name: string)
     {

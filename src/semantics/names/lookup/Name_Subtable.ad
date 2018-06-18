@@ -3,7 +3,7 @@ public /*mut*/ class Name_Subtable
     public let name_table: Name_Table;
     public let parent: Name_Subtable?; // TODO this should point at the package binding scope?
     public let name: Name;
-    public var type: Type;
+    public var type: Type?;
     public let subtables: mut system.collections.List<mut Name_Subtable>;
 
     public new global_namespace(name_table: Name_Table)
@@ -26,7 +26,7 @@ public /*mut*/ class Name_Subtable
         self.subtables = new system.collections.List<mut Name_Subtable>();
     }
 
-    public new(parent: Name_Subtable, name: Name, type: Type)
+    public new(parent: Name_Subtable, name: Name, type: Type?)
     {
         // assert(parent.name.package == name.package);
         // assert parent name contains us
