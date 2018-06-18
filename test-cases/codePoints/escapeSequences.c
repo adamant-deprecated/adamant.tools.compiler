@@ -20,7 +20,7 @@ void mut main__0();
 
 void mut main__0()
 {
-	string mut s__ = ((string){2,(uint8_t const*)"\"\\"});
+	string mut s__ = ((string){{2},(uint8_t*)u8"\"\\"});
 	code_point mut c__ = ((code_point){/*\'*/0x27});
 	c__ = ((code_point){/*\\*/0x5C});
 }

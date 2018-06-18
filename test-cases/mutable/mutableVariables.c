@@ -25,7 +25,7 @@ system__text__String_Builder__0 mut ref mut Func__2(int32 mut x__, int32 const y
 	int32 const i__ = int32__0op__add(x__, ((int32){2}));
 	int32 mut j__ = int32__0op__sub(y__, ((int32){23}));
 	j__ = i__;
-	system__text__String_Builder__0 mut ref const string_a__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){5,(uint8_t const*)"Hello"}));
+	system__text__String_Builder__0 mut ref const string_a__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){{5},(uint8_t*)u8"Hello"}));
 	system__text__String_Builder__0 const ref mut string_b__;
 	string_b__ = string_a__;
 	return string_a__;

@@ -34,7 +34,7 @@ Test__0 mut Test__0__0new__1(string const name__)
 
 void mut main__0()
 {
-	Test__0 const t__ = Test__0__0new__1(((string){3,(uint8_t const*)"Bob"}));
+	Test__0 const t__ = Test__0__0new__1(((string){{3},(uint8_t*)u8"Bob"}));
 }
 
 // Entry Point Adapter

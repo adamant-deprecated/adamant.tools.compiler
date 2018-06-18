@@ -479,7 +479,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         let value: string = get_semantic_node_text(syntax);
         // Extra parens are needed in some weird cases with macros
-        write(builder, "((string){" + int_to_string(literal_length(value)) + ",(uint8_t const*)" + value + "})");
+        write(builder, "((string){{" + int_to_string(literal_length(value)) + "},(uint8_t*)u8" + value + "})");
     }
     else if syntax.kind == AssignmentExpression
     {
@@ -1369,9 +1369,9 @@ public emit_entry_point_adapter(emitter: mut Emitter) -> void
         resource_text = string_replace(resource_text, "\r", "\\r");
         resource_text = string_replace(resource_text, "\"", "\\\"");
         resource_text = "\""+resource_text+"\"";
-        begin_line(emitter.definitions, "add_resource((string){"+int_to_string(literal_length(resource_name))+",(uint8_t const*)");
+        begin_line(emitter.definitions, "add_resource((string){{"+int_to_string(literal_length(resource_name))+"},(uint8_t*)u8");
         write(emitter.definitions, resource_name);
-        write(emitter.definitions, "}, (string){"+int_to_string(literal_length(resource_text))+",(uint8_t const*)");
+        write(emitter.definitions, "}, (string){{"+int_to_string(literal_length(resource_text))+"},(uint8_t*)u8");
         write(emitter.definitions, resource_text);
         end_line(emitter.definitions, "});");
     }

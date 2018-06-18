@@ -20,7 +20,7 @@ void mut main__0();
 
 void mut main__0()
 {
-	string__0new__1(((string){3,(uint8_t const*)"foo"}));
+	string__0new__1(((string){{3},(uint8_t*)u8"foo"}));
 }
 
 // Entry Point Adapter

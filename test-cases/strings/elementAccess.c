@@ -21,8 +21,8 @@ void mut main__0();
 void mut main__0()
 {
 	code_point mut result__;
-	result__ = string__0__0op__element(((string){5,(uint8_t const*)"hello"}), ((int32){0}));
-	result__ = string__0__0op__element(((string){7,(uint8_t const*)"goodbye"}), ((int32){4}));
+	result__ = string__0__0op__element(((string){{5},(uint8_t*)u8"hello"}), ((int32){0}));
+	result__ = string__0__0op__element(((string){{7},(uint8_t*)u8"goodbye"}), ((int32){4}));
 }
 
 // Entry Point Adapter

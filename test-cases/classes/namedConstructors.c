@@ -56,9 +56,9 @@ C__0 mut ref mut C__0__0new__two__1(C__0 mut ref const self, string const name__
 
 void mut main__0()
 {
-	C__0__0new__1(allocate(sizeof(C__0)), ((string){1,(uint8_t const*)"0"}));
-	C__0__0new__one__1(allocate(sizeof(C__0)), ((string){1,(uint8_t const*)"1"}));
-	C__0__0new__two__1(allocate(sizeof(C__0)), ((string){1,(uint8_t const*)"2"}));
+	C__0__0new__1(allocate(sizeof(C__0)), ((string){{1},(uint8_t*)u8"0"}));
+	C__0__0new__one__1(allocate(sizeof(C__0)), ((string){{1},(uint8_t*)u8"1"}));
+	C__0__0new__two__1(allocate(sizeof(C__0)), ((string){{1},(uint8_t*)u8"2"}));
 }
 
 // Entry Point Adapter

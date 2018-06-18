@@ -27,16 +27,16 @@ void mut main__1(system__console__Console__0 mut ref const console__)
 		{
 			if (cond(int32__0op__equal(int32__0op__remainder(x__, ((int32){5})), ((int32){0}))))
 			{
-				console_write_line__2(console__, ((string){8,(uint8_t const*)"FizzBuzz"}));
+				console_write_line__2(console__, ((string){{8},(uint8_t*)u8"FizzBuzz"}));
 			}
 			else
 			{
-				console_write_line__2(console__, ((string){4,(uint8_t const*)"Fizz"}));
+				console_write_line__2(console__, ((string){{4},(uint8_t*)u8"Fizz"}));
 			}
 		}
 		else if (cond(int32__0op__equal(int32__0op__remainder(x__, ((int32){5})), ((int32){0}))))
 		{
-			console_write_line__2(console__, ((string){4,(uint8_t const*)"Buzz"}));
+			console_write_line__2(console__, ((string){{4},(uint8_t*)u8"Buzz"}));
 		}
 		else
 		{

@@ -20,7 +20,7 @@ int32 mut main__0();
 
 int32 mut main__0()
 {
-	NOT_IMPLEMENTED__1(((string){14,(uint8_t const*)"[Test Message]"}));
+	NOT_IMPLEMENTED__1(((string){{14},(uint8_t*)u8"[Test Message]"}));
 }
 
 // Entry Point Adapter

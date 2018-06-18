@@ -20,7 +20,7 @@ void mut main__1(system__console__Console__0 mut ref const console__);
 
 void mut main__1(system__console__Console__0 mut ref const console__)
 {
-	console_write_line__2(console__, ((string){12,(uint8_t const*)"Hello World!"}));
+	console_write_line__2(console__, ((string){{12},(uint8_t*)u8"Hello World!"}));
 }
 
 // Entry Point Adapter
