@@ -103,7 +103,7 @@ char const * cstr_from(string value)
 
 string string_from_cstr(char const* s)
 {
-    return (string){(int32_t)strlen(s), (uint8_t const*)s};
+    return (string){int32_from(strlen(s)), (uint8_t*)s};
 }
 
 // -----------------------------------------------------------------------------
@@ -119,9 +119,9 @@ extern inline BOOL BOOL__0op__not(BOOL b);
 string bool_to_string__1(BOOL b)
 {
     if(cond(b))
-        return (string){4,(uint8_t const*)"true"};
+        return (string){int32_from(4),(uint8_t*)u8"true"};
     else
-        return (string){5,(uint8_t const*)"false"};
+        return (string){int32_from(5),(uint8_t*)u8"false"};
 }
 
 extern inline void op__add_assign(int32*_Nonnull lhs, int32 rhs);
@@ -142,7 +142,7 @@ string int_to_string__1(int32 i)
     uint8_t* bytes = allocate(12); // -2,147,483,648 plus null terminator
     int length = sprintf((char*)bytes, "%d", i.value);
     lib_assert(length > 0);
-    return (string){length, bytes};
+    return (string){int32_from(length), bytes};
 }
 string int_to_hex_string__1(int32 i)
 {
@@ -150,7 +150,7 @@ string int_to_hex_string__1(int32 i)
     uint8_t* bytes = allocate(9); // FF_FF_FF_FF plus null terminator
     int length = sprintf((char*)bytes, "%X", i.value);
     lib_assert(length > 0);
-    return (string){length, bytes};
+    return (string){int32_from(length), bytes};
 }
 
 int32 hex_string_to_int__1(string s)
@@ -177,12 +177,12 @@ string code_point_to_string__1(code_point c)
 {
     uint8_t* bytes = allocate(sizeof(uint8_t));
     *bytes = code_point__to_char(c);
-    return (string){1, bytes};
+    return (string){int32_from(1), bytes};
 }
 
 string string__0new__0()
 {
-    return (string){0, 0};
+    return (string){int32_from(0), 0};
 }
 
 string string__0new__1(string value)
@@ -207,7 +207,7 @@ string string__0op__add(string lhs, string rhs)
     size_t offset = sizeof(uint8_t) * lhs.byte_length.value;
     memcpy(chars, lhs.bytes, offset);
     memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);
-    return (string){new_length, chars};
+    return (string){int32_from(new_length), chars};
 }
 
 BOOL string__0op__equal(string lhs, string rhs)
@@ -582,7 +582,7 @@ string file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)
     fseek(reader->file, 0, SEEK_SET);
     uint8_t*_Nonnull bytes = allocate(length);
     length = fread(bytes, sizeof(uint8_t), length, reader->file);
-    return (string){(int32_t)length, bytes};
+    return (string){int32_from(length), bytes};
 }
 void close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)
 {
@@ -698,7 +698,7 @@ void sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start)
 
 string sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)
 {
-    string result = {sb->byte_length__.value, sb->bytes};
+    string result = {int32_from(sb->byte_length__.value), sb->bytes};
     // give up ownership of bytes
     sb->bytes = 0;
     sb->byte_length__.value = 0;

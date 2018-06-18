@@ -843,19 +843,19 @@ void mut console_write_diagnostics__2(system__console__Console__0 mut ref const 
 		string mut severity__;
 		if (cond(int32__0op__equal(diagnostic__->level__, Info__)))
 		{
-			severity__ = ((string){13,(uint8_t const*)"Informational"});
+			severity__ = ((string){{13},(uint8_t*)u8"Informational"});
 		}
 		else if (cond(int32__0op__equal(diagnostic__->level__, Warning__)))
 		{
-			severity__ = ((string){7,(uint8_t const*)"Warning"});
+			severity__ = ((string){{7},(uint8_t*)u8"Warning"});
 		}
 		else
 		{
-			severity__ = ((string){5,(uint8_t const*)"Error"});
+			severity__ = ((string){{5},(uint8_t*)u8"Error"});
 		}
 
-		console_write_line__2(console__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(diagnostic__->source__->path__, ((string){1,(uint8_t const*)":"})), int_to_string__1(position__->line__)), ((string){1,(uint8_t const*)":"})), int_to_string__1(position__->column__)), ((string){1,(uint8_t const*)" "})), severity__), ((string){1,(uint8_t const*)":"})));
-		console_write_line__2(console__, string__0op__add(((string){2,(uint8_t const*)"  "}), diagnostic__->message__));
+		console_write_line__2(console__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(diagnostic__->source__->path__, ((string){{1},(uint8_t*)u8":"})), int_to_string__1(position__->line__)), ((string){{1},(uint8_t*)u8":"})), int_to_string__1(position__->column__)), ((string){{1},(uint8_t*)u8" "})), severity__), ((string){{1},(uint8_t*)u8":"})));
+		console_write_line__2(console__, string__0op__add(((string){{2},(uint8_t*)u8"  "}), diagnostic__->message__));
 	}
 }
 
@@ -875,7 +875,7 @@ BOOL mut has_errors__1(system__collections__List__1 const ref const diagnostics_
 
 int32 mut main__2(system__console__Console__0 mut ref const console__, system__console__Arguments__0 const ref const args__)
 {
-	if (cond(bool_op(bool_arg(int32__0op__equal(args__->count__, ((int32){1}))) && bool_arg(string__0op__equal(system__console__Arguments__0__0op__element(args__, ((int32){0})), ((string){11,(uint8_t const*)"--unit-test"}))))))
+	if (cond(bool_op(bool_arg(int32__0op__equal(args__->count__, ((int32){1}))) && bool_arg(string__0op__equal(system__console__Arguments__0__0op__element(args__, ((int32){0})), ((string){{11},(uint8_t*)u8"--unit-test"}))))))
 	{
 		run_unit_tests__1(console__);
 		return ((int32){0});
@@ -883,7 +883,7 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 
 	Strings__0 mut ref const source_file_paths__ = Strings__0__0new__0(allocate(sizeof(Strings__0)));
 	Strings__0 mut ref const resource_file_paths__ = Strings__0__0new__0(allocate(sizeof(Strings__0)));
-	string mut output_file_path__ = ((string){0,(uint8_t const*)""});
+	string mut output_file_path__ = ((string){{0},(uint8_t*)u8""});
 	BOOL mut verbose__ = FALSE;
 	int32 mut arg_type__ = ((int32){0});
 	for (string__0iter mut iter = system__console__Arguments__0__0iterate(args__); string__0next(&iter);)
@@ -891,15 +891,15 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 		string const arg__ = string__0current(&iter);
 		if (cond(int32__0op__equal(arg_type__, ((int32){0}))))
 		{
-			if (cond(string__0op__equal(arg__, ((string){2,(uint8_t const*)"-r"}))))
+			if (cond(string__0op__equal(arg__, ((string){{2},(uint8_t*)u8"-r"}))))
 			{
 				arg_type__ = ((int32){1});
 			}
-			else if (cond(string__0op__equal(arg__, ((string){2,(uint8_t const*)"-o"}))))
+			else if (cond(string__0op__equal(arg__, ((string){{2},(uint8_t*)u8"-o"}))))
 			{
 				arg_type__ = ((int32){2});
 			}
-			else if (cond(bool_op(bool_arg(string__0op__equal(arg__, ((string){2,(uint8_t const*)"-v"}))) || bool_arg(string__0op__equal(arg__, ((string){9,(uint8_t const*)"--verbose"}))))))
+			else if (cond(bool_op(bool_arg(string__0op__equal(arg__, ((string){{2},(uint8_t*)u8"-v"}))) || bool_arg(string__0op__equal(arg__, ((string){{9},(uint8_t*)u8"--verbose"}))))))
 			{
 				verbose__ = TRUE;
 			}
@@ -922,12 +922,12 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 
 	if (cond(verbose__))
 	{
-		console_write_line__2(console__, ((string){23,(uint8_t const*)"Adamant Compiler v0.1.0"}));
+		console_write_line__2(console__, ((string){{23},(uint8_t*)u8"Adamant Compiler v0.1.0"}));
 	}
 
-	if (cond(bool_op(bool_arg(int32__0op__equal(source_file_paths__->count__, ((int32){0}))) || bool_arg(string__0op__equal(output_file_path__, ((string){0,(uint8_t const*)""}))))))
+	if (cond(bool_op(bool_arg(int32__0op__equal(source_file_paths__->count__, ((int32){0}))) || bool_arg(string__0op__equal(output_file_path__, ((string){{0},(uint8_t*)u8""}))))))
 	{
-		console_write_line__2(console__, ((string){57,(uint8_t const*)"Args: <Input File(s)> -o <Output File> -r <Resource File>"}));
+		console_write_line__2(console__, ((string){{57},(uint8_t*)u8"Args: <Input File(s)> -o <Output File> -r <Resource File>"}));
 		return UsageError__;
 	}
 
@@ -936,7 +936,7 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 	{
 		if (cond(verbose__))
 		{
-			console_write_line__2(console__, ((string){18,(uint8_t const*)"Reading Resources:"}));
+			console_write_line__2(console__, ((string){{18},(uint8_t*)u8"Reading Resources:"}));
 		}
 
 		for (string__0iter mut iter = Strings__0__0iterate(resource_file_paths__); string__0next(&iter);)
@@ -944,7 +944,7 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 			string const resource_file_path__ = string__0current(&iter);
 			if (cond(verbose__))
 			{
-				console_write_line__2(console__, string__0op__add(((string){2,(uint8_t const*)"  "}), resource_file_path__));
+				console_write_line__2(console__, string__0op__add(((string){{2},(uint8_t*)u8"  "}), resource_file_path__));
 			}
 
 			add_item__2(resources__, read_source__1(resource_file_path__));
@@ -953,7 +953,7 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 
 	if (cond(verbose__))
 	{
-		console_write_line__2(console__, ((string){10,(uint8_t const*)"Compiling:"}));
+		console_write_line__2(console__, ((string){{10},(uint8_t*)u8"Compiling:"}));
 	}
 
 	system__collections__List__1 mut ref const sources__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -962,7 +962,7 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 		string const source_file_path__ = string__0current(&iter);
 		if (cond(verbose__))
 		{
-			console_write_line__2(console__, string__0op__add(((string){2,(uint8_t const*)"  "}), source_file_path__));
+			console_write_line__2(console__, string__0op__add(((string){{2},(uint8_t*)u8"  "}), source_file_path__));
 		}
 
 		add_item__2(sources__, read_source__1(source_file_path__));
@@ -980,7 +980,7 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 	string const translated__ = emit__1(emitter__);
 	if (cond(verbose__))
 	{
-		console_write__2(console__, ((string){8,(uint8_t const*)"Output: "}));
+		console_write__2(console__, ((string){{8},(uint8_t*)u8"Output: "}));
 		console_write_line__2(console__, output_file_path__);
 	}
 
@@ -1002,15 +1002,15 @@ int32 mut main__2(system__console__Console__0 mut ref const console__, system__c
 
 	if (cond(verbose__))
 	{
-		console_write__2(console__, ((string){30,(uint8_t const*)"Outputting RuntimeLibrary to: "}));
+		console_write__2(console__, ((string){{30},(uint8_t*)u8"Outputting RuntimeLibrary to: "}));
 		console_write_line__2(console__, output_dir_path__);
 	}
 
-	system__io__File_Writer__0 mut ref mut resource_file__ = system__io__File_Writer__0__0new__1(allocate(sizeof(system__io__File_Writer__0)), string__0op__add(output_dir_path__, ((string){16,(uint8_t const*)"RuntimeLibrary.h"})));
-	file_write__2(resource_file__, get_resource__1(((string){16,(uint8_t const*)"RuntimeLibrary.h"})));
+	system__io__File_Writer__0 mut ref mut resource_file__ = system__io__File_Writer__0__0new__1(allocate(sizeof(system__io__File_Writer__0)), string__0op__add(output_dir_path__, ((string){{16},(uint8_t*)u8"RuntimeLibrary.h"})));
+	file_write__2(resource_file__, get_resource__1(((string){{16},(uint8_t*)u8"RuntimeLibrary.h"})));
 	close_file_writer__1(resource_file__);
-	resource_file__ = system__io__File_Writer__0__0new__1(allocate(sizeof(system__io__File_Writer__0)), string__0op__add(output_dir_path__, ((string){16,(uint8_t const*)"RuntimeLibrary.c"})));
-	file_write__2(resource_file__, get_resource__1(((string){16,(uint8_t const*)"RuntimeLibrary.c"})));
+	resource_file__ = system__io__File_Writer__0__0new__1(allocate(sizeof(system__io__File_Writer__0)), string__0op__add(output_dir_path__, ((string){{16},(uint8_t*)u8"RuntimeLibrary.c"})));
+	file_write__2(resource_file__, get_resource__1(((string){{16},(uint8_t*)u8"RuntimeLibrary.c"})));
 	close_file_writer__1(resource_file__);
 	return Success__;
 }
@@ -1020,12 +1020,12 @@ Source_Text__0 const ref mut read_source__1(string const path__)
 	system__io__File_Reader__0 mut ref const file__ = system__io__File_Reader__0__0new__1(allocate(sizeof(system__io__File_Reader__0)), path__);
 	string const contents__ = file_read_to_end__1(file__);
 	close_file_reader__1(file__);
-	return Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), ((string){9,(uint8_t const*)"<default>"}), path__, contents__);
+	return Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), ((string){{9},(uint8_t*)u8"<default>"}), path__, contents__);
 }
 
 void mut run_unit_tests__1(system__console__Console__0 mut ref const console__)
 {
-	console_write_line__2(console__, ((string){21,(uint8_t const*)"Running Unit Tests..."}));
+	console_write_line__2(console__, ((string){{21},(uint8_t*)u8"Running Unit Tests..."}));
 	unit_test_Text_Position__0();
 	unit_test_build_primitives_package__0();
 	unit_test_build_runtime_library_package__0();
@@ -1153,8 +1153,8 @@ int32 mut line_count__1(Text_Lines__0 const ref const lines__)
 
 Text_Line__0 const ref mut get_line__2(Text_Lines__0 const ref const lines__, int32 const line_number__)
 {
-	assert__2(int32__0op__gt(line_number__, ((int32){0})), string__0op__add(((string){5,(uint8_t const*)"line "}), int_to_string__1(line_number__)));
-	assert__2(int32__0op__lte(line_number__, line_count__1(lines__)), string__0op__add(((string){5,(uint8_t const*)"line "}), int_to_string__1(line_number__)));
+	assert__2(int32__0op__gt(line_number__, ((int32){0})), string__0op__add(((string){{5},(uint8_t*)u8"line "}), int_to_string__1(line_number__)));
+	assert__2(int32__0op__lte(line_number__, line_count__1(lines__)), string__0op__add(((string){{5},(uint8_t*)u8"line "}), int_to_string__1(line_number__)));
 	int32 const line_index__ = int32__0op__sub(line_number__, ((int32){1}));
 	int32 const line_start__ = Ints__0__0op__element(lines__->start_of_line__, line_index__);
 	if (cond(int32__0op__equal(line_index__, int32__0op__sub(line_count__1(lines__), ((int32){1})))))
@@ -1168,8 +1168,8 @@ Text_Line__0 const ref mut get_line__2(Text_Lines__0 const ref const lines__, in
 
 int32 mut line_containing_offset__2(Text_Lines__0 const ref const lines__, int32 const character_offset__)
 {
-	assert__2(int32__0op__gte(character_offset__, ((int32){0})), string__0op__add(((string){7,(uint8_t const*)"offset "}), int_to_string__1(character_offset__)));
-	assert__2(int32__0op__lte(character_offset__, source_byte_length__1(lines__->source__)), string__0op__add(string__0op__add(string__0op__add(((string){7,(uint8_t const*)"offset "}), int_to_string__1(character_offset__)), ((string){15,(uint8_t const*)" source length "})), int_to_string__1(source_byte_length__1(lines__->source__))));
+	assert__2(int32__0op__gte(character_offset__, ((int32){0})), string__0op__add(((string){{7},(uint8_t*)u8"offset "}), int_to_string__1(character_offset__)));
+	assert__2(int32__0op__lte(character_offset__, source_byte_length__1(lines__->source__)), string__0op__add(string__0op__add(string__0op__add(((string){{7},(uint8_t*)u8"offset "}), int_to_string__1(character_offset__)), ((string){{15},(uint8_t*)u8" source length "})), int_to_string__1(source_byte_length__1(lines__->source__))));
 	int32 mut left__ = ((int32){0});
 	int32 mut right__ = int32__0op__sub(line_count__1(lines__), ((int32){1}));
 	while (cond(int32__0op__lte(left__, right__)))
@@ -1225,7 +1225,7 @@ Text_Span__0 mut ref mut Text_Span__0__0new__2(Text_Span__0 mut ref const self, 
 
 string mut format_error__1(string const message__)
 {
-	return string__0op__add(string__0op__add(((string){3,(uint8_t const*)"<$ "}), message__), ((string){3,(uint8_t const*)" $>"}));
+	return string__0op__add(string__0op__add(((string){{3},(uint8_t*)u8"<$ "}), message__), ((string){{3},(uint8_t*)u8" $>"}));
 }
 
 Source_File_Builder__0 mut ref mut Source_File_Builder__0__0new__0(Source_File_Builder__0 mut ref const self)
@@ -1300,29 +1300,29 @@ void mut statement_separator_line__1(Source_File_Builder__0 mut ref const file__
 
 void mut begin_block__1(Source_File_Builder__0 mut ref const file__)
 {
-	write_line__2(file__, ((string){1,(uint8_t const*)"{"}));
-	sb_append__2(file__->indent__, ((string){1,(uint8_t const*)"\t"}));
+	write_line__2(file__, ((string){{1},(uint8_t*)u8"{"}));
+	sb_append__2(file__->indent__, ((string){{1},(uint8_t*)u8"\t"}));
 	file__->first_element__ = file__->after_block__ = FALSE;
 }
 
 void mut begin_block_with__2(Source_File_Builder__0 mut ref const file__, string const value__)
 {
 	write_line__2(file__, value__);
-	sb_append__2(file__->indent__, ((string){1,(uint8_t const*)"\t"}));
+	sb_append__2(file__->indent__, ((string){{1},(uint8_t*)u8"\t"}));
 	file__->first_element__ = file__->after_block__ = FALSE;
 }
 
 void mut end_block__1(Source_File_Builder__0 mut ref const file__)
 {
 	sb_remove__3(file__->indent__, ((int32){0}), ((int32){1}));
-	write_line__2(file__, ((string){1,(uint8_t const*)"}"}));
+	write_line__2(file__, ((string){{1},(uint8_t*)u8"}"}));
 	file__->after_block__ = TRUE;
 }
 
 void mut end_block_with_semicolon__1(Source_File_Builder__0 mut ref const file__)
 {
 	sb_remove__3(file__->indent__, ((int32){0}), ((int32){1}));
-	write_line__2(file__, ((string){2,(uint8_t const*)"};"}));
+	write_line__2(file__, ((string){{2},(uint8_t*)u8"};"}));
 }
 
 void mut end_block_with__2(Source_File_Builder__0 mut ref const file__, string const value__)
@@ -1399,13 +1399,13 @@ Package_Reference__0 mut ref mut Package_Reference__0__0new__2(Package_Reference
 
 Package__0 const ref mut build_primitives_package__0()
 {
-	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){11,(uint8_t const*)"$primitives"}));
+	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{11},(uint8_t*)u8"$primitives"}));
 	system__collections__List__1 const ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 const ref const compilation_units__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 mut ref const primitive_symbols__ = build_primitive_symbols__1(name__);
-	assert__2(int32__0op__gt(primitive_symbols__->count__, ((int32){0})), string__0op__add(((string){24,(uint8_t const*)"primitive_symbols.count="}), int_to_string__1(primitive_symbols__->count__)));
+	assert__2(int32__0op__gt(primitive_symbols__->count__, ((int32){0})), string__0op__add(((string){{24},(uint8_t*)u8"primitive_symbols.count="}), int_to_string__1(primitive_symbols__->count__)));
 	Symbol__0 const ref const package_symbol__ = Symbol__0__0new__package__2(allocate(sizeof(Symbol__0)), name__->unqualified__, primitive_symbols__);
-	assert__2(int32__0op__gt(package_symbol__->children__->count__, ((int32){0})), string__0op__add(((string){30,(uint8_t const*)"package_symbol.children.count="}), int_to_string__1(package_symbol__->children__->count__)));
+	assert__2(int32__0op__gt(package_symbol__->children__->count__, ((int32){0})), string__0op__add(((string){{30},(uint8_t*)u8"package_symbol.children.count="}), int_to_string__1(package_symbol__->children__->count__)));
 	return Package__0__0new__4(allocate(sizeof(Package__0)), name__, references__, compilation_units__, package_symbol__);
 }
 
@@ -1414,40 +1414,40 @@ system__collections__List__1 mut ref mut build_primitive_symbols__1(Package_Name
 	Name__0 const ref const global_namespace__ = Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), package_name__);
 	system__collections__List__1 mut ref const symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(symbols__, build_adamant_language_namespace_symbol__1(global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){4,(uint8_t const*)"void"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){5,(uint8_t const*)"never"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){4,(uint8_t const*)"bool"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){10,(uint8_t const*)"code_point"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){6,(uint8_t const*)"string"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){4,(uint8_t const*)"int8"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){5,(uint8_t const*)"int16"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){3,(uint8_t const*)"int"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){5,(uint8_t const*)"int64"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){6,(uint8_t const*)"int128"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){4,(uint8_t const*)"byte"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){6,(uint8_t const*)"uint16"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){4,(uint8_t const*)"uint"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){6,(uint8_t const*)"uint64"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){7,(uint8_t const*)"uint128"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){7,(uint8_t const*)"float32"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){5,(uint8_t const*)"float"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){8,(uint8_t const*)"float128"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"void"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{5},(uint8_t*)u8"never"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"bool"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{10},(uint8_t*)u8"code_point"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{6},(uint8_t*)u8"string"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"int8"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{5},(uint8_t*)u8"int16"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{3},(uint8_t*)u8"int"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{5},(uint8_t*)u8"int64"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{6},(uint8_t*)u8"int128"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"byte"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{6},(uint8_t*)u8"uint16"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"uint"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{6},(uint8_t*)u8"uint64"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{7},(uint8_t*)u8"uint128"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{7},(uint8_t*)u8"float32"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{5},(uint8_t*)u8"float"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{8},(uint8_t*)u8"float128"}), global_namespace__));
 	build_fixed_point_primitives__3(symbols__, ((int32){8}), global_namespace__);
 	build_fixed_point_primitives__3(symbols__, ((int32){16}), global_namespace__);
 	build_fixed_point_primitives__3(symbols__, ((int32){32}), global_namespace__);
 	build_fixed_point_primitives__3(symbols__, ((int32){64}), global_namespace__);
-	add_item__2(symbols__, build_primitive_symbol__2(((string){9,(uint8_t const*)"decimal32"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){7,(uint8_t const*)"decimal"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){10,(uint8_t const*)"decimal128"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){4,(uint8_t const*)"size"}), global_namespace__));
-	add_item__2(symbols__, build_primitive_symbol__2(((string){6,(uint8_t const*)"offset"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{9},(uint8_t*)u8"decimal32"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{7},(uint8_t*)u8"decimal"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{10},(uint8_t*)u8"decimal128"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"size"}), global_namespace__));
+	add_item__2(symbols__, build_primitive_symbol__2(((string){{6},(uint8_t*)u8"offset"}), global_namespace__));
 	return symbols__;
 }
 
 Symbol__0 const ref mut build_adamant_language_namespace_symbol__1(Name__0 const ref const global_namespace__)
 {
-	Name__0 const ref const adamant_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){7,(uint8_t const*)"adamant"}));
-	Name__0 const ref const language_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace__, NamespaceName__, ((string){8,(uint8_t const*)"language"}));
+	Name__0 const ref const adamant_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){{7},(uint8_t*)u8"adamant"}));
+	Name__0 const ref const language_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace__, NamespaceName__, ((string){{8},(uint8_t*)u8"language"}));
 	system__collections__List__1 mut ref const language_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(language_children__, build_optional_type_symbol__1(language_namespace__));
 	system__collections__List__1 mut ref const adamant_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -1457,9 +1457,9 @@ Symbol__0 const ref mut build_adamant_language_namespace_symbol__1(Name__0 const
 
 Symbol__0 const ref mut build_optional_type_symbol__1(Name__0 const ref const language_namespace__)
 {
-	Name__0 const ref const optional_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace__, TypeName__, ((string){8,(uint8_t const*)"optional"}));
+	Name__0 const ref const optional_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace__, TypeName__, ((string){{8},(uint8_t*)u8"optional"}));
 	system__collections__List__1 mut ref const type_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(type_parameters__, Type__0__0new__3(allocate(sizeof(Type__0)), TypeParameterType__, Name__0__0new__3(allocate(sizeof(Name__0)), optional_name__, TypeParameterName__, ((string){1,(uint8_t const*)"T"})), TRUE));
+	add_item__2(type_parameters__, Type__0__0new__3(allocate(sizeof(Type__0)), TypeParameterType__, Name__0__0new__3(allocate(sizeof(Name__0)), optional_name__, TypeParameterName__, ((string){{1},(uint8_t*)u8"T"})), TRUE));
 	Type__0 const ref const type__ = Type__0__0new__primitive__2(allocate(sizeof(Type__0)), optional_name__, type_parameters__);
 	system__collections__List__1 mut ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -1492,7 +1492,7 @@ void mut Package_name_is_dollar_primitives__0()
 {
 	Package__0 const ref const package__ = build_primitives_package__0();
 	Package_Name__0 const ref const name__ = package__->name__;
-	assert__1(string__0op__equal(name__->unqualified__, ((string){11,(uint8_t const*)"$primitives"})));
+	assert__1(string__0op__equal(name__->unqualified__, ((string){{11},(uint8_t*)u8"$primitives"})));
 }
 
 void mut Package_has_no_references_or_compilation_units__0()
@@ -1520,18 +1520,18 @@ void mut Package_symbol_has_children__0()
 void mut Package_contains_the_string_type__0()
 {
 	Package__0 const ref const package__ = build_primitives_package__0();
-	Symbol__0 const ref const string_symbol__ = get_child_symbol__3(package__->symbol__, ((string){6,(uint8_t const*)"string"}), IdentifierSymbol__);
+	Symbol__0 const ref const string_symbol__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"string"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(string_symbol__, none));
 }
 
 void mut Package_contains_optional_type__0()
 {
 	Package__0 const ref const package__ = build_primitives_package__0();
-	Symbol__0 const opt_ref const adamant_symbol__ = get_child_symbol__3(package__->symbol__, ((string){7,(uint8_t const*)"adamant"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const adamant_symbol__ = get_child_symbol__3(package__->symbol__, ((string){{7},(uint8_t*)u8"adamant"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(adamant_symbol__, none));
-	Symbol__0 const opt_ref const langauge_symbol__ = get_child_symbol__3(adamant_symbol__, ((string){8,(uint8_t const*)"language"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const langauge_symbol__ = get_child_symbol__3(adamant_symbol__, ((string){{8},(uint8_t*)u8"language"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(langauge_symbol__, none));
-	Symbol__0 const opt_ref const optional_symbol__ = get_child_symbol__3(langauge_symbol__, ((string){8,(uint8_t const*)"optional"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const optional_symbol__ = get_child_symbol__3(langauge_symbol__, ((string){{8},(uint8_t*)u8"optional"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(optional_symbol__, none));
 }
 
@@ -1539,13 +1539,13 @@ Program_Fragment__0 mut ref mut Program_Fragment__0__0new__0(Program_Fragment__0
 
 Package__0 const ref mut build_runtime_library_package__0()
 {
-	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){8,(uint8_t const*)"$runtime"}));
+	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{8},(uint8_t*)u8"$runtime"}));
 	system__collections__List__1 const ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 const ref const compilation_units__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 const ref const symbols__ = build_runtime_library_symbols__1(name__);
-	assert__2(int32__0op__equal(symbols__->count__, ((int32){42})), string__0op__add(((string){14,(uint8_t const*)"symbols.count="}), int_to_string__1(symbols__->count__)));
+	assert__2(int32__0op__equal(symbols__->count__, ((int32){42})), string__0op__add(((string){{14},(uint8_t*)u8"symbols.count="}), int_to_string__1(symbols__->count__)));
 	Symbol__0 const ref const package_symbol__ = Symbol__0__0new__package__2(allocate(sizeof(Symbol__0)), name__->unqualified__, symbols__);
-	assert__2(int32__0op__gt(package_symbol__->children__->count__, ((int32){0})), string__0op__add(((string){30,(uint8_t const*)"package_symbol.children.count="}), int_to_string__1(package_symbol__->children__->count__)));
+	assert__2(int32__0op__gt(package_symbol__->children__->count__, ((int32){0})), string__0op__add(((string){{30},(uint8_t*)u8"package_symbol.children.count="}), int_to_string__1(package_symbol__->children__->count__)));
 	return Package__0__0new__4(allocate(sizeof(Package__0)), name__, references__, compilation_units__, package_symbol__);
 }
 
@@ -1553,70 +1553,70 @@ system__collections__List__1 mut ref mut build_runtime_library_symbols__1(Packag
 {
 	Name__0 const ref const global_namespace__ = Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), package_name__);
 	system__collections__List__1 mut ref const symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){8,(uint8_t const*)"allocate"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){4,(uint8_t const*)"free"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){14,(uint8_t const*)"bool_to_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){13,(uint8_t const*)"int_to_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){17,(uint8_t const*)"int_to_hex_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){17,(uint8_t const*)"hex_string_to_int"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){17,(uint8_t const*)"int_to_code_point"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){20,(uint8_t const*)"code_point_to_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){18,(uint8_t const*)"string_byte_length"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){9,(uint8_t const*)"substring"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){14,(uint8_t const*)"string_replace"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){15,(uint8_t const*)"string_index_of"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){20,(uint8_t const*)"string_last_index_of"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){17,(uint8_t const*)"code_point_as_int"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){15,(uint8_t const*)"NOT_IMPLEMENTED"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){11,(uint8_t const*)"UNREACHABLE"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){6,(uint8_t const*)"assert"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){11,(uint8_t const*)"debug_write"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){16,(uint8_t const*)"debug_write_line"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){12,(uint8_t const*)"get_resource"}))));
-	add_item__2(symbols__, build_class_symbol__2(global_namespace__, ((string){7,(uint8_t const*)"Strings"})));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){13,(uint8_t const*)"clear_strings"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){10,(uint8_t const*)"add_string"}))));
-	add_item__2(symbols__, build_class_symbol__2(global_namespace__, ((string){4,(uint8_t const*)"Ints"})));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){10,(uint8_t const*)"clear_ints"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){7,(uint8_t const*)"add_int"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){10,(uint8_t const*)"clear_list"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){8,(uint8_t const*)"add_item"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){13,(uint8_t const*)"console_write"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){18,(uint8_t const*)"console_write_line"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){16,(uint8_t const*)"file_read_to_end"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){17,(uint8_t const*)"close_file_reader"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){10,(uint8_t const*)"file_write"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){17,(uint8_t const*)"close_file_writer"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){9,(uint8_t const*)"sb_append"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){12,(uint8_t const*)"sb_append_sb"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){14,(uint8_t const*)"sb_append_line"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){9,(uint8_t const*)"sb_remove"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){12,(uint8_t const*)"sb_to_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){6,(uint8_t const*)"as_any"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){10,(uint8_t const*)"as_any_mut"}))));
-	Name__0 const ref const system_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){6,(uint8_t const*)"system"}));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{8},(uint8_t*)u8"allocate"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{4},(uint8_t*)u8"free"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"bool_to_string"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"int_to_string"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"int_to_hex_string"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"hex_string_to_int"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"int_to_code_point"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{20},(uint8_t*)u8"code_point_to_string"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{18},(uint8_t*)u8"string_byte_length"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"substring"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"string_replace"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{15},(uint8_t*)u8"string_index_of"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{20},(uint8_t*)u8"string_last_index_of"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"code_point_as_int"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{15},(uint8_t*)u8"NOT_IMPLEMENTED"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{11},(uint8_t*)u8"UNREACHABLE"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{6},(uint8_t*)u8"assert"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{11},(uint8_t*)u8"debug_write"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{16},(uint8_t*)u8"debug_write_line"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"get_resource"}))));
+	add_item__2(symbols__, build_class_symbol__2(global_namespace__, ((string){{7},(uint8_t*)u8"Strings"})));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"clear_strings"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"add_string"}))));
+	add_item__2(symbols__, build_class_symbol__2(global_namespace__, ((string){{4},(uint8_t*)u8"Ints"})));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"clear_ints"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{7},(uint8_t*)u8"add_int"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"clear_list"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{8},(uint8_t*)u8"add_item"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"console_write"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{18},(uint8_t*)u8"console_write_line"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{16},(uint8_t*)u8"file_read_to_end"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"close_file_reader"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"file_write"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"close_file_writer"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"sb_append"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"sb_append_sb"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"sb_append_line"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"sb_remove"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"sb_to_string"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{6},(uint8_t*)u8"as_any"}))));
+	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"as_any_mut"}))));
+	Name__0 const ref const system_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
 	system__collections__List__1 mut ref const system_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	Name__0 const ref const collections_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){11,(uint8_t const*)"collections"}));
+	Name__0 const ref const collections_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){{11},(uint8_t*)u8"collections"}));
 	system__collections__List__1 mut ref const collections_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 mut ref const list_type_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(list_type_parameters__, Type__0__0new__parameter__1(allocate(sizeof(Type__0)), ((string){1,(uint8_t const*)"T"})));
-	add_item__2(collections_symbols__, build_generic_class_symbol__3(collections_namespace__, ((string){4,(uint8_t const*)"List"}), list_type_parameters__));
+	add_item__2(list_type_parameters__, Type__0__0new__parameter__1(allocate(sizeof(Type__0)), ((string){{1},(uint8_t*)u8"T"})));
+	add_item__2(collections_symbols__, build_generic_class_symbol__3(collections_namespace__, ((string){{4},(uint8_t*)u8"List"}), list_type_parameters__));
 	add_item__2(system_symbols__, build_namespace_symbol__2(collections_namespace__, collections_symbols__));
-	Name__0 const ref const console_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){7,(uint8_t const*)"console"}));
+	Name__0 const ref const console_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){{7},(uint8_t*)u8"console"}));
 	system__collections__List__1 mut ref const console_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(console_symbols__, build_class_symbol__2(console_namespace__, ((string){7,(uint8_t const*)"Console"})));
-	add_item__2(console_symbols__, build_class_symbol__2(console_namespace__, ((string){9,(uint8_t const*)"Arguments"})));
+	add_item__2(console_symbols__, build_class_symbol__2(console_namespace__, ((string){{7},(uint8_t*)u8"Console"})));
+	add_item__2(console_symbols__, build_class_symbol__2(console_namespace__, ((string){{9},(uint8_t*)u8"Arguments"})));
 	add_item__2(system_symbols__, build_namespace_symbol__2(console_namespace__, console_symbols__));
-	Name__0 const ref const io_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){2,(uint8_t const*)"io"}));
+	Name__0 const ref const io_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){{2},(uint8_t*)u8"io"}));
 	system__collections__List__1 mut ref const io_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(io_symbols__, build_class_symbol__2(io_namespace__, ((string){11,(uint8_t const*)"File_Reader"})));
-	add_item__2(io_symbols__, build_class_symbol__2(io_namespace__, ((string){11,(uint8_t const*)"File_Writer"})));
+	add_item__2(io_symbols__, build_class_symbol__2(io_namespace__, ((string){{11},(uint8_t*)u8"File_Reader"})));
+	add_item__2(io_symbols__, build_class_symbol__2(io_namespace__, ((string){{11},(uint8_t*)u8"File_Writer"})));
 	add_item__2(system_symbols__, build_namespace_symbol__2(io_namespace__, io_symbols__));
-	Name__0 const ref const text_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){4,(uint8_t const*)"text"}));
+	Name__0 const ref const text_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){{4},(uint8_t*)u8"text"}));
 	system__collections__List__1 mut ref const text_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 mut ref const string_builder_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(string_builder_symbols__, build_constructor_symbol__1(((string){13,(uint8_t const*)"with_capacity"})));
-	add_item__2(text_symbols__, build_class_symbol__3(text_namespace__, ((string){14,(uint8_t const*)"String_Builder"}), string_builder_symbols__));
+	add_item__2(string_builder_symbols__, build_constructor_symbol__1(((string){{13},(uint8_t*)u8"with_capacity"})));
+	add_item__2(text_symbols__, build_class_symbol__3(text_namespace__, ((string){{14},(uint8_t*)u8"String_Builder"}), string_builder_symbols__));
 	add_item__2(system_symbols__, build_namespace_symbol__2(text_namespace__, text_symbols__));
 	add_item__2(symbols__, build_namespace_symbol__2(system_namespace__, system_symbols__));
 	return symbols__;
@@ -1662,7 +1662,7 @@ Symbol__0 const ref mut build_generic_class_symbol__3(Name__0 const ref const na
 
 Symbol__0 const ref mut build_constructor_symbol__1(string const name__)
 {
-	string const constructor_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), name__);
+	string const constructor_name__ = string__0op__add(((string){{4},(uint8_t*)u8"new_"}), name__);
 	system__collections__List__1 const ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return Symbol__0__0new__constructor__2(allocate(sizeof(Symbol__0)), constructor_name__, declarations__);
 }
@@ -1679,49 +1679,49 @@ void mut unit_test_build_runtime_library_package__0()
 void mut Runtime_Library_Package_contains_system_package__0()
 {
 	Package__0 const ref const package__ = build_runtime_library_package__0();
-	assert__1(never__0op__not_equal(get_child_symbol__3(package__->symbol__, ((string){6,(uint8_t const*)"system"}), IdentifierSymbol__), none));
+	assert__1(never__0op__not_equal(get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__), none));
 }
 
 void mut System_namespace_contains_console_namespace__0()
 {
 	Package__0 const ref const package__ = build_runtime_library_package__0();
-	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){6,(uint8_t const*)"system"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(system_namespace__, none));
-	assert__1(never__0op__not_equal(get_child_symbol__3(system_namespace__, ((string){7,(uint8_t const*)"console"}), IdentifierSymbol__), none));
+	assert__1(never__0op__not_equal(get_child_symbol__3(system_namespace__, ((string){{7},(uint8_t*)u8"console"}), IdentifierSymbol__), none));
 }
 
 void mut Console_namespace_contains_Console_class__0()
 {
 	Package__0 const ref const package__ = build_runtime_library_package__0();
-	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){6,(uint8_t const*)"system"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(system_namespace__, none));
-	Symbol__0 const opt_ref const console_namespace__ = get_child_symbol__3(system_namespace__, ((string){7,(uint8_t const*)"console"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const console_namespace__ = get_child_symbol__3(system_namespace__, ((string){{7},(uint8_t*)u8"console"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(console_namespace__, none));
-	assert__1(never__0op__not_equal(get_child_symbol__3(console_namespace__, ((string){7,(uint8_t const*)"Console"}), IdentifierSymbol__), none));
+	assert__1(never__0op__not_equal(get_child_symbol__3(console_namespace__, ((string){{7},(uint8_t*)u8"Console"}), IdentifierSymbol__), none));
 }
 
 void mut System_namespace_contains_collections_namespace__0()
 {
 	Package__0 const ref const package__ = build_runtime_library_package__0();
-	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){6,(uint8_t const*)"system"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(system_namespace__, none));
-	assert__1(never__0op__not_equal(get_child_symbol__3(system_namespace__, ((string){11,(uint8_t const*)"collections"}), IdentifierSymbol__), none));
+	assert__1(never__0op__not_equal(get_child_symbol__3(system_namespace__, ((string){{11},(uint8_t*)u8"collections"}), IdentifierSymbol__), none));
 }
 
 void mut Collections_namespace_contains_List_class__0()
 {
 	Package__0 const ref const package__ = build_runtime_library_package__0();
-	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){6,(uint8_t const*)"system"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(system_namespace__, none));
-	Symbol__0 const opt_ref const collections_namespace__ = get_child_symbol__3(system_namespace__, ((string){11,(uint8_t const*)"collections"}), IdentifierSymbol__);
+	Symbol__0 const opt_ref const collections_namespace__ = get_child_symbol__3(system_namespace__, ((string){{11},(uint8_t*)u8"collections"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(collections_namespace__, none));
-	assert__1(never__0op__not_equal(get_child_symbol__3(collections_namespace__, ((string){4,(uint8_t const*)"List"}), IdentifierSymbol__), none));
+	assert__1(never__0op__not_equal(get_child_symbol__3(collections_namespace__, ((string){{4},(uint8_t*)u8"List"}), IdentifierSymbol__), none));
 }
 
 Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const package_syntax__)
 {
-	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){20,(uint8_t const*)"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
-	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){7,(uint8_t const*)"default"}));
+	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){{20},(uint8_t*)u8"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
+	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
 	Package__0 const ref const primitives_package__ = build_primitives_package__0();
 	Package__0 const ref const runtime_package__ = build_runtime_library_package__0();
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -1880,7 +1880,7 @@ string mut get_semantic_node_text__1(Semantic_Node__0 const ref const node__)
 {
 	if (cond(void_ptr__0op__equal(node__->source__, none)))
 	{
-		return ((string){11,(uint8_t const*)"$No Source$"});
+		return ((string){{11},(uint8_t*)u8"$No Source$"});
 	}
 
 	return substring__3(node__->source__->text__, node__->start__, node__->byte_length__);
@@ -2148,18 +2148,18 @@ void mut collect_node_diagnostics__2(Semantic_Node__0 const ref const node__, sy
 Semantic_Tree_Builder__0 mut ref mut Semantic_Tree_Builder__0__0new__0(Semantic_Tree_Builder__0 mut ref const self)
 {
 	self->type_id = Semantic_Tree_Builder__0__0Type_ID;
-	Package_Name__0 const ref const primitives_package__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){11,(uint8_t const*)"$primitives"}));
+	Package_Name__0 const ref const primitives_package__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{11},(uint8_t*)u8"$primitives"}));
 	Name__0 const ref const global_namespace__ = Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), primitives_package__);
-	Name__0 const ref const adamant_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){7,(uint8_t const*)"adamant"}));
-	Name__0 const ref const language_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace__, NamespaceName__, ((string){8,(uint8_t const*)"language"}));
-	self->optional_type_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace__, TypeName__, ((string){8,(uint8_t const*)"optional"}));
+	Name__0 const ref const adamant_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){{7},(uint8_t*)u8"adamant"}));
+	Name__0 const ref const language_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace__, NamespaceName__, ((string){{8},(uint8_t*)u8"language"}));
+	self->optional_type_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace__, TypeName__, ((string){{8},(uint8_t*)u8"optional"}));
 	return self;
 }
 
 system__collections__List__1 const ref mut build_compilation_units__3(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const package_syntax__, Name_Table__0 const ref const name_table__)
 {
-	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){20,(uint8_t const*)"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
-	assert__2(never__0op__not_equal(lookup_special__2(name_table__->any_package__, ((string){6,(uint8_t const*)"string"})), none), string__0op__add(((string){28,(uint8_t const*)"name_table.any_package.name="}), full_name__1(name_table__->any_package__->name__)));
+	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){{20},(uint8_t*)u8"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
+	assert__2(never__0op__not_equal(lookup_special__2(name_table__->any_package__, ((string){{6},(uint8_t*)u8"string"})), none), string__0op__add(((string){{28},(uint8_t*)u8"name_table.any_package.name="}), full_name__1(name_table__->any_package__->name__)));
 	system__collections__List__1 mut ref const compilation_units__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(package_syntax__->children__); void_ptr__0next(&iter);)
 	{
@@ -2172,7 +2172,7 @@ system__collections__List__1 const ref mut build_compilation_units__3(Semantic_T
 
 Compilation_Unit__0 const ref mut build_compilation_unit_semantic_node__3(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const compilation_unit_syntax__, Name_Table__0 const ref const name_table__)
 {
-	assert__2(int32__0op__equal(compilation_unit_syntax__->kind__, CompilationUnit__), string__0op__add(((string){29,(uint8_t const*)"compilation_unit_syntax.kind="}), int_to_string__1(compilation_unit_syntax__->kind__)));
+	assert__2(int32__0op__equal(compilation_unit_syntax__->kind__, CompilationUnit__), string__0op__add(((string){{29},(uint8_t*)u8"compilation_unit_syntax.kind="}), int_to_string__1(compilation_unit_syntax__->kind__)));
 	system__collections__List__1 mut ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(compilation_unit_syntax__->children__); void_ptr__0next(&iter);)
 	{
@@ -2192,7 +2192,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		Token__0 const ref const function_name__ = first_child_token__2(syntax__, Identifier__);
 		add_item__2(children__, build_semantic_node__4(builder__, as_any__1(function_name__), name_table__, scope__));
 		Name_Subtable__0 mut ref const function_scope__ = find__2(scope__, get_token_text__1(function_name__));
-		assert__2(void_ptr__0op__not_equal(function_scope__, none), string__0op__add(((string){36,(uint8_t const*)"get_syntax_node_text(function_name)="}), get_token_text__1(function_name__)));
+		assert__2(void_ptr__0op__not_equal(function_scope__, none), string__0op__add(((string){{36},(uint8_t*)u8"get_syntax_node_text(function_name)="}), get_token_text__1(function_name__)));
 		Syntax_Node__0 const ref const parameters__ = first_child_syntax_node__2(syntax__, ParameterList__);
 		add_item__2(children__, build_parameters_semantic_node__4(builder__, parameters__, name_table__, function_scope__));
 		Syntax_Node__0 const ref const return_type__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){4}));
@@ -2212,7 +2212,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		Token__0 const ref const type_name__ = first_child_token__2(syntax__, Identifier__);
 		add_item__2(children__, build_semantic_node__4(builder__, as_any__1(type_name__), name_table__, scope__));
 		Name_Subtable__0 const ref const type_scope__ = find__2(scope__, get_token_text__1(type_name__));
-		assert__2(void_ptr__0op__not_equal(type_scope__, none), string__0op__add(((string){32,(uint8_t const*)"get_syntax_node_text(type_name)="}), get_token_text__1(type_name__)));
+		assert__2(void_ptr__0op__not_equal(type_scope__, none), string__0op__add(((string){{32},(uint8_t*)u8"get_syntax_node_text(type_name)="}), get_token_text__1(type_name__)));
 		for (void_ptr__0iter mut iter = void_ptr__0iterate(members__1(syntax__)); void_ptr__0next(&iter);)
 		{
 			Syntax_Node__0 const ref const member__ = void_ptr__0current(&iter);
@@ -2224,16 +2224,16 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	else if (cond(int32__0op__equal(syntax__->kind__, ConstructorDeclaration__)))
 	{
 		add_item__2(children__, build_semantic_node__4(builder__, as_any__1(access_modifier__1(syntax__)), name_table__, scope__));
-		string mut full_name__ = ((string){3,(uint8_t const*)"new"});
+		string mut full_name__ = ((string){{3},(uint8_t*)u8"new"});
 		Token__0 const opt_ref const constructor_name__ = first_child_token__2(syntax__, Identifier__);
 		if (cond(void_ptr__0op__not_equal(constructor_name__, none)))
 		{
-			full_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_token_text__1(constructor_name__));
+			full_name__ = string__0op__add(((string){{4},(uint8_t*)u8"new_"}), get_token_text__1(constructor_name__));
 			add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), constructor_name__));
 		}
 
 		Name_Subtable__0 const ref const constructor_scope__ = find_special__2(scope__, full_name__);
-		assert__2(void_ptr__0op__not_equal(constructor_scope__, none), string__0op__add(((string){10,(uint8_t const*)"full_name="}), full_name__));
+		assert__2(void_ptr__0op__not_equal(constructor_scope__, none), string__0op__add(((string){{10},(uint8_t*)u8"full_name="}), full_name__));
 		Syntax_Node__0 const ref const parameters__ = first_child_syntax_node__2(syntax__, ParameterList__);
 		add_item__2(children__, build_parameters_semantic_node__4(builder__, parameters__, name_table__, constructor_scope__));
 		Syntax_Node__0 const ref const body__ = first_child_syntax_node__2(syntax__, Block__);
@@ -2359,36 +2359,36 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	}
 	else if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, TrueLiteralExpression__)) || bool_arg(int32__0op__equal(syntax__->kind__, FalseLiteralExpression__)))))
 	{
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"bool"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{4},(uint8_t*)u8"bool"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, StringLiteralExpression__)))
 	{
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){6,(uint8_t const*)"string"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{6},(uint8_t*)u8"string"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, CodePointLiteralExpression__)))
 	{
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){10,(uint8_t const*)"code_point"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{10},(uint8_t*)u8"code_point"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IntegerLiteralExpression__)))
 	{
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NoneLiteralExpression__)))
 	{
-		Type__0 const ref const type__ = build_optional_type__3(builder__, name_table__, lookup_special__2(scope__, ((string){5,(uint8_t const*)"never"}))->type__);
+		Type__0 const ref const type__ = build_optional_type__3(builder__, name_table__, lookup_special__2(scope__, ((string){{5},(uint8_t*)u8"never"}))->type__);
 		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, SelfExpression__)))
 	{
 		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), first_child_token__2(syntax__, SelfKeyword__)));
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"self"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{4},(uint8_t*)u8"self"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NegateExpression__)))
 	{
 		Semantic_Node__0 const ref const operand__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), name_table__, scope__);
 		add_item__2(children__, operand__);
 		assert__2(void_ptr__0op__not_equal(operand__->of_type__, none), get_syntax_node_text__1(syntax__));
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, AddExpression__)))
 	{
@@ -2404,7 +2404,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 
 		if (cond(void_ptr__0op__equal(type__, none)))
 		{
-			type__ = lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__;
+			type__ = lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__;
 		}
 
 		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), type__, syntax__, children__);
@@ -2416,7 +2416,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		add_item__2(children__, lhs__);
 		add_item__2(children__, rhs__);
 		assert__2(void_ptr__0op__not_equal(rhs__->of_type__, none), get_syntax_node_text__1(syntax__));
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, MultiplyExpression__)))
 	{
@@ -2426,7 +2426,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		add_item__2(children__, rhs__);
 		assert__2(void_ptr__0op__not_equal(lhs__->of_type__, none), get_syntax_node_text__1(syntax__));
 		assert__2(void_ptr__0op__not_equal(rhs__->of_type__, none), get_syntax_node_text__1(syntax__));
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, DivideExpression__)))
 	{
@@ -2436,7 +2436,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		add_item__2(children__, rhs__);
 		assert__2(void_ptr__0op__not_equal(lhs__->of_type__, none), get_syntax_node_text__1(syntax__));
 		assert__2(void_ptr__0op__not_equal(rhs__->of_type__, none), get_syntax_node_text__1(syntax__));
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, RemainderExpression__)))
 	{
@@ -2446,7 +2446,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		add_item__2(children__, rhs__);
 		assert__2(void_ptr__0op__not_equal(lhs__->of_type__, none), get_syntax_node_text__1(syntax__));
 		assert__2(void_ptr__0op__not_equal(rhs__->of_type__, none), get_syntax_node_text__1(syntax__));
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){3,(uint8_t const*)"int"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ParenthesizedExpression__)))
 	{
@@ -2461,7 +2461,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		Semantic_Node__0 const ref const rhs__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), name_table__, scope__);
 		add_item__2(children__, lhs__);
 		add_item__2(children__, rhs__);
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"bool"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{4},(uint8_t*)u8"bool"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NotEqualExpression__)))
 	{
@@ -2469,7 +2469,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		Semantic_Node__0 const ref const rhs__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), name_table__, scope__);
 		add_item__2(children__, lhs__);
 		add_item__2(children__, rhs__);
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"bool"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{4},(uint8_t*)u8"bool"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ComparisonExpression__)))
 	{
@@ -2478,7 +2478,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		add_item__2(children__, lhs__);
 		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), system__collections__List__1__0op__element(syntax__->children__, ((int32){1}))));
 		add_item__2(children__, rhs__);
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"bool"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{4},(uint8_t*)u8"bool"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, AndExpression__)))
 	{
@@ -2486,7 +2486,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		Semantic_Node__0 const ref const rhs__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), name_table__, scope__);
 		add_item__2(children__, lhs__);
 		add_item__2(children__, rhs__);
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"bool"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{4},(uint8_t*)u8"bool"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, OrExpression__)))
 	{
@@ -2494,13 +2494,13 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		Semantic_Node__0 const ref const rhs__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), name_table__, scope__);
 		add_item__2(children__, lhs__);
 		add_item__2(children__, rhs__);
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"bool"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{4},(uint8_t*)u8"bool"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NotExpression__)))
 	{
 		Semantic_Node__0 const ref const operand__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), name_table__, scope__);
 		add_item__2(children__, operand__);
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){4,(uint8_t const*)"bool"}))->type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), lookup_special__2(scope__, ((string){{4},(uint8_t*)u8"bool"}))->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->children__->count__, ((int32){0}))))
 	{
@@ -2520,7 +2520,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 
 Semantic_Node__0 mut ref mut build_parameters_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const parameters_syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__)
 {
-	assert__2(int32__0op__equal(parameters_syntax__->kind__, ParameterList__), string__0op__add(((string){23,(uint8_t const*)"parameters_syntax.kind="}), int_to_string__1(parameters_syntax__->kind__)));
+	assert__2(int32__0op__equal(parameters_syntax__->kind__, ParameterList__), string__0op__add(((string){{23},(uint8_t*)u8"parameters_syntax.kind="}), int_to_string__1(parameters_syntax__->kind__)));
 	system__collections__List__1 mut ref const parameter_nodes__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(parameters__1(parameters_syntax__)); void_ptr__0next(&iter);)
 	{
@@ -2557,7 +2557,7 @@ Semantic_Node__0 mut ref mut build_parameters_semantic_node__4(Semantic_Tree_Bui
 		}
 		else
 		{
-			NOT_IMPLEMENTED__1(string__0op__add(((string){15,(uint8_t const*)"parameter.kind="}), int_to_string__1(parameter__->kind__)));
+			NOT_IMPLEMENTED__1(string__0op__add(((string){{15},(uint8_t*)u8"parameter.kind="}), int_to_string__1(parameter__->kind__)));
 		}
 	}
 
@@ -2571,7 +2571,7 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	{
 		string const primitive_name__ = get_syntax_node_text__1(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})));
 		Name_Subtable__0 const opt_ref const primitive_entry__ = lookup_special__2(scope__, primitive_name__);
-		assert__2(void_ptr__0op__not_equal(primitive_entry__, none), string__0op__add(string__0op__add(((string){24,(uint8_t const*)"No entry for primitive `"}), primitive_name__), ((string){1,(uint8_t const*)"`"})));
+		assert__2(void_ptr__0op__not_equal(primitive_entry__, none), string__0op__add(string__0op__add(((string){{24},(uint8_t*)u8"No entry for primitive `"}), primitive_name__), ((string){{1},(uint8_t*)u8"`"})));
 		return Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), primitive_entry__->type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IdentifierName__)))
@@ -2711,7 +2711,7 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	else
 	{
 		int32 const place__ = syntax__->start__;
-		NOT_IMPLEMENTED__1(string__0op__add(string__0op__add(string__0op__add(((string){12,(uint8_t const*)"syntax.kind="}), int_to_string__1(syntax__->kind__)), ((string){4,(uint8_t const*)" at "})), int_to_string__1(place__)));
+		NOT_IMPLEMENTED__1(string__0op__add(string__0op__add(string__0op__add(((string){{12},(uint8_t*)u8"syntax.kind="}), int_to_string__1(syntax__->kind__)), ((string){{4},(uint8_t*)u8" at "})), int_to_string__1(place__)));
 	}
 }
 
@@ -2734,7 +2734,7 @@ system__collections__List__1 const ref mut build_type_arguments_semantic_node__5
 		return type_parameters__;
 	}
 
-	assert__2(int32__0op__equal(syntax__->kind__, GenericName__), string__0op__add(((string){13,(uint8_t const*)"syntax.kind=="}), int_to_string__1(syntax__->kind__)));
+	assert__2(int32__0op__equal(syntax__->kind__, GenericName__), string__0op__add(((string){{13},(uint8_t*)u8"syntax.kind=="}), int_to_string__1(syntax__->kind__)));
 	BOOL mut in_type_arguments__ = FALSE;
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
@@ -2766,9 +2766,9 @@ Semantic_Node__0 const ref mut build_constructor_name_semantic_node__4(Semantic_
 		Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, qualifier__, name_table__, scope__);
 		add_item__2(children__, type_node__);
 		Token__0 const ref const name__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){2}));
-		string const constructor_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_token_text__1(name__));
+		string const constructor_name__ = string__0op__add(((string){{4},(uint8_t*)u8"new_"}), get_token_text__1(name__));
 		Type__0 const ref const referenced_type__ = type_node__->referenced_type__;
-		assert__2(void_ptr__0op__not_equal(referenced_type__, none), string__0op__add(string__0op__add(((string){24,(uint8_t const*)"no referenced type for `"}), get_semantic_node_text__1(type_node__)), ((string){1,(uint8_t const*)"`"})));
+		assert__2(void_ptr__0op__not_equal(referenced_type__, none), string__0op__add(string__0op__add(((string){{24},(uint8_t*)u8"no referenced type for `"}), get_semantic_node_text__1(type_node__)), ((string){{1},(uint8_t*)u8"`"})));
 		Name_Subtable__0 const opt_ref const constructor_scope__ = lookup_special__2(get_name__2(name_table__, referenced_type__->name__), constructor_name__);
 		if (cond(void_ptr__0op__not_equal(constructor_scope__, none)))
 		{
@@ -2787,12 +2787,12 @@ Syntax_Node__0 const ref mut as_syntax_node__1(Syntax_Node__0 const ref const sy
 
 Diagnostic__0 const ref mut resolution_error__1(Syntax_Node__0 const ref const node__)
 {
-	return Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_syntax_node_text_span__1(node__), string__0op__add(string__0op__add(((string){24,(uint8_t const*)"Could not resolve name `"}), get_syntax_node_text__1(node__)), ((string){1,(uint8_t const*)"`"})));
+	return Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_syntax_node_text_span__1(node__), string__0op__add(string__0op__add(((string){{24},(uint8_t*)u8"Could not resolve name `"}), get_syntax_node_text__1(node__)), ((string){{1},(uint8_t*)u8"`"})));
 }
 
 Diagnostic__0 const ref mut resolution_error__2(Syntax_Node__0 const ref const node__, Semantic_Node__0 const ref const qualifier__)
 {
-	return Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_syntax_node_text_span__1(node__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){24,(uint8_t const*)"Could not resolve name `"}), get_syntax_node_text__1(node__)), ((string){21,(uint8_t const*)"` because qualifier `"})), get_semantic_node_text__1(qualifier__)), ((string){24,(uint8_t const*)"` could not be resolved."})));
+	return Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), FatalCompilationError__, Analysis__, node__->source__, get_syntax_node_text_span__1(node__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{24},(uint8_t*)u8"Could not resolve name `"}), get_syntax_node_text__1(node__)), ((string){{21},(uint8_t*)u8"` because qualifier `"})), get_semantic_node_text__1(qualifier__)), ((string){{24},(uint8_t*)u8"` could not be resolved."})));
 }
 
 Symbol__0 const ref mut build_symbols__2(Package_Name__0 const ref const package_name__, system__collections__List__1 const ref const compilation_units__)
@@ -3592,13 +3592,13 @@ string mut syntax_to_string__1(Syntax__0 const ref const syntax__)
 		case Token__0__0Type_ID:
 		{
 			Token__0 const ref const token__ = match_value;
-			return string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){11,(uint8_t const*)"Token.kind="}), int_to_string__1(token__->kind__)), ((string){3,(uint8_t const*)", \""})), get_token_text__1(token__)), ((string){1,(uint8_t const*)"\""}));
+			return string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{11},(uint8_t*)u8"Token.kind="}), int_to_string__1(token__->kind__)), ((string){{3},(uint8_t*)u8", \""})), get_token_text__1(token__)), ((string){{1},(uint8_t*)u8"\""}));
 		}
 		break;
 		case Syntax_Node__0__0Type_ID:
 		{
 			Syntax_Node__0 const ref const node__ = match_value;
-			return string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){17,(uint8_t const*)"Syntax_Node.kind="}), int_to_string__1(node__->kind__)), ((string){3,(uint8_t const*)", \""})), get_syntax_node_text__1(node__)), ((string){1,(uint8_t const*)"\""}));
+			return string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{17},(uint8_t*)u8"Syntax_Node.kind="}), int_to_string__1(node__->kind__)), ((string){{3},(uint8_t*)u8", \""})), get_syntax_node_text__1(node__)), ((string){{1},(uint8_t*)u8"\""}));
 		}
 		break;
 		default:
@@ -3671,7 +3671,7 @@ Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped__1(Syntax_Node__0 mut r
 	self->byte_length__ = token__->byte_length__;
 	system__collections__List__1 mut ref const diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	Text_Span__0 const ref const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), token__->start__, token__->byte_length__);
-	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, token__->source__, span__, string__0op__add(((string){33,(uint8_t const*)"Skipped unexpected token of kind "}), int_to_string__1(token__->kind__))));
+	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, token__->source__, span__, string__0op__add(((string){{33},(uint8_t*)u8"Skipped unexpected token of kind "}), int_to_string__1(token__->kind__))));
 	self->diagnostics__ = diagnostics__;
 	self->kind__ = SkippedTokens__;
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -3692,7 +3692,7 @@ Syntax_Node__0 mut ref mut Syntax_Node__0__0new__skipped_many__1(Syntax_Node__0 
 	self->byte_length__ = int32__0op__add(int32__0op__sub(last_child__->start__, self->start__), last_child__->byte_length__);
 	system__collections__List__1 mut ref const diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	Text_Span__0 const ref const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), self->start__, self->byte_length__);
-	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, self->source__, span__, string__0op__add(string__0op__add(((string){8,(uint8_t const*)"Skipped "}), int_to_string__1(tokens__->count__)), ((string){20,(uint8_t const*)" unexpected token(s)"}))));
+	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, self->source__, span__, string__0op__add(string__0op__add(((string){{8},(uint8_t*)u8"Skipped "}), int_to_string__1(tokens__->count__)), ((string){{20},(uint8_t*)u8" unexpected token(s)"}))));
 	self->diagnostics__ = diagnostics__;
 	self->kind__ = SkippedTokens__;
 	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -3877,7 +3877,7 @@ Token__0 mut ref mut Token__0__0new__5(Token__0 mut ref const self, int32 const 
 	self->diagnostics__ = diagnostics__;
 	self->kind__ = kind__;
 	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	self->value__ = ((string){0,(uint8_t const*)""});
+	self->value__ = ((string){{0},(uint8_t*)u8""});
 	return self;
 }
 
@@ -3904,11 +3904,11 @@ Token__0 mut ref mut Token__0__0new__missing__3(Token__0 mut ref const self, int
 	self->byte_length__ = ((int32){0});
 	system__collections__List__1 mut ref const diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	Text_Span__0 const ref const span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), start__, ((int32){0}));
-	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, source__, span__, string__0op__add(((string){22,(uint8_t const*)"Missing token of kind "}), int_to_string__1(kind__))));
+	add_item__2(diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Parsing__, source__, span__, string__0op__add(((string){{22},(uint8_t*)u8"Missing token of kind "}), int_to_string__1(kind__))));
 	self->diagnostics__ = diagnostics__;
 	self->kind__ = kind__;
 	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	self->value__ = ((string){0,(uint8_t const*)""});
+	self->value__ = ((string){{0},(uint8_t*)u8""});
 	return self;
 }
 
@@ -4156,7 +4156,7 @@ Token__0 const opt_ref mut next_token__1(Token_Stream__0 mut ref const tokens__)
 			}
 
 			Text_Span__0 const ref mut diagnostic_span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, ((int32){1}));
-			add_item__2(tokens__->diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnostic_span__, string__0op__add(string__0op__add(((string){19,(uint8_t const*)"Invalid character `"}), code_point_to_string__1(cur_char__)), ((string){1,(uint8_t const*)"`"}))));
+			add_item__2(tokens__->diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnostic_span__, string__0op__add(string__0op__add(((string){{19},(uint8_t*)u8"Invalid character `"}), code_point_to_string__1(cur_char__)), ((string){{1},(uint8_t*)u8"`"}))));
 			tokens__->position__ = end__;
 		}
 	}
@@ -4180,147 +4180,147 @@ Token__0 const ref mut new_identifier_or_keyword_token__2(Token_Stream__0 mut re
 	int32 const length__ = int32__0op__sub(end__, tokens__->position__);
 	string const value__ = substring__3(tokens__->source__->text__, tokens__->position__, length__);
 	int32 mut kind__;
-	if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"new"}))))
+	if (cond(string__0op__equal(value__, ((string){{3},(uint8_t*)u8"new"}))))
 	{
 		kind__ = NewKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"not"}))))
+	else if (cond(string__0op__equal(value__, ((string){{3},(uint8_t*)u8"not"}))))
 	{
 		kind__ = NotKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"null"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"null"}))))
 	{
 		kind__ = NullReservedWord__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"self"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"self"}))))
 	{
 		kind__ = SelfKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"true"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"true"}))))
 	{
 		kind__ = TrueKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"false"}))))
+	else if (cond(string__0op__equal(value__, ((string){{5},(uint8_t*)u8"false"}))))
 	{
 		kind__ = FalseKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"mut"}))))
+	else if (cond(string__0op__equal(value__, ((string){{3},(uint8_t*)u8"mut"}))))
 	{
 		kind__ = MutableKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){10,(uint8_t const*)"code_point"}))))
+	else if (cond(string__0op__equal(value__, ((string){{10},(uint8_t*)u8"code_point"}))))
 	{
 		kind__ = CodePoint__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){6,(uint8_t const*)"string"}))))
+	else if (cond(string__0op__equal(value__, ((string){{6},(uint8_t*)u8"string"}))))
 	{
 		kind__ = String__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"int"}))))
+	else if (cond(string__0op__equal(value__, ((string){{3},(uint8_t*)u8"int"}))))
 	{
 		kind__ = Int__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"bool"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"bool"}))))
 	{
 		kind__ = Bool__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"void"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"void"}))))
 	{
 		kind__ = Void__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"uint"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"uint"}))))
 	{
 		kind__ = UnsignedInt__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"var"}))))
+	else if (cond(string__0op__equal(value__, ((string){{3},(uint8_t*)u8"var"}))))
 	{
 		kind__ = VarKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"and"}))))
+	else if (cond(string__0op__equal(value__, ((string){{3},(uint8_t*)u8"and"}))))
 	{
 		kind__ = AndKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){2,(uint8_t const*)"or"}))))
+	else if (cond(string__0op__equal(value__, ((string){{2},(uint8_t*)u8"or"}))))
 	{
 		kind__ = OrKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){6,(uint8_t const*)"return"}))))
+	else if (cond(string__0op__equal(value__, ((string){{6},(uint8_t*)u8"return"}))))
 	{
 		kind__ = ReturnKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"loop"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"loop"}))))
 	{
 		kind__ = LoopKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"while"}))))
+	else if (cond(string__0op__equal(value__, ((string){{5},(uint8_t*)u8"while"}))))
 	{
 		kind__ = WhileKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"for"}))))
+	else if (cond(string__0op__equal(value__, ((string){{3},(uint8_t*)u8"for"}))))
 	{
 		kind__ = ForKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){3,(uint8_t const*)"let"}))))
+	else if (cond(string__0op__equal(value__, ((string){{3},(uint8_t*)u8"let"}))))
 	{
 		kind__ = LetKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){2,(uint8_t const*)"in"}))))
+	else if (cond(string__0op__equal(value__, ((string){{2},(uint8_t*)u8"in"}))))
 	{
 		kind__ = InKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){2,(uint8_t const*)"do"}))))
+	else if (cond(string__0op__equal(value__, ((string){{2},(uint8_t*)u8"do"}))))
 	{
 		kind__ = DoKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){2,(uint8_t const*)"if"}))))
+	else if (cond(string__0op__equal(value__, ((string){{2},(uint8_t*)u8"if"}))))
 	{
 		kind__ = IfKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"else"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"else"}))))
 	{
 		kind__ = ElseKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"break"}))))
+	else if (cond(string__0op__equal(value__, ((string){{5},(uint8_t*)u8"break"}))))
 	{
 		kind__ = BreakKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){8,(uint8_t const*)"continue"}))))
+	else if (cond(string__0op__equal(value__, ((string){{8},(uint8_t*)u8"continue"}))))
 	{
 		kind__ = ContinueKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){7,(uint8_t const*)"private"}))))
+	else if (cond(string__0op__equal(value__, ((string){{7},(uint8_t*)u8"private"}))))
 	{
 		kind__ = PrivateKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){9,(uint8_t const*)"protected"}))))
+	else if (cond(string__0op__equal(value__, ((string){{9},(uint8_t*)u8"protected"}))))
 	{
 		kind__ = ProtectedKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){6,(uint8_t const*)"public"}))))
+	else if (cond(string__0op__equal(value__, ((string){{6},(uint8_t*)u8"public"}))))
 	{
 		kind__ = PublicKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){8,(uint8_t const*)"internal"}))))
+	else if (cond(string__0op__equal(value__, ((string){{8},(uint8_t*)u8"internal"}))))
 	{
 		kind__ = InternalKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"class"}))))
+	else if (cond(string__0op__equal(value__, ((string){{5},(uint8_t*)u8"class"}))))
 	{
 		kind__ = ClassKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"enum"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"enum"}))))
 	{
 		kind__ = EnumKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){6,(uint8_t const*)"struct"}))))
+	else if (cond(string__0op__equal(value__, ((string){{6},(uint8_t*)u8"struct"}))))
 	{
 		kind__ = StructKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"none"}))))
+	else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"none"}))))
 	{
 		kind__ = NoneKeyword__;
 	}
-	else if (cond(string__0op__equal(value__, ((string){5,(uint8_t const*)"match"}))))
+	else if (cond(string__0op__equal(value__, ((string){{5},(uint8_t*)u8"match"}))))
 	{
 		kind__ = MatchKeyword__;
 	}
@@ -4330,7 +4330,7 @@ Token__0 const ref mut new_identifier_or_keyword_token__2(Token_Stream__0 mut re
 		if (cond(bool_op(bool_arg(int32__0op__gt(string_byte_length__1(value__), ((int32){1}))) && bool_arg(code_point__0op__equal(string__0__0op__element(value__, int32__0op__sub(string_byte_length__1(value__), ((int32){1}))), ((code_point){/*_*/0x5F}))))))
 		{
 			Text_Span__0 const ref mut diagnostic_span__ = Text_Span__0__0new__2(allocate(sizeof(Text_Span__0)), tokens__->position__, int32__0op__sub(end__, tokens__->position__));
-			add_item__2(tokens__->diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnostic_span__, string__0op__add(string__0op__add(((string){49,(uint8_t const*)"Identifiers ending with underscore are reserved `"}), value__), ((string){1,(uint8_t const*)"`"}))));
+			add_item__2(tokens__->diagnostics__, Diagnostic__0__0new__5(allocate(sizeof(Diagnostic__0)), CompilationError__, Lexing__, tokens__->source__, diagnostic_span__, string__0op__add(string__0op__add(((string){{49},(uint8_t*)u8"Identifiers ending with underscore are reserved `"}), value__), ((string){{1},(uint8_t*)u8"`"}))));
 		}
 	}
 
@@ -4416,7 +4416,7 @@ string mut emit__1(Emitter__0 mut ref const emitter__)
 	emitter__->class_declarations__ = Source_File_Builder__0__0new__0(allocate(sizeof(Source_File_Builder__0)));
 	emitter__->global_definitions__ = Source_File_Builder__0__0new__0(allocate(sizeof(Source_File_Builder__0)));
 	emitter__->definitions__ = Source_File_Builder__0__0new__0(allocate(sizeof(Source_File_Builder__0)));
-	emitter__->main_function_return_type__ = ((string){0,(uint8_t const*)""});
+	emitter__->main_function_return_type__ = ((string){{0},(uint8_t*)u8""});
 	emitter__->main_function_accepts_console__ = FALSE;
 	emitter__->main_function_accepts_args__ = FALSE;
 	emit_preamble__1(emitter__);
@@ -4453,7 +4453,7 @@ string mut mangle_name__1(Type__0 const ref const type__)
 		}
 		else
 		{
-			sb_append__2(builder__, ((string){2,(uint8_t const*)"__"}));
+			sb_append__2(builder__, ((string){{2},(uint8_t*)u8"__"}));
 		}
 
 		if (cond(BOOL__0op__not(contains_multi_underscore_runs__1(segment__))))
@@ -4466,7 +4466,7 @@ string mut mangle_name__1(Type__0 const ref const type__)
 		}
 	}
 
-	sb_append__2(builder__, ((string){2,(uint8_t const*)"__"}));
+	sb_append__2(builder__, ((string){{2},(uint8_t*)u8"__"}));
 	sb_append__2(builder__, int_to_string__1(type__->type_parameters__->count__));
 	return sb_to_string__1(builder__);
 }
@@ -4483,7 +4483,7 @@ string mut mangle_function_name__2(string const name__, int32 const parameter_co
 		append_fixing_underscores__2(builder__, name__);
 	}
 
-	sb_append__2(builder__, ((string){2,(uint8_t const*)"__"}));
+	sb_append__2(builder__, ((string){{2},(uint8_t*)u8"__"}));
 	sb_append__2(builder__, int_to_string__1(parameter_count__));
 	return sb_to_string__1(builder__);
 }
@@ -4492,13 +4492,13 @@ string mut mangle_field_name__1(string const name__)
 {
 	if (cond(BOOL__0op__not(contains_multi_underscore_runs__1(name__))))
 	{
-		return string__0op__add(name__, ((string){2,(uint8_t const*)"__"}));
+		return string__0op__add(name__, ((string){{2},(uint8_t*)u8"__"}));
 	}
 	else
 	{
 		system__text__String_Builder__0 mut ref const builder__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
 		append_fixing_underscores__2(builder__, name__);
-		sb_append__2(builder__, ((string){2,(uint8_t const*)"__"}));
+		sb_append__2(builder__, ((string){{2},(uint8_t*)u8"__"}));
 		return sb_to_string__1(builder__);
 	}
 }
@@ -4543,7 +4543,7 @@ void mut append_fixing_underscores__2(system__text__String_Builder__0 mut ref co
 		{
 			if (cond(int32__0op__gte(underscores__, ((int32){2}))))
 			{
-				sb_append__2(builder__, ((string){1,(uint8_t const*)"_"}));
+				sb_append__2(builder__, ((string){{1},(uint8_t*)u8"_"}));
 			}
 
 			underscores__ = ((int32){0});
@@ -4558,17 +4558,17 @@ string mut convert_primitive_type_name__1(Type__0 const ref const type__)
 {
 	string const name__ = unqualified_name__1(type__->name__);
 	assert__2(type__->is_primitive__, name__);
-	if (cond(string__0op__equal(name__, ((string){4,(uint8_t const*)"bool"}))))
+	if (cond(string__0op__equal(name__, ((string){{4},(uint8_t*)u8"bool"}))))
 	{
-		return ((string){4,(uint8_t const*)"BOOL"});
+		return ((string){{4},(uint8_t*)u8"BOOL"});
 	}
-	else if (cond(string__0op__equal(name__, ((string){3,(uint8_t const*)"int"}))))
+	else if (cond(string__0op__equal(name__, ((string){{3},(uint8_t*)u8"int"}))))
 	{
-		return ((string){5,(uint8_t const*)"int32"});
+		return ((string){{5},(uint8_t*)u8"int32"});
 	}
-	else if (cond(string__0op__equal(name__, ((string){4,(uint8_t const*)"uint"}))))
+	else if (cond(string__0op__equal(name__, ((string){{4},(uint8_t*)u8"uint"}))))
 	{
-		return ((string){6,(uint8_t const*)"uint32"});
+		return ((string){{6},(uint8_t*)u8"uint32"});
 	}
 	else
 	{
@@ -4601,8 +4601,8 @@ void mut convert_type_name_parameters__2(system__text__String_Builder__0 mut ref
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(type__->type_parameters__); void_ptr__0next(&iter);)
 	{
 		Type__0 const ref mut type_parameter__ = void_ptr__0current(&iter);
-		sb_append__2(builder__, ((string){2,(uint8_t const*)"__"}));
-		if (cond(bool_op(bool_arg(type_parameter__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type_parameter__->name__), ((string){8,(uint8_t const*)"optional"}))))))
+		sb_append__2(builder__, ((string){{2},(uint8_t*)u8"__"}));
+		if (cond(bool_op(bool_arg(type_parameter__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type_parameter__->name__), ((string){{8},(uint8_t*)u8"optional"}))))))
 		{
 			type_parameter__ = system__collections__List__1__0op__element(type_parameter__->type_parameters__, ((int32){0}));
 		}
@@ -4613,7 +4613,7 @@ void mut convert_type_name_parameters__2(system__text__String_Builder__0 mut ref
 		}
 		else
 		{
-			sb_append__2(builder__, ((string){8,(uint8_t const*)"void_ptr"}));
+			sb_append__2(builder__, ((string){{8},(uint8_t*)u8"void_ptr"}));
 		}
 	}
 }
@@ -4623,29 +4623,29 @@ string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const
 	system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
 	if (cond(type__->is_mutable__))
 	{
-		sb_append__2(c_type__, ((string){4,(uint8_t const*)" mut"}));
+		sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
 	}
 	else
 	{
-		sb_append__2(c_type__, ((string){6,(uint8_t const*)" const"}));
+		sb_append__2(c_type__, ((string){{6},(uint8_t*)u8" const"}));
 	}
 
 	if (cond(nullable__))
 	{
-		sb_append__2(c_type__, ((string){8,(uint8_t const*)" opt_ref"}));
+		sb_append__2(c_type__, ((string){{8},(uint8_t*)u8" opt_ref"}));
 	}
 	else
 	{
-		sb_append__2(c_type__, ((string){4,(uint8_t const*)" ref"}));
+		sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" ref"}));
 	}
 
 	if (cond(mutable_binding__))
 	{
-		sb_append__2(c_type__, ((string){4,(uint8_t const*)" mut"}));
+		sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
 	}
 	else
 	{
-		sb_append__2(c_type__, ((string){6,(uint8_t const*)" const"}));
+		sb_append__2(c_type__, ((string){{6},(uint8_t*)u8" const"}));
 	}
 
 	return sb_to_string__1(c_type__);
@@ -4654,20 +4654,20 @@ string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const
 string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref mut type__, BOOL const optional__)
 {
 	assert__1(void_ptr__0op__not_equal(type__, none));
-	if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){8,(uint8_t const*)"optional"}))))))
+	if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){{8},(uint8_t*)u8"optional"}))))))
 	{
 		Type__0 const ref const optional_type__ = system__collections__List__1__0op__element(type__->type_parameters__, ((int32){0}));
 		if (cond(optional_type__->is_value_type__))
 		{
-			system__text__String_Builder__0 mut ref const c_type__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){10,(uint8_t const*)"optional__"}));
+			system__text__String_Builder__0 mut ref const c_type__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){{10},(uint8_t*)u8"optional__"}));
 			if (cond(mutable_binding__))
 			{
-				sb_append__2(c_type__, ((string){6,(uint8_t const*)"0var__"}));
+				sb_append__2(c_type__, ((string){{6},(uint8_t*)u8"0var__"}));
 			}
 
 			if (cond(type__->is_mutable__))
 			{
-				sb_append__2(c_type__, ((string){6,(uint8_t const*)"0mut__"}));
+				sb_append__2(c_type__, ((string){{6},(uint8_t*)u8"0mut__"}));
 			}
 
 			sb_append__2(c_type__, convert_type__3(TRUE, optional_type__, TRUE));
@@ -4685,11 +4685,11 @@ string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref mut t
 			system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
 			if (cond(bool_op(bool_arg(mutable_binding__) || bool_arg(type__->is_mutable__))))
 			{
-				sb_append__2(c_type__, ((string){4,(uint8_t const*)" mut"}));
+				sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
 			}
 			else
 			{
-				sb_append__2(c_type__, ((string){6,(uint8_t const*)" const"}));
+				sb_append__2(c_type__, ((string){{6},(uint8_t*)u8" const"}));
 			}
 
 			return sb_to_string__1(c_type__);
@@ -4709,13 +4709,13 @@ string mut convert_type__2(BOOL const mutable_binding__, Semantic_Node__0 const 
 
 string mut convert_parameter_list__4(Emitter__0 mut ref const emitter__, Semantic_Node__0 const ref const parameters__, string const self_type__, BOOL const is_main_function__)
 {
-	assert__2(int32__0op__equal(parameters__->kind__, ParameterList__), string__0op__add(((string){16,(uint8_t const*)"parameters.kind="}), int_to_string__1(parameters__->kind__)));
+	assert__2(int32__0op__equal(parameters__->kind__, ParameterList__), string__0op__add(((string){{16},(uint8_t*)u8"parameters.kind="}), int_to_string__1(parameters__->kind__)));
 	system__text__String_Builder__0 mut ref const builder__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
-	sb_append__2(builder__, ((string){1,(uint8_t const*)"("}));
+	sb_append__2(builder__, ((string){{1},(uint8_t*)u8"("}));
 	if (cond(int32__0op__gt(string_byte_length__1(self_type__), ((int32){0}))))
 	{
 		sb_append__2(builder__, self_type__);
-		sb_append__2(builder__, ((string){5,(uint8_t const*)" self"}));
+		sb_append__2(builder__, ((string){{5},(uint8_t*)u8" self"}));
 	}
 
 	BOOL mut first_parameter__ = int32__0op__equal(string_byte_length__1(self_type__), ((int32){0}));
@@ -4724,7 +4724,7 @@ string mut convert_parameter_list__4(Emitter__0 mut ref const emitter__, Semanti
 		Semantic_Node__0 const ref const parameter__ = void_ptr__0current(&iter);
 		if (cond(BOOL__0op__not(first_parameter__)))
 		{
-			sb_append__2(builder__, ((string){2,(uint8_t const*)", "}));
+			sb_append__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		}
 		else
 		{
@@ -4734,7 +4734,7 @@ string mut convert_parameter_list__4(Emitter__0 mut ref const emitter__, Semanti
 		BOOL const mutable_binding__ = node_has_child__2(parameter__, VarKeyword__);
 		Semantic_Node__0 const ref const type_node__ = system__collections__List__1__0op__element(parameter__->children__, int32__0op__sub(parameter__->children__->count__, ((int32){1})));
 		sb_append__2(builder__, convert_type__2(mutable_binding__, type_node__));
-		sb_append__2(builder__, ((string){1,(uint8_t const*)" "}));
+		sb_append__2(builder__, ((string){{1},(uint8_t*)u8" "}));
 		sb_append__2(builder__, mangle_field_name__1(get_semantic_node_text__1(first_child__2(parameter__, Identifier__))));
 		if (cond(is_main_function__))
 		{
@@ -4748,19 +4748,19 @@ string mut convert_parameter_list__4(Emitter__0 mut ref const emitter__, Semanti
 				type_string__ = get_semantic_node_text__1(type_node__);
 			}
 
-			if (cond(string__0op__equal(type_string__, ((string){22,(uint8_t const*)"system.console.Console"}))))
+			if (cond(string__0op__equal(type_string__, ((string){{22},(uint8_t*)u8"system.console.Console"}))))
 			{
 				emitter__->main_function_accepts_console__ = TRUE;
 			}
 
-			if (cond(string__0op__equal(type_string__, ((string){24,(uint8_t const*)"system.console.Arguments"}))))
+			if (cond(string__0op__equal(type_string__, ((string){{24},(uint8_t*)u8"system.console.Arguments"}))))
 			{
 				emitter__->main_function_accepts_args__ = TRUE;
 			}
 		}
 	}
 
-	sb_append__2(builder__, ((string){1,(uint8_t const*)")"}));
+	sb_append__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	return sb_to_string__1(builder__);
 }
 
@@ -4771,26 +4771,26 @@ string mut convert_method_parameter_list__3(Emitter__0 mut ref const emitter__, 
 
 string mut convert_parameter_list__3(Emitter__0 mut ref const emitter__, Semantic_Node__0 const ref const parameters__, BOOL const is_main_function__)
 {
-	return convert_parameter_list__4(emitter__, parameters__, ((string){0,(uint8_t const*)""}), is_main_function__);
+	return convert_parameter_list__4(emitter__, parameters__, ((string){{0},(uint8_t*)u8""}), is_main_function__);
 }
 
 string mut convert_parameter_list__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 const ref const parameters__)
 {
-	return convert_parameter_list__4(emitter__, parameters__, ((string){0,(uint8_t const*)""}), FALSE);
+	return convert_parameter_list__4(emitter__, parameters__, ((string){{0},(uint8_t*)u8""}), FALSE);
 }
 
 void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source_File_Builder__0 mut ref const builder__)
 {
 	if (cond(int32__0op__equal(syntax__->kind__, NewExpression__)))
 	{
-		string mut constructor_name__ = ((string){0,(uint8_t const*)""});
+		string mut constructor_name__ = ((string){{0},(uint8_t*)u8""});
 		Semantic_Node__0 const ref mut type_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		if (cond(int32__0op__equal(type_node__->kind__, QualifiedName__)))
 		{
 			Semantic_Node__0 const ref const name_node__ = system__collections__List__1__0op__element(type_node__->children__, ((int32){1}));
 			if (cond(bool_op(bool_arg(int32__0op__equal(name_node__->kind__, IdentifierName__)) && bool_arg(void_ptr__0op__equal(name_node__->referenced_type__, none)))))
 			{
-				constructor_name__ = string__0op__add(((string){2,(uint8_t const*)"__"}), get_semantic_node_text__1(name_node__));
+				constructor_name__ = string__0op__add(((string){{2},(uint8_t*)u8"__"}), get_semantic_node_text__1(name_node__));
 				type_node__ = system__collections__List__1__0op__element(type_node__->children__, ((int32){0}));
 			}
 		}
@@ -4798,9 +4798,9 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 		Type__0 const ref const type__ = type_node__->referenced_type__;
 		assert__2(void_ptr__0op__not_equal(type__, none), get_semantic_node_text__1(type_node__));
 		write__2(builder__, sb_to_string__1(convert_type_name__2(type__, FALSE)));
-		write__2(builder__, ((string){6,(uint8_t const*)"__0new"}));
+		write__2(builder__, ((string){{6},(uint8_t*)u8"__0new"}));
 		write__2(builder__, constructor_name__);
-		write__2(builder__, ((string){2,(uint8_t const*)"__"}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8"__"}));
 		Semantic_Node__0 const ref const argument_list__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
 		write__2(builder__, int_to_string__1(node_argument_count__1(argument_list__)));
 		if (cond(type__->is_value_type__))
@@ -4814,7 +4814,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ArgumentList__)))
 	{
-		write__2(builder__, ((string){1,(uint8_t const*)"("}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8"("}));
 		BOOL mut first_expression__ = TRUE;
 		for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 		{
@@ -4827,20 +4827,20 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 				}
 				else
 				{
-					write__2(builder__, ((string){2,(uint8_t const*)", "}));
+					write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 				}
 
 				convert_expression__2(arg__, builder__);
 			}
 		}
 
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NotExpression__)))
 	{
-		write__2(builder__, ((string){15,(uint8_t const*)"BOOL__0op__not("}));
+		write__2(builder__, ((string){{15},(uint8_t*)u8"BOOL__0op__not("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ParenthesizedExpression__)))
 	{
@@ -4848,35 +4848,35 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NegateExpression__)))
 	{
-		write__2(builder__, ((string){16,(uint8_t const*)"int32__0op__neg("}));
+		write__2(builder__, ((string){{16},(uint8_t*)u8"int32__0op__neg("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NoneLiteralExpression__)))
 	{
-		write__2(builder__, ((string){4,(uint8_t const*)"none"}));
+		write__2(builder__, ((string){{4},(uint8_t*)u8"none"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, SelfExpression__)))
 	{
-		write__2(builder__, ((string){4,(uint8_t const*)"self"}));
+		write__2(builder__, ((string){{4},(uint8_t*)u8"self"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IntegerLiteralExpression__)))
 	{
-		write__2(builder__, string__0op__add(string__0op__add(((string){9,(uint8_t const*)"((int32){"}), get_semantic_node_text__1(syntax__)), ((string){2,(uint8_t const*)"})"})));
+		write__2(builder__, string__0op__add(string__0op__add(((string){{9},(uint8_t*)u8"((int32){"}), get_semantic_node_text__1(syntax__)), ((string){{2},(uint8_t*)u8"})"})));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, TrueLiteralExpression__)))
 	{
-		write__2(builder__, ((string){4,(uint8_t const*)"TRUE"}));
+		write__2(builder__, ((string){{4},(uint8_t*)u8"TRUE"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, FalseLiteralExpression__)))
 	{
-		write__2(builder__, ((string){5,(uint8_t const*)"FALSE"}));
+		write__2(builder__, ((string){{5},(uint8_t*)u8"FALSE"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, CodePointLiteralExpression__)))
 	{
 		string const raw_value__ = get_semantic_node_text__1(syntax__);
 		code_point const code_point_value__ = code_point_literal_value__1(raw_value__);
-		write__2(builder__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){16,(uint8_t const*)"((code_point){/*"}), substring__3(raw_value__, ((int32){1}), int32__0op__sub(string_byte_length__1(raw_value__), ((int32){2})))), ((string){4,(uint8_t const*)"*/0x"})), int_to_hex_string__1(code_point_as_int__1(code_point_value__))), ((string){2,(uint8_t const*)"})"})));
+		write__2(builder__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{16},(uint8_t*)u8"((code_point){/*"}), substring__3(raw_value__, ((int32){1}), int32__0op__sub(string_byte_length__1(raw_value__), ((int32){2})))), ((string){{4},(uint8_t*)u8"*/0x"})), int_to_hex_string__1(code_point_as_int__1(code_point_value__))), ((string){{2},(uint8_t*)u8"})"})));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IdentifierName__)))
 	{
@@ -4885,7 +4885,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	else if (cond(int32__0op__equal(syntax__->kind__, StringLiteralExpression__)))
 	{
 		string const value__ = get_semantic_node_text__1(syntax__);
-		write__2(builder__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){11,(uint8_t const*)"((string){{"}), int_to_string__1(literal_length__1(value__))), ((string){14,(uint8_t const*)"},(uint8_t*)u8"})), value__), ((string){2,(uint8_t const*)"})"})));
+		write__2(builder__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{11},(uint8_t*)u8"((string){{"}), int_to_string__1(literal_length__1(value__))), ((string){{14},(uint8_t*)u8"},(uint8_t*)u8"})), value__), ((string){{2},(uint8_t*)u8"})"})));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, AssignmentExpression__)))
 	{
@@ -4894,32 +4894,32 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 		if (cond(int32__0op__equal(operator__, Equals__)))
 		{
 			convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-			write__2(builder__, ((string){1,(uint8_t const*)" "}));
+			write__2(builder__, ((string){{1},(uint8_t*)u8" "}));
 			write__2(builder__, get_semantic_node_text__1(system__collections__List__1__0op__element(syntax__->children__, ((int32){1}))));
-			write__2(builder__, ((string){1,(uint8_t const*)" "}));
+			write__2(builder__, ((string){{1},(uint8_t*)u8" "}));
 			convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), builder__);
 		}
 		else
 		{
-			write__2(builder__, ((string){4,(uint8_t const*)"op__"}));
+			write__2(builder__, ((string){{4},(uint8_t*)u8"op__"}));
 			if (cond(int32__0op__equal(operator__, PlusEquals__)))
 			{
-				write__2(builder__, ((string){10,(uint8_t const*)"add_assign"}));
+				write__2(builder__, ((string){{10},(uint8_t*)u8"add_assign"}));
 			}
 			else if (cond(int32__0op__equal(operator__, MinusEquals__)))
 			{
-				write__2(builder__, ((string){10,(uint8_t const*)"sub_assign"}));
+				write__2(builder__, ((string){{10},(uint8_t*)u8"sub_assign"}));
 			}
 			else
 			{
-				error__2(builder__, string__0op__add(((string){32,(uint8_t const*)"Unsupported assignment operator "}), int_to_string__1(operator__)));
+				error__2(builder__, string__0op__add(((string){{32},(uint8_t*)u8"Unsupported assignment operator "}), int_to_string__1(operator__)));
 			}
 
-			write__2(builder__, ((string){3,(uint8_t const*)"(&("}));
+			write__2(builder__, ((string){{3},(uint8_t*)u8"(&("}));
 			convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-			write__2(builder__, ((string){3,(uint8_t const*)"), "}));
+			write__2(builder__, ((string){{3},(uint8_t*)u8"), "}));
 			convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), builder__);
-			write__2(builder__, ((string){1,(uint8_t const*)")"}));
+			write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 		}
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, EqualExpression__)))
@@ -4934,7 +4934,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
-			if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){8,(uint8_t const*)"optional"}))))))
+			if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){{8},(uint8_t*)u8"optional"}))))))
 			{
 				type__ = system__collections__List__1__0op__element(type__->type_parameters__, ((int32){0}));
 			}
@@ -4945,20 +4945,20 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 			}
 			else
 			{
-				write__2(builder__, ((string){8,(uint8_t const*)"void_ptr"}));
+				write__2(builder__, ((string){{8},(uint8_t*)u8"void_ptr"}));
 			}
 
-			write__2(builder__, ((string){13,(uint8_t const*)"__0op__equal("}));
+			write__2(builder__, ((string){{13},(uint8_t*)u8"__0op__equal("}));
 		}
 		else
 		{
-			write__2(builder__, ((string){18,(uint8_t const*)"int32__0op__equal("}));
+			write__2(builder__, ((string){{18},(uint8_t*)u8"int32__0op__equal("}));
 		}
 
 		convert_expression__2(lhs_node__, builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(rhs_node__, builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, NotEqualExpression__)))
 	{
@@ -4972,7 +4972,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
-			if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){8,(uint8_t const*)"optional"}))))))
+			if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){{8},(uint8_t*)u8"optional"}))))))
 			{
 				type__ = system__collections__List__1__0op__element(type__->type_parameters__, ((int32){0}));
 			}
@@ -4983,20 +4983,20 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 			}
 			else
 			{
-				write__2(builder__, ((string){8,(uint8_t const*)"void_ptr"}));
+				write__2(builder__, ((string){{8},(uint8_t*)u8"void_ptr"}));
 			}
 
-			write__2(builder__, ((string){17,(uint8_t const*)"__0op__not_equal("}));
+			write__2(builder__, ((string){{17},(uint8_t*)u8"__0op__not_equal("}));
 		}
 		else
 		{
-			write__2(builder__, ((string){22,(uint8_t const*)"int32__0op__not_equal("}));
+			write__2(builder__, ((string){{22},(uint8_t*)u8"int32__0op__not_equal("}));
 		}
 
 		convert_expression__2(lhs_node__, builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(rhs_node__, builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ComparisonExpression__)))
 	{
@@ -5010,35 +5010,35 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 		}
 		else
 		{
-			write__2(builder__, ((string){5,(uint8_t const*)"int32"}));
+			write__2(builder__, ((string){{5},(uint8_t*)u8"int32"}));
 		}
 
 		if (cond(int32__0op__equal(operator__, LessThan__)))
 		{
-			write__2(builder__, ((string){9,(uint8_t const*)"__0op__lt"}));
+			write__2(builder__, ((string){{9},(uint8_t*)u8"__0op__lt"}));
 		}
 		else if (cond(int32__0op__equal(operator__, LessThanEquals__)))
 		{
-			write__2(builder__, ((string){10,(uint8_t const*)"__0op__lte"}));
+			write__2(builder__, ((string){{10},(uint8_t*)u8"__0op__lte"}));
 		}
 		else if (cond(int32__0op__equal(operator__, GreaterThan__)))
 		{
-			write__2(builder__, ((string){9,(uint8_t const*)"__0op__gt"}));
+			write__2(builder__, ((string){{9},(uint8_t*)u8"__0op__gt"}));
 		}
 		else if (cond(int32__0op__equal(operator__, GreaterThanEquals__)))
 		{
-			write__2(builder__, ((string){10,(uint8_t const*)"__0op__gte"}));
+			write__2(builder__, ((string){{10},(uint8_t*)u8"__0op__gte"}));
 		}
 		else
 		{
-			error__2(builder__, string__0op__add(((string){32,(uint8_t const*)"Unsupported comparison operator "}), int_to_string__1(operator__)));
+			error__2(builder__, string__0op__add(((string){{32},(uint8_t*)u8"Unsupported comparison operator "}), int_to_string__1(operator__)));
 		}
 
-		write__2(builder__, ((string){1,(uint8_t const*)"("}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8"("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, AddExpression__)))
 	{
@@ -5056,64 +5056,64 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 		}
 		else
 		{
-			write__2(builder__, ((string){6,(uint8_t const*)"string"}));
+			write__2(builder__, ((string){{6},(uint8_t*)u8"string"}));
 		}
 
-		write__2(builder__, ((string){11,(uint8_t const*)"__0op__add("}));
+		write__2(builder__, ((string){{11},(uint8_t*)u8"__0op__add("}));
 		convert_expression__2(lhs_node__, builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(rhs_node__, builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, SubtractExpression__)))
 	{
 		Semantic_Node__0 const ref const lhs_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		Semantic_Node__0 const ref const rhs_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
-		write__2(builder__, ((string){16,(uint8_t const*)"int32__0op__sub("}));
+		write__2(builder__, ((string){{16},(uint8_t*)u8"int32__0op__sub("}));
 		convert_expression__2(lhs_node__, builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(rhs_node__, builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, MultiplyExpression__)))
 	{
-		write__2(builder__, ((string){16,(uint8_t const*)"int32__0op__mul("}));
+		write__2(builder__, ((string){{16},(uint8_t*)u8"int32__0op__mul("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, DivideExpression__)))
 	{
-		write__2(builder__, ((string){16,(uint8_t const*)"int32__0op__div("}));
+		write__2(builder__, ((string){{16},(uint8_t*)u8"int32__0op__div("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, RemainderExpression__)))
 	{
-		write__2(builder__, ((string){22,(uint8_t const*)"int32__0op__remainder("}));
+		write__2(builder__, ((string){{22},(uint8_t*)u8"int32__0op__remainder("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, OrExpression__)))
 	{
-		write__2(builder__, ((string){17,(uint8_t const*)"bool_op(bool_arg("}));
+		write__2(builder__, ((string){{17},(uint8_t*)u8"bool_op(bool_arg("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){14,(uint8_t const*)") || bool_arg("}));
+		write__2(builder__, ((string){{14},(uint8_t*)u8") || bool_arg("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)"))"}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8"))"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, AndExpression__)))
 	{
-		write__2(builder__, ((string){17,(uint8_t const*)"bool_op(bool_arg("}));
+		write__2(builder__, ((string){{17},(uint8_t*)u8"bool_op(bool_arg("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){14,(uint8_t const*)") && bool_arg("}));
+		write__2(builder__, ((string){{14},(uint8_t*)u8") && bool_arg("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){1})), builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)"))"}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8"))"}));
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, InvocationExpression__)))
 	{
@@ -5135,22 +5135,22 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
 			write__2(builder__, mangle_name__1(type__));
-			write__2(builder__, ((string){3,(uint8_t const*)"__0"}));
+			write__2(builder__, ((string){{3},(uint8_t*)u8"__0"}));
 		}
 		else
 		{
-			write__2(builder__, ((string){31,(uint8_t const*)"system__collections__List__1__0"}));
+			write__2(builder__, ((string){{31},(uint8_t*)u8"system__collections__List__1__0"}));
 		}
 
-		write__2(builder__, ((string){12,(uint8_t const*)"op__element("}));
+		write__2(builder__, ((string){{12},(uint8_t*)u8"op__element("}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){0})), builder__);
-		write__2(builder__, ((string){2,(uint8_t const*)", "}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 		convert_expression__2(system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), builder__);
-		write__2(builder__, ((string){1,(uint8_t const*)")"}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 	}
 	else
 	{
-		error__2(builder__, string__0op__add(((string){37,(uint8_t const*)"Could not convert expression of type "}), int_to_string__1(syntax__->kind__)));
+		error__2(builder__, string__0op__add(((string){{37},(uint8_t*)u8"Could not convert expression of type "}), int_to_string__1(syntax__->kind__)));
 	}
 }
 
@@ -5186,56 +5186,56 @@ code_point mut code_point_literal_value__1(string const value__)
 	}
 	else if (cond(int32__0op__equal(length__, ((int32){4}))))
 	{
-		if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\\"'"}))))
+		if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\\"'"}))))
 		{
 			return ((code_point){/*\"*/0x22});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\\\'"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\\\'"}))))
 		{
 			return ((code_point){/*\\*/0x5C});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\''"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\''"}))))
 		{
 			return ((code_point){/*\'*/0x27});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\n'"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\n'"}))))
 		{
 			return ((code_point){/*\n*/0xA});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\r'"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\r'"}))))
 		{
 			return ((code_point){/*\r*/0xD});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\0'"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\0'"}))))
 		{
 			return ((code_point){/*\0*/0x0});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\b'"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\b'"}))))
 		{
 			return ((code_point){/*\b*/0x8});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\f'"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\f'"}))))
 		{
 			return ((code_point){/*\f*/0xC});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\t'"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\t'"}))))
 		{
 			return ((code_point){/*\t*/0x9});
 		}
-		else if (cond(string__0op__equal(value__, ((string){4,(uint8_t const*)"'\\b'"}))))
+		else if (cond(string__0op__equal(value__, ((string){{4},(uint8_t*)u8"'\\b'"}))))
 		{
 			return ((code_point){/*\b*/0x8});
 		}
 		else
 		{
-			assert__2(FALSE, string__0op__add(((string){39,(uint8_t const*)"Unsupported code_point escape sequence "}), value__));
+			assert__2(FALSE, string__0op__add(((string){{39},(uint8_t*)u8"Unsupported code_point escape sequence "}), value__));
 		}
 	}
 	else if (cond(int32__0op__equal(length__, ((int32){6}))))
 	{
-		if (cond(string__0op__not_equal(substring__3(value__, ((int32){0}), ((int32){3})), ((string){3,(uint8_t const*)"'\\x"}))))
+		if (cond(string__0op__not_equal(substring__3(value__, ((int32){0}), ((int32){3})), ((string){{3},(uint8_t*)u8"'\\x"}))))
 		{
-			assert__2(FALSE, string__0op__add(((string){39,(uint8_t const*)"Unsupported code_point escape sequence "}), value__));
+			assert__2(FALSE, string__0op__add(((string){{39},(uint8_t*)u8"Unsupported code_point escape sequence "}), value__));
 		}
 		else
 		{
@@ -5244,7 +5244,7 @@ code_point mut code_point_literal_value__1(string const value__)
 	}
 	else
 	{
-		assert__2(FALSE, string__0op__add(((string){39,(uint8_t const*)"Unsupported code_point escape sequence "}), value__));
+		assert__2(FALSE, string__0op__add(((string){{39},(uint8_t*)u8"Unsupported code_point escape sequence "}), value__));
 	}
 
 	UNREACHABLE__0();
@@ -5253,32 +5253,32 @@ code_point mut code_point_literal_value__1(string const value__)
 void mut convert_reference_type_constructor_arguments__3(Semantic_Node__0 const ref const syntax__, Source_File_Builder__0 mut ref const builder__, string const type_name__)
 {
 	assert__1(int32__0op__equal(syntax__->kind__, ArgumentList__));
-	write__2(builder__, ((string){17,(uint8_t const*)"(allocate(sizeof("}));
+	write__2(builder__, ((string){{17},(uint8_t*)u8"(allocate(sizeof("}));
 	write__2(builder__, type_name__);
-	write__2(builder__, ((string){2,(uint8_t const*)"))"}));
+	write__2(builder__, ((string){{2},(uint8_t*)u8"))"}));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
 		Semantic_Node__0 const ref const arg__ = void_ptr__0current(&iter);
 		if (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__not_equal(arg__->kind__, LeftParen__)) && bool_arg(int32__0op__not_equal(arg__->kind__, RightParen__)))) && bool_arg(int32__0op__not_equal(arg__->kind__, Comma__)))))
 		{
-			write__2(builder__, ((string){2,(uint8_t const*)", "}));
+			write__2(builder__, ((string){{2},(uint8_t*)u8", "}));
 			convert_expression__2(arg__, builder__);
 		}
 	}
 
-	write__2(builder__, ((string){1,(uint8_t const*)")"}));
+	write__2(builder__, ((string){{1},(uint8_t*)u8")"}));
 }
 
 void mut convert_member_access__2(Semantic_Node__0 const ref const lhs__, Source_File_Builder__0 mut ref const builder__)
 {
 	Type__0 const opt_ref const type__ = lhs__->of_type__;
-	if (cond(bool_op(bool_arg(bool_op(bool_arg(void_ptr__0op__not_equal(type__, none)) && bool_arg(type__->is_value_type__))) && bool_arg(BOOL__0op__not(bool_op(bool_arg(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){8,(uint8_t const*)"optional"}))))) && bool_arg(BOOL__0op__not(as_type__1(system__collections__List__1__0op__element(type__->type_parameters__, ((int32){0})))->is_value_type__))))))))
+	if (cond(bool_op(bool_arg(bool_op(bool_arg(void_ptr__0op__not_equal(type__, none)) && bool_arg(type__->is_value_type__))) && bool_arg(BOOL__0op__not(bool_op(bool_arg(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){{8},(uint8_t*)u8"optional"}))))) && bool_arg(BOOL__0op__not(as_type__1(system__collections__List__1__0op__element(type__->type_parameters__, ((int32){0})))->is_value_type__))))))))
 	{
-		write__2(builder__, ((string){1,(uint8_t const*)"."}));
+		write__2(builder__, ((string){{1},(uint8_t*)u8"."}));
 	}
 	else
 	{
-		write__2(builder__, ((string){2,(uint8_t const*)"->"}));
+		write__2(builder__, ((string){{2},(uint8_t*)u8"->"}));
 	}
 }
 
@@ -5294,18 +5294,18 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 	{
 		if (cond(int32__0op__equal(statement__->children__->count__, ((int32){2}))))
 		{
-			write_line__2(emitter__->definitions__, ((string){7,(uint8_t const*)"return;"}));
+			write_line__2(emitter__->definitions__, ((string){{7},(uint8_t*)u8"return;"}));
 		}
 		else
 		{
-			begin_line__2(emitter__->definitions__, ((string){7,(uint8_t const*)"return "}));
+			begin_line__2(emitter__->definitions__, ((string){{7},(uint8_t*)u8"return "}));
 			convert_expression__2(system__collections__List__1__0op__element(statement__->children__, ((int32){1})), emitter__->definitions__);
-			end_line__2(emitter__->definitions__, ((string){1,(uint8_t const*)";"}));
+			end_line__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8";"}));
 		}
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, LoopStatement__)))
 	{
-		write_line__2(emitter__->definitions__, ((string){8,(uint8_t const*)"for (;;)"}));
+		write_line__2(emitter__->definitions__, ((string){{8},(uint8_t*)u8"for (;;)"}));
 		emit_statement__2(emitter__, system__collections__List__1__0op__element(statement__->children__, ((int32){1})));
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, Block__)))
@@ -5321,9 +5321,9 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, WhileStatement__)))
 	{
-		begin_line__2(emitter__->definitions__, ((string){12,(uint8_t const*)"while (cond("}));
+		begin_line__2(emitter__->definitions__, ((string){{12},(uint8_t*)u8"while (cond("}));
 		convert_expression__2(system__collections__List__1__0op__element(statement__->children__, ((int32){1})), emitter__->definitions__);
-		end_line__2(emitter__->definitions__, ((string){2,(uint8_t const*)"))"}));
+		end_line__2(emitter__->definitions__, ((string){{2},(uint8_t*)u8"))"}));
 		emit_statement__2(emitter__, system__collections__List__1__0op__element(statement__->children__, ((int32){2})));
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, ForStatement__)))
@@ -5342,7 +5342,7 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 		}
 		else
 		{
-			iterator_type__ = ((string){8,(uint8_t const*)"void_ptr"});
+			iterator_type__ = ((string){{8},(uint8_t*)u8"void_ptr"});
 		}
 
 		Type__0 const ref const collection_type__ = iterator_expression__->of_type__;
@@ -5356,23 +5356,23 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 			iteratable_type__ = iterator_type__;
 		}
 
-		begin_line__2(emitter__->definitions__, ((string){5,(uint8_t const*)"for ("}));
+		begin_line__2(emitter__->definitions__, ((string){{5},(uint8_t*)u8"for ("}));
 		write__2(emitter__->definitions__, iterator_type__);
-		write__2(emitter__->definitions__, ((string){19,(uint8_t const*)"__0iter mut iter = "}));
+		write__2(emitter__->definitions__, ((string){{19},(uint8_t*)u8"__0iter mut iter = "}));
 		write__2(emitter__->definitions__, iteratable_type__);
-		write__2(emitter__->definitions__, ((string){11,(uint8_t const*)"__0iterate("}));
+		write__2(emitter__->definitions__, ((string){{11},(uint8_t*)u8"__0iterate("}));
 		convert_expression__2(iterator_expression__, emitter__->definitions__);
-		write__2(emitter__->definitions__, ((string){3,(uint8_t const*)"); "}));
+		write__2(emitter__->definitions__, ((string){{3},(uint8_t*)u8"); "}));
 		write__2(emitter__->definitions__, iterator_type__);
-		end_line__2(emitter__->definitions__, ((string){16,(uint8_t const*)"__0next(&iter);)"}));
+		end_line__2(emitter__->definitions__, ((string){{16},(uint8_t*)u8"__0next(&iter);)"}));
 		begin_block__1(emitter__->definitions__);
-		begin_line__2(emitter__->definitions__, ((string){0,(uint8_t const*)""}));
+		begin_line__2(emitter__->definitions__, ((string){{0},(uint8_t*)u8""}));
 		write__2(emitter__->definitions__, convert_type__2(mutable_binding__, variable_type_node__));
-		write__2(emitter__->definitions__, ((string){1,(uint8_t const*)" "}));
+		write__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8" "}));
 		write__2(emitter__->definitions__, mangle_field_name__1(variable_name__));
-		write__2(emitter__->definitions__, ((string){3,(uint8_t const*)" = "}));
+		write__2(emitter__->definitions__, ((string){{3},(uint8_t*)u8" = "}));
 		write__2(emitter__->definitions__, iterator_type__);
-		end_line__2(emitter__->definitions__, ((string){18,(uint8_t const*)"__0current(&iter);"}));
+		end_line__2(emitter__->definitions__, ((string){{18},(uint8_t*)u8"__0current(&iter);"}));
 		Semantic_Node__0 const ref const for_loop_body__ = system__collections__List__1__0op__element(statement__->children__, ((int32){4}));
 		for (void_ptr__0iter mut iter = void_ptr__0iterate(node_statements__1(for_loop_body__)); void_ptr__0next(&iter);)
 		{
@@ -5384,21 +5384,21 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, DoWhileStatement__)))
 	{
-		write_line__2(emitter__->definitions__, ((string){2,(uint8_t const*)"do"}));
+		write_line__2(emitter__->definitions__, ((string){{2},(uint8_t*)u8"do"}));
 		emit_statement__2(emitter__, system__collections__List__1__0op__element(statement__->children__, ((int32){1})));
-		begin_line__2(emitter__->definitions__, ((string){12,(uint8_t const*)"while (cond("}));
+		begin_line__2(emitter__->definitions__, ((string){{12},(uint8_t*)u8"while (cond("}));
 		convert_expression__2(system__collections__List__1__0op__element(statement__->children__, ((int32){3})), emitter__->definitions__);
-		end_line__2(emitter__->definitions__, ((string){3,(uint8_t const*)"));"}));
+		end_line__2(emitter__->definitions__, ((string){{3},(uint8_t*)u8"));"}));
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, IfStatement__)))
 	{
 		Semantic_Node__0 const opt_ref mut if_statement__ = statement__;
-		begin_line__2(emitter__->definitions__, ((string){0,(uint8_t const*)""}));
+		begin_line__2(emitter__->definitions__, ((string){{0},(uint8_t*)u8""}));
 		for (;;)
 		{
-			write__2(emitter__->definitions__, ((string){9,(uint8_t const*)"if (cond("}));
+			write__2(emitter__->definitions__, ((string){{9},(uint8_t*)u8"if (cond("}));
 			convert_expression__2(system__collections__List__1__0op__element(if_statement__->children__, ((int32){1})), emitter__->definitions__);
-			end_line__2(emitter__->definitions__, ((string){2,(uint8_t const*)"))"}));
+			end_line__2(emitter__->definitions__, ((string){{2},(uint8_t*)u8"))"}));
 			emit_statement__2(emitter__, system__collections__List__1__0op__element(if_statement__->children__, ((int32){2})));
 			Semantic_Node__0 const opt_ref const else_clause__ = first_child__2(if_statement__, ElseClause__);
 			if (cond(void_ptr__0op__not_equal(else_clause__, none)))
@@ -5406,11 +5406,11 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 				if_statement__ = first_child__2(else_clause__, IfStatement__);
 				if (cond(void_ptr__0op__not_equal(if_statement__, none)))
 				{
-					begin_line__2(emitter__->definitions__, ((string){5,(uint8_t const*)"else "}));
+					begin_line__2(emitter__->definitions__, ((string){{5},(uint8_t*)u8"else "}));
 				}
 				else
 				{
-					write_line__2(emitter__->definitions__, ((string){4,(uint8_t const*)"else"}));
+					write_line__2(emitter__->definitions__, ((string){{4},(uint8_t*)u8"else"}));
 					emit_statement__2(emitter__, system__collections__List__1__0op__element(else_clause__->children__, ((int32){1})));
 					break;
 				}
@@ -5423,10 +5423,10 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, MatchStatement__)))
 	{
-		begin_line__2(emitter__->definitions__, ((string){49,(uint8_t const*)"/* match */ { void const ref const match_value = "}));
+		begin_line__2(emitter__->definitions__, ((string){{49},(uint8_t*)u8"/* match */ { void const ref const match_value = "}));
 		convert_expression__2(system__collections__List__1__0op__element(statement__->children__, ((int32){1})), emitter__->definitions__);
-		end_line__2(emitter__->definitions__, ((string){1,(uint8_t const*)";"}));
-		write_line__2(emitter__->definitions__, ((string){42,(uint8_t const*)"   switch(*(Type_ID const ref)match_value)"}));
+		end_line__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8";"}));
+		write_line__2(emitter__->definitions__, ((string){{42},(uint8_t*)u8"   switch(*(Type_ID const ref)match_value)"}));
 		begin_block__1(emitter__->definitions__);
 		for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(statement__->children__); void_ptr__0next(&iter);)
 		{
@@ -5439,14 +5439,14 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 				Semantic_Node__0 const ref const match_block__ = first_child__2(match_arm__, Block__);
 				assert__2(void_ptr__0op__not_equal(match_variable_type_node__->referenced_type__, none), get_semantic_node_text__1(match_variable_type_node__));
 				string const type_name__ = sb_to_string__1(convert_type_name__1(match_variable_type_node__->referenced_type__));
-				write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){5,(uint8_t const*)"case "}), type_name__), ((string){11,(uint8_t const*)"__0Type_ID:"})));
+				write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){{5},(uint8_t*)u8"case "}), type_name__), ((string){{11},(uint8_t*)u8"__0Type_ID:"})));
 				begin_block__1(emitter__->definitions__);
 				if (cond(code_point__0op__not_equal(string__0__0op__element(variable_name__, ((int32){0})), ((code_point){/*_*/0x5F}))))
 				{
 					begin_line__2(emitter__->definitions__, convert_type__2(FALSE, match_variable_type_node__));
-					write__2(emitter__->definitions__, ((string){1,(uint8_t const*)" "}));
+					write__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8" "}));
 					write__2(emitter__->definitions__, mangle_field_name__1(variable_name__));
-					end_line__2(emitter__->definitions__, ((string){15,(uint8_t const*)" = match_value;"}));
+					end_line__2(emitter__->definitions__, ((string){{15},(uint8_t*)u8" = match_value;"}));
 				}
 
 				for (void_ptr__0iter mut iter = void_ptr__0iterate(node_statements__1(match_block__)); void_ptr__0next(&iter);)
@@ -5456,21 +5456,21 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 				}
 
 				end_block__1(emitter__->definitions__);
-				write_line__2(emitter__->definitions__, ((string){6,(uint8_t const*)"break;"}));
+				write_line__2(emitter__->definitions__, ((string){{6},(uint8_t*)u8"break;"}));
 			}
 		}
 
-		write_line__2(emitter__->definitions__, ((string){8,(uint8_t const*)"default:"}));
-		write_line__2(emitter__->definitions__, ((string){57,(uint8_t const*)"   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);"}));
-		end_block_with__2(emitter__->definitions__, ((string){2,(uint8_t const*)"}}"}));
+		write_line__2(emitter__->definitions__, ((string){{8},(uint8_t*)u8"default:"}));
+		write_line__2(emitter__->definitions__, ((string){{57},(uint8_t*)u8"   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);"}));
+		end_block_with__2(emitter__->definitions__, ((string){{2},(uint8_t*)u8"}}"}));
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, BreakStatement__)))
 	{
-		write_line__2(emitter__->definitions__, ((string){6,(uint8_t const*)"break;"}));
+		write_line__2(emitter__->definitions__, ((string){{6},(uint8_t*)u8"break;"}));
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, ContinueStatement__)))
 	{
-		write_line__2(emitter__->definitions__, ((string){9,(uint8_t const*)"continue;"}));
+		write_line__2(emitter__->definitions__, ((string){{9},(uint8_t*)u8"continue;"}));
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, LocalDeclarationStatement__)))
 	{
@@ -5479,24 +5479,24 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 		Semantic_Node__0 const ref const variable_type__ = system__collections__List__1__0op__element(variable_declaration__->children__, ((int32){2}));
 		BOOL const mutable_binding__ = node_has_child__2(variable_declaration__, VarKeyword__);
 		begin_line__2(emitter__->definitions__, convert_type__2(mutable_binding__, variable_type__));
-		write__2(emitter__->definitions__, string__0op__add(((string){1,(uint8_t const*)" "}), mangle_field_name__1(variable_name__)));
+		write__2(emitter__->definitions__, string__0op__add(((string){{1},(uint8_t*)u8" "}), mangle_field_name__1(variable_name__)));
 		if (cond(int32__0op__gt(variable_declaration__->children__->count__, ((int32){3}))))
 		{
-			write__2(emitter__->definitions__, ((string){3,(uint8_t const*)" = "}));
+			write__2(emitter__->definitions__, ((string){{3},(uint8_t*)u8" = "}));
 			convert_expression__2(system__collections__List__1__0op__element(variable_declaration__->children__, ((int32){3})), emitter__->definitions__);
 		}
 
-		end_line__2(emitter__->definitions__, ((string){1,(uint8_t const*)";"}));
+		end_line__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8";"}));
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, ExpressionStatement__)))
 	{
-		begin_line__2(emitter__->definitions__, ((string){0,(uint8_t const*)""}));
+		begin_line__2(emitter__->definitions__, ((string){{0},(uint8_t*)u8""}));
 		convert_expression__2(system__collections__List__1__0op__element(statement__->children__, ((int32){0})), emitter__->definitions__);
-		end_line__2(emitter__->definitions__, ((string){1,(uint8_t const*)";"}));
+		end_line__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8";"}));
 	}
 	else
 	{
-		NOT_IMPLEMENTED__1(string__0op__add(((string){15,(uint8_t const*)"statement.kind="}), int_to_string__1(statement__->kind__)));
+		NOT_IMPLEMENTED__1(string__0op__add(((string){{15},(uint8_t*)u8"statement.kind="}), int_to_string__1(statement__->kind__)));
 	}
 }
 
@@ -5505,7 +5505,7 @@ void mut emit_method_body__3(Emitter__0 mut ref const emitter__, Semantic_Node__
 	begin_block__1(emitter__->definitions__);
 	if (cond(BOOL__0op__not(is_associated_function__)))
 	{
-		write_line__2(emitter__->definitions__, ((string){17,(uint8_t const*)"auto self = this;"}));
+		write_line__2(emitter__->definitions__, ((string){{17},(uint8_t*)u8"auto self = this;"}));
 	}
 
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(node_statements__1(block__)); void_ptr__0next(&iter);)
@@ -5522,11 +5522,11 @@ void mut emit_constructor_body__4(Emitter__0 mut ref const emitter__, Semantic_N
 	begin_block__1(emitter__->definitions__);
 	if (cond(is_value_type__))
 	{
-		write_line__2(emitter__->definitions__, string__0op__add(type_name__, ((string){10,(uint8_t const*)" mut self;"})));
+		write_line__2(emitter__->definitions__, string__0op__add(type_name__, ((string){{10},(uint8_t*)u8" mut self;"})));
 	}
 	else
 	{
-		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){16,(uint8_t const*)"self->type_id = "}), type_name__), ((string){11,(uint8_t const*)"__0Type_ID;"})));
+		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){{16},(uint8_t*)u8"self->type_id = "}), type_name__), ((string){{11},(uint8_t*)u8"__0Type_ID;"})));
 	}
 
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(node_statements__1(block__)); void_ptr__0next(&iter);)
@@ -5535,7 +5535,7 @@ void mut emit_constructor_body__4(Emitter__0 mut ref const emitter__, Semantic_N
 		emit_statement__2(emitter__, statement__);
 	}
 
-	write_line__2(emitter__->definitions__, ((string){12,(uint8_t const*)"return self;"}));
+	write_line__2(emitter__->definitions__, ((string){{12},(uint8_t*)u8"return self;"}));
 	end_block__1(emitter__->definitions__);
 }
 
@@ -5544,35 +5544,35 @@ void mut emit_member_declaration__4(Emitter__0 mut ref const emitter__, Semantic
 	if (cond(int32__0op__equal(member__->kind__, ConstructorDeclaration__)))
 	{
 		Semantic_Node__0 const ref const parameters_node__ = first_child__2(member__, ParameterList__);
-		string mut new_function_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), class_name__);
-		string mut constructor_full_name__ = string__0op__add(class_name__, ((string){8,(uint8_t const*)"__0new__"}));
+		string mut new_function_name__ = string__0op__add(((string){{4},(uint8_t*)u8"new_"}), class_name__);
+		string mut constructor_full_name__ = string__0op__add(class_name__, ((string){{8},(uint8_t*)u8"__0new__"}));
 		Semantic_Node__0 const opt_ref const constructor_name_node__ = first_child__2(member__, Identifier__);
 		if (cond(void_ptr__0op__not_equal(constructor_name_node__, none)))
 		{
 			string const constructor_name__ = get_semantic_node_text__1(constructor_name_node__);
-			new_function_name__ = string__0op__add(string__0op__add(new_function_name__, ((string){2,(uint8_t const*)"__"})), constructor_name__);
-			constructor_full_name__ = string__0op__add(string__0op__add(constructor_full_name__, constructor_name__), ((string){2,(uint8_t const*)"__"}));
+			new_function_name__ = string__0op__add(string__0op__add(new_function_name__, ((string){{2},(uint8_t*)u8"__"})), constructor_name__);
+			constructor_full_name__ = string__0op__add(string__0op__add(constructor_full_name__, constructor_name__), ((string){{2},(uint8_t*)u8"__"}));
 		}
 
 		constructor_full_name__ = string__0op__add(constructor_full_name__, int_to_string__1(parameters_node__->children__->count__));
-		string mut return_type__ = string__0op__add(class_name__, ((string){4,(uint8_t const*)" mut"}));
+		string mut return_type__ = string__0op__add(class_name__, ((string){{4},(uint8_t*)u8" mut"}));
 		if (cond(BOOL__0op__not(is_value_type__)))
 		{
-			return_type__ = string__0op__add(return_type__, ((string){8,(uint8_t const*)" ref mut"}));
+			return_type__ = string__0op__add(return_type__, ((string){{8},(uint8_t*)u8" ref mut"}));
 		}
 
 		string mut constructor_parameters__;
 		if (cond(BOOL__0op__not(is_value_type__)))
 		{
-			constructor_parameters__ = convert_method_parameter_list__3(emitter__, parameters_node__, string__0op__add(class_name__, ((string){14,(uint8_t const*)" mut ref const"})));
+			constructor_parameters__ = convert_method_parameter_list__3(emitter__, parameters_node__, string__0op__add(class_name__, ((string){{14},(uint8_t*)u8" mut ref const"})));
 		}
 		else
 		{
 			constructor_parameters__ = convert_parameter_list__2(emitter__, parameters_node__);
 		}
 
-		string mut constructor_signature__ = string__0op__add(string__0op__add(string__0op__add(return_type__, ((string){1,(uint8_t const*)" "})), constructor_full_name__), constructor_parameters__);
-		write_line__2(emitter__->function_declarations__, string__0op__add(constructor_signature__, ((string){1,(uint8_t const*)";"})));
+		string mut constructor_signature__ = string__0op__add(string__0op__add(string__0op__add(return_type__, ((string){{1},(uint8_t*)u8" "})), constructor_full_name__), constructor_parameters__);
+		write_line__2(emitter__->function_declarations__, string__0op__add(constructor_signature__, ((string){{1},(uint8_t*)u8";"})));
 		element_separator_line__1(emitter__->definitions__);
 		write_line__2(emitter__->definitions__, constructor_signature__);
 		emit_constructor_body__4(emitter__, first_child__2(member__, Block__), class_name__, is_value_type__);
@@ -5583,7 +5583,7 @@ void mut emit_member_declaration__4(Emitter__0 mut ref const emitter__, Semantic
 		string const field_name__ = get_semantic_node_text__1(first_child__2(variable_declaration__, Identifier__));
 		Semantic_Node__0 const ref const field_type__ = system__collections__List__1__0op__element(variable_declaration__->children__, ((int32){2}));
 		string const c_type__ = convert_type__2(TRUE, field_type__);
-		write_line__2(emitter__->class_declarations__, string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){1,(uint8_t const*)" "})), mangle_field_name__1(field_name__)), ((string){1,(uint8_t const*)";"})));
+		write_line__2(emitter__->class_declarations__, string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){{1},(uint8_t*)u8" "})), mangle_field_name__1(field_name__)), ((string){{1},(uint8_t*)u8";"})));
 	}
 	else if (cond(int32__0op__equal(member__->kind__, MethodDeclaration__)))
 	{
@@ -5601,56 +5601,56 @@ void mut emit_member_declaration__4(Emitter__0 mut ref const emitter__, Semantic
 		BOOL const mutable_self__ = bool_op(bool_arg(BOOL__0op__not(is_associated_function__)) && bool_arg(node_has_child__2(self_parameter__, MutableKeyword__)));
 		Semantic_Node__0 const ref const return_type_node__ = system__collections__List__1__0op__element(member__->children__, ((int32){3}));
 		string const c_type__ = convert_type__2(TRUE, return_type_node__);
-		string mut static_modifier__ = ((string){0,(uint8_t const*)""});
+		string mut static_modifier__ = ((string){{0},(uint8_t*)u8""});
 		if (cond(is_associated_function__))
 		{
-			static_modifier__ = ((string){7,(uint8_t const*)"static "});
+			static_modifier__ = ((string){{7},(uint8_t*)u8"static "});
 		}
 
-		string mut const_modifier__ = ((string){0,(uint8_t const*)""});
+		string mut const_modifier__ = ((string){{0},(uint8_t*)u8""});
 		if (cond(bool_op(bool_arg(BOOL__0op__not(mutable_self__)) && bool_arg(BOOL__0op__not(is_associated_function__)))))
 		{
-			const_modifier__ = ((string){6,(uint8_t const*)" const"});
+			const_modifier__ = ((string){{6},(uint8_t*)u8" const"});
 		}
 
-		write_line__2(emitter__->class_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(static_modifier__, c_type__), ((string){1,(uint8_t const*)" "})), method_name__), parameters__), const_modifier__), ((string){1,(uint8_t const*)";"})));
+		write_line__2(emitter__->class_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(static_modifier__, c_type__), ((string){{1},(uint8_t*)u8" "})), method_name__), parameters__), const_modifier__), ((string){{1},(uint8_t*)u8";"})));
 		element_separator_line__1(emitter__->definitions__);
-		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){1,(uint8_t const*)" "})), class_name__), ((string){2,(uint8_t const*)"::"})), method_name__), parameters__), const_modifier__));
+		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){{1},(uint8_t*)u8" "})), class_name__), ((string){{2},(uint8_t*)u8"::"})), method_name__), parameters__), const_modifier__));
 		Semantic_Node__0 const ref const block__ = first_child__2(member__, Block__);
 		emit_method_body__3(emitter__, block__, is_associated_function__);
 	}
 	else
 	{
-		error__2(emitter__->definitions__, string__0op__add(((string){30,(uint8_t const*)"Could not emit member of type "}), int_to_string__1(member__->kind__)));
+		error__2(emitter__->definitions__, string__0op__add(((string){{30},(uint8_t*)u8"Could not emit member of type "}), int_to_string__1(member__->kind__)));
 	}
 }
 
 void mut emit_default_constructor__3(Emitter__0 mut ref const emitter__, string const type_name__, BOOL const is_value_type__)
 {
-	string const default_constructor_name__ = string__0op__add(type_name__, ((string){9,(uint8_t const*)"__0new__0"}));
-	string mut return_type__ = string__0op__add(type_name__, ((string){4,(uint8_t const*)" mut"}));
+	string const default_constructor_name__ = string__0op__add(type_name__, ((string){{9},(uint8_t*)u8"__0new__0"}));
+	string mut return_type__ = string__0op__add(type_name__, ((string){{4},(uint8_t*)u8" mut"}));
 	if (cond(BOOL__0op__not(is_value_type__)))
 	{
-		return_type__ = string__0op__add(return_type__, ((string){8,(uint8_t const*)" ref mut"}));
+		return_type__ = string__0op__add(return_type__, ((string){{8},(uint8_t*)u8" ref mut"}));
 	}
 
-	string mut constructor_signature__ = string__0op__add(string__0op__add(string__0op__add(return_type__, ((string){1,(uint8_t const*)" "})), default_constructor_name__), ((string){1,(uint8_t const*)"("}));
+	string mut constructor_signature__ = string__0op__add(string__0op__add(string__0op__add(return_type__, ((string){{1},(uint8_t*)u8" "})), default_constructor_name__), ((string){{1},(uint8_t*)u8"("}));
 	if (cond(BOOL__0op__not(is_value_type__)))
 	{
-		constructor_signature__ = string__0op__add(string__0op__add(constructor_signature__, type_name__), ((string){19,(uint8_t const*)" mut ref const self"}));
+		constructor_signature__ = string__0op__add(string__0op__add(constructor_signature__, type_name__), ((string){{19},(uint8_t*)u8" mut ref const self"}));
 	}
 
-	constructor_signature__ = string__0op__add(constructor_signature__, ((string){1,(uint8_t const*)")"}));
-	write_line__2(emitter__->function_declarations__, string__0op__add(constructor_signature__, ((string){1,(uint8_t const*)";"})));
+	constructor_signature__ = string__0op__add(constructor_signature__, ((string){{1},(uint8_t*)u8")"}));
+	write_line__2(emitter__->function_declarations__, string__0op__add(constructor_signature__, ((string){{1},(uint8_t*)u8";"})));
 	element_separator_line__1(emitter__->definitions__);
 	begin_line__2(emitter__->definitions__, constructor_signature__);
 	if (cond(is_value_type__))
 	{
-		end_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){11,(uint8_t const*)" { return ("}), return_type__), ((string){6,(uint8_t const*)"){}; }"})));
+		end_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){{11},(uint8_t*)u8" { return ("}), return_type__), ((string){{6},(uint8_t*)u8"){}; }"})));
 	}
 	else
 	{
-		end_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){19,(uint8_t const*)" { self->type_id = "}), type_name__), ((string){26,(uint8_t const*)"__0Type_ID; return self; }"})));
+		end_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){{19},(uint8_t*)u8" { self->type_id = "}), type_name__), ((string){{26},(uint8_t*)u8"__0Type_ID; return self; }"})));
 	}
 }
 
@@ -5664,22 +5664,22 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 		BOOL const mutable_binding__ = node_has_child__2(variable_declaration__, VarKeyword__);
 		string const c_type__ = convert_type__2(mutable_binding__, variable_type__);
 		begin_line__2(emitter__->global_definitions__, c_type__);
-		write__2(emitter__->global_definitions__, string__0op__add(string__0op__add(((string){1,(uint8_t const*)" "}), mangle_field_name__1(variable_name__)), ((string){3,(uint8_t const*)" = "})));
+		write__2(emitter__->global_definitions__, string__0op__add(string__0op__add(((string){{1},(uint8_t*)u8" "}), mangle_field_name__1(variable_name__)), ((string){{3},(uint8_t*)u8" = "})));
 		Semantic_Node__0 const ref const expression__ = system__collections__List__1__0op__element(variable_declaration__->children__, ((int32){3}));
 		convert_expression__2(expression__, emitter__->global_definitions__);
-		end_line__2(emitter__->global_definitions__, ((string){1,(uint8_t const*)";"}));
+		end_line__2(emitter__->global_definitions__, ((string){{1},(uint8_t*)u8";"}));
 	}
 	else if (cond(int32__0op__equal(declaration__->kind__, ClassDeclaration__)))
 	{
 		Type__0 const ref const declared_type__ = declaration__->declares_type__;
 		assert__2(void_ptr__0op__not_equal(declared_type__, none), get_semantic_node_text__1(first_child__2(declaration__, Identifier__)));
 		string const class_name__ = mangle_name__1(declared_type__);
-		write_line__2(emitter__->type_id_declaration__, string__0op__add(class_name__, ((string){11,(uint8_t const*)"__0Type_ID,"})));
-		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){15,(uint8_t const*)"typedef struct "}), class_name__), ((string){1,(uint8_t const*)" "})), class_name__), ((string){1,(uint8_t const*)";"})));
+		write_line__2(emitter__->type_id_declaration__, string__0op__add(class_name__, ((string){{11},(uint8_t*)u8"__0Type_ID,"})));
+		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{15},(uint8_t*)u8"typedef struct "}), class_name__), ((string){{1},(uint8_t*)u8" "})), class_name__), ((string){{1},(uint8_t*)u8";"})));
 		element_separator_line__1(emitter__->class_declarations__);
-		write_line__2(emitter__->class_declarations__, string__0op__add(((string){7,(uint8_t const*)"struct "}), class_name__));
+		write_line__2(emitter__->class_declarations__, string__0op__add(((string){{7},(uint8_t*)u8"struct "}), class_name__));
 		begin_block__1(emitter__->class_declarations__);
-		write_line__2(emitter__->class_declarations__, ((string){16,(uint8_t const*)"Type_ID type_id;"}));
+		write_line__2(emitter__->class_declarations__, ((string){{16},(uint8_t*)u8"Type_ID type_id;"}));
 		BOOL mut has_constructors__ = FALSE;
 		for (void_ptr__0iter mut iter = void_ptr__0iterate(node_members__1(declaration__)); void_ptr__0next(&iter);)
 		{
@@ -5700,9 +5700,9 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 		Type__0 const ref const declared_type__ = declaration__->declares_type__;
 		assert__2(void_ptr__0op__not_equal(declared_type__, none), get_semantic_node_text__1(first_child__2(declaration__, Identifier__)));
 		string const struct_name__ = mangle_name__1(declared_type__);
-		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){15,(uint8_t const*)"typedef struct "}), struct_name__), ((string){1,(uint8_t const*)" "})), struct_name__), ((string){1,(uint8_t const*)";"})));
+		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{15},(uint8_t*)u8"typedef struct "}), struct_name__), ((string){{1},(uint8_t*)u8" "})), struct_name__), ((string){{1},(uint8_t*)u8";"})));
 		element_separator_line__1(emitter__->class_declarations__);
-		write_line__2(emitter__->class_declarations__, string__0op__add(((string){7,(uint8_t const*)"struct "}), struct_name__));
+		write_line__2(emitter__->class_declarations__, string__0op__add(((string){{7},(uint8_t*)u8"struct "}), struct_name__));
 		begin_block__1(emitter__->class_declarations__);
 		BOOL mut has_constructors__ = FALSE;
 		for (void_ptr__0iter mut iter = void_ptr__0iterate(node_members__1(declaration__)); void_ptr__0next(&iter);)
@@ -5722,7 +5722,7 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 	else if (cond(int32__0op__equal(declaration__->kind__, EnumDeclaration__)))
 	{
 		string const enum_name__ = get_semantic_node_text__1(first_child__2(declaration__, Identifier__));
-		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(((string){5,(uint8_t const*)"enum "}), enum_name__), ((string){1,(uint8_t const*)"_"})));
+		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(((string){{5},(uint8_t*)u8"enum "}), enum_name__), ((string){{1},(uint8_t*)u8"_"})));
 		begin_block__1(emitter__->type_declarations__);
 		for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(declaration__->children__); void_ptr__0next(&iter);)
 		{
@@ -5730,26 +5730,26 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 			if (cond(int32__0op__equal(member__->kind__, EnumMemberDeclaration__)))
 			{
 				string const member_name__ = get_semantic_node_text__1(system__collections__List__1__0op__element(member__->children__, ((int32){0})));
-				begin_line__2(emitter__->type_declarations__, string__0op__add(member_name__, ((string){1,(uint8_t const*)"_"})));
+				begin_line__2(emitter__->type_declarations__, string__0op__add(member_name__, ((string){{1},(uint8_t*)u8"_"})));
 				Semantic_Node__0 const opt_ref const member_value__ = first_child__2(member__, Integer__);
 				if (cond(void_ptr__0op__not_equal(member_value__, none)))
 				{
-					write__2(emitter__->type_declarations__, ((string){3,(uint8_t const*)" = "}));
+					write__2(emitter__->type_declarations__, ((string){{3},(uint8_t*)u8" = "}));
 					write__2(emitter__->type_declarations__, get_semantic_node_text__1(member_value__));
 				}
 
-				end_line__2(emitter__->type_declarations__, ((string){1,(uint8_t const*)","}));
+				end_line__2(emitter__->type_declarations__, ((string){{1},(uint8_t*)u8","}));
 			}
 		}
 
 		end_block_with_semicolon__1(emitter__->type_declarations__);
-		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){13,(uint8_t const*)"typedef enum "}), enum_name__), ((string){2,(uint8_t const*)"_ "})), enum_name__), ((string){2,(uint8_t const*)"_;"})));
+		write_line__2(emitter__->type_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{13},(uint8_t*)u8"typedef enum "}), enum_name__), ((string){{2},(uint8_t*)u8"_ "})), enum_name__), ((string){{2},(uint8_t*)u8"_;"})));
 	}
 	else if (cond(int32__0op__equal(declaration__->kind__, FunctionDeclaration__)))
 	{
 		Semantic_Node__0 const ref const parameters_node__ = first_child__2(declaration__, ParameterList__);
 		string mut name__ = get_semantic_node_text__1(first_child__2(declaration__, Identifier__));
-		BOOL const is_main__ = string__0op__equal(name__, ((string){4,(uint8_t const*)"main"}));
+		BOOL const is_main__ = string__0op__equal(name__, ((string){{4},(uint8_t*)u8"main"}));
 		name__ = mangle_function_name__2(name__, parameters_node__->children__->count__);
 		if (cond(is_main__))
 		{
@@ -5759,14 +5759,14 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 		string const parameters__ = convert_parameter_list__3(emitter__, parameters_node__, is_main__);
 		Semantic_Node__0 const ref const return_type_node__ = system__collections__List__1__0op__element(declaration__->children__, ((int32){3}));
 		string const c_type__ = convert_type__2(TRUE, return_type_node__);
-		write_line__2(emitter__->function_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){1,(uint8_t const*)" "})), name__), parameters__), ((string){1,(uint8_t const*)";"})));
+		write_line__2(emitter__->function_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){{1},(uint8_t*)u8" "})), name__), parameters__), ((string){{1},(uint8_t*)u8";"})));
 		element_separator_line__1(emitter__->definitions__);
-		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){1,(uint8_t const*)" "})), name__), parameters__));
+		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){{1},(uint8_t*)u8" "})), name__), parameters__));
 		if (cond(is_main__))
 		{
-			if (cond(string__0op__not_equal(emitter__->main_function_return_type__, ((string){0,(uint8_t const*)""}))))
+			if (cond(string__0op__not_equal(emitter__->main_function_return_type__, ((string){{0},(uint8_t*)u8""}))))
 			{
-				error__2(emitter__->definitions__, ((string){29,(uint8_t const*)"Multiple declarations of main"}));
+				error__2(emitter__->definitions__, ((string){{29},(uint8_t*)u8"Multiple declarations of main"}));
 			}
 
 			emitter__->main_function_return_type__ = c_type__;
@@ -5779,7 +5779,7 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 	}
 	else
 	{
-		error__2(emitter__->definitions__, string__0op__add(((string){35,(uint8_t const*)"Could not emit declaration of type "}), int_to_string__1(declaration__->kind__)));
+		error__2(emitter__->definitions__, string__0op__add(((string){{35},(uint8_t*)u8"Could not emit declaration of type "}), int_to_string__1(declaration__->kind__)));
 	}
 }
 
@@ -5794,76 +5794,76 @@ void mut emit_compilation_unit__2(Emitter__0 mut ref const emitter__, Compilatio
 
 void mut emit_preamble__1(Emitter__0 mut ref const emitter__)
 {
-	write_line__2(emitter__->includes__, ((string){27,(uint8_t const*)"#include \"RuntimeLibrary.h\""}));
+	write_line__2(emitter__->includes__, ((string){{27},(uint8_t*)u8"#include \"RuntimeLibrary.h\""}));
 	blank_line__1(emitter__->type_id_declaration__);
-	write_line__2(emitter__->type_id_declaration__, ((string){23,(uint8_t const*)"// Type ID Declarations"}));
-	write_line__2(emitter__->type_id_declaration__, ((string){12,(uint8_t const*)"enum Type_ID"}));
+	write_line__2(emitter__->type_id_declaration__, ((string){{23},(uint8_t*)u8"// Type ID Declarations"}));
+	write_line__2(emitter__->type_id_declaration__, ((string){{12},(uint8_t*)u8"enum Type_ID"}));
 	begin_block__1(emitter__->type_id_declaration__);
-	write_line__2(emitter__->type_id_declaration__, ((string){21,(uint8_t const*)"never__0Type__ID = 0,"}));
+	write_line__2(emitter__->type_id_declaration__, ((string){{21},(uint8_t*)u8"never__0Type__ID = 0,"}));
 	blank_line__1(emitter__->type_declarations__);
-	write_line__2(emitter__->type_declarations__, ((string){20,(uint8_t const*)"// Type Declarations"}));
+	write_line__2(emitter__->type_declarations__, ((string){{20},(uint8_t*)u8"// Type Declarations"}));
 	blank_line__1(emitter__->function_declarations__);
-	write_line__2(emitter__->function_declarations__, ((string){24,(uint8_t const*)"// Function Declarations"}));
+	write_line__2(emitter__->function_declarations__, ((string){{24},(uint8_t*)u8"// Function Declarations"}));
 	blank_line__1(emitter__->class_declarations__);
-	write_line__2(emitter__->class_declarations__, ((string){21,(uint8_t const*)"// Class Declarations"}));
+	write_line__2(emitter__->class_declarations__, ((string){{21},(uint8_t*)u8"// Class Declarations"}));
 	blank_line__1(emitter__->global_definitions__);
-	write_line__2(emitter__->global_definitions__, ((string){21,(uint8_t const*)"// Global Definitions"}));
+	write_line__2(emitter__->global_definitions__, ((string){{21},(uint8_t*)u8"// Global Definitions"}));
 	blank_line__1(emitter__->definitions__);
-	write_line__2(emitter__->definitions__, ((string){14,(uint8_t const*)"// Definitions"}));
+	write_line__2(emitter__->definitions__, ((string){{14},(uint8_t*)u8"// Definitions"}));
 }
 
 void mut emit_entry_point_adapter__1(Emitter__0 mut ref const emitter__)
 {
 	element_separator_line__1(emitter__->definitions__);
-	write_line__2(emitter__->definitions__, ((string){22,(uint8_t const*)"// Entry Point Adapter"}));
-	write_line__2(emitter__->definitions__, ((string){53,(uint8_t const*)"int32_t main(int argc, char const ptr const ptr argv)"}));
+	write_line__2(emitter__->definitions__, ((string){{22},(uint8_t*)u8"// Entry Point Adapter"}));
+	write_line__2(emitter__->definitions__, ((string){{53},(uint8_t*)u8"int32_t main(int argc, char const ptr const ptr argv)"}));
 	begin_block__1(emitter__->definitions__);
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(emitter__->resources__); void_ptr__0next(&iter);)
 	{
 		Source_Text__0 const ref const resource__ = void_ptr__0current(&iter);
-		string const resource_name__ = string__0op__add(string__0op__add(((string){1,(uint8_t const*)"\""}), resource__->name__), ((string){1,(uint8_t const*)"\""}));
+		string const resource_name__ = string__0op__add(string__0op__add(((string){{1},(uint8_t*)u8"\""}), resource__->name__), ((string){{1},(uint8_t*)u8"\""}));
 		string mut resource_text__ = resource__->text__;
-		resource_text__ = string_replace__3(resource_text__, ((string){1,(uint8_t const*)"\\"}), ((string){2,(uint8_t const*)"\\\\"}));
-		resource_text__ = string_replace__3(resource_text__, ((string){1,(uint8_t const*)"\n"}), ((string){2,(uint8_t const*)"\\n"}));
-		resource_text__ = string_replace__3(resource_text__, ((string){1,(uint8_t const*)"\r"}), ((string){2,(uint8_t const*)"\\r"}));
-		resource_text__ = string_replace__3(resource_text__, ((string){1,(uint8_t const*)"\""}), ((string){2,(uint8_t const*)"\\\""}));
-		resource_text__ = string__0op__add(string__0op__add(((string){1,(uint8_t const*)"\""}), resource_text__), ((string){1,(uint8_t const*)"\""}));
-		begin_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){23,(uint8_t const*)"add_resource((string){{"}), int_to_string__1(literal_length__1(resource_name__))), ((string){14,(uint8_t const*)"},(uint8_t*)u8"})));
+		resource_text__ = string_replace__3(resource_text__, ((string){{1},(uint8_t*)u8"\\"}), ((string){{2},(uint8_t*)u8"\\\\"}));
+		resource_text__ = string_replace__3(resource_text__, ((string){{1},(uint8_t*)u8"\n"}), ((string){{2},(uint8_t*)u8"\\n"}));
+		resource_text__ = string_replace__3(resource_text__, ((string){{1},(uint8_t*)u8"\r"}), ((string){{2},(uint8_t*)u8"\\r"}));
+		resource_text__ = string_replace__3(resource_text__, ((string){{1},(uint8_t*)u8"\""}), ((string){{2},(uint8_t*)u8"\\\""}));
+		resource_text__ = string__0op__add(string__0op__add(((string){{1},(uint8_t*)u8"\""}), resource_text__), ((string){{1},(uint8_t*)u8"\""}));
+		begin_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){{23},(uint8_t*)u8"add_resource((string){{"}), int_to_string__1(literal_length__1(resource_name__))), ((string){{14},(uint8_t*)u8"},(uint8_t*)u8"})));
 		write__2(emitter__->definitions__, resource_name__);
-		write__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){13,(uint8_t const*)"}, (string){{"}), int_to_string__1(literal_length__1(resource_text__))), ((string){14,(uint8_t const*)"},(uint8_t*)u8"})));
+		write__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){{13},(uint8_t*)u8"}, (string){{"}), int_to_string__1(literal_length__1(resource_text__))), ((string){{14},(uint8_t*)u8"},(uint8_t*)u8"})));
 		write__2(emitter__->definitions__, resource_text__);
-		end_line__2(emitter__->definitions__, ((string){3,(uint8_t const*)"});"}));
+		end_line__2(emitter__->definitions__, ((string){{3},(uint8_t*)u8"});"}));
 	}
 
 	if (cond(int32__0op__gt(emitter__->resources__->count__, ((int32){0}))))
 	{
-		end_line__2(emitter__->definitions__, ((string){0,(uint8_t const*)""}));
+		end_line__2(emitter__->definitions__, ((string){{0},(uint8_t*)u8""}));
 	}
 
 	system__text__String_Builder__0 mut ref const args__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
 	if (cond(emitter__->main_function_accepts_console__))
 	{
-		sb_append__2(args__, ((string){45,(uint8_t const*)"allocate(sizeof(system__console__Console__0))"}));
+		sb_append__2(args__, ((string){{45},(uint8_t*)u8"allocate(sizeof(system__console__Console__0))"}));
 	}
 
 	if (cond(emitter__->main_function_accepts_args__))
 	{
 		if (cond(emitter__->main_function_accepts_console__))
 		{
-			sb_append__2(args__, ((string){2,(uint8_t const*)", "}));
+			sb_append__2(args__, ((string){{2},(uint8_t*)u8", "}));
 		}
 
-		sb_append__2(args__, ((string){29,(uint8_t const*)"convert_arguments(argc, argv)"}));
+		sb_append__2(args__, ((string){{29},(uint8_t*)u8"convert_arguments(argc, argv)"}));
 	}
 
-	if (cond(string__0op__equal(emitter__->main_function_return_type__, ((string){8,(uint8_t const*)"void mut"}))))
+	if (cond(string__0op__equal(emitter__->main_function_return_type__, ((string){{8},(uint8_t*)u8"void mut"}))))
 	{
-		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(emitter__->main_function_name__, ((string){1,(uint8_t const*)"("})), sb_to_string__1(args__)), ((string){2,(uint8_t const*)");"})));
-		write_line__2(emitter__->definitions__, ((string){9,(uint8_t const*)"return 0;"}));
+		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(emitter__->main_function_name__, ((string){{1},(uint8_t*)u8"("})), sb_to_string__1(args__)), ((string){{2},(uint8_t*)u8");"})));
+		write_line__2(emitter__->definitions__, ((string){{9},(uint8_t*)u8"return 0;"}));
 	}
 	else
 	{
-		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){7,(uint8_t const*)"return "}), emitter__->main_function_name__), ((string){1,(uint8_t const*)"("})), sb_to_string__1(args__)), ((string){8,(uint8_t const*)").value;"})));
+		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{7},(uint8_t*)u8"return "}), emitter__->main_function_name__), ((string){{1},(uint8_t*)u8"("})), sb_to_string__1(args__)), ((string){{8},(uint8_t*)u8").value;"})));
 	}
 
 	end_block__1(emitter__->definitions__);
@@ -5872,7 +5872,7 @@ void mut emit_entry_point_adapter__1(Emitter__0 mut ref const emitter__)
 void mut emit_postamble__1(Emitter__0 mut ref const emitter__)
 {
 	end_block_with_semicolon__1(emitter__->type_id_declaration__);
-	write_line__2(emitter__->type_id_declaration__, ((string){29,(uint8_t const*)"typedef enum Type_ID Type_ID;"}));
+	write_line__2(emitter__->type_id_declaration__, ((string){{29},(uint8_t*)u8"typedef enum Type_ID Type_ID;"}));
 }
 
 Expression__0 mut ref mut Expression__0__0new__0(Expression__0 mut ref const self) { self->type_id = Expression__0__0Type_ID; return self; }
@@ -6021,7 +6021,7 @@ string mut unqualified_name__1(Name__0 const ref const name__)
 {
 	if (cond(int32__0op__equal(name__->segments__->count__, ((int32){0}))))
 	{
-		return ((string){0,(uint8_t const*)""});
+		return ((string){{0},(uint8_t*)u8""});
 	}
 
 	return Strings__0__0op__element(name__->segments__, int32__0op__sub(name__->segments__->count__, ((int32){1})));
@@ -6029,13 +6029,13 @@ string mut unqualified_name__1(Name__0 const ref const name__)
 
 string mut full_name__1(Name__0 const ref const name__)
 {
-	string mut result__ = ((string){0,(uint8_t const*)""});
+	string mut result__ = ((string){{0},(uint8_t*)u8""});
 	if (cond(void_ptr__0op__not_equal(name__->package__, none)))
 	{
 		result__ = full_package_name__1(name__->package__);
 	}
 
-	result__ = string__0op__add(result__, ((string){2,(uint8_t const*)"::"}));
+	result__ = string__0op__add(result__, ((string){{2},(uint8_t*)u8"::"}));
 	BOOL mut first__ = TRUE;
 	for (string__0iter mut iter = Strings__0__0iterate(name__->segments__); string__0next(&iter);)
 	{
@@ -6047,7 +6047,7 @@ string mut full_name__1(Name__0 const ref const name__)
 			continue;
 		}
 
-		result__ = string__0op__add(string__0op__add(result__, ((string){1,(uint8_t const*)"."})), segment__);
+		result__ = string__0op__add(string__0op__add(result__, ((string){{1},(uint8_t*)u8"."})), segment__);
 	}
 
 	return result__;
@@ -6145,14 +6145,14 @@ void mut unit_test_Name__0()
 
 void mut name_with_unspecified_package_names_name_with_package__0()
 {
-	Name__0 const ref const name_without_package__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){6,(uint8_t const*)"system"}));
-	Name__0 const ref const name_with_package__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){7,(uint8_t const*)"package"}))), NamespaceName__, ((string){6,(uint8_t const*)"system"}));
+	Name__0 const ref const name_without_package__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
+	Name__0 const ref const name_with_package__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"package"}))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
 	assert__1(names__2(name_without_package__, name_with_package__));
 }
 
 void mut name_with_unspecified_package_names_itself__0()
 {
-	Name__0 const ref const name_without_package__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){6,(uint8_t const*)"system"}));
+	Name__0 const ref const name_without_package__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
 	assert__1(names__2(name_without_package__, name_without_package__));
 }
 
@@ -6187,7 +6187,7 @@ Symbol__0 mut ref mut Symbol__0__0new__identifier__2(Symbol__0 mut ref const sel
 {
 	self->type_id = Symbol__0__0Type_ID;
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
-	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
+	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), name__));
 	self->name__ = name__;
 	self->kind__ = IdentifierSymbol__;
 	self->is_special_name__ = FALSE;
@@ -6202,7 +6202,7 @@ Symbol__0 mut ref mut Symbol__0__0new__constructor__2(Symbol__0 mut ref const se
 {
 	self->type_id = Symbol__0__0Type_ID;
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
-	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
+	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), name__));
 	self->name__ = name__;
 	self->kind__ = IdentifierSymbol__;
 	self->is_special_name__ = TRUE;
@@ -6217,7 +6217,7 @@ Symbol__0 mut ref mut Symbol__0__0new__package__2(Symbol__0 mut ref const self, 
 {
 	self->type_id = Symbol__0__0Type_ID;
 	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
-	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
+	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), name__));
 	self->name__ = name__;
 	self->kind__ = PackageSymbol__;
 	self->is_special_name__ = FALSE;
@@ -6232,8 +6232,8 @@ Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self
 {
 	self->type_id = Symbol__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(declares_type__, none));
-	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), unqualified_name__1(declares_type__->name__)));
-	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), unqualified_name__1(declares_type__->name__)));
+	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), unqualified_name__1(declares_type__->name__)));
+	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), unqualified_name__1(declares_type__->name__)));
 	self->name__ = unqualified_name__1(declares_type__->name__);
 	self->kind__ = IdentifierSymbol__;
 	self->is_special_name__ = declares_type__->name__->is_special__;
@@ -6247,9 +6247,9 @@ Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self
 Symbol__0 mut ref mut Symbol__0__0new__of_type__4(Symbol__0 mut ref const self, string const name__, Type__0 const ref const of_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__)
 {
 	self->type_id = Symbol__0__0Type_ID;
-	assert__2(void_ptr__0op__not_equal(of_type__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
-	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
-	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){5,(uint8_t const*)"name="}), name__));
+	assert__2(void_ptr__0op__not_equal(of_type__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), name__));
+	assert__2(void_ptr__0op__not_equal(declarations__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), name__));
+	assert__2(void_ptr__0op__not_equal(children__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), name__));
 	self->name__ = name__;
 	self->kind__ = IdentifierSymbol__;
 	self->is_special_name__ = FALSE;
@@ -6283,9 +6283,9 @@ void mut unit_test_Symbol__0()
 void mut Package_symbol_children_can_be_found_by_name_and_kind__0()
 {
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(children__, Symbol__0__0new__identifier__1(allocate(sizeof(Symbol__0)), ((string){5,(uint8_t const*)"child"})));
-	Symbol__0 const ref const package_with_children__ = Symbol__0__0new__package__2(allocate(sizeof(Symbol__0)), ((string){7,(uint8_t const*)"package"}), children__);
-	assert__1(never__0op__not_equal(get_child_symbol__3(package_with_children__, ((string){5,(uint8_t const*)"child"}), IdentifierSymbol__), none));
+	add_item__2(children__, Symbol__0__0new__identifier__1(allocate(sizeof(Symbol__0)), ((string){{5},(uint8_t*)u8"child"})));
+	Symbol__0 const ref const package_with_children__ = Symbol__0__0new__package__2(allocate(sizeof(Symbol__0)), ((string){{7},(uint8_t*)u8"package"}), children__);
+	assert__1(never__0op__not_equal(get_child_symbol__3(package_with_children__, ((string){{5},(uint8_t*)u8"child"}), IdentifierSymbol__), none));
 }
 
 Type__0 mut ref mut Type__0__0new__3(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, BOOL const is_mutable__)
@@ -6372,7 +6372,7 @@ Type__0 mut ref mut Type__0__0new__generic__2(Type__0 mut ref const self, Type__
 	self->type_id = Type__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(definition__, none));
 	assert__2(void_ptr__0op__not_equal(type_arguments__, none), full_name__1(definition__->name__));
-	assert__2(int32__0op__equal(definition__->type_parameters__->count__, type_arguments__->count__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(full_name__1(definition__->name__), ((string){1,(uint8_t const*)" "})), int_to_string__1(definition__->type_parameters__->count__)), ((string){7,(uint8_t const*)" given "})), int_to_string__1(type_arguments__->count__)));
+	assert__2(int32__0op__equal(definition__->type_parameters__->count__, type_arguments__->count__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(full_name__1(definition__->name__), ((string){{1},(uint8_t*)u8" "})), int_to_string__1(definition__->type_parameters__->count__)), ((string){{7},(uint8_t*)u8" given "})), int_to_string__1(type_arguments__->count__)));
 	self->kind__ = definition__->kind__;
 	self->name__ = definition__->name__;
 	self->type_parameters__ = type_arguments__;
@@ -6398,7 +6398,7 @@ Type__0 mut ref mut Type__0__0new__6(Type__0 mut ref const self, int32 const kin
 
 Type__0 const ref mut make_mutable_type__1(Type__0 const ref const type__)
 {
-	assert__2(type__->is_potentially_mutable__, string__0op__add(((string){10,(uint8_t const*)"self.name="}), full_name__1(type__->name__)));
+	assert__2(type__->is_potentially_mutable__, string__0op__add(((string){{10},(uint8_t*)u8"self.name="}), full_name__1(type__->name__)));
 	return Type__0__0new__6(allocate(sizeof(Type__0)), type__->kind__, type__->name__, type__->type_parameters__, type__->is_primitive__, type__->is_potentially_mutable__, TRUE);
 }
 
@@ -6409,7 +6409,7 @@ Type__0 const ref mut make_immutable_type__1(Type__0 const ref const type__)
 
 Type__0 const ref mut remove_type_package__1(Type__0 const ref const type__)
 {
-	assert__2(int32__0op__equal(type__->kind__, NamespaceType__), string__0op__add(((string){5,(uint8_t const*)"kind="}), int_to_string__1(type__->kind__)));
+	assert__2(int32__0op__equal(type__->kind__, NamespaceType__), string__0op__add(((string){{5},(uint8_t*)u8"kind="}), int_to_string__1(type__->kind__)));
 	if (cond(is_package_qualified__1(type__->name__)))
 	{
 		return Type__0__0new__6(allocate(sizeof(Type__0)), type__->kind__, remove_package__1(type__->name__), type__->type_parameters__, type__->is_primitive__, type__->is_potentially_mutable__, type__->is_mutable__);
@@ -6455,7 +6455,7 @@ Name_Subtable__0 mut ref mut Name_Subtable__0__0new__3(Name_Subtable__0 mut ref 
 
 void mut add_subtable__3(Name_Subtable__0 mut ref const scope__, Name__0 const ref const name__, Type__0 const opt_ref const type__)
 {
-	assert__2(is_qualified_by__2(name__, scope__->name__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){1,(uint8_t const*)"\""}), full_name__1(name__)), ((string){21,(uint8_t const*)"\" is not a child of \""})), full_name__1(scope__->name__)), ((string){1,(uint8_t const*)"\""})));
+	assert__2(is_qualified_by__2(name__, scope__->name__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{1},(uint8_t*)u8"\""}), full_name__1(name__)), ((string){{21},(uint8_t*)u8"\" is not a child of \""})), full_name__1(scope__->name__)), ((string){{1},(uint8_t*)u8"\""})));
 	if (cond(qualifier_is__2(name__, scope__->name__)))
 	{
 		if (cond(bool_op(bool_arg(bool_op(bool_arg(void_ptr__0op__equal(scope__->name__->package__, none)) && bool_arg(void_ptr__0op__not_equal(type__, none)))) && bool_arg(int32__0op__equal(type__->kind__, NamespaceType__)))))
@@ -6480,7 +6480,7 @@ void mut add_subtable__3(Name_Subtable__0 mut ref const scope__, Name__0 const r
 		}
 	}
 
-	assert__2(int32__0op__equal(name__->segments__->count__, int32__0op__add(((int32){1}), scope__->name__->segments__->count__)), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){11,(uint8_t const*)"Can't add \""}), full_name__1(name__)), ((string){6,(uint8_t const*)"\" to \""})), full_name__1(scope__->name__)), ((string){1,(uint8_t const*)"\""})));
+	assert__2(int32__0op__equal(name__->segments__->count__, int32__0op__add(((int32){1}), scope__->name__->segments__->count__)), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{11},(uint8_t*)u8"Can't add \""}), full_name__1(name__)), ((string){{6},(uint8_t*)u8"\" to \""})), full_name__1(scope__->name__)), ((string){{1},(uint8_t*)u8"\""})));
 }
 
 Name_Subtable__0 mut opt_ref mut find__2(Name_Subtable__0 const ref const scope__, string const name__)
@@ -6558,7 +6558,7 @@ void mut bind_type__2(Name_Subtable__0 mut ref const scope__, Type__0 const ref 
 	if (cond(void_ptr__0op__not_equal(scope__->type__, none)))
 	{
 		string const scope_type_name__ = full_name__1(scope__->type__->name__);
-		assert__2(string__0op__equal(scope_type_name__, full_name__1(type__->name__)), string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(full_name__1(scope__->name__), ((string){12,(uint8_t const*)" currently `"})), scope_type_name__), ((string){20,(uint8_t const*)"` trying to set to `"})), full_name__1(type__->name__)), ((string){1,(uint8_t const*)"`"})));
+		assert__2(string__0op__equal(scope_type_name__, full_name__1(type__->name__)), string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(full_name__1(scope__->name__), ((string){{12},(uint8_t*)u8" currently `"})), scope_type_name__), ((string){{20},(uint8_t*)u8"` trying to set to `"})), full_name__1(type__->name__)), ((string){{1},(uint8_t*)u8"`"})));
 	}
 
 	scope__->type__ = type__;
@@ -6579,9 +6579,9 @@ void mut global_namespace_contains_added_name__0()
 {
 	Name_Table__0 const ref const name_table__ = Name_Table__0__0new__0(allocate(sizeof(Name_Table__0)));
 	Name_Subtable__0 mut ref const global_namespace__ = Name_Subtable__0__0new__global_namespace__1(allocate(sizeof(Name_Subtable__0)), name_table__);
-	Name__0 const ref const test_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__->name__, TypeName__, ((string){4,(uint8_t const*)"test"}));
+	Name__0 const ref const test_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__->name__, TypeName__, ((string){{4},(uint8_t*)u8"test"}));
 	add_subtable__3(global_namespace__, test_name__, none);
-	assert__1(never__0op__not_equal(find__2(global_namespace__, ((string){4,(uint8_t const*)"test"})), none));
+	assert__1(never__0op__not_equal(find__2(global_namespace__, ((string){{4},(uint8_t*)u8"test"})), none));
 	assert__1(never__0op__not_equal(get_scope__2(global_namespace__, test_name__), none));
 }
 
@@ -6589,11 +6589,11 @@ void mut namespace_contains_added_name__0()
 {
 	Name_Table__0 const ref const name_table__ = Name_Table__0__0new__0(allocate(sizeof(Name_Table__0)));
 	Name_Subtable__0 mut ref const global_namespace__ = Name_Subtable__0__0new__global_namespace__1(allocate(sizeof(Name_Subtable__0)), name_table__);
-	Name__0 const ref const namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__->name__, NamespaceName__, ((string){9,(uint8_t const*)"namespace"}));
+	Name__0 const ref const namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__->name__, NamespaceName__, ((string){{9},(uint8_t*)u8"namespace"}));
 	add_subtable__3(global_namespace__, namespace_name__, none);
-	add_subtable__3(global_namespace__, Name__0__0new__3(allocate(sizeof(Name__0)), namespace_name__, TypeName__, ((string){4,(uint8_t const*)"test"})), none);
-	Name_Subtable__0 const ref const namespace__ = find__2(global_namespace__, ((string){9,(uint8_t const*)"namespace"}));
-	assert__1(never__0op__not_equal(find__2(namespace__, ((string){4,(uint8_t const*)"test"})), none));
+	add_subtable__3(global_namespace__, Name__0__0new__3(allocate(sizeof(Name__0)), namespace_name__, TypeName__, ((string){{4},(uint8_t*)u8"test"})), none);
+	Name_Subtable__0 const ref const namespace__ = find__2(global_namespace__, ((string){{9},(uint8_t*)u8"namespace"}));
+	assert__1(never__0op__not_equal(find__2(namespace__, ((string){{4},(uint8_t*)u8"test"})), none));
 }
 
 Name_Table__0 mut ref mut Name_Table__0__0new__0(Name_Table__0 mut ref const self)
@@ -6641,7 +6641,7 @@ void mut add_type_name__3(Name_Table__0 mut ref const name_table__, Name__0 cons
 		}
 	}
 
-	assert__2(FALSE, string__0op__add(string__0op__add(((string){16,(uint8_t const*)"Can't add name \""}), full_name__1(name__)), ((string){41,(uint8_t const*)"\" because package doesn't exist in table."})));
+	assert__2(FALSE, string__0op__add(string__0op__add(((string){{16},(uint8_t*)u8"Can't add name \""}), full_name__1(name__)), ((string){{41},(uint8_t*)u8"\" because package doesn't exist in table."})));
 }
 
 Name_Subtable__0 const opt_ref mut get_name__2(Name_Table__0 const ref const name_table__, Name__0 const ref const name__)
@@ -6665,7 +6665,7 @@ Name_Subtable__0 const opt_ref mut get_name__2(Name_Table__0 const ref const nam
 
 Name_Table__0 const ref mut build_name_table__3(Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__, system__collections__List__1 const ref const references__)
 {
-	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){20,(uint8_t const*)"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
+	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){{20},(uint8_t*)u8"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
 	Name_Table__0 mut ref const name_table__ = Name_Table__0__0new__0(allocate(sizeof(Name_Table__0)));
 	add_referenced__2(name_table__, references__);
 	add_package__3(name_table__, package_name__, package_syntax__);
@@ -6699,7 +6699,7 @@ void mut add_symbol__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 
 void mut add_package__3(Name_Table__0 mut ref const name_table__, Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__)
 {
-	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){20,(uint8_t const*)"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
+	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){{20},(uint8_t*)u8"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
 	Name__0 const ref const global_namespace__ = add_package__2(name_table__, package_name__);
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(package_syntax__->children__); void_ptr__0next(&iter);)
 	{
@@ -6710,7 +6710,7 @@ void mut add_package__3(Name_Table__0 mut ref const name_table__, Package_Name__
 
 void mut add_compilation_unit__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const global_namespace__, Syntax_Node__0 const ref const compilation_unit__)
 {
-	assert__2(int32__0op__equal(compilation_unit__->kind__, CompilationUnit__), string__0op__add(((string){22,(uint8_t const*)"compilation_unit.kind="}), int_to_string__1(compilation_unit__->kind__)));
+	assert__2(int32__0op__equal(compilation_unit__->kind__, CompilationUnit__), string__0op__add(((string){{22},(uint8_t*)u8"compilation_unit.kind="}), int_to_string__1(compilation_unit__->kind__)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(compilation_unit__->children__); void_ptr__0next(&iter);)
 	{
 		Syntax_Node__0 const ref const declaration__ = void_ptr__0current(&iter);
@@ -6749,16 +6749,16 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ConstructorDeclaration__)))
 	{
-		string mut full_name__ = ((string){3,(uint8_t const*)"new"});
+		string mut full_name__ = ((string){{3},(uint8_t*)u8"new"});
 		Token__0 const opt_ref const constructor_name__ = first_child_token__2(syntax__, Identifier__);
 		if (cond(void_ptr__0op__not_equal(constructor_name__, none)))
 		{
-			full_name__ = string__0op__add(((string){4,(uint8_t const*)"new_"}), get_token_text__1(constructor_name__));
+			full_name__ = string__0op__add(((string){{4},(uint8_t*)u8"new_"}), get_token_text__1(constructor_name__));
 		}
 
 		Name__0 const ref const name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), parent__, FunctionName__, full_name__);
 		add_function__3(name_table__, name__, syntax__);
-		Name__0 const ref const self_name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), name__, VariableName__, ((string){4,(uint8_t const*)"self"}));
+		Name__0 const ref const self_name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), name__, VariableName__, ((string){{4},(uint8_t*)u8"self"}));
 		Type__0 const ref const self_type__ = get_name__2(name_table__, parent__)->type__;
 		assert__1(void_ptr__0op__not_equal(self_type__, none));
 		add_type_name__3(name_table__, self_name__, self_type__);
@@ -6860,7 +6860,7 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, SelfParameter__)))
 	{
-		Name__0 const ref const name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), parent__, VariableName__, ((string){4,(uint8_t const*)"self"}));
+		Name__0 const ref const name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), parent__, VariableName__, ((string){{4},(uint8_t*)u8"self"}));
 		Type__0 const ref const self_type__ = get_name__2(name_table__, parent__)->parent__->type__;
 		assert__1(void_ptr__0op__not_equal(self_type__, none));
 		add_type_name__3(name_table__, name__, self_type__);
@@ -6870,7 +6870,7 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	}
 	else
 	{
-		NOT_IMPLEMENTED__1(string__0op__add(((string){12,(uint8_t const*)"syntax.kind="}), int_to_string__1(syntax__->kind__)));
+		NOT_IMPLEMENTED__1(string__0op__add(((string){{12},(uint8_t*)u8"syntax.kind="}), int_to_string__1(syntax__->kind__)));
 	}
 }
 
@@ -6899,72 +6899,72 @@ void mut unit_test_Name_Table_Builder__0()
 
 void mut table_contains_referenced_child_names__0()
 {
-	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){7,(uint8_t const*)"default"}));
+	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
 	Package__0 const ref const runtime_package__ = build_runtime_library_package__0();
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
-	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){9,(uint8_t const*)"//test.ad"}), ((string){19,(uint8_t const*)"// test source text"}));
+	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
 	Syntax_Node__0 const ref const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
 	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
-	Name_Subtable__0 const ref const namespace__ = find__2(name_table__->any_package__, ((string){6,(uint8_t const*)"system"}));
-	assert__1(never__0op__not_equal(find__2(namespace__, ((string){7,(uint8_t const*)"console"})), none));
-	Name__0 const ref const system_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){6,(uint8_t const*)"system"}));
+	Name_Subtable__0 const ref const namespace__ = find__2(name_table__->any_package__, ((string){{6},(uint8_t*)u8"system"}));
+	assert__1(never__0op__not_equal(find__2(namespace__, ((string){{7},(uint8_t*)u8"console"})), none));
+	Name__0 const ref const system_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
 	assert__1(never__0op__not_equal(get_name__2(name_table__, system_namespace_name__), none));
-	Name__0 const ref const console_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace_name__, NamespaceName__, ((string){7,(uint8_t const*)"console"}));
+	Name__0 const ref const console_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace_name__, NamespaceName__, ((string){{7},(uint8_t*)u8"console"}));
 	assert__1(never__0op__not_equal(get_name__2(name_table__, console_namespace_name__), none));
-	Name__0 const ref const console_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), console_namespace_name__, TypeName__, ((string){7,(uint8_t const*)"Console"}));
+	Name__0 const ref const console_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), console_namespace_name__, TypeName__, ((string){{7},(uint8_t*)u8"Console"}));
 	assert__1(never__0op__not_equal(get_name__2(name_table__, console_class_name__), none));
 }
 
 void mut can_get_root_namespace_from_name__0()
 {
-	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){7,(uint8_t const*)"default"}));
+	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
 	Package__0 const ref const runtime_package__ = build_runtime_library_package__0();
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
-	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){9,(uint8_t const*)"//test.ad"}), ((string){19,(uint8_t const*)"// test source text"}));
+	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
 	Syntax_Node__0 const ref const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
 	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
-	Name__0 const ref const namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){6,(uint8_t const*)"system"}));
+	Name__0 const ref const namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
 	assert__1(never__0op__not_equal(get_name__2(name_table__, namespace_name__), none));
 }
 
 void mut can_get_Console_class_from_name_without_package__0()
 {
-	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){7,(uint8_t const*)"default"}));
+	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
 	Package__0 const ref const runtime_package__ = build_runtime_library_package__0();
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
-	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){9,(uint8_t const*)"//test.ad"}), ((string){19,(uint8_t const*)"// test source text"}));
+	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
 	Syntax_Node__0 const ref const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
 	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
-	Name__0 const ref const system_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){6,(uint8_t const*)"system"}));
-	Name__0 const ref const console_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace_name__, NamespaceName__, ((string){7,(uint8_t const*)"console"}));
-	Name__0 const ref const console_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), console_namespace_name__, TypeName__, ((string){7,(uint8_t const*)"Console"}));
+	Name__0 const ref const system_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
+	Name__0 const ref const console_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace_name__, NamespaceName__, ((string){{7},(uint8_t*)u8"console"}));
+	Name__0 const ref const console_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), console_namespace_name__, TypeName__, ((string){{7},(uint8_t*)u8"Console"}));
 	assert__1(never__0op__not_equal(get_name__2(name_table__, console_class_name__), none));
 }
 
 void mut can_get_Optional_class_from_name_with_package__0()
 {
-	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){7,(uint8_t const*)"default"}));
+	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
 	Package__0 const ref const primitives_package__ = build_primitives_package__0();
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), primitives_package__));
-	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){9,(uint8_t const*)"//test.ad"}), ((string){19,(uint8_t const*)"// test source text"}));
+	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
 	Syntax_Node__0 const ref const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
 	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
-	Name__0 const ref const adamant_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){7,(uint8_t const*)"adamant"}));
-	Name__0 const ref const language_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace_name__, NamespaceName__, ((string){8,(uint8_t const*)"language"}));
+	Name__0 const ref const adamant_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{7},(uint8_t*)u8"adamant"}));
+	Name__0 const ref const language_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace_name__, NamespaceName__, ((string){{8},(uint8_t*)u8"language"}));
 	assert__1(never__0op__not_equal(get_name__2(name_table__, language_namespace_name__), none));
-	Name__0 const ref const optional_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace_name__, TypeName__, ((string){8,(uint8_t const*)"optional"}));
+	Name__0 const ref const optional_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace_name__, TypeName__, ((string){{8},(uint8_t*)u8"optional"}));
 	assert__1(never__0op__not_equal(get_name__2(name_table__, optional_class_name__), none));
 }
 
 // Entry Point Adapter
 int32_t main(int argc, char const ptr const ptr argv)
 {
-	add_resource((string){16,(uint8_t const*)"RuntimeLibrary.c"}, (string){24871,(uint8_t const*)"#include \"RuntimeLibrary.h\"\n\n#include <string.h>\n#include <assert.h>\n\n// -----------------------------------------------------------------------------\n// Static Checks\n// -----------------------------------------------------------------------------\n\n// At least on windows, this macro seems to be missing\n#ifndef static_assert\n#define static_assert _Static_assert\n#endif\n\n// Because we assume we can cast from char* to uint8_t* they need to be the same size\nstatic_assert(sizeof(char) == sizeof(uint8_t), \"chars must be 8 bits\");\n\n// Because we assume we can cast from uint8_t* to byte* they need to be the same size\nstatic_assert(sizeof(uint8_t) == sizeof(byte), \"bytes must be 8 bits\");\n\n// Bool sizing assertions.\nstatic_assert(sizeof(_Bool) == sizeof(BOOL), \"BOOL size\");\ntypedef struct { _Bool a; _Bool b; } raw;\ntypedef struct { BOOL a; BOOL b; } wrapped;\nstatic_assert(sizeof(raw) == sizeof(wrapped), \"Wrapping doesn't change size\");\n\nstatic_assert(sizeof(_Bool) != sizeof(raw), \"_Bools don't pack\");\nstatic_assert(sizeof(_Bool) != sizeof(wrapped), \"Wrapped _bools don't pack\");\n\ntypedef struct { _Bool a:1; _Bool b:1; } field;\nstatic_assert(sizeof(_Bool) == sizeof(field), \"Bit fields pack\");\n\ntypedef struct { _Bool a:1; uint8_t x; _Bool b:1; } split_field;\nstatic_assert(sizeof(split_field) == 3, \"Split bit fields don't pack\");\n\n// Testing that the style we use for literals can be used as a const\nconst code_point test_code_point = ((code_point){0xFF});\nstatic_assert(sizeof(test_code_point) == 4, \"test code point size\");\n\n// Note: C allows character array literals one byte shorter than the string\n// TODO change the emitted literals\nconst string test_string = ((string){{5},(uint8_t[5]){u8\"hello\"}});\nstatic_assert(sizeof((uint8_t[5]){u8\"hello\"}) == 5, \"string literals test\");\n\n// -----------------------------------------------------------------------------\n// Emit Support\n// -----------------------------------------------------------------------------\n// These are things which make emitting easier or clearer\n\nnoreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line)\n{\n    printf(\"Non-exhustive match. Type_ID=%i not covered in function %s in %s, line %i\", type_id, function, file, line);\n    exit(70);\n}\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\nstatic const _Bool _true=1;\nstatic const _Bool _false=0;\n\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s\", code);\n        exit(70);\n    }\n}\n\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s, %s\", code, message);\n        exit(70);\n    }\n}\n\nextern inline void_ptr allocate(size_t bytes);\n\nstatic inline int32 int32_from(int32_t v)\n{\n    return (int32){ v };\n}\n\n// TODO change this to something like byte_from\nuint8_t code_point__to_char(code_point v)\n{\n    lib_assert(v.value <= 0xFF);\n    return v.value;\n}\n\nchar const * cstr_from(string value)\n{\n    int32_t length = value.byte_length.value;\n    char* bytes = allocate(length + 1);\n    memcpy(bytes, value.bytes, length);\n    bytes[length] = 0;\n    return bytes;\n}\n\nstring string_from_cstr(char const* s)\n{\n    return (string){int32_from(strlen(s)), (uint8_t*)s};\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\nextern inline _Bool cond(BOOL cond);\nextern inline BOOL bool_from(_Bool b);\nextern inline BOOL bool_op(_Bool b);\nextern inline _Bool bool_arg(BOOL b);\nextern inline BOOL BOOL__0op__not(BOOL b);\n\nstring bool_to_string__1(BOOL b)\n{\n    if(cond(b))\n        return (string){int32_from(4),(uint8_t*)u8\"true\"};\n    else\n        return (string){int32_from(5),(uint8_t*)u8\"false\"};\n}\n\nextern inline void op__add_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline int32 int32__0op__neg(int32 v);\nextern inline int32 int32__0op__add(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__sub(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__mul(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__div(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__remainder(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lte(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gte(int32 lhs, int32 rhs);\n\nstring int_to_string__1(int32 i)\n{\n    uint8_t* bytes = allocate(12); // -2,147,483,648 plus null terminator\n    int length = sprintf((char*)bytes, \"%d\", i.value);\n    lib_assert(length > 0);\n    return (string){int32_from(length), bytes};\n}\nstring int_to_hex_string__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    uint8_t* bytes = allocate(9); // FF_FF_FF_FF plus null terminator\n    int length = sprintf((char*)bytes, \"%X\", i.value);\n    lib_assert(length > 0);\n    return (string){int32_from(length), bytes};\n}\n\nint32 hex_string_to_int__1(string s)\n{\n    char const* cstr = cstr_from(s);\n    int32_t i = strtoul(cstr, NULL, 16);\n    free__1(cstr);\n    return (int32){i};\n}\n\ncode_point int_to_code_point__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    return (code_point){(uint32_t)i.value};\n}\n\nextern inline BOOL code_point__0op__lt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__lte(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gte(code_point lhs, code_point rhs);\nextern inline int32 code_point_as_int__1(code_point c);\n\nstring code_point_to_string__1(code_point c)\n{\n    uint8_t* bytes = allocate(sizeof(uint8_t));\n    *bytes = code_point__to_char(c);\n    return (string){int32_from(1), bytes};\n}\n\nstring string__0new__0()\n{\n    return (string){int32_from(0), 0};\n}\n\nstring string__0new__1(string value)\n{\n    return value;\n}\n\nstring string__0new__2(code_point c, int32 repeat)\n{\n    uint8_t* bytes = allocate(repeat.value);\n    uint8_t ch = code_point__to_char(c);\n    for (int i = 0; i < repeat.value; i++)\n        bytes[i] = ch;\n\n    return (string){repeat, bytes};\n}\n\nstring string__0op__add(string lhs, string rhs)\n{\n    int new_length = lhs.byte_length.value + rhs.byte_length.value;\n    uint8_t* chars = allocate(new_length);\n    size_t offset = sizeof(uint8_t) * lhs.byte_length.value;\n    memcpy(chars, lhs.bytes, offset);\n    memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);\n    return (string){int32_from(new_length), chars};\n}\n\nBOOL string__0op__equal(string lhs, string rhs)\n{\n    if (lhs.byte_length.value != rhs.byte_length.value)\n        return FALSE;\n\n    for (int i = 0; i < lhs.byte_length.value; i++)\n        if (lhs.bytes[i] != rhs.bytes[i])\n            return FALSE;\n\n    return TRUE;\n}\n\nBOOL string__0op__lt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) < 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__lte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) <= 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__gt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) > 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\nBOOL string__0op__gte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) >= 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\n\nextern inline code_point string__0__0op__element(string value, int32 index);\nextern inline int32 string_byte_length__1(string s);\n\nstring substring__3(string s, int32 start, int32 length)\n{\n    // You can ask for a zero length substring at the end of the string\n    lib_assert(start.value <= s.byte_length.value);\n    lib_assert(start.value+length.value <= s.byte_length.value);\n    return (string){length, s.bytes + start.value};\n}\n\nextern inline string substring__2(string s, int32 start);\n\nstring string_replace__3(string s, string old_value, string new_value)\n{\n    // We make one one the stack then manually call the constructor\n    system__text__String_Builder__0 builder;\n    system__text__String_Builder__0__0new__with_capacity__1(&builder, s.byte_length);\n    int limit = s.byte_length.value - old_value.byte_length.value + 1;\n    int last_index = 0;\n    for(int i=0; i < limit; i++)\n        if(cond(string__0op__equal(substring__3(s, int32_from(i), old_value.byte_length), old_value)))\n        {\n            sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(i-last_index)));\n            sb_append__2(&builder, new_value);\n            i += old_value.byte_length.value; // skip over the value we just matched\n            last_index = i;\n            i--; // we need i-- to offset the i++ that is about to happen\n        }\n\n    sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(s.byte_length.value - last_index)));\n    return sb_to_string__1(&builder);\n}\nint32 string_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = 0; i < s.byte_length.value; i++)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\nint32 string_last_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = s.byte_length.value - 1; i >= 0; i--)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\nextern inline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__equal(code_point lhs, code_point rhs);\nextern BOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\n\nextern inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__not_equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs);\nextern inline BOOL string__0op__not_equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n\nextern inline void const ref as_any__1(void const ref const value);\nextern inline void mut ref as_any_mut__1(void mut ref const value);\n\nextern inline void_ptr allocate__1(int32 bytes);\nextern inline void free__1(const_void_ptr object);\n\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, file %s, line %i\", code, file, line);\n        exit(70);\n    }\n}\n\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, %s, file %s, line %i\", code, cstr_from(message), file, line);\n        exit(70);\n    }\n}\n\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, %s, line %i\", function, cstr_from(message), file, line);\n    exit(70);\n}\n\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Reached \\\"UNREACHABLE\\\" statement in function %s, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nstatic int32_t resource_count = 0;\nstatic string resource_name[1024];\nstatic string resource_value[1024];\n\nvoid add_resource(string name, string value)\n{\n    lib_assert_msg(resource_count < 1024, \"only 1024 resources are currently supported\");\n    resource_name[resource_count] = name;\n    resource_value[resource_count] = value;\n    resource_count += 1;\n}\n\nstring get_resource__1(string name)\n{\n    for(int32_t i=0; i < resource_count; i++)\n        if(cond(string__0op__equal(resource_name[i], name)))\n            return resource_value[i];\n\n    lib_assert_msg(_false, cstr_from(name));\n    UNREACHABLE__0();\n}\n\nvoid debug_write__1(string value)\n{\n    fprintf(stderr, \"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__1(string value)\n{\n    fprintf(stderr, \"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__0()\n{\n    fprintf(stderr, \"\\n\");\n}\n\n_Bool string__0next(string__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline string string__0current(string__0iter const*_Nonnull iter);\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index);\nextern inline void clear_strings__1(Strings__0 *_Nonnull strings);\n\nvoid add_string__2(Strings__0 *_Nonnull strings, string value)\n{\n    if(strings->count__.value >= strings->capacity__.value)\n    {\n        int32_t new_capacity = strings->capacity__.value == 0 ? 16 : strings->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        string* new_values = allocate(new_capacity * sizeof(string));\n        memcpy(new_values, strings->values, strings->count__.value * sizeof(string));\n        if(strings->capacity__.value != 0)\n            free__1(strings->values); // delete the old array\n        strings->values = new_values;\n        strings->capacity__ = (int32){new_capacity};\n    }\n    strings->values[strings->count__.value] = value;\n    strings->count__.value++;\n}\n\nextern inline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings);\nextern inline string__0iter string__0iterate(Strings__0 const *_Nonnull strings);\n\n_Bool int__0next(int__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline int32 int__0current(int__0iter const*_Nonnull iter);\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index);\nextern inline void clear_ints__1(Ints__0 *_Nonnull ints);\n\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value)\n{\n    if(ints->count__.value >= ints->capacity__.value)\n    {\n        int32_t new_capacity = ints->capacity__.value == 0 ? 16 : ints->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        int32* new_values = allocate(new_capacity * sizeof(int32));\n        memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));\n        if(ints->capacity__.value != 0)\n            free__1(ints->values); // delete the old array\n        ints->values = new_values;\n        ints->capacity__ = (int32){new_capacity};\n    }\n    ints->values[ints->count__.value] = value;\n    ints->count__.value++;\n}\n\nextern inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints);\nextern inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints);\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter);\n\nextern inline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self);\n\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value)\n{\n    if(list->count__.value >= list->capacity__.value)\n    {\n        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        void_ptr* new_values = allocate(new_capacity * sizeof(void_ptr));\n        memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));\n        if(list->capacity__.value != 0)\n            free__1(list->values); // delete the old array\n        list->values = new_values;\n        list->capacity__ = (int32){new_capacity};\n    }\n    list->values[list->count__.value] = (void*_Nullable)value; // TODO hack, we cast away const\n    list->count__.value++;\n}\n\nextern inline void clear_list__1(system__collections__List__1 *_Nonnull list);\nextern inline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index);\nextern inline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list);\nextern inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list);\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console)\n{\n    printf(\"\\n\");\n}\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv)\n{\n    system__console__Arguments__0 *_Nonnull self = allocate(sizeof(system__console__Arguments__0));\n    self->count__ = (int32){argc-1};\n    self->values = allocate(self->count__.value * sizeof(string));\n    for (int i = 0; i < self->count__.value; i++)\n        self->values[i] = string_from_cstr(argv[i+1]);\n    return self;\n}\n\nextern inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index);\nextern inline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments);\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name)\n{\n    char const *_Nonnull fname = cstr_from(file_name);\n    self->file= fopen(fname, \"rb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fseek(reader->file, 0, SEEK_END);\n    long int length = ftell(reader->file);\n    fseek(reader->file, 0, SEEK_SET);\n    uint8_t*_Nonnull bytes = allocate(length);\n    length = fread(bytes, sizeof(uint8_t), length, reader->file);\n    return (string){int32_from(length), bytes};\n}\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fclose(reader->file);\n}\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name)\n{\n    char const *_Nonnull fname = cstr_from(file_name);\n    self->file = fopen(fname, \"wb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value)\n{\n    fwrite(value.bytes, sizeof(char), value.byte_length.value, writer->file);\n}\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)\n{\n    fclose(writer->file);\n}\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)\n{\n    int new_capacity = sb->capacity == 0 ? 128 : sb->capacity;\n    while(new_capacity < needed)\n    {\n        new_capacity *= 2;\n    }\n\n    if(new_capacity > sb->capacity)\n    {\n        uint8_t* new_buffer =  allocate(new_capacity);\n        if(sb->byte_length__.value > 0)\n            memcpy(new_buffer, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));\n\n        if(sb->capacity > 0)\n            free__1(sb->bytes);\n\n        sb->bytes = new_buffer;\n        sb->capacity = new_capacity;\n    }\n}\n\nextern inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self);\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, value.byte_length.value);\n    memcpy(self->bytes, value.bytes, value.byte_length.value);\n    self->byte_length__.value = value.byte_length.value;\n    return self;\n}\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, capacity.value);\n    return self;\n}\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value)\n{\n    int32_t new_length = sb->byte_length__.value + value->byte_length__.value;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    int32_t new_length = sb->byte_length__.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n\n    int32_t end = start.value + length.value;\n    lib_assert(end <= sb->byte_length__.value); // less than or equal because end is one past the end of the remove\n\n    memmove(sb->bytes+start.value, sb->bytes+end, sb->byte_length__.value-end);\n    sb->byte_length__.value -= length.value;\n}\n\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n    sb->byte_length__.value = start.value;\n}\n\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    string result = {int32_from(sb->byte_length__.value), sb->bytes};\n    // give up ownership of bytes\n    sb->bytes = 0;\n    sb->byte_length__.value = 0;\n    sb->capacity = 0;\n    return result;\n}\n"});
-	add_resource((string){16,(uint8_t const*)"RuntimeLibrary.h"}, (string){17658,(uint8_t const*)"// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n// Note that we can't switch to the \"secure\" functions because they don't\n// compile in linux on Travis CI\n#define _CRT_SECURE_NO_WARNINGS\n\n#include <stdlib.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <stdnoreturn.h>\n\n// -----------------------------------------------------------------------------\n// Emit Support\n// -----------------------------------------------------------------------------\n// These are things which make emitting easier or clearer\n\n#define ref *_Nonnull restrict\n#define opt_ref *_Nullable restrict\n#define ptr *_Nonnull\n#define opt_ptr *_Nullable\n#define mut\n\n#define NON_EXHAUSTIVE_MATCH(type_id) NON_EXHAUSTIVE_MATCH_IMPL(type_id, __func__, __FILE__, __LINE__);\nnoreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line);\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\ntypedef void*_Nullable void_ptr;\ntypedef void const*_Nullable const_void_ptr;\n\n#define lib_assert(condition) lib_assert1(condition, #condition)\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code);\n#define lib_assert_msg(condition, message) lib_assert2(condition, #condition, message)\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message);\n\ninline void_ptr allocate(size_t bytes)\n{\n    return malloc(bytes);\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\ntypedef struct never never;\ntypedef struct optional__never optional__never;\ntypedef struct BOOL BOOL;\ntypedef struct int32 int32;\ntypedef struct byte byte;\ntypedef struct code_point code_point;\ntypedef struct string string;\n\n// `never` type\nstruct never\n{\n};\n\n// `never?` type\nstruct optional__never\n{\n};\n\n// TODO this is a hack for now, the type of `none` should be `never?`\nstatic const void_ptr none = NULL;\n\n// For now, use `BOOL` as the emitted type\n// TODO C: switch `BOOL` to `bool`\n// TODO C: switch `TRUE` to `true`\n// TODO C: switch `FALSE` to `false`\n\n// `bool` type\nstruct BOOL\n{\n    _Bool value;\n};\n\nstatic const BOOL TRUE = { 1 };\nstatic const BOOL FALSE = { 0 };\n\n// Function used in conditions to make them take `bool`\ninline _Bool cond(BOOL cond) { return cond.value; }\n\n// Used by runtime for converting to bool\ninline BOOL bool_from(_Bool b) { return (BOOL){ b }; }\n\n// Wrap a bool operation that is bool based\ninline BOOL bool_op(_Bool b) { return (BOOL){ b }; }\n// Convert the arguments of a logical operation to bool\ninline _Bool bool_arg(BOOL b) { return b.value; }\n\ninline BOOL BOOL__0op__not(BOOL b) { return (BOOL){ !b.value }; }\n\nstring bool_to_string__1(BOOL b);\n\n// `int` type\nstruct int32\n{\n    int32_t value;\n};\n\ninline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }\ninline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }\ninline int32 int32__0op__neg(int32 v) { return (int32){-v.value}; }\ninline int32 int32__0op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }\ninline int32 int32__0op__sub(int32 lhs, int32 rhs) { return (int32){ lhs.value - rhs.value}; }\ninline int32 int32__0op__mul(int32 lhs, int32 rhs) { return (int32){ lhs.value * rhs.value}; }\ninline int32 int32__0op__div(int32 lhs, int32 rhs) { return (int32){ lhs.value / rhs.value}; }\ninline int32 int32__0op__remainder(int32 lhs, int32 rhs) { return (int32){ lhs.value % rhs.value}; }\ninline BOOL int32__0op__lt(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }\n\nstring int_to_string__1(int32 i);\nstring int_to_hex_string__1(int32 i);\nint32 hex_string_to_int__1(string s);\ncode_point int_to_code_point__1(int32 i);\n\nstruct byte\n{\n    uint8_t value;\n};\n\nstruct code_point\n{\n    // don't use something like char32_t because C's handling of chars sucks\n    uint32_t value;\n};\n\ninline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }\n\ninline int32 code_point_as_int__1(code_point c) { return (int32){(int32_t)c.value}; }\nstring code_point_to_string__1(code_point c);\n\nstruct string\n{\n    // Though there will be a byte_length property in the future,\n    // it doesn't make sense to directly expose it right now because this is\n    // not the correct implementation.\n    int32 byte_length;\n\n    // don't use chars because C's handling of chars sucks\n    uint8_t const *_Nonnull bytes;\n};\n\nstring string__0new__0();\nstring string__0new__1(string value);\nstring string__0new__2(code_point c, int32 repeat);\n\nstring string__0op__add(string lhs, string rhs);\nBOOL string__0op__lt(string lhs, string rhs);\nBOOL string__0op__lte(string lhs, string rhs);\nBOOL string__0op__gt(string lhs, string rhs);\nBOOL string__0op__gte(string lhs, string rhs);\ninline code_point string__0__0op__element(string value, int32 index)\n{\n    lib_assert(index.value >= 0 && index.value < value.byte_length.value);\n    return (code_point){value.bytes[index.value]};\n}\n\ninline int32 string_byte_length__1(string s) { return s.byte_length; }\nstring substring__3(string s, int32 start, int32 length);\ninline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length.value-start.value}); }\nstring string_replace__3(string s, string old_value, string new_value);\nint32 string_index_of__2(string s, code_point c);\nint32 string_last_index_of__2(string s, code_point c);\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL int32__0op__equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL code_point__0op__equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\nBOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\ninline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\n\ninline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL int32__0op__not_equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL string__0op__not_equal(string lhs, string rhs)\n{\n    return BOOL__0op__not(string__0op__equal(lhs, rhs));\n}\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\ninline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\ntypedef struct string__0iter string__0iter;\ntypedef struct Strings__0 Strings__0;\ntypedef struct int__0iter int__0iter;\ntypedef struct Ints__0 Ints__0;\ntypedef struct void_ptr__0iter void_ptr__0iter;\ntypedef struct system__collections__List__1 system__collections__List__1;\ntypedef struct system__console__Console__0 system__console__Console__0;\ntypedef struct system__console__Arguments__0 system__console__Arguments__0;\ntypedef struct system__io__File_Reader__0 system__io__File_Reader__0;\ntypedef struct system__io__File_Writer__0 system__io__File_Writer__0;\ntypedef struct system__text__String_Builder__0 system__text__String_Builder__0;\n\ninline void const ref as_any__1(void const ref const value)\n{\n    return value;\n}\n\ninline void mut ref as_any_mut__1(void mut ref const value)\n{\n    return value;\n}\n\ninline void_ptr allocate__1(int32 bytes)\n{\n    return malloc(bytes.value);\n}\n\n// TODO rename dellocate()\ninline void free__1(const_void_ptr object)\n{\n    // TODO hack cast away const\n    free((void*_Nonnull)object);\n}\n\n#define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)\n#define assert__2(condition, message) assert2(condition, #condition, message, __FILE__, __LINE__)\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line);\n\n#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED0(__func__, __FILE__, __LINE__)\n#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED1(message, __func__, __FILE__, __LINE__)\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\n#define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\nstring get_resource__1(string resource_name);\nvoid add_resource(string name, string value);\n\nvoid debug_write__1(string value);\nvoid debug_write_line__1(string value);\nvoid debug_write_line__0();\n\nstruct string__0iter\n{\n    string *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool string__0next(string__0iter*_Nonnull iter);\ninline string string__0current(string__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Strings__0\n{\n    string *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self);\ninline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < strings->count__.value);\n    return strings->values[index.value];\n}\ninline void clear_strings__1(Strings__0 *_Nonnull strings)\n{\n    strings->count__ = (int32){0};\n}\nvoid add_string__2(Strings__0 *_Nonnull strings, string value);\ninline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\ninline string__0iter string__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\n\nstruct int__0iter\n{\n    int32 *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool int__0next(int__0iter*_Nonnull iter);\ninline int32 int__0current(int__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Ints__0\n{\n    int32 *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self);\ninline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < ints->count__.value);\n    return ints->values[index.value];\n}\ninline void clear_ints__1(Ints__0 *_Nonnull ints)\n{\n    ints->count__ = (int32){0};\n}\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value);\ninline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\ninline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\n\nstruct void_ptr__0iter\n{\n    void_ptr *_Nonnull values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);\ninline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct system__collections__List__1\n{\n    void_ptr *_Nonnull values;\n    int32 count__;\n    int32 capacity__;\n};\n\ninline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\n// TODO hack that we take const_void_ptr but then treat it as mutable\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value);\n\ninline void clear_list__1(system__collections__List__1 *_Nonnull list)\n{\n    list->count__ = (int32){0};\n}\n\ninline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < list->count__.value);\n    return list->values[index.value];\n}\n\ninline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\ninline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\nstruct system__console__Console__0\n{\n};\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console);\n\nstruct system__console__Arguments__0\n{\n    string *_Nonnull values;\n    int32 count__;\n};\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);\n\ninline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < arguments->count__.value);\n    return arguments->values[index.value];\n}\n\ninline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments)\n{\n    return (string__0iter)\n    {\n        .values = arguments->values,\n        .current = -1,\n        .count = arguments->count__.value\n    };\n}\n\nstruct system__io__File_Reader__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name);\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);\n\nstruct system__io__File_Writer__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name);\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);\n\nstruct system__text__String_Builder__0\n{\n    uint8_t *_Nullable bytes;\n    int capacity;\n    int32 byte_length__;\n};\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);\n\ninline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self)\n{\n    self->bytes = 0;\n    self->capacity = 0;\n    self->byte_length__ = (int32){0};\n    return self;\n}\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value);\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb);\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb);\n"});
+	add_resource((string){{16},(uint8_t*)u8"RuntimeLibrary.c"}, (string){{24733},(uint8_t*)u8"#include \"RuntimeLibrary.h\"\n\n#include <string.h>\n#include <assert.h>\n\n// -----------------------------------------------------------------------------\n// Static Checks\n// -----------------------------------------------------------------------------\n\n// At least on windows, this macro seems to be missing\n#ifndef static_assert\n#define static_assert _Static_assert\n#endif\n\n// Because we assume we can cast from char* to uint8_t* they need to be the same size\nstatic_assert(sizeof(char) == sizeof(uint8_t), \"chars must be 8 bits\");\n\n// Because we assume we can cast from uint8_t* to byte* they need to be the same size\nstatic_assert(sizeof(uint8_t) == sizeof(byte), \"bytes must be 8 bits\");\n\n// Bool sizing assertions.\nstatic_assert(sizeof(_Bool) == sizeof(BOOL), \"BOOL size\");\ntypedef struct { _Bool a; _Bool b; } raw;\ntypedef struct { BOOL a; BOOL b; } wrapped;\nstatic_assert(sizeof(raw) == sizeof(wrapped), \"Wrapping doesn't change size\");\n\nstatic_assert(sizeof(_Bool) != sizeof(raw), \"_Bools don't pack\");\nstatic_assert(sizeof(_Bool) != sizeof(wrapped), \"Wrapped _bools don't pack\");\n\ntypedef struct { _Bool a:1; _Bool b:1; } field;\nstatic_assert(sizeof(_Bool) == sizeof(field), \"Bit fields pack\");\n\ntypedef struct { _Bool a:1; uint8_t x; _Bool b:1; } split_field;\nstatic_assert(sizeof(split_field) == 3, \"Split bit fields don't pack\");\n\n// Testing that the style we use for literals can be used as a const\nconst code_point test_code_point = ((code_point){0xFF});\n\n// Note: there is no such thing as a constant array initializer in C. We have to\n// take the pointer to the string literal.\nconst string test_string = ((string){{5},(uint8_t*)u8\"hello\"});\n\n// -----------------------------------------------------------------------------\n// Emit Support\n// -----------------------------------------------------------------------------\n// These are things which make emitting easier or clearer\n\nnoreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line)\n{\n    printf(\"Non-exhustive match. Type_ID=%i not covered in function %s in %s, line %i\", type_id, function, file, line);\n    exit(70);\n}\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\nstatic const _Bool _true=1;\nstatic const _Bool _false=0;\n\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s\", code);\n        exit(70);\n    }\n}\n\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s, %s\", code, message);\n        exit(70);\n    }\n}\n\nextern inline void_ptr allocate(size_t bytes);\n\nstatic inline int32 int32_from(int32_t v)\n{\n    return (int32){ v };\n}\n\n// TODO change this to something like byte_from\nuint8_t code_point__to_char(code_point v)\n{\n    lib_assert(v.value <= 0xFF);\n    return v.value;\n}\n\nchar const * cstr_from(string value)\n{\n    int32_t length = value.byte_length.value;\n    char* bytes = allocate(length + 1);\n    memcpy(bytes, value.bytes, length);\n    bytes[length] = 0;\n    return bytes;\n}\n\nstring string_from_cstr(char const* s)\n{\n    return (string){int32_from(strlen(s)), (uint8_t*)s};\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\nextern inline _Bool cond(BOOL cond);\nextern inline BOOL bool_from(_Bool b);\nextern inline BOOL bool_op(_Bool b);\nextern inline _Bool bool_arg(BOOL b);\nextern inline BOOL BOOL__0op__not(BOOL b);\n\nstring bool_to_string__1(BOOL b)\n{\n    if(cond(b))\n        return (string){int32_from(4),(uint8_t*)u8\"true\"};\n    else\n        return (string){int32_from(5),(uint8_t*)u8\"false\"};\n}\n\nextern inline void op__add_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline int32 int32__0op__neg(int32 v);\nextern inline int32 int32__0op__add(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__sub(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__mul(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__div(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__remainder(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lte(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gte(int32 lhs, int32 rhs);\n\nstring int_to_string__1(int32 i)\n{\n    uint8_t* bytes = allocate(12); // -2,147,483,648 plus null terminator\n    int length = sprintf((char*)bytes, \"%d\", i.value);\n    lib_assert(length > 0);\n    return (string){int32_from(length), bytes};\n}\nstring int_to_hex_string__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    uint8_t* bytes = allocate(9); // FF_FF_FF_FF plus null terminator\n    int length = sprintf((char*)bytes, \"%X\", i.value);\n    lib_assert(length > 0);\n    return (string){int32_from(length), bytes};\n}\n\nint32 hex_string_to_int__1(string s)\n{\n    char const* cstr = cstr_from(s);\n    int32_t i = strtoul(cstr, NULL, 16);\n    free__1(cstr);\n    return (int32){i};\n}\n\ncode_point int_to_code_point__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    return (code_point){(uint32_t)i.value};\n}\n\nextern inline BOOL code_point__0op__lt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__lte(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gte(code_point lhs, code_point rhs);\nextern inline int32 code_point_as_int__1(code_point c);\n\nstring code_point_to_string__1(code_point c)\n{\n    uint8_t* bytes = allocate(sizeof(uint8_t));\n    *bytes = code_point__to_char(c);\n    return (string){int32_from(1), bytes};\n}\n\nstring string__0new__0()\n{\n    return (string){int32_from(0), 0};\n}\n\nstring string__0new__1(string value)\n{\n    return value;\n}\n\nstring string__0new__2(code_point c, int32 repeat)\n{\n    uint8_t* bytes = allocate(repeat.value);\n    uint8_t ch = code_point__to_char(c);\n    for (int i = 0; i < repeat.value; i++)\n        bytes[i] = ch;\n\n    return (string){repeat, bytes};\n}\n\nstring string__0op__add(string lhs, string rhs)\n{\n    int new_length = lhs.byte_length.value + rhs.byte_length.value;\n    uint8_t* chars = allocate(new_length);\n    size_t offset = sizeof(uint8_t) * lhs.byte_length.value;\n    memcpy(chars, lhs.bytes, offset);\n    memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);\n    return (string){int32_from(new_length), chars};\n}\n\nBOOL string__0op__equal(string lhs, string rhs)\n{\n    if (lhs.byte_length.value != rhs.byte_length.value)\n        return FALSE;\n\n    for (int i = 0; i < lhs.byte_length.value; i++)\n        if (lhs.bytes[i] != rhs.bytes[i])\n            return FALSE;\n\n    return TRUE;\n}\n\nBOOL string__0op__lt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) < 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__lte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) <= 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__gt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) > 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\nBOOL string__0op__gte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) >= 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\n\nextern inline code_point string__0__0op__element(string value, int32 index);\nextern inline int32 string_byte_length__1(string s);\n\nstring substring__3(string s, int32 start, int32 length)\n{\n    // You can ask for a zero length substring at the end of the string\n    lib_assert(start.value <= s.byte_length.value);\n    lib_assert(start.value+length.value <= s.byte_length.value);\n    return (string){length, s.bytes + start.value};\n}\n\nextern inline string substring__2(string s, int32 start);\n\nstring string_replace__3(string s, string old_value, string new_value)\n{\n    // We make one one the stack then manually call the constructor\n    system__text__String_Builder__0 builder;\n    system__text__String_Builder__0__0new__with_capacity__1(&builder, s.byte_length);\n    int limit = s.byte_length.value - old_value.byte_length.value + 1;\n    int last_index = 0;\n    for(int i=0; i < limit; i++)\n        if(cond(string__0op__equal(substring__3(s, int32_from(i), old_value.byte_length), old_value)))\n        {\n            sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(i-last_index)));\n            sb_append__2(&builder, new_value);\n            i += old_value.byte_length.value; // skip over the value we just matched\n            last_index = i;\n            i--; // we need i-- to offset the i++ that is about to happen\n        }\n\n    sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(s.byte_length.value - last_index)));\n    return sb_to_string__1(&builder);\n}\nint32 string_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = 0; i < s.byte_length.value; i++)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\nint32 string_last_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = s.byte_length.value - 1; i >= 0; i--)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\nextern inline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__equal(code_point lhs, code_point rhs);\nextern BOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\n\nextern inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__not_equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs);\nextern inline BOOL string__0op__not_equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n\nextern inline void const ref as_any__1(void const ref const value);\nextern inline void mut ref as_any_mut__1(void mut ref const value);\n\nextern inline void_ptr allocate__1(int32 bytes);\nextern inline void free__1(const_void_ptr object);\n\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, file %s, line %i\", code, file, line);\n        exit(70);\n    }\n}\n\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, %s, file %s, line %i\", code, cstr_from(message), file, line);\n        exit(70);\n    }\n}\n\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, %s, line %i\", function, cstr_from(message), file, line);\n    exit(70);\n}\n\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Reached \\\"UNREACHABLE\\\" statement in function %s, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nstatic int32_t resource_count = 0;\nstatic string resource_name[1024];\nstatic string resource_value[1024];\n\nvoid add_resource(string name, string value)\n{\n    lib_assert_msg(resource_count < 1024, \"only 1024 resources are currently supported\");\n    resource_name[resource_count] = name;\n    resource_value[resource_count] = value;\n    resource_count += 1;\n}\n\nstring get_resource__1(string name)\n{\n    for(int32_t i=0; i < resource_count; i++)\n        if(cond(string__0op__equal(resource_name[i], name)))\n            return resource_value[i];\n\n    lib_assert_msg(_false, cstr_from(name));\n    UNREACHABLE__0();\n}\n\nvoid debug_write__1(string value)\n{\n    fprintf(stderr, \"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__1(string value)\n{\n    fprintf(stderr, \"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__0()\n{\n    fprintf(stderr, \"\\n\");\n}\n\n_Bool string__0next(string__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline string string__0current(string__0iter const*_Nonnull iter);\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index);\nextern inline void clear_strings__1(Strings__0 *_Nonnull strings);\n\nvoid add_string__2(Strings__0 *_Nonnull strings, string value)\n{\n    if(strings->count__.value >= strings->capacity__.value)\n    {\n        int32_t new_capacity = strings->capacity__.value == 0 ? 16 : strings->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        string* new_values = allocate(new_capacity * sizeof(string));\n        memcpy(new_values, strings->values, strings->count__.value * sizeof(string));\n        if(strings->capacity__.value != 0)\n            free__1(strings->values); // delete the old array\n        strings->values = new_values;\n        strings->capacity__ = (int32){new_capacity};\n    }\n    strings->values[strings->count__.value] = value;\n    strings->count__.value++;\n}\n\nextern inline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings);\nextern inline string__0iter string__0iterate(Strings__0 const *_Nonnull strings);\n\n_Bool int__0next(int__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline int32 int__0current(int__0iter const*_Nonnull iter);\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index);\nextern inline void clear_ints__1(Ints__0 *_Nonnull ints);\n\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value)\n{\n    if(ints->count__.value >= ints->capacity__.value)\n    {\n        int32_t new_capacity = ints->capacity__.value == 0 ? 16 : ints->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        int32* new_values = allocate(new_capacity * sizeof(int32));\n        memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));\n        if(ints->capacity__.value != 0)\n            free__1(ints->values); // delete the old array\n        ints->values = new_values;\n        ints->capacity__ = (int32){new_capacity};\n    }\n    ints->values[ints->count__.value] = value;\n    ints->count__.value++;\n}\n\nextern inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints);\nextern inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints);\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter);\n\nextern inline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self);\n\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value)\n{\n    if(list->count__.value >= list->capacity__.value)\n    {\n        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        void_ptr* new_values = allocate(new_capacity * sizeof(void_ptr));\n        memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));\n        if(list->capacity__.value != 0)\n            free__1(list->values); // delete the old array\n        list->values = new_values;\n        list->capacity__ = (int32){new_capacity};\n    }\n    list->values[list->count__.value] = (void*_Nullable)value; // TODO hack, we cast away const\n    list->count__.value++;\n}\n\nextern inline void clear_list__1(system__collections__List__1 *_Nonnull list);\nextern inline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index);\nextern inline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list);\nextern inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list);\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console)\n{\n    printf(\"\\n\");\n}\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv)\n{\n    system__console__Arguments__0 *_Nonnull self = allocate(sizeof(system__console__Arguments__0));\n    self->count__ = (int32){argc-1};\n    self->values = allocate(self->count__.value * sizeof(string));\n    for (int i = 0; i < self->count__.value; i++)\n        self->values[i] = string_from_cstr(argv[i+1]);\n    return self;\n}\n\nextern inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index);\nextern inline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments);\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name)\n{\n    char const *_Nonnull fname = cstr_from(file_name);\n    self->file= fopen(fname, \"rb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fseek(reader->file, 0, SEEK_END);\n    long int length = ftell(reader->file);\n    fseek(reader->file, 0, SEEK_SET);\n    uint8_t*_Nonnull bytes = allocate(length);\n    length = fread(bytes, sizeof(uint8_t), length, reader->file);\n    return (string){int32_from(length), bytes};\n}\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fclose(reader->file);\n}\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name)\n{\n    char const *_Nonnull fname = cstr_from(file_name);\n    self->file = fopen(fname, \"wb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value)\n{\n    fwrite(value.bytes, sizeof(char), value.byte_length.value, writer->file);\n}\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)\n{\n    fclose(writer->file);\n}\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)\n{\n    int new_capacity = sb->capacity == 0 ? 128 : sb->capacity;\n    while(new_capacity < needed)\n    {\n        new_capacity *= 2;\n    }\n\n    if(new_capacity > sb->capacity)\n    {\n        uint8_t* new_buffer =  allocate(new_capacity);\n        if(sb->byte_length__.value > 0)\n            memcpy(new_buffer, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));\n\n        if(sb->capacity > 0)\n            free__1(sb->bytes);\n\n        sb->bytes = new_buffer;\n        sb->capacity = new_capacity;\n    }\n}\n\nextern inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self);\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, value.byte_length.value);\n    memcpy(self->bytes, value.bytes, value.byte_length.value);\n    self->byte_length__.value = value.byte_length.value;\n    return self;\n}\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, capacity.value);\n    return self;\n}\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value)\n{\n    int32_t new_length = sb->byte_length__.value + value->byte_length__.value;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    int32_t new_length = sb->byte_length__.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n\n    int32_t end = start.value + length.value;\n    lib_assert(end <= sb->byte_length__.value); // less than or equal because end is one past the end of the remove\n\n    memmove(sb->bytes+start.value, sb->bytes+end, sb->byte_length__.value-end);\n    sb->byte_length__.value -= length.value;\n}\n\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n    sb->byte_length__.value = start.value;\n}\n\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    string result = {int32_from(sb->byte_length__.value), sb->bytes};\n    // give up ownership of bytes\n    sb->bytes = 0;\n    sb->byte_length__.value = 0;\n    sb->capacity = 0;\n    return result;\n}\n"});
+	add_resource((string){{16},(uint8_t*)u8"RuntimeLibrary.h"}, (string){{17664},(uint8_t*)u8"// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n// Note that we can't switch to the \"secure\" functions because they don't\n// compile in linux on Travis CI\n#define _CRT_SECURE_NO_WARNINGS\n\n#include <stdlib.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <stdnoreturn.h>\n\n// -----------------------------------------------------------------------------\n// Emit Support\n// -----------------------------------------------------------------------------\n// These are things which make emitting easier or clearer\n\n#define ref *_Nonnull restrict\n#define opt_ref *_Nullable restrict\n#define ptr *_Nonnull\n#define opt_ptr *_Nullable\n#define mut\n\n#define NON_EXHAUSTIVE_MATCH(type_id) NON_EXHAUSTIVE_MATCH_IMPL(type_id, __func__, __FILE__, __LINE__);\nnoreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line);\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\ntypedef void*_Nullable void_ptr;\ntypedef void const*_Nullable const_void_ptr;\n\n#define lib_assert(condition) lib_assert1(condition, #condition)\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code);\n#define lib_assert_msg(condition, message) lib_assert2(condition, #condition, message)\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message);\n\ninline void_ptr allocate(size_t bytes)\n{\n    return malloc(bytes);\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\ntypedef struct never never;\ntypedef struct optional__never optional__never;\ntypedef struct BOOL BOOL;\ntypedef struct int32 int32;\ntypedef struct byte byte;\ntypedef struct code_point code_point;\ntypedef struct string string;\n\n// `never` type\nstruct never\n{\n};\n\n// `never?` type\nstruct optional__never\n{\n};\n\n// TODO this is a hack for now, the type of `none` should be `never?`\nstatic const void_ptr none = NULL;\n\n// For now, use `BOOL` as the emitted type\n// TODO C: switch `BOOL` to `bool`\n// TODO C: switch `TRUE` to `true`\n// TODO C: switch `FALSE` to `false`\n\n// `bool` type\nstruct BOOL\n{\n    _Bool value;\n};\n\nstatic const BOOL TRUE = { 1 };\nstatic const BOOL FALSE = { 0 };\n\n// Function used in conditions to make them take `bool`\ninline _Bool cond(BOOL cond) { return cond.value; }\n\n// Used by runtime for converting to bool\ninline BOOL bool_from(_Bool b) { return (BOOL){ b }; }\n\n// Wrap a bool operation that is bool based\ninline BOOL bool_op(_Bool b) { return (BOOL){ b }; }\n// Convert the arguments of a logical operation to bool\ninline _Bool bool_arg(BOOL b) { return b.value; }\n\ninline BOOL BOOL__0op__not(BOOL b) { return (BOOL){ !b.value }; }\n\nstring bool_to_string__1(BOOL b);\n\n// `int` type\nstruct int32\n{\n    int32_t value;\n};\n\ninline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }\ninline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }\ninline int32 int32__0op__neg(int32 v) { return (int32){-v.value}; }\ninline int32 int32__0op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }\ninline int32 int32__0op__sub(int32 lhs, int32 rhs) { return (int32){ lhs.value - rhs.value}; }\ninline int32 int32__0op__mul(int32 lhs, int32 rhs) { return (int32){ lhs.value * rhs.value}; }\ninline int32 int32__0op__div(int32 lhs, int32 rhs) { return (int32){ lhs.value / rhs.value}; }\ninline int32 int32__0op__remainder(int32 lhs, int32 rhs) { return (int32){ lhs.value % rhs.value}; }\ninline BOOL int32__0op__lt(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }\n\nstring int_to_string__1(int32 i);\nstring int_to_hex_string__1(int32 i);\nint32 hex_string_to_int__1(string s);\ncode_point int_to_code_point__1(int32 i);\n\nstruct byte\n{\n    uint8_t value;\n};\n\nstruct code_point\n{\n    // don't use something like char32_t because C's handling of chars sucks\n    uint32_t value;\n};\n\ninline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }\n\ninline int32 code_point_as_int__1(code_point c) { return (int32){(int32_t)c.value}; }\nstring code_point_to_string__1(code_point c);\n\nstruct string\n{\n    // Though there will be a byte_length property in the future,\n    // it doesn't make sense to directly expose it right now because this is\n    // not the correct implementation.\n    int32 byte_length;\n\n    // don't use chars because C's handling of chars sucks\n    uint8_t const *_Nonnull bytes;\n};\n\nstring string__0new__0();\nstring string__0new__1(string value);\nstring string__0new__2(code_point c, int32 repeat);\n\nstring string__0op__add(string lhs, string rhs);\nBOOL string__0op__lt(string lhs, string rhs);\nBOOL string__0op__lte(string lhs, string rhs);\nBOOL string__0op__gt(string lhs, string rhs);\nBOOL string__0op__gte(string lhs, string rhs);\ninline code_point string__0__0op__element(string value, int32 index)\n{\n    lib_assert(index.value >= 0 && index.value < value.byte_length.value);\n    return (code_point){value.bytes[index.value]};\n}\n\ninline int32 string_byte_length__1(string s) { return s.byte_length; }\nstring substring__3(string s, int32 start, int32 length);\ninline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length.value-start.value}); }\nstring string_replace__3(string s, string old_value, string new_value);\nint32 string_index_of__2(string s, code_point c);\nint32 string_last_index_of__2(string s, code_point c);\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL int32__0op__equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL code_point__0op__equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\nBOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\ninline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\n\ninline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL int32__0op__not_equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL string__0op__not_equal(string lhs, string rhs)\n{\n    return BOOL__0op__not(string__0op__equal(lhs, rhs));\n}\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\ninline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\ntypedef struct string__0iter string__0iter;\ntypedef struct Strings__0 Strings__0;\ntypedef struct int__0iter int__0iter;\ntypedef struct Ints__0 Ints__0;\ntypedef struct void_ptr__0iter void_ptr__0iter;\ntypedef struct system__collections__List__1 system__collections__List__1;\ntypedef struct system__console__Console__0 system__console__Console__0;\ntypedef struct system__console__Arguments__0 system__console__Arguments__0;\ntypedef struct system__io__File_Reader__0 system__io__File_Reader__0;\ntypedef struct system__io__File_Writer__0 system__io__File_Writer__0;\ntypedef struct system__text__String_Builder__0 system__text__String_Builder__0;\n\ninline void const ref as_any__1(void const ref const value)\n{\n    return value;\n}\n\ninline void mut ref as_any_mut__1(void mut ref const value)\n{\n    return value;\n}\n\ninline void_ptr allocate__1(int32 bytes)\n{\n    return malloc(bytes.value);\n}\n\n// TODO rename dellocate()\ninline void free__1(const_void_ptr object)\n{\n    // TODO hack cast away const\n    free((void*_Nonnull)object);\n}\n\n#define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)\n#define assert__2(condition, message) assert2(condition, #condition, message, __FILE__, __LINE__)\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line);\n\n#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED0(__func__, __FILE__, __LINE__)\n#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED1(message, __func__, __FILE__, __LINE__)\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\n#define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\nstring get_resource__1(string resource_name);\nvoid add_resource(string name, string value);\n\nvoid debug_write__1(string value);\nvoid debug_write_line__1(string value);\nvoid debug_write_line__0();\n\nstruct string__0iter\n{\n    string *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool string__0next(string__0iter*_Nonnull iter);\ninline string string__0current(string__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Strings__0\n{\n    string *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self);\ninline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < strings->count__.value);\n    return strings->values[index.value];\n}\ninline void clear_strings__1(Strings__0 *_Nonnull strings)\n{\n    strings->count__ = (int32){0};\n}\nvoid add_string__2(Strings__0 *_Nonnull strings, string value);\ninline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\ninline string__0iter string__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\n\nstruct int__0iter\n{\n    int32 *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool int__0next(int__0iter*_Nonnull iter);\ninline int32 int__0current(int__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Ints__0\n{\n    int32 *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self);\ninline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < ints->count__.value);\n    return ints->values[index.value];\n}\ninline void clear_ints__1(Ints__0 *_Nonnull ints)\n{\n    ints->count__ = (int32){0};\n}\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value);\ninline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\ninline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\n\nstruct void_ptr__0iter\n{\n    void_ptr *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);\ninline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct system__collections__List__1\n{\n    void_ptr *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\ninline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\n// TODO hack that we take const_void_ptr but then treat it as mutable\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value);\n\ninline void clear_list__1(system__collections__List__1 *_Nonnull list)\n{\n    list->count__ = (int32){0};\n}\n\ninline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < list->count__.value);\n    return list->values[index.value];\n}\n\ninline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\ninline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\nstruct system__console__Console__0\n{\n};\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console);\n\nstruct system__console__Arguments__0\n{\n    string *_Nonnull values;\n    int32 count__;\n};\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);\n\ninline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < arguments->count__.value);\n    return arguments->values[index.value];\n}\n\ninline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments)\n{\n    return (string__0iter)\n    {\n        .values = arguments->values,\n        .current = -1,\n        .count = arguments->count__.value\n    };\n}\n\nstruct system__io__File_Reader__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name);\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);\n\nstruct system__io__File_Writer__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name);\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);\n\nstruct system__text__String_Builder__0\n{\n    uint8_t *_Nullable bytes;\n    int capacity;\n    int32 byte_length__;\n};\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);\n\ninline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self)\n{\n    self->bytes = 0;\n    self->capacity = 0;\n    self->byte_length__ = (int32){0};\n    return self;\n}\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value);\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb);\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb);\n"});
 
 	return main__2(allocate(sizeof(system__console__Console__0)), convert_arguments(argc, argv)).value;
 }
