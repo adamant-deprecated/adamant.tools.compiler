@@ -2246,7 +2246,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IdentifierName__)))
 	{
-		Name_Subtable__0 const ref const name_scope__ = lookup__2(scope__, get_syntax_node_text__1(syntax__));
+		Name_Subtable__0 const opt_ref const name_scope__ = lookup__2(scope__, get_syntax_node_text__1(syntax__));
 		if (cond(void_ptr__0op__equal(name_scope__, none)))
 		{
 			if (cond(BOOL__0op__not(syntax__->is_missing__)))
@@ -2283,7 +2283,7 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		else
 		{
 			Name_Subtable__0 const ref const access_scope__ = get_name__2(name_table__, lhs__->of_type__->name__);
-			Name_Subtable__0 const ref const member_scope__ = find__2(access_scope__, get_syntax_node_text__1(member_name__));
+			Name_Subtable__0 const opt_ref const member_scope__ = find__2(access_scope__, get_syntax_node_text__1(member_name__));
 			if (cond(void_ptr__0op__equal(member_scope__, none)))
 			{
 				rhs__ = Semantic_Node__0__0new__concrete__1(allocate(sizeof(Semantic_Node__0)), member_name__);
@@ -2396,18 +2396,18 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		Semantic_Node__0 const ref const rhs__ = build_semantic_node__4(builder__, system__collections__List__1__0op__element(syntax__->children__, ((int32){2})), name_table__, scope__);
 		add_item__2(children__, lhs__);
 		add_item__2(children__, rhs__);
-		Type__0 const ref mut type__ = lhs__->of_type__;
-		if (cond(void_ptr__0op__equal(type__, none)))
+		Type__0 const opt_ref mut optional_type__ = lhs__->of_type__;
+		if (cond(void_ptr__0op__equal(optional_type__, none)))
 		{
-			type__ = rhs__->of_type__;
+			optional_type__ = rhs__->of_type__;
 		}
 
-		if (cond(void_ptr__0op__equal(type__, none)))
+		if (cond(void_ptr__0op__equal(optional_type__, none)))
 		{
-			type__ = lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__;
+			optional_type__ = lookup_special__2(scope__, ((string){{3},(uint8_t*)u8"int"}))->type__;
 		}
 
-		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), type__, syntax__, children__);
+		return Semantic_Node__0__0new__of_type__3(allocate(sizeof(Semantic_Node__0)), optional_type__, syntax__, children__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, SubtractExpression__)))
 	{
@@ -4795,7 +4795,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 			}
 		}
 
-		Type__0 const ref const type__ = type_node__->referenced_type__;
+		Type__0 const opt_ref const type__ = type_node__->referenced_type__;
 		assert__2(void_ptr__0op__not_equal(type__, none), get_semantic_node_text__1(type_node__));
 		write__2(builder__, sb_to_string__1(convert_type_name__2(type__, FALSE)));
 		write__2(builder__, ((string){{6},(uint8_t*)u8"__0new"}));
@@ -4926,7 +4926,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	{
 		Semantic_Node__0 const ref const lhs_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		Semantic_Node__0 const ref const rhs_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
-		Type__0 const ref mut type__ = lhs_node__->of_type__;
+		Type__0 const opt_ref mut type__ = lhs_node__->of_type__;
 		if (cond(void_ptr__0op__equal(type__, none)))
 		{
 			type__ = rhs_node__->of_type__;
@@ -4964,7 +4964,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	{
 		Semantic_Node__0 const ref const lhs_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		Semantic_Node__0 const ref const rhs_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
-		Type__0 const ref mut type__ = lhs_node__->of_type__;
+		Type__0 const opt_ref mut type__ = lhs_node__->of_type__;
 		if (cond(void_ptr__0op__equal(type__, none)))
 		{
 			type__ = rhs_node__->of_type__;
@@ -5003,7 +5003,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 		Semantic_Node__0 const ref mut child__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
 		int32 const operator__ = child__->kind__;
 		child__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
-		Type__0 const ref const type__ = child__->of_type__;
+		Type__0 const opt_ref const type__ = child__->of_type__;
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
 			write__2(builder__, convert_primitive_type_name__1(type__));
@@ -5044,7 +5044,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	{
 		Semantic_Node__0 const ref const lhs_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		Semantic_Node__0 const ref const rhs_node__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
-		Type__0 const ref mut type__ = lhs_node__->of_type__;
+		Type__0 const opt_ref mut type__ = lhs_node__->of_type__;
 		if (cond(void_ptr__0op__equal(type__, none)))
 		{
 			void_ptr__0op__equal(type__, rhs_node__->of_type__);
@@ -5131,7 +5131,7 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 	else if (cond(int32__0op__equal(syntax__->kind__, ElementAccessExpression__)))
 	{
 		Semantic_Node__0 const ref const child__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
-		Type__0 const ref mut type__ = child__->of_type__;
+		Type__0 const opt_ref mut type__ = child__->of_type__;
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
 			write__2(builder__, mangle_name__1(type__));
@@ -5345,7 +5345,7 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 			iterator_type__ = ((string){{8},(uint8_t*)u8"void_ptr"});
 		}
 
-		Type__0 const ref const collection_type__ = iterator_expression__->of_type__;
+		Type__0 const opt_ref const collection_type__ = iterator_expression__->of_type__;
 		string mut iteratable_type__;
 		if (cond(void_ptr__0op__not_equal(collection_type__, none)))
 		{

@@ -145,7 +145,7 @@ struct string
     int32 byte_length;
 
     // don't use chars because C's handling of chars sucks
-    uint8_t const *_Nonnull bytes;
+    uint8_t const *_Nullable bytes;
 };
 
 string string__0new__0();
