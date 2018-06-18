@@ -1,0 +1,20 @@
+
+
+
+public main(console: mut system.console.Console) -> void
+{
+    let t: Test = new Test(false);
+    if not t.value
+    {
+        console_write_line(console, "Hey!");
+    }
+}
+
+public class Test
+{
+    public let value: bool;
+    public new(value: bool)
+    {
+        self.value = value;
+    }
+}

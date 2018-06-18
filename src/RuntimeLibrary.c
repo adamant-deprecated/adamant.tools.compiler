@@ -17,7 +17,20 @@ static inline void static_checks()
     // Because we assume we can cast from uint8_t* to byte* they need to be the same size
     _Static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
 
+    // Bool sizing assertions.
     _Static_assert(sizeof(_Bool) == sizeof(BOOL), "BOOL size");
+    struct { _Bool a; _Bool b; } raw;
+    struct { BOOL a; BOOL b; } wrapped;
+    _Static_assert(sizeof(raw) == sizeof(wrapped), "Wrapping doesn't change size");
+
+    _Static_assert(sizeof(_Bool) != sizeof(raw), "_Bools don't pack");
+    _Static_assert(sizeof(_Bool) != sizeof(wrapped), "Wrapped _bools don't pack");
+
+    struct { _Bool a:1; _Bool b:1; } field;
+    _Static_assert(sizeof(_Bool) == sizeof(field), "Bit fields pack");
+
+    struct { _Bool a:1; uint8_t x; _Bool b:1; } split_field;
+    _Static_assert(sizeof(split_field) == 3, "Split bit fields don't pack");
 
     // Testing that the style we use for literals can be used as a const
     const code_point test_code_point = ((code_point){0xFF});
