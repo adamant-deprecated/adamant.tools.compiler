@@ -1,4 +1,5 @@
-public main() -> void
+public main(console: mut system.console.Console) -> void
 {
     var x: string = "Hello " + "World! " + int_to_string(4) + code_point_to_string('c');
+    console_write_line(console, x);
 }
