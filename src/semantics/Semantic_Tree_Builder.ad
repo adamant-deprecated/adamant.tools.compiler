@@ -258,7 +258,7 @@ public build_semantic_node(
     else if syntax.kind == TrueLiteralExpression
         or syntax.kind == FalseLiteralExpression
     {
-        // TODO rather than looking up the time, directly use the one in the package
+        // TODO rather than looking up the type, directly use the one in the package
         return new Semantic_Node.of_type(lookup_special(scope, "bool").type, syntax, children);
     }
     else if syntax.kind == StringLiteralExpression

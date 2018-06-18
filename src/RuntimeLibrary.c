@@ -17,6 +17,8 @@ static inline void static_checks()
     // Because we assume we can cast from uint8_t* to byte* they need to be the same size
     _Static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
 
+    _Static_assert(sizeof(_Bool) == sizeof(BOOL), "BOOL size");
+
     // Testing that the style we use for literals can be used as a const
     const code_point test_code_point = ((code_point){0xFF});
     // TODO: C allows string literals that are one byte shorter than the array so no null terminator
