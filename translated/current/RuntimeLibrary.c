@@ -35,12 +35,10 @@ static_assert(sizeof(split_field) == 3, "Split bit fields don't pack");
 
 // Testing that the style we use for literals can be used as a const
 const code_point test_code_point = ((code_point){0xFF});
-static_assert(sizeof(test_code_point) == 4, "test code point size");
 
-// Note: C allows character array literals one byte shorter than the string
-// TODO change the emitted literals
-const string test_string = ((string){{5},(uint8_t[5]){u8"hello"}});
-static_assert(sizeof((uint8_t[5]){u8"hello"}) == 5, "string literals test");
+// Note: there is no such thing as a constant array initializer in C. We have to
+// take the pointer to the string literal.
+const string test_string = ((string){{5},(uint8_t*)u8"hello"});
 
 // -----------------------------------------------------------------------------
 // Emit Support

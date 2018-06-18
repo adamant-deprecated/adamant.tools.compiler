@@ -284,7 +284,7 @@ void debug_write_line__0();
 
 struct string__0iter
 {
-    string *_Nonnull values;
+    string *_Nullable values;
     int32_t current;
     int32_t count;
 };
@@ -298,7 +298,7 @@ inline string string__0current(string__0iter const*_Nonnull iter)
 
 struct Strings__0
 {
-    string *_Nonnull values;
+    string *_Nullable values;
     int32 count__;
     int32 capacity__;
 };
@@ -335,7 +335,7 @@ inline string__0iter string__0iterate(Strings__0 const *_Nonnull strings)
 
 struct int__0iter
 {
-    int32 *_Nonnull values;
+    int32 *_Nullable values;
     int32_t current;
     int32_t count;
 };
@@ -349,7 +349,7 @@ inline int32 int__0current(int__0iter const*_Nonnull iter)
 
 struct Ints__0
 {
-    int32 *_Nonnull values;
+    int32 *_Nullable values;
     int32 count__;
     int32 capacity__;
 };
@@ -386,7 +386,7 @@ inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)
 
 struct void_ptr__0iter
 {
-    void_ptr *_Nonnull values;
+    void_ptr *_Nullable values;
     int32_t current;
     int32_t count;
 };
@@ -400,7 +400,7 @@ inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)
 
 struct system__collections__List__1
 {
-    void_ptr *_Nonnull values;
+    void_ptr *_Nullable values;
     int32 count__;
     int32 capacity__;
 };
