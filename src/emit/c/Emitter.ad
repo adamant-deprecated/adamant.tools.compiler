@@ -385,7 +385,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
             }
         }
 
-        let type: Type = type_node.referenced_type;
+        let type: Type? = type_node.referenced_type;
         assert(type =/= none, get_semantic_node_text(type_node));
         write(builder, sb_to_string(convert_type_name(type, false)));
         write(builder, "__0new");
@@ -519,7 +519,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         let lhs_node: Semantic_Node = syntax.children[0];
         let rhs_node: Semantic_Node = syntax.children[1];
-        var type: Type = lhs_node.of_type;
+        var type: Type? = lhs_node.of_type;
         if type == none { type = rhs_node.of_type; }
         if type =/= none
         {
@@ -546,7 +546,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         let lhs_node: Semantic_Node = syntax.children[0];
         let rhs_node: Semantic_Node = syntax.children[1];
-        var type: Type = lhs_node.of_type;
+        var type: Type? = lhs_node.of_type;
         if type == none { type = rhs_node.of_type; }
         if type =/= none
         {
@@ -575,7 +575,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         var child: Semantic_Node = syntax.children[1];
         let operator: int = child.kind;
         child = syntax.children[0];
-        let type: Type = child.of_type;
+        let type: Type? = child.of_type;
         if type =/= none
         {
             write(builder, convert_primitive_type_name(type));
@@ -616,7 +616,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     {
         let lhs_node: Semantic_Node = syntax.children[0];
         let rhs_node: Semantic_Node = syntax.children[1];
-        var type: Type = lhs_node.of_type;
+        var type: Type? = lhs_node.of_type;
         if type == none { type == rhs_node.of_type; }
         if type =/= none
         {
@@ -710,7 +710,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == ElementAccessExpression
     {
         let child: Semantic_Node = syntax.children[0];
-        var type: Type = child.of_type;
+        var type: Type? = child.of_type;
         if type =/= none
         {
             write(builder, mangle_name(type));
@@ -919,7 +919,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
             { iterator_type = convert_primitive_type_name(iterator_over_type); }
         else
             { iterator_type = "void_ptr"; }
-        let collection_type: Type = iterator_expression.of_type;
+        let collection_type: Type? = iterator_expression.of_type;
         var iteratable_type: string;
         if collection_type =/= none
             { iteratable_type = mangle_name(collection_type); }

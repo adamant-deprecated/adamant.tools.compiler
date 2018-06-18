@@ -133,7 +133,7 @@ public build_semantic_node(
     }
     else if syntax.kind == IdentifierName
     {
-        let name_scope: Name_Subtable = lookup(scope, get_syntax_node_text(syntax));
+        let name_scope: Name_Subtable? = lookup(scope, get_syntax_node_text(syntax));
         if name_scope == none
         {
             if not syntax.is_missing
@@ -174,7 +174,7 @@ public build_semantic_node(
         {
             // debug_write_line("Getting scope for type name `"+full_name(lhs.of_type.name)+"`");
             let access_scope: Name_Subtable = get_name(name_table, lhs.of_type.name);
-            let member_scope: Name_Subtable = find(access_scope, get_syntax_node_text(member_name));
+            let member_scope: Name_Subtable? = find(access_scope, get_syntax_node_text(member_name));
 
             if member_scope == none
             {
@@ -302,10 +302,10 @@ public build_semantic_node(
         add_item(children, rhs);
         // assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
         // assert(rhs.of_type =/= none, get_syntax_node_text(syntax));
-        var type: Type = lhs.of_type;
-        if type == none { type = rhs.of_type; }
-        if type == none { type = lookup_special(scope, "int").type; }
-        return new Semantic_Node.of_type(type, syntax, children);
+        var optional_type: Type? = lhs.of_type;
+        if optional_type == none { optional_type = rhs.of_type; }
+        if optional_type == none { optional_type = lookup_special(scope, "int").type; }
+        return new Semantic_Node.of_type(optional_type, syntax, children);
     }
     else if syntax.kind == SubtractExpression
     {
