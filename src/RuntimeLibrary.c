@@ -1,44 +1,46 @@
 #include "RuntimeLibrary.h"
 
 #include <string.h>
+#include <assert.h>
 
 // -----------------------------------------------------------------------------
 // Static Checks
 // -----------------------------------------------------------------------------
 
-static inline void static_checks()
-{
-    // Note: for some reason I haven't been able to get static_assert()
-    // using assert.h to work without giving a warning.
+// At least on windows, this macro seems to be missing
+#ifndef static_assert
+#define static_assert _Static_assert
+#endif
 
-    // Because we assume we can cast from char* to uint8_t* they need to be the same size
-    _Static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
+// Because we assume we can cast from char* to uint8_t* they need to be the same size
+static_assert(sizeof(char) == sizeof(uint8_t), "chars must be 8 bits");
 
-    // Because we assume we can cast from uint8_t* to byte* they need to be the same size
-    _Static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
+// Because we assume we can cast from uint8_t* to byte* they need to be the same size
+static_assert(sizeof(uint8_t) == sizeof(byte), "bytes must be 8 bits");
 
-    // Bool sizing assertions.
-    _Static_assert(sizeof(_Bool) == sizeof(BOOL), "BOOL size");
-    struct { _Bool a; _Bool b; } raw;
-    struct { BOOL a; BOOL b; } wrapped;
-    _Static_assert(sizeof(raw) == sizeof(wrapped), "Wrapping doesn't change size");
+// Bool sizing assertions.
+static_assert(sizeof(_Bool) == sizeof(BOOL), "BOOL size");
+typedef struct { _Bool a; _Bool b; } raw;
+typedef struct { BOOL a; BOOL b; } wrapped;
+static_assert(sizeof(raw) == sizeof(wrapped), "Wrapping doesn't change size");
 
-    _Static_assert(sizeof(_Bool) != sizeof(raw), "_Bools don't pack");
-    _Static_assert(sizeof(_Bool) != sizeof(wrapped), "Wrapped _bools don't pack");
+static_assert(sizeof(_Bool) != sizeof(raw), "_Bools don't pack");
+static_assert(sizeof(_Bool) != sizeof(wrapped), "Wrapped _bools don't pack");
 
-    struct { _Bool a:1; _Bool b:1; } field;
-    _Static_assert(sizeof(_Bool) == sizeof(field), "Bit fields pack");
+typedef struct { _Bool a:1; _Bool b:1; } field;
+static_assert(sizeof(_Bool) == sizeof(field), "Bit fields pack");
 
-    struct { _Bool a:1; uint8_t x; _Bool b:1; } split_field;
-    _Static_assert(sizeof(split_field) == 3, "Split bit fields don't pack");
+typedef struct { _Bool a:1; uint8_t x; _Bool b:1; } split_field;
+static_assert(sizeof(split_field) == 3, "Split bit fields don't pack");
 
-    // Testing that the style we use for literals can be used as a const
-    const code_point test_code_point = ((code_point){0xFF});
-    // TODO: C allows string literals that are one byte shorter than the array so no null terminator
-    // TODO: C also has UTF-8 literals u8"hello"
-    // TODO change the emitted literals?
-    const string test_string = ((string){5,(uint8_t const[]){u8"hello"}});
-}
+// Testing that the style we use for literals can be used as a const
+const code_point test_code_point = ((code_point){0xFF});
+static_assert(sizeof(test_code_point) == 4, "test code point size");
+
+// Note: C allows character array literals one byte shorter than the string
+// TODO change the emitted literals
+const string test_string = ((string){{5},(uint8_t[5]){u8"hello"}});
+static_assert(sizeof((uint8_t[5]){u8"hello"}) == 5, "string literals test");
 
 // -----------------------------------------------------------------------------
 // Emit Support

@@ -121,7 +121,7 @@ public first_child_token(syntax: Syntax_Node, kind: int) -> Token?
         match child
         {
             token: Token => { if token.kind == kind { return token; } },
-            node: Syntax_Node => { }
+            _: Syntax_Node => { }
         }
     }
     return none;
@@ -134,7 +134,7 @@ public first_child_syntax_node(syntax: Syntax_Node, kind: int) -> Syntax_Node?
         match child
         {
             node: Syntax_Node => { if node.kind == kind { return node; } },
-            token: Token => { }
+            _: Token => { }
         }
     }
     return none;

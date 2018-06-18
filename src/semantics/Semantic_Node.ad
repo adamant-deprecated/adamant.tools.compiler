@@ -164,7 +164,7 @@ public first_child(node: Semantic_Node, kind: int) -> Semantic_Node?
         match child
         {
             node: Semantic_Node => { if node.kind == kind { return node; } },
-            e: Expression => {}
+            _: Expression => {}
         }
     }
     return none;
@@ -178,7 +178,7 @@ public children_of_kind(node: Semantic_Node, kind: int) -> system.collections.Li
         match child
         {
             node: Semantic_Node => { if node.kind == kind { add_item(children, node); } },
-            e: Expression => {}
+            _: Expression => {}
         }
     }
     return children;
@@ -202,7 +202,7 @@ public node_members(node: Semantic_Node) -> system.collections.List<Semantic_Nod
                     add_item(members, node);
                 }
             },
-            e: Expression => {}
+            _: Expression => {}
         }
     }
     return members;
@@ -225,7 +225,7 @@ public node_statements(node: Semantic_Node) -> system.collections.List<Semantic_
                     add_item(statements, node);
                 }
             },
-            e: Expression => {}
+            _: Expression => {}
         }
     }
     return statements;
@@ -248,7 +248,7 @@ public node_parameters(node: Semantic_Node) -> system.collections.List<Semantic_
                     add_item(parameters, node);
                 }
             },
-            e: Expression => {}
+            _: Expression => {}
         }
     }
     return parameters;
@@ -273,7 +273,7 @@ public node_argument_count(node: Semantic_Node) -> int
                 }
                 count += 1;
             },
-            e: Expression => {}
+            _: Expression => {}
         }
     }
     return count;
@@ -297,7 +297,7 @@ public node_access_modifier(node: Semantic_Node) -> Semantic_Node?
                     return node;
                 }
             },
-            e: Expression => {}
+            _: Expression => {}
         }
     }
 
@@ -315,7 +315,7 @@ public node_has_child(node: Semantic_Node, kind: int) -> bool
                 if node.kind == kind
                     { return true; }
             },
-            e: Expression => {}
+            _: Expression => {}
         }
     }
     return false;
