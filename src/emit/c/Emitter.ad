@@ -219,15 +219,26 @@ public convert_type_name(type: Type, include_type_parameters: bool) -> mut syste
 
 public convert_type_name_parameters(builder: mut system.text.String_Builder, type: Type) -> void
 {
-    sb_append(builder, "<");
-    var first: bool = true;
-    for let type_parameter: Type in type.type_parameters
+    for var type_parameter: Type in type.type_parameters
     {
-        if first { first = false; }
-        else { sb_append(builder, ", "); }
-        sb_append(builder, convert_type(true, type_parameter, false));
+        sb_append(builder, "__");
+        if type_parameter.is_primitive and unqualified_name(type_parameter.name) == "optional"
+            { type_parameter = type_parameter.type_parameters[0]; }
+
+        if type_parameter.is_primitive
+            { sb_append(builder, convert_primitive_type_name(type_parameter)); }
+        else
+            { sb_append(builder, "void_ptr"); }
     }
-    sb_append(builder, ">");
+    // sb_append(builder, "<");
+    // var first: bool = true;
+    // for let type_parameter: Type in type.type_parameters
+    // {
+    //     if first { first = false; }
+    //     else { sb_append(builder, ", "); }
+    //     sb_append(builder, convert_type(true, type_parameter, false));
+    // }
+    // sb_append(builder, ">");
 }
 
 public convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
