@@ -94,7 +94,8 @@ char const * cstr_from(string value)
 {
     int32_t length = value.byte_length.value;
     char* bytes = allocate(length + 1);
-    memcpy(bytes, value.bytes, length);
+    if(length > 0)
+        memcpy(bytes, value.bytes, length);
     bytes[length] = 0;
     return bytes;
 }
@@ -203,8 +204,10 @@ string string__0op__add(string lhs, string rhs)
     int new_length = lhs.byte_length.value + rhs.byte_length.value;
     uint8_t* chars = allocate(new_length);
     size_t offset = sizeof(uint8_t) * lhs.byte_length.value;
-    memcpy(chars, lhs.bytes, offset);
-    memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);
+    if(lhs.byte_length.value > 0)
+        memcpy(chars, lhs.bytes, offset);
+    if(rhs.byte_length.value > 0)
+        memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);
     return (string){int32_from(new_length), chars};
 }
 
@@ -444,7 +447,8 @@ void add_string__2(Strings__0 *_Nonnull strings, string value)
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         string* new_values = allocate(new_capacity * sizeof(string));
-        memcpy(new_values, strings->values, strings->count__.value * sizeof(string));
+        if(strings->count__.value > 0)
+            memcpy(new_values, strings->values, strings->count__.value * sizeof(string));
         if(strings->capacity__.value != 0)
             free__1(strings->values); // delete the old array
         strings->values = new_values;
@@ -489,7 +493,8 @@ void add_int__2(Ints__0 *_Nonnull ints, int32 value)
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         // Needed if T is a value type to avoid needing a default constructor
         int32* new_values = allocate(new_capacity * sizeof(int32));
-        memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));
+        if(ints->count__.value > 0)
+            memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));
         if(ints->capacity__.value != 0)
             free__1(ints->values); // delete the old array
         ints->values = new_values;
@@ -524,7 +529,8 @@ void add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr val
         int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;
         // Allocate uninitalized bytes (note `sizeof(char) == 1` always)
         void_ptr* new_values = allocate(new_capacity * sizeof(void_ptr));
-        memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));
+        if(list->count__.value > 0)
+            memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));
         if(list->capacity__.value != 0)
             free__1(list->values); // delete the old array
         list->values = new_values;
@@ -632,7 +638,8 @@ system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new_
 {
     system__text__String_Builder__0__0new__0(self);
     ensure_sb_capacity(self, value.byte_length.value);
-    memcpy(self->bytes, value.bytes, value.byte_length.value);
+    if(value.byte_length.value > 0)
+        memcpy(self->bytes, value.bytes, value.byte_length.value);
     self->byte_length__.value = value.byte_length.value;
     return self;
 }
@@ -648,7 +655,8 @@ void sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)
 {
     int32_t new_length = sb->byte_length__.value + value.byte_length.value;
     ensure_sb_capacity(sb, new_length);
-    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);
+    if(value.byte_length.value > 0)
+        memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);
     sb->byte_length__.value = new_length;
 }
 
@@ -656,7 +664,8 @@ void sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text_
 {
     int32_t new_length = sb->byte_length__.value + value->byte_length__.value;
     ensure_sb_capacity(sb, new_length);
-    memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);
+    if(value->byte_length__.value > 0)
+        memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);
     sb->byte_length__.value = new_length;
 }
 
@@ -664,7 +673,8 @@ void sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string valu
 {
     int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;
     ensure_sb_capacity(sb, new_length);
-    memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);
+    if(value.byte_length.value > 0)
+        memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);
     sb->bytes[new_length-1] = '\n';
     sb->byte_length__.value = new_length;
 }
