@@ -545,6 +545,7 @@ ConsoleCommand CompileC(string[] sourceGlobs, FilePath output, FilePath includeD
     var options = " -std=c11 -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -Wall -Werror";
 
     // Additional options that can be useful:
+    // --analyze --analyzer-outputhtml run static analysis, may require hacking command line to remove -o option
     // -fsanitize=address perform runtime address safety checks
     // -fno-ms-extensions disable Microsoft extensions
     //  Note: With this, headers don't compile on windows, but it catches some errors that the standard

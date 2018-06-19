@@ -33,6 +33,7 @@ public emit(emitter: mut Emitter) -> string
     emitter.class_declarations = new Source_File_Builder();
     emitter.global_definitions = new Source_File_Builder();
     emitter.definitions = new Source_File_Builder();
+    emitter.main_function_name = "";
     emitter.main_function_return_type = "";
     emitter.main_function_accepts_console = false;
     emitter.main_function_accepts_args = false;
@@ -1107,13 +1108,11 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
     if member.kind == ConstructorDeclaration
     {
         let parameters_node: Semantic_Node = first_child(member, ParameterList);
-        var new_function_name: string = "new_" + class_name;
         var constructor_full_name: string = class_name + "__0new__";
         let constructor_name_node: Semantic_Node? = first_child(member, Identifier);
         if constructor_name_node =/= none
         {
             let constructor_name: string = get_semantic_node_text(constructor_name_node);
-            new_function_name = new_function_name + "__" + constructor_name;
             constructor_full_name = constructor_full_name + constructor_name + "__";
         }
         constructor_full_name = constructor_full_name + int_to_string(parameters_node.children.count);
