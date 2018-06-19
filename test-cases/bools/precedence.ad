@@ -1,7 +1,7 @@
 public main() -> void
 {
-	var x: bool;
-	x = not true and false; // should be `(not true) and false`
-	x = not true or false; // should be `(not true) or false`
-	x = false or true and true; // should be `false or (true and true)`
+    var x: bool;
+    x = not true and false; // should be `(not true) and false`
+    x = not true or false; // should be `(not true) or false`
+    x = false or true and true; // should be `false or (true and true)`
 }

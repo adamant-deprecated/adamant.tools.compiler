@@ -1,13 +1,13 @@
 public True() -> bool
 {
-	return true;
+    return true;
 }
 
 public main() -> void
 {
-	var x: bool;
-	x = true == false;
-	x = true =/= false;
-	//TODO add back next line when typing is fixed
-	// x = True() == True(); // had weird problem parsing expressions
+    var x: bool;
+    x = true == false;
+    x = true =/= false;
+    //TODO add back next line when typing is fixed
+    // x = True() == True(); // had weird problem parsing expressions
 }
