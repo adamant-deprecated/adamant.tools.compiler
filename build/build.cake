@@ -493,7 +493,7 @@ bool TestResult(FilePath testCase, CommandResult expected, CommandResult actual)
     if(expected.ErrorOutput.Count != actual.ErrorOutput.Count)
     {
         Information("    {0} error lines output did not match the {1} expected", actual.ErrorOutput.Count, expected.ErrorOutput.Count);
-        Verbose("    Actual errors output:");
+        Verbose("    Actual error output:");
         for(var i=0; i< actual.ErrorOutput.Count; i++)
             Verbose("    "+actual.ErrorOutput[i]);
     }
