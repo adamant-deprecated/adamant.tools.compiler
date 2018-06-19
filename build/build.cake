@@ -476,7 +476,12 @@ bool TestResult(FilePath testCase, CommandResult expected, CommandResult actual)
         Information("    Exit code of {0} did not match expected value {1}", actual.ExitCode, expected.ExitCode);
 
     if(expected.Output.Count != actual.Output.Count)
+    {
         Information("    {0} lines output did not match the {1} expected", actual.Output.Count, expected.Output.Count);
+        Verbose("    Actual output:");
+        for(var i=0; i < actual.Output.Count; i++)
+            Verbose("    "+actual.Output[i]);
+    }
     else
         for(var i = 0; i < actual.Output.Count; i++)
             if(expected.Output[i] != actual.Output[i])
@@ -486,7 +491,12 @@ bool TestResult(FilePath testCase, CommandResult expected, CommandResult actual)
                 Information("    Actual:   {0}", actual.Output[i]);
             }
     if(expected.ErrorOutput.Count != actual.ErrorOutput.Count)
+    {
         Information("    {0} error lines output did not match the {1} expected", actual.ErrorOutput.Count, expected.ErrorOutput.Count);
+        Verbose("    Actual errors output:");
+        for(var i=0; i< actual.ErrorOutput.Count; i++)
+            Verbose("    "+actual.ErrorOutput[i]);
+    }
     else
         for(var i = 0; i < actual.ErrorOutput.Count; i++)
             if(expected.ErrorOutput[i] != actual.ErrorOutput[i])
@@ -736,41 +746,41 @@ CommandResult DefaultResult()
 // Can't be a static method because we need access to `Context`
 CommandResult ReadResultFile(FilePath file)
 {
-    Verbose("Reading result file");
+    Verbose("  Reading result file");
     var lines = FileReadLines(file);
     if(lines.Length < 2)
     {
         Error("{0} file should have at least 2 lines, has {1}", file, lines.Length);
         throw new Exception();
     }
-    Verbose("  Reading exitCode");
+    Verbose("    Reading exitCode");
     int exitCode = -1;
     if(!int.TryParse(lines[0], out exitCode))
     {
         Error("First line of {0} file '{1}' should be expected exit code", file, lines[0]);
         throw new Exception();
     }
-    Verbose("  Reading outputLines");
+    Verbose("    Reading outputLines");
     int outputLines = -1;
     if(!int.TryParse(lines[1], out outputLines))
     {
         Error("Second line of {0} file '{1}' should be number of output lines", file, lines[1]);
         throw new Exception();
     }
-    Verbose("  Reading errorLines");
+    Verbose("    Reading errorLines");
     var errorCountLine = 2+outputLines;
     int errorLines = 0;
     if(lines.Length > errorCountLine)
     {
-        Verbose("  Has error lines");
-        Verbose("    errorCountLine={0}", errorCountLine);
-        Verbose("    lines.Length={0}", lines.Length);
+        Verbose("    Has error lines");
+        Verbose("      errorCountLine={0}", errorCountLine);
+        Verbose("      lines.Length={0}", lines.Length);
         if(!int.TryParse(lines[errorCountLine], out errorLines))
         {
             Error("Line {0} of {1} file '{2}' should be number of error lines", errorCountLine, file, lines[errorCountLine]);
             throw new Exception();
         }
     }
-    Verbose("  Returning Result");
+    Verbose("    Returning Result");
     return new CommandResult(Context, exitCode, lines.Skip(2).Take(outputLines), lines.Skip(errorCountLine+1).Take(errorLines));
 }
