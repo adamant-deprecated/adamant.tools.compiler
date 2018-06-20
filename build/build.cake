@@ -541,10 +541,10 @@ ConsoleCommand CompileC(string[] sourceGlobs, FilePath output, FilePath includeD
     // -std=c11 use the C 2011 standard (newest fully finalized)
     // -fsanitize=undefined -fsanitize=integer -fsanitize=nullability perform runtime checks for undefined and bad behavior
     // -Wall all warnings
-    // -Werror treat warnings as errors
-    var options = " -std=c11 -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -Wall -Werror";
+    var options = " -std=c11 -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -Wall";
 
     // Additional options that can be useful:
+    // -Werror treat warnings as errors
     // --analyze --analyzer-outputhtml run static analysis, may require hacking command line to remove -o option
     // -fsanitize=address perform runtime address safety checks
     // -fno-ms-extensions disable Microsoft extensions
