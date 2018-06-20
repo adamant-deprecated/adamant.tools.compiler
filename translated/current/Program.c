@@ -4416,6 +4416,7 @@ string mut emit__1(Emitter__0 mut ref const emitter__)
 	emitter__->class_declarations__ = Source_File_Builder__0__0new__0(allocate(sizeof(Source_File_Builder__0)));
 	emitter__->global_definitions__ = Source_File_Builder__0__0new__0(allocate(sizeof(Source_File_Builder__0)));
 	emitter__->definitions__ = Source_File_Builder__0__0new__0(allocate(sizeof(Source_File_Builder__0)));
+	emitter__->main_function_name__ = ((string){{0},(uint8_t*)u8""});
 	emitter__->main_function_return_type__ = ((string){{0},(uint8_t*)u8""});
 	emitter__->main_function_accepts_console__ = FALSE;
 	emitter__->main_function_accepts_args__ = FALSE;
@@ -5544,13 +5545,11 @@ void mut emit_member_declaration__4(Emitter__0 mut ref const emitter__, Semantic
 	if (cond(int32__0op__equal(member__->kind__, ConstructorDeclaration__)))
 	{
 		Semantic_Node__0 const ref const parameters_node__ = first_child__2(member__, ParameterList__);
-		string mut new_function_name__ = string__0op__add(((string){{4},(uint8_t*)u8"new_"}), class_name__);
 		string mut constructor_full_name__ = string__0op__add(class_name__, ((string){{8},(uint8_t*)u8"__0new__"}));
 		Semantic_Node__0 const opt_ref const constructor_name_node__ = first_child__2(member__, Identifier__);
 		if (cond(void_ptr__0op__not_equal(constructor_name_node__, none)))
 		{
 			string const constructor_name__ = get_semantic_node_text__1(constructor_name_node__);
-			new_function_name__ = string__0op__add(string__0op__add(new_function_name__, ((string){{2},(uint8_t*)u8"__"})), constructor_name__);
 			constructor_full_name__ = string__0op__add(string__0op__add(constructor_full_name__, constructor_name__), ((string){{2},(uint8_t*)u8"__"}));
 		}
 
