@@ -427,9 +427,11 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == NotExpression
     {
+        let operand: Semantic_Node = syntax.children[0];
+        // assert(operand.of_type =/= none, get_semantic_node_text(operand));
         // TODO change to other functions based on argument type
         write(builder, "BOOL__0op__not(");
-        convert_expression(syntax.children[0], builder);
+        convert_expression(operand, builder);
         write(builder, ")");
     }
     else if syntax.kind == ParenthesizedExpression
@@ -521,6 +523,8 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         let lhs_node: Semantic_Node = syntax.children[0];
         let rhs_node: Semantic_Node = syntax.children[1];
         var type: Type? = lhs_node.of_type;
+        // assert(lhs_node.of_type =/= none, get_semantic_node_text(lhs_node));
+        // assert(rhs_node.of_type =/= none, get_semantic_node_text(rhs_node));
         if type == none { type = rhs_node.of_type; }
         if type =/= none
         {
@@ -572,11 +576,14 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     }
     else if syntax.kind == ComparisonExpression
     {
+        let lhs_node: Semantic_Node = syntax.children[0];
+        let rhs_node: Semantic_Node = syntax.children[2];
         // TODO assert the left and right types match
-        var child: Semantic_Node = syntax.children[1];
-        let operator: int = child.kind;
-        child = syntax.children[0];
-        let type: Type? = child.of_type;
+        // assert(lhs_node.of_type =/= none, get_semantic_node_text(lhs_node));
+        // assert(rhs_node.of_type =/= none, get_semantic_node_text(rhs_node));
+        let operator_syntax: Semantic_Node = syntax.children[1]; // TODO extra variable needed to work around bugs with type handling
+        let operator: int = operator_syntax.kind;
+        let type: Type? = lhs_node.of_type;
         if type =/= none
         {
             write(builder, convert_primitive_type_name(type));
@@ -608,9 +615,9 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
             error(builder, "Unsupported comparison operator " + int_to_string(operator));
         }
         write(builder, "(");
-        convert_expression(syntax.children[0], builder);
+        convert_expression(lhs_node, builder);
         write(builder, ", ");
-        convert_expression(syntax.children[2], builder);
+        convert_expression(rhs_node, builder);
         write(builder, ")");
     }
     else if syntax.kind == AddExpression

@@ -1,6 +1,3 @@
-
-
-
 public main(console: mut system.console.Console) -> void
 {
     let t: Test = new Test(false);
