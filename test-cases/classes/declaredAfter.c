@@ -12,8 +12,8 @@ typedef enum Type_ID Type_ID;
 typedef struct Test__0 Test__0;
 
 // Function Declarations
-Test__0 mut ref mut Test__0__0new__1(Test__0 mut ref const self, BOOL const value__);
 void mut main__1(system__console__Console__0 mut ref const console__);
+Test__0 mut ref mut Test__0__0new__1(Test__0 mut ref const self, BOOL const value__);
 
 // Class Declarations
 
@@ -27,20 +27,20 @@ struct Test__0
 
 // Definitions
 
-Test__0 mut ref mut Test__0__0new__1(Test__0 mut ref const self, BOOL const value__)
-{
-	self->type_id = Test__0__0Type_ID;
-	self->value__ = value__;
-	return self;
-}
-
 void mut main__1(system__console__Console__0 mut ref const console__)
 {
 	Test__0 const ref const t__ = Test__0__0new__1(allocate(sizeof(Test__0)), FALSE);
 	if (cond(BOOL__0op__not(t__->value__)))
 	{
-		console_write_line__2(console__, ((string){4,(uint8_t const*)"Hey!"}));
+		console_write_line__2(console__, ((string){{4},(uint8_t*)u8"Hey!"}));
 	}
+}
+
+Test__0 mut ref mut Test__0__0new__1(Test__0 mut ref const self, BOOL const value__)
+{
+	self->type_id = Test__0__0Type_ID;
+	self->value__ = value__;
+	return self;
 }
 
 // Entry Point Adapter
