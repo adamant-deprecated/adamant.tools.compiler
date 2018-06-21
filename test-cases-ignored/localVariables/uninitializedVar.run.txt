@@ -1,0 +1,3 @@
+70
+Program exited due to error:
+Can't access a binding before it is initialized

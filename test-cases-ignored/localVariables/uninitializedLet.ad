@@ -1,0 +1,5 @@
+public Main() -> int
+{
+	let result: int;
+	return result;
+}

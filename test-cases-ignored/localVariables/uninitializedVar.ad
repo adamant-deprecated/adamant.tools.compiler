@@ -1,0 +1,5 @@
+public Main() -> int
+{
+	var result: int;
+	return result;
+}
