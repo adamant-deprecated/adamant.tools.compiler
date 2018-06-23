@@ -1,0 +1,4 @@
+public bind_declaration_types(package_syntax: Syntax_Node, name_table: Name_Table) -> void
+{
+
+}

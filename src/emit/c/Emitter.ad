@@ -428,7 +428,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
     else if syntax.kind == NotExpression
     {
         let operand: Semantic_Node = syntax.children[0];
-        // assert(operand.of_type =/= none, get_semantic_node_text(operand));
+        // assert(operand.of_type =/= none, "Emit Not Exrepssion: " + get_semantic_node_text(operand));
         // TODO change to other functions based on argument type
         write(builder, "BOOL__0op__not(");
         convert_expression(operand, builder);

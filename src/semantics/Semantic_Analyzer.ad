@@ -11,6 +11,7 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
     add_item(references, new Package_Reference(runtime_package));
 
     let name_table: Name_Table = build_name_table(name, package_syntax, references);
+    bind_declaration_types(package_syntax, name_table);
     let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();
     let compilation_units: system.collections.List<Compilation_Unit> = build_compilation_units(semantic_tree_builder, package_syntax, name_table);
     let package_symbol: Symbol = build_symbols(name, compilation_units);

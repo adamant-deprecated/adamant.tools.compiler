@@ -1,0 +1,34 @@
+# `adamant.tools.compiler.semantics`
+
+The representation of semantics in the compiler is more complicated than in some other compilers. This is to simultaneously support in-memory incremental compilation, parallel compilation and the ownership model.
+
+The semantic model is represented as an annotated abstract syntax tree (`Program_Fragment`). The annotations provide information about type checking, borrow checking, and name binding. Cross links in the tree are not direct references in order to prevent issues with lifetimes without having to completely recreate the tree during in-memory incremental compilation. Instead they are provided as names (`Name`). These names can be used to rapidly reference tree nodes by lookup through a symbol tree (`Symbol`). Likewise types are represented as essentially special names (`Type`) that can be looked up in the symbol tree. The symbol tree and abstract syntax tree compose a package (`Package`).
+
+During analysis, the semantic model is being built up and not all the annotations for a given node may be available at any given point. This prevents use of the strongly typed abstract syntax and symbol tree during analysis. Instead structures associating data with the concrete syntax tree nodes are created and then frozen to provide many of the benefits that having a strongly typed abstract syntax tree for each step/phase would.
+
+## Analyses Performed
+
+The various semantic analyses performed are:
+
+* Declared Type Name Binding - bind all declared type names
+* Variable Name Binding - bind variable and field references to their declarations
+* Type Checking - check the type correctness of initializers and function bodies
+* Type Inference - type inference within functions
+* Overload Resolution - resolve which overload is being called
+* Borrow Checking - check the lifetime and borrow rules
+* Constant Evaluation - evaluate constant expressions (needed because their result can affect type checking and inference)
+* Safety Rules - that unsafe operations are only performed in unsafe contexts
+* Effect Type Inference - inferring and checking the effect types of functions
+
+## Analysis Steps
+
+1. Build a symbol table of the *declared* types of every declared symbol that covers every scoping level. For example, using statements introduce a scoping level that doesn't correspond to a symbol in the symbol tree.
+2. Name binding, type checking, type inference and overload resolution are done for each function in parallel.
+3. Borrow checking
+4. Safety Rules
+5. Effect Typing
+6. Abstract syntax tree and symbol tree building
+
+## Design Notes
+
+The Roslyn C# compiler avoids the issue of having a weakly types analysis phase by using lazy evaluation. Thus it creates a strongly typed semantic model which it lazily evaluates. It then appears that all semantic annotations are available on all nodes when they are calculated on the fly and the results memoized. This strategy was rejected for the Adamant compiler because it relies heavily on locking for multi-threaded safety and still introduces issues of weak typing when evaluating annotations because cycles must be avoided and broken. The threading model of Adamant is meant to steer developers away from heavy reliance on locking for thread coordination. There was concern that the use of so many locks would hurt performance.
