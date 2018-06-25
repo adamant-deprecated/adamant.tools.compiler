@@ -1,0 +1,77 @@
+public get_declared_type_symbols(
+    package_syntax: Syntax_Node,
+    name: Package_Name,
+    annotations: mut Annotations_Dictionary)
+    -> Syntax_Symbol
+{
+    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
+    let symbol: mut Syntax_Symbol = new Syntax_Symbol.package(name.unqualified, syntax_node_as_syntax(package_syntax));
+    symbol.declares_type = new Type.namespace(new Name.global_namespace(name));
+    let syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(package_syntax));
+    syntax_annotations.symbol = symbol;
+    syntax_annotations.declares_type = symbol.declares_type;
+    for let compilation_unit: Syntax_Node in package_syntax.children
+    {
+        build_declared_symbols(symbol, compilation_unit, annotations);
+    }
+    return symbol;
+}
+
+public build_declared_symbols(
+    parent: Syntax_Symbol,
+    syntax: Syntax_Node,
+    annotations: mut Annotations_Dictionary)
+    -> void
+{
+    if syntax.kind == CompilationUnit
+    {
+        for let child: Syntax_Node in syntax.children
+        {
+            build_declared_symbols(parent, child, annotations);
+        }
+    }
+    else if syntax.kind == ClassDeclaration
+        or syntax.kind == StructDeclaration
+    {
+        let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
+        let name: Name = new Name(parent.declares_type.name, TypeName, unqualified_name);
+        var type_kind: int;
+        if syntax.kind == ClassDeclaration
+            { type_kind = ReferenceType; }
+        else
+            { type_kind = ValueType; }
+        let type: Type = new Type(type_kind, name, true);
+        let symbol: mut Syntax_Symbol = new Syntax_Symbol.declaring(type, syntax_node_as_syntax(syntax));
+        let syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(syntax));
+        syntax_annotations.symbol = symbol;
+        syntax_annotations.declares_type = symbol.declares_type;
+        for let member: Syntax_Node in members(syntax)
+        {
+            build_declared_symbols(symbol, member, annotations);
+        }
+    }
+    else if syntax.kind == EnumDeclaration
+    {
+        let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
+        let name: Name = new Name(parent.declares_type.name, TypeName, unqualified_name);
+        let type: Type = new Type(ReferenceType, name, true);
+        let symbol: mut Syntax_Symbol = new Syntax_Symbol.declaring(type, syntax_node_as_syntax(syntax));
+        let syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(syntax));
+        syntax_annotations.symbol = symbol;
+        syntax_annotations.declares_type = symbol.declares_type;
+        // TODO Add enum member symbols
+    }
+    else if syntax.kind == FunctionDeclaration
+        or syntax.kind == MethodDeclaration
+        or syntax.kind == FieldDeclaration
+        or syntax.kind == ConstructorDeclaration
+        or syntax.kind == GlobalDeclaration
+        or syntax.kind == EndOfFile
+    {
+        // Skipped
+    }
+    else
+    {
+        NOT_IMPLEMENTED("syntax.kind=" + int_to_string(syntax.kind));
+    }
+}

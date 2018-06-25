@@ -22,7 +22,7 @@ The various semantic analyses performed are:
 
 ## Analysis Steps
 
-1. Build the symbol declaration tree with declares types (omit types for fields, globals and functions).
+1. Build the syntax symbol tree for declared types (omit symbols for fields, globals and functions).
 2. Bind globals, fields and parameters, assign function types and associate name binders with function scopes.
 3. Name binding, type checking, type inference and overload resolution are done for each function in parallel.
 4. Borrow checking

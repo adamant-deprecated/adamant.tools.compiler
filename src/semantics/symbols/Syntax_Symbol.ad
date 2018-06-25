@@ -41,6 +41,7 @@ public /* abstract */ class Syntax_Symbol
     public new package(name: string, declaration: Syntax)
     {
         assert(string_byte_length(name) > 0);
+        assert(declaration =/= none);
         self.name = name;
         self.kind = PackageSymbol;
         self.is_special_name = false;
@@ -51,15 +52,17 @@ public /* abstract */ class Syntax_Symbol
         self.children = new system.collections.List<Syntax_Symbol>();
     }
 
-    public new declaring(declares_type: Type)
+    public new declaring(declares_type: Type, declaration: Syntax)
     {
         assert(declares_type =/= none);
+        assert(declaration =/= none);
         self.name = unqualified_name(declares_type.name);
         self.kind = IdentifierSymbol;
         self.is_special_name = declares_type.name.is_special;
         self.of_type = none;
         self.declares_type = declares_type;
         self.declarations = new system.collections.List<Syntax>();
+        add_item(self.declarations, declaration);
         self.children = new system.collections.List<Syntax_Symbol>();
     }
 
