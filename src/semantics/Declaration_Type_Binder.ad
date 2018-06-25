@@ -1,4 +1,26 @@
 public bind_declaration_types(package_syntax: Syntax_Node, name_table: Name_Table) -> void
 {
+    // if syntax.kind == FieldDeclaration
+    // {
+    //     let variable_declaration: Syntax_Node = first_child_syntax_node(syntax, VariableDeclaration);
 
+    // }
+    // if syntax.kind == VariableDeclaration
+    // {
+    //     let type_syntax: Syntax_Node = syntax.children[3]; // TODO need better way to get this
+
+    // }
+    // else
+    // {
+    //     // Recurse down the whole tree
+    //     for let child_syntax: Syntax_Node in syntax.children
+    //     {
+    //         bind_declaration_types(child_syntax, name_table);
+    //     }
+    // }
 }
+
+// public lookup_referenced_type(type_syntax: Syntax_Node) -> Type
+// {
+
+// }

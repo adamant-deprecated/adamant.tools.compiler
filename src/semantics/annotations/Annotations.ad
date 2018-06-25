@@ -1,0 +1,9 @@
+public class Annotations
+{
+    public let for_syntax: Syntax;
+
+    public new(for_syntax: Syntax)
+    {
+        self.for_syntax = for_syntax;
+    }
+}

@@ -1053,6 +1053,17 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
     {
         let variable_declaration: Semantic_Node = first_child(statement, VariableDeclaration);
         let variable_name: string = get_semantic_node_text(first_child(variable_declaration, Identifier));
+        if variable_name[0] == '_' // skip emitting unused varaible to avoid warning about unused variables
+        {
+            if variable_declaration.children.count > 3
+            {
+                // Just emit an expression statement for side effects if there is an initalizer
+                begin_line(emitter.definitions, "");
+                convert_expression(variable_declaration.children[3], emitter.definitions);
+                end_line(emitter.definitions, ";");
+            }
+            return;
+        }
         let variable_type: Semantic_Node = variable_declaration.children[2];
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
         begin_line(emitter.definitions, convert_type(mutable_binding, variable_type));

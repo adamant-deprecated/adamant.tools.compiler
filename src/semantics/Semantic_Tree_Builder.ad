@@ -162,6 +162,7 @@ public build_semantic_node(
         // Before dot
         let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
         add_item(children, lhs);
+        // assert(lhs.of_type =/= none, "Build Member Access: " + get_syntax_node_text(syntax));
         // After dot
         var rhs: Semantic_Node;
         let member_name: Syntax_Node = syntax.children[2];
@@ -409,7 +410,7 @@ public build_semantic_node(
     {
         let operand: Semantic_Node = build_semantic_node(builder, syntax.children[1], name_table, scope);
         add_item(children, operand);
-        // assert(operand.of_type =/= none, get_syntax_node_text(syntax));
+        // assert(operand.of_type =/= none, "Build Not Expression: " + get_syntax_node_text(syntax));
         return new Semantic_Node.of_type(lookup_special(scope, "bool").type, syntax, children);
     }
     else if syntax.children.count == 0

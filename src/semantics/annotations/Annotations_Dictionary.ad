@@ -1,0 +1,26 @@
+public class Annotations_Dictionary
+{
+    public let package: Syntax_Node;
+    public let annotations_list: mut system.collections.List<Annotations>;
+
+    public new(package: Syntax_Node)
+    {
+        self.package = package;
+        self.annotations_list = new system.collections.List<Annotations>();
+    }
+}
+
+public annotations_for(all_annotations: mut Annotations_Dictionary, syntax: Syntax) -> Annotations
+{
+    for let annotations: Annotations in all_annotations.annotations_list
+    {
+        if annotations.for_syntax == syntax
+        {
+            return annotations;
+        }
+    }
+
+    let annotations: Annotations = new Annotations(syntax);
+    add_item(all_annotations.annotations_list, annotations);
+    return annotations;
+}
