@@ -1,7 +1,7 @@
 public class Annotations_Dictionary
 {
     public let package: Syntax_Node;
-    public let annotations_list: mut system.collections.List<Annotations>;
+    public let annotations_list: mut system.collections.List<mut Annotations>;
 
     public new(package: Syntax_Node)
     {
@@ -10,9 +10,9 @@ public class Annotations_Dictionary
     }
 }
 
-public annotations_for(all_annotations: mut Annotations_Dictionary, syntax: Syntax) -> Annotations
+public annotations_for(all_annotations: mut Annotations_Dictionary, syntax: Syntax) -> mut Annotations
 {
-    for let annotations: Annotations in all_annotations.annotations_list
+    for let annotations: mut Annotations in all_annotations.annotations_list
     {
         if annotations.for_syntax == syntax
         {
@@ -20,7 +20,7 @@ public annotations_for(all_annotations: mut Annotations_Dictionary, syntax: Synt
         }
     }
 
-    let annotations: Annotations = new Annotations(syntax);
+    let annotations: mut Annotations = new Annotations(syntax);
     add_item(all_annotations.annotations_list, annotations);
     return annotations;
 }

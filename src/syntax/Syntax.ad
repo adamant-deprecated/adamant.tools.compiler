@@ -5,6 +5,10 @@ public /*abstract*/ class Syntax
     public let start: int;
     public let byte_length: int;
     public let diagnostics: system.collections.List<Diagnostic>;
+
+    public let kind: int; // For now, allow kind as a mix of Node and Token kind
+    // TODO remove `children`. For now, it allows easy recursion
+    public let children: system.collections.List<Syntax>;
 }
 
 public syntax_to_string(syntax: Syntax) -> string

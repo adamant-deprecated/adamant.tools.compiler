@@ -116,7 +116,7 @@ public get_syntax_node_text(syntax: Syntax_Node) -> string
 
 public first_child_token(syntax: Syntax_Node, kind: int) -> Token?
 {
-    for let child: Syntax_Node in syntax.children
+    for let child: Syntax in syntax.children
     {
         match child
         {
@@ -129,7 +129,7 @@ public first_child_token(syntax: Syntax_Node, kind: int) -> Token?
 
 public first_child_syntax_node(syntax: Syntax_Node, kind: int) -> Syntax_Node?
 {
-    for let child: Syntax_Node in syntax.children
+    for let child: Syntax in syntax.children
     {
         match child
         {
@@ -142,7 +142,7 @@ public first_child_syntax_node(syntax: Syntax_Node, kind: int) -> Syntax_Node?
 
 public has_child(syntax: Syntax_Node, type: int) -> bool
 {
-    for let child: Syntax_Node in syntax.children
+    for let child: Syntax in syntax.children
     {
         if child.kind == type
             { return true; }
@@ -154,18 +154,18 @@ public has_child(syntax: Syntax_Node, type: int) -> bool
 public all_node_diagnostics(syntax: Syntax_Node) -> mut system.collections.List<Diagnostic>
 {
     var diagnostics: mut system.collections.List<Diagnostic> = new system.collections.List<Diagnostic>();
-    collect_syntax_diagnostics(syntax, diagnostics);
+    collect_syntax_diagnostics(syntax_node_as_syntax(syntax), diagnostics);
     return diagnostics;
 }
 
-public collect_syntax_diagnostics(syntax: Syntax_Node, diagnostics: mut system.collections.List<Diagnostic>) -> void
+public collect_syntax_diagnostics(syntax: Syntax, diagnostics: mut system.collections.List<Diagnostic>) -> void
 {
     for let diagnostic: Diagnostic in syntax.diagnostics
     {
         add_item(diagnostics, diagnostic);
     }
 
-    for let child: Syntax_Node in syntax.children
+    for let child: Syntax in syntax.children
     {
         collect_syntax_diagnostics(child, diagnostics);
     }
@@ -175,7 +175,7 @@ public collect_syntax_diagnostics(syntax: Syntax_Node, diagnostics: mut system.c
 public members(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
 {
     let members: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-    for let child: Syntax_Node in syntax.children
+    for let child: Syntax in syntax.children
     {
         // TODO fix this to a more reliable means of telling what should be visited
         if child.kind == ConstructorDeclaration
@@ -192,7 +192,7 @@ public members(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
 public parameters(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
 {
     let parameters: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-    for let child: Syntax_Node in syntax.children
+    for let child: Syntax in syntax.children
     {
         // TODO fix this to a more reliable means of telling what should be visited
         if child.kind == Parameter
@@ -208,7 +208,7 @@ public parameters(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
 public statements(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
 {
     let statements: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
-    for let child: Syntax_Node in syntax.children
+    for let child: Syntax in syntax.children
     {
         // TODO fix this to a more reliable means of telling what should be visited
         if child.kind =/= LeftBrace

@@ -1,0 +1,91 @@
+/// Symbol declarations are a tree of all the declarations of symbols in the syntax tree. Used
+//  during the analysis phase, the tree and symbols are incomplete in various ways at different
+/// stages of anlaysis.
+public /* abstract */ class Syntax_Symbol
+{
+    public let name: string;
+    public let children: mut system.collections.List<Syntax_Symbol>;
+    public let declarations: mut system.collections.List<Syntax>;
+
+    public let is_special_name: bool;
+
+    public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
+    // TODO have different symbol types for type declarations vs variable declarations so these can be non-null
+    public var of_type: Type?; // for variables and parameters, the type of the value they represent
+    public var declares_type: Type?; // for class/struct/enum symbols, the type being declared
+
+    public new identifier(name: string)
+    {
+        assert(string_byte_length(name) > 0);
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_special_name = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = new system.collections.List<Syntax>();
+        self.children = new system.collections.List<Syntax_Symbol>();
+    }
+
+    public new constructor(name: string)
+    {
+        assert(string_byte_length(name) > 0);
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_special_name = true;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = new system.collections.List<Syntax>();
+        self.children = new system.collections.List<Syntax_Symbol>();
+    }
+
+    public new package(name: string, declaration: Syntax)
+    {
+        assert(string_byte_length(name) > 0);
+        self.name = name;
+        self.kind = PackageSymbol;
+        self.is_special_name = false;
+        self.of_type = none;
+        self.declares_type = none;
+        self.declarations = new system.collections.List<Program_Fragment>();
+        add_item(self.declarations, declaration);
+        self.children = new system.collections.List<Syntax_Symbol>();
+    }
+
+    public new declaring(declares_type: Type)
+    {
+        assert(declares_type =/= none);
+        self.name = unqualified_name(declares_type.name);
+        self.kind = IdentifierSymbol;
+        self.is_special_name = declares_type.name.is_special;
+        self.of_type = none;
+        self.declares_type = declares_type;
+        self.declarations = new system.collections.List<Syntax>();
+        self.children = new system.collections.List<Syntax_Symbol>();
+    }
+
+    public new of_type(name: string, of_type: Type)
+    {
+        assert(of_type =/= none, "name="+name);
+        self.name = name;
+        self.kind = IdentifierSymbol;
+        self.is_special_name = false;
+        self.of_type = of_type;
+        self.declares_type = none;
+        self.declarations = new system.collections.List<Syntax>();
+        self.children = new system.collections.List<Syntax_Symbol>();
+    }
+}
+
+// TODO change to operator []
+public get_child_Symbol_Declaration(builder: Syntax_Symbol, name: string, kind: int) -> Syntax_Symbol?
+{
+    assert(builder =/= none);
+    for let child: Syntax_Symbol in builder.children
+    {
+        if child.name == name and child.kind == kind
+        {
+            return child;
+        }
+    }
+    return none;
+}

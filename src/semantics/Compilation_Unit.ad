@@ -14,7 +14,7 @@ public class Compilation_Unit
 
 public collect_diagnostics(compilation_unit: Compilation_Unit, diagnostics: mut system.collections.List<Diagnostic>) -> void
 {
-    collect_syntax_diagnostics(compilation_unit.syntax, diagnostics);
+    collect_syntax_diagnostics(syntax_node_as_syntax(compilation_unit.syntax), diagnostics);
     for let declaration: Semantic_Node in compilation_unit.declarations
     {
         collect_node_diagnostics(declaration, diagnostics);

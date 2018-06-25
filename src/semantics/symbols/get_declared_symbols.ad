@@ -1,0 +1,40 @@
+public get_declared_symbols(
+    package_syntax: Syntax_Node,
+    name: Package_Name,
+    annotations: mut Annotations_Dictionary)
+    -> Syntax_Symbol
+{
+    assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
+    let symbol: Syntax_Symbol = new Syntax_Symbol.package(name.unqualified, syntax_node_as_syntax(package_syntax));
+    annotations_for(annotations, syntax_node_as_syntax(package_syntax)).symbol = symbol;
+    build_declared_child_symbols(symbol, package_syntax, annotations);
+    return symbol;
+}
+
+public build_declared_symbols(
+    parent: Syntax_Symbol,
+    syntax: Syntax_Node,
+    annotations: mut Annotations_Dictionary)
+    -> void
+{
+    if syntax.kind == CompilationUnit
+    {
+        build_declared_child_symbols(parent, syntax, annotations);
+    }
+    else
+    {
+        NOT_IMPLEMENTED("syntax.kind=" + int_to_string(syntax.kind));
+    }
+}
+
+public build_declared_child_symbols(
+    symbol: Syntax_Symbol,
+    syntax: Syntax_Node,
+    annotations: mut Annotations_Dictionary)
+    -> void
+{
+    for let child: Syntax_Node in syntax.children
+    {
+        build_declared_symbols(symbol, child, annotations);
+    }
+}
