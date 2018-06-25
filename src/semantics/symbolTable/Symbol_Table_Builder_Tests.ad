@@ -1,4 +1,4 @@
-public unit_test_Name_Table_Builder() -> void
+public unit_test_Symbol_Table_Builder() -> void
 {
     table_contains_referenced_child_names();
     can_get_root_namespace_from_name();
@@ -15,16 +15,17 @@ public table_contains_referenced_child_names() -> void
     let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
 
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
-    let name_table: Name_Table = build_name_table(name, package_syntax, references);
-    let namespace: Name_Subtable = find(name_table.any_package, "system");
+    let annotations: mut Annotations_Dictionary = new Annotations_Dictionary(package_syntax);
+    let symbol_table: Name_Table = build_symbol_table(name, package_syntax, references, annotations);
+    let namespace: Name_Subtable = find(symbol_table.any_package, "system");
     assert(find(namespace, "console") =/= none);
 
     let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
-    assert(get_name(name_table, system_namespace_name) =/= none);
+    assert(get_name(symbol_table, system_namespace_name) =/= none);
     let console_namespace_name: Name = new Name(system_namespace_name, NamespaceName, "console");
-    assert(get_name(name_table, console_namespace_name) =/= none);
+    assert(get_name(symbol_table, console_namespace_name) =/= none);
     let console_class_name: Name = new Name(console_namespace_name, TypeName, "Console");
-    assert(get_name(name_table, console_class_name) =/= none);
+    assert(get_name(symbol_table, console_class_name) =/= none);
 }
 
 public can_get_root_namespace_from_name() -> void
@@ -36,9 +37,10 @@ public can_get_root_namespace_from_name() -> void
     let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
 
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
-    let name_table: Name_Table = build_name_table(name, package_syntax, references);
+    let annotations: mut Annotations_Dictionary = new Annotations_Dictionary(package_syntax);
+    let symbol_table: Name_Table = build_symbol_table(name, package_syntax, references, annotations);
     let namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
-    assert(get_name(name_table, namespace_name) =/= none);
+    assert(get_name(symbol_table, namespace_name) =/= none);
 }
 
 public can_get_Console_class_from_name_without_package() -> void
@@ -50,12 +52,13 @@ public can_get_Console_class_from_name_without_package() -> void
     let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
 
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
-    let name_table: Name_Table = build_name_table(name, package_syntax, references);
+    let annotations: mut Annotations_Dictionary = new Annotations_Dictionary(package_syntax);
+    let symbol_table: Name_Table = build_symbol_table(name, package_syntax, references, annotations);
 
     let system_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "system");
     let console_namespace_name: Name = new Name(system_namespace_name, NamespaceName, "console");
     let console_class_name: Name = new Name(console_namespace_name, TypeName, "Console");
-    assert(get_name(name_table, console_class_name) =/= none);
+    assert(get_name(symbol_table, console_class_name) =/= none);
 }
 
 public can_get_Optional_class_from_name_with_package() -> void
@@ -67,11 +70,12 @@ public can_get_Optional_class_from_name_with_package() -> void
     let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
 
     let package_syntax: Syntax_Node = new Syntax_Node(PackageNode, source, 0, 0);
-    let name_table: Name_Table = build_name_table(name, package_syntax, references);
+    let annotations: mut Annotations_Dictionary = new Annotations_Dictionary(package_syntax);
+    let symbol_table: Name_Table = build_symbol_table(name, package_syntax, references, annotations);
 
     let adamant_namespace_name: Name = new Name(new Name.global_namespace(), NamespaceName, "adamant");
     let language_namespace_name: Name = new Name(adamant_namespace_name, NamespaceName, "language");
-    assert(get_name(name_table, language_namespace_name) =/= none);
+    assert(get_name(symbol_table, language_namespace_name) =/= none);
     let optional_class_name: Name = new Name(language_namespace_name, TypeName, "optional");
-    assert(get_name(name_table, optional_class_name) =/= none);
+    assert(get_name(symbol_table, optional_class_name) =/= none);
 }

@@ -1,8 +1,9 @@
 /// Builds the binding scopes so that we can look up names
-public build_name_table(
+public build_symbol_table(
     package_name: Package_Name,
     package_syntax: Syntax_Node,
-    references: system.collections.List<Package_Reference>)
+    references: system.collections.List<Package_Reference>,
+    annotations: mut Annotations_Dictionary)
     -> Name_Table
 {
     assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));

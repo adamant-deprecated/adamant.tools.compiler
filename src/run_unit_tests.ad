@@ -14,7 +14,7 @@ public run_unit_tests(console: mut system.console.Console) -> void
 
     // semantics.names.lookup
     unit_test_Name_Subtable();
-    unit_test_Name_Table_Builder();
+    unit_test_Symbol_Table_Builder();
 
     // semantics.symbols
     unit_test_Symbol();
