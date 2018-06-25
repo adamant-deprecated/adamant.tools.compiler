@@ -9,7 +9,7 @@ public build_symbol_table(
     assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
     let name_table: mut Name_Table = new Name_Table();
     add_referenced(name_table, references);
-    add_package(name_table, package_name, package_syntax);
+    add_package(name_table, package_name, package_syntax, annotations);
     return name_table;
 }
 
@@ -42,41 +42,44 @@ public add_symbol(name_table: mut Name_Table, parent: Name, symbol: Symbol) -> v
 public add_package(
     name_table: mut Name_Table,
     package_name: Package_Name,
-    package_syntax: Syntax_Node)
+    package_syntax: Syntax_Node,
+    annotations: mut Annotations_Dictionary)
     -> void
 {
     assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
     let global_namespace: Name = add_package(name_table, package_name);
     for let compilation_unit: Syntax_Node in package_syntax.children
     {
-        add_compilation_unit(name_table, global_namespace, compilation_unit);
+        add_compilation_unit(name_table, global_namespace, compilation_unit, annotations);
     }
 }
 
 public add_compilation_unit(
     name_table: mut Name_Table,
     global_namespace: Name,
-    compilation_unit: Syntax_Node)
+    compilation_unit: Syntax_Node,
+    annotations: mut Annotations_Dictionary)
     -> void
 {
     assert(compilation_unit.kind == CompilationUnit, "compilation_unit.kind=" + int_to_string(compilation_unit.kind));
     for let declaration: Syntax_Node in compilation_unit.children
     {
-        add_syntax(name_table, global_namespace, declaration);
+        add_syntax(name_table, global_namespace, declaration, annotations);
     }
 }
 
 public add_syntax(
     name_table: mut Name_Table,
     parent: Name,
-    syntax: Syntax_Node)
+    syntax: Syntax_Node,
+    annotations: mut Annotations_Dictionary)
     -> void
 {
     if syntax.kind == FunctionDeclaration
         or syntax.kind == MethodDeclaration
     {
         let name: Name = new Name(parent, FunctionName, get_token_text(first_child_token(syntax, Identifier)));
-        add_function(name_table, name, syntax);
+        add_function(name_table, name, syntax, annotations);
     }
     else if syntax.kind == ClassDeclaration
         or syntax.kind == StructDeclaration
@@ -92,7 +95,7 @@ public add_syntax(
         add_type_name(name_table, name, type);
         for let member: Syntax_Node in members(syntax)
         {
-            add_syntax(name_table, name, member);
+            add_syntax(name_table, name, member, annotations);
         }
     }
     else if syntax.kind == ConstructorDeclaration
@@ -103,7 +106,7 @@ public add_syntax(
             { full_name = "new_" + get_token_text(constructor_name); }
         let name: Name = new Name.special(parent, FunctionName, full_name);
 
-        add_function(name_table, name, syntax);
+        add_function(name_table, name, syntax, annotations);
 
         // Implicit Self Parameter (have to add after adding function name)
         let self_name: Name = new Name.special(name, VariableName, "self");
@@ -137,14 +140,14 @@ public add_syntax(
     {
         for let statement: Syntax_Node in statements(syntax)
         {
-            add_syntax(name_table, parent, statement);
+            add_syntax(name_table, parent, statement, annotations);
         }
     }
     else if syntax.kind == LoopStatement
         or syntax.kind == WhileStatement
         or syntax.kind == DoWhileStatement
     {
-        add_syntax(name_table, parent, first_child_syntax_node(syntax, Block));
+        add_syntax(name_table, parent, first_child_syntax_node(syntax, Block), annotations);
     }
     else if syntax.kind == ForStatement
     {
@@ -152,15 +155,15 @@ public add_syntax(
         let name: Name = new Name(parent, VariableName, get_token_text(identifier));
         let no_type: Type? = none; // Haven't bound the type yet
         add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
-        add_syntax(name_table, parent, first_child_syntax_node(syntax, Block));
+        add_syntax(name_table, parent, first_child_syntax_node(syntax, Block), annotations);
     }
     else if syntax.kind == IfStatement
     {
-        add_syntax(name_table, parent, first_child_syntax_node(syntax, Block));
+        add_syntax(name_table, parent, first_child_syntax_node(syntax, Block), annotations);
         let else_clause: Syntax_Node? = first_child_syntax_node(syntax, ElseClause);
         if else_clause =/= none
         {
-            add_syntax(name_table, parent, else_clause);
+            add_syntax(name_table, parent, else_clause, annotations);
         }
     }
     else if syntax.kind == MatchStatement
@@ -169,7 +172,7 @@ public add_syntax(
         {
             if child.kind == MatchArm
             {
-                add_syntax(name_table, parent, child);
+                add_syntax(name_table, parent, child, annotations);
             }
         }
     }
@@ -181,7 +184,7 @@ public add_syntax(
         let no_type: Type? = none; // Haven't bound the type yet
         add_type_name(name_table, name, no_type); // need variable to avoid ambiguity about types
 
-        add_syntax(name_table, parent, first_child_syntax_node(syntax, Block));
+        add_syntax(name_table, parent, first_child_syntax_node(syntax, Block), annotations);
     }
     else if syntax.kind == ElseClause
     {
@@ -189,11 +192,11 @@ public add_syntax(
         let block: Syntax_Node? = first_child_syntax_node(syntax, Block);
         if block =/= none
         {
-            add_syntax(name_table, parent, block);
+            add_syntax(name_table, parent, block, annotations);
         }
         else
         {
-            add_syntax(name_table, parent, first_child_syntax_node(syntax, IfStatement));
+            add_syntax(name_table, parent, first_child_syntax_node(syntax, IfStatement), annotations);
         }
     }
     else if syntax.kind == LocalDeclarationStatement
@@ -234,7 +237,8 @@ public add_syntax(
 public add_function(
     name_table: mut Name_Table,
     name: Name,
-    function: Syntax_Node)
+    function: Syntax_Node,
+    annotations: mut Annotations_Dictionary)
     -> void
 {
     let no_type: Type? = none; // we don't have a type for functions yet
@@ -243,9 +247,9 @@ public add_function(
     let parameters_syntax: Syntax_Node = first_child_syntax_node(function, ParameterList);
     for let parameter: Syntax_Node in parameters(parameters_syntax)
     {
-        add_syntax(name_table, name, parameter);
+        add_syntax(name_table, name, parameter, annotations);
     }
 
     let body: Syntax_Node = first_child_syntax_node(function, Block);
-    add_syntax(name_table, name, body);
+    add_syntax(name_table, name, body, annotations);
 }
