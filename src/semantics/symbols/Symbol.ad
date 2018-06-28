@@ -4,7 +4,6 @@ public /* abstract */ class Symbol // = Type_Symbol | Variable_Symbol
 {
     public let name: string;
     public let children: system.collections.List<Symbol>;
-    public let declarations: system.collections.List<Program_Fragment>;
 
     public let is_special_name: bool;
 
@@ -12,6 +11,8 @@ public /* abstract */ class Symbol // = Type_Symbol | Variable_Symbol
     // TODO have different symbol types for type declarations vs variable declarations so these can be non-null
     public let of_type: Type?; // for variables and parameters, the type of the value they represent
     public let declares_type: Type?; // for class/struct/enum symbols, the type being declared
+
+    public let declarations: system.collections.List<Program_Fragment>;
 
     public new identifier(name: string)
     {
@@ -112,4 +113,9 @@ public get_child_symbol(symbol: Symbol, name: string, kind: int) -> Symbol?
         }
     }
     return none;
+}
+
+public symbol_as_detached_symbol(symbol: Symbol) -> Detached_Symbol
+{
+    return as_any(symbol);
 }

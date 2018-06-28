@@ -15,17 +15,19 @@ public bind_declared_symbols(
     syntax_annotations.scope = global_scope;
     for let compilation_unit: Syntax in package_syntax.children
     {
-        bind_declared_symbols_in_scope(compilation_unit, global_scope, annotations);
+        bind_declared_symbols(syntax_annotations.symbol, compilation_unit, global_scope, annotations);
     }
 }
 
 // TODO better name for this
-public bind_declared_symbols_in_scope(
+public bind_declared_symbols(
+    parent_symbol: Syntax_Symbol,
     syntax: Syntax,
     scope: Name_Scope,
     annotations: mut Annotations_Dictionary)
     -> void
 {
+    assert(parent_symbol =/= none);
     let syntax_annotations: mut Annotations = annotations_for(annotations, syntax);
     match syntax
     {
@@ -35,7 +37,7 @@ public bind_declared_symbols_in_scope(
             {
                 for let child: Syntax in syntax.children
                 {
-                    bind_declared_symbols_in_scope(child, scope, annotations);
+                    bind_declared_symbols(parent_symbol, child, scope, annotations);
                 }
             }
             else if syntax_node.kind == FunctionDeclaration
@@ -51,7 +53,7 @@ public bind_declared_symbols_in_scope(
                 syntax_annotations.scope = nested_scope;
                 for let member: Syntax in members(syntax_node)
                 {
-                    bind_declared_symbols_in_scope(member, nested_scope, annotations);
+                    bind_declared_symbols(syntax_annotations.symbol, member, nested_scope, annotations);
                 }
             }
             else if syntax_node.kind == EnumDeclaration
@@ -61,7 +63,27 @@ public bind_declared_symbols_in_scope(
             else if syntax_node.kind == FieldDeclaration
                 or syntax_node.kind == GlobalDeclaration
             {
-                // NOT_IMPLEMENTED("syntax_node.kind=" + int_to_string(syntax_node.kind));
+                let variable_declaration: Syntax = syntax_node_as_syntax(first_child_syntax_node(syntax_node, VariableDeclaration));
+                bind_declared_symbols(parent_symbol, variable_declaration, scope, annotations);
+
+                let variable_annotations: Annotations = annotations_for(annotations, variable_declaration);
+                let optional_type: Type? = variable_annotations.of_type;
+                assert(optional_type =/= none);
+                let optional_symbol: Syntax_Symbol? = variable_annotations.symbol;
+                assert(optional_symbol =/= none);
+                syntax_annotations.symbol = optional_symbol;
+                syntax_annotations.of_type = optional_type;
+            }
+            else if syntax_node.kind == VariableDeclaration
+            {
+                let identifier: Token = first_child_token(syntax_node, Identifier);
+                let type_syntax: Syntax_Node = syntax_node.children[3];
+                let optional_type: Type? = bind_type_name(type_syntax, scope, annotations);
+                assert(optional_type =/= none);
+                let symbol: Syntax_Symbol = new Syntax_Symbol.of_type(get_token_text(identifier), optional_type);
+                add_item(parent_symbol.children, symbol);
+                syntax_annotations.symbol = symbol;
+                syntax_annotations.of_type = optional_type;
             }
             else
             {
@@ -93,8 +115,9 @@ public bind_prameter_symbols(
             let _var_syntax: Token? = first_child_token(parameter, VarKeyword);
             let _identifier: Token = first_child_token(parameter, Identifier);
             // Because a parameter can have `var` at the beginning, the position of the type isn't constant
-            let _type_syntax: Syntax_Node = parameter.children[parameter.children.count - 1];
-            // bind_type_name(type_syntax, scope, annotations);
+            let type_syntax: Syntax_Node = parameter.children[parameter.children.count - 1];
+            bind_type_name(type_syntax, scope, annotations);
+            // NOT_IMPLEMENTED("parameter.kind=Parameter");
         }
         else
         {
@@ -113,18 +136,58 @@ public bind_type_name(
     if type_syntax.kind == PredefinedType
     {
         let primitive_name: string = get_syntax_node_text(type_syntax.children[0]);
-        let primitive_symbol: Symbol? = lookup_name_in_scope(scope);
+        let primitive_symbol: Detached_Symbol? = lookup_special_name_in_scope(scope, primitive_name);
         assert(primitive_symbol =/= none, "No symbol for primitive `"+primitive_name+"`");
         let type: Type = primitive_symbol.declares_type;
+        type_syntax_annotations.referenced_type = type;
+        return type;
+    }
+    else if type_syntax.kind == IdentifierName
+    {
+        let name: string = get_syntax_node_text(type_syntax);
+        let symbol: Detached_Symbol? = lookup_name_in_scope(scope, name);
+        assert(symbol =/= none, "No symbol for `"+name+"`");
+        let type: Type = symbol.declares_type;
         type_syntax_annotations.referenced_type = type;
         return type;
     }
     else if type_syntax.kind == QualifiedName
     {
         let qualifier_syntax: Syntax_Node = type_syntax.children[0];
-        let _qualifier_type: Type = bind_type_name(qualifier_syntax, scope, annotations);
-        let _qualified_syntax: Syntax_Node = type_syntax.children[2];
-        NOT_IMPLEMENTED("QualifiedName");
+        let qualifier_type: Type = bind_type_name(qualifier_syntax, scope, annotations);
+        let qualifier_symbol: Detached_Symbol? = lookup_qualified_name_in_scope(scope, qualifier_type.name);
+        assert(qualifier_symbol =/= none);
+        let qualified_syntax: Syntax_Node = type_syntax.children[2];
+        if qualified_syntax.kind == IdentifierName
+        {
+            let name: string = get_syntax_node_text(qualified_syntax);
+            let symbol: Detached_Symbol? = get_child_detached_symbol(qualifier_symbol, name, IdentifierSymbol);
+            assert(symbol =/= none, "No symbol for `"+name+"` qualified by `"+get_syntax_node_text(qualifier_syntax)+"`");
+            let type: Type = symbol.declares_type;
+            type_syntax_annotations.referenced_type = symbol.declares_type;
+            return type;
+        }
+        else if qualified_syntax.kind == GenericName
+        {
+            let name_syntax: Syntax_Node = first_child_syntax_node(qualified_syntax, IdentifierName);
+            let name: string = get_syntax_node_text(name_syntax);
+            let symbol: Detached_Symbol? = get_child_detached_symbol(qualifier_symbol, name, IdentifierSymbol);
+            assert(symbol =/= none, "No symbol for `"+name+"` qualified by `"+get_syntax_node_text(qualifier_syntax)+"`");
+            let open_type: Type = symbol.declares_type;
+            let arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
+            for let type_argument: Syntax_Node in type_arguments(qualified_syntax)
+            {
+                let argument_type: Type = bind_type_name(type_argument, scope, annotations);
+                add_item(arguments, argument_type);
+            }
+            let type: Type = new Type.generic(open_type, arguments);
+            type_syntax_annotations.referenced_type = type;
+            return type;
+        }
+        else
+        {
+            UNREACHABLE();
+        }
     }
     else if type_syntax.kind == MutableType
     {
@@ -142,14 +205,18 @@ public bind_type_name(
         type_syntax_annotations.referenced_type = type;
         return type;
     }
-    // else if type_syntax.kind == OptionalType
-    // {
-    //     let inner_type_syntax: Syntax_Node = type_syntax.children[1];
-    //     let inner_type: Type = bind_type_name(inner_type_syntax, scope, annotations);
-    //     let type: Type = build_optional_type(inner_type); // TODO
-    //     type_syntax_annotations.referenced_type = type;
-    //     return type;
-    // }
+    else if type_syntax.kind == OptionalType
+    {
+        let inner_type_syntax: Syntax_Node = type_syntax.children[0];
+        let inner_type: Type = bind_type_name(inner_type_syntax, scope, annotations);
+
+        let optional_type: Type = lookup_optional_type(scope);
+        let type_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
+        add_item(type_arguments, inner_type);
+        let type: Type = new Type.generic(optional_type, type_arguments);
+        type_syntax_annotations.referenced_type = type;
+        return type;
+    }
     else
     {
         let place: int = type_syntax.start;
@@ -157,4 +224,20 @@ public bind_type_name(
             + " on " + get_syntax_node_text(type_syntax)
             + " at "+ int_to_string(place));
     }
+
+    UNREACHABLE();
+}
+
+public lookup_optional_type(scope: Name_Scope) -> Type
+{
+    // TODO we shouldn't have to recreate all this every time, look it up once and remember
+    let primitives_package: Package_Name = new Package_Name("$primitives");
+    let global_namespace: Name = new Name.global_namespace(primitives_package);
+    let adamant_namespace: Name = new Name(global_namespace, NamespaceName, "adamant");
+    let language_namespace: Name = new Name(adamant_namespace, NamespaceName, "language");
+    let type_name: Name = new Name(language_namespace, TypeName, "optional");
+    let symbol: Detached_Symbol? = lookup_qualified_name_in_scope(scope, type_name);
+    assert(symbol =/= none, "Could not find symbol for optional type");
+    let type: Type = symbol.declares_type;
+    return type;
 }

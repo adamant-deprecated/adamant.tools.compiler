@@ -19,7 +19,67 @@ public /* abstract */ class Name_Scope
     }
 }
 
-public lookup_name_in_scope(scope: Name_Scope) -> Symbol?
+public lookup_name_in_scope(scope: Name_Scope, name: string) -> Detached_Symbol?
 {
-    NOT_IMPLEMENTED();
+    return lookup_name_in_scope(scope, name, false);
+}
+
+public lookup_special_name_in_scope(scope: Name_Scope, name: string) -> Detached_Symbol?
+{
+    return lookup_name_in_scope(scope, name, true);
+}
+
+public lookup_name_in_scope(scope: Name_Scope, name: string, is_special: bool) -> Detached_Symbol?
+{
+    for let child_syntax_symbol: Syntax_Symbol in scope.symbol.children
+    {
+        if child_syntax_symbol.is_special_name == is_special
+            and child_syntax_symbol.name == name
+        {
+            return syntax_symbol_as_detached_symbol(child_syntax_symbol);
+        }
+    }
+
+    for let symbol: Symbol in scope.symbols
+    {
+        for let child_symbol: Symbol in symbol.children
+        {
+            if child_symbol.is_special_name == is_special
+                and child_symbol.name == name
+            {
+                return symbol_as_detached_symbol(child_symbol);
+            }
+        }
+    }
+
+    if scope.parent =/= none
+    {
+        return lookup_name_in_scope(scope.parent, name, is_special);
+    }
+    return none;
+}
+
+public lookup_qualified_name_in_scope(scope: Name_Scope, name: Name) -> Detached_Symbol?
+{
+    // go to the global scope
+    if scope.parent =/= none
+    {
+        return lookup_qualified_name_in_scope(scope.parent, name);
+    }
+
+    var symbol: Detached_Symbol? = none;
+    for let segment: string in name.segments
+    {
+        if symbol == none
+        {
+            symbol = lookup_name_in_scope(scope, segment);
+            assert(symbol =/= none);
+        }
+        else
+        {
+            symbol = get_child_detached_symbol(symbol, segment, IdentifierSymbol);
+            assert(symbol =/= none);
+        }
+    }
+    return symbol;
 }

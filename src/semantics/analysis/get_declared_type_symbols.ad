@@ -42,6 +42,7 @@ public build_declared_symbols(
             { type_kind = ValueType; }
         let type: Type = new Type(type_kind, name, true);
         let symbol: mut Syntax_Symbol = new Syntax_Symbol.declaring(type, syntax_node_as_syntax(syntax));
+        add_item(parent.children, symbol);
         let syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(syntax));
         syntax_annotations.symbol = symbol;
         syntax_annotations.declares_type = symbol.declares_type;
@@ -60,6 +61,7 @@ public build_declared_symbols(
         syntax_annotations.symbol = symbol;
         syntax_annotations.declares_type = symbol.declares_type;
         // TODO Add enum member symbols
+        // NOT_IMPLEMENTED();
     }
     else if syntax.kind == FunctionDeclaration
         or syntax.kind == MethodDeclaration

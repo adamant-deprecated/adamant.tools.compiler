@@ -5,7 +5,6 @@ public /* abstract */ class Syntax_Symbol
 {
     public let name: string;
     public let children: mut system.collections.List<Syntax_Symbol>;
-    public let declarations: mut system.collections.List<Syntax>;
 
     public let is_special_name: bool;
 
@@ -13,6 +12,8 @@ public /* abstract */ class Syntax_Symbol
     // TODO have different symbol types for type declarations vs variable declarations so these can be non-null
     public var of_type: Type?; // for variables and parameters, the type of the value they represent
     public var declares_type: Type?; // for class/struct/enum symbols, the type being declared
+
+    public let declarations: mut system.collections.List<Syntax>;
 
     public new identifier(name: string)
     {
@@ -80,7 +81,7 @@ public /* abstract */ class Syntax_Symbol
 }
 
 // TODO change to operator []
-public get_child_Symbol_Declaration(builder: Syntax_Symbol, name: string, kind: int) -> Syntax_Symbol?
+public get_child_syntax_symbol(builder: Syntax_Symbol, name: string, kind: int) -> Syntax_Symbol?
 {
     assert(builder =/= none);
     for let child: Syntax_Symbol in builder.children
@@ -91,4 +92,9 @@ public get_child_Symbol_Declaration(builder: Syntax_Symbol, name: string, kind: 
         }
     }
     return none;
+}
+
+public syntax_symbol_as_detached_symbol(symbol: Syntax_Symbol) -> Detached_Symbol
+{
+    return as_any(symbol);
 }

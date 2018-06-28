@@ -12,7 +12,9 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
 
     let annotations: mut Annotations_Dictionary = new Annotations_Dictionary(package_syntax);
     let package_syntax_symbol: Syntax_Symbol = get_declared_type_symbols(package_syntax, name, annotations);
+    // debug_write_syntax_symbols(package_syntax_symbol, "");
     bind_declared_symbols(package_syntax_symbol, references, annotations);
+    // debug_write_syntax_symbols(package_syntax_symbol, "");
     let name_table: Name_Table = build_symbol_table(name, package_syntax, references, annotations);
     bind_declaration_types(package_syntax, name_table);
     let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();
@@ -21,4 +23,14 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
     let package: Package = new Package(name, references, compilation_units, package_symbol);
 
     return package;
+}
+
+public debug_write_syntax_symbols(symbol: Syntax_Symbol, prefix: string) -> void
+{
+    debug_write_line(prefix + symbol.name);
+    let child_prefix: string = prefix+"  ";
+    for let child: Syntax_Symbol in symbol.children
+    {
+        debug_write_syntax_symbols(child, child_prefix);
+    }
 }

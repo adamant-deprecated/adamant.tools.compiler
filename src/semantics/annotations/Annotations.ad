@@ -1,7 +1,7 @@
 public class Annotations
 {
     public let for_syntax: Syntax;
-    public var symbol: Syntax_Symbol;
+    public var symbol: Syntax_Symbol?;
     public var of_type: Type?; // for variables and parameters, the type of the value they represent
     public var declares_type: Type?; // for class/struct/enum symbols, the type being declared
     public let referenced_type: Type?; // For type names, the type that is being referenced

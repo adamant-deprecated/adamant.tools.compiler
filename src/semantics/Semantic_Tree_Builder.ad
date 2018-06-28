@@ -589,8 +589,8 @@ public build_type_name_semantic_node(
                 let referenced_type_name: Type = referenced_scope.type;
                 let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type_name, name_syntax, new system.collections.List<Semantic_Node>());
                 add_item(generic_name_children, name_node);
-                let type_parameters: system.collections.List<Type> = build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
-                let referenced_type: Type = new Type.generic(referenced_type_name, type_parameters);
+                let type_arguments: system.collections.List<Type> = build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
+                let referenced_type: Type = new Type.generic(referenced_type_name, type_arguments);
                 let qualified_name: mut Semantic_Node = new Semantic_Node.referencing_type(referenced_type, qualified_syntax, generic_name_children);
                 add_item(children, qualified_name);
                 return new Semantic_Node.referencing_type(referenced_type, syntax, children);
@@ -676,29 +676,19 @@ public build_type_arguments_semantic_node(
     children: mut system.collections.List<Semantic_Node>)
     -> system.collections.List<Type>
 {
-    let type_parameters: mut system.collections.List<Type> = new system.collections.List<Type>();
+    let arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
     // for convenience, we ignore identifier names
     if syntax.kind == IdentifierName
-        { return type_parameters; }
-    assert(syntax.kind == GenericName, "syntax.kind=="+int_to_string(syntax.kind));
-    var in_type_arguments: bool = false;
-    for let type_argument: Syntax_Node in syntax.children
+        { return arguments; }
+
+    for let type_argument: Syntax_Node in type_arguments(syntax)
     {
-        if in_type_arguments
-        {
-            if type_argument.kind =/= GreaterThan
-            {
-                let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_argument, name_table, scope);
-                add_item(type_parameters, type_node.referenced_type);
-                add_item(children, type_node);
-            }
-        }
-        else if type_argument.kind == LessThan
-        {
-            in_type_arguments = true;
-        }
+        let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_argument, name_table, scope);
+        add_item(arguments, type_node.referenced_type);
+        add_item(children, type_node);
     }
-    return type_parameters;
+
+    return arguments;
 }
 
 public build_constructor_name_semantic_node(

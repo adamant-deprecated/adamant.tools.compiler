@@ -1,0 +1,27 @@
+// A detached symbol is a symbol without its declarations, this is a base type
+// for Symbol and Syntax_Symbol
+public /* abstract */ class Detached_Symbol
+{
+    public let name: string;
+    public let children: system.collections.List<Detached_Symbol>;
+
+    public let is_special_name: bool;
+
+    public let kind: int; // TODO have is_special_name instead and use kinds for package vs namespace vs class etc?
+    // TODO have different symbol types for type declarations vs variable declarations so these can be non-null
+    public let of_type: Type?; // for variables and parameters, the type of the value they represent
+    public let declares_type: Type?; // for class/struct/enum symbols, the type being declared
+}
+
+public get_child_detached_symbol(symbol: Detached_Symbol, name: string, kind: int) -> Detached_Symbol?
+{
+    assert(symbol =/= none);
+    for let child: Detached_Symbol in symbol.children
+    {
+        if child.name == name and child.kind == kind
+        {
+            return child;
+        }
+    }
+    return none;
+}

@@ -235,3 +235,26 @@ public access_modifier(syntax: Syntax_Node) -> Token?
     }
     return none;
 }
+
+// TODO this should only be on GenericName
+public type_arguments(syntax: Syntax_Node) -> system.collections.List<Syntax_Node>
+{
+    assert(syntax.kind == GenericName);
+    let arguments: mut system.collections.List<Syntax_Node> = new system.collections.List<Syntax_Node>();
+    var in_type_arguments: bool = false;
+    for let type_argument: Syntax in syntax.children
+    {
+        if in_type_arguments
+        {
+            if type_argument.kind =/= GreaterThan
+            {
+                add_item(arguments, type_argument);
+            }
+        }
+        else if type_argument.kind == LessThan
+        {
+            in_type_arguments = true;
+        }
+    }
+    return arguments;
+}
