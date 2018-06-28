@@ -423,7 +423,8 @@ inline void clear_list__1(system__collections__List__1 *_Nonnull list)
 
 inline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)
 {
-    lib_assert(index.value >= 0 && index.value < list->count__.value);
+    lib_assert(index.value >= 0);
+    lib_assert(index.value < list->count__.value);
     return list->values[index.value];
 }
 

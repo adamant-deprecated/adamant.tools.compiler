@@ -1,0 +1,160 @@
+public bind_declared_symbols(
+    package_syntax_symbol: Syntax_Symbol,
+    references: mut system.collections.List<Package_Reference>,
+    annotations: mut Annotations_Dictionary)
+    -> void
+{
+    let package_syntax: Syntax = package_syntax_symbol.declarations[0];
+    let syntax_annotations: mut Annotations = annotations_for(annotations, package_syntax);
+    let global_namespace_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    for let reference: Package_Reference in references
+    {
+        add_item(global_namespace_symbols, reference.package.symbol);
+    }
+    let global_scope: Name_Scope = new Name_Scope(none, package_syntax_symbol, global_namespace_symbols);
+    syntax_annotations.scope = global_scope;
+    for let compilation_unit: Syntax in package_syntax.children
+    {
+        bind_declared_symbols_in_scope(compilation_unit, global_scope, annotations);
+    }
+}
+
+// TODO better name for this
+public bind_declared_symbols_in_scope(
+    syntax: Syntax,
+    scope: Name_Scope,
+    annotations: mut Annotations_Dictionary)
+    -> void
+{
+    let syntax_annotations: mut Annotations = annotations_for(annotations, syntax);
+    match syntax
+    {
+        syntax_node: Syntax_Node =>
+        {
+            if syntax_node.kind == CompilationUnit
+            {
+                for let child: Syntax in syntax.children
+                {
+                    bind_declared_symbols_in_scope(child, scope, annotations);
+                }
+            }
+            else if syntax_node.kind == FunctionDeclaration
+                or syntax_node.kind == ConstructorDeclaration
+            {
+                bind_prameter_symbols(syntax_node, scope, annotations);
+                // NOT_IMPLEMENTED("syntax_node.kind=" + int_to_string(syntax_node.kind));
+            }
+            else if syntax_node.kind == ClassDeclaration
+                or syntax_node.kind == StructDeclaration
+            {
+                let nested_scope: Name_Scope = new Name_Scope(scope, syntax_annotations.symbol);
+                syntax_annotations.scope = nested_scope;
+                for let member: Syntax in members(syntax_node)
+                {
+                    bind_declared_symbols_in_scope(member, nested_scope, annotations);
+                }
+            }
+            else if syntax_node.kind == EnumDeclaration
+            {
+                // NOT_IMPLEMENTED("syntax_node.kind=EnumDeclaration");
+            }
+            else if syntax_node.kind == FieldDeclaration
+                or syntax_node.kind == GlobalDeclaration
+            {
+                // NOT_IMPLEMENTED("syntax_node.kind=" + int_to_string(syntax_node.kind));
+            }
+            else
+            {
+                NOT_IMPLEMENTED("syntax_node.kind=" + int_to_string(syntax_node.kind));
+            }
+        },
+        token: Token =>
+        {
+            // End of File is Skipped
+            if token.kind =/= EndOfFile
+            {
+                NOT_IMPLEMENTED("token.kind=" + int_to_string(token.kind));
+            }
+        }
+    }
+}
+
+public bind_prameter_symbols(
+    function: Syntax_Node,
+    scope: Name_Scope,
+    annotations: mut Annotations_Dictionary)
+    -> void
+{
+    let parameters_syntax: Syntax_Node = first_child_syntax_node(function, ParameterList);
+    for let parameter: Syntax_Node in parameters(parameters_syntax)
+    {
+        if parameter.kind == Parameter
+        {
+            let _var_syntax: Token? = first_child_token(parameter, VarKeyword);
+            let _identifier: Token = first_child_token(parameter, Identifier);
+            // Because a parameter can have `var` at the beginning, the position of the type isn't constant
+            let _type_syntax: Syntax_Node = parameter.children[parameter.children.count - 1];
+            // bind_type_name(type_syntax, scope, annotations);
+        }
+        else
+        {
+            NOT_IMPLEMENTED("parameter.kind="+int_to_string(parameter.kind));
+        }
+    }
+}
+
+public bind_type_name(
+    type_syntax: Syntax_Node,
+    scope: Name_Scope,
+    annotations: mut Annotations_Dictionary)
+    -> Type
+{
+    let type_syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(type_syntax));
+    if type_syntax.kind == PredefinedType
+    {
+        let primitive_name: string = get_syntax_node_text(type_syntax.children[0]);
+        let primitive_symbol: Symbol? = lookup_name_in_scope(scope);
+        assert(primitive_symbol =/= none, "No symbol for primitive `"+primitive_name+"`");
+        let type: Type = primitive_symbol.declares_type;
+        type_syntax_annotations.referenced_type = type;
+        return type;
+    }
+    else if type_syntax.kind == QualifiedName
+    {
+        let qualifier_syntax: Syntax_Node = type_syntax.children[0];
+        let _qualifier_type: Type = bind_type_name(qualifier_syntax, scope, annotations);
+        let _qualified_syntax: Syntax_Node = type_syntax.children[2];
+        NOT_IMPLEMENTED("QualifiedName");
+    }
+    else if type_syntax.kind == MutableType
+    {
+        let inner_type_syntax: Syntax_Node = type_syntax.children[1];
+        let inner_type: Type = bind_type_name(inner_type_syntax, scope, annotations);
+        let type: Type = make_mutable_type(inner_type);
+        type_syntax_annotations.referenced_type = type;
+        return type;
+    }
+    else if type_syntax.kind == ImmutableType
+    {
+        let inner_type_syntax: Syntax_Node = type_syntax.children[0];
+        let inner_type: Type = bind_type_name(inner_type_syntax, scope, annotations);
+        let type: Type = make_immutable_type(inner_type);
+        type_syntax_annotations.referenced_type = type;
+        return type;
+    }
+    // else if type_syntax.kind == OptionalType
+    // {
+    //     let inner_type_syntax: Syntax_Node = type_syntax.children[1];
+    //     let inner_type: Type = bind_type_name(inner_type_syntax, scope, annotations);
+    //     let type: Type = build_optional_type(inner_type); // TODO
+    //     type_syntax_annotations.referenced_type = type;
+    //     return type;
+    // }
+    else
+    {
+        let place: int = type_syntax.start;
+        NOT_IMPLEMENTED("type_syntax.kind=" + int_to_string(type_syntax.kind)
+            + " on " + get_syntax_node_text(type_syntax)
+            + " at "+ int_to_string(place));
+    }
+}

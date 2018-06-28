@@ -1,0 +1,25 @@
+public /* abstract */ class Name_Scope
+{
+    public let parent: Name_Scope?;
+    public let symbol: Syntax_Symbol;
+    public let symbols: system.collections.List<Symbol>;
+
+    public new(parent: Name_Scope?, symbol: Syntax_Symbol, symbols: system.collections.List<Symbol>)
+    {
+        self.parent = parent;
+        self.symbol = symbol;
+        self.symbols = symbols;
+    }
+
+    public new(parent: Name_Scope?, symbol: Syntax_Symbol)
+    {
+        self.parent = parent;
+        self.symbol = symbol;
+        self.symbols = new system.collections.List<Symbol>();
+    }
+}
+
+public lookup_name_in_scope(scope: Name_Scope) -> Symbol?
+{
+    NOT_IMPLEMENTED();
+}
