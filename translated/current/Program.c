@@ -25,6 +25,7 @@ enum Type_ID
 	Emitter__0__0Type_ID,
 	Annotations__0__0Type_ID,
 	Annotations_Dictionary__0__0Type_ID,
+	Name_Scope__0__0Type_ID,
 	Expression__0__0Type_ID,
 	Integer_Literal_Expression__0__0Type_ID,
 	Literal_Expression__0__0Type_ID,
@@ -33,6 +34,7 @@ enum Type_ID
 	Name__0__0Type_ID,
 	Package_Name__0__0Type_ID,
 	Symbol__0__0Type_ID,
+	Syntax_Symbol__0__0Type_ID,
 	Name_Subtable__0__0Type_ID,
 	Name_Table__0__0Type_ID,
 	Type__0__0Type_ID,
@@ -61,6 +63,7 @@ typedef struct Diagnostic__0 Diagnostic__0;
 typedef struct Emitter__0 Emitter__0;
 typedef struct Annotations__0 Annotations__0;
 typedef struct Annotations_Dictionary__0 Annotations_Dictionary__0;
+typedef struct Name_Scope__0 Name_Scope__0;
 typedef struct Expression__0 Expression__0;
 typedef struct Integer_Literal_Expression__0 Integer_Literal_Expression__0;
 typedef struct Literal_Expression__0 Literal_Expression__0;
@@ -69,6 +72,7 @@ typedef struct Unary_Expression__0 Unary_Expression__0;
 typedef struct Name__0 Name__0;
 typedef struct Package_Name__0 Package_Name__0;
 typedef struct Symbol__0 Symbol__0;
+typedef struct Syntax_Symbol__0 Syntax_Symbol__0;
 typedef struct Name_Subtable__0 Name_Subtable__0;
 typedef struct Name_Table__0 Name_Table__0;
 typedef struct Type__0 Type__0;
@@ -217,7 +221,7 @@ Token__0 const opt_ref mut first_child_token__2(Syntax_Node__0 const ref const s
 Syntax_Node__0 const opt_ref mut first_child_syntax_node__2(Syntax_Node__0 const ref const syntax__, int32 const kind__);
 BOOL mut has_child__2(Syntax_Node__0 const ref const syntax__, int32 const type__);
 system__collections__List__1 mut ref mut all_node_diagnostics__1(Syntax_Node__0 const ref const syntax__);
-void mut collect_syntax_diagnostics__2(Syntax_Node__0 const ref const syntax__, system__collections__List__1 mut ref const diagnostics__);
+void mut collect_syntax_diagnostics__2(Syntax__0 const ref const syntax__, system__collections__List__1 mut ref const diagnostics__);
 system__collections__List__1 const ref mut members__1(Syntax_Node__0 const ref const syntax__);
 system__collections__List__1 const ref mut parameters__1(Syntax_Node__0 const ref const syntax__);
 system__collections__List__1 const ref mut statements__1(Syntax_Node__0 const ref const syntax__);
@@ -272,9 +276,18 @@ void mut emit_compilation_unit__2(Emitter__0 mut ref const emitter__, Compilatio
 void mut emit_preamble__1(Emitter__0 mut ref const emitter__);
 void mut emit_entry_point_adapter__1(Emitter__0 mut ref const emitter__);
 void mut emit_postamble__1(Emitter__0 mut ref const emitter__);
+void mut bind_declared_symbols__3(Syntax_Symbol__0 const ref const package_syntax_symbol__, system__collections__List__1 mut ref const references__, Annotations_Dictionary__0 mut ref const annotations__);
+void mut bind_declared_symbols_in_scope__3(Syntax__0 const ref const syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
+void mut bind_prameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
+Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
+Syntax_Symbol__0 const ref mut get_declared_type_symbols__3(Syntax_Node__0 const ref const package_syntax__, Package_Name__0 const ref const name__, Annotations_Dictionary__0 mut ref const annotations__);
+void mut build_declared_symbols__3(Syntax_Symbol__0 const ref const parent__, Syntax_Node__0 const ref const syntax__, Annotations_Dictionary__0 mut ref const annotations__);
 Annotations__0 mut ref mut Annotations__0__0new__1(Annotations__0 mut ref const self, Syntax__0 const ref const for_syntax__);
 Annotations_Dictionary__0 mut ref mut Annotations_Dictionary__0__0new__1(Annotations_Dictionary__0 mut ref const self, Syntax_Node__0 const ref const package__);
-Annotations__0 const ref mut annotations_for__2(Annotations_Dictionary__0 mut ref const all_annotations__, Syntax__0 const ref const syntax__);
+Annotations__0 mut ref mut annotations_for__2(Annotations_Dictionary__0 mut ref const all_annotations__, Syntax__0 const ref const syntax__);
+Name_Scope__0 mut ref mut Name_Scope__0__0new__3(Name_Scope__0 mut ref const self, Name_Scope__0 const opt_ref const parent__, Syntax_Symbol__0 const ref const symbol__, system__collections__List__1 const ref const symbols__);
+Name_Scope__0 mut ref mut Name_Scope__0__0new__2(Name_Scope__0 mut ref const self, Name_Scope__0 const opt_ref const parent__, Syntax_Symbol__0 const ref const symbol__);
+Symbol__0 const opt_ref mut lookup_name_in_scope__1(Name_Scope__0 const ref const scope__);
 Expression__0 mut ref mut Expression__0__0new__0(Expression__0 mut ref const self);
 Program_Fragment__0 const ref mut expression_as_program_fragment__1(Expression__0 const ref const expression__);
 Integer_Literal_Expression__0 mut ref mut Integer_Literal_Expression__0__0new__2(Integer_Literal_Expression__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const node__);
@@ -312,6 +325,12 @@ Symbol__0 mut ref mut Symbol__0__0new__of_type__4(Symbol__0 mut ref const self, 
 Symbol__0 const opt_ref mut get_child_symbol__3(Symbol__0 const ref const symbol__, string const name__, int32 const kind__);
 void mut unit_test_Symbol__0();
 void mut Package_symbol_children_can_be_found_by_name_and_kind__0();
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__identifier__1(Syntax_Symbol__0 mut ref const self, string const name__);
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__constructor__1(Syntax_Symbol__0 mut ref const self, string const name__);
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__package__2(Syntax_Symbol__0 mut ref const self, string const name__, Syntax__0 const ref const declaration__);
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__declaring__2(Syntax_Symbol__0 mut ref const self, Type__0 const ref const declares_type__, Syntax__0 const ref const declaration__);
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__of_type__2(Syntax_Symbol__0 mut ref const self, string const name__, Type__0 const ref const of_type__);
+Syntax_Symbol__0 const opt_ref mut get_child_Symbol_Declaration__3(Syntax_Symbol__0 const ref const builder__, string const name__, int32 const kind__);
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__1(Name_Subtable__0 mut ref const self, Name_Table__0 const ref const name_table__);
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__2(Name_Subtable__0 mut ref const self, Name_Table__0 const ref const name_table__, Package_Name__0 const ref const package_name__);
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__3(Name_Subtable__0 mut ref const self, Name_Subtable__0 const ref const parent__, Name__0 const ref const name__, Type__0 const opt_ref const type__);
@@ -333,14 +352,14 @@ Name__0 const ref mut add_package__2(Name_Table__0 mut ref const name_table__, P
 Name__0 const ref mut add_symbol_name__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const parent__, Symbol__0 const ref const symbol__);
 void mut add_type_name__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const name__, Type__0 const opt_ref const type__);
 Name_Subtable__0 const opt_ref mut get_name__2(Name_Table__0 const ref const name_table__, Name__0 const ref const name__);
-Name_Table__0 const ref mut build_name_table__3(Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__, system__collections__List__1 const ref const references__);
+Name_Table__0 const ref mut build_symbol_table__4(Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__, system__collections__List__1 const ref const references__, Annotations_Dictionary__0 mut ref const annotations__);
 void mut add_referenced__2(Name_Table__0 mut ref const name_table__, system__collections__List__1 const ref const references__);
 void mut add_symbol__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const parent__, Symbol__0 const ref const symbol__);
-void mut add_package__3(Name_Table__0 mut ref const name_table__, Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__);
-void mut add_compilation_unit__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const global_namespace__, Syntax_Node__0 const ref const compilation_unit__);
-void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const parent__, Syntax_Node__0 const ref const syntax__);
-void mut add_function__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const name__, Syntax_Node__0 const ref const function__);
-void mut unit_test_Name_Table_Builder__0();
+void mut add_package__4(Name_Table__0 mut ref const name_table__, Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__, Annotations_Dictionary__0 mut ref const annotations__);
+void mut add_compilation_unit__4(Name_Table__0 mut ref const name_table__, Name__0 const ref const global_namespace__, Syntax_Node__0 const ref const compilation_unit__, Annotations_Dictionary__0 mut ref const annotations__);
+void mut add_syntax__4(Name_Table__0 mut ref const name_table__, Name__0 const ref const parent__, Syntax_Node__0 const ref const syntax__, Annotations_Dictionary__0 mut ref const annotations__);
+void mut add_function__4(Name_Table__0 mut ref const name_table__, Name__0 const ref const name__, Syntax_Node__0 const ref const function__, Annotations_Dictionary__0 mut ref const annotations__);
+void mut unit_test_Symbol_Table_Builder__0();
 void mut table_contains_referenced_child_names__0();
 void mut can_get_root_namespace_from_name__0();
 void mut can_get_Console_class_from_name_without_package__0();
@@ -481,6 +500,8 @@ struct Syntax__0
 	int32 mut start__;
 	int32 mut byte_length__;
 	system__collections__List__1 const ref mut diagnostics__;
+	int32 mut kind__;
+	system__collections__List__1 const ref mut children__;
 };
 
 struct Syntax_Node__0
@@ -550,6 +571,11 @@ struct Annotations__0
 {
 	Type_ID type_id;
 	Syntax__0 const ref mut for_syntax__;
+	Syntax_Symbol__0 const ref mut symbol__;
+	Type__0 const opt_ref mut of_type__;
+	Type__0 const opt_ref mut declares_type__;
+	Type__0 const opt_ref mut referenced_type__;
+	Name_Scope__0 const opt_ref mut scope__;
 };
 
 struct Annotations_Dictionary__0
@@ -557,6 +583,14 @@ struct Annotations_Dictionary__0
 	Type_ID type_id;
 	Syntax_Node__0 const ref mut package__;
 	system__collections__List__1 mut ref mut annotations_list__;
+};
+
+struct Name_Scope__0
+{
+	Type_ID type_id;
+	Name_Scope__0 const opt_ref mut parent__;
+	Syntax_Symbol__0 const ref mut symbol__;
+	system__collections__List__1 const ref mut symbols__;
 };
 
 struct Expression__0
@@ -648,6 +682,18 @@ struct Symbol__0
 	string mut name__;
 	system__collections__List__1 const ref mut children__;
 	system__collections__List__1 const ref mut declarations__;
+	BOOL mut is_special_name__;
+	int32 mut kind__;
+	Type__0 const opt_ref mut of_type__;
+	Type__0 const opt_ref mut declares_type__;
+};
+
+struct Syntax_Symbol__0
+{
+	Type_ID type_id;
+	string mut name__;
+	system__collections__List__1 mut ref mut children__;
+	system__collections__List__1 mut ref mut declarations__;
 	BOOL mut is_special_name__;
 	int32 mut kind__;
 	Type__0 const opt_ref mut of_type__;
@@ -1052,7 +1098,7 @@ void mut run_unit_tests__1(system__console__Console__0 mut ref const console__)
 	unit_test_build_runtime_library_package__0();
 	unit_test_Name__0();
 	unit_test_Name_Subtable__0();
-	unit_test_Name_Table_Builder__0();
+	unit_test_Symbol_Table_Builder__0();
 	unit_test_Symbol__0();
 }
 
@@ -1372,7 +1418,7 @@ Compilation_Unit__0 mut ref mut Compilation_Unit__0__0new__2(Compilation_Unit__0
 
 void mut collect_diagnostics__2(Compilation_Unit__0 const ref const compilation_unit__, system__collections__List__1 mut ref const diagnostics__)
 {
-	collect_syntax_diagnostics__2(compilation_unit__->syntax__, diagnostics__);
+	collect_syntax_diagnostics__2(syntax_node_as_syntax__1(compilation_unit__->syntax__), diagnostics__);
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(compilation_unit__->declarations__); void_ptr__0next(&iter);)
 	{
 		Semantic_Node__0 const ref const declaration__ = void_ptr__0current(&iter);
@@ -1752,8 +1798,10 @@ Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const pac
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), primitives_package__));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
-	Annotations_Dictionary__0 mut ref const _annotations__ = Annotations_Dictionary__0__0new__1(allocate(sizeof(Annotations_Dictionary__0)), package_syntax__);
-	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
+	Annotations_Dictionary__0 mut ref const annotations__ = Annotations_Dictionary__0__0new__1(allocate(sizeof(Annotations_Dictionary__0)), package_syntax__);
+	Syntax_Symbol__0 const ref const package_syntax_symbol__ = get_declared_type_symbols__3(package_syntax__, name__, annotations__);
+	bind_declared_symbols__3(package_syntax_symbol__, references__, annotations__);
+	Name_Table__0 const ref const name_table__ = build_symbol_table__4(name__, package_syntax__, references__, annotations__);
 	bind_declaration_types__2(package_syntax__, name_table__);
 	Semantic_Tree_Builder__0 const ref const semantic_tree_builder__ = Semantic_Tree_Builder__0__0new__0(allocate(sizeof(Semantic_Tree_Builder__0)));
 	system__collections__List__1 const ref const compilation_units__ = build_compilation_units__3(semantic_tree_builder__, package_syntax__, name_table__);
@@ -3745,7 +3793,7 @@ Token__0 const opt_ref mut first_child_token__2(Syntax_Node__0 const ref const s
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
-		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		Syntax__0 const ref const child__ = void_ptr__0current(&iter);
 		/* match */ { void const ref const match_value = child__;
 		   switch(*(Type_ID const ref)match_value)
 		{
@@ -3774,7 +3822,7 @@ Syntax_Node__0 const opt_ref mut first_child_syntax_node__2(Syntax_Node__0 const
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
-		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		Syntax__0 const ref const child__ = void_ptr__0current(&iter);
 		/* match */ { void const ref const match_value = child__;
 		   switch(*(Type_ID const ref)match_value)
 		{
@@ -3803,7 +3851,7 @@ BOOL mut has_child__2(Syntax_Node__0 const ref const syntax__, int32 const type_
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
-		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		Syntax__0 const ref const child__ = void_ptr__0current(&iter);
 		if (cond(int32__0op__equal(child__->kind__, type__)))
 		{
 			return TRUE;
@@ -3816,11 +3864,11 @@ BOOL mut has_child__2(Syntax_Node__0 const ref const syntax__, int32 const type_
 system__collections__List__1 mut ref mut all_node_diagnostics__1(Syntax_Node__0 const ref const syntax__)
 {
 	system__collections__List__1 mut ref mut diagnostics__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	collect_syntax_diagnostics__2(syntax__, diagnostics__);
+	collect_syntax_diagnostics__2(syntax_node_as_syntax__1(syntax__), diagnostics__);
 	return diagnostics__;
 }
 
-void mut collect_syntax_diagnostics__2(Syntax_Node__0 const ref const syntax__, system__collections__List__1 mut ref const diagnostics__)
+void mut collect_syntax_diagnostics__2(Syntax__0 const ref const syntax__, system__collections__List__1 mut ref const diagnostics__)
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->diagnostics__); void_ptr__0next(&iter);)
 	{
@@ -3830,7 +3878,7 @@ void mut collect_syntax_diagnostics__2(Syntax_Node__0 const ref const syntax__, 
 
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
-		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		Syntax__0 const ref const child__ = void_ptr__0current(&iter);
 		collect_syntax_diagnostics__2(child__, diagnostics__);
 	}
 }
@@ -3840,7 +3888,7 @@ system__collections__List__1 const ref mut members__1(Syntax_Node__0 const ref c
 	system__collections__List__1 mut ref const members__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
-		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		Syntax__0 const ref const child__ = void_ptr__0current(&iter);
 		if (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(child__->kind__, ConstructorDeclaration__)) || bool_arg(int32__0op__equal(child__->kind__, FieldDeclaration__)))) || bool_arg(int32__0op__equal(child__->kind__, MethodDeclaration__)))))
 		{
 			add_item__2(members__, child__);
@@ -3855,7 +3903,7 @@ system__collections__List__1 const ref mut parameters__1(Syntax_Node__0 const re
 	system__collections__List__1 mut ref const parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
-		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		Syntax__0 const ref const child__ = void_ptr__0current(&iter);
 		if (cond(bool_op(bool_arg(int32__0op__equal(child__->kind__, Parameter__)) || bool_arg(int32__0op__equal(child__->kind__, SelfParameter__)))))
 		{
 			add_item__2(parameters__, child__);
@@ -3870,7 +3918,7 @@ system__collections__List__1 const ref mut statements__1(Syntax_Node__0 const re
 	system__collections__List__1 mut ref const statements__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 	{
-		Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+		Syntax__0 const ref const child__ = void_ptr__0current(&iter);
 		if (cond(bool_op(bool_arg(int32__0op__not_equal(child__->kind__, LeftBrace__)) && bool_arg(int32__0op__not_equal(child__->kind__, RightBrace__)))))
 		{
 			add_item__2(statements__, child__);
@@ -5915,6 +5963,215 @@ void mut emit_postamble__1(Emitter__0 mut ref const emitter__)
 	write_line__2(emitter__->type_id_declaration__, ((string){{29},(uint8_t*)u8"typedef enum Type_ID Type_ID;"}));
 }
 
+void mut bind_declared_symbols__3(Syntax_Symbol__0 const ref const package_syntax_symbol__, system__collections__List__1 mut ref const references__, Annotations_Dictionary__0 mut ref const annotations__)
+{
+	Syntax__0 const ref const package_syntax__ = system__collections__List__1__0op__element(package_syntax_symbol__->declarations__, ((int32){0}));
+	Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, package_syntax__);
+	system__collections__List__1 mut ref const global_namespace_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(references__); void_ptr__0next(&iter);)
+	{
+		Package_Reference__0 const ref const reference__ = void_ptr__0current(&iter);
+		add_item__2(global_namespace_symbols__, reference__->package__->symbol__);
+	}
+
+	Name_Scope__0 const ref const global_scope__ = Name_Scope__0__0new__3(allocate(sizeof(Name_Scope__0)), none, package_syntax_symbol__, global_namespace_symbols__);
+	syntax_annotations__->scope__ = global_scope__;
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(package_syntax__->children__); void_ptr__0next(&iter);)
+	{
+		Syntax__0 const ref const compilation_unit__ = void_ptr__0current(&iter);
+		bind_declared_symbols_in_scope__3(compilation_unit__, global_scope__, annotations__);
+	}
+}
+
+void mut bind_declared_symbols_in_scope__3(Syntax__0 const ref const syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
+{
+	Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, syntax__);
+	/* match */ { void const ref const match_value = syntax__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Syntax_Node__0__0Type_ID:
+		{
+			Syntax_Node__0 const ref const syntax_node__ = match_value;
+			if (cond(int32__0op__equal(syntax_node__->kind__, CompilationUnit__)))
+			{
+				for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
+				{
+					Syntax__0 const ref const child__ = void_ptr__0current(&iter);
+					bind_declared_symbols_in_scope__3(child__, scope__, annotations__);
+				}
+			}
+			else if (cond(bool_op(bool_arg(int32__0op__equal(syntax_node__->kind__, FunctionDeclaration__)) || bool_arg(int32__0op__equal(syntax_node__->kind__, ConstructorDeclaration__)))))
+			{
+				bind_prameter_symbols__3(syntax_node__, scope__, annotations__);
+			}
+			else if (cond(bool_op(bool_arg(int32__0op__equal(syntax_node__->kind__, ClassDeclaration__)) || bool_arg(int32__0op__equal(syntax_node__->kind__, StructDeclaration__)))))
+			{
+				Name_Scope__0 const ref const nested_scope__ = Name_Scope__0__0new__2(allocate(sizeof(Name_Scope__0)), scope__, syntax_annotations__->symbol__);
+				syntax_annotations__->scope__ = nested_scope__;
+				for (void_ptr__0iter mut iter = void_ptr__0iterate(members__1(syntax_node__)); void_ptr__0next(&iter);)
+				{
+					Syntax__0 const ref const member__ = void_ptr__0current(&iter);
+					bind_declared_symbols_in_scope__3(member__, nested_scope__, annotations__);
+				}
+			}
+			else if (cond(int32__0op__equal(syntax_node__->kind__, EnumDeclaration__)))
+			{
+			}
+			else if (cond(bool_op(bool_arg(int32__0op__equal(syntax_node__->kind__, FieldDeclaration__)) || bool_arg(int32__0op__equal(syntax_node__->kind__, GlobalDeclaration__)))))
+			{
+			}
+			else
+			{
+				NOT_IMPLEMENTED__1(string__0op__add(((string){{17},(uint8_t*)u8"syntax_node.kind="}), int_to_string__1(syntax_node__->kind__)));
+			}
+		}
+		break;
+		case Token__0__0Type_ID:
+		{
+			Token__0 const ref const token__ = match_value;
+			if (cond(int32__0op__not_equal(token__->kind__, EndOfFile__)))
+			{
+				NOT_IMPLEMENTED__1(string__0op__add(((string){{11},(uint8_t*)u8"token.kind="}), int_to_string__1(token__->kind__)));
+			}
+		}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
+}
+
+void mut bind_prameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
+{
+	Syntax_Node__0 const ref const parameters_syntax__ = first_child_syntax_node__2(function__, ParameterList__);
+	for (void_ptr__0iter mut iter = void_ptr__0iterate(parameters__1(parameters_syntax__)); void_ptr__0next(&iter);)
+	{
+		Syntax_Node__0 const ref const parameter__ = void_ptr__0current(&iter);
+		if (cond(int32__0op__equal(parameter__->kind__, Parameter__)))
+		{
+			first_child_token__2(parameter__, VarKeyword__);
+			first_child_token__2(parameter__, Identifier__);
+			system__collections__List__1__0op__element(parameter__->children__, int32__0op__sub(parameter__->children__->count__, ((int32){1})));
+		}
+		else
+		{
+			NOT_IMPLEMENTED__1(string__0op__add(((string){{15},(uint8_t*)u8"parameter.kind="}), int_to_string__1(parameter__->kind__)));
+		}
+	}
+}
+
+Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
+{
+	Annotations__0 mut ref const type_syntax_annotations__ = annotations_for__2(annotations__, syntax_node_as_syntax__1(type_syntax__));
+	if (cond(int32__0op__equal(type_syntax__->kind__, PredefinedType__)))
+	{
+		string const primitive_name__ = get_syntax_node_text__1(system__collections__List__1__0op__element(type_syntax__->children__, ((int32){0})));
+		Symbol__0 const opt_ref const primitive_symbol__ = lookup_name_in_scope__1(scope__);
+		assert__2(void_ptr__0op__not_equal(primitive_symbol__, none), string__0op__add(string__0op__add(((string){{25},(uint8_t*)u8"No symbol for primitive `"}), primitive_name__), ((string){{1},(uint8_t*)u8"`"})));
+		Type__0 const ref const type__ = primitive_symbol__->declares_type__;
+		type_syntax_annotations__->referenced_type__ = type__;
+		return type__;
+	}
+	else if (cond(int32__0op__equal(type_syntax__->kind__, QualifiedName__)))
+	{
+		Syntax_Node__0 const ref const qualifier_syntax__ = system__collections__List__1__0op__element(type_syntax__->children__, ((int32){0}));
+		bind_type_name__3(qualifier_syntax__, scope__, annotations__);
+		system__collections__List__1__0op__element(type_syntax__->children__, ((int32){2}));
+		NOT_IMPLEMENTED__1(((string){{13},(uint8_t*)u8"QualifiedName"}));
+	}
+	else if (cond(int32__0op__equal(type_syntax__->kind__, MutableType__)))
+	{
+		Syntax_Node__0 const ref const inner_type_syntax__ = system__collections__List__1__0op__element(type_syntax__->children__, ((int32){1}));
+		Type__0 const ref const inner_type__ = bind_type_name__3(inner_type_syntax__, scope__, annotations__);
+		Type__0 const ref const type__ = make_mutable_type__1(inner_type__);
+		type_syntax_annotations__->referenced_type__ = type__;
+		return type__;
+	}
+	else if (cond(int32__0op__equal(type_syntax__->kind__, ImmutableType__)))
+	{
+		Syntax_Node__0 const ref const inner_type_syntax__ = system__collections__List__1__0op__element(type_syntax__->children__, ((int32){0}));
+		Type__0 const ref const inner_type__ = bind_type_name__3(inner_type_syntax__, scope__, annotations__);
+		Type__0 const ref const type__ = make_immutable_type__1(inner_type__);
+		type_syntax_annotations__->referenced_type__ = type__;
+		return type__;
+	}
+	else
+	{
+		int32 const place__ = type_syntax__->start__;
+		NOT_IMPLEMENTED__1(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{17},(uint8_t*)u8"type_syntax.kind="}), int_to_string__1(type_syntax__->kind__)), ((string){{4},(uint8_t*)u8" on "})), get_syntax_node_text__1(type_syntax__)), ((string){{4},(uint8_t*)u8" at "})), int_to_string__1(place__)));
+	}
+}
+
+Syntax_Symbol__0 const ref mut get_declared_type_symbols__3(Syntax_Node__0 const ref const package_syntax__, Package_Name__0 const ref const name__, Annotations_Dictionary__0 mut ref const annotations__)
+{
+	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){{20},(uint8_t*)u8"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
+	Syntax_Symbol__0 mut ref const symbol__ = Syntax_Symbol__0__0new__package__2(allocate(sizeof(Syntax_Symbol__0)), name__->unqualified__, syntax_node_as_syntax__1(package_syntax__));
+	symbol__->declares_type__ = Type__0__0new__namespace__1(allocate(sizeof(Type__0)), Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), name__));
+	Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, syntax_node_as_syntax__1(package_syntax__));
+	syntax_annotations__->symbol__ = symbol__;
+	syntax_annotations__->declares_type__ = symbol__->declares_type__;
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(package_syntax__->children__); void_ptr__0next(&iter);)
+	{
+		Syntax_Node__0 const ref const compilation_unit__ = void_ptr__0current(&iter);
+		build_declared_symbols__3(symbol__, compilation_unit__, annotations__);
+	}
+
+	return symbol__;
+}
+
+void mut build_declared_symbols__3(Syntax_Symbol__0 const ref const parent__, Syntax_Node__0 const ref const syntax__, Annotations_Dictionary__0 mut ref const annotations__)
+{
+	if (cond(int32__0op__equal(syntax__->kind__, CompilationUnit__)))
+	{
+		for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
+		{
+			Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
+			build_declared_symbols__3(parent__, child__, annotations__);
+		}
+	}
+	else if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, ClassDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, StructDeclaration__)))))
+	{
+		string const unqualified_name__ = get_token_text__1(first_child_token__2(syntax__, Identifier__));
+		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__->declares_type__->name__, TypeName__, unqualified_name__);
+		int32 mut type_kind__;
+		if (cond(int32__0op__equal(syntax__->kind__, ClassDeclaration__)))
+		{
+			type_kind__ = ReferenceType__;
+		}
+		else
+		{
+			type_kind__ = ValueType__;
+		}
+
+		Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), type_kind__, name__, TRUE);
+		Syntax_Symbol__0 mut ref const symbol__ = Syntax_Symbol__0__0new__declaring__2(allocate(sizeof(Syntax_Symbol__0)), type__, syntax_node_as_syntax__1(syntax__));
+		Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, syntax_node_as_syntax__1(syntax__));
+		syntax_annotations__->symbol__ = symbol__;
+		syntax_annotations__->declares_type__ = symbol__->declares_type__;
+		for (void_ptr__0iter mut iter = void_ptr__0iterate(members__1(syntax__)); void_ptr__0next(&iter);)
+		{
+			Syntax_Node__0 const ref const member__ = void_ptr__0current(&iter);
+			build_declared_symbols__3(symbol__, member__, annotations__);
+		}
+	}
+	else if (cond(int32__0op__equal(syntax__->kind__, EnumDeclaration__)))
+	{
+		string const unqualified_name__ = get_token_text__1(first_child_token__2(syntax__, Identifier__));
+		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__->declares_type__->name__, TypeName__, unqualified_name__);
+		Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), ReferenceType__, name__, TRUE);
+		Syntax_Symbol__0 mut ref const symbol__ = Syntax_Symbol__0__0new__declaring__2(allocate(sizeof(Syntax_Symbol__0)), type__, syntax_node_as_syntax__1(syntax__));
+		Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, syntax_node_as_syntax__1(syntax__));
+		syntax_annotations__->symbol__ = symbol__;
+		syntax_annotations__->declares_type__ = symbol__->declares_type__;
+	}
+	else if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, FunctionDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, MethodDeclaration__)))) || bool_arg(int32__0op__equal(syntax__->kind__, FieldDeclaration__)))) || bool_arg(int32__0op__equal(syntax__->kind__, ConstructorDeclaration__)))) || bool_arg(int32__0op__equal(syntax__->kind__, GlobalDeclaration__)))) || bool_arg(int32__0op__equal(syntax__->kind__, EndOfFile__)))))
+	{
+	}
+	else
+	{
+		NOT_IMPLEMENTED__1(string__0op__add(((string){{12},(uint8_t*)u8"syntax.kind="}), int_to_string__1(syntax__->kind__)));
+	}
+}
+
 Annotations__0 mut ref mut Annotations__0__0new__1(Annotations__0 mut ref const self, Syntax__0 const ref const for_syntax__)
 {
 	self->type_id = Annotations__0__0Type_ID;
@@ -5930,20 +6187,43 @@ Annotations_Dictionary__0 mut ref mut Annotations_Dictionary__0__0new__1(Annotat
 	return self;
 }
 
-Annotations__0 const ref mut annotations_for__2(Annotations_Dictionary__0 mut ref const all_annotations__, Syntax__0 const ref const syntax__)
+Annotations__0 mut ref mut annotations_for__2(Annotations_Dictionary__0 mut ref const all_annotations__, Syntax__0 const ref const syntax__)
 {
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(all_annotations__->annotations_list__); void_ptr__0next(&iter);)
 	{
-		Annotations__0 const ref const annotations__ = void_ptr__0current(&iter);
+		Annotations__0 mut ref const annotations__ = void_ptr__0current(&iter);
 		if (cond(void_ptr__0op__equal(annotations__->for_syntax__, syntax__)))
 		{
 			return annotations__;
 		}
 	}
 
-	Annotations__0 const ref const annotations__ = Annotations__0__0new__1(allocate(sizeof(Annotations__0)), syntax__);
+	Annotations__0 mut ref const annotations__ = Annotations__0__0new__1(allocate(sizeof(Annotations__0)), syntax__);
 	add_item__2(all_annotations__->annotations_list__, annotations__);
 	return annotations__;
+}
+
+Name_Scope__0 mut ref mut Name_Scope__0__0new__3(Name_Scope__0 mut ref const self, Name_Scope__0 const opt_ref const parent__, Syntax_Symbol__0 const ref const symbol__, system__collections__List__1 const ref const symbols__)
+{
+	self->type_id = Name_Scope__0__0Type_ID;
+	self->parent__ = parent__;
+	self->symbol__ = symbol__;
+	self->symbols__ = symbols__;
+	return self;
+}
+
+Name_Scope__0 mut ref mut Name_Scope__0__0new__2(Name_Scope__0 mut ref const self, Name_Scope__0 const opt_ref const parent__, Syntax_Symbol__0 const ref const symbol__)
+{
+	self->type_id = Name_Scope__0__0Type_ID;
+	self->parent__ = parent__;
+	self->symbol__ = symbol__;
+	self->symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	return self;
+}
+
+Symbol__0 const opt_ref mut lookup_name_in_scope__1(Name_Scope__0 const ref const scope__)
+{
+	NOT_IMPLEMENTED__0();
 }
 
 Expression__0 mut ref mut Expression__0__0new__0(Expression__0 mut ref const self) { self->type_id = Expression__0__0Type_ID; return self; }
@@ -6359,6 +6639,95 @@ void mut Package_symbol_children_can_be_found_by_name_and_kind__0()
 	assert__1(never__0op__not_equal(get_child_symbol__3(package_with_children__, ((string){{5},(uint8_t*)u8"child"}), IdentifierSymbol__), none));
 }
 
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__identifier__1(Syntax_Symbol__0 mut ref const self, string const name__)
+{
+	self->type_id = Syntax_Symbol__0__0Type_ID;
+	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
+	self->name__ = name__;
+	self->kind__ = IdentifierSymbol__;
+	self->is_special_name__ = FALSE;
+	self->of_type__ = none;
+	self->declares_type__ = none;
+	self->declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	return self;
+}
+
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__constructor__1(Syntax_Symbol__0 mut ref const self, string const name__)
+{
+	self->type_id = Syntax_Symbol__0__0Type_ID;
+	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
+	self->name__ = name__;
+	self->kind__ = IdentifierSymbol__;
+	self->is_special_name__ = TRUE;
+	self->of_type__ = none;
+	self->declares_type__ = none;
+	self->declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	return self;
+}
+
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__package__2(Syntax_Symbol__0 mut ref const self, string const name__, Syntax__0 const ref const declaration__)
+{
+	self->type_id = Syntax_Symbol__0__0Type_ID;
+	assert__1(int32__0op__gt(string_byte_length__1(name__), ((int32){0})));
+	assert__1(void_ptr__0op__not_equal(declaration__, none));
+	self->name__ = name__;
+	self->kind__ = PackageSymbol__;
+	self->is_special_name__ = FALSE;
+	self->of_type__ = none;
+	self->declares_type__ = none;
+	self->declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	add_item__2(self->declarations__, declaration__);
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	return self;
+}
+
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__declaring__2(Syntax_Symbol__0 mut ref const self, Type__0 const ref const declares_type__, Syntax__0 const ref const declaration__)
+{
+	self->type_id = Syntax_Symbol__0__0Type_ID;
+	assert__1(void_ptr__0op__not_equal(declares_type__, none));
+	assert__1(void_ptr__0op__not_equal(declaration__, none));
+	self->name__ = unqualified_name__1(declares_type__->name__);
+	self->kind__ = IdentifierSymbol__;
+	self->is_special_name__ = declares_type__->name__->is_special__;
+	self->of_type__ = none;
+	self->declares_type__ = declares_type__;
+	self->declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	add_item__2(self->declarations__, declaration__);
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	return self;
+}
+
+Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__of_type__2(Syntax_Symbol__0 mut ref const self, string const name__, Type__0 const ref const of_type__)
+{
+	self->type_id = Syntax_Symbol__0__0Type_ID;
+	assert__2(void_ptr__0op__not_equal(of_type__, none), string__0op__add(((string){{5},(uint8_t*)u8"name="}), name__));
+	self->name__ = name__;
+	self->kind__ = IdentifierSymbol__;
+	self->is_special_name__ = FALSE;
+	self->of_type__ = of_type__;
+	self->declares_type__ = none;
+	self->declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	return self;
+}
+
+Syntax_Symbol__0 const opt_ref mut get_child_Symbol_Declaration__3(Syntax_Symbol__0 const ref const builder__, string const name__, int32 const kind__)
+{
+	assert__1(void_ptr__0op__not_equal(builder__, none));
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(builder__->children__); void_ptr__0next(&iter);)
+	{
+		Syntax_Symbol__0 const ref const child__ = void_ptr__0current(&iter);
+		if (cond(bool_op(bool_arg(string__0op__equal(child__->name__, name__)) && bool_arg(int32__0op__equal(child__->kind__, kind__)))))
+		{
+			return child__;
+		}
+	}
+
+	return none;
+}
+
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__1(Name_Subtable__0 mut ref const self, Name_Table__0 const ref const name_table__)
 {
 	self->type_id = Name_Subtable__0__0Type_ID;
@@ -6602,12 +6971,12 @@ Name_Subtable__0 const opt_ref mut get_name__2(Name_Table__0 const ref const nam
 	return none;
 }
 
-Name_Table__0 const ref mut build_name_table__3(Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__, system__collections__List__1 const ref const references__)
+Name_Table__0 const ref mut build_symbol_table__4(Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__, system__collections__List__1 const ref const references__, Annotations_Dictionary__0 mut ref const annotations__)
 {
 	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){{20},(uint8_t*)u8"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
 	Name_Table__0 mut ref const name_table__ = Name_Table__0__0new__0(allocate(sizeof(Name_Table__0)));
 	add_referenced__2(name_table__, references__);
-	add_package__3(name_table__, package_name__, package_syntax__);
+	add_package__4(name_table__, package_name__, package_syntax__, annotations__);
 	return name_table__;
 }
 
@@ -6636,33 +7005,33 @@ void mut add_symbol__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	}
 }
 
-void mut add_package__3(Name_Table__0 mut ref const name_table__, Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__)
+void mut add_package__4(Name_Table__0 mut ref const name_table__, Package_Name__0 const ref const package_name__, Syntax_Node__0 const ref const package_syntax__, Annotations_Dictionary__0 mut ref const annotations__)
 {
 	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){{20},(uint8_t*)u8"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
 	Name__0 const ref const global_namespace__ = add_package__2(name_table__, package_name__);
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(package_syntax__->children__); void_ptr__0next(&iter);)
 	{
 		Syntax_Node__0 const ref const compilation_unit__ = void_ptr__0current(&iter);
-		add_compilation_unit__3(name_table__, global_namespace__, compilation_unit__);
+		add_compilation_unit__4(name_table__, global_namespace__, compilation_unit__, annotations__);
 	}
 }
 
-void mut add_compilation_unit__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const global_namespace__, Syntax_Node__0 const ref const compilation_unit__)
+void mut add_compilation_unit__4(Name_Table__0 mut ref const name_table__, Name__0 const ref const global_namespace__, Syntax_Node__0 const ref const compilation_unit__, Annotations_Dictionary__0 mut ref const annotations__)
 {
 	assert__2(int32__0op__equal(compilation_unit__->kind__, CompilationUnit__), string__0op__add(((string){{22},(uint8_t*)u8"compilation_unit.kind="}), int_to_string__1(compilation_unit__->kind__)));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(compilation_unit__->children__); void_ptr__0next(&iter);)
 	{
 		Syntax_Node__0 const ref const declaration__ = void_ptr__0current(&iter);
-		add_syntax__3(name_table__, global_namespace__, declaration__);
+		add_syntax__4(name_table__, global_namespace__, declaration__, annotations__);
 	}
 }
 
-void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const parent__, Syntax_Node__0 const ref const syntax__)
+void mut add_syntax__4(Name_Table__0 mut ref const name_table__, Name__0 const ref const parent__, Syntax_Node__0 const ref const syntax__, Annotations_Dictionary__0 mut ref const annotations__)
 {
 	if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, FunctionDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, MethodDeclaration__)))))
 	{
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, FunctionName__, get_token_text__1(first_child_token__2(syntax__, Identifier__)));
-		add_function__3(name_table__, name__, syntax__);
+		add_function__4(name_table__, name__, syntax__, annotations__);
 	}
 	else if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, ClassDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, StructDeclaration__)))))
 	{
@@ -6683,7 +7052,7 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 		for (void_ptr__0iter mut iter = void_ptr__0iterate(members__1(syntax__)); void_ptr__0next(&iter);)
 		{
 			Syntax_Node__0 const ref const member__ = void_ptr__0current(&iter);
-			add_syntax__3(name_table__, name__, member__);
+			add_syntax__4(name_table__, name__, member__, annotations__);
 		}
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ConstructorDeclaration__)))
@@ -6696,7 +7065,7 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 		}
 
 		Name__0 const ref const name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), parent__, FunctionName__, full_name__);
-		add_function__3(name_table__, name__, syntax__);
+		add_function__4(name_table__, name__, syntax__, annotations__);
 		Name__0 const ref const self_name__ = Name__0__0new__special__3(allocate(sizeof(Name__0)), name__, VariableName__, ((string){{4},(uint8_t*)u8"self"}));
 		Type__0 const ref const self_type__ = get_name__2(name_table__, parent__)->type__;
 		assert__1(void_ptr__0op__not_equal(self_type__, none));
@@ -6728,12 +7097,12 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 		for (void_ptr__0iter mut iter = void_ptr__0iterate(statements__1(syntax__)); void_ptr__0next(&iter);)
 		{
 			Syntax_Node__0 const ref const statement__ = void_ptr__0current(&iter);
-			add_syntax__3(name_table__, parent__, statement__);
+			add_syntax__4(name_table__, parent__, statement__, annotations__);
 		}
 	}
 	else if (cond(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, LoopStatement__)) || bool_arg(int32__0op__equal(syntax__->kind__, WhileStatement__)))) || bool_arg(int32__0op__equal(syntax__->kind__, DoWhileStatement__)))))
 	{
-		add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__));
+		add_syntax__4(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__), annotations__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ForStatement__)))
 	{
@@ -6741,15 +7110,15 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_token_text__1(identifier__));
 		Type__0 const opt_ref const no_type__ = none;
 		add_type_name__3(name_table__, name__, no_type__);
-		add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__));
+		add_syntax__4(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__), annotations__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, IfStatement__)))
 	{
-		add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__));
+		add_syntax__4(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__), annotations__);
 		Syntax_Node__0 const opt_ref const else_clause__ = first_child_syntax_node__2(syntax__, ElseClause__);
 		if (cond(void_ptr__0op__not_equal(else_clause__, none)))
 		{
-			add_syntax__3(name_table__, parent__, else_clause__);
+			add_syntax__4(name_table__, parent__, else_clause__, annotations__);
 		}
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, MatchStatement__)))
@@ -6759,7 +7128,7 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 			Syntax_Node__0 const ref const child__ = void_ptr__0current(&iter);
 			if (cond(int32__0op__equal(child__->kind__, MatchArm__)))
 			{
-				add_syntax__3(name_table__, parent__, child__);
+				add_syntax__4(name_table__, parent__, child__, annotations__);
 			}
 		}
 	}
@@ -6769,18 +7138,18 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, VariableName__, get_token_text__1(identifier__));
 		Type__0 const opt_ref const no_type__ = none;
 		add_type_name__3(name_table__, name__, no_type__);
-		add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__));
+		add_syntax__4(name_table__, parent__, first_child_syntax_node__2(syntax__, Block__), annotations__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, ElseClause__)))
 	{
 		Syntax_Node__0 const opt_ref const block__ = first_child_syntax_node__2(syntax__, Block__);
 		if (cond(void_ptr__0op__not_equal(block__, none)))
 		{
-			add_syntax__3(name_table__, parent__, block__);
+			add_syntax__4(name_table__, parent__, block__, annotations__);
 		}
 		else
 		{
-			add_syntax__3(name_table__, parent__, first_child_syntax_node__2(syntax__, IfStatement__));
+			add_syntax__4(name_table__, parent__, first_child_syntax_node__2(syntax__, IfStatement__), annotations__);
 		}
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, LocalDeclarationStatement__)))
@@ -6813,7 +7182,7 @@ void mut add_syntax__3(Name_Table__0 mut ref const name_table__, Name__0 const r
 	}
 }
 
-void mut add_function__3(Name_Table__0 mut ref const name_table__, Name__0 const ref const name__, Syntax_Node__0 const ref const function__)
+void mut add_function__4(Name_Table__0 mut ref const name_table__, Name__0 const ref const name__, Syntax_Node__0 const ref const function__, Annotations_Dictionary__0 mut ref const annotations__)
 {
 	Type__0 const opt_ref const no_type__ = none;
 	add_type_name__3(name_table__, name__, no_type__);
@@ -6821,14 +7190,14 @@ void mut add_function__3(Name_Table__0 mut ref const name_table__, Name__0 const
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(parameters__1(parameters_syntax__)); void_ptr__0next(&iter);)
 	{
 		Syntax_Node__0 const ref const parameter__ = void_ptr__0current(&iter);
-		add_syntax__3(name_table__, name__, parameter__);
+		add_syntax__4(name_table__, name__, parameter__, annotations__);
 	}
 
 	Syntax_Node__0 const ref const body__ = first_child_syntax_node__2(function__, Block__);
-	add_syntax__3(name_table__, name__, body__);
+	add_syntax__4(name_table__, name__, body__, annotations__);
 }
 
-void mut unit_test_Name_Table_Builder__0()
+void mut unit_test_Symbol_Table_Builder__0()
 {
 	table_contains_referenced_child_names__0();
 	can_get_root_namespace_from_name__0();
@@ -6844,15 +7213,16 @@ void mut table_contains_referenced_child_names__0()
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
 	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
 	Syntax_Node__0 const ref const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
-	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
-	Name_Subtable__0 const ref const namespace__ = find__2(name_table__->any_package__, ((string){{6},(uint8_t*)u8"system"}));
+	Annotations_Dictionary__0 mut ref const annotations__ = Annotations_Dictionary__0__0new__1(allocate(sizeof(Annotations_Dictionary__0)), package_syntax__);
+	Name_Table__0 const ref const symbol_table__ = build_symbol_table__4(name__, package_syntax__, references__, annotations__);
+	Name_Subtable__0 const ref const namespace__ = find__2(symbol_table__->any_package__, ((string){{6},(uint8_t*)u8"system"}));
 	assert__1(never__0op__not_equal(find__2(namespace__, ((string){{7},(uint8_t*)u8"console"})), none));
 	Name__0 const ref const system_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
-	assert__1(never__0op__not_equal(get_name__2(name_table__, system_namespace_name__), none));
+	assert__1(never__0op__not_equal(get_name__2(symbol_table__, system_namespace_name__), none));
 	Name__0 const ref const console_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace_name__, NamespaceName__, ((string){{7},(uint8_t*)u8"console"}));
-	assert__1(never__0op__not_equal(get_name__2(name_table__, console_namespace_name__), none));
+	assert__1(never__0op__not_equal(get_name__2(symbol_table__, console_namespace_name__), none));
 	Name__0 const ref const console_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), console_namespace_name__, TypeName__, ((string){{7},(uint8_t*)u8"Console"}));
-	assert__1(never__0op__not_equal(get_name__2(name_table__, console_class_name__), none));
+	assert__1(never__0op__not_equal(get_name__2(symbol_table__, console_class_name__), none));
 }
 
 void mut can_get_root_namespace_from_name__0()
@@ -6863,9 +7233,10 @@ void mut can_get_root_namespace_from_name__0()
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
 	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
 	Syntax_Node__0 const ref const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
-	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
+	Annotations_Dictionary__0 mut ref const annotations__ = Annotations_Dictionary__0__0new__1(allocate(sizeof(Annotations_Dictionary__0)), package_syntax__);
+	Name_Table__0 const ref const symbol_table__ = build_symbol_table__4(name__, package_syntax__, references__, annotations__);
 	Name__0 const ref const namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
-	assert__1(never__0op__not_equal(get_name__2(name_table__, namespace_name__), none));
+	assert__1(never__0op__not_equal(get_name__2(symbol_table__, namespace_name__), none));
 }
 
 void mut can_get_Console_class_from_name_without_package__0()
@@ -6876,11 +7247,12 @@ void mut can_get_Console_class_from_name_without_package__0()
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
 	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
 	Syntax_Node__0 const ref const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
-	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
+	Annotations_Dictionary__0 mut ref const annotations__ = Annotations_Dictionary__0__0new__1(allocate(sizeof(Annotations_Dictionary__0)), package_syntax__);
+	Name_Table__0 const ref const symbol_table__ = build_symbol_table__4(name__, package_syntax__, references__, annotations__);
 	Name__0 const ref const system_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
 	Name__0 const ref const console_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace_name__, NamespaceName__, ((string){{7},(uint8_t*)u8"console"}));
 	Name__0 const ref const console_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), console_namespace_name__, TypeName__, ((string){{7},(uint8_t*)u8"Console"}));
-	assert__1(never__0op__not_equal(get_name__2(name_table__, console_class_name__), none));
+	assert__1(never__0op__not_equal(get_name__2(symbol_table__, console_class_name__), none));
 }
 
 void mut can_get_Optional_class_from_name_with_package__0()
@@ -6891,12 +7263,13 @@ void mut can_get_Optional_class_from_name_with_package__0()
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), primitives_package__));
 	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
 	Syntax_Node__0 const ref const package_syntax__ = Syntax_Node__0__0new__4(allocate(sizeof(Syntax_Node__0)), PackageNode__, source__, ((int32){0}), ((int32){0}));
-	Name_Table__0 const ref const name_table__ = build_name_table__3(name__, package_syntax__, references__);
+	Annotations_Dictionary__0 mut ref const annotations__ = Annotations_Dictionary__0__0new__1(allocate(sizeof(Annotations_Dictionary__0)), package_syntax__);
+	Name_Table__0 const ref const symbol_table__ = build_symbol_table__4(name__, package_syntax__, references__, annotations__);
 	Name__0 const ref const adamant_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), NamespaceName__, ((string){{7},(uint8_t*)u8"adamant"}));
 	Name__0 const ref const language_namespace_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace_name__, NamespaceName__, ((string){{8},(uint8_t*)u8"language"}));
-	assert__1(never__0op__not_equal(get_name__2(name_table__, language_namespace_name__), none));
+	assert__1(never__0op__not_equal(get_name__2(symbol_table__, language_namespace_name__), none));
 	Name__0 const ref const optional_class_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace_name__, TypeName__, ((string){{8},(uint8_t*)u8"optional"}));
-	assert__1(never__0op__not_equal(get_name__2(name_table__, optional_class_name__), none));
+	assert__1(never__0op__not_equal(get_name__2(symbol_table__, optional_class_name__), none));
 }
 
 Type__0 mut ref mut Type__0__0new__3(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, BOOL const is_mutable__)
@@ -7035,7 +7408,7 @@ Type__0 const ref mut remove_type_package__1(Type__0 const ref const type__)
 int32_t main(int argc, char const ptr const ptr argv)
 {
 	add_resource((string){{16},(uint8_t*)u8"RuntimeLibrary.c"}, (string){{25118},(uint8_t*)u8"#include \"RuntimeLibrary.h\"\n\n#include <string.h>\n#include <assert.h>\n\n// -----------------------------------------------------------------------------\n// Static Checks\n// -----------------------------------------------------------------------------\n\n// At least on windows, this macro seems to be missing\n#ifndef static_assert\n#define static_assert _Static_assert\n#endif\n\n// Because we assume we can cast from char* to uint8_t* they need to be the same size\nstatic_assert(sizeof(char) == sizeof(uint8_t), \"chars must be 8 bits\");\n\n// Because we assume we can cast from uint8_t* to byte* they need to be the same size\nstatic_assert(sizeof(uint8_t) == sizeof(byte), \"bytes must be 8 bits\");\n\n// Bool sizing assertions.\nstatic_assert(sizeof(_Bool) == sizeof(BOOL), \"BOOL size\");\ntypedef struct { _Bool a; _Bool b; } raw;\ntypedef struct { BOOL a; BOOL b; } wrapped;\nstatic_assert(sizeof(raw) == sizeof(wrapped), \"Wrapping doesn't change size\");\n\nstatic_assert(sizeof(_Bool) != sizeof(raw), \"_Bools don't pack\");\nstatic_assert(sizeof(_Bool) != sizeof(wrapped), \"Wrapped _bools don't pack\");\n\ntypedef struct { _Bool a:1; _Bool b:1; } field;\nstatic_assert(sizeof(_Bool) == sizeof(field), \"Bit fields pack\");\n\ntypedef struct { _Bool a:1; uint8_t x; _Bool b:1; } split_field;\nstatic_assert(sizeof(split_field) == 3, \"Split bit fields don't pack\");\n\n// Testing that the style we use for literals can be used as a const\nconst code_point test_code_point = ((code_point){0xFF});\n\n// Note: there is no such thing as a constant array initializer in C. We have to\n// take the pointer to the string literal.\nconst string test_string = ((string){{5},(uint8_t*)u8\"hello\"});\n\n// -----------------------------------------------------------------------------\n// Emit Support\n// -----------------------------------------------------------------------------\n// These are things which make emitting easier or clearer\n\nnoreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line)\n{\n    printf(\"Non-exhustive match. Type_ID=%i not covered in function %s in %s, line %i\", type_id, function, file, line);\n    exit(70);\n}\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\nstatic const _Bool _true=1;\nstatic const _Bool _false=0;\n\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s\", code);\n        exit(70);\n    }\n}\n\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message)\n{\n    if(!condition)\n    {\n        printf(\"Assertion failed: %s, %s\", code, message);\n        exit(70);\n    }\n}\n\nextern inline void_ptr allocate(size_t bytes);\n\nstatic inline int32 int32_from(int32_t v)\n{\n    return (int32){ v };\n}\n\n// TODO change this to something like byte_from\nuint8_t code_point__to_char(code_point v)\n{\n    lib_assert(v.value <= 0xFF);\n    return v.value;\n}\n\nchar const * cstr_from(string value)\n{\n    int32_t length = value.byte_length.value;\n    char* bytes = allocate(length + 1);\n    if(length > 0)\n        memcpy(bytes, value.bytes, length);\n    bytes[length] = 0;\n    return bytes;\n}\n\nstring string_from_cstr(char const* s)\n{\n    return (string){int32_from(strlen(s)), (uint8_t*)s};\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\nextern inline _Bool cond(BOOL cond);\nextern inline BOOL bool_from(_Bool b);\nextern inline BOOL bool_op(_Bool b);\nextern inline _Bool bool_arg(BOOL b);\nextern inline BOOL BOOL__0op__not(BOOL b);\n\nstring bool_to_string__1(BOOL b)\n{\n    if(cond(b))\n        return (string){int32_from(4),(uint8_t*)u8\"true\"};\n    else\n        return (string){int32_from(5),(uint8_t*)u8\"false\"};\n}\n\nextern inline void op__add_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline void op__sub_assign(int32*_Nonnull lhs, int32 rhs);\nextern inline int32 int32__0op__neg(int32 v);\nextern inline int32 int32__0op__add(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__sub(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__mul(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__div(int32 lhs, int32 rhs);\nextern inline int32 int32__0op__remainder(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__lte(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gt(int32 lhs, int32 rhs);\nextern inline BOOL int32__0op__gte(int32 lhs, int32 rhs);\n\nstring int_to_string__1(int32 i)\n{\n    uint8_t* bytes = allocate(12); // -2,147,483,648 plus null terminator\n    int length = sprintf((char*)bytes, \"%d\", i.value);\n    lib_assert(length > 0);\n    return (string){int32_from(length), bytes};\n}\nstring int_to_hex_string__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    uint8_t* bytes = allocate(9); // FF_FF_FF_FF plus null terminator\n    int length = sprintf((char*)bytes, \"%X\", i.value);\n    lib_assert(length > 0);\n    return (string){int32_from(length), bytes};\n}\n\nint32 hex_string_to_int__1(string s)\n{\n    char const* cstr = cstr_from(s);\n    int32_t i = strtoul(cstr, NULL, 16);\n    free__1(cstr);\n    return (int32){i};\n}\n\ncode_point int_to_code_point__1(int32 i)\n{\n    lib_assert(i.value >= 0);\n    return (code_point){(uint32_t)i.value};\n}\n\nextern inline BOOL code_point__0op__lt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__lte(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gt(code_point lhs, code_point rhs);\nextern inline BOOL code_point__0op__gte(code_point lhs, code_point rhs);\nextern inline int32 code_point_as_int__1(code_point c);\n\nstring code_point_to_string__1(code_point c)\n{\n    uint8_t* bytes = allocate(sizeof(uint8_t));\n    *bytes = code_point__to_char(c);\n    return (string){int32_from(1), bytes};\n}\n\nstring string__0new__0()\n{\n    return (string){int32_from(0), 0};\n}\n\nstring string__0new__1(string value)\n{\n    return value;\n}\n\nstring string__0new__2(code_point c, int32 repeat)\n{\n    uint8_t* bytes = allocate(repeat.value);\n    uint8_t ch = code_point__to_char(c);\n    for (int i = 0; i < repeat.value; i++)\n        bytes[i] = ch;\n\n    return (string){repeat, bytes};\n}\n\nstring string__0op__add(string lhs, string rhs)\n{\n    int new_length = lhs.byte_length.value + rhs.byte_length.value;\n    uint8_t* chars = allocate(new_length);\n    size_t offset = sizeof(uint8_t) * lhs.byte_length.value;\n    if(lhs.byte_length.value > 0)\n        memcpy(chars, lhs.bytes, offset);\n    if(rhs.byte_length.value > 0)\n        memcpy(chars + offset, rhs.bytes, rhs.byte_length.value);\n    return (string){int32_from(new_length), chars};\n}\n\nBOOL string__0op__equal(string lhs, string rhs)\n{\n    if (lhs.byte_length.value != rhs.byte_length.value)\n        return FALSE;\n\n    for (int i = 0; i < lhs.byte_length.value; i++)\n        if (lhs.bytes[i] != rhs.bytes[i])\n            return FALSE;\n\n    return TRUE;\n}\n\nBOOL string__0op__lt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) < 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__lte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    _Bool result = strcmp(left, right) <= 0;\n    free__1(left);\n    free__1(right);\n    return bool_from(result);\n}\nBOOL string__0op__gt(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) > 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\nBOOL string__0op__gte(string lhs, string rhs)\n{\n    char const* left = cstr_from(lhs);\n    char const* right = cstr_from(rhs);\n    BOOL result = bool_from(strcmp(left, right) >= 0);\n    free__1(left);\n    free__1(right);\n    return result;\n}\n\nextern inline code_point string__0__0op__element(string value, int32 index);\nextern inline int32 string_byte_length__1(string s);\n\nstring substring__3(string s, int32 start, int32 length)\n{\n    // You can ask for a zero length substring at the end of the string\n    lib_assert(start.value <= s.byte_length.value);\n    lib_assert(start.value+length.value <= s.byte_length.value);\n    return (string){length, s.bytes + start.value};\n}\n\nextern inline string substring__2(string s, int32 start);\n\nstring string_replace__3(string s, string old_value, string new_value)\n{\n    // We make one one the stack then manually call the constructor\n    system__text__String_Builder__0 builder;\n    system__text__String_Builder__0__0new__with_capacity__1(&builder, s.byte_length);\n    int limit = s.byte_length.value - old_value.byte_length.value + 1;\n    int last_index = 0;\n    for(int i=0; i < limit; i++)\n        if(cond(string__0op__equal(substring__3(s, int32_from(i), old_value.byte_length), old_value)))\n        {\n            sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(i-last_index)));\n            sb_append__2(&builder, new_value);\n            i += old_value.byte_length.value; // skip over the value we just matched\n            last_index = i;\n            i--; // we need i-- to offset the i++ that is about to happen\n        }\n\n    sb_append__2(&builder, substring__3(s, int32_from(last_index), int32_from(s.byte_length.value - last_index)));\n    return sb_to_string__1(&builder);\n}\nint32 string_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = 0; i < s.byte_length.value; i++)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\nint32 string_last_index_of__2(string s, code_point c)\n{\n    uint8_t value = code_point__to_char(c);\n    for(int i = s.byte_length.value - 1; i >= 0; i--)\n        if(s.bytes[i] == value)\n            return int32_from(i);\n\n    // TODO we should return `int?` and return `none` in this case\n    return int32_from(-1);\n}\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\nextern inline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__equal(code_point lhs, code_point rhs);\nextern BOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs);\n\nextern inline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs);\nextern inline BOOL int32__0op__not_equal(int32 lhs, int32 rhs);\nextern inline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs);\nextern inline BOOL string__0op__not_equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\nextern inline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\nextern inline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs);\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n\nextern inline void const ref as_any__1(void const ref const value);\nextern inline void mut ref as_any_mut__1(void mut ref const value);\n\nextern inline void_ptr allocate__1(int32 bytes);\nextern inline void free__1(const_void_ptr object);\n\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, file %s, line %i\", code, file, line);\n        exit(70);\n    }\n}\n\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line)\n{\n    if(!condition.value)\n    {\n        printf(\"Assertion failed: %s, %s, file %s, line %i\", code, cstr_from(message), file, line);\n        exit(70);\n    }\n}\n\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Function %s not yet implemented, %s, %s, line %i\", function, cstr_from(message), file, line);\n    exit(70);\n}\n\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line)\n{\n    printf(\"Reached \\\"UNREACHABLE\\\" statement in function %s, %s, line %i\", function, file, line);\n    exit(70);\n}\n\nstatic int32_t resource_count = 0;\nstatic string resource_name[1024];\nstatic string resource_value[1024];\n\nvoid add_resource(string name, string value)\n{\n    lib_assert_msg(resource_count < 1024, \"only 1024 resources are currently supported\");\n    resource_name[resource_count] = name;\n    resource_value[resource_count] = value;\n    resource_count += 1;\n}\n\nstring get_resource__1(string name)\n{\n    for(int32_t i=0; i < resource_count; i++)\n        if(cond(string__0op__equal(resource_name[i], name)))\n            return resource_value[i];\n\n    lib_assert_msg(_false, cstr_from(name));\n    UNREACHABLE__0();\n}\n\nvoid debug_write__1(string value)\n{\n    fprintf(stderr, \"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__1(string value)\n{\n    fprintf(stderr, \"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid debug_write_line__0()\n{\n    fprintf(stderr, \"\\n\");\n}\n\n_Bool string__0next(string__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline string string__0current(string__0iter const*_Nonnull iter);\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index);\nextern inline void clear_strings__1(Strings__0 *_Nonnull strings);\n\nvoid add_string__2(Strings__0 *_Nonnull strings, string value)\n{\n    if(strings->count__.value >= strings->capacity__.value)\n    {\n        int32_t new_capacity = strings->capacity__.value == 0 ? 16 : strings->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        string* new_values = allocate(new_capacity * sizeof(string));\n        if(strings->count__.value > 0)\n            memcpy(new_values, strings->values, strings->count__.value * sizeof(string));\n        if(strings->capacity__.value != 0)\n            free__1(strings->values); // delete the old array\n        strings->values = new_values;\n        strings->capacity__ = (int32){new_capacity};\n    }\n    strings->values[strings->count__.value] = value;\n    strings->count__.value++;\n}\n\nextern inline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings);\nextern inline string__0iter string__0iterate(Strings__0 const *_Nonnull strings);\n\n_Bool int__0next(int__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline int32 int__0current(int__0iter const*_Nonnull iter);\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\nextern inline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index);\nextern inline void clear_ints__1(Ints__0 *_Nonnull ints);\n\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value)\n{\n    if(ints->count__.value >= ints->capacity__.value)\n    {\n        int32_t new_capacity = ints->capacity__.value == 0 ? 16 : ints->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        // Needed if T is a value type to avoid needing a default constructor\n        int32* new_values = allocate(new_capacity * sizeof(int32));\n        if(ints->count__.value > 0)\n            memcpy(new_values, ints->values, ints->count__.value * sizeof(int32));\n        if(ints->capacity__.value != 0)\n            free__1(ints->values); // delete the old array\n        ints->values = new_values;\n        ints->capacity__ = (int32){new_capacity};\n    }\n    ints->values[ints->count__.value] = value;\n    ints->count__.value++;\n}\n\nextern inline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints);\nextern inline int__0iter int__0iterate(Ints__0 const*_Nonnull ints);\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter)\n{\n    iter->current++;\n    if(iter->current >= iter->count)\n    {\n        iter->current = iter->count; // prevent current from further increase\n        return _false;\n    }\n    return _true;\n}\n\nextern inline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter);\n\nextern inline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self);\n\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value)\n{\n    if(list->count__.value >= list->capacity__.value)\n    {\n        int32_t new_capacity = list->capacity__.value == 0 ? 16 : list->capacity__.value * 2;\n        // Allocate uninitalized bytes (note `sizeof(char) == 1` always)\n        void_ptr* new_values = allocate(new_capacity * sizeof(void_ptr));\n        if(list->count__.value > 0)\n            memcpy(new_values, list->values, list->count__.value * sizeof(void_ptr));\n        if(list->capacity__.value != 0)\n            free__1(list->values); // delete the old array\n        list->values = new_values;\n        list->capacity__ = (int32){new_capacity};\n    }\n    list->values[list->count__.value] = (void*_Nullable)value; // TODO hack, we cast away const\n    list->count__.value++;\n}\n\nextern inline void clear_list__1(system__collections__List__1 *_Nonnull list);\nextern inline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index);\nextern inline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list);\nextern inline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list);\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value)\n{\n    printf(\"%.*s\\n\", value.byte_length.value, value.bytes);\n}\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console)\n{\n    printf(\"\\n\");\n}\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv)\n{\n    system__console__Arguments__0 *_Nonnull self = allocate(sizeof(system__console__Arguments__0));\n    self->count__ = (int32){argc-1};\n    self->values = allocate(self->count__.value * sizeof(string));\n    for (int i = 0; i < self->count__.value; i++)\n        self->values[i] = string_from_cstr(argv[i+1]);\n    return self;\n}\n\nextern inline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index);\nextern inline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments);\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name)\n{\n    char const *_Nonnull fname = cstr_from(file_name);\n    self->file= fopen(fname, \"rb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fseek(reader->file, 0, SEEK_END);\n    long int length = ftell(reader->file);\n    fseek(reader->file, 0, SEEK_SET);\n    uint8_t*_Nonnull bytes = allocate(length);\n    length = fread(bytes, sizeof(uint8_t), length, reader->file);\n    return (string){int32_from(length), bytes};\n}\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader)\n{\n    fclose(reader->file);\n}\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name)\n{\n    char const *_Nonnull fname = cstr_from(file_name);\n    self->file = fopen(fname, \"wb\"); // TODO report error up to caller\n    free__1(fname);\n    return self;\n}\n\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value)\n{\n    fwrite(value.bytes, sizeof(char), value.byte_length.value, writer->file);\n}\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer)\n{\n    fclose(writer->file);\n}\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed)\n{\n    int new_capacity = sb->capacity == 0 ? 128 : sb->capacity;\n    while(new_capacity < needed)\n    {\n        new_capacity *= 2;\n    }\n\n    if(new_capacity > sb->capacity)\n    {\n        uint8_t* new_buffer =  allocate(new_capacity);\n        if(sb->byte_length__.value > 0)\n            memcpy(new_buffer, sb->bytes, sb->byte_length__.value*sizeof(uint8_t));\n\n        if(sb->capacity > 0)\n            free__1(sb->bytes);\n\n        sb->bytes = new_buffer;\n        sb->capacity = new_capacity;\n    }\n}\n\nextern inline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self);\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, value.byte_length.value);\n    if(value.byte_length.value > 0)\n        memcpy(self->bytes, value.bytes, value.byte_length.value);\n    self->byte_length__.value = value.byte_length.value;\n    return self;\n}\n\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity)\n{\n    system__text__String_Builder__0__0new__0(self);\n    ensure_sb_capacity(self, capacity.value);\n    return self;\n}\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value;\n    ensure_sb_capacity(sb, new_length);\n    if(value.byte_length.value > 0)\n        memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value)\n{\n    int32_t new_length = sb->byte_length__.value + value->byte_length__.value;\n    ensure_sb_capacity(sb, new_length);\n    if(value->byte_length__.value > 0)\n        memcpy(sb->bytes+sb->byte_length__.value, value->bytes, value->byte_length__.value);\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value)\n{\n    int32_t new_length = sb->byte_length__.value + value.byte_length.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    if(value.byte_length.value > 0)\n        memcpy(sb->bytes+sb->byte_length__.value, value.bytes, value.byte_length.value);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    int32_t new_length = sb->byte_length__.value + 1;\n    ensure_sb_capacity(sb, new_length);\n    sb->bytes[new_length-1] = '\\n';\n    sb->byte_length__.value = new_length;\n}\n\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n\n    int32_t end = start.value + length.value;\n    lib_assert(end <= sb->byte_length__.value); // less than or equal because end is one past the end of the remove\n\n    memmove(sb->bytes+start.value, sb->bytes+end, sb->byte_length__.value-end);\n    sb->byte_length__.value -= length.value;\n}\n\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start)\n{\n    lib_assert(start.value < sb->byte_length__.value);\n    sb->byte_length__.value = start.value;\n}\n\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb)\n{\n    string result = {int32_from(sb->byte_length__.value), sb->bytes};\n    // give up ownership of bytes\n    sb->bytes = 0;\n    sb->byte_length__.value = 0;\n    sb->capacity = 0;\n    return result;\n}\n"});
-	add_resource((string){{16},(uint8_t*)u8"RuntimeLibrary.h"}, (string){{17665},(uint8_t*)u8"// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n// Note that we can't switch to the \"secure\" functions because they don't\n// compile in linux on Travis CI\n#define _CRT_SECURE_NO_WARNINGS\n\n#include <stdlib.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <stdnoreturn.h>\n\n// -----------------------------------------------------------------------------\n// Emit Support\n// -----------------------------------------------------------------------------\n// These are things which make emitting easier or clearer\n\n#define ref *_Nonnull restrict\n#define opt_ref *_Nullable restrict\n#define ptr *_Nonnull\n#define opt_ptr *_Nullable\n#define mut\n\n#define NON_EXHAUSTIVE_MATCH(type_id) NON_EXHAUSTIVE_MATCH_IMPL(type_id, __func__, __FILE__, __LINE__);\nnoreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line);\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\ntypedef void*_Nullable void_ptr;\ntypedef void const*_Nullable const_void_ptr;\n\n#define lib_assert(condition) lib_assert1(condition, #condition)\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code);\n#define lib_assert_msg(condition, message) lib_assert2(condition, #condition, message)\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message);\n\ninline void_ptr allocate(size_t bytes)\n{\n    return malloc(bytes);\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\ntypedef struct never never;\ntypedef struct optional__never optional__never;\ntypedef struct BOOL BOOL;\ntypedef struct int32 int32;\ntypedef struct byte byte;\ntypedef struct code_point code_point;\ntypedef struct string string;\n\n// `never` type\nstruct never\n{\n};\n\n// `never?` type\nstruct optional__never\n{\n};\n\n// TODO this is a hack for now, the type of `none` should be `never?`\nstatic const void_ptr none = NULL;\n\n// For now, use `BOOL` as the emitted type\n// TODO C: switch `BOOL` to `bool`\n// TODO C: switch `TRUE` to `true`\n// TODO C: switch `FALSE` to `false`\n\n// `bool` type\nstruct BOOL\n{\n    _Bool value;\n};\n\nstatic const BOOL TRUE = { 1 };\nstatic const BOOL FALSE = { 0 };\n\n// Function used in conditions to make them take `bool`\ninline _Bool cond(BOOL cond) { return cond.value; }\n\n// Used by runtime for converting to bool\ninline BOOL bool_from(_Bool b) { return (BOOL){ b }; }\n\n// Wrap a bool operation that is bool based\ninline BOOL bool_op(_Bool b) { return (BOOL){ b }; }\n// Convert the arguments of a logical operation to bool\ninline _Bool bool_arg(BOOL b) { return b.value; }\n\ninline BOOL BOOL__0op__not(BOOL b) { return (BOOL){ !b.value }; }\n\nstring bool_to_string__1(BOOL b);\n\n// `int` type\nstruct int32\n{\n    int32_t value;\n};\n\ninline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }\ninline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }\ninline int32 int32__0op__neg(int32 v) { return (int32){-v.value}; }\ninline int32 int32__0op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }\ninline int32 int32__0op__sub(int32 lhs, int32 rhs) { return (int32){ lhs.value - rhs.value}; }\ninline int32 int32__0op__mul(int32 lhs, int32 rhs) { return (int32){ lhs.value * rhs.value}; }\ninline int32 int32__0op__div(int32 lhs, int32 rhs) { return (int32){ lhs.value / rhs.value}; }\ninline int32 int32__0op__remainder(int32 lhs, int32 rhs) { return (int32){ lhs.value % rhs.value}; }\ninline BOOL int32__0op__lt(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }\n\nstring int_to_string__1(int32 i);\nstring int_to_hex_string__1(int32 i);\nint32 hex_string_to_int__1(string s);\ncode_point int_to_code_point__1(int32 i);\n\nstruct byte\n{\n    uint8_t value;\n};\n\nstruct code_point\n{\n    // don't use something like char32_t because C's handling of chars sucks\n    uint32_t value;\n};\n\ninline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }\n\ninline int32 code_point_as_int__1(code_point c) { return (int32){(int32_t)c.value}; }\nstring code_point_to_string__1(code_point c);\n\nstruct string\n{\n    // Though there will be a byte_length property in the future,\n    // it doesn't make sense to directly expose it right now because this is\n    // not the correct implementation.\n    int32 byte_length;\n\n    // don't use chars because C's handling of chars sucks\n    uint8_t const *_Nullable bytes;\n};\n\nstring string__0new__0();\nstring string__0new__1(string value);\nstring string__0new__2(code_point c, int32 repeat);\n\nstring string__0op__add(string lhs, string rhs);\nBOOL string__0op__lt(string lhs, string rhs);\nBOOL string__0op__lte(string lhs, string rhs);\nBOOL string__0op__gt(string lhs, string rhs);\nBOOL string__0op__gte(string lhs, string rhs);\ninline code_point string__0__0op__element(string value, int32 index)\n{\n    lib_assert(index.value >= 0 && index.value < value.byte_length.value);\n    return (code_point){value.bytes[index.value]};\n}\n\ninline int32 string_byte_length__1(string s) { return s.byte_length; }\nstring substring__3(string s, int32 start, int32 length);\ninline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length.value-start.value}); }\nstring string_replace__3(string s, string old_value, string new_value);\nint32 string_index_of__2(string s, code_point c);\nint32 string_last_index_of__2(string s, code_point c);\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL int32__0op__equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL code_point__0op__equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\nBOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\ninline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\n\ninline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL int32__0op__not_equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL string__0op__not_equal(string lhs, string rhs)\n{\n    return BOOL__0op__not(string__0op__equal(lhs, rhs));\n}\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\ninline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\ntypedef struct string__0iter string__0iter;\ntypedef struct Strings__0 Strings__0;\ntypedef struct int__0iter int__0iter;\ntypedef struct Ints__0 Ints__0;\ntypedef struct void_ptr__0iter void_ptr__0iter;\ntypedef struct system__collections__List__1 system__collections__List__1;\ntypedef struct system__console__Console__0 system__console__Console__0;\ntypedef struct system__console__Arguments__0 system__console__Arguments__0;\ntypedef struct system__io__File_Reader__0 system__io__File_Reader__0;\ntypedef struct system__io__File_Writer__0 system__io__File_Writer__0;\ntypedef struct system__text__String_Builder__0 system__text__String_Builder__0;\n\ninline void const ref as_any__1(void const ref const value)\n{\n    return value;\n}\n\ninline void mut ref as_any_mut__1(void mut ref const value)\n{\n    return value;\n}\n\ninline void_ptr allocate__1(int32 bytes)\n{\n    return malloc(bytes.value);\n}\n\n// TODO rename dellocate()\ninline void free__1(const_void_ptr object)\n{\n    // TODO hack cast away const\n    free((void*_Nonnull)object);\n}\n\n#define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)\n#define assert__2(condition, message) assert2(condition, #condition, message, __FILE__, __LINE__)\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line);\n\n#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED0(__func__, __FILE__, __LINE__)\n#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED1(message, __func__, __FILE__, __LINE__)\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\n#define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\nstring get_resource__1(string resource_name);\nvoid add_resource(string name, string value);\n\nvoid debug_write__1(string value);\nvoid debug_write_line__1(string value);\nvoid debug_write_line__0();\n\nstruct string__0iter\n{\n    string *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool string__0next(string__0iter*_Nonnull iter);\ninline string string__0current(string__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Strings__0\n{\n    string *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self);\ninline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < strings->count__.value);\n    return strings->values[index.value];\n}\ninline void clear_strings__1(Strings__0 *_Nonnull strings)\n{\n    strings->count__ = (int32){0};\n}\nvoid add_string__2(Strings__0 *_Nonnull strings, string value);\ninline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\ninline string__0iter string__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\n\nstruct int__0iter\n{\n    int32 *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool int__0next(int__0iter*_Nonnull iter);\ninline int32 int__0current(int__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Ints__0\n{\n    int32 *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self);\ninline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < ints->count__.value);\n    return ints->values[index.value];\n}\ninline void clear_ints__1(Ints__0 *_Nonnull ints)\n{\n    ints->count__ = (int32){0};\n}\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value);\ninline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\ninline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\n\nstruct void_ptr__0iter\n{\n    void_ptr *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);\ninline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct system__collections__List__1\n{\n    void_ptr *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\ninline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\n// TODO hack that we take const_void_ptr but then treat it as mutable\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value);\n\ninline void clear_list__1(system__collections__List__1 *_Nonnull list)\n{\n    list->count__ = (int32){0};\n}\n\ninline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < list->count__.value);\n    return list->values[index.value];\n}\n\ninline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\ninline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\nstruct system__console__Console__0\n{\n};\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console);\n\nstruct system__console__Arguments__0\n{\n    string *_Nonnull values;\n    int32 count__;\n};\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);\n\ninline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < arguments->count__.value);\n    return arguments->values[index.value];\n}\n\ninline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments)\n{\n    return (string__0iter)\n    {\n        .values = arguments->values,\n        .current = -1,\n        .count = arguments->count__.value\n    };\n}\n\nstruct system__io__File_Reader__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name);\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);\n\nstruct system__io__File_Writer__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name);\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);\n\nstruct system__text__String_Builder__0\n{\n    uint8_t *_Nullable bytes;\n    int capacity;\n    int32 byte_length__;\n};\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);\n\ninline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self)\n{\n    self->bytes = 0;\n    self->capacity = 0;\n    self->byte_length__ = (int32){0};\n    return self;\n}\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value);\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb);\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb);\n"});
+	add_resource((string){{16},(uint8_t*)u8"RuntimeLibrary.h"}, (string){{17679},(uint8_t*)u8"// On windows this disables warnings about using fopen_s instead of fopen\n// It must be defined before including the headers.\n// Note that we can't switch to the \"secure\" functions because they don't\n// compile in linux on Travis CI\n#define _CRT_SECURE_NO_WARNINGS\n\n#include <stdlib.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <stdnoreturn.h>\n\n// -----------------------------------------------------------------------------\n// Emit Support\n// -----------------------------------------------------------------------------\n// These are things which make emitting easier or clearer\n\n#define ref *_Nonnull restrict\n#define opt_ref *_Nullable restrict\n#define ptr *_Nonnull\n#define opt_ptr *_Nullable\n#define mut\n\n#define NON_EXHAUSTIVE_MATCH(type_id) NON_EXHAUSTIVE_MATCH_IMPL(type_id, __func__, __FILE__, __LINE__);\nnoreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line);\n\n// -----------------------------------------------------------------------------\n// Library Utils\n// -----------------------------------------------------------------------------\n\ntypedef void*_Nullable void_ptr;\ntypedef void const*_Nullable const_void_ptr;\n\n#define lib_assert(condition) lib_assert1(condition, #condition)\nvoid lib_assert1(const _Bool condition, char const *_Nonnull code);\n#define lib_assert_msg(condition, message) lib_assert2(condition, #condition, message)\nvoid lib_assert2(const _Bool condition, char const *_Nonnull code, char const *_Nonnull message);\n\ninline void_ptr allocate(size_t bytes)\n{\n    return malloc(bytes);\n}\n\n// -----------------------------------------------------------------------------\n// Primitive Types\n// -----------------------------------------------------------------------------\n\ntypedef struct never never;\ntypedef struct optional__never optional__never;\ntypedef struct BOOL BOOL;\ntypedef struct int32 int32;\ntypedef struct byte byte;\ntypedef struct code_point code_point;\ntypedef struct string string;\n\n// `never` type\nstruct never\n{\n};\n\n// `never?` type\nstruct optional__never\n{\n};\n\n// TODO this is a hack for now, the type of `none` should be `never?`\nstatic const void_ptr none = NULL;\n\n// For now, use `BOOL` as the emitted type\n// TODO C: switch `BOOL` to `bool`\n// TODO C: switch `TRUE` to `true`\n// TODO C: switch `FALSE` to `false`\n\n// `bool` type\nstruct BOOL\n{\n    _Bool value;\n};\n\nstatic const BOOL TRUE = { 1 };\nstatic const BOOL FALSE = { 0 };\n\n// Function used in conditions to make them take `bool`\ninline _Bool cond(BOOL cond) { return cond.value; }\n\n// Used by runtime for converting to bool\ninline BOOL bool_from(_Bool b) { return (BOOL){ b }; }\n\n// Wrap a bool operation that is bool based\ninline BOOL bool_op(_Bool b) { return (BOOL){ b }; }\n// Convert the arguments of a logical operation to bool\ninline _Bool bool_arg(BOOL b) { return b.value; }\n\ninline BOOL BOOL__0op__not(BOOL b) { return (BOOL){ !b.value }; }\n\nstring bool_to_string__1(BOOL b);\n\n// `int` type\nstruct int32\n{\n    int32_t value;\n};\n\ninline void op__add_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value += rhs.value; }\ninline void op__sub_assign(int32*_Nonnull lhs, int32 rhs) { lhs->value -= rhs.value; }\ninline int32 int32__0op__neg(int32 v) { return (int32){-v.value}; }\ninline int32 int32__0op__add(int32 lhs, int32 rhs) { return (int32){ lhs.value + rhs.value}; }\ninline int32 int32__0op__sub(int32 lhs, int32 rhs) { return (int32){ lhs.value - rhs.value}; }\ninline int32 int32__0op__mul(int32 lhs, int32 rhs) { return (int32){ lhs.value * rhs.value}; }\ninline int32 int32__0op__div(int32 lhs, int32 rhs) { return (int32){ lhs.value / rhs.value}; }\ninline int32 int32__0op__remainder(int32 lhs, int32 rhs) { return (int32){ lhs.value % rhs.value}; }\ninline BOOL int32__0op__lt(int32 lhs, int32 rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL int32__0op__lte(int32 lhs, int32 rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL int32__0op__gt(int32 lhs, int32 rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL int32__0op__gte(int32 lhs, int32 rhs) { return bool_from(lhs.value >= rhs.value); }\n\nstring int_to_string__1(int32 i);\nstring int_to_hex_string__1(int32 i);\nint32 hex_string_to_int__1(string s);\ncode_point int_to_code_point__1(int32 i);\n\nstruct byte\n{\n    uint8_t value;\n};\n\nstruct code_point\n{\n    // don't use something like char32_t because C's handling of chars sucks\n    uint32_t value;\n};\n\ninline BOOL code_point__0op__lt(code_point lhs, code_point rhs) { return bool_from(lhs.value < rhs.value); }\ninline BOOL code_point__0op__lte(code_point lhs, code_point rhs) { return bool_from(lhs.value <= rhs.value); }\ninline BOOL code_point__0op__gt(code_point lhs, code_point rhs) { return bool_from(lhs.value > rhs.value); }\ninline BOOL code_point__0op__gte(code_point lhs, code_point rhs) { return bool_from(lhs.value >= rhs.value); }\n\ninline int32 code_point_as_int__1(code_point c) { return (int32){(int32_t)c.value}; }\nstring code_point_to_string__1(code_point c);\n\nstruct string\n{\n    // Though there will be a byte_length property in the future,\n    // it doesn't make sense to directly expose it right now because this is\n    // not the correct implementation.\n    int32 byte_length;\n\n    // don't use chars because C's handling of chars sucks\n    uint8_t const *_Nullable bytes;\n};\n\nstring string__0new__0();\nstring string__0new__1(string value);\nstring string__0new__2(code_point c, int32 repeat);\n\nstring string__0op__add(string lhs, string rhs);\nBOOL string__0op__lt(string lhs, string rhs);\nBOOL string__0op__lte(string lhs, string rhs);\nBOOL string__0op__gt(string lhs, string rhs);\nBOOL string__0op__gte(string lhs, string rhs);\ninline code_point string__0__0op__element(string value, int32 index)\n{\n    lib_assert(index.value >= 0 && index.value < value.byte_length.value);\n    return (code_point){value.bytes[index.value]};\n}\n\ninline int32 string_byte_length__1(string s) { return s.byte_length; }\nstring substring__3(string s, int32 start, int32 length);\ninline string substring__2(string s, int32 start) { return substring__3(s, start, (int32){s.byte_length.value-start.value}); }\nstring string_replace__3(string s, string old_value, string new_value);\nint32 string_index_of__2(string s, code_point c);\nint32 string_last_index_of__2(string s, code_point c);\n\n// -----------------------------------------------------------------------------\n// Operators\n// -----------------------------------------------------------------------------\n\ninline BOOL BOOL__0op__equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL int32__0op__equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\ninline BOOL code_point__0op__equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value == rhs.value);\n}\nBOOL string__0op__equal(string lhs, string rhs);\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\ninline BOOL void_ptr__0op__equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs == rhs);\n}\n\ninline BOOL BOOL__0op__not_equal(BOOL lhs, BOOL rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL int32__0op__not_equal(int32 lhs, int32 rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL code_point__0op__not_equal(code_point lhs, code_point rhs)\n{\n    return bool_from(lhs.value != rhs.value);\n}\ninline BOOL string__0op__not_equal(string lhs, string rhs)\n{\n    return BOOL__0op__not(string__0op__equal(lhs, rhs));\n}\n// TODO this currently exists becuase of the compare `none`, it shouldn't exist\ninline BOOL never__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\ninline BOOL void_ptr__0op__not_equal(const_void_ptr lhs, const_void_ptr rhs)\n{\n    return bool_from(lhs != rhs);\n}\n\n// -----------------------------------------------------------------------------\n// Standard Library\n// -----------------------------------------------------------------------------\n// Parts of the standard library that are currently implemented in the runtime.\n\ntypedef struct string__0iter string__0iter;\ntypedef struct Strings__0 Strings__0;\ntypedef struct int__0iter int__0iter;\ntypedef struct Ints__0 Ints__0;\ntypedef struct void_ptr__0iter void_ptr__0iter;\ntypedef struct system__collections__List__1 system__collections__List__1;\ntypedef struct system__console__Console__0 system__console__Console__0;\ntypedef struct system__console__Arguments__0 system__console__Arguments__0;\ntypedef struct system__io__File_Reader__0 system__io__File_Reader__0;\ntypedef struct system__io__File_Writer__0 system__io__File_Writer__0;\ntypedef struct system__text__String_Builder__0 system__text__String_Builder__0;\n\ninline void const ref as_any__1(void const ref const value)\n{\n    return value;\n}\n\ninline void mut ref as_any_mut__1(void mut ref const value)\n{\n    return value;\n}\n\ninline void_ptr allocate__1(int32 bytes)\n{\n    return malloc(bytes.value);\n}\n\n// TODO rename dellocate()\ninline void free__1(const_void_ptr object)\n{\n    // TODO hack cast away const\n    free((void*_Nonnull)object);\n}\n\n#define assert__1(condition) assert1(condition, #condition, __FILE__, __LINE__)\n#define assert__2(condition, message) assert2(condition, #condition, message, __FILE__, __LINE__)\nvoid assert1(const BOOL condition, char const *_Nonnull code, char const *_Nonnull file, const int32_t line);\nvoid assert2(const BOOL condition, char const *_Nonnull code, const string message, char const *_Nonnull file, const int32_t line);\n\n#define NOT_IMPLEMENTED__0() NOT_IMPLEMENTED0(__func__, __FILE__, __LINE__)\n#define NOT_IMPLEMENTED__1(message) NOT_IMPLEMENTED1(message, __func__, __FILE__, __LINE__)\nnoreturn void NOT_IMPLEMENTED0(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\nnoreturn void NOT_IMPLEMENTED1(const string message, char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\n#define UNREACHABLE__0() UNREACHABLE(__func__, __FILE__, __LINE__)\nnoreturn void UNREACHABLE(char const *_Nonnull function, char const *_Nonnull file, const int32_t line);\n\nstring get_resource__1(string resource_name);\nvoid add_resource(string name, string value);\n\nvoid debug_write__1(string value);\nvoid debug_write_line__1(string value);\nvoid debug_write_line__0();\n\nstruct string__0iter\n{\n    string *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool string__0next(string__0iter*_Nonnull iter);\ninline string string__0current(string__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Strings__0\n{\n    string *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\nStrings__0 *_Nonnull Strings__0__0new__0(Strings__0 *_Nonnull self);\ninline string Strings__0__0op__element(Strings__0 const*_Nonnull strings, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < strings->count__.value);\n    return strings->values[index.value];\n}\ninline void clear_strings__1(Strings__0 *_Nonnull strings)\n{\n    strings->count__ = (int32){0};\n}\nvoid add_string__2(Strings__0 *_Nonnull strings, string value);\ninline string__0iter Strings__0__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\ninline string__0iter string__0iterate(Strings__0 const *_Nonnull strings)\n{\n    return (string__0iter)\n    {\n        .values = strings->values,\n        .current = -1,\n        .count = strings->count__.value\n    };\n}\n\nstruct int__0iter\n{\n    int32 *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool int__0next(int__0iter*_Nonnull iter);\ninline int32 int__0current(int__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct Ints__0\n{\n    int32 *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\nInts__0 *_Nonnull Ints__0__0new__0(Ints__0 *_Nonnull self);\ninline int32 Ints__0__0op__element(Ints__0 const*_Nonnull ints, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < ints->count__.value);\n    return ints->values[index.value];\n}\ninline void clear_ints__1(Ints__0 *_Nonnull ints)\n{\n    ints->count__ = (int32){0};\n}\nvoid add_int__2(Ints__0 *_Nonnull ints, int32 value);\ninline int__0iter Ints__0__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\ninline int__0iter int__0iterate(Ints__0 const*_Nonnull ints)\n{\n    return (int__0iter)\n    {\n        .values = ints->values,\n        .current = -1,\n        .count = ints->count__.value\n    };\n}\n\nstruct void_ptr__0iter\n{\n    void_ptr *_Nullable values;\n    int32_t current;\n    int32_t count;\n};\n\n_Bool void_ptr__0next(void_ptr__0iter*_Nonnull iter);\ninline void_ptr void_ptr__0current(void_ptr__0iter const*_Nonnull iter)\n{\n    lib_assert(iter->current >= 0 && iter->current < iter->count);\n    return iter->values[iter->current];\n}\n\nstruct system__collections__List__1\n{\n    void_ptr *_Nullable values;\n    int32 count__;\n    int32 capacity__;\n};\n\ninline system__collections__List__1 *_Nonnull system__collections__List__1__0new__0(system__collections__List__1 *_Nonnull self)\n{\n    self->values = NULL;\n    self->count__ = (int32){0};\n    self->capacity__ = (int32){0};\n    return self;\n}\n\n// TODO hack that we take const_void_ptr but then treat it as mutable\nvoid add_item__2(system__collections__List__1 *_Nonnull list, const_void_ptr value);\n\ninline void clear_list__1(system__collections__List__1 *_Nonnull list)\n{\n    list->count__ = (int32){0};\n}\n\ninline const_void_ptr system__collections__List__1__0op__element(system__collections__List__1 const*_Nonnull list, int32 const index)\n{\n    lib_assert(index.value >= 0);\n    lib_assert(index.value < list->count__.value);\n    return list->values[index.value];\n}\n\ninline void_ptr__0iter system__collections__List__1__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\ninline void_ptr__0iter void_ptr__0iterate(system__collections__List__1 const *_Nonnull list)\n{\n    return (void_ptr__0iter)\n    {\n        .values = list->values,\n        .current = -1,\n        .count = list->count__.value\n    };\n}\n\nstruct system__console__Console__0\n{\n};\n\nvoid console_write__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__2(system__console__Console__0 *_Nonnull console, string value);\nvoid console_write_line__1(system__console__Console__0 *_Nonnull console);\n\nstruct system__console__Arguments__0\n{\n    string *_Nonnull values;\n    int32 count__;\n};\n\nsystem__console__Arguments__0 const *_Nonnull convert_arguments(int argc, char const *_Nonnull const *_Nonnull argv);\n\ninline string system__console__Arguments__0__0op__element(system__console__Arguments__0 const*_Nonnull arguments, int32 const index)\n{\n    lib_assert(index.value >= 0 && index.value < arguments->count__.value);\n    return arguments->values[index.value];\n}\n\ninline string__0iter system__console__Arguments__0__0iterate(system__console__Arguments__0 const*_Nonnull arguments)\n{\n    return (string__0iter)\n    {\n        .values = arguments->values,\n        .current = -1,\n        .count = arguments->count__.value\n    };\n}\n\nstruct system__io__File_Reader__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Reader__0 *_Nonnull system__io__File_Reader__0__0new__1(system__io__File_Reader__0 *_Nonnull self, string file_name);\nstring file_read_to_end__1(system__io__File_Reader__0 *_Nonnull reader);\nvoid close_file_reader__1(system__io__File_Reader__0 *_Nonnull reader);\n\nstruct system__io__File_Writer__0\n{\n    FILE *_Nonnull file;\n};\n\nsystem__io__File_Writer__0 *_Nonnull system__io__File_Writer__0__0new__1(system__io__File_Writer__0 *_Nonnull self, string file_name);\nvoid file_write__2(system__io__File_Writer__0 *_Nonnull writer, string value);\nvoid close_file_writer__1(system__io__File_Writer__0 *_Nonnull writer);\n\nstruct system__text__String_Builder__0\n{\n    uint8_t *_Nullable bytes;\n    int capacity;\n    int32 byte_length__;\n};\n\nvoid ensure_sb_capacity(system__text__String_Builder__0*_Nonnull sb, int needed);\n\ninline system__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__0(system__text__String_Builder__0 *_Nonnull self)\n{\n    self->bytes = 0;\n    self->capacity = 0;\n    self->byte_length__ = (int32){0};\n    return self;\n}\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__1(system__text__String_Builder__0 *_Nonnull self, string value);\nsystem__text__String_Builder__0 *_Nonnull system__text__String_Builder__0__0new__with_capacity__1(system__text__String_Builder__0 *_Nonnull self, int32 capacity);\n\nvoid sb_append__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_sb__2(system__text__String_Builder__0 *_Nonnull sb, system__text__String_Builder__0 const *_Nonnull value);\nvoid sb_append_line__2(system__text__String_Builder__0 *_Nonnull sb, string value);\nvoid sb_append_line__1(system__text__String_Builder__0 *_Nonnull sb);\nvoid sb_remove__3(system__text__String_Builder__0 *_Nonnull sb, int32 start, int32 length);\nvoid sb_remove__2(system__text__String_Builder__0 *_Nonnull sb, int32 start);\nstring sb_to_string__1(system__text__String_Builder__0 *_Nonnull sb);\n"});
 
 	return main__2(allocate(sizeof(system__console__Console__0)), convert_arguments(argc, argv)).value;
 }
