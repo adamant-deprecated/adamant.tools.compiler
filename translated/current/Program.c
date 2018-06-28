@@ -33,6 +33,7 @@ enum Type_ID
 	Unary_Expression__0__0Type_ID,
 	Name__0__0Type_ID,
 	Package_Name__0__0Type_ID,
+	Detached_Symbol__0__0Type_ID,
 	Symbol__0__0Type_ID,
 	Syntax_Symbol__0__0Type_ID,
 	Name_Subtable__0__0Type_ID,
@@ -71,6 +72,7 @@ typedef struct Negate_Expression__0 Negate_Expression__0;
 typedef struct Unary_Expression__0 Unary_Expression__0;
 typedef struct Name__0 Name__0;
 typedef struct Package_Name__0 Package_Name__0;
+typedef struct Detached_Symbol__0 Detached_Symbol__0;
 typedef struct Symbol__0 Symbol__0;
 typedef struct Syntax_Symbol__0 Syntax_Symbol__0;
 typedef struct Name_Subtable__0 Name_Subtable__0;
@@ -151,6 +153,7 @@ void mut Console_namespace_contains_Console_class__0();
 void mut System_namespace_contains_collections_namespace__0();
 void mut Collections_namespace_contains_List_class__0();
 Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const package_syntax__);
+void mut debug_write_syntax_symbols__2(Syntax_Symbol__0 const ref const symbol__, string const prefix__);
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 mut ref const self, Token__0 const ref const token__);
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__1(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const node__);
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__concrete__2(Semantic_Node__0 mut ref const self, Syntax_Node__0 const ref const node__, Diagnostic__0 const ref const diagnostic__);
@@ -226,6 +229,7 @@ system__collections__List__1 const ref mut members__1(Syntax_Node__0 const ref c
 system__collections__List__1 const ref mut parameters__1(Syntax_Node__0 const ref const syntax__);
 system__collections__List__1 const ref mut statements__1(Syntax_Node__0 const ref const syntax__);
 Token__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref const syntax__);
+system__collections__List__1 const ref mut type_arguments__1(Syntax_Node__0 const ref const syntax__);
 Token__0 mut ref mut Token__0__0new__5(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__, system__collections__List__1 const ref const diagnostics__);
 Token__0 mut ref mut Token__0__0new__6(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__, system__collections__List__1 const ref const diagnostics__, string const value__);
 Token__0 mut ref mut Token__0__0new__missing__3(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__);
@@ -277,9 +281,10 @@ void mut emit_preamble__1(Emitter__0 mut ref const emitter__);
 void mut emit_entry_point_adapter__1(Emitter__0 mut ref const emitter__);
 void mut emit_postamble__1(Emitter__0 mut ref const emitter__);
 void mut bind_declared_symbols__3(Syntax_Symbol__0 const ref const package_syntax_symbol__, system__collections__List__1 mut ref const references__, Annotations_Dictionary__0 mut ref const annotations__);
-void mut bind_declared_symbols_in_scope__3(Syntax__0 const ref const syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
-void mut bind_prameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
+void mut bind_declared_symbols__4(Syntax_Symbol__0 const ref const parent_symbol__, Syntax__0 const ref const syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
+system__collections__List__1 const ref mut bind_prameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
 Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
+Type__0 const ref mut lookup_optional_type__1(Name_Scope__0 const ref const scope__);
 Syntax_Symbol__0 const ref mut get_declared_type_symbols__3(Syntax_Node__0 const ref const package_syntax__, Package_Name__0 const ref const name__, Annotations_Dictionary__0 mut ref const annotations__);
 void mut build_declared_symbols__3(Syntax_Symbol__0 const ref const parent__, Syntax_Node__0 const ref const syntax__, Annotations_Dictionary__0 mut ref const annotations__);
 Annotations__0 mut ref mut Annotations__0__0new__1(Annotations__0 mut ref const self, Syntax__0 const ref const for_syntax__);
@@ -287,7 +292,10 @@ Annotations_Dictionary__0 mut ref mut Annotations_Dictionary__0__0new__1(Annotat
 Annotations__0 mut ref mut annotations_for__2(Annotations_Dictionary__0 mut ref const all_annotations__, Syntax__0 const ref const syntax__);
 Name_Scope__0 mut ref mut Name_Scope__0__0new__3(Name_Scope__0 mut ref const self, Name_Scope__0 const opt_ref const parent__, Syntax_Symbol__0 const ref const symbol__, system__collections__List__1 const ref const symbols__);
 Name_Scope__0 mut ref mut Name_Scope__0__0new__2(Name_Scope__0 mut ref const self, Name_Scope__0 const opt_ref const parent__, Syntax_Symbol__0 const ref const symbol__);
-Symbol__0 const opt_ref mut lookup_name_in_scope__1(Name_Scope__0 const ref const scope__);
+Detached_Symbol__0 const opt_ref mut lookup_name_in_scope__2(Name_Scope__0 const ref const scope__, string const name__);
+Detached_Symbol__0 const opt_ref mut lookup_special_name_in_scope__2(Name_Scope__0 const ref const scope__, string const name__);
+Detached_Symbol__0 const opt_ref mut lookup_name_in_scope__3(Name_Scope__0 const ref const scope__, string const name__, BOOL const is_special__);
+Detached_Symbol__0 const opt_ref mut lookup_qualified_name_in_scope__2(Name_Scope__0 const ref const scope__, Name__0 const ref const name__);
 Expression__0 mut ref mut Expression__0__0new__0(Expression__0 mut ref const self);
 Program_Fragment__0 const ref mut expression_as_program_fragment__1(Expression__0 const ref const expression__);
 Integer_Literal_Expression__0 mut ref mut Integer_Literal_Expression__0__0new__2(Integer_Literal_Expression__0 mut ref const self, Type__0 const ref const type__, Syntax_Node__0 const ref const node__);
@@ -316,6 +324,8 @@ void mut name_with_unspecified_package_names_name_with_package__0();
 void mut name_with_unspecified_package_names_itself__0();
 Package_Name__0 mut ref mut Package_Name__0__0new__1(Package_Name__0 mut ref const self, string const name__);
 string mut full_package_name__1(Package_Name__0 const ref const package_name__);
+Detached_Symbol__0 mut ref mut Detached_Symbol__0__0new__0(Detached_Symbol__0 mut ref const self);
+Detached_Symbol__0 const opt_ref mut get_child_detached_symbol__3(Detached_Symbol__0 const ref const symbol__, string const name__, int32 const kind__);
 Symbol__0 mut ref mut Symbol__0__0new__identifier__1(Symbol__0 mut ref const self, string const name__);
 Symbol__0 mut ref mut Symbol__0__0new__identifier__2(Symbol__0 mut ref const self, string const name__, system__collections__List__1 const ref const children__);
 Symbol__0 mut ref mut Symbol__0__0new__constructor__2(Symbol__0 mut ref const self, string const name__, system__collections__List__1 const ref const declarations__);
@@ -323,6 +333,7 @@ Symbol__0 mut ref mut Symbol__0__0new__package__2(Symbol__0 mut ref const self, 
 Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self, Type__0 const ref const declares_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__);
 Symbol__0 mut ref mut Symbol__0__0new__of_type__4(Symbol__0 mut ref const self, string const name__, Type__0 const ref const of_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__);
 Symbol__0 const opt_ref mut get_child_symbol__3(Symbol__0 const ref const symbol__, string const name__, int32 const kind__);
+Detached_Symbol__0 const ref mut symbol_as_detached_symbol__1(Symbol__0 const ref const symbol__);
 void mut unit_test_Symbol__0();
 void mut Package_symbol_children_can_be_found_by_name_and_kind__0();
 Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__identifier__1(Syntax_Symbol__0 mut ref const self, string const name__);
@@ -330,7 +341,8 @@ Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__constructor__1(Syntax_Symbo
 Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__package__2(Syntax_Symbol__0 mut ref const self, string const name__, Syntax__0 const ref const declaration__);
 Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__declaring__2(Syntax_Symbol__0 mut ref const self, Type__0 const ref const declares_type__, Syntax__0 const ref const declaration__);
 Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__of_type__2(Syntax_Symbol__0 mut ref const self, string const name__, Type__0 const ref const of_type__);
-Syntax_Symbol__0 const opt_ref mut get_child_Symbol_Declaration__3(Syntax_Symbol__0 const ref const builder__, string const name__, int32 const kind__);
+Syntax_Symbol__0 const opt_ref mut get_child_syntax_symbol__3(Syntax_Symbol__0 const ref const builder__, string const name__, int32 const kind__);
+Detached_Symbol__0 const ref mut syntax_symbol_as_detached_symbol__1(Syntax_Symbol__0 const ref const symbol__);
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__1(Name_Subtable__0 mut ref const self, Name_Table__0 const ref const name_table__);
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__2(Name_Subtable__0 mut ref const self, Name_Table__0 const ref const name_table__, Package_Name__0 const ref const package_name__);
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__3(Name_Subtable__0 mut ref const self, Name_Subtable__0 const ref const parent__, Name__0 const ref const name__, Type__0 const opt_ref const type__);
@@ -571,7 +583,7 @@ struct Annotations__0
 {
 	Type_ID type_id;
 	Syntax__0 const ref mut for_syntax__;
-	Syntax_Symbol__0 const ref mut symbol__;
+	Syntax_Symbol__0 const opt_ref mut symbol__;
 	Type__0 const opt_ref mut of_type__;
 	Type__0 const opt_ref mut declares_type__;
 	Type__0 const opt_ref mut referenced_type__;
@@ -676,16 +688,27 @@ struct Package_Name__0
 	string mut unqualified__;
 };
 
+struct Detached_Symbol__0
+{
+	Type_ID type_id;
+	string mut name__;
+	system__collections__List__1 const ref mut children__;
+	BOOL mut is_special_name__;
+	int32 mut kind__;
+	Type__0 const opt_ref mut of_type__;
+	Type__0 const opt_ref mut declares_type__;
+};
+
 struct Symbol__0
 {
 	Type_ID type_id;
 	string mut name__;
 	system__collections__List__1 const ref mut children__;
-	system__collections__List__1 const ref mut declarations__;
 	BOOL mut is_special_name__;
 	int32 mut kind__;
 	Type__0 const opt_ref mut of_type__;
 	Type__0 const opt_ref mut declares_type__;
+	system__collections__List__1 const ref mut declarations__;
 };
 
 struct Syntax_Symbol__0
@@ -693,11 +716,11 @@ struct Syntax_Symbol__0
 	Type_ID type_id;
 	string mut name__;
 	system__collections__List__1 mut ref mut children__;
-	system__collections__List__1 mut ref mut declarations__;
 	BOOL mut is_special_name__;
 	int32 mut kind__;
 	Type__0 const opt_ref mut of_type__;
 	Type__0 const opt_ref mut declares_type__;
+	system__collections__List__1 mut ref mut declarations__;
 };
 
 struct Name_Subtable__0
@@ -1810,6 +1833,17 @@ Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const pac
 	return package__;
 }
 
+void mut debug_write_syntax_symbols__2(Syntax_Symbol__0 const ref const symbol__, string const prefix__)
+{
+	debug_write_line__1(string__0op__add(prefix__, symbol__->name__));
+	string const child_prefix__ = string__0op__add(prefix__, ((string){{2},(uint8_t*)u8"  "}));
+	for (void_ptr__0iter mut iter = void_ptr__0iterate(symbol__->children__); void_ptr__0next(&iter);)
+	{
+		Syntax_Symbol__0 const ref const child__ = void_ptr__0current(&iter);
+		debug_write_syntax_symbols__2(child__, child_prefix__);
+	}
+}
+
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 mut ref const self, Token__0 const ref const token__)
 {
 	self->type_id = Semantic_Node__0__0Type_ID;
@@ -2733,8 +2767,8 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 				Type__0 const ref const referenced_type_name__ = referenced_scope__->type__;
 				Semantic_Node__0 const ref const name_node__ = Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), referenced_type_name__, name_syntax__, system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1))));
 				add_item__2(generic_name_children__, name_node__);
-				system__collections__List__1 const ref const type_parameters__ = build_type_arguments_semantic_node__5(builder__, qualified_syntax__, name_table__, scope__, generic_name_children__);
-				Type__0 const ref const referenced_type__ = Type__0__0new__generic__2(allocate(sizeof(Type__0)), referenced_type_name__, type_parameters__);
+				system__collections__List__1 const ref const type_arguments__ = build_type_arguments_semantic_node__5(builder__, qualified_syntax__, name_table__, scope__, generic_name_children__);
+				Type__0 const ref const referenced_type__ = Type__0__0new__generic__2(allocate(sizeof(Type__0)), referenced_type_name__, type_arguments__);
 				Semantic_Node__0 mut ref const qualified_name__ = Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), referenced_type__, qualified_syntax__, generic_name_children__);
 				add_item__2(children__, qualified_name__);
 				return Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), referenced_type__, syntax__, children__);
@@ -2803,33 +2837,21 @@ Type__0 const ref mut build_optional_type__3(Semantic_Tree_Builder__0 const ref 
 
 system__collections__List__1 const ref mut build_type_arguments_semantic_node__5(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__, system__collections__List__1 mut ref const children__)
 {
-	system__collections__List__1 mut ref const type_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	system__collections__List__1 mut ref const arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	if (cond(int32__0op__equal(syntax__->kind__, IdentifierName__)))
 	{
-		return type_parameters__;
+		return arguments__;
 	}
 
-	assert__2(int32__0op__equal(syntax__->kind__, GenericName__), string__0op__add(((string){{13},(uint8_t*)u8"syntax.kind=="}), int_to_string__1(syntax__->kind__)));
-	BOOL mut in_type_arguments__ = FALSE;
-	for (void_ptr__0iter mut iter = void_ptr__0iterate(syntax__->children__); void_ptr__0next(&iter);)
+	for (void_ptr__0iter mut iter = void_ptr__0iterate(type_arguments__1(syntax__)); void_ptr__0next(&iter);)
 	{
 		Syntax_Node__0 const ref const type_argument__ = void_ptr__0current(&iter);
-		if (cond(in_type_arguments__))
-		{
-			if (cond(int32__0op__not_equal(type_argument__->kind__, GreaterThan__)))
-			{
-				Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, type_argument__, name_table__, scope__);
-				add_item__2(type_parameters__, type_node__->referenced_type__);
-				add_item__2(children__, type_node__);
-			}
-		}
-		else if (cond(int32__0op__equal(type_argument__->kind__, LessThan__)))
-		{
-			in_type_arguments__ = TRUE;
-		}
+		Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, type_argument__, name_table__, scope__);
+		add_item__2(arguments__, type_node__->referenced_type__);
+		add_item__2(children__, type_node__);
 	}
 
-	return type_parameters__;
+	return arguments__;
 }
 
 Semantic_Node__0 const ref mut build_constructor_name_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__)
@@ -3940,6 +3962,30 @@ Token__0 const opt_ref mut access_modifier__1(Syntax_Node__0 const ref const syn
 	}
 
 	return none;
+}
+
+system__collections__List__1 const ref mut type_arguments__1(Syntax_Node__0 const ref const syntax__)
+{
+	assert__1(int32__0op__equal(syntax__->kind__, GenericName__));
+	system__collections__List__1 mut ref const arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	BOOL mut in_type_arguments__ = FALSE;
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
+	{
+		Syntax__0 const ref const type_argument__ = void_ptr__0current(&iter);
+		if (cond(in_type_arguments__))
+		{
+			if (cond(int32__0op__not_equal(type_argument__->kind__, GreaterThan__)))
+			{
+				add_item__2(arguments__, type_argument__);
+			}
+		}
+		else if (cond(int32__0op__equal(type_argument__->kind__, LessThan__)))
+		{
+			in_type_arguments__ = TRUE;
+		}
+	}
+
+	return arguments__;
 }
 
 Token__0 mut ref mut Token__0__0new__5(Token__0 mut ref const self, int32 const kind__, Source_Text__0 const ref const source__, int32 const start__, int32 const byte_length__, system__collections__List__1 const ref const diagnostics__)
@@ -5979,12 +6025,13 @@ void mut bind_declared_symbols__3(Syntax_Symbol__0 const ref const package_synta
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(package_syntax__->children__); void_ptr__0next(&iter);)
 	{
 		Syntax__0 const ref const compilation_unit__ = void_ptr__0current(&iter);
-		bind_declared_symbols_in_scope__3(compilation_unit__, global_scope__, annotations__);
+		bind_declared_symbols__4(syntax_annotations__->symbol__, compilation_unit__, global_scope__, annotations__);
 	}
 }
 
-void mut bind_declared_symbols_in_scope__3(Syntax__0 const ref const syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
+void mut bind_declared_symbols__4(Syntax_Symbol__0 const ref const parent_symbol__, Syntax__0 const ref const syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
 {
+	assert__1(void_ptr__0op__not_equal(parent_symbol__, none));
 	Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, syntax__);
 	/* match */ { void const ref const match_value = syntax__;
 	   switch(*(Type_ID const ref)match_value)
@@ -5997,10 +6044,16 @@ void mut bind_declared_symbols_in_scope__3(Syntax__0 const ref const syntax__, N
 				for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(syntax__->children__); void_ptr__0next(&iter);)
 				{
 					Syntax__0 const ref const child__ = void_ptr__0current(&iter);
-					bind_declared_symbols_in_scope__3(child__, scope__, annotations__);
+					bind_declared_symbols__4(parent_symbol__, child__, scope__, annotations__);
 				}
 			}
-			else if (cond(bool_op(bool_arg(int32__0op__equal(syntax_node__->kind__, FunctionDeclaration__)) || bool_arg(int32__0op__equal(syntax_node__->kind__, ConstructorDeclaration__)))))
+			else if (cond(int32__0op__equal(syntax_node__->kind__, FunctionDeclaration__)))
+			{
+				bind_prameter_symbols__3(syntax_node__, scope__, annotations__);
+				Syntax_Node__0 const ref const return_type_syntax__ = system__collections__List__1__0op__element(syntax_node__->children__, ((int32){4}));
+				bind_type_name__3(return_type_syntax__, scope__, annotations__);
+			}
+			else if (cond(int32__0op__equal(syntax_node__->kind__, ConstructorDeclaration__)))
 			{
 				bind_prameter_symbols__3(syntax_node__, scope__, annotations__);
 			}
@@ -6011,7 +6064,7 @@ void mut bind_declared_symbols_in_scope__3(Syntax__0 const ref const syntax__, N
 				for (void_ptr__0iter mut iter = void_ptr__0iterate(members__1(syntax_node__)); void_ptr__0next(&iter);)
 				{
 					Syntax__0 const ref const member__ = void_ptr__0current(&iter);
-					bind_declared_symbols_in_scope__3(member__, nested_scope__, annotations__);
+					bind_declared_symbols__4(syntax_annotations__->symbol__, member__, nested_scope__, annotations__);
 				}
 			}
 			else if (cond(int32__0op__equal(syntax_node__->kind__, EnumDeclaration__)))
@@ -6019,6 +6072,26 @@ void mut bind_declared_symbols_in_scope__3(Syntax__0 const ref const syntax__, N
 			}
 			else if (cond(bool_op(bool_arg(int32__0op__equal(syntax_node__->kind__, FieldDeclaration__)) || bool_arg(int32__0op__equal(syntax_node__->kind__, GlobalDeclaration__)))))
 			{
+				Syntax__0 const ref const variable_declaration__ = syntax_node_as_syntax__1(first_child_syntax_node__2(syntax_node__, VariableDeclaration__));
+				bind_declared_symbols__4(parent_symbol__, variable_declaration__, scope__, annotations__);
+				Annotations__0 const ref const variable_annotations__ = annotations_for__2(annotations__, variable_declaration__);
+				Type__0 const opt_ref const optional_type__ = variable_annotations__->of_type__;
+				assert__1(void_ptr__0op__not_equal(optional_type__, none));
+				Syntax_Symbol__0 const opt_ref const optional_symbol__ = variable_annotations__->symbol__;
+				assert__1(void_ptr__0op__not_equal(optional_symbol__, none));
+				syntax_annotations__->symbol__ = optional_symbol__;
+				syntax_annotations__->of_type__ = optional_type__;
+			}
+			else if (cond(int32__0op__equal(syntax_node__->kind__, VariableDeclaration__)))
+			{
+				Token__0 const ref const identifier__ = first_child_token__2(syntax_node__, Identifier__);
+				Syntax_Node__0 const ref const type_syntax__ = system__collections__List__1__0op__element(syntax_node__->children__, ((int32){3}));
+				Type__0 const opt_ref const optional_type__ = bind_type_name__3(type_syntax__, scope__, annotations__);
+				assert__1(void_ptr__0op__not_equal(optional_type__, none));
+				Syntax_Symbol__0 const ref const symbol__ = Syntax_Symbol__0__0new__of_type__2(allocate(sizeof(Syntax_Symbol__0)), get_token_text__1(identifier__), optional_type__);
+				add_item__2(parent_symbol__->children__, symbol__);
+				syntax_annotations__->symbol__ = symbol__;
+				syntax_annotations__->of_type__ = optional_type__;
 			}
 			else
 			{
@@ -6040,23 +6113,32 @@ void mut bind_declared_symbols_in_scope__3(Syntax__0 const ref const syntax__, N
 	}}
 }
 
-void mut bind_prameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
+system__collections__List__1 const ref mut bind_prameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
 {
 	Syntax_Node__0 const ref const parameters_syntax__ = first_child_syntax_node__2(function__, ParameterList__);
+	system__collections__List__1 mut ref const symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	for (void_ptr__0iter mut iter = void_ptr__0iterate(parameters__1(parameters_syntax__)); void_ptr__0next(&iter);)
 	{
 		Syntax_Node__0 const ref const parameter__ = void_ptr__0current(&iter);
 		if (cond(int32__0op__equal(parameter__->kind__, Parameter__)))
 		{
 			first_child_token__2(parameter__, VarKeyword__);
-			first_child_token__2(parameter__, Identifier__);
-			system__collections__List__1__0op__element(parameter__->children__, int32__0op__sub(parameter__->children__->count__, ((int32){1})));
+			Token__0 const ref const identifier__ = first_child_token__2(parameter__, Identifier__);
+			Syntax_Node__0 const ref const type_syntax__ = system__collections__List__1__0op__element(parameter__->children__, int32__0op__sub(parameter__->children__->count__, ((int32){1})));
+			Type__0 const ref const type__ = bind_type_name__3(type_syntax__, scope__, annotations__);
+			Syntax_Symbol__0 const ref const symbol__ = Syntax_Symbol__0__0new__of_type__2(allocate(sizeof(Syntax_Symbol__0)), get_token_text__1(identifier__), type__);
+			add_item__2(symbols__, symbol__);
+			Annotations__0 mut ref const parameter_annotations__ = annotations_for__2(annotations__, syntax_node_as_syntax__1(parameter__));
+			parameter_annotations__->symbol__ = symbol__;
+			parameter_annotations__->of_type__ = type__;
 		}
 		else
 		{
 			NOT_IMPLEMENTED__1(string__0op__add(((string){{15},(uint8_t*)u8"parameter.kind="}), int_to_string__1(parameter__->kind__)));
 		}
 	}
+
+	return symbols__;
 }
 
 Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
@@ -6065,18 +6147,60 @@ Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_synt
 	if (cond(int32__0op__equal(type_syntax__->kind__, PredefinedType__)))
 	{
 		string const primitive_name__ = get_syntax_node_text__1(system__collections__List__1__0op__element(type_syntax__->children__, ((int32){0})));
-		Symbol__0 const opt_ref const primitive_symbol__ = lookup_name_in_scope__1(scope__);
+		Detached_Symbol__0 const opt_ref const primitive_symbol__ = lookup_special_name_in_scope__2(scope__, primitive_name__);
 		assert__2(void_ptr__0op__not_equal(primitive_symbol__, none), string__0op__add(string__0op__add(((string){{25},(uint8_t*)u8"No symbol for primitive `"}), primitive_name__), ((string){{1},(uint8_t*)u8"`"})));
 		Type__0 const ref const type__ = primitive_symbol__->declares_type__;
+		type_syntax_annotations__->referenced_type__ = type__;
+		return type__;
+	}
+	else if (cond(int32__0op__equal(type_syntax__->kind__, IdentifierName__)))
+	{
+		string const name__ = get_syntax_node_text__1(type_syntax__);
+		Detached_Symbol__0 const opt_ref const symbol__ = lookup_name_in_scope__2(scope__, name__);
+		assert__2(void_ptr__0op__not_equal(symbol__, none), string__0op__add(string__0op__add(((string){{15},(uint8_t*)u8"No symbol for `"}), name__), ((string){{1},(uint8_t*)u8"`"})));
+		Type__0 const ref const type__ = symbol__->declares_type__;
 		type_syntax_annotations__->referenced_type__ = type__;
 		return type__;
 	}
 	else if (cond(int32__0op__equal(type_syntax__->kind__, QualifiedName__)))
 	{
 		Syntax_Node__0 const ref const qualifier_syntax__ = system__collections__List__1__0op__element(type_syntax__->children__, ((int32){0}));
-		bind_type_name__3(qualifier_syntax__, scope__, annotations__);
-		system__collections__List__1__0op__element(type_syntax__->children__, ((int32){2}));
-		NOT_IMPLEMENTED__1(((string){{13},(uint8_t*)u8"QualifiedName"}));
+		Type__0 const ref const qualifier_type__ = bind_type_name__3(qualifier_syntax__, scope__, annotations__);
+		Detached_Symbol__0 const opt_ref const qualifier_symbol__ = lookup_qualified_name_in_scope__2(scope__, qualifier_type__->name__);
+		assert__1(void_ptr__0op__not_equal(qualifier_symbol__, none));
+		Syntax_Node__0 const ref const qualified_syntax__ = system__collections__List__1__0op__element(type_syntax__->children__, ((int32){2}));
+		if (cond(int32__0op__equal(qualified_syntax__->kind__, IdentifierName__)))
+		{
+			string const name__ = get_syntax_node_text__1(qualified_syntax__);
+			Detached_Symbol__0 const opt_ref const symbol__ = get_child_detached_symbol__3(qualifier_symbol__, name__, IdentifierSymbol__);
+			assert__2(void_ptr__0op__not_equal(symbol__, none), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{15},(uint8_t*)u8"No symbol for `"}), name__), ((string){{16},(uint8_t*)u8"` qualified by `"})), get_syntax_node_text__1(qualifier_syntax__)), ((string){{1},(uint8_t*)u8"`"})));
+			Type__0 const ref const type__ = symbol__->declares_type__;
+			type_syntax_annotations__->referenced_type__ = symbol__->declares_type__;
+			return type__;
+		}
+		else if (cond(int32__0op__equal(qualified_syntax__->kind__, GenericName__)))
+		{
+			Syntax_Node__0 const ref const name_syntax__ = first_child_syntax_node__2(qualified_syntax__, IdentifierName__);
+			string const name__ = get_syntax_node_text__1(name_syntax__);
+			Detached_Symbol__0 const opt_ref const symbol__ = get_child_detached_symbol__3(qualifier_symbol__, name__, IdentifierSymbol__);
+			assert__2(void_ptr__0op__not_equal(symbol__, none), string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{15},(uint8_t*)u8"No symbol for `"}), name__), ((string){{16},(uint8_t*)u8"` qualified by `"})), get_syntax_node_text__1(qualifier_syntax__)), ((string){{1},(uint8_t*)u8"`"})));
+			Type__0 const ref const open_type__ = symbol__->declares_type__;
+			system__collections__List__1 mut ref const arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+			for (void_ptr__0iter mut iter = void_ptr__0iterate(type_arguments__1(qualified_syntax__)); void_ptr__0next(&iter);)
+			{
+				Syntax_Node__0 const ref const type_argument__ = void_ptr__0current(&iter);
+				Type__0 const ref const argument_type__ = bind_type_name__3(type_argument__, scope__, annotations__);
+				add_item__2(arguments__, argument_type__);
+			}
+
+			Type__0 const ref const type__ = Type__0__0new__generic__2(allocate(sizeof(Type__0)), open_type__, arguments__);
+			type_syntax_annotations__->referenced_type__ = type__;
+			return type__;
+		}
+		else
+		{
+			UNREACHABLE__0();
+		}
 	}
 	else if (cond(int32__0op__equal(type_syntax__->kind__, MutableType__)))
 	{
@@ -6094,11 +6218,37 @@ Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_synt
 		type_syntax_annotations__->referenced_type__ = type__;
 		return type__;
 	}
+	else if (cond(int32__0op__equal(type_syntax__->kind__, OptionalType__)))
+	{
+		Syntax_Node__0 const ref const inner_type_syntax__ = system__collections__List__1__0op__element(type_syntax__->children__, ((int32){0}));
+		Type__0 const ref const inner_type__ = bind_type_name__3(inner_type_syntax__, scope__, annotations__);
+		Type__0 const ref const optional_type__ = lookup_optional_type__1(scope__);
+		system__collections__List__1 mut ref const type_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+		add_item__2(type_arguments__, inner_type__);
+		Type__0 const ref const type__ = Type__0__0new__generic__2(allocate(sizeof(Type__0)), optional_type__, type_arguments__);
+		type_syntax_annotations__->referenced_type__ = type__;
+		return type__;
+	}
 	else
 	{
 		int32 const place__ = type_syntax__->start__;
 		NOT_IMPLEMENTED__1(string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(((string){{17},(uint8_t*)u8"type_syntax.kind="}), int_to_string__1(type_syntax__->kind__)), ((string){{4},(uint8_t*)u8" on "})), get_syntax_node_text__1(type_syntax__)), ((string){{4},(uint8_t*)u8" at "})), int_to_string__1(place__)));
 	}
+
+	UNREACHABLE__0();
+}
+
+Type__0 const ref mut lookup_optional_type__1(Name_Scope__0 const ref const scope__)
+{
+	Package_Name__0 const ref const primitives_package__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{11},(uint8_t*)u8"$primitives"}));
+	Name__0 const ref const global_namespace__ = Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), primitives_package__);
+	Name__0 const ref const adamant_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){{7},(uint8_t*)u8"adamant"}));
+	Name__0 const ref const language_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace__, NamespaceName__, ((string){{8},(uint8_t*)u8"language"}));
+	Name__0 const ref const type_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace__, TypeName__, ((string){{8},(uint8_t*)u8"optional"}));
+	Detached_Symbol__0 const opt_ref const symbol__ = lookup_qualified_name_in_scope__2(scope__, type_name__);
+	assert__2(void_ptr__0op__not_equal(symbol__, none), ((string){{39},(uint8_t*)u8"Could not find symbol for optional type"}));
+	Type__0 const ref const type__ = symbol__->declares_type__;
+	return type__;
 }
 
 Syntax_Symbol__0 const ref mut get_declared_type_symbols__3(Syntax_Node__0 const ref const package_syntax__, Package_Name__0 const ref const name__, Annotations_Dictionary__0 mut ref const annotations__)
@@ -6144,6 +6294,7 @@ void mut build_declared_symbols__3(Syntax_Symbol__0 const ref const parent__, Sy
 
 		Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), type_kind__, name__, TRUE);
 		Syntax_Symbol__0 mut ref const symbol__ = Syntax_Symbol__0__0new__declaring__2(allocate(sizeof(Syntax_Symbol__0)), type__, syntax_node_as_syntax__1(syntax__));
+		add_item__2(parent__->children__, symbol__);
 		Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, syntax_node_as_syntax__1(syntax__));
 		syntax_annotations__->symbol__ = symbol__;
 		syntax_annotations__->declares_type__ = symbol__->declares_type__;
@@ -6221,9 +6372,72 @@ Name_Scope__0 mut ref mut Name_Scope__0__0new__2(Name_Scope__0 mut ref const sel
 	return self;
 }
 
-Symbol__0 const opt_ref mut lookup_name_in_scope__1(Name_Scope__0 const ref const scope__)
+Detached_Symbol__0 const opt_ref mut lookup_name_in_scope__2(Name_Scope__0 const ref const scope__, string const name__)
 {
-	NOT_IMPLEMENTED__0();
+	return lookup_name_in_scope__3(scope__, name__, FALSE);
+}
+
+Detached_Symbol__0 const opt_ref mut lookup_special_name_in_scope__2(Name_Scope__0 const ref const scope__, string const name__)
+{
+	return lookup_name_in_scope__3(scope__, name__, TRUE);
+}
+
+Detached_Symbol__0 const opt_ref mut lookup_name_in_scope__3(Name_Scope__0 const ref const scope__, string const name__, BOOL const is_special__)
+{
+	for (void_ptr__0iter mut iter = void_ptr__0iterate(scope__->symbol__->children__); void_ptr__0next(&iter);)
+	{
+		Syntax_Symbol__0 const ref const child_syntax_symbol__ = void_ptr__0current(&iter);
+		if (cond(bool_op(bool_arg(BOOL__0op__equal(child_syntax_symbol__->is_special_name__, is_special__)) && bool_arg(string__0op__equal(child_syntax_symbol__->name__, name__)))))
+		{
+			return syntax_symbol_as_detached_symbol__1(child_syntax_symbol__);
+		}
+	}
+
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(scope__->symbols__); void_ptr__0next(&iter);)
+	{
+		Symbol__0 const ref const symbol__ = void_ptr__0current(&iter);
+		for (void_ptr__0iter mut iter = void_ptr__0iterate(symbol__->children__); void_ptr__0next(&iter);)
+		{
+			Symbol__0 const ref const child_symbol__ = void_ptr__0current(&iter);
+			if (cond(bool_op(bool_arg(BOOL__0op__equal(child_symbol__->is_special_name__, is_special__)) && bool_arg(string__0op__equal(child_symbol__->name__, name__)))))
+			{
+				return symbol_as_detached_symbol__1(child_symbol__);
+			}
+		}
+	}
+
+	if (cond(void_ptr__0op__not_equal(scope__->parent__, none)))
+	{
+		return lookup_name_in_scope__3(scope__->parent__, name__, is_special__);
+	}
+
+	return none;
+}
+
+Detached_Symbol__0 const opt_ref mut lookup_qualified_name_in_scope__2(Name_Scope__0 const ref const scope__, Name__0 const ref const name__)
+{
+	if (cond(void_ptr__0op__not_equal(scope__->parent__, none)))
+	{
+		return lookup_qualified_name_in_scope__2(scope__->parent__, name__);
+	}
+
+	Detached_Symbol__0 const opt_ref mut symbol__ = none;
+	for (string__0iter mut iter = string__0iterate(name__->segments__); string__0next(&iter);)
+	{
+		string const segment__ = string__0current(&iter);
+		if (cond(void_ptr__0op__equal(symbol__, none)))
+		{
+			symbol__ = lookup_name_in_scope__2(scope__, segment__);
+			assert__1(void_ptr__0op__not_equal(symbol__, none));
+		}
+		else
+		{
+			symbol__ = get_child_detached_symbol__3(symbol__, segment__, IdentifierSymbol__);
+			assert__1(void_ptr__0op__not_equal(symbol__, none));
+		}
+	}
+
+	return symbol__;
 }
 
 Expression__0 mut ref mut Expression__0__0new__0(Expression__0 mut ref const self) { self->type_id = Expression__0__0Type_ID; return self; }
@@ -6520,6 +6734,23 @@ string mut full_package_name__1(Package_Name__0 const ref const package_name__)
 	return package_name__->unqualified__;
 }
 
+Detached_Symbol__0 mut ref mut Detached_Symbol__0__0new__0(Detached_Symbol__0 mut ref const self) { self->type_id = Detached_Symbol__0__0Type_ID; return self; }
+
+Detached_Symbol__0 const opt_ref mut get_child_detached_symbol__3(Detached_Symbol__0 const ref const symbol__, string const name__, int32 const kind__)
+{
+	assert__1(void_ptr__0op__not_equal(symbol__, none));
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(symbol__->children__); void_ptr__0next(&iter);)
+	{
+		Detached_Symbol__0 const ref const child__ = void_ptr__0current(&iter);
+		if (cond(bool_op(bool_arg(string__0op__equal(child__->name__, name__)) && bool_arg(int32__0op__equal(child__->kind__, kind__)))))
+		{
+			return child__;
+		}
+	}
+
+	return none;
+}
+
 Symbol__0 mut ref mut Symbol__0__0new__identifier__1(Symbol__0 mut ref const self, string const name__)
 {
 	self->type_id = Symbol__0__0Type_ID;
@@ -6626,6 +6857,11 @@ Symbol__0 const opt_ref mut get_child_symbol__3(Symbol__0 const ref const symbol
 	return none;
 }
 
+Detached_Symbol__0 const ref mut symbol_as_detached_symbol__1(Symbol__0 const ref const symbol__)
+{
+	return as_any__1(symbol__);
+}
+
 void mut unit_test_Symbol__0()
 {
 	Package_symbol_children_can_be_found_by_name_and_kind__0();
@@ -6713,7 +6949,7 @@ Syntax_Symbol__0 mut ref mut Syntax_Symbol__0__0new__of_type__2(Syntax_Symbol__0
 	return self;
 }
 
-Syntax_Symbol__0 const opt_ref mut get_child_Symbol_Declaration__3(Syntax_Symbol__0 const ref const builder__, string const name__, int32 const kind__)
+Syntax_Symbol__0 const opt_ref mut get_child_syntax_symbol__3(Syntax_Symbol__0 const ref const builder__, string const name__, int32 const kind__)
 {
 	assert__1(void_ptr__0op__not_equal(builder__, none));
 	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(builder__->children__); void_ptr__0next(&iter);)
@@ -6726,6 +6962,11 @@ Syntax_Symbol__0 const opt_ref mut get_child_Symbol_Declaration__3(Syntax_Symbol
 	}
 
 	return none;
+}
+
+Detached_Symbol__0 const ref mut syntax_symbol_as_detached_symbol__1(Syntax_Symbol__0 const ref const symbol__)
+{
+	return as_any__1(symbol__);
 }
 
 Name_Subtable__0 mut ref mut Name_Subtable__0__0new__global_namespace__1(Name_Subtable__0 mut ref const self, Name_Table__0 const ref const name_table__)
