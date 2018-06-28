@@ -19,7 +19,6 @@ public bind_declared_symbols(
     }
 }
 
-// TODO better name for this
 public bind_declared_symbols(
     parent_symbol: Syntax_Symbol,
     syntax: Syntax,
@@ -41,10 +40,16 @@ public bind_declared_symbols(
                 }
             }
             else if syntax_node.kind == FunctionDeclaration
-                or syntax_node.kind == ConstructorDeclaration
             {
-                bind_prameter_symbols(syntax_node, scope, annotations);
-                // NOT_IMPLEMENTED("syntax_node.kind=" + int_to_string(syntax_node.kind));
+                let _parameter_symbols: system.collections.List<Syntax_Symbol> = bind_prameter_symbols(syntax_node, scope, annotations);
+                let return_type_syntax: Syntax_Node = syntax_node.children[4]; // TODO need more reliable way to pick this out
+                let _return_type: Type = bind_type_name(return_type_syntax, scope, annotations);
+                // NOT_IMPLEMENTED("syntax_node.kind=FunctionDeclaration");
+            }
+            else if syntax_node.kind == ConstructorDeclaration
+            {
+                let _parameter_symbols: system.collections.List<Syntax_Symbol> = bind_prameter_symbols(syntax_node, scope, annotations);
+                // NOT_IMPLEMENTED("syntax_node.kind=ConstructorDeclaration");
             }
             else if syntax_node.kind == ClassDeclaration
                 or syntax_node.kind == StructDeclaration
@@ -105,25 +110,31 @@ public bind_prameter_symbols(
     function: Syntax_Node,
     scope: Name_Scope,
     annotations: mut Annotations_Dictionary)
-    -> void
+    -> system.collections.List<Syntax_Symbol>
 {
     let parameters_syntax: Syntax_Node = first_child_syntax_node(function, ParameterList);
+    let symbols: mut system.collections.List<Syntax_Symbol> = new system.collections.List<Syntax_Symbol>();
     for let parameter: Syntax_Node in parameters(parameters_syntax)
     {
         if parameter.kind == Parameter
         {
             let _var_syntax: Token? = first_child_token(parameter, VarKeyword);
-            let _identifier: Token = first_child_token(parameter, Identifier);
+            let identifier: Token = first_child_token(parameter, Identifier);
             // Because a parameter can have `var` at the beginning, the position of the type isn't constant
             let type_syntax: Syntax_Node = parameter.children[parameter.children.count - 1];
-            bind_type_name(type_syntax, scope, annotations);
-            // NOT_IMPLEMENTED("parameter.kind=Parameter");
+            let type: Type = bind_type_name(type_syntax, scope, annotations);
+            let symbol: Syntax_Symbol = new Syntax_Symbol.of_type(get_token_text(identifier), type);
+            add_item(symbols, symbol);
+            let parameter_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(parameter));
+            parameter_annotations.symbol = symbol;
+            parameter_annotations.of_type = type;
         }
         else
         {
             NOT_IMPLEMENTED("parameter.kind="+int_to_string(parameter.kind));
         }
     }
+    return symbols;
 }
 
 public bind_type_name(
