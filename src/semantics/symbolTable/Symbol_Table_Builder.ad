@@ -85,13 +85,9 @@ public add_syntax(
         or syntax.kind == StructDeclaration
     {
         let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
-        var type_kind: int;
-        if syntax.kind == ClassDeclaration
-            { type_kind = ReferenceType; }
-        else
-            { type_kind = ValueType; }
+        let is_value_type: bool = syntax.kind =/= ClassDeclaration;
         let name: Name = new Name(parent, TypeName, unqualified_name);
-        let type: Type = new Type(type_kind, name, true);
+        let type: Type = object_type_as_type(new Object_Type(is_value_type, name, true));
         add_type_name(name_table, name, type);
         for let member: Syntax_Node in members(syntax)
         {
@@ -125,7 +121,7 @@ public add_syntax(
     {
         let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
         let name: Name = new Name(parent, TypeName, unqualified_name);
-        let type: Type = new Type(ReferenceType, name, true);
+        let type: Type = object_type_as_type(new Object_Type(false, name, true));
         add_type_name(name_table, name, type);
         // TODO Add enum member symbols
     }

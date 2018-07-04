@@ -38,6 +38,22 @@ public class Primitive_Type // : Type
         self.is_potentially_mutable = false;
         self.is_mutable = false;
     }
+
+    public new(
+        name: Name,
+        generic_parameters: system.collections.List<Generic_Parameter>,
+        generic_arguments: system.collections.List<Type>,
+        is_potentially_mutable: bool,
+        is_mutable: bool)
+    {
+        self.name = name;
+        self.generic_parameters = generic_parameters;
+        self.generic_arguments = generic_arguments;
+        self.is_primitive = true;
+        self.is_value_type = true;
+        self.is_potentially_mutable = is_potentially_mutable;
+        self.is_mutable = is_mutable;
+    }
 }
 
 public primitive_type_as_type(type: Primitive_Type) -> Type

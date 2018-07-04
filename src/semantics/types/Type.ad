@@ -9,54 +9,60 @@ public /* abstract */ class Type
     public let is_value_type: bool;
     public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
     public let is_mutable: bool;
-
-    /// # Parameters
-    /// * is_mutable - whether the type as declared is mutable
-    public new(kind: int, name: Name, is_mutable: bool)
-    {
-        assert(name =/= none);
-        // self.kind = kind;
-        self.name = name;
-        self.generic_arguments = new system.collections.List<Type>();
-        self.is_primitive = false;
-        self.is_value_type = kind == ValueType;
-        self.is_potentially_mutable = is_mutable;
-        self.is_mutable = is_mutable;
-    }
-
-
-    public new generic(definition: Type, generic_arguments: system.collections.List<Type>)
-    {
-        assert(definition =/= none);
-        assert(generic_arguments =/= none, full_name(definition.name));
-        assert(definition.generic_arguments.count == generic_arguments.count,
-            full_name(definition.name)+" "+int_to_string(definition.generic_arguments.count)+" given "+int_to_string(generic_arguments.count));
-        self.name = definition.name;
-        self.generic_arguments = generic_arguments;
-        self.is_primitive = definition.is_primitive;
-        self.is_value_type = definition.is_value_type;
-        self.is_potentially_mutable = definition.is_potentially_mutable;
-        self.is_mutable = definition.is_mutable;
-    }
-
-    public new(name: Name, generic_arguments: system.collections.List<Type>, is_primitive: bool, is_value_type: bool, is_potentially_mutable: bool, is_mutable: bool)
-    {
-        self.name = name;
-        self.generic_arguments = generic_arguments;
-        self.is_primitive = is_primitive;
-        self.is_value_type = is_value_type;
-        self.is_potentially_mutable = is_potentially_mutable;
-        self.is_mutable = is_mutable;
-    }
 }
 
 public make_mutable_type(type: Type) -> Type
 {
-    assert(type.is_potentially_mutable, "self.name="+full_name(type.name));
-    return new Type(type.name, type.generic_arguments, type.is_primitive, type.is_value_type, type.is_potentially_mutable, true);
+    match type
+    {
+        o: Object_Type =>
+        {
+            assert(type.is_potentially_mutable, "self.name="+full_name(type.name));
+            return object_type_as_type(new Object_Type(o.is_value_type, o.name, o.generic_parameters, o.generic_arguments, o.is_potentially_mutable, true));
+        }
+    }
+    UNREACHABLE();
 }
 
 public make_immutable_type(type: Type) -> Type
 {
-    return new Type(type.name, type.generic_arguments, type.is_primitive, type.is_value_type, type.is_potentially_mutable, false);
+    match type
+    {
+        ns: Namespace_Type => { return namespace_type_as_type(ns); },
+        f: Function_Type => { return function_type_as_type(f); },
+        p: Primitive_Type => { return primitive_type_as_type(p); },
+        o: Object_Type => { return object_type_as_type(new Object_Type(o.is_value_type, o.name, o.generic_parameters, o.generic_arguments, o.is_potentially_mutable, false)); },
+    }
+}
+
+public apply_generic_arguments(type: Type, generic_arguments: system.collections.List<Type?>) -> Type
+{
+    match type
+    {
+        p: Primitive_Type =>
+        {
+            return primitive_type_as_type(new Primitive_Type(p.name, p.generic_parameters, apply_generic_arguments(p.generic_parameters, p.generic_arguments, generic_arguments), p.is_potentially_mutable, p.is_mutable));
+        },
+        o: Object_Type =>
+        {
+            return object_type_as_type(new Object_Type(o.is_value_type, o.name, o.generic_parameters, apply_generic_arguments(o.generic_parameters, o.generic_arguments, generic_arguments), o.is_potentially_mutable, o.is_mutable));
+        }
+    }
+}
+
+public apply_generic_arguments(
+    generic_parameters: system.collections.List<Generic_Parameter>,
+    existing_generic_arguments: system.collections.List<Type?>,
+    generic_arguments: system.collections.List<Type?>)
+    -> system.collections.List<Type?>
+{
+    // TODO deal with existing arguments
+    // for let argument: Type? in existing_generic_arguments
+    // {
+    //     assert(argument == none);
+    // }
+
+    assert(generic_parameters.count == generic_arguments.count);
+
+    return generic_arguments;
 }

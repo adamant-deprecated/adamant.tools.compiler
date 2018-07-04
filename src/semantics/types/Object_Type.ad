@@ -15,6 +15,17 @@ public class Object_Type // : Type
     public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
     public let is_mutable: bool;
 
+    public new(is_value_type: bool, name: Name, is_mutable: bool)
+    {
+        self.name = name;
+        self.generic_parameters = new system.collections.List<Generic_Parameter>();
+        self.generic_arguments = new system.collections.List<Type?>();
+        self.is_primitive = false;
+        self.is_value_type = is_value_type;
+        self.is_potentially_mutable = is_mutable;
+        self.is_mutable = is_mutable;
+    }
+
     public new(is_value_type: bool, name: Name, generic_parameters: system.collections.List<Generic_Parameter>, is_mutable: bool)
     {
         self.name = name;
@@ -29,6 +40,23 @@ public class Object_Type // : Type
         self.is_primitive = false;
         self.is_value_type = is_value_type;
         self.is_potentially_mutable = is_mutable;
+        self.is_mutable = is_mutable;
+    }
+
+    public new(
+        is_value_type: bool,
+        name: Name,
+        generic_parameters: system.collections.List<Generic_Parameter>,
+        generic_arguments: system.collections.List<Type>,
+        is_potentially_mutable: bool,
+        is_mutable: bool)
+    {
+        self.name = name;
+        self.generic_parameters = generic_parameters;
+        self.generic_arguments = generic_arguments;
+        self.is_primitive = false;
+        self.is_value_type = is_value_type;
+        self.is_potentially_mutable = is_potentially_mutable;
         self.is_mutable = is_mutable;
     }
 }

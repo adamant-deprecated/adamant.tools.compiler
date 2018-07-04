@@ -35,12 +35,8 @@ public build_declared_symbols(
     {
         let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
         let name: Name = new Name(parent.declares_type.name, TypeName, unqualified_name);
-        var type_kind: int;
-        if syntax.kind == ClassDeclaration
-            { type_kind = ReferenceType; }
-        else
-            { type_kind = ValueType; }
-        let type: Type = new Type(type_kind, name, true);
+        let is_value_type: bool = syntax.kind =/= ClassDeclaration;
+        let type: Type = object_type_as_type(new Object_Type(is_value_type, name, true));
         let symbol: mut Syntax_Symbol = new Syntax_Symbol.declaring(type, syntax_node_as_syntax(syntax));
         add_item(parent.children, symbol);
         let syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(syntax));
@@ -55,7 +51,7 @@ public build_declared_symbols(
     {
         let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
         let name: Name = new Name(parent.declares_type.name, TypeName, unqualified_name);
-        let type: Type = new Type(ReferenceType, name, true);
+        let type: Type = object_type_as_type(new Object_Type(false, name, true));
         let symbol: mut Syntax_Symbol = new Syntax_Symbol.declaring(type, syntax_node_as_syntax(syntax));
         let syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(syntax));
         syntax_annotations.symbol = symbol;

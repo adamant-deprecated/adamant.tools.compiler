@@ -185,13 +185,13 @@ public bind_type_name(
             let symbol: Detached_Symbol? = get_child_detached_symbol(qualifier_symbol, name, IdentifierSymbol);
             assert(symbol =/= none, "No symbol for `"+name+"` qualified by `"+get_syntax_node_text(qualifier_syntax)+"`");
             let open_type: Type = symbol.declares_type;
-            let arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
+            let arguments: mut system.collections.List<Type?> = new system.collections.List<Type?>();
             for let type_argument: Syntax_Node in type_arguments(qualified_syntax)
             {
                 let argument_type: Type = bind_type_name(type_argument, scope, annotations);
                 add_item(arguments, argument_type);
             }
-            let type: Type = new Type.generic(open_type, arguments);
+            let type: Type = apply_generic_arguments(open_type, arguments);
             type_syntax_annotations.referenced_type = type;
             return type;
         }
@@ -222,9 +222,9 @@ public bind_type_name(
         let inner_type: Type = bind_type_name(inner_type_syntax, scope, annotations);
 
         let optional_type: Type = lookup_optional_type(scope);
-        let type_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
+        let type_arguments: mut system.collections.List<Type?> = new system.collections.List<Type?>();
         add_item(type_arguments, inner_type);
-        let type: Type = new Type.generic(optional_type, type_arguments);
+        let type: Type = apply_generic_arguments(optional_type, type_arguments);
         type_syntax_annotations.referenced_type = type;
         return type;
     }

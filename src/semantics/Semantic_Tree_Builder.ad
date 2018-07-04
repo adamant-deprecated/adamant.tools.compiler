@@ -589,8 +589,8 @@ public build_type_name_semantic_node(
                 let referenced_type_name: Type = referenced_scope.type;
                 let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type_name, name_syntax, new system.collections.List<Semantic_Node>());
                 add_item(generic_name_children, name_node);
-                let type_arguments: system.collections.List<Type> = build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
-                let referenced_type: Type = new Type.generic(referenced_type_name, type_arguments);
+                let type_arguments: system.collections.List<Type?> = build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
+                let referenced_type: Type = apply_generic_arguments(referenced_type_name, type_arguments);
                 let qualified_name: mut Semantic_Node = new Semantic_Node.referencing_type(referenced_type, qualified_syntax, generic_name_children);
                 add_item(children, qualified_name);
                 return new Semantic_Node.referencing_type(referenced_type, syntax, children);
@@ -662,9 +662,9 @@ public build_optional_type(
     let optional_type_scope: Name_Subtable? = get_name(name_table, builder.optional_type_name);
     assert(optional_type_scope =/= none);
     let optional_type: Type = optional_type_scope.type;
-    let type_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
+    let type_arguments: mut system.collections.List<Type?> = new system.collections.List<Type?>();
     add_item(type_arguments, base_type);
-    let type: Type = new Type.generic(optional_type, type_arguments);
+    let type: Type = apply_generic_arguments(optional_type, type_arguments);
     return type;
 }
 

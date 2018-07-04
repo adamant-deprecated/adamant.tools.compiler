@@ -125,7 +125,7 @@ public build_namespace_symbol(name: Name, symbols: system.collections.List<Symbo
 
 public build_class_symbol(namespace: Name, class_name: string) -> Symbol
 {
-    let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
+    let type: Type = object_type_as_type(new Object_Type(false, new Name(namespace, TypeName, class_name), true));
     let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
     return new Symbol.declaring(type, declarations, children);
@@ -133,7 +133,7 @@ public build_class_symbol(namespace: Name, class_name: string) -> Symbol
 
 public build_class_symbol(namespace: Name, class_name: string, children: system.collections.List<Symbol>) -> Symbol
 {
-    let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), true);
+    let type: Type = object_type_as_type(new Object_Type(false, new Name(namespace, TypeName, class_name), true));
     let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     return new Symbol.declaring(type, declarations, children);
 }
