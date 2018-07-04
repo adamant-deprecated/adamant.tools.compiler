@@ -176,7 +176,13 @@ public build_semantic_node(
         else
         {
             // debug_write_line("Getting scope for type name `"+full_name(lhs.of_type.name)+"`");
-            let access_scope: Name_Subtable = get_name(name_table, lhs.of_type.name);
+            var access_scope: Name_Subtable;
+            match lhs.of_type
+            {
+                object_type: Object_Type => { access_scope = get_name(name_table, object_type.name); },
+                primitive_type: Primitive_Type => { access_scope = get_name(name_table, primitive_type.name); },
+                _ => { NOT_IMPLEMENTED(); }
+            }
             let member_scope: Name_Subtable? = find(access_scope, get_syntax_node_text(member_name));
 
             if member_scope == none
@@ -538,9 +544,9 @@ public build_type_name_semantic_node(
             else
             {
                 let containing_type: Type = qualifier.referenced_type;
-                let containing_scope: Name_Subtable = get_name(name_table, containing_type.name);
+                let containing_scope: Name_Subtable = get_type_name_subtable(name_table, containing_type);
                 // `containing_scope` shouldn't be none, because we looked it up to get the name
-                assert(containing_scope =/= none, full_name(containing_type.name));
+                assert(containing_scope =/= none);
                 let referenced_scope: Name_Subtable = find(containing_scope, get_syntax_node_text(name_syntax));
 
                 if referenced_scope == none
@@ -576,9 +582,9 @@ public build_type_name_semantic_node(
             else
             {
                 let containing_type: Type = qualifier.referenced_type;
-                let containing_scope: Name_Subtable = get_name(name_table, containing_type.name);
+                let containing_scope: Name_Subtable = get_type_name_subtable(name_table, containing_type);
                 // `containing_scope` shouldn't be none, because we looked it up to get the name
-                assert(containing_scope =/= none, full_name(containing_type.name));
+                assert(containing_scope =/= none);
                 let referenced_scope: Name_Subtable = find(containing_scope, get_syntax_node_text(name_syntax));
 
                 if referenced_scope == none
@@ -656,6 +662,22 @@ public build_type_name_semantic_node(
         let place: int = syntax.start;
         NOT_IMPLEMENTED("syntax.kind="+int_to_string(syntax.kind)+" at "+int_to_string(place));
     }
+}
+
+public get_type_name_subtable(name_table: Name_Table, type: Type) -> Name_Subtable
+{
+    var containing_scope: Name_Subtable;
+    match type
+    {
+        object_type: Object_Type => { containing_scope = get_name(name_table, object_type.name); },
+        primitive_type: Primitive_Type => { containing_scope = get_name(name_table, primitive_type.name); },
+        _: Function_Type => { NOT_IMPLEMENTED("Function_Type"); },
+        namespace_type: Namespace_Type => { containing_scope = get_name(name_table, namespace_type.name); },
+        _ => { NOT_IMPLEMENTED(); }
+    }
+    // `containing_scope` shouldn't be none, because we looked it up to get the name
+    assert(containing_scope =/= none);
+    return containing_scope;
 }
 
 public build_optional_type(
