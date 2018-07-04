@@ -42,6 +42,7 @@ enum Type_ID
 	Generic_Parameter__0__0Type_ID,
 	Namespace_Type__0__0Type_ID,
 	Object_Type__0__0Type_ID,
+	Primitive_Type__0__0Type_ID,
 	Type__0__0Type_ID,
 };
 typedef enum Type_ID Type_ID;
@@ -85,6 +86,7 @@ typedef struct Function_Type__0 Function_Type__0;
 typedef struct Generic_Parameter__0 Generic_Parameter__0;
 typedef struct Namespace_Type__0 Namespace_Type__0;
 typedef struct Object_Type__0 Object_Type__0;
+typedef struct Primitive_Type__0 Primitive_Type__0;
 typedef struct Type__0 Type__0;
 
 // Function Declarations
@@ -134,8 +136,7 @@ Package_Reference__0 mut ref mut Package_Reference__0__0new__1(Package_Reference
 Package_Reference__0 mut ref mut Package_Reference__0__0new__2(Package_Reference__0 mut ref const self, string const name__, Package__0 const ref const package__);
 Package__0 const ref mut build_primitives_package__0();
 system__collections__List__1 mut ref mut build_primitive_symbols__1(Package_Name__0 const ref const package_name__);
-Symbol__0 const ref mut build_adamant_language_namespace_symbol__1(Name__0 const ref const global_namespace__);
-Symbol__0 const ref mut build_optional_type_symbol__1(Name__0 const ref const language_namespace__);
+Symbol__0 const ref mut build_optional_type_symbol__2(Name__0 const ref const language_namespace__, Symbol__0 const ref const type_symbol__);
 Symbol__0 const ref mut build_primitive_symbol__2(string const name__, Name__0 const ref const namespace__);
 void mut build_fixed_point_primitives__3(system__collections__List__1 mut ref const symbols__, int32 const bits__, Name__0 const ref const namespace__);
 void mut unit_test_build_primitives_package__0();
@@ -144,22 +145,23 @@ void mut Package_has_no_references_or_compilation_units__0();
 void mut Package_symbol_has_package_name__0();
 void mut Package_symbol_has_children__0();
 void mut Package_contains_the_string_type__0();
+void mut Package_contains_the_type_type__0();
 void mut Package_contains_optional_type__0();
 Program_Fragment__0 mut ref mut Program_Fragment__0__0new__0(Program_Fragment__0 mut ref const self);
-Package__0 const ref mut build_runtime_library_package__0();
-system__collections__List__1 mut ref mut build_runtime_library_symbols__1(Package_Name__0 const ref const package_name__);
-Symbol__0 const ref mut build_function_symbol__1(Name__0 const ref const name__);
+Package__0 const ref mut build_runtime_library_package__1(Package__0 const ref const primitives_package__);
+system__collections__List__1 mut ref mut build_runtime_library_symbols__2(Package_Name__0 const ref const package_name__, Package__0 const ref const primitives_package__);
+Symbol__0 const ref mut build_function_symbol__2(Name__0 const ref const name__, Symbol__0 const ref const return_type_symbol__);
 Symbol__0 const ref mut build_namespace_symbol__2(Name__0 const ref const name__, system__collections__List__1 const ref const symbols__);
 Symbol__0 const ref mut build_class_symbol__2(Name__0 const ref const namespace__, string const class_name__);
 Symbol__0 const ref mut build_class_symbol__3(Name__0 const ref const namespace__, string const class_name__, system__collections__List__1 const ref const children__);
-Symbol__0 const ref mut build_generic_class_symbol__3(Name__0 const ref const namespace__, string const class_name__, system__collections__List__1 const ref const generic_arguments__);
+Symbol__0 const ref mut build_generic_class_symbol__3(Name__0 const ref const namespace__, string const class_name__, system__collections__List__1 const ref const generic_parameters__);
 Symbol__0 const ref mut build_constructor_symbol__1(string const name__);
 void mut unit_test_build_runtime_library_package__0();
-void mut Runtime_Library_Package_contains_system_package__0();
-void mut System_namespace_contains_console_namespace__0();
-void mut Console_namespace_contains_Console_class__0();
-void mut System_namespace_contains_collections_namespace__0();
-void mut Collections_namespace_contains_List_class__0();
+void mut Runtime_Library_Package_contains_system_package__1(Package__0 const ref const primitives_package__);
+void mut System_namespace_contains_console_namespace__1(Package__0 const ref const primitives_package__);
+void mut Console_namespace_contains_Console_class__1(Package__0 const ref const primitives_package__);
+void mut System_namespace_contains_collections_namespace__1(Package__0 const ref const primitives_package__);
+void mut Collections_namespace_contains_List_class__1(Package__0 const ref const primitives_package__);
 Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const package_syntax__);
 void mut debug_write_syntax_symbols__2(Syntax_Symbol__0 const ref const symbol__, string const prefix__);
 Semantic_Node__0 mut ref mut Semantic_Node__0__0new__token__1(Semantic_Node__0 mut ref const self, Token__0 const ref const token__);
@@ -191,6 +193,7 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 Type__0 const ref mut build_optional_type__3(Semantic_Tree_Builder__0 const ref const builder__, Name_Table__0 const ref const name_table__, Type__0 const ref const base_type__);
 system__collections__List__1 const ref mut build_type_arguments_semantic_node__5(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__, system__collections__List__1 mut ref const children__);
 Semantic_Node__0 const ref mut build_constructor_name_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__);
+system__collections__List__1 const ref mut parameter_types__1(Semantic_Node__0 const ref const parameters_node__);
 Syntax_Node__0 const ref mut as_syntax_node__1(Syntax_Node__0 const ref const syntax__);
 Diagnostic__0 const ref mut resolution_error__1(Syntax_Node__0 const ref const node__);
 Diagnostic__0 const ref mut resolution_error__2(Syntax_Node__0 const ref const node__, Semantic_Node__0 const ref const qualifier__);
@@ -261,12 +264,13 @@ string mut mangle_function_name__2(string const name__, int32 const parameter_co
 string mut mangle_field_name__1(string const name__);
 BOOL mut contains_multi_underscore_runs__1(string const value__);
 void mut append_fixing_underscores__2(system__text__String_Builder__0 mut ref const builder__, string const value__);
-string mut convert_primitive_type_name__1(Type__0 const ref const type__);
+string mut convert_primitive_type_name__1(Primitive_Type__0 const ref const type__);
 system__text__String_Builder__0 mut ref mut convert_type_name__1(Type__0 const ref const type__);
 system__text__String_Builder__0 mut ref mut convert_type_name__2(Type__0 const ref const type__, BOOL const include_type_parameters__);
-void mut convert_type_name_parameters__2(system__text__String_Builder__0 mut ref const builder__, Type__0 const ref const type__);
-string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const ref mut type__, BOOL const nullable__);
-string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref mut type__, BOOL const optional__);
+string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const nullable__);
+BOOL mut is_optional_type__1(Type__0 const ref const type__);
+string mut convert_non_optional_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const optional__);
+string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const optional__);
 string mut convert_type__2(BOOL const mutable_binding__, Semantic_Node__0 const ref const type_node__);
 string mut convert_parameter_list__4(Emitter__0 mut ref const emitter__, Semantic_Node__0 const ref const parameters__, string const self_type__, BOOL const is_main_function__);
 string mut convert_method_parameter_list__3(Emitter__0 mut ref const emitter__, Semantic_Node__0 const ref const parameters__, string const self_type__);
@@ -290,7 +294,7 @@ void mut emit_entry_point_adapter__1(Emitter__0 mut ref const emitter__);
 void mut emit_postamble__1(Emitter__0 mut ref const emitter__);
 void mut bind_declared_symbols__3(Syntax_Symbol__0 const ref const package_syntax_symbol__, system__collections__List__1 mut ref const references__, Annotations_Dictionary__0 mut ref const annotations__);
 void mut bind_declared_symbols__4(Syntax_Symbol__0 const ref const parent_symbol__, Syntax__0 const ref const syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
-system__collections__List__1 const ref mut bind_prameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
+system__collections__List__1 const ref mut bind_parameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
 Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_syntax__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__);
 Type__0 const ref mut lookup_optional_type__1(Name_Scope__0 const ref const scope__);
 Syntax_Symbol__0 const ref mut get_declared_type_symbols__3(Syntax_Node__0 const ref const package_syntax__, Package_Name__0 const ref const name__, Annotations_Dictionary__0 mut ref const annotations__);
@@ -380,26 +384,31 @@ void mut add_compilation_unit__4(Name_Table__0 mut ref const name_table__, Name_
 void mut add_syntax__4(Name_Table__0 mut ref const name_table__, Name__0 const ref const parent__, Syntax_Node__0 const ref const syntax__, Annotations_Dictionary__0 mut ref const annotations__);
 void mut add_function__4(Name_Table__0 mut ref const name_table__, Name__0 const ref const name__, Syntax_Node__0 const ref const function__, Annotations_Dictionary__0 mut ref const annotations__);
 void mut unit_test_Symbol_Table_Builder__0();
-void mut table_contains_referenced_child_names__0();
-void mut can_get_root_namespace_from_name__0();
-void mut can_get_Console_class_from_name_without_package__0();
-void mut can_get_Optional_class_from_name_with_package__0();
-Function_Type__0 mut ref mut Function_Type__0__0new__1(Function_Type__0 mut ref const self, Name__0 const ref const name__);
+void mut table_contains_referenced_child_names__1(Package__0 const ref const primitives_package__);
+void mut can_get_root_namespace_from_name__1(Package__0 const ref const primitives_package__);
+void mut can_get_Console_class_from_name_without_package__1(Package__0 const ref const primitives_package__);
+void mut can_get_Optional_class_from_name_with_package__1(Package__0 const ref const primitives_package__);
+Function_Type__0 mut ref mut Function_Type__0__0new__3(Function_Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const parameter_types__, Type__0 const ref const return_type__);
+Function_Type__0 mut ref mut Function_Type__0__0new__4(Function_Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const parameter_types__, Type__0 const ref const return_type__);
 Type__0 const ref mut function_type_as_type__1(Function_Type__0 const ref const type__);
-Generic_Parameter__0 mut ref mut Generic_Parameter__0__0new__0(Generic_Parameter__0 mut ref const self);
+Generic_Parameter__0 mut ref mut Generic_Parameter__0__0new__2(Generic_Parameter__0 mut ref const self, Name__0 const ref const name__, Type__0 const ref const type__);
 Namespace_Type__0 mut ref mut Namespace_Type__0__0new__1(Namespace_Type__0 mut ref const self, Name__0 const ref const name__);
 Type__0 const ref mut namespace_type_as_type__1(Namespace_Type__0 const ref const type__);
 Namespace_Type__0 const ref mut remove_type_package__1(Namespace_Type__0 const ref const type__);
-Object_Type__0 mut ref mut Object_Type__0__0new__0(Object_Type__0 mut ref const self);
-Type__0 mut ref mut Type__0__0new__3(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, BOOL const is_mutable__);
-Type__0 mut ref mut Type__0__0new__parameter__1(Type__0 mut ref const self, string const name__);
-Type__0 mut ref mut Type__0__0new__4(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, system__collections__List__1 const ref const generic_arguments__, BOOL const is_mutable__);
-Type__0 mut ref mut Type__0__0new__primitive__1(Type__0 mut ref const self, Name__0 const ref const name__);
-Type__0 mut ref mut Type__0__0new__primitive__2(Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_arguments__);
-Type__0 mut ref mut Type__0__0new__generic__2(Type__0 mut ref const self, Type__0 const ref const definition__, system__collections__List__1 const ref const generic_arguments__);
-Type__0 mut ref mut Type__0__0new__6(Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_arguments__, BOOL const is_primitive__, BOOL const is_value_type__, BOOL const is_potentially_mutable__, BOOL const is_mutable__);
+Object_Type__0 mut ref mut Object_Type__0__0new__3(Object_Type__0 mut ref const self, BOOL const is_value_type__, Name__0 const ref const name__, BOOL const is_mutable__);
+Object_Type__0 mut ref mut Object_Type__0__0new__4(Object_Type__0 mut ref const self, BOOL const is_value_type__, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__, BOOL const is_mutable__);
+Object_Type__0 mut ref mut Object_Type__0__0new__6(Object_Type__0 mut ref const self, BOOL const is_value_type__, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const generic_arguments__, BOOL const is_potentially_mutable__, BOOL const is_mutable__);
+Type__0 const ref mut object_type_as_type__1(Object_Type__0 const ref const type__);
+Primitive_Type__0 mut ref mut Primitive_Type__0__0new__1(Primitive_Type__0 mut ref const self, Name__0 const ref const name__);
+Primitive_Type__0 mut ref mut Primitive_Type__0__0new__2(Primitive_Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__);
+Primitive_Type__0 mut ref mut Primitive_Type__0__0new__5(Primitive_Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const generic_arguments__, BOOL const is_potentially_mutable__, BOOL const is_mutable__);
+Type__0 const ref mut primitive_type_as_type__1(Primitive_Type__0 const ref const type__);
+Type__0 mut ref mut Type__0__0new__0(Type__0 mut ref const self);
+system__collections__List__1 const ref mut no_generic_arguments__1(system__collections__List__1 const ref const generic_parameters__);
 Type__0 const ref mut make_mutable_type__1(Type__0 const ref const type__);
 Type__0 const ref mut make_immutable_type__1(Type__0 const ref const type__);
+Type__0 const ref mut apply_generic_arguments__2(Type__0 const ref const type__, system__collections__List__1 const ref const generic_arguments__);
+system__collections__List__1 const ref mut apply_generic_arguments__3(system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const existing_generic_arguments__, system__collections__List__1 const ref const generic_arguments__);
 
 // Class Declarations
 
@@ -782,14 +791,28 @@ struct Object_Type__0
 	Name__0 const ref mut name__;
 	system__collections__List__1 const ref mut generic_parameters__;
 	system__collections__List__1 const ref mut generic_arguments__;
+	BOOL mut is_value_type__;
+	BOOL mut is_potentially_mutable__;
+	BOOL mut is_mutable__;
+};
+
+struct Primitive_Type__0
+{
+	Type_ID type_id;
+	Name__0 const ref mut name__;
+	system__collections__List__1 const ref mut generic_parameters__;
+	system__collections__List__1 const ref mut generic_arguments__;
+	BOOL mut is_value_type__;
+	BOOL mut is_potentially_mutable__;
+	BOOL mut is_mutable__;
 };
 
 struct Type__0
 {
 	Type_ID type_id;
 	Name__0 const ref mut name__;
+	system__collections__List__1 const ref mut generic_parameters__;
 	system__collections__List__1 const ref mut generic_arguments__;
-	BOOL mut is_primitive__;
 	BOOL mut is_value_type__;
 	BOOL mut is_potentially_mutable__;
 	BOOL mut is_mutable__;
@@ -952,10 +975,6 @@ int32 const TypeParameterName__ = ((int32){4});
 int32 const VariableName__ = ((int32){5});
 int32 const IdentifierSymbol__ = ((int32){0});
 int32 const PackageSymbol__ = ((int32){1});
-int32 const ReferenceType__ = ((int32){1});
-int32 const ValueType__ = ((int32){2});
-int32 const NamespaceType__ = ((int32){3});
-int32 const TypeParameterType__ = ((int32){4});
 
 // Definitions
 
@@ -1549,7 +1568,8 @@ system__collections__List__1 mut ref mut build_primitive_symbols__1(Package_Name
 {
 	Name__0 const ref const global_namespace__ = Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), package_name__);
 	system__collections__List__1 mut ref const symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(symbols__, build_adamant_language_namespace_symbol__1(global_namespace__));
+	Symbol__0 const ref const type_symbol__ = build_primitive_symbol__2(((string){{4},(uint8_t*)u8"type"}), global_namespace__);
+	add_item__2(symbols__, type_symbol__);
 	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"void"}), global_namespace__));
 	add_item__2(symbols__, build_primitive_symbol__2(((string){{5},(uint8_t*)u8"never"}), global_namespace__));
 	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"bool"}), global_namespace__));
@@ -1577,26 +1597,22 @@ system__collections__List__1 mut ref mut build_primitive_symbols__1(Package_Name
 	add_item__2(symbols__, build_primitive_symbol__2(((string){{10},(uint8_t*)u8"decimal128"}), global_namespace__));
 	add_item__2(symbols__, build_primitive_symbol__2(((string){{4},(uint8_t*)u8"size"}), global_namespace__));
 	add_item__2(symbols__, build_primitive_symbol__2(((string){{6},(uint8_t*)u8"offset"}), global_namespace__));
+	Name__0 const ref const adamant_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){{7},(uint8_t*)u8"adamant"}));
+	system__collections__List__1 mut ref const adamant_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	Name__0 const ref const language_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace__, NamespaceName__, ((string){{8},(uint8_t*)u8"language"}));
+	system__collections__List__1 mut ref const language_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	add_item__2(language_symbols__, build_optional_type_symbol__2(language_namespace__, type_symbol__));
+	add_item__2(adamant_symbols__, Symbol__0__0new__identifier__2(allocate(sizeof(Symbol__0)), unqualified_name__1(language_namespace__), language_symbols__));
+	add_item__2(symbols__, Symbol__0__0new__identifier__2(allocate(sizeof(Symbol__0)), unqualified_name__1(adamant_namespace__), adamant_symbols__));
 	return symbols__;
 }
 
-Symbol__0 const ref mut build_adamant_language_namespace_symbol__1(Name__0 const ref const global_namespace__)
-{
-	Name__0 const ref const adamant_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){{7},(uint8_t*)u8"adamant"}));
-	Name__0 const ref const language_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), adamant_namespace__, NamespaceName__, ((string){{8},(uint8_t*)u8"language"}));
-	system__collections__List__1 mut ref const language_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(language_children__, build_optional_type_symbol__1(language_namespace__));
-	system__collections__List__1 mut ref const adamant_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(adamant_children__, Symbol__0__0new__identifier__2(allocate(sizeof(Symbol__0)), unqualified_name__1(language_namespace__), language_children__));
-	return Symbol__0__0new__identifier__2(allocate(sizeof(Symbol__0)), unqualified_name__1(adamant_namespace__), adamant_children__);
-}
-
-Symbol__0 const ref mut build_optional_type_symbol__1(Name__0 const ref const language_namespace__)
+Symbol__0 const ref mut build_optional_type_symbol__2(Name__0 const ref const language_namespace__, Symbol__0 const ref const type_symbol__)
 {
 	Name__0 const ref const optional_name__ = Name__0__0new__3(allocate(sizeof(Name__0)), language_namespace__, TypeName__, ((string){{8},(uint8_t*)u8"optional"}));
-	system__collections__List__1 mut ref const generic_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(generic_arguments__, Type__0__0new__3(allocate(sizeof(Type__0)), TypeParameterType__, Name__0__0new__3(allocate(sizeof(Name__0)), optional_name__, TypeParameterName__, ((string){{1},(uint8_t*)u8"T"})), TRUE));
-	Type__0 const ref const type__ = Type__0__0new__primitive__2(allocate(sizeof(Type__0)), optional_name__, generic_arguments__);
+	system__collections__List__1 mut ref const generic_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	add_item__2(generic_parameters__, Generic_Parameter__0__0new__2(allocate(sizeof(Generic_Parameter__0)), Name__0__0new__3(allocate(sizeof(Name__0)), optional_name__, TypeParameterName__, ((string){{1},(uint8_t*)u8"T"})), type_symbol__->declares_type__));
+	Type__0 const ref const type__ = primitive_type_as_type__1(Primitive_Type__0__0new__2(allocate(sizeof(Primitive_Type__0)), optional_name__, generic_parameters__));
 	system__collections__List__1 mut ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return Symbol__0__0new__declaring__3(allocate(sizeof(Symbol__0)), type__, declarations__, children__);
@@ -1604,7 +1620,7 @@ Symbol__0 const ref mut build_optional_type_symbol__1(Name__0 const ref const la
 
 Symbol__0 const ref mut build_primitive_symbol__2(string const name__, Name__0 const ref const namespace__)
 {
-	Type__0 const ref const type__ = Type__0__0new__primitive__1(allocate(sizeof(Type__0)), Name__0__0new__special__3(allocate(sizeof(Name__0)), namespace__, TypeName__, name__));
+	Type__0 const ref const type__ = primitive_type_as_type__1(Primitive_Type__0__0new__1(allocate(sizeof(Primitive_Type__0)), Name__0__0new__special__3(allocate(sizeof(Name__0)), namespace__, TypeName__, name__)));
 	system__collections__List__1 mut ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return Symbol__0__0new__declaring__3(allocate(sizeof(Symbol__0)), type__, declarations__, children__);
@@ -1621,6 +1637,7 @@ void mut unit_test_build_primitives_package__0()
 	Package_symbol_has_package_name__0();
 	Package_symbol_has_children__0();
 	Package_contains_the_string_type__0();
+	Package_contains_the_type_type__0();
 	Package_contains_optional_type__0();
 }
 
@@ -1660,6 +1677,13 @@ void mut Package_contains_the_string_type__0()
 	assert__1(void_ptr__0op__not_equal(string_symbol__, none));
 }
 
+void mut Package_contains_the_type_type__0()
+{
+	Package__0 const ref const package__ = build_primitives_package__0();
+	Symbol__0 const ref const type_symbol__ = get_child_symbol__3(package__->symbol__, ((string){{4},(uint8_t*)u8"type"}), IdentifierSymbol__);
+	assert__1(void_ptr__0op__not_equal(type_symbol__, none));
+}
+
 void mut Package_contains_optional_type__0()
 {
 	Package__0 const ref const package__ = build_primitives_package__0();
@@ -1673,70 +1697,74 @@ void mut Package_contains_optional_type__0()
 
 Program_Fragment__0 mut ref mut Program_Fragment__0__0new__0(Program_Fragment__0 mut ref const self) { self->type_id = Program_Fragment__0__0Type_ID; return self; }
 
-Package__0 const ref mut build_runtime_library_package__0()
+Package__0 const ref mut build_runtime_library_package__1(Package__0 const ref const primitives_package__)
 {
 	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{8},(uint8_t*)u8"$runtime"}));
 	system__collections__List__1 const ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 const ref const compilation_units__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	system__collections__List__1 const ref const symbols__ = build_runtime_library_symbols__1(name__);
+	system__collections__List__1 const ref const symbols__ = build_runtime_library_symbols__2(name__, primitives_package__);
 	assert__2(int32__0op__equal(symbols__->count__, ((int32){42})), string__0op__add(((string){{14},(uint8_t*)u8"symbols.count="}), int_to_string__1(symbols__->count__)));
 	Symbol__0 const ref const package_symbol__ = Symbol__0__0new__package__2(allocate(sizeof(Symbol__0)), name__->unqualified__, symbols__);
 	assert__2(int32__0op__gt(package_symbol__->children__->count__, ((int32){0})), string__0op__add(((string){{30},(uint8_t*)u8"package_symbol.children.count="}), int_to_string__1(package_symbol__->children__->count__)));
 	return Package__0__0new__4(allocate(sizeof(Package__0)), name__, references__, compilation_units__, package_symbol__);
 }
 
-system__collections__List__1 mut ref mut build_runtime_library_symbols__1(Package_Name__0 const ref const package_name__)
+system__collections__List__1 mut ref mut build_runtime_library_symbols__2(Package_Name__0 const ref const package_name__, Package__0 const ref const primitives_package__)
 {
 	Name__0 const ref const global_namespace__ = Name__0__0new__global_namespace__1(allocate(sizeof(Name__0)), package_name__);
 	system__collections__List__1 mut ref const symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{8},(uint8_t*)u8"allocate"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{4},(uint8_t*)u8"free"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"bool_to_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"int_to_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"int_to_hex_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"hex_string_to_int"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"int_to_code_point"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{20},(uint8_t*)u8"code_point_to_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{18},(uint8_t*)u8"string_byte_length"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"substring"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"string_replace"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{15},(uint8_t*)u8"string_index_of"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{20},(uint8_t*)u8"string_last_index_of"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"code_point_as_int"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{15},(uint8_t*)u8"NOT_IMPLEMENTED"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{11},(uint8_t*)u8"UNREACHABLE"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{6},(uint8_t*)u8"assert"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{11},(uint8_t*)u8"debug_write"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{16},(uint8_t*)u8"debug_write_line"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"get_resource"}))));
+	Symbol__0 const opt_ref const void_symbol__ = get_child_symbol__3(primitives_package__->symbol__, ((string){{4},(uint8_t*)u8"type"}), IdentifierSymbol__);
+	assert__1(void_ptr__0op__not_equal(void_symbol__, none));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{8},(uint8_t*)u8"allocate"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{4},(uint8_t*)u8"free"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"bool_to_string"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"int_to_string"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"int_to_hex_string"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"hex_string_to_int"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"int_to_code_point"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{20},(uint8_t*)u8"code_point_to_string"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{18},(uint8_t*)u8"string_byte_length"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"substring"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"string_replace"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{15},(uint8_t*)u8"string_index_of"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{20},(uint8_t*)u8"string_last_index_of"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"code_point_as_int"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{15},(uint8_t*)u8"NOT_IMPLEMENTED"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{11},(uint8_t*)u8"UNREACHABLE"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{6},(uint8_t*)u8"assert"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{11},(uint8_t*)u8"debug_write"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{16},(uint8_t*)u8"debug_write_line"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"get_resource"})), void_symbol__));
 	add_item__2(symbols__, build_class_symbol__2(global_namespace__, ((string){{7},(uint8_t*)u8"Strings"})));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"clear_strings"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"add_string"}))));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"clear_strings"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"add_string"})), void_symbol__));
 	add_item__2(symbols__, build_class_symbol__2(global_namespace__, ((string){{4},(uint8_t*)u8"Ints"})));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"clear_ints"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{7},(uint8_t*)u8"add_int"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"clear_list"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{8},(uint8_t*)u8"add_item"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"console_write"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{18},(uint8_t*)u8"console_write_line"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{16},(uint8_t*)u8"file_read_to_end"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"close_file_reader"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"file_write"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"close_file_writer"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"sb_append"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"sb_append_sb"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"sb_append_line"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"sb_remove"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"sb_to_string"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{6},(uint8_t*)u8"as_any"}))));
-	add_item__2(symbols__, build_function_symbol__1(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"as_any_mut"}))));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"clear_ints"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{7},(uint8_t*)u8"add_int"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"clear_list"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{8},(uint8_t*)u8"add_item"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{13},(uint8_t*)u8"console_write"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{18},(uint8_t*)u8"console_write_line"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{16},(uint8_t*)u8"file_read_to_end"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"close_file_reader"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"file_write"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{17},(uint8_t*)u8"close_file_writer"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"sb_append"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"sb_append_sb"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{14},(uint8_t*)u8"sb_append_line"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{9},(uint8_t*)u8"sb_remove"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{12},(uint8_t*)u8"sb_to_string"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{6},(uint8_t*)u8"as_any"})), void_symbol__));
+	add_item__2(symbols__, build_function_symbol__2(Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, FunctionName__, ((string){{10},(uint8_t*)u8"as_any_mut"})), void_symbol__));
 	Name__0 const ref const system_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), global_namespace__, NamespaceName__, ((string){{6},(uint8_t*)u8"system"}));
 	system__collections__List__1 mut ref const system_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	Name__0 const ref const collections_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){{11},(uint8_t*)u8"collections"}));
 	system__collections__List__1 mut ref const collections_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	system__collections__List__1 mut ref const list_generic_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	add_item__2(list_generic_arguments__, Type__0__0new__parameter__1(allocate(sizeof(Type__0)), ((string){{1},(uint8_t*)u8"T"})));
-	add_item__2(collections_symbols__, build_generic_class_symbol__3(collections_namespace__, ((string){{4},(uint8_t*)u8"List"}), list_generic_arguments__));
+	system__collections__List__1 mut ref const list_generic_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	Symbol__0 const opt_ref const type_symbol__ = get_child_symbol__3(primitives_package__->symbol__, ((string){{4},(uint8_t*)u8"type"}), IdentifierSymbol__);
+	assert__1(void_ptr__0op__not_equal(type_symbol__, none));
+	add_item__2(list_generic_parameters__, Generic_Parameter__0__0new__2(allocate(sizeof(Generic_Parameter__0)), Name__0__0new__3(allocate(sizeof(Name__0)), collections_namespace__, TypeParameterName__, ((string){{1},(uint8_t*)u8"T"})), type_symbol__->declares_type__));
+	add_item__2(collections_symbols__, build_generic_class_symbol__3(collections_namespace__, ((string){{4},(uint8_t*)u8"List"}), list_generic_parameters__));
 	add_item__2(system_symbols__, build_namespace_symbol__2(collections_namespace__, collections_symbols__));
 	Name__0 const ref const console_namespace__ = Name__0__0new__3(allocate(sizeof(Name__0)), system_namespace__, NamespaceName__, ((string){{7},(uint8_t*)u8"console"}));
 	system__collections__List__1 mut ref const console_symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -1758,9 +1786,10 @@ system__collections__List__1 mut ref mut build_runtime_library_symbols__1(Packag
 	return symbols__;
 }
 
-Symbol__0 const ref mut build_function_symbol__1(Name__0 const ref const name__)
+Symbol__0 const ref mut build_function_symbol__2(Name__0 const ref const name__, Symbol__0 const ref const return_type_symbol__)
 {
-	Type__0 const ref const type__ = function_type_as_type__1(Function_Type__0__0new__1(allocate(sizeof(Function_Type__0)), name__));
+	system__collections__List__1 const ref const parameter_types__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	Type__0 const ref const type__ = function_type_as_type__1(Function_Type__0__0new__3(allocate(sizeof(Function_Type__0)), name__, parameter_types__, return_type_symbol__->declares_type__));
 	system__collections__List__1 const ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 const ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return Symbol__0__0new__of_type__4(allocate(sizeof(Symbol__0)), unqualified_name__1(name__), type__, declarations__, children__);
@@ -1775,7 +1804,7 @@ Symbol__0 const ref mut build_namespace_symbol__2(Name__0 const ref const name__
 
 Symbol__0 const ref mut build_class_symbol__2(Name__0 const ref const namespace__, string const class_name__)
 {
-	Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), ReferenceType__, Name__0__0new__3(allocate(sizeof(Name__0)), namespace__, TypeName__, class_name__), TRUE);
+	Type__0 const ref const type__ = object_type_as_type__1(Object_Type__0__0new__3(allocate(sizeof(Object_Type__0)), FALSE, Name__0__0new__3(allocate(sizeof(Name__0)), namespace__, TypeName__, class_name__), TRUE));
 	system__collections__List__1 const ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 const ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return Symbol__0__0new__declaring__3(allocate(sizeof(Symbol__0)), type__, declarations__, children__);
@@ -1783,14 +1812,14 @@ Symbol__0 const ref mut build_class_symbol__2(Name__0 const ref const namespace_
 
 Symbol__0 const ref mut build_class_symbol__3(Name__0 const ref const namespace__, string const class_name__, system__collections__List__1 const ref const children__)
 {
-	Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), ReferenceType__, Name__0__0new__3(allocate(sizeof(Name__0)), namespace__, TypeName__, class_name__), TRUE);
+	Type__0 const ref const type__ = object_type_as_type__1(Object_Type__0__0new__3(allocate(sizeof(Object_Type__0)), FALSE, Name__0__0new__3(allocate(sizeof(Name__0)), namespace__, TypeName__, class_name__), TRUE));
 	system__collections__List__1 const ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return Symbol__0__0new__declaring__3(allocate(sizeof(Symbol__0)), type__, declarations__, children__);
 }
 
-Symbol__0 const ref mut build_generic_class_symbol__3(Name__0 const ref const namespace__, string const class_name__, system__collections__List__1 const ref const generic_arguments__)
+Symbol__0 const ref mut build_generic_class_symbol__3(Name__0 const ref const namespace__, string const class_name__, system__collections__List__1 const ref const generic_parameters__)
 {
-	Type__0 const ref const type__ = Type__0__0new__4(allocate(sizeof(Type__0)), ReferenceType__, Name__0__0new__3(allocate(sizeof(Name__0)), namespace__, TypeName__, class_name__), generic_arguments__, TRUE);
+	Type__0 const ref const type__ = object_type_as_type__1(Object_Type__0__0new__4(allocate(sizeof(Object_Type__0)), FALSE, Name__0__0new__3(allocate(sizeof(Name__0)), namespace__, TypeName__, class_name__), generic_parameters__, TRUE));
 	system__collections__List__1 const ref const declarations__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 const ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	return Symbol__0__0new__declaring__3(allocate(sizeof(Symbol__0)), type__, declarations__, children__);
@@ -1805,30 +1834,31 @@ Symbol__0 const ref mut build_constructor_symbol__1(string const name__)
 
 void mut unit_test_build_runtime_library_package__0()
 {
-	Runtime_Library_Package_contains_system_package__0();
-	System_namespace_contains_console_namespace__0();
-	Console_namespace_contains_Console_class__0();
-	System_namespace_contains_collections_namespace__0();
-	Collections_namespace_contains_List_class__0();
+	Package__0 const ref const primitives_package__ = build_primitives_package__0();
+	Runtime_Library_Package_contains_system_package__1(primitives_package__);
+	System_namespace_contains_console_namespace__1(primitives_package__);
+	Console_namespace_contains_Console_class__1(primitives_package__);
+	System_namespace_contains_collections_namespace__1(primitives_package__);
+	Collections_namespace_contains_List_class__1(primitives_package__);
 }
 
-void mut Runtime_Library_Package_contains_system_package__0()
+void mut Runtime_Library_Package_contains_system_package__1(Package__0 const ref const primitives_package__)
 {
-	Package__0 const ref const package__ = build_runtime_library_package__0();
+	Package__0 const ref const package__ = build_runtime_library_package__1(primitives_package__);
 	assert__1(never__0op__not_equal(get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__), none));
 }
 
-void mut System_namespace_contains_console_namespace__0()
+void mut System_namespace_contains_console_namespace__1(Package__0 const ref const primitives_package__)
 {
-	Package__0 const ref const package__ = build_runtime_library_package__0();
+	Package__0 const ref const package__ = build_runtime_library_package__1(primitives_package__);
 	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(system_namespace__, none));
 	assert__1(never__0op__not_equal(get_child_symbol__3(system_namespace__, ((string){{7},(uint8_t*)u8"console"}), IdentifierSymbol__), none));
 }
 
-void mut Console_namespace_contains_Console_class__0()
+void mut Console_namespace_contains_Console_class__1(Package__0 const ref const primitives_package__)
 {
-	Package__0 const ref const package__ = build_runtime_library_package__0();
+	Package__0 const ref const package__ = build_runtime_library_package__1(primitives_package__);
 	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(system_namespace__, none));
 	Symbol__0 const opt_ref const console_namespace__ = get_child_symbol__3(system_namespace__, ((string){{7},(uint8_t*)u8"console"}), IdentifierSymbol__);
@@ -1836,17 +1866,17 @@ void mut Console_namespace_contains_Console_class__0()
 	assert__1(never__0op__not_equal(get_child_symbol__3(console_namespace__, ((string){{7},(uint8_t*)u8"Console"}), IdentifierSymbol__), none));
 }
 
-void mut System_namespace_contains_collections_namespace__0()
+void mut System_namespace_contains_collections_namespace__1(Package__0 const ref const primitives_package__)
 {
-	Package__0 const ref const package__ = build_runtime_library_package__0();
+	Package__0 const ref const package__ = build_runtime_library_package__1(primitives_package__);
 	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(system_namespace__, none));
 	assert__1(never__0op__not_equal(get_child_symbol__3(system_namespace__, ((string){{11},(uint8_t*)u8"collections"}), IdentifierSymbol__), none));
 }
 
-void mut Collections_namespace_contains_List_class__0()
+void mut Collections_namespace_contains_List_class__1(Package__0 const ref const primitives_package__)
 {
-	Package__0 const ref const package__ = build_runtime_library_package__0();
+	Package__0 const ref const package__ = build_runtime_library_package__1(primitives_package__);
 	Symbol__0 const opt_ref const system_namespace__ = get_child_symbol__3(package__->symbol__, ((string){{6},(uint8_t*)u8"system"}), IdentifierSymbol__);
 	assert__1(void_ptr__0op__not_equal(system_namespace__, none));
 	Symbol__0 const opt_ref const collections_namespace__ = get_child_symbol__3(system_namespace__, ((string){{11},(uint8_t*)u8"collections"}), IdentifierSymbol__);
@@ -1859,7 +1889,7 @@ Package__0 const ref mut analyze_semantics__1(Syntax_Node__0 const ref const pac
 	assert__2(int32__0op__equal(package_syntax__->kind__, PackageNode__), string__0op__add(((string){{20},(uint8_t*)u8"package_syntax.kind="}), int_to_string__1(package_syntax__->kind__)));
 	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
 	Package__0 const ref const primitives_package__ = build_primitives_package__0();
-	Package__0 const ref const runtime_package__ = build_runtime_library_package__0();
+	Package__0 const ref const runtime_package__ = build_runtime_library_package__1(primitives_package__);
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), primitives_package__));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
@@ -2345,10 +2375,12 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		Name_Subtable__0 mut ref const function_scope__ = find__2(scope__, get_token_text__1(function_name__));
 		assert__2(void_ptr__0op__not_equal(function_scope__, none), string__0op__add(((string){{36},(uint8_t*)u8"get_syntax_node_text(function_name)="}), get_token_text__1(function_name__)));
 		Syntax_Node__0 const ref const parameters__ = first_child_syntax_node__2(syntax__, ParameterList__);
-		add_item__2(children__, build_parameters_semantic_node__4(builder__, parameters__, name_table__, function_scope__));
+		Semantic_Node__0 const ref const parameters_node__ = build_parameters_semantic_node__4(builder__, parameters__, name_table__, function_scope__);
+		add_item__2(children__, parameters_node__);
 		Syntax_Node__0 const ref const return_type__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){4}));
-		add_item__2(children__, build_type_name_semantic_node__4(builder__, return_type__, name_table__, scope__));
-		Type__0 const ref const function_type__ = function_type_as_type__1(Function_Type__0__0new__1(allocate(sizeof(Function_Type__0)), function_scope__->name__));
+		Semantic_Node__0 const ref const return_type_node__ = build_type_name_semantic_node__4(builder__, return_type__, name_table__, scope__);
+		add_item__2(children__, return_type_node__);
+		Type__0 const ref const function_type__ = function_type_as_type__1(Function_Type__0__0new__3(allocate(sizeof(Function_Type__0)), function_scope__->name__, parameter_types__1(parameters_node__), return_type_node__->referenced_type__));
 		bind_type__2(function_scope__, function_type__);
 		Syntax_Node__0 const ref const body__ = first_child_syntax_node__2(syntax__, Block__);
 		if (cond(void_ptr__0op__not_equal(body__, none)))
@@ -2501,11 +2533,15 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 	{
 		Token__0 const ref const identifier__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){0}));
 		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), identifier__));
-		Token__0 const ref const colon__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
-		add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), colon__));
-		Syntax_Node__0 const ref const type_syntax__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){2}));
-		Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, type_syntax__, name_table__, scope__);
-		add_item__2(children__, type_node__);
+		if (cond(int32__0op__gt(syntax__->children__->count__, ((int32){1}))))
+		{
+			Token__0 const ref const colon__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){1}));
+			add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), colon__));
+			Syntax_Node__0 const ref const type_syntax__ = system__collections__List__1__0op__element(syntax__->children__, ((int32){2}));
+			Semantic_Node__0 const ref const type_node__ = build_type_name_semantic_node__4(builder__, type_syntax__, name_table__, scope__);
+			add_item__2(children__, type_node__);
+		}
+
 		return Semantic_Node__0__0new__concrete_with_children__2(allocate(sizeof(Semantic_Node__0)), syntax__, children__);
 	}
 	else if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, TrueLiteralExpression__)) || bool_arg(int32__0op__equal(syntax__->kind__, FalseLiteralExpression__)))))
@@ -2810,7 +2846,7 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 				Semantic_Node__0 const ref const name_node__ = Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), referenced_type_name__, name_syntax__, system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1))));
 				add_item__2(generic_name_children__, name_node__);
 				system__collections__List__1 const ref const type_arguments__ = build_type_arguments_semantic_node__5(builder__, qualified_syntax__, name_table__, scope__, generic_name_children__);
-				Type__0 const ref const referenced_type__ = Type__0__0new__generic__2(allocate(sizeof(Type__0)), referenced_type_name__, type_arguments__);
+				Type__0 const ref const referenced_type__ = apply_generic_arguments__2(referenced_type_name__, type_arguments__);
 				Semantic_Node__0 mut ref const qualified_name__ = Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), referenced_type__, qualified_syntax__, generic_name_children__);
 				add_item__2(children__, qualified_name__);
 				return Semantic_Node__0__0new__referencing_type__3(allocate(sizeof(Semantic_Node__0)), referenced_type__, syntax__, children__);
@@ -2873,7 +2909,7 @@ Type__0 const ref mut build_optional_type__3(Semantic_Tree_Builder__0 const ref 
 	Type__0 const ref const optional_type__ = optional_type_scope__->type__;
 	system__collections__List__1 mut ref const type_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(type_arguments__, base_type__);
-	Type__0 const ref const type__ = Type__0__0new__generic__2(allocate(sizeof(Type__0)), optional_type__, type_arguments__);
+	Type__0 const ref const type__ = apply_generic_arguments__2(optional_type__, type_arguments__);
 	return type__;
 }
 
@@ -2917,6 +2953,18 @@ Semantic_Node__0 const ref mut build_constructor_name_semantic_node__4(Semantic_
 	}
 
 	return build_type_name_semantic_node__4(builder__, syntax__, name_table__, scope__);
+}
+
+system__collections__List__1 const ref mut parameter_types__1(Semantic_Node__0 const ref const parameters_node__)
+{
+	system__collections__List__1 mut ref const types__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	for (void_ptr__0iter mut iter = void_ptr__0iterate(node_parameters__1(parameters_node__)); void_ptr__0next(&iter);)
+	{
+		Semantic_Node__0 const ref const parameter__ = void_ptr__0current(&iter);
+		add_item__2(types__, parameter__->of_type__);
+	}
+
+	return types__;
 }
 
 Syntax_Node__0 const ref mut as_syntax_node__1(Syntax_Node__0 const ref const syntax__)
@@ -3304,8 +3352,12 @@ Syntax__0 const ref mut parse_match_arm__1(Compilation_Unit_Parser__0 mut ref co
 	system__collections__List__1 mut ref const children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	system__collections__List__1 mut ref const pattern_children__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(pattern_children__, expect_token__2(parser__, Identifier__));
-	add_item__2(pattern_children__, expect_token__2(parser__, Colon__));
-	add_item__2(pattern_children__, parse_type__1(parser__));
+	if (cond(bool_op(bool_arg(void_ptr__0op__not_equal(parser__->token__, none)) && bool_arg(int32__0op__equal(parser__->token__->kind__, Colon__)))))
+	{
+		add_item__2(pattern_children__, expect_token__2(parser__, Colon__));
+		add_item__2(pattern_children__, parse_type__1(parser__));
+	}
+
 	add_item__2(children__, Syntax_Node__0__0new__with_children__2(allocate(sizeof(Syntax_Node__0)), MatchPattern__, pattern_children__));
 	add_item__2(children__, expect_token__2(parser__, FatArrow__));
 	add_item__2(children__, parse_block__1(parser__));
@@ -4718,10 +4770,9 @@ void mut append_fixing_underscores__2(system__text__String_Builder__0 mut ref co
 	}
 }
 
-string mut convert_primitive_type_name__1(Type__0 const ref const type__)
+string mut convert_primitive_type_name__1(Primitive_Type__0 const ref const type__)
 {
 	string const name__ = unqualified_name__1(type__->name__);
-	assert__2(type__->is_primitive__, name__);
 	if (cond(string__0op__equal(name__, ((string){{4},(uint8_t*)u8"bool"}))))
 	{
 		return ((string){{4},(uint8_t*)u8"BOOL"});
@@ -4748,41 +4799,28 @@ system__text__String_Builder__0 mut ref mut convert_type_name__1(Type__0 const r
 system__text__String_Builder__0 mut ref mut convert_type_name__2(Type__0 const ref const type__, BOOL const include_type_parameters__)
 {
 	system__text__String_Builder__0 mut ref const c_type__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
-	if (cond(type__->is_primitive__))
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
 	{
-		sb_append__2(c_type__, convert_primitive_type_name__1(type__));
-	}
-	else
-	{
-		sb_append__2(c_type__, mangle_name__1(type__));
-	}
-
+		case Primitive_Type__0__0Type_ID:
+		{
+			Primitive_Type__0 const ref const p__ = match_value;
+			sb_append__2(c_type__, convert_primitive_type_name__1(p__));
+		}
+		break;
+		case Object_Type__0__0Type_ID:
+		{
+			Object_Type__0 const ref const o__ = match_value;
+			sb_append__2(c_type__, mangle_name__1(object_type_as_type__1(o__)));
+		}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
 	return c_type__;
 }
 
-void mut convert_type_name_parameters__2(system__text__String_Builder__0 mut ref const builder__, Type__0 const ref const type__)
-{
-	for (void_ptr__0iter mut iter = void_ptr__0iterate(type__->generic_arguments__); void_ptr__0next(&iter);)
-	{
-		Type__0 const ref mut type_parameter__ = void_ptr__0current(&iter);
-		sb_append__2(builder__, ((string){{2},(uint8_t*)u8"__"}));
-		if (cond(bool_op(bool_arg(type_parameter__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type_parameter__->name__), ((string){{8},(uint8_t*)u8"optional"}))))))
-		{
-			type_parameter__ = system__collections__List__1__0op__element(type_parameter__->generic_arguments__, ((int32){0}));
-		}
-
-		if (cond(type_parameter__->is_primitive__))
-		{
-			sb_append__2(builder__, convert_primitive_type_name__1(type_parameter__));
-		}
-		else
-		{
-			sb_append__2(builder__, ((string){{8},(uint8_t*)u8"void_ptr"}));
-		}
-	}
-}
-
-string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const ref mut type__, BOOL const nullable__)
+string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const nullable__)
 {
 	system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
 	if (cond(type__->is_mutable__))
@@ -4815,54 +4853,96 @@ string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const
 	return sb_to_string__1(c_type__);
 }
 
-string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref mut type__, BOOL const optional__)
+BOOL mut is_optional_type__1(Type__0 const ref const type__)
 {
-	assert__1(void_ptr__0op__not_equal(type__, none));
-	if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){{8},(uint8_t*)u8"optional"}))))))
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
 	{
-		Type__0 const ref const optional_type__ = system__collections__List__1__0op__element(type__->generic_arguments__, ((int32){0}));
-		if (cond(optional_type__->is_value_type__))
+		case Primitive_Type__0__0Type_ID:
 		{
-			system__text__String_Builder__0 mut ref const c_type__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){{10},(uint8_t*)u8"optional__"}));
-			if (cond(mutable_binding__))
-			{
-				sb_append__2(c_type__, ((string){{6},(uint8_t*)u8"0var__"}));
-			}
+			Primitive_Type__0 const ref const p__ = match_value;
+			return string__0op__equal(unqualified_name__1(p__->name__), ((string){{8},(uint8_t*)u8"optional"}));
+		}
+		break;
+		case Object_Type__0__0Type_ID:
+		{
+			return FALSE;
+		}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
+}
 
-			if (cond(type__->is_mutable__))
-			{
-				sb_append__2(c_type__, ((string){{6},(uint8_t*)u8"0mut__"}));
-			}
-
-			sb_append__2(c_type__, convert_type__3(TRUE, optional_type__, TRUE));
-			return sb_to_string__1(c_type__);
+string mut convert_non_optional_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const optional__)
+{
+	if (cond(type__->is_value_type__))
+	{
+		system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
+		if (cond(bool_op(bool_arg(mutable_binding__) || bool_arg(type__->is_mutable__))))
+		{
+			sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
 		}
 		else
 		{
-			return convert_type__3(mutable_binding__, optional_type__, TRUE);
+			sb_append__2(c_type__, ((string){{6},(uint8_t*)u8" const"}));
 		}
+
+		return sb_to_string__1(c_type__);
 	}
 	else
 	{
-		if (cond(type__->is_value_type__))
+		return convert_reference_type__3(mutable_binding__, type__, optional__);
+	}
+}
+
+string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const optional__)
+{
+	assert__1(void_ptr__0op__not_equal(type__, none));
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Primitive_Type__0__0Type_ID:
 		{
-			system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
-			if (cond(bool_op(bool_arg(mutable_binding__) || bool_arg(type__->is_mutable__))))
+			Primitive_Type__0 const ref const p__ = match_value;
+			if (cond(string__0op__equal(unqualified_name__1(p__->name__), ((string){{8},(uint8_t*)u8"optional"}))))
 			{
-				sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
+				Type__0 const ref const optional_type__ = system__collections__List__1__0op__element(p__->generic_arguments__, ((int32){0}));
+				if (cond(optional_type__->is_value_type__))
+				{
+					system__text__String_Builder__0 mut ref const c_type__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){{10},(uint8_t*)u8"optional__"}));
+					if (cond(mutable_binding__))
+					{
+						sb_append__2(c_type__, ((string){{6},(uint8_t*)u8"0var__"}));
+					}
+
+					if (cond(p__->is_mutable__))
+					{
+						sb_append__2(c_type__, ((string){{6},(uint8_t*)u8"0mut__"}));
+					}
+
+					sb_append__2(c_type__, convert_type__3(TRUE, optional_type__, TRUE));
+					return sb_to_string__1(c_type__);
+				}
+				else
+				{
+					return convert_type__3(mutable_binding__, optional_type__, TRUE);
+				}
 			}
 			else
 			{
-				sb_append__2(c_type__, ((string){{6},(uint8_t*)u8" const"}));
+				return convert_non_optional_type__3(mutable_binding__, type__, optional__);
 			}
-
-			return sb_to_string__1(c_type__);
 		}
-		else
+		break;
+		case Object_Type__0__0Type_ID:
 		{
-			return convert_reference_type__3(mutable_binding__, type__, optional__);
+			return convert_non_optional_type__3(mutable_binding__, type__, optional__);
 		}
-	}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
 }
 
 string mut convert_type__2(BOOL const mutable_binding__, Semantic_Node__0 const ref const type_node__)
@@ -5099,20 +5179,28 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
-			if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){{8},(uint8_t*)u8"optional"}))))))
+			if (cond(is_optional_type__1(type__)))
 			{
 				type__ = system__collections__List__1__0op__element(type__->generic_arguments__, ((int32){0}));
 			}
 
-			if (cond(type__->is_primitive__))
+			/* match */ { void const ref const match_value = type__;
+			   switch(*(Type_ID const ref)match_value)
 			{
-				write__2(builder__, convert_primitive_type_name__1(type__));
-			}
-			else
-			{
-				write__2(builder__, ((string){{8},(uint8_t*)u8"void_ptr"}));
-			}
-
+				case Primitive_Type__0__0Type_ID:
+				{
+					Primitive_Type__0 const ref const p__ = match_value;
+					write__2(builder__, convert_primitive_type_name__1(p__));
+				}
+				break;
+				case Object_Type__0__0Type_ID:
+				{
+					write__2(builder__, ((string){{8},(uint8_t*)u8"void_ptr"}));
+				}
+				break;
+				default:
+				   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+			}}
 			write__2(builder__, ((string){{13},(uint8_t*)u8"__0op__equal("}));
 		}
 		else
@@ -5137,20 +5225,28 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
-			if (cond(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){{8},(uint8_t*)u8"optional"}))))))
+			if (cond(is_optional_type__1(type__)))
 			{
 				type__ = system__collections__List__1__0op__element(type__->generic_arguments__, ((int32){0}));
 			}
 
-			if (cond(type__->is_primitive__))
+			/* match */ { void const ref const match_value = type__;
+			   switch(*(Type_ID const ref)match_value)
 			{
-				write__2(builder__, convert_primitive_type_name__1(type__));
-			}
-			else
-			{
-				write__2(builder__, ((string){{8},(uint8_t*)u8"void_ptr"}));
-			}
-
+				case Primitive_Type__0__0Type_ID:
+				{
+					Primitive_Type__0 const ref const p__ = match_value;
+					write__2(builder__, convert_primitive_type_name__1(p__));
+				}
+				break;
+				case Object_Type__0__0Type_ID:
+				{
+					write__2(builder__, ((string){{8},(uint8_t*)u8"void_ptr"}));
+				}
+				break;
+				default:
+				   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+			}}
 			write__2(builder__, ((string){{17},(uint8_t*)u8"__0op__not_equal("}));
 		}
 		else
@@ -5172,7 +5268,23 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 		Type__0 const opt_ref const type__ = lhs_node__->of_type__;
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
-			write__2(builder__, convert_primitive_type_name__1(type__));
+			/* match */ { void const ref const match_value = type__;
+			   switch(*(Type_ID const ref)match_value)
+			{
+				case Primitive_Type__0__0Type_ID:
+				{
+					Primitive_Type__0 const ref const p__ = match_value;
+					write__2(builder__, convert_primitive_type_name__1(p__));
+				}
+				break;
+				case Object_Type__0__0Type_ID:
+				{
+					write__2(builder__, ((string){{5},(uint8_t*)u8"int32"}));
+				}
+				break;
+				default:
+				   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+			}}
 		}
 		else
 		{
@@ -5218,7 +5330,23 @@ void mut convert_expression__2(Semantic_Node__0 const ref const syntax__, Source
 
 		if (cond(void_ptr__0op__not_equal(type__, none)))
 		{
-			write__2(builder__, convert_primitive_type_name__1(type__));
+			/* match */ { void const ref const match_value = type__;
+			   switch(*(Type_ID const ref)match_value)
+			{
+				case Primitive_Type__0__0Type_ID:
+				{
+					Primitive_Type__0 const ref const p__ = match_value;
+					write__2(builder__, convert_primitive_type_name__1(p__));
+				}
+				break;
+				case Object_Type__0__0Type_ID:
+				{
+					write__2(builder__, ((string){{6},(uint8_t*)u8"string"}));
+				}
+				break;
+				default:
+				   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+			}}
 		}
 		else
 		{
@@ -5438,7 +5566,7 @@ void mut convert_reference_type_constructor_arguments__3(Semantic_Node__0 const 
 void mut convert_member_access__2(Semantic_Node__0 const ref const lhs__, Source_File_Builder__0 mut ref const builder__)
 {
 	Type__0 const opt_ref const type__ = lhs__->of_type__;
-	if (cond(bool_op(bool_arg(bool_op(bool_arg(void_ptr__0op__not_equal(type__, none)) && bool_arg(type__->is_value_type__))) && bool_arg(BOOL__0op__not(bool_op(bool_arg(bool_op(bool_arg(type__->is_primitive__) && bool_arg(string__0op__equal(unqualified_name__1(type__->name__), ((string){{8},(uint8_t*)u8"optional"}))))) && bool_arg(BOOL__0op__not(as_type__1(system__collections__List__1__0op__element(type__->generic_arguments__, ((int32){0})))->is_value_type__))))))))
+	if (cond(bool_op(bool_arg(bool_op(bool_arg(void_ptr__0op__not_equal(type__, none)) && bool_arg(type__->is_value_type__))) && bool_arg(BOOL__0op__not(bool_op(bool_arg(is_optional_type__1(type__)) && bool_arg(BOOL__0op__not(as_type__1(system__collections__List__1__0op__element(type__->generic_arguments__, ((int32){0})))->is_value_type__))))))))
 	{
 		write__2(builder__, ((string){{1},(uint8_t*)u8"."}));
 	}
@@ -5502,15 +5630,23 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 		Type__0 const ref const iterator_over_type__ = variable_type_node__->referenced_type__;
 		assert__2(void_ptr__0op__not_equal(iterator_over_type__, none), get_semantic_node_text__1(variable_type_node__));
 		string mut iterator_type__;
-		if (cond(iterator_over_type__->is_primitive__))
+		/* match */ { void const ref const match_value = iterator_over_type__;
+		   switch(*(Type_ID const ref)match_value)
 		{
-			iterator_type__ = convert_primitive_type_name__1(iterator_over_type__);
-		}
-		else
-		{
-			iterator_type__ = ((string){{8},(uint8_t*)u8"void_ptr"});
-		}
-
+			case Primitive_Type__0__0Type_ID:
+			{
+				Primitive_Type__0 const ref const p__ = match_value;
+				iterator_type__ = convert_primitive_type_name__1(p__);
+			}
+			break;
+			case Object_Type__0__0Type_ID:
+			{
+				iterator_type__ = ((string){{8},(uint8_t*)u8"void_ptr"});
+			}
+			break;
+			default:
+			   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		}}
 		Type__0 const opt_ref const collection_type__ = iterator_expression__->of_type__;
 		string mut iteratable_type__;
 		if (cond(void_ptr__0op__not_equal(collection_type__, none)))
@@ -5598,40 +5734,55 @@ void mut emit_statement__2(Emitter__0 mut ref const emitter__, Semantic_Node__0 
 		end_line__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8";"}));
 		write_line__2(emitter__->definitions__, ((string){{42},(uint8_t*)u8"   switch(*(Type_ID const ref)match_value)"}));
 		begin_block__1(emitter__->definitions__);
+		BOOL mut has_default__ = FALSE;
 		for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(statement__->children__); void_ptr__0next(&iter);)
 		{
 			Semantic_Node__0 const ref const match_arm__ = void_ptr__0current(&iter);
 			if (cond(int32__0op__equal(match_arm__->kind__, MatchArm__)))
 			{
 				Semantic_Node__0 const ref const match_pattern__ = first_child__2(match_arm__, MatchPattern__);
-				Semantic_Node__0 const ref const match_variable_type_node__ = system__collections__List__1__0op__element(match_pattern__->children__, ((int32){2}));
 				string const variable_name__ = get_semantic_node_text__1(first_child__2(match_pattern__, Identifier__));
 				Semantic_Node__0 const ref const match_block__ = first_child__2(match_arm__, Block__);
-				assert__2(void_ptr__0op__not_equal(match_variable_type_node__->referenced_type__, none), get_semantic_node_text__1(match_variable_type_node__));
-				string const type_name__ = sb_to_string__1(convert_type_name__1(match_variable_type_node__->referenced_type__));
-				write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){{5},(uint8_t*)u8"case "}), type_name__), ((string){{11},(uint8_t*)u8"__0Type_ID:"})));
-				begin_block__1(emitter__->definitions__);
-				if (cond(code_point__0op__not_equal(string__0__0op__element(variable_name__, ((int32){0})), ((code_point){/*_*/0x5F}))))
+				if (cond(int32__0op__gt(match_pattern__->children__->count__, ((int32){1}))))
 				{
-					begin_line__2(emitter__->definitions__, convert_type__2(FALSE, match_variable_type_node__));
-					write__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8" "}));
-					write__2(emitter__->definitions__, mangle_field_name__1(variable_name__));
-					end_line__2(emitter__->definitions__, ((string){{15},(uint8_t*)u8" = match_value;"}));
+					Semantic_Node__0 const ref const match_variable_type_node__ = system__collections__List__1__0op__element(match_pattern__->children__, ((int32){2}));
+					assert__2(void_ptr__0op__not_equal(match_variable_type_node__->referenced_type__, none), get_semantic_node_text__1(match_variable_type_node__));
+					string const type_name__ = sb_to_string__1(convert_type_name__1(match_variable_type_node__->referenced_type__));
+					write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(((string){{5},(uint8_t*)u8"case "}), type_name__), ((string){{11},(uint8_t*)u8"__0Type_ID:"})));
+					begin_block__1(emitter__->definitions__);
+					if (cond(code_point__0op__not_equal(string__0__0op__element(variable_name__, ((int32){0})), ((code_point){/*_*/0x5F}))))
+					{
+						begin_line__2(emitter__->definitions__, convert_type__2(FALSE, match_variable_type_node__));
+						write__2(emitter__->definitions__, ((string){{1},(uint8_t*)u8" "}));
+						write__2(emitter__->definitions__, mangle_field_name__1(variable_name__));
+						end_line__2(emitter__->definitions__, ((string){{15},(uint8_t*)u8" = match_value;"}));
+					}
+
+					for (void_ptr__0iter mut iter = void_ptr__0iterate(node_statements__1(match_block__)); void_ptr__0next(&iter);)
+					{
+						Semantic_Node__0 const ref const block_statement__ = void_ptr__0current(&iter);
+						emit_statement__2(emitter__, block_statement__);
+					}
+
+					end_block__1(emitter__->definitions__);
+				}
+				else
+				{
+					has_default__ = TRUE;
+					write_line__2(emitter__->definitions__, ((string){{8},(uint8_t*)u8"default:"}));
+					emit_statement__2(emitter__, match_block__);
 				}
 
-				for (void_ptr__0iter mut iter = void_ptr__0iterate(node_statements__1(match_block__)); void_ptr__0next(&iter);)
-				{
-					Semantic_Node__0 const ref const block_statement__ = void_ptr__0current(&iter);
-					emit_statement__2(emitter__, block_statement__);
-				}
-
-				end_block__1(emitter__->definitions__);
 				write_line__2(emitter__->definitions__, ((string){{6},(uint8_t*)u8"break;"}));
 			}
 		}
 
-		write_line__2(emitter__->definitions__, ((string){{8},(uint8_t*)u8"default:"}));
-		write_line__2(emitter__->definitions__, ((string){{57},(uint8_t*)u8"   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);"}));
+		if (cond(BOOL__0op__not(has_default__)))
+		{
+			write_line__2(emitter__->definitions__, ((string){{8},(uint8_t*)u8"default:"}));
+			write_line__2(emitter__->definitions__, ((string){{57},(uint8_t*)u8"   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);"}));
+		}
+
 		end_block_with__2(emitter__->definitions__, ((string){{2},(uint8_t*)u8"}}"}));
 	}
 	else if (cond(int32__0op__equal(statement__->kind__, BreakStatement__)))
@@ -6095,13 +6246,13 @@ void mut bind_declared_symbols__4(Syntax_Symbol__0 const ref const parent_symbol
 			}
 			else if (cond(int32__0op__equal(syntax_node__->kind__, FunctionDeclaration__)))
 			{
-				bind_prameter_symbols__3(syntax_node__, scope__, annotations__);
+				bind_parameter_symbols__3(syntax_node__, scope__, annotations__);
 				Syntax_Node__0 const ref const return_type_syntax__ = system__collections__List__1__0op__element(syntax_node__->children__, ((int32){4}));
 				bind_type_name__3(return_type_syntax__, scope__, annotations__);
 			}
 			else if (cond(int32__0op__equal(syntax_node__->kind__, ConstructorDeclaration__)))
 			{
-				bind_prameter_symbols__3(syntax_node__, scope__, annotations__);
+				bind_parameter_symbols__3(syntax_node__, scope__, annotations__);
 			}
 			else if (cond(bool_op(bool_arg(int32__0op__equal(syntax_node__->kind__, ClassDeclaration__)) || bool_arg(int32__0op__equal(syntax_node__->kind__, StructDeclaration__)))))
 			{
@@ -6159,7 +6310,7 @@ void mut bind_declared_symbols__4(Syntax_Symbol__0 const ref const parent_symbol
 	}}
 }
 
-system__collections__List__1 const ref mut bind_prameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
+system__collections__List__1 const ref mut bind_parameter_symbols__3(Syntax_Node__0 const ref const function__, Name_Scope__0 const ref const scope__, Annotations_Dictionary__0 mut ref const annotations__)
 {
 	Syntax_Node__0 const ref const parameters_syntax__ = first_child_syntax_node__2(function__, ParameterList__);
 	system__collections__List__1 mut ref const symbols__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
@@ -6239,7 +6390,7 @@ Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_synt
 				add_item__2(arguments__, argument_type__);
 			}
 
-			Type__0 const ref const type__ = Type__0__0new__generic__2(allocate(sizeof(Type__0)), open_type__, arguments__);
+			Type__0 const ref const type__ = apply_generic_arguments__2(open_type__, arguments__);
 			type_syntax_annotations__->referenced_type__ = type__;
 			return type__;
 		}
@@ -6271,7 +6422,7 @@ Type__0 const ref mut bind_type_name__3(Syntax_Node__0 const ref const type_synt
 		Type__0 const ref const optional_type__ = lookup_optional_type__1(scope__);
 		system__collections__List__1 mut ref const type_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 		add_item__2(type_arguments__, inner_type__);
-		Type__0 const ref const type__ = Type__0__0new__generic__2(allocate(sizeof(Type__0)), optional_type__, type_arguments__);
+		Type__0 const ref const type__ = apply_generic_arguments__2(optional_type__, type_arguments__);
 		type_syntax_annotations__->referenced_type__ = type__;
 		return type__;
 	}
@@ -6328,17 +6479,8 @@ void mut build_declared_symbols__3(Syntax_Symbol__0 const ref const parent__, Sy
 	{
 		string const unqualified_name__ = get_token_text__1(first_child_token__2(syntax__, Identifier__));
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__->declares_type__->name__, TypeName__, unqualified_name__);
-		int32 mut type_kind__;
-		if (cond(int32__0op__equal(syntax__->kind__, ClassDeclaration__)))
-		{
-			type_kind__ = ReferenceType__;
-		}
-		else
-		{
-			type_kind__ = ValueType__;
-		}
-
-		Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), type_kind__, name__, TRUE);
+		BOOL const is_value_type__ = int32__0op__not_equal(syntax__->kind__, ClassDeclaration__);
+		Type__0 const ref const type__ = object_type_as_type__1(Object_Type__0__0new__3(allocate(sizeof(Object_Type__0)), is_value_type__, name__, TRUE));
 		Syntax_Symbol__0 mut ref const symbol__ = Syntax_Symbol__0__0new__declaring__2(allocate(sizeof(Syntax_Symbol__0)), type__, syntax_node_as_syntax__1(syntax__));
 		add_item__2(parent__->children__, symbol__);
 		Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, syntax_node_as_syntax__1(syntax__));
@@ -6354,7 +6496,7 @@ void mut build_declared_symbols__3(Syntax_Symbol__0 const ref const parent__, Sy
 	{
 		string const unqualified_name__ = get_token_text__1(first_child_token__2(syntax__, Identifier__));
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__->declares_type__->name__, TypeName__, unqualified_name__);
-		Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), ReferenceType__, name__, TRUE);
+		Type__0 const ref const type__ = object_type_as_type__1(Object_Type__0__0new__3(allocate(sizeof(Object_Type__0)), FALSE, name__, TRUE));
 		Syntax_Symbol__0 mut ref const symbol__ = Syntax_Symbol__0__0new__declaring__2(allocate(sizeof(Syntax_Symbol__0)), type__, syntax_node_as_syntax__1(syntax__));
 		Annotations__0 mut ref const syntax_annotations__ = annotations_for__2(annotations__, syntax_node_as_syntax__1(syntax__));
 		syntax_annotations__->symbol__ = symbol__;
@@ -7073,6 +7215,10 @@ void mut add_subtable__3(Name_Subtable__0 mut ref const scope__, Name__0 const r
 				{
 				}
 				break;
+				case Primitive_Type__0__0Type_ID:
+				{
+				}
+				break;
 				case Type__0__0Type_ID:
 				{
 				}
@@ -7344,18 +7490,9 @@ void mut add_syntax__4(Name_Table__0 mut ref const name_table__, Name__0 const r
 	else if (cond(bool_op(bool_arg(int32__0op__equal(syntax__->kind__, ClassDeclaration__)) || bool_arg(int32__0op__equal(syntax__->kind__, StructDeclaration__)))))
 	{
 		string const unqualified_name__ = get_token_text__1(first_child_token__2(syntax__, Identifier__));
-		int32 mut type_kind__;
-		if (cond(int32__0op__equal(syntax__->kind__, ClassDeclaration__)))
-		{
-			type_kind__ = ReferenceType__;
-		}
-		else
-		{
-			type_kind__ = ValueType__;
-		}
-
+		BOOL const is_value_type__ = int32__0op__not_equal(syntax__->kind__, ClassDeclaration__);
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, TypeName__, unqualified_name__);
-		Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), type_kind__, name__, TRUE);
+		Type__0 const ref const type__ = object_type_as_type__1(Object_Type__0__0new__3(allocate(sizeof(Object_Type__0)), is_value_type__, name__, TRUE));
 		add_type_name__3(name_table__, name__, type__);
 		for (void_ptr__0iter mut iter = void_ptr__0iterate(members__1(syntax__)); void_ptr__0next(&iter);)
 		{
@@ -7390,7 +7527,7 @@ void mut add_syntax__4(Name_Table__0 mut ref const name_table__, Name__0 const r
 	{
 		string const unqualified_name__ = get_token_text__1(first_child_token__2(syntax__, Identifier__));
 		Name__0 const ref const name__ = Name__0__0new__3(allocate(sizeof(Name__0)), parent__, TypeName__, unqualified_name__);
-		Type__0 const ref const type__ = Type__0__0new__3(allocate(sizeof(Type__0)), ReferenceType__, name__, TRUE);
+		Type__0 const ref const type__ = object_type_as_type__1(Object_Type__0__0new__3(allocate(sizeof(Object_Type__0)), FALSE, name__, TRUE));
 		add_type_name__3(name_table__, name__, type__);
 	}
 	else if (cond(int32__0op__equal(syntax__->kind__, GlobalDeclaration__)))
@@ -7507,16 +7644,17 @@ void mut add_function__4(Name_Table__0 mut ref const name_table__, Name__0 const
 
 void mut unit_test_Symbol_Table_Builder__0()
 {
-	table_contains_referenced_child_names__0();
-	can_get_root_namespace_from_name__0();
-	can_get_Console_class_from_name_without_package__0();
-	can_get_Optional_class_from_name_with_package__0();
+	Package__0 const ref const primitives_package__ = build_primitives_package__0();
+	table_contains_referenced_child_names__1(primitives_package__);
+	can_get_root_namespace_from_name__1(primitives_package__);
+	can_get_Console_class_from_name_without_package__1(primitives_package__);
+	can_get_Optional_class_from_name_with_package__1(primitives_package__);
 }
 
-void mut table_contains_referenced_child_names__0()
+void mut table_contains_referenced_child_names__1(Package__0 const ref const primitives_package__)
 {
 	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
-	Package__0 const ref const runtime_package__ = build_runtime_library_package__0();
+	Package__0 const ref const runtime_package__ = build_runtime_library_package__1(primitives_package__);
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
 	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
@@ -7533,10 +7671,10 @@ void mut table_contains_referenced_child_names__0()
 	assert__1(never__0op__not_equal(get_name__2(symbol_table__, console_class_name__), none));
 }
 
-void mut can_get_root_namespace_from_name__0()
+void mut can_get_root_namespace_from_name__1(Package__0 const ref const primitives_package__)
 {
 	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
-	Package__0 const ref const runtime_package__ = build_runtime_library_package__0();
+	Package__0 const ref const runtime_package__ = build_runtime_library_package__1(primitives_package__);
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
 	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
@@ -7547,10 +7685,10 @@ void mut can_get_root_namespace_from_name__0()
 	assert__1(never__0op__not_equal(get_name__2(symbol_table__, namespace_name__), none));
 }
 
-void mut can_get_Console_class_from_name_without_package__0()
+void mut can_get_Console_class_from_name_without_package__1(Package__0 const ref const primitives_package__)
 {
 	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
-	Package__0 const ref const runtime_package__ = build_runtime_library_package__0();
+	Package__0 const ref const runtime_package__ = build_runtime_library_package__1(primitives_package__);
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), runtime_package__));
 	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
@@ -7563,10 +7701,9 @@ void mut can_get_Console_class_from_name_without_package__0()
 	assert__1(never__0op__not_equal(get_name__2(symbol_table__, console_class_name__), none));
 }
 
-void mut can_get_Optional_class_from_name_with_package__0()
+void mut can_get_Optional_class_from_name_with_package__1(Package__0 const ref const primitives_package__)
 {
 	Package_Name__0 const ref const name__ = Package_Name__0__0new__1(allocate(sizeof(Package_Name__0)), ((string){{7},(uint8_t*)u8"default"}));
-	Package__0 const ref const primitives_package__ = build_primitives_package__0();
 	system__collections__List__1 mut ref const references__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	add_item__2(references__, Package_Reference__0__0new__1(allocate(sizeof(Package_Reference__0)), primitives_package__));
 	Source_Text__0 const ref const source__ = Source_Text__0__0new__3(allocate(sizeof(Source_Text__0)), name__->unqualified__, ((string){{9},(uint8_t*)u8"//test.ad"}), ((string){{19},(uint8_t*)u8"// test source text"}));
@@ -7580,10 +7717,25 @@ void mut can_get_Optional_class_from_name_with_package__0()
 	assert__1(never__0op__not_equal(get_name__2(symbol_table__, optional_class_name__), none));
 }
 
-Function_Type__0 mut ref mut Function_Type__0__0new__1(Function_Type__0 mut ref const self, Name__0 const ref const name__)
+Function_Type__0 mut ref mut Function_Type__0__0new__3(Function_Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const parameter_types__, Type__0 const ref const return_type__)
 {
 	self->type_id = Function_Type__0__0Type_ID;
 	self->name__ = name__;
+	self->generic_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->generic_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->parameter_types__ = parameter_types__;
+	self->return_type__ = return_type__;
+	return self;
+}
+
+Function_Type__0 mut ref mut Function_Type__0__0new__4(Function_Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const parameter_types__, Type__0 const ref const return_type__)
+{
+	self->type_id = Function_Type__0__0Type_ID;
+	self->name__ = name__;
+	self->generic_parameters__ = generic_parameters__;
+	self->generic_arguments__ = no_generic_arguments__1(generic_parameters__);
+	self->parameter_types__ = parameter_types__;
+	self->return_type__ = return_type__;
 	return self;
 }
 
@@ -7592,7 +7744,13 @@ Type__0 const ref mut function_type_as_type__1(Function_Type__0 const ref const 
 	return as_any__1(type__);
 }
 
-Generic_Parameter__0 mut ref mut Generic_Parameter__0__0new__0(Generic_Parameter__0 mut ref const self) { self->type_id = Generic_Parameter__0__0Type_ID; return self; }
+Generic_Parameter__0 mut ref mut Generic_Parameter__0__0new__2(Generic_Parameter__0 mut ref const self, Name__0 const ref const name__, Type__0 const ref const type__)
+{
+	self->type_id = Generic_Parameter__0__0Type_ID;
+	self->name__ = name__;
+	self->type__ = type__;
+	return self;
+}
 
 Namespace_Type__0 mut ref mut Namespace_Type__0__0new__1(Namespace_Type__0 mut ref const self, Name__0 const ref const name__)
 {
@@ -7618,105 +7776,179 @@ Namespace_Type__0 const ref mut remove_type_package__1(Namespace_Type__0 const r
 	}
 }
 
-Object_Type__0 mut ref mut Object_Type__0__0new__0(Object_Type__0 mut ref const self) { self->type_id = Object_Type__0__0Type_ID; return self; }
-
-Type__0 mut ref mut Type__0__0new__3(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, BOOL const is_mutable__)
+Object_Type__0 mut ref mut Object_Type__0__0new__3(Object_Type__0 mut ref const self, BOOL const is_value_type__, Name__0 const ref const name__, BOOL const is_mutable__)
 {
-	self->type_id = Type__0__0Type_ID;
-	assert__1(void_ptr__0op__not_equal(name__, none));
+	self->type_id = Object_Type__0__0Type_ID;
 	self->name__ = name__;
+	self->generic_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
 	self->generic_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	self->is_primitive__ = FALSE;
-	self->is_value_type__ = int32__0op__equal(kind__, ValueType__);
+	self->is_value_type__ = is_value_type__;
 	self->is_potentially_mutable__ = is_mutable__;
 	self->is_mutable__ = is_mutable__;
 	return self;
 }
 
-Type__0 mut ref mut Type__0__0new__parameter__1(Type__0 mut ref const self, string const name__)
+Object_Type__0 mut ref mut Object_Type__0__0new__4(Object_Type__0 mut ref const self, BOOL const is_value_type__, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__, BOOL const is_mutable__)
 {
-	self->type_id = Type__0__0Type_ID;
-	self->name__ = Name__0__0new__3(allocate(sizeof(Name__0)), Name__0__0new__global_namespace__0(allocate(sizeof(Name__0))), TypeParameterName__, name__);
-	self->generic_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	self->is_primitive__ = FALSE;
-	self->is_value_type__ = FALSE;
-	self->is_potentially_mutable__ = TRUE;
-	self->is_mutable__ = FALSE;
-	return self;
-}
-
-Type__0 mut ref mut Type__0__0new__4(Type__0 mut ref const self, int32 const kind__, Name__0 const ref const name__, system__collections__List__1 const ref const generic_arguments__, BOOL const is_mutable__)
-{
-	self->type_id = Type__0__0Type_ID;
+	self->type_id = Object_Type__0__0Type_ID;
 	self->name__ = name__;
-	self->generic_arguments__ = generic_arguments__;
-	self->is_primitive__ = FALSE;
-	self->is_value_type__ = int32__0op__equal(kind__, ValueType__);
+	self->generic_parameters__ = generic_parameters__;
+	self->generic_arguments__ = no_generic_arguments__1(generic_parameters__);
+	self->is_value_type__ = is_value_type__;
 	self->is_potentially_mutable__ = is_mutable__;
 	self->is_mutable__ = is_mutable__;
 	return self;
 }
 
-Type__0 mut ref mut Type__0__0new__primitive__1(Type__0 mut ref const self, Name__0 const ref const name__)
+Object_Type__0 mut ref mut Object_Type__0__0new__6(Object_Type__0 mut ref const self, BOOL const is_value_type__, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const generic_arguments__, BOOL const is_potentially_mutable__, BOOL const is_mutable__)
 {
-	self->type_id = Type__0__0Type_ID;
+	self->type_id = Object_Type__0__0Type_ID;
 	self->name__ = name__;
-	self->generic_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
-	self->is_primitive__ = TRUE;
-	self->is_value_type__ = TRUE;
-	self->is_potentially_mutable__ = FALSE;
-	self->is_mutable__ = FALSE;
-	return self;
-}
-
-Type__0 mut ref mut Type__0__0new__primitive__2(Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_arguments__)
-{
-	self->type_id = Type__0__0Type_ID;
-	self->name__ = name__;
+	self->generic_parameters__ = generic_parameters__;
 	self->generic_arguments__ = generic_arguments__;
-	self->is_primitive__ = TRUE;
-	self->is_value_type__ = TRUE;
-	self->is_potentially_mutable__ = FALSE;
-	self->is_mutable__ = FALSE;
-	return self;
-}
-
-Type__0 mut ref mut Type__0__0new__generic__2(Type__0 mut ref const self, Type__0 const ref const definition__, system__collections__List__1 const ref const generic_arguments__)
-{
-	self->type_id = Type__0__0Type_ID;
-	assert__1(void_ptr__0op__not_equal(definition__, none));
-	assert__2(void_ptr__0op__not_equal(generic_arguments__, none), full_name__1(definition__->name__));
-	assert__2(int32__0op__equal(definition__->generic_arguments__->count__, generic_arguments__->count__), string__0op__add(string__0op__add(string__0op__add(string__0op__add(full_name__1(definition__->name__), ((string){{1},(uint8_t*)u8" "})), int_to_string__1(definition__->generic_arguments__->count__)), ((string){{7},(uint8_t*)u8" given "})), int_to_string__1(generic_arguments__->count__)));
-	self->name__ = definition__->name__;
-	self->generic_arguments__ = generic_arguments__;
-	self->is_primitive__ = definition__->is_primitive__;
-	self->is_value_type__ = definition__->is_value_type__;
-	self->is_potentially_mutable__ = definition__->is_potentially_mutable__;
-	self->is_mutable__ = definition__->is_mutable__;
-	return self;
-}
-
-Type__0 mut ref mut Type__0__0new__6(Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_arguments__, BOOL const is_primitive__, BOOL const is_value_type__, BOOL const is_potentially_mutable__, BOOL const is_mutable__)
-{
-	self->type_id = Type__0__0Type_ID;
-	self->name__ = name__;
-	self->generic_arguments__ = generic_arguments__;
-	self->is_primitive__ = is_primitive__;
 	self->is_value_type__ = is_value_type__;
 	self->is_potentially_mutable__ = is_potentially_mutable__;
 	self->is_mutable__ = is_mutable__;
 	return self;
 }
 
+Type__0 const ref mut object_type_as_type__1(Object_Type__0 const ref const type__)
+{
+	return as_any__1(type__);
+}
+
+Primitive_Type__0 mut ref mut Primitive_Type__0__0new__1(Primitive_Type__0 mut ref const self, Name__0 const ref const name__)
+{
+	self->type_id = Primitive_Type__0__0Type_ID;
+	self->name__ = name__;
+	self->generic_parameters__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->generic_arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	self->is_value_type__ = TRUE;
+	self->is_potentially_mutable__ = FALSE;
+	self->is_mutable__ = FALSE;
+	return self;
+}
+
+Primitive_Type__0 mut ref mut Primitive_Type__0__0new__2(Primitive_Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__)
+{
+	self->type_id = Primitive_Type__0__0Type_ID;
+	self->name__ = name__;
+	self->generic_parameters__ = generic_parameters__;
+	self->generic_arguments__ = no_generic_arguments__1(generic_parameters__);
+	self->is_value_type__ = TRUE;
+	self->is_potentially_mutable__ = FALSE;
+	self->is_mutable__ = FALSE;
+	return self;
+}
+
+Primitive_Type__0 mut ref mut Primitive_Type__0__0new__5(Primitive_Type__0 mut ref const self, Name__0 const ref const name__, system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const generic_arguments__, BOOL const is_potentially_mutable__, BOOL const is_mutable__)
+{
+	self->type_id = Primitive_Type__0__0Type_ID;
+	self->name__ = name__;
+	self->generic_parameters__ = generic_parameters__;
+	self->generic_arguments__ = generic_arguments__;
+	self->is_value_type__ = TRUE;
+	self->is_potentially_mutable__ = is_potentially_mutable__;
+	self->is_mutable__ = is_mutable__;
+	return self;
+}
+
+Type__0 const ref mut primitive_type_as_type__1(Primitive_Type__0 const ref const type__)
+{
+	return as_any__1(type__);
+}
+
+Type__0 mut ref mut Type__0__0new__0(Type__0 mut ref const self) { self->type_id = Type__0__0Type_ID; return self; }
+
+system__collections__List__1 const ref mut no_generic_arguments__1(system__collections__List__1 const ref const generic_parameters__)
+{
+	system__collections__List__1 mut ref const arguments__ = system__collections__List__1__0new__0(allocate(sizeof(system__collections__List__1)));
+	for (void_ptr__0iter mut iter = system__collections__List__1__0iterate(generic_parameters__); void_ptr__0next(&iter);)
+	{
+		add_item__2(arguments__, none);
+	}
+
+	return arguments__;
+}
+
 Type__0 const ref mut make_mutable_type__1(Type__0 const ref const type__)
 {
-	assert__2(type__->is_potentially_mutable__, string__0op__add(((string){{10},(uint8_t*)u8"self.name="}), full_name__1(type__->name__)));
-	return Type__0__0new__6(allocate(sizeof(Type__0)), type__->name__, type__->generic_arguments__, type__->is_primitive__, type__->is_value_type__, type__->is_potentially_mutable__, TRUE);
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Object_Type__0__0Type_ID:
+		{
+			Object_Type__0 const ref const o__ = match_value;
+			assert__2(type__->is_potentially_mutable__, string__0op__add(((string){{10},(uint8_t*)u8"self.name="}), full_name__1(type__->name__)));
+			return object_type_as_type__1(Object_Type__0__0new__6(allocate(sizeof(Object_Type__0)), o__->is_value_type__, o__->name__, o__->generic_parameters__, o__->generic_arguments__, o__->is_potentially_mutable__, TRUE));
+		}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
+	UNREACHABLE__0();
 }
 
 Type__0 const ref mut make_immutable_type__1(Type__0 const ref const type__)
 {
-	return Type__0__0new__6(allocate(sizeof(Type__0)), type__->name__, type__->generic_arguments__, type__->is_primitive__, type__->is_value_type__, type__->is_potentially_mutable__, FALSE);
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Namespace_Type__0__0Type_ID:
+		{
+			Namespace_Type__0 const ref const ns__ = match_value;
+			return namespace_type_as_type__1(ns__);
+		}
+		break;
+		case Function_Type__0__0Type_ID:
+		{
+			Function_Type__0 const ref const f__ = match_value;
+			return function_type_as_type__1(f__);
+		}
+		break;
+		case Primitive_Type__0__0Type_ID:
+		{
+			Primitive_Type__0 const ref const p__ = match_value;
+			return primitive_type_as_type__1(p__);
+		}
+		break;
+		case Object_Type__0__0Type_ID:
+		{
+			Object_Type__0 const ref const o__ = match_value;
+			return object_type_as_type__1(Object_Type__0__0new__6(allocate(sizeof(Object_Type__0)), o__->is_value_type__, o__->name__, o__->generic_parameters__, o__->generic_arguments__, o__->is_potentially_mutable__, FALSE));
+		}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
+}
+
+Type__0 const ref mut apply_generic_arguments__2(Type__0 const ref const type__, system__collections__List__1 const ref const generic_arguments__)
+{
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Primitive_Type__0__0Type_ID:
+		{
+			Primitive_Type__0 const ref const p__ = match_value;
+			return primitive_type_as_type__1(Primitive_Type__0__0new__5(allocate(sizeof(Primitive_Type__0)), p__->name__, p__->generic_parameters__, apply_generic_arguments__3(p__->generic_parameters__, p__->generic_arguments__, generic_arguments__), p__->is_potentially_mutable__, p__->is_mutable__));
+		}
+		break;
+		case Object_Type__0__0Type_ID:
+		{
+			Object_Type__0 const ref const o__ = match_value;
+			return object_type_as_type__1(Object_Type__0__0new__6(allocate(sizeof(Object_Type__0)), o__->is_value_type__, o__->name__, o__->generic_parameters__, apply_generic_arguments__3(o__->generic_parameters__, o__->generic_arguments__, generic_arguments__), o__->is_potentially_mutable__, o__->is_mutable__));
+		}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
+}
+
+system__collections__List__1 const ref mut apply_generic_arguments__3(system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const existing_generic_arguments__, system__collections__List__1 const ref const generic_arguments__)
+{
+	assert__1(int32__0op__equal(generic_parameters__->count__, generic_arguments__->count__));
+	return generic_arguments__;
 }
 
 // Entry Point Adapter
