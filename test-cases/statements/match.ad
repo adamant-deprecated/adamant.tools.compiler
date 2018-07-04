@@ -29,6 +29,7 @@ public main() -> int
     match v
     {
         a: A => { return a.value_a; },
-        b: B => { return b.value_b; }
+        b: B => { return b.value_b; },
+        _ => { return 0; }
     }
 }

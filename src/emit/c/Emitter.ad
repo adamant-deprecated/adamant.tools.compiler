@@ -1052,38 +1052,52 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         end_line(emitter.definitions, ";");
         write_line(emitter.definitions, "   switch(*(Type_ID const ref)match_value)");
         begin_block(emitter.definitions);
+        var has_default: bool = false;
         for let match_arm: Semantic_Node in statement.children
         {
             if match_arm.kind == MatchArm
             {
                 let match_pattern: Semantic_Node = first_child(match_arm, MatchPattern);
-                let match_variable_type_node: Semantic_Node = match_pattern.children[2];
                 let variable_name: string = get_semantic_node_text(first_child(match_pattern, Identifier));
                 let match_block: Semantic_Node = first_child(match_arm, Block);
-                assert(match_variable_type_node.referenced_type =/= none, get_semantic_node_text(match_variable_type_node));
-                let type_name: string = sb_to_string(convert_type_name(match_variable_type_node.referenced_type));
-                write_line(emitter.definitions, "case " + type_name + "__0Type_ID:");
-                begin_block(emitter.definitions);
-                // let first_char: code_point = variable_name[0];
-                if variable_name[0] =/= '_' // skip emitting unused varaible to avoid warning about unused variables
+                if match_pattern.children.count > 1
                 {
-                    begin_line(emitter.definitions, convert_type(false, match_variable_type_node));
-                    write(emitter.definitions, " ");
-                    write(emitter.definitions, mangle_field_name(variable_name));
-                    end_line(emitter.definitions, " = match_value;");
+                    let match_variable_type_node: Semantic_Node = match_pattern.children[2];
+                    assert(match_variable_type_node.referenced_type =/= none, get_semantic_node_text(match_variable_type_node));
+                    let type_name: string = sb_to_string(convert_type_name(match_variable_type_node.referenced_type));
+                    write_line(emitter.definitions, "case " + type_name + "__0Type_ID:");
+                    begin_block(emitter.definitions);
+                    // let first_char: code_point = variable_name[0];
+                    if variable_name[0] =/= '_' // skip emitting unused varaible to avoid warning about unused variables
+                    {
+                        begin_line(emitter.definitions, convert_type(false, match_variable_type_node));
+                        write(emitter.definitions, " ");
+                        write(emitter.definitions, mangle_field_name(variable_name));
+                        end_line(emitter.definitions, " = match_value;");
+                    }
+                    for let block_statement: Semantic_Node in node_statements(match_block)
+                    {
+                        emit_statement(emitter, block_statement);
+                    }
+
+                    end_block(emitter.definitions);
                 }
-                for let block_statement: Semantic_Node in node_statements(match_block)
+                else
                 {
-                    emit_statement(emitter, block_statement);
+                    // TODO we are ignoring the variable name
+                    has_default = true;
+                    write_line(emitter.definitions, "default:");
+                    emit_statement(emitter, match_block);
                 }
 
-                end_block(emitter.definitions);
                 write_line(emitter.definitions, "break;");
             }
         }
-        write_line(emitter.definitions, "default:");
-        write_line(emitter.definitions, "   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);");
-        // TODO write out match arms
+        if not has_default
+        {
+            write_line(emitter.definitions, "default:");
+            write_line(emitter.definitions, "   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);");
+        }
         end_block_with(emitter.definitions, "}}");
     }
     else if statement.kind == BreakStatement

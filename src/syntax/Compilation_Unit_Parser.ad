@@ -401,8 +401,11 @@ public parse_match_arm(parser: mut Compilation_Unit_Parser) -> Syntax
     // Parse Match Pattern
     let pattern_children: mut system.collections.List<Syntax> = new system.collections.List<Syntax>();
     add_item(pattern_children, expect_token(parser, Identifier));
-    add_item(pattern_children, expect_token(parser, Colon));
-    add_item(pattern_children, parse_type(parser));
+    if parser.token =/= none and parser.token.kind == Colon
+    {
+        add_item(pattern_children, expect_token(parser, Colon));
+        add_item(pattern_children, parse_type(parser));
+    }
     add_item(children, new Syntax_Node.with_children(MatchPattern, pattern_children));
 
     add_item(children, expect_token(parser, FatArrow));

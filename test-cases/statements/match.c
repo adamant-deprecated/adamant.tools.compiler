@@ -80,7 +80,10 @@ int32 mut main__0()
 		}
 		break;
 		default:
-		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+		{
+			return ((int32){0});
+		}
+		break;
 	}}
 }
 
