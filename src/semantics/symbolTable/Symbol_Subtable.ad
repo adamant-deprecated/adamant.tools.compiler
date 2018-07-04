@@ -12,7 +12,7 @@ public /*mut*/ class Name_Subtable
         self.name_table = name_table;
         self.parent = none;
         self.name = new Name.global_namespace();
-        self.type = new Type.namespace(self.name);
+        self.type = namespace_type_as_type(new Namespace_Type(self.name));
         self.subtables = new system.collections.List<mut Name_Subtable>();
     }
 
@@ -22,7 +22,7 @@ public /*mut*/ class Name_Subtable
         self.name_table = name_table;
         self.parent = none;
         self.name = new Name.global_namespace(package_name);
-        self.type = new Type.namespace(self.name);
+        self.type = namespace_type_as_type(new Namespace_Type(self.name));
         self.subtables = new system.collections.List<mut Name_Subtable>();
     }
 
@@ -43,14 +43,19 @@ public add_subtable(scope: mut Name_Subtable, name: Name, type: Type?) -> void
     assert(is_qualified_by(name, scope.name), "\""+full_name(name)+"\" is not a child of \""+full_name(scope.name)+"\"");
     if qualifier_is(name, scope.name)
     {
-        if scope.name.package == none and type =/= none and type.kind == NamespaceType
+        if scope.name.package == none and type =/= none
         {
-            add_item(scope.subtables, new Name_Subtable(scope, remove_package(name), remove_type_package(type)));
+            match type
+            {
+                ns_type: Namespace_Type =>
+                {
+                    add_item(scope.subtables, new Name_Subtable(scope, remove_package(name), namespace_type_as_type(remove_type_package(ns_type))));
+                },
+                _: Type => {}
+            }
         }
-        else
-        {
-            add_item(scope.subtables, new Name_Subtable(scope, name, type));
-        }
+
+        add_item(scope.subtables, new Name_Subtable(scope, name, type));
         return;
     }
 

@@ -1,9 +1,9 @@
 // TODO maybe type should inherit from name
-public class Type
+// Base class for types
+public /* abstract */ class Type
 {
-    public let kind: int;
     public let name: Name;
-    public let type_parameters: system.collections.List<Type>;
+    public let generic_arguments: system.collections.List<Type>;
     public let is_primitive: bool;
     public let is_value_type: bool;
     public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
@@ -14,9 +14,9 @@ public class Type
     public new(kind: int, name: Name, is_mutable: bool)
     {
         assert(name =/= none);
-        self.kind = kind;
+        // self.kind = kind;
         self.name = name;
-        self.type_parameters = new system.collections.List<Type>();
+        self.generic_arguments = new system.collections.List<Type>();
         self.is_primitive = false;
         self.is_value_type = kind == ValueType;
         self.is_potentially_mutable = is_mutable;
@@ -25,20 +25,18 @@ public class Type
 
     public new parameter(name: string)
     {
-        self.kind = TypeParameterType;
         self.name = new Name(new Name.global_namespace(), TypeParameterName, name);
-        self.type_parameters = new system.collections.List<Type>();
+        self.generic_arguments = new system.collections.List<Type>();
         self.is_primitive = false;
         self.is_value_type = false;
         self.is_potentially_mutable = true;
         self.is_mutable = false;
     }
 
-    public new(kind: int, name: Name, type_parameters: system.collections.List<Type>, is_mutable: bool)
+    public new(kind: int, name: Name, generic_arguments: system.collections.List<Type>, is_mutable: bool)
     {
-        self.kind = kind;
         self.name = name;
-        self.type_parameters = type_parameters;
+        self.generic_arguments = generic_arguments;
         self.is_primitive = false;
         self.is_value_type = kind == ValueType;
         self.is_potentially_mutable = is_mutable;
@@ -47,60 +45,46 @@ public class Type
 
     public new primitive(name: Name)
     {
-        self.kind = ValueType;
+        // self.kind = ValueType;
         self.name = name;
-        self.type_parameters = new system.collections.List<Type>();
+        self.generic_arguments = new system.collections.List<Type>();
         self.is_primitive = true;
         self.is_value_type = true;
         self.is_potentially_mutable = false;
         self.is_mutable = false;
     }
 
-    public new primitive(name: Name, type_parameters: system.collections.List<Type>)
+    public new primitive(name: Name, generic_arguments: system.collections.List<Type>)
     {
-        self.kind = ValueType;
+        // self.kind = ValueType;
         self.name = name;
-        self.type_parameters = type_parameters;
+        self.generic_arguments = generic_arguments;
         self.is_primitive = true;
         self.is_value_type = true;
         self.is_potentially_mutable = false;
         self.is_mutable = false;
     }
 
-    public new namespace(name: Name)
-    {
-        self.kind = NamespaceType;
-        self.name = name;
-        self.is_primitive = false;
-        self.type_parameters = new system.collections.List<Type>();
-        // TODO value type don't make sense for namespaces
-        self.is_value_type = true;
-        self.is_potentially_mutable = false;
-        self.is_mutable = false;
-    }
-
-    public new generic(definition: Type, type_arguments: system.collections.List<Type>)
+    public new generic(definition: Type, generic_arguments: system.collections.List<Type>)
     {
         assert(definition =/= none);
-        assert(type_arguments =/= none, full_name(definition.name));
-        assert(definition.type_parameters.count == type_arguments.count,
-            full_name(definition.name)+" "+int_to_string(definition.type_parameters.count)+" given "+int_to_string(type_arguments.count));
-        self.kind = definition.kind;
+        assert(generic_arguments =/= none, full_name(definition.name));
+        assert(definition.generic_arguments.count == generic_arguments.count,
+            full_name(definition.name)+" "+int_to_string(definition.generic_arguments.count)+" given "+int_to_string(generic_arguments.count));
         self.name = definition.name;
-        self.type_parameters = type_arguments;
+        self.generic_arguments = generic_arguments;
         self.is_primitive = definition.is_primitive;
         self.is_value_type = definition.is_value_type;
         self.is_potentially_mutable = definition.is_potentially_mutable;
         self.is_mutable = definition.is_mutable;
     }
 
-    public new(kind: int, name: Name, type_parameters: system.collections.List<Type>, is_primitive: bool, is_potentially_mutable: bool, is_mutable: bool)
+    public new(name: Name, generic_arguments: system.collections.List<Type>, is_primitive: bool, is_value_type: bool, is_potentially_mutable: bool, is_mutable: bool)
     {
-        self.kind = kind;
         self.name = name;
-        self.type_parameters = type_parameters;
+        self.generic_arguments = generic_arguments;
         self.is_primitive = is_primitive;
-        self.is_value_type = kind == ValueType;
+        self.is_value_type = is_value_type;
         self.is_potentially_mutable = is_potentially_mutable;
         self.is_mutable = is_mutable;
     }
@@ -109,24 +93,10 @@ public class Type
 public make_mutable_type(type: Type) -> Type
 {
     assert(type.is_potentially_mutable, "self.name="+full_name(type.name));
-    return new Type(type.kind, type.name, type.type_parameters, type.is_primitive, type.is_potentially_mutable, true);
+    return new Type(type.name, type.generic_arguments, type.is_primitive, type.is_value_type, type.is_potentially_mutable, true);
 }
 
 public make_immutable_type(type: Type) -> Type
 {
-    return new Type(type.kind, type.name, type.type_parameters, type.is_primitive, type.is_potentially_mutable, false);
-}
-
-public remove_type_package(type: Type) -> Type
-{
-    assert(type.kind == NamespaceType, "kind=" + int_to_string(type.kind));
-    if is_package_qualified(type.name)
-        { return new Type(type.kind,
-                        remove_package(type.name),
-                        type.type_parameters,
-                        type.is_primitive,
-                        type.is_potentially_mutable,
-                        type.is_mutable); }
-    else
-        { return type; }
+    return new Type(type.name, type.generic_arguments, type.is_primitive, type.is_value_type, type.is_potentially_mutable, false);
 }

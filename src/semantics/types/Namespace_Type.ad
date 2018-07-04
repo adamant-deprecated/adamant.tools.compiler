@@ -1,0 +1,28 @@
+// Namespace types are created for all namespaces. Namespace types are not values
+// in the language. A namespace type can't be used as an argument to a type
+// parameter. However, in the compiler it is convient for consistency to create
+// namespace types. A namespace type may be for the namespace within a specific
+// package, or accross all packages. This is determined by whether the name has
+// the package specified.
+public class Namespace_Type // : Type
+{
+    public let name: Name; // Must be first to match `Type`
+
+    public new(name: Name)
+    {
+        self.name = name;
+    }
+}
+
+public namespace_type_as_type(type: Namespace_Type) -> Type
+{
+    return as_any(type);
+}
+
+public remove_type_package(type: Namespace_Type) -> Namespace_Type
+{
+    if is_package_qualified(type.name)
+        { return new Namespace_Type(remove_package(type.name)); }
+    else
+        { return type; }
+}

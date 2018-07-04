@@ -38,7 +38,7 @@ This phase is specified in a short hand notation of concatenating strings.
 
 Since all names are mangled, we are free to use C style names without concern for conflict except with the C standard library. This allows for shorter cleaner code
 
-* Tuples: `tuple` + number_of_type_parameters + `__` + type_parameters_separated_by_underscores
+* Tuples: `tuple` + number_of_generic_arguments + `__` + type_arguments_separated_by_underscores
 * Primitives: type except that
   * `int32`
   * `uint32`

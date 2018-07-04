@@ -1,0 +1,13 @@
+// Object types are the types created with class and struct declarations. The
+// primitive types are also object types. An object type may have generic parameters
+// that may be filled with generic arguments. An object type with generic parameters
+// but no generic arguments is *open* or *unbound*. One with generic arguments supplied
+// for all parameters is *closed* or *bound*. One with some but not all
+// arguments supplied is *partially bound*.
+public class Object_Type // : Type
+{
+    public let name: Name; // Must be first to match `Type`
+    public let generic_parameters: system.collections.List<Type_Parameter>;
+    // TODO type arguments can be values, not just types
+    public let generic_arguments: system.collections.List<Type?>;
+}

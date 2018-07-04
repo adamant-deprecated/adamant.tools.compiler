@@ -74,9 +74,9 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     // system.collections
     let collections_namespace: Name = new Name(system_namespace, NamespaceName, "collections");
     let collections_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    let list_type_parameters: mut system.collections.List<Type> = new system.collections.List<Type>();
-    add_item(list_type_parameters, new Type.parameter("T"));
-    add_item(collections_symbols, build_generic_class_symbol(collections_namespace, "List", list_type_parameters));
+    let list_generic_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
+    add_item(list_generic_arguments, new Type.parameter("T"));
+    add_item(collections_symbols, build_generic_class_symbol(collections_namespace, "List", list_generic_arguments));
     add_item(system_symbols, build_namespace_symbol(collections_namespace, collections_symbols));
 
     // system.console
@@ -117,7 +117,7 @@ public build_function_symbol(name: Name) -> Symbol
 
 public build_namespace_symbol(name: Name, symbols: system.collections.List<Symbol>) -> Symbol
 {
-    let type: Type = new Type.namespace(name);
+    let type: Type = namespace_type_as_type(new Namespace_Type(name));
     let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     return new Symbol.declaring(type, declarations, symbols);
 }
@@ -137,9 +137,9 @@ public build_class_symbol(namespace: Name, class_name: string, children: system.
     return new Symbol.declaring(type, declarations, children);
 }
 
-public build_generic_class_symbol(namespace: Name, class_name: string, type_parameters: system.collections.List<Type>) -> Symbol
+public build_generic_class_symbol(namespace: Name, class_name: string, generic_arguments: system.collections.List<Type>) -> Symbol
 {
-    let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), type_parameters, true);
+    let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), generic_arguments, true);
     let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
     return new Symbol.declaring(type, declarations, children);

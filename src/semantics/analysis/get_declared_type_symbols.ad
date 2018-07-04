@@ -6,7 +6,7 @@ public get_declared_type_symbols(
 {
     assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
     let symbol: mut Syntax_Symbol = new Syntax_Symbol.package(name.unqualified, syntax_node_as_syntax(package_syntax));
-    symbol.declares_type = new Type.namespace(new Name.global_namespace(name));
+    symbol.declares_type = namespace_type_as_type(new Namespace_Type(new Name.global_namespace(name)));
     let syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(package_syntax));
     syntax_annotations.symbol = symbol;
     syntax_annotations.declares_type = symbol.declares_type;

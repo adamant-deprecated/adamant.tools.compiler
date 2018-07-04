@@ -1,0 +1,12 @@
+// A type parameter describes a parameter to a type. Note that a type parameter
+// is not itself a type, rather, it is essentially a compile time variable declared
+// with a type. If no type is declared for a type parameter the type `type` is
+// implied. `type` is the type of all types treated as values. For example, a
+// fixed size array might have the type declaration `Array[length: integer, T]`.
+// Here `length` will take on an integer value while `T` has the implied type
+// `type` equivalent to being declared `T: type`. Thus it will take a type value.
+public class Type_Parameter
+{
+    public let name: Name;
+    public let type: Type;
+}

@@ -80,9 +80,9 @@ public build_adamant_language_namespace_symbol(global_namespace: Name) -> Symbol
 public build_optional_type_symbol(language_namespace: Name) -> Symbol
 {
     let optional_name: Name = new Name(language_namespace, TypeName, "optional");
-    let type_parameters: mut system.collections.List<Type> = new system.collections.List<Type>();
-    add_item(type_parameters, new Type(TypeParameterType, new Name(optional_name, TypeParameterName, "T"), true));
-    let type: Type = new Type.primitive(optional_name, type_parameters);
+    let generic_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
+    add_item(generic_arguments, new Type(TypeParameterType, new Name(optional_name, TypeParameterName, "T"), true));
+    let type: Type = new Type.primitive(optional_name, generic_arguments);
     let declarations: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     let children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
     return new Symbol.declaring(type, declarations, children);
