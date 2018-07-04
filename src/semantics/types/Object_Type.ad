@@ -7,7 +7,7 @@
 public class Object_Type // : Type
 {
     public let name: Name; // Must be first to match `Type`
-    public let generic_parameters: system.collections.List<Type_Parameter>;
+    public let generic_parameters: system.collections.List<Generic_Parameter>;
     // TODO type arguments can be values, not just types
     public let generic_arguments: system.collections.List<Type?>;
 }

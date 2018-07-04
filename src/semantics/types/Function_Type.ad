@@ -3,10 +3,21 @@
 public class Function_Type // : Type
 {
     public let name: Name; // Must be first to match `Type`
-    public let generic_parameters: system.collections.List<Type_Parameter>;
+    public let generic_parameters: system.collections.List<Generic_Parameter>;
     // TODO type arguments can be values, not just types
     public let generic_arguments: system.collections.List<Type?>;
 
     public let parameter_types: system.collections.List<Type>;
     public let return_type: Type;
+
+    // TODO initialize all the other stuff here
+    public new(name: Name)
+    {
+        self.name = name;
+    }
+}
+
+public function_type_as_type(type: Function_Type) -> Type
+{
+    return as_any(type);
 }

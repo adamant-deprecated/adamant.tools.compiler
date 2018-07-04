@@ -50,8 +50,12 @@ public add_subtable(scope: mut Name_Subtable, name: Name, type: Type?) -> void
                 ns_type: Namespace_Type =>
                 {
                     add_item(scope.subtables, new Name_Subtable(scope, remove_package(name), namespace_type_as_type(remove_type_package(ns_type))));
+                    return;
                 },
-                _: Type => {}
+                // TODO should be able to combine these match arms
+                _: Function_Type => {},
+                _: Object_Type => {},
+                _: Type => {} // TODO remove case when abstract
             }
         }
 

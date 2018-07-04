@@ -108,8 +108,7 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
 
 public build_function_symbol(name: Name) -> Symbol
 {
-    // TODO this should be a function type
-    let type: Type = new Type(FunctionType, name, false);
+    let type: Type = function_type_as_type(new Function_Type(name));
     let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
     return new Symbol.of_type(unqualified_name(name), type, declarations, children);

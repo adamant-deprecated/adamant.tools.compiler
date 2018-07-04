@@ -76,7 +76,7 @@ public build_semantic_node(
         let return_type: Syntax_Node = syntax.children[4]; // TODO need more reliable way to pick this out
         add_item(children, build_type_name_semantic_node(builder, return_type, name_table, scope));
 
-        let function_type: Type = new Type(FunctionType, function_scope.name, false);
+        let function_type: Type = function_type_as_type(new Function_Type(function_scope.name));
         // debug_write_line("Binding function `"+get_syntax_node_text(function_name)+"` with type `"+full_name(function_type.name)+"`, scope `"+full_name(function_scope.name)+"`");
         bind_type(function_scope, function_type);
         let body: Syntax_Node = first_child_syntax_node(syntax, Block);
