@@ -10,6 +10,17 @@ public /* abstract */ class Type
     public let is_mutable: bool;
 }
 
+public no_generic_arguments(generic_parameters: system.collections.List<Generic_Parameter>) -> system.collections.List<Type>
+{
+    let arguments: mut system.collections.List<Type?> = new system.collections.List<Type?>();
+    // TODO should be a short way to do this
+    for let _: Generic_Parameter in generic_parameters
+    {
+        add_item(arguments, none);
+    }
+    return arguments;
+}
+
 public make_mutable_type(type: Type) -> Type
 {
     match type

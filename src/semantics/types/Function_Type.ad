@@ -10,10 +10,26 @@ public class Function_Type // : Type
     public let parameter_types: system.collections.List<Type>;
     public let return_type: Type;
 
-    // TODO initialize all the other stuff here
-    public new(name: Name)
+    public new(name: Name, parameter_types: system.collections.List<Type>, return_type: Type)
     {
         self.name = name;
+        self.generic_parameters = new system.collections.List<Generic_Parameter>();
+        self.generic_arguments = new system.collections.List<Type?>();
+        self.parameter_types = parameter_types;
+        self.return_type = return_type;
+    }
+
+    public new(
+        name: Name,
+        generic_parameters: system.collections.List<Generic_Parameter>,
+        parameter_types: system.collections.List<Type>,
+        return_type: Type)
+    {
+        self.name = name;
+        self.generic_parameters = generic_parameters;
+        self.generic_arguments = no_generic_arguments(generic_parameters);
+        self.parameter_types = parameter_types;
+        self.return_type = return_type;
     }
 }
 

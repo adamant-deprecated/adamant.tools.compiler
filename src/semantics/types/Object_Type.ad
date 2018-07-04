@@ -28,13 +28,7 @@ public class Object_Type // : Type
     {
         self.name = name;
         self.generic_parameters = generic_parameters;
-        let arguments: mut system.collections.List<Type?> = new system.collections.List<Type?>();
-        // TODO should be a short way to do this
-        for let _: Generic_Parameter in generic_parameters
-        {
-            add_item(arguments, none);
-        }
-        self.generic_arguments = arguments;
+        self.generic_arguments = no_generic_arguments(generic_parameters);
         self.is_value_type = is_value_type;
         self.is_potentially_mutable = is_mutable;
         self.is_mutable = is_mutable;
