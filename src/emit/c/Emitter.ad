@@ -165,10 +165,9 @@ public append_fixing_underscores(builder: mut system.text.String_Builder, value:
     }
 }
 
-public convert_primitive_type_name(type: Type) -> string
+public convert_primitive_type_name(type: Primitive_Type) -> string
 {
     let name: string = unqualified_name(type.name);
-    assert(type.is_primitive, name);
     if name == "bool"
     {
         return "BOOL";
@@ -202,13 +201,10 @@ public convert_type_name(type: Type) -> mut system.text.String_Builder
 public convert_type_name(type: Type, include_type_parameters: bool) -> mut system.text.String_Builder
 {
     let c_type: mut system.text.String_Builder = new system.text.String_Builder();
-    if type.is_primitive
+    match type
     {
-        sb_append(c_type, convert_primitive_type_name(type));
-    }
-    else
-    {
-        sb_append(c_type, mangle_name(type));
+        p: Primitive_Type => { sb_append(c_type, convert_primitive_type_name(p)); },
+        o: Object_Type => { sb_append(c_type, mangle_name(object_type_as_type(o))); }
     }
 
     // if type.type_parameters.count > 0 and include_type_parameters
@@ -218,29 +214,37 @@ public convert_type_name(type: Type, include_type_parameters: bool) -> mut syste
     return c_type;
 }
 
-public convert_type_name_parameters(builder: mut system.text.String_Builder, type: Type) -> void
-{
-    for var type_parameter: Type in type.generic_arguments
-    {
-        sb_append(builder, "__");
-        if type_parameter.is_primitive and unqualified_name(type_parameter.name) == "optional"
-            { type_parameter = type_parameter.generic_arguments[0]; }
+// public convert_type_name_parameters(builder: mut system.text.String_Builder, type: Type) -> void
+// {
+//     for var generic_argument: Type in type.generic_arguments
+//     {
+//         sb_append(builder, "__");
+//         match generic_argument
+//         {
+//             p: Primitive_Type =>
+//             {
+//                 if unqualified_name(p.name) == "optional"
+//                     { generic_argument = p.generic_arguments[0]; }
+//             },
+//             _: Object_Type => {}
+//         }
 
-        if type_parameter.is_primitive
-            { sb_append(builder, convert_primitive_type_name(type_parameter)); }
-        else
-            { sb_append(builder, "void_ptr"); }
-    }
-    // sb_append(builder, "<");
-    // var first: bool = true;
-    // for let type_parameter: Type in type.type_parameters
-    // {
-    //     if first { first = false; }
-    //     else { sb_append(builder, ", "); }
-    //     sb_append(builder, convert_type(true, type_parameter, false));
-    // }
-    // sb_append(builder, ">");
-}
+//         match generic_argument
+//         {
+//             _: Primitive_Type => { sb_append(builder, convert_primitive_type_name(generic_argument)); },
+//             _: Object_Type => { sb_append(builder, "void_ptr"); }
+//         }
+//     }
+//     // sb_append(builder, "<");
+//     // var first: bool = true;
+//     // for let type_parameter: Type in type.type_parameters
+//     // {
+//     //     if first { first = false; }
+//     //     else { sb_append(builder, ", "); }
+//     //     sb_append(builder, convert_type(true, type_parameter, false));
+//     // }
+//     // sb_append(builder, ">");
+// }
 
 public convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
 {
@@ -260,46 +264,67 @@ public convert_reference_type(mutable_binding: bool, var type: Type, nullable: b
     return sb_to_string(c_type);
 }
 
-// Converts a type to C
-public convert_type(mutable_binding: bool, var type: Type, optional: bool) -> string
+public is_optional_type(type: Type) -> bool
 {
-    assert(type =/= none);
-
-    if type.is_primitive and unqualified_name(type.name) == "optional"
+    match type
     {
-        let optional_type: Type = type.generic_arguments[0];
-        if optional_type.is_value_type
-        {
-            // optional<T> is a const struct
-            let c_type: mut system.text.String_Builder = new system.text.String_Builder("optional__");
-            if mutable_binding
-                { sb_append(c_type, "0var__"); }
-            if type.is_mutable
-                { sb_append(c_type, "0mut__"); }
-            sb_append(c_type, convert_type(true, optional_type, true));
-
-            return  sb_to_string(c_type);
-        }
+        p: Primitive_Type => { return unqualified_name(p.name) == "optional"; },
+        _: Object_Type => { return false; }
+    }
+}
+// Means type =/= optional, but could be in an optional context
+public convert_non_optional_type(mutable_binding: bool, type: Type, optional: bool) -> string
+{
+    if type.is_value_type
+    {
+        let c_type: mut system.text.String_Builder = convert_type_name(type);
+        if mutable_binding or type.is_mutable
+            { sb_append(c_type, " mut"); }
         else
-        {
-            return convert_type(mutable_binding, optional_type, true);
-        }
+            { sb_append(c_type, " const"); }
+        return sb_to_string(c_type);
     }
     else
     {
-        if type.is_value_type
+        return convert_reference_type(mutable_binding, type, optional);
+    }
+}
+
+// Converts a type to C
+public convert_type(mutable_binding: bool, type: Type, optional: bool) -> string
+{
+    assert(type =/= none);
+
+    match type
+    {
+        p: Primitive_Type =>
         {
-            let c_type: mut system.text.String_Builder = convert_type_name(type);
-            if mutable_binding or type.is_mutable
-                { sb_append(c_type, " mut"); }
+            if unqualified_name(p.name) == "optional"
+            {
+                let optional_type: Type = p.generic_arguments[0];
+                if optional_type.is_value_type
+                {
+                    // optional<T> is a const struct
+                    let c_type: mut system.text.String_Builder = new system.text.String_Builder("optional__");
+                    if mutable_binding
+                        { sb_append(c_type, "0var__"); }
+                    if p.is_mutable
+                        { sb_append(c_type, "0mut__"); }
+                    sb_append(c_type, convert_type(true, optional_type, true));
+
+                    return  sb_to_string(c_type);
+                }
+                else
+                {
+                    return convert_type(mutable_binding, optional_type, true);
+                }
+            }
             else
-                { sb_append(c_type, " const"); }
-            return sb_to_string(c_type);
-        }
-        else
-        {
-            return convert_reference_type(mutable_binding, type, optional);
-        }
+            {
+                return convert_non_optional_type(mutable_binding, type, optional);
+            }
+        },
+        _: Object_Type => { return convert_non_optional_type(mutable_binding, type, optional); }
     }
 }
 
@@ -528,13 +553,14 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         if type == none { type = rhs_node.of_type; }
         if type =/= none
         {
-            if type.is_primitive and unqualified_name(type.name) == "optional"
+            if is_optional_type(type)
                 { type = type.generic_arguments[0]; }
 
-            if type.is_primitive
-                { write(builder, convert_primitive_type_name(type)); }
-            else
-                { write(builder, "void_ptr"); }
+            match type
+            {
+                p: Primitive_Type => { write(builder, convert_primitive_type_name(p)); },
+                _: Object_Type => { write(builder, "void_ptr"); }
+            }
             write(builder, "__0op__equal(");
         }
         else
@@ -555,13 +581,14 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         if type == none { type = rhs_node.of_type; }
         if type =/= none
         {
-            if type.is_primitive and unqualified_name(type.name) == "optional"
+            if is_optional_type(type)
                 { type = type.generic_arguments[0]; }
 
-            if type.is_primitive
-                { write(builder, convert_primitive_type_name(type)); }
-            else
-                { write(builder, "void_ptr"); }
+            match type
+            {
+                p: Primitive_Type => { write(builder, convert_primitive_type_name(p)); },
+                _: Object_Type => { write(builder, "void_ptr"); }
+            }
             write(builder, "__0op__not_equal(");
         }
         else
@@ -586,7 +613,12 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         let type: Type? = lhs_node.of_type;
         if type =/= none
         {
-            write(builder, convert_primitive_type_name(type));
+            match type
+            {
+                p: Primitive_Type => { write(builder, convert_primitive_type_name(p)); },
+                _: Object_Type => // TODO we just assume they are `int`s, that could be wrong
+                    { write(builder, "int32"); }
+            }
         }
         else
         {
@@ -628,7 +660,17 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         if type == none { type == rhs_node.of_type; }
         if type =/= none
         {
-            write(builder, convert_primitive_type_name(type));
+            match type
+            {
+                p: Primitive_Type => { write(builder, convert_primitive_type_name(p)); },
+                _: Object_Type =>
+                {
+                    // TODO we just assume they are `string`s, that could be wrong
+                    // Seems more likely that the result of two function calls would be string
+                    write(builder, "string");
+                }
+            }
+
         }
         else
         {
@@ -850,8 +892,7 @@ public convert_member_access(lhs: Semantic_Node, builder: mut Source_File_Builde
 {
     let type: Type? = lhs.of_type;
     if type =/= none and type.is_value_type // TODO eventually, we shouldn't need to check if the type is null
-        and not (type.is_primitive // optional reference types are still pointers
-                and unqualified_name(type.name) == "optional"
+        and not (is_optional_type(type) // optional reference types are still pointers
                 and not as_type(type.generic_arguments[0]).is_value_type) // as_type() needed for now because of void_ptr
         { write(builder, "."); }
     else
@@ -923,10 +964,11 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         let iterator_over_type: Type = variable_type_node.referenced_type;
         assert(iterator_over_type =/= none, get_semantic_node_text(variable_type_node));
         var iterator_type: string;
-        if iterator_over_type.is_primitive
-            { iterator_type = convert_primitive_type_name(iterator_over_type); }
-        else
-            { iterator_type = "void_ptr"; }
+        match iterator_over_type
+        {
+            p: Primitive_Type => { iterator_type = convert_primitive_type_name(p); },
+            _: Object_Type => { iterator_type = "void_ptr"; }
+        }
         let collection_type: Type? = iterator_expression.of_type;
         var iteratable_type: string;
         if collection_type =/= none

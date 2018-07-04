@@ -6,7 +6,6 @@ public class Primitive_Type // : Type
     public let generic_parameters: system.collections.List<Generic_Parameter>;
     // TODO type arguments can be values, not just types
     public let generic_arguments: system.collections.List<Type?>;
-    public let is_primitive: bool; // TODO remove
     public let is_value_type: bool;
     public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
     public let is_mutable: bool;
@@ -16,7 +15,6 @@ public class Primitive_Type // : Type
         self.name = name;
         self.generic_parameters = new system.collections.List<Generic_Parameter>();
         self.generic_arguments = new system.collections.List<Type>();
-        self.is_primitive = true;
         self.is_value_type = true;
         self.is_potentially_mutable = false;
         self.is_mutable = false;
@@ -33,7 +31,6 @@ public class Primitive_Type // : Type
             add_item(arguments, none);
         }
         self.generic_arguments = arguments;
-        self.is_primitive = true;
         self.is_value_type = true;
         self.is_potentially_mutable = false;
         self.is_mutable = false;
@@ -49,7 +46,6 @@ public class Primitive_Type // : Type
         self.name = name;
         self.generic_parameters = generic_parameters;
         self.generic_arguments = generic_arguments;
-        self.is_primitive = true;
         self.is_value_type = true;
         self.is_potentially_mutable = is_potentially_mutable;
         self.is_mutable = is_mutable;
