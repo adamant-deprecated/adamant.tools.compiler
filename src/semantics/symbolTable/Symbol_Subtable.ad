@@ -55,6 +55,7 @@ public add_subtable(scope: mut Name_Subtable, name: Name, type: Type?) -> void
                 // TODO should be able to combine these match arms
                 _: Function_Type => {},
                 _: Object_Type => {},
+                _: Primitive_Type => {},
                 _: Type => {} // TODO remove case when abstract
             }
         }

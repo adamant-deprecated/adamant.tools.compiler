@@ -1,0 +1,46 @@
+// Like an object type, but primitive
+public class Primitive_Type // : Type
+{
+    // TODO have string name instead?
+    public let name: Name; // Must be first to match `Type`
+    public let generic_parameters: system.collections.List<Generic_Parameter>;
+    // TODO type arguments can be values, not just types
+    public let generic_arguments: system.collections.List<Type?>;
+    public let is_primitive: bool; // TODO remove
+    public let is_value_type: bool;
+    public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
+    public let is_mutable: bool;
+
+    public new(name: Name)
+    {
+        self.name = name;
+        self.generic_parameters = new system.collections.List<Generic_Parameter>();
+        self.generic_arguments = new system.collections.List<Type>();
+        self.is_primitive = true;
+        self.is_value_type = true;
+        self.is_potentially_mutable = false;
+        self.is_mutable = false;
+    }
+
+    public new(name: Name, generic_parameters: system.collections.List<Generic_Parameter>)
+    {
+        self.name = name;
+        self.generic_parameters = generic_parameters;
+        let arguments: mut system.collections.List<Type?> = new system.collections.List<Type?>();
+        // TODO should be a short way to do this
+        for let _: Generic_Parameter in generic_parameters
+        {
+            add_item(arguments, none);
+        }
+        self.generic_arguments = arguments;
+        self.is_primitive = true;
+        self.is_value_type = true;
+        self.is_potentially_mutable = false;
+        self.is_mutable = false;
+    }
+}
+
+public primitive_type_as_type(type: Primitive_Type) -> Type
+{
+    return as_any(type);
+}

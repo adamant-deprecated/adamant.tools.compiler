@@ -10,4 +10,8 @@ public class Object_Type // : Type
     public let generic_parameters: system.collections.List<Generic_Parameter>;
     // TODO type arguments can be values, not just types
     public let generic_arguments: system.collections.List<Type?>;
+    public let is_primitive: bool;
+    public let is_value_type: bool;
+    public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
+    public let is_mutable: bool;
 }

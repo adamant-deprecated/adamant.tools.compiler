@@ -9,4 +9,10 @@ public class Generic_Parameter
 {
     public let name: Name;
     public let type: Type;
+
+    public new(name: Name, type: Type)
+    {
+        self.name = name;
+        self.type = type;
+    }
 }
