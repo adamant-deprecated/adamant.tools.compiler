@@ -947,13 +947,16 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         // loop block
         begin_block(emitter.definitions);
         // loop variable
-        begin_line(emitter.definitions, "");
-        write(emitter.definitions, convert_type(mutable_binding, variable_type_node));
-        write(emitter.definitions, " ");
-        write(emitter.definitions, mangle_field_name(variable_name));
-        write(emitter.definitions, " = ");
-        write(emitter.definitions, iterator_type);
-        end_line(emitter.definitions, "__0current(&iter);");
+        if variable_name[0] =/= '_' // skip emitting unused varaible to avoid warning about unused variables
+        {
+            begin_line(emitter.definitions, "");
+            write(emitter.definitions, convert_type(mutable_binding, variable_type_node));
+            write(emitter.definitions, " ");
+            write(emitter.definitions, mangle_field_name(variable_name));
+            write(emitter.definitions, " = ");
+            write(emitter.definitions, iterator_type);
+            end_line(emitter.definitions, "__0current(&iter);");
+        }
         // loop body
         let for_loop_body: Semantic_Node = statement.children[4];
         for let block_statement: Semantic_Node in node_statements(for_loop_body)
