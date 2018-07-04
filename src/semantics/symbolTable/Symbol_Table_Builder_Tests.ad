@@ -1,15 +1,16 @@
 public unit_test_Symbol_Table_Builder() -> void
 {
-    table_contains_referenced_child_names();
-    can_get_root_namespace_from_name();
-    can_get_Console_class_from_name_without_package();
-    can_get_Optional_class_from_name_with_package();
+    let primitives_package: Package = build_primitives_package();
+    table_contains_referenced_child_names(primitives_package);
+    can_get_root_namespace_from_name(primitives_package);
+    can_get_Console_class_from_name_without_package(primitives_package);
+    can_get_Optional_class_from_name_with_package(primitives_package);
 }
 
-public table_contains_referenced_child_names() -> void
+public table_contains_referenced_child_names(primitives_package: Package) -> void
 {
     let name: Package_Name = new Package_Name("default");
-    let runtime_package: Package = build_runtime_library_package();
+    let runtime_package: Package = build_runtime_library_package(primitives_package);
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     add_item(references, new Package_Reference(runtime_package));
     let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
@@ -28,10 +29,10 @@ public table_contains_referenced_child_names() -> void
     assert(get_name(symbol_table, console_class_name) =/= none);
 }
 
-public can_get_root_namespace_from_name() -> void
+public can_get_root_namespace_from_name(primitives_package: Package) -> void
 {
     let name: Package_Name = new Package_Name("default");
-    let runtime_package: Package = build_runtime_library_package();
+    let runtime_package: Package = build_runtime_library_package(primitives_package);
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     add_item(references, new Package_Reference(runtime_package));
     let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
@@ -43,10 +44,10 @@ public can_get_root_namespace_from_name() -> void
     assert(get_name(symbol_table, namespace_name) =/= none);
 }
 
-public can_get_Console_class_from_name_without_package() -> void
+public can_get_Console_class_from_name_without_package(primitives_package: Package) -> void
 {
     let name: Package_Name = new Package_Name("default");
-    let runtime_package: Package = build_runtime_library_package();
+    let runtime_package: Package = build_runtime_library_package(primitives_package);
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     add_item(references, new Package_Reference(runtime_package));
     let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");
@@ -61,10 +62,9 @@ public can_get_Console_class_from_name_without_package() -> void
     assert(get_name(symbol_table, console_class_name) =/= none);
 }
 
-public can_get_Optional_class_from_name_with_package() -> void
+public can_get_Optional_class_from_name_with_package(primitives_package: Package) -> void
 {
     let name: Package_Name = new Package_Name("default");
-    let primitives_package: Package = build_primitives_package();
     let references: mut system.collections.List<Package_Reference> = new system.collections.List<Package_Reference>();
     add_item(references, new Package_Reference(primitives_package));
     let source: Source_Text = new Source_Text(name.unqualified, "//test.ad", "// test source text");

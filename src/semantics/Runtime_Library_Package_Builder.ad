@@ -1,4 +1,4 @@
-public build_runtime_library_package() -> Package
+public build_runtime_library_package(primitives_package: Package) -> Package
 {
     // The runtime library package has the special name `$runtime` to distinguish
     // it from all normal packages since dollar is invalid in a package name.
@@ -10,7 +10,7 @@ public build_runtime_library_package() -> Package
     // The runtime package has no compilation units because it has no source
     let compilation_units: system.collections.List<Compilation_Unit> = new system.collections.List<Compilation_Unit>();
 
-    let symbols: system.collections.List<Symbol> = build_runtime_library_symbols(name);
+    let symbols: system.collections.List<Symbol> = build_runtime_library_symbols(name, primitives_package);
     assert(symbols.count == 42, "symbols.count=" + int_to_string(symbols.count));
 
     let package_symbol: Symbol = new Symbol.package(name.unqualified, symbols);
@@ -19,7 +19,7 @@ public build_runtime_library_package() -> Package
     return new Package(name, references, compilation_units, package_symbol);
 }
 
-public build_runtime_library_symbols(package_name: Package_Name) -> mut system.collections.List<Symbol>
+public build_runtime_library_symbols(package_name: Package_Name, primitives_package: Package) -> mut system.collections.List<Symbol>
 {
     let global_namespace: Name = new Name.global_namespace(package_name);
     let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
@@ -74,9 +74,11 @@ public build_runtime_library_symbols(package_name: Package_Name) -> mut system.c
     // system.collections
     let collections_namespace: Name = new Name(system_namespace, NamespaceName, "collections");
     let collections_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    let list_generic_arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
-    add_item(list_generic_arguments, new Type.parameter("T"));
-    add_item(collections_symbols, build_generic_class_symbol(collections_namespace, "List", list_generic_arguments));
+    let list_generic_parameters: mut system.collections.List<Generic_Parameter> = new system.collections.List<Generic_Parameter>();
+    let type_symbol: Symbol? = get_child_symbol(primitives_package.symbol, "type", IdentifierSymbol);
+    assert(type_symbol =/= none);
+    add_item(list_generic_parameters, new Generic_Parameter(new Name(collections_namespace, TypeParameterName, "T"), type_symbol.declares_type));
+    add_item(collections_symbols, build_generic_class_symbol(collections_namespace, "List", list_generic_parameters));
     add_item(system_symbols, build_namespace_symbol(collections_namespace, collections_symbols));
 
     // system.console
@@ -136,9 +138,9 @@ public build_class_symbol(namespace: Name, class_name: string, children: system.
     return new Symbol.declaring(type, declarations, children);
 }
 
-public build_generic_class_symbol(namespace: Name, class_name: string, generic_arguments: system.collections.List<Type>) -> Symbol
+public build_generic_class_symbol(namespace: Name, class_name: string, generic_parameters: system.collections.List<Generic_Parameter>) -> Symbol
 {
-    let type: Type = new Type(ReferenceType, new Name(namespace, TypeName, class_name), generic_arguments, true);
+    let type: Type = object_type_as_type(new Object_Type(false, new Name(namespace, TypeName, class_name), generic_parameters, true));
     let declarations: system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     let children: system.collections.List<Symbol> = new system.collections.List<Symbol>();
     return new Symbol.declaring(type, declarations, children);

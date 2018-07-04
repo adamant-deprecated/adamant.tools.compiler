@@ -27,7 +27,9 @@ public build_primitive_symbols(package_name: Package_Name) -> mut system.collect
     let global_namespace: Name = new Name.global_namespace(package_name);
     let symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
 
-    add_item(symbols, build_adamant_language_namespace_symbol(global_namespace));
+    let type_symbol: Symbol = build_primitive_symbol("type", global_namespace);
+    add_item(symbols, type_symbol);
+
     add_item(symbols, build_primitive_symbol("void", global_namespace));
     add_item(symbols, build_primitive_symbol("never", global_namespace));
 
@@ -63,26 +65,24 @@ public build_primitive_symbols(package_name: Package_Name) -> mut system.collect
     add_item(symbols, build_primitive_symbol("size", global_namespace));
     add_item(symbols, build_primitive_symbol("offset", global_namespace));
 
+    let adamant_namespace: Name = new Name(global_namespace, NamespaceName, "adamant");
+    let adamant_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+
+    let language_namespace: Name = new Name(adamant_namespace, NamespaceName, "language");
+    let language_symbols: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
+    add_item(language_symbols, build_optional_type_symbol(language_namespace, type_symbol));
+
+    add_item(adamant_symbols, new Symbol.identifier(unqualified_name(language_namespace), language_symbols));
+    add_item(symbols, new Symbol.identifier(unqualified_name(adamant_namespace), adamant_symbols));
+
     return symbols;
 }
 
-public build_adamant_language_namespace_symbol(global_namespace: Name) -> Symbol
+public build_optional_type_symbol(language_namespace: Name, type_symbol: Symbol) -> Symbol
 {
-    let adamant_namespace: Name = new Name(global_namespace, NamespaceName, "adamant");
-    let language_namespace: Name = new Name(adamant_namespace, NamespaceName, "language");
-    let language_children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    add_item(language_children, build_optional_type_symbol(language_namespace));
-    let adamant_children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();
-    add_item(adamant_children, new Symbol.identifier(unqualified_name(language_namespace), language_children));
-    return new Symbol.identifier(unqualified_name(adamant_namespace), adamant_children);
-}
-
-public build_optional_type_symbol(language_namespace: Name) -> Symbol
-{
-    let type_type: Type = primitive_type_as_type(new Primitive_Type(new Name(language_namespace, TypeName, "type")));
     let optional_name: Name = new Name(language_namespace, TypeName, "optional");
     let generic_parameters: mut system.collections.List<Generic_Parameter> = new system.collections.List<Generic_Parameter>();
-    add_item(generic_parameters, new Generic_Parameter(new Name(optional_name, TypeParameterName, "T"), type_type));
+    add_item(generic_parameters, new Generic_Parameter(new Name(optional_name, TypeParameterName, "T"), type_symbol.declares_type));
     let type: Type = primitive_type_as_type(new Primitive_Type(optional_name, generic_parameters));
     let declarations: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     let children: mut system.collections.List<Symbol> = new system.collections.List<Symbol>();

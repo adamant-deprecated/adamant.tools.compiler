@@ -24,26 +24,6 @@ public /* abstract */ class Type
         self.is_mutable = is_mutable;
     }
 
-    public new parameter(name: string)
-    {
-        self.name = new Name(new Name.global_namespace(), TypeParameterName, name);
-        self.generic_arguments = new system.collections.List<Type>();
-        self.is_primitive = false;
-        self.is_value_type = false;
-        self.is_potentially_mutable = true;
-        self.is_mutable = false;
-    }
-
-    public new(kind: int, name: Name, generic_arguments: system.collections.List<Type>, is_mutable: bool)
-    {
-        self.name = name;
-        self.generic_arguments = generic_arguments;
-        self.is_primitive = false;
-        self.is_value_type = kind == ValueType;
-        self.is_potentially_mutable = is_mutable;
-        self.is_mutable = is_mutable;
-    }
-
 
     public new generic(definition: Type, generic_arguments: system.collections.List<Type>)
     {
