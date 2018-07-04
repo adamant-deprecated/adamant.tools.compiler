@@ -41,14 +41,18 @@ public bind_declared_symbols(
             }
             else if syntax_node.kind == FunctionDeclaration
             {
-                let _parameter_symbols: system.collections.List<Syntax_Symbol> = bind_prameter_symbols(syntax_node, scope, annotations);
+                let _parameter_symbols: system.collections.List<Syntax_Symbol> = bind_parameter_symbols(syntax_node, scope, annotations);
                 let return_type_syntax: Syntax_Node = syntax_node.children[4]; // TODO need more reliable way to pick this out
                 let _return_type: Type = bind_type_name(return_type_syntax, scope, annotations);
+                // let nested_scope: Name_Scope = new Name_Scope(scope, syntax_annotations.symbol, parameter_symbols);
+                // syntax_annotations.scope = nested_scope;
+                // let function_type: Type = new Function_Type()
+                // syntax_annotations.of_type = optional_type;
                 // NOT_IMPLEMENTED("syntax_node.kind=FunctionDeclaration");
             }
             else if syntax_node.kind == ConstructorDeclaration
             {
-                let _parameter_symbols: system.collections.List<Syntax_Symbol> = bind_prameter_symbols(syntax_node, scope, annotations);
+                let _parameter_symbols: system.collections.List<Syntax_Symbol> = bind_parameter_symbols(syntax_node, scope, annotations);
                 // NOT_IMPLEMENTED("syntax_node.kind=ConstructorDeclaration");
             }
             else if syntax_node.kind == ClassDeclaration
@@ -106,7 +110,7 @@ public bind_declared_symbols(
     }
 }
 
-public bind_prameter_symbols(
+public bind_parameter_symbols(
     function: Syntax_Node,
     scope: Name_Scope,
     annotations: mut Annotations_Dictionary)

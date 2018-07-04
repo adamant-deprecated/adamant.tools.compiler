@@ -246,7 +246,7 @@ public convert_type_name(type: Type, include_type_parameters: bool) -> mut syste
 //     // sb_append(builder, ">");
 // }
 
-public convert_reference_type(mutable_binding: bool, var type: Type, nullable: bool) -> string
+public convert_reference_type(mutable_binding: bool, type: Type, nullable: bool) -> string
 {
     let c_type: mut system.text.String_Builder = convert_type_name(type);
     if type.is_mutable
