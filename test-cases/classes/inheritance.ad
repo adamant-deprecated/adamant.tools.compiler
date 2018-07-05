@@ -1,0 +1,39 @@
+public class Base
+{
+    public let base_field: bool;
+
+    public new()
+    {
+        self.base_field = true;
+    }
+}
+
+public class Derived // : Base
+{
+    public let base_field: bool;
+    public let derived_field: bool;
+
+    public new()
+    {
+        self.base_field = true;
+        self.derived_field = true;
+    }
+}
+
+public main(console: mut system.console.Console) -> void
+{
+    let d: Derived = new Derived();
+    if d.derived_field
+    {
+        console_write_line(console, "Has `derived_field`");
+    }
+    if d.base_field
+    {
+        console_write_line(console, "Inherited `base_field`");
+    }
+    let b: Base = d;
+    if b.base_field
+    {
+        console_write_line(console, "Assigned and used as `Base`");
+    }
+}

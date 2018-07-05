@@ -541,7 +541,7 @@ ConsoleCommand CompileC(string[] sourceGlobs, FilePath output, FilePath includeD
     // -std=c11 use the C 2011 standard (newest fully finalized)
     // -fsanitize=undefined -fsanitize=integer -fsanitize=nullability perform runtime checks for undefined and bad behavior
     // -Wall all warnings
-    var options = " -std=c11 -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -Wall";
+    var options = " -std=c11 -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -Wall -Wno-incompatible-pointer-types";
 
     // Additional options that can be useful:
     // -Werror treat warnings as errors

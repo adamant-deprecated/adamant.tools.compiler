@@ -66,7 +66,7 @@ public /* abstract */ class Symbol // = Type_Symbol | Variable_Symbol
     }
 
     public new declaring(
-        declares_type: Type,
+        declares_type: Object_Type,
         declarations: system.collections.List<Program_Fragment>,
         children: system.collections.List<Symbol>)
     {
