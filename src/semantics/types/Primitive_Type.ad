@@ -1,4 +1,6 @@
 // Like an object type, but primitive
+
+// TODO maybe Primitive Types should just be object types with special names that are primitive names
 public class Primitive_Type // : Object_Type // primitive types should be like special object types so one can deal with them the same
 {
     // TODO have string name instead?

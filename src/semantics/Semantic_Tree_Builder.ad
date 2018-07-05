@@ -737,7 +737,7 @@ public build_constructor_name_semantic_node(
         let constructor_name: string = "new_" + get_token_text(name);
         let referenced_type: Type = type_node.referenced_type;
         assert(referenced_type =/= none, "no referenced type for `"+get_semantic_node_text(type_node)+"`");
-        let constructor_scope: Name_Subtable? = lookup_special(get_name(name_table, referenced_type.name), constructor_name);
+        let constructor_scope: Name_Subtable? = lookup_special(get_type_name_subtable(name_table, referenced_type), constructor_name);
         if constructor_scope =/= none
         {
             add_item(children, new Semantic_Node.token(name));

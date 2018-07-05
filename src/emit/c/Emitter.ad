@@ -77,7 +77,7 @@ public mangle_name(type: Type) -> string
     let builder: mut system.text.String_Builder = new system.text.String_Builder();
 
     var first_segment: bool = true;
-    for let segment: string in type.name.segments
+    for let segment: string in get_type_name(type).segments
     {
         if first_segment
             { first_segment = false; }
@@ -91,9 +91,33 @@ public mangle_name(type: Type) -> string
     }
 
     sb_append(builder, "__");
-    sb_append(builder, int_to_string(type.generic_arguments.count));
+    sb_append(builder, int_to_string(get_generic_arguments(type).count));
 
     return sb_to_string(builder);
+}
+
+public get_type_name(type: Type) -> Name
+{
+    match type
+    {
+        object_type: Object_Type => { return object_type.name; },
+        primitive_type: Primitive_Type => { return primitive_type.name; },
+        _: Function_Type => { NOT_IMPLEMENTED("Function_Type"); },
+        namespace_type: Namespace_Type => { return namespace_type.name; },
+        _ => { NOT_IMPLEMENTED(); }
+    }
+}
+
+public get_generic_arguments(type: Type) -> system.collections.List<Type>
+{
+    match type
+    {
+        object_type: Object_Type => { return object_type.generic_arguments; },
+        primitive_type: Primitive_Type => { return primitive_type.generic_arguments; },
+        _: Function_Type => { NOT_IMPLEMENTED("Function_Type"); },
+        _: Namespace_Type => { NOT_IMPLEMENTED("Namespace_Type"); },
+        _ => { NOT_IMPLEMENTED(); }
+    }
 }
 
 public mangle_function_name(name: string, parameter_count: int) -> string
@@ -246,9 +270,9 @@ public convert_type_name(type: Type, include_type_parameters: bool) -> mut syste
 //     // sb_append(builder, ">");
 // }
 
-public convert_reference_type(mutable_binding: bool, type: Type, nullable: bool) -> string
+public convert_reference_type(mutable_binding: bool, type: Object_Type, nullable: bool) -> string
 {
-    let c_type: mut system.text.String_Builder = convert_type_name(type);
+    let c_type: mut system.text.String_Builder = convert_type_name(object_type_as_type(type));
     if type.is_mutable
         { sb_append(c_type, " mut"); }
     else
@@ -275,18 +299,32 @@ public is_optional_type(type: Type) -> bool
 // Means type =/= optional, but could be in an optional context
 public convert_non_optional_type(mutable_binding: bool, type: Type, optional: bool) -> string
 {
-    if type.is_value_type
+    match type
     {
-        let c_type: mut system.text.String_Builder = convert_type_name(type);
-        if mutable_binding or type.is_mutable
-            { sb_append(c_type, " mut"); }
-        else
-            { sb_append(c_type, " const"); }
-        return sb_to_string(c_type);
-    }
-    else
-    {
-        return convert_reference_type(mutable_binding, type, optional);
+        object_type: Object_Type =>
+        {
+            if not object_type.is_value_type
+                { return convert_reference_type(mutable_binding, object_type, optional); }
+            else
+            {
+                let c_type: mut system.text.String_Builder = convert_type_name(type);
+                if mutable_binding or object_type.is_mutable
+                    { sb_append(c_type, " mut"); }
+                else
+                    { sb_append(c_type, " const"); }
+                return sb_to_string(c_type);
+            }
+        },
+        primitive_type: Primitive_Type =>
+        {
+            // TODO duplicates the else case above
+            let c_type: mut system.text.String_Builder = convert_type_name(type);
+            if mutable_binding or primitive_type.is_mutable
+                { sb_append(c_type, " mut"); }
+            else
+                { sb_append(c_type, " const"); }
+            return sb_to_string(c_type);
+        }
     }
 }
 
@@ -306,8 +344,8 @@ public convert_type(mutable_binding: bool, type: Type, optional: bool) -> string
                 {
                     // optional<T> is a const struct
                     let c_type: mut system.text.String_Builder = new system.text.String_Builder("optional__");
-                    if mutable_binding
-                        { sb_append(c_type, "0var__"); }
+                    // if mutable_binding
+                    //     { sb_append(c_type, "0var__"); }
                     if p.is_mutable
                         { sb_append(c_type, "0mut__"); }
                     sb_append(c_type, convert_type(true, optional_type, true));
