@@ -1,0 +1,8 @@
+public main() -> int
+{
+    let x: never? = none;
+    if x == none
+        { return 0; }
+    else
+        { return 1; }
+}
