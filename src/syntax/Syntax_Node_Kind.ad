@@ -63,3 +63,4 @@ public let NamespaceDeclaration: int = 129;
 public let MatchStatement: int = 131;
 public let MatchArm: int = 134;
 public let MatchPattern: int = 135;
+public let NeverType: int = 140; // `never`

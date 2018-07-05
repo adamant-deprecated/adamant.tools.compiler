@@ -1416,10 +1416,15 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let return_type_node: Semantic_Node = declaration.children[3];
         // TODO const/mut doesn't really apply to the outer level of return types. This matches C.
         let c_type: string = convert_type(true, return_type_node);
+        var modifiers: string = "";
+        if c_type == "never mut" or c_type == "optional__never mut"
+        {
+            modifiers = "noreturn ";
+        }
         // Write out the function declaration for C so we can call functions defined after others
-        write_line(emitter.function_declarations, c_type + " " + name + parameters + ";");
+        write_line(emitter.function_declarations, modifiers + c_type + " " + name + parameters + ";");
         element_separator_line(emitter.definitions);
-        write_line(emitter.definitions, c_type + " " + name + parameters);
+        write_line(emitter.definitions, modifiers + c_type + " " + name + parameters);
         if is_main
         {
             if emitter.main_function_return_type =/= ""

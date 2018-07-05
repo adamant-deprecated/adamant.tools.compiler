@@ -63,6 +63,7 @@ public parse_type_name(parser: mut Compilation_Unit_Parser) -> Syntax
         or parser.token.kind == Bool
         or parser.token.kind == Void
         or parser.token.kind == UnsignedInt
+        or parser.token.kind == Never
     {
         return syntax_node_as_syntax(new Syntax_Node(PredefinedType, token_as_syntax(accept_token(parser))));
     }

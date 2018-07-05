@@ -1,0 +1,10 @@
+public test() -> never
+{
+    assert(false, "prevent function from returning");
+    UNREACHABLE();
+}
+
+public main() -> int
+{
+    test();
+}

@@ -1,0 +1,3 @@
+70
+1
+Assertion failed: FALSE, prevent function from returning, file test-cases/never/returnNever.c, line 24

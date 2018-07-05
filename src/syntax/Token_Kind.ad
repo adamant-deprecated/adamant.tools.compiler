@@ -71,3 +71,4 @@ public let MatchKeyword: int = 130; // `match`
 public let AbstractKeyword: int = 136; // `abstract`
 public let Caret: int = 137; // `^`
 public let CaretDot: int = 138; // `^.`
+public let Never: int = 139; // `never`
