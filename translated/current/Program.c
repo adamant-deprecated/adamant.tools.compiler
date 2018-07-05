@@ -44,6 +44,7 @@ enum Type_ID
 	Object_Type__0__0Type_ID,
 	Primitive_Type__0__0Type_ID,
 	Type__0__0Type_ID,
+	Unknown_Type__0__0Type_ID,
 };
 typedef enum Type_ID Type_ID;
 
@@ -88,6 +89,7 @@ typedef struct Namespace_Type__0 Namespace_Type__0;
 typedef struct Object_Type__0 Object_Type__0;
 typedef struct Primitive_Type__0 Primitive_Type__0;
 typedef struct Type__0 Type__0;
+typedef struct Unknown_Type__0 Unknown_Type__0;
 
 // Function Declarations
 Package__0 const ref mut compile__1(system__collections__List__1 const ref const sources__);
@@ -190,6 +192,7 @@ Compilation_Unit__0 const ref mut build_compilation_unit_semantic_node__3(Semant
 Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__);
 Semantic_Node__0 mut ref mut build_parameters_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const parameters_syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__);
 Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__);
+Name_Subtable__0 const ref mut get_type_name_subtable__2(Name_Table__0 const ref const name_table__, Type__0 const ref const type__);
 Type__0 const ref mut build_optional_type__3(Semantic_Tree_Builder__0 const ref const builder__, Name_Table__0 const ref const name_table__, Type__0 const ref const base_type__);
 system__collections__List__1 const ref mut build_type_arguments_semantic_node__5(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__, system__collections__List__1 mut ref const children__);
 Semantic_Node__0 const ref mut build_constructor_name_semantic_node__4(Semantic_Tree_Builder__0 const ref const builder__, Syntax_Node__0 const ref const syntax__, Name_Table__0 const ref const name_table__, Name_Subtable__0 const ref const scope__);
@@ -260,6 +263,8 @@ Diagnostic__0 mut ref mut Diagnostic__0__0new__5(Diagnostic__0 mut ref const sel
 Emitter__0 mut ref mut Emitter__0__0new__2(Emitter__0 mut ref const self, Package__0 const ref const package__, system__collections__List__1 const ref const resources__);
 string mut emit__1(Emitter__0 mut ref const emitter__);
 string mut mangle_name__1(Type__0 const ref const type__);
+Name__0 const ref mut get_type_name__1(Type__0 const ref const type__);
+system__collections__List__1 const ref mut get_generic_arguments__1(Type__0 const ref const type__);
 string mut mangle_function_name__2(string const name__, int32 const parameter_count__);
 string mut mangle_field_name__1(string const name__);
 BOOL mut contains_multi_underscore_runs__1(string const value__);
@@ -267,7 +272,7 @@ void mut append_fixing_underscores__2(system__text__String_Builder__0 mut ref co
 string mut convert_primitive_type_name__1(Primitive_Type__0 const ref const type__);
 system__text__String_Builder__0 mut ref mut convert_type_name__1(Type__0 const ref const type__);
 system__text__String_Builder__0 mut ref mut convert_type_name__2(Type__0 const ref const type__, BOOL const include_type_parameters__);
-string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const nullable__);
+string mut convert_reference_type__3(BOOL const mutable_binding__, Object_Type__0 const ref const type__, BOOL const nullable__);
 BOOL mut is_optional_type__1(Type__0 const ref const type__);
 string mut convert_non_optional_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const optional__);
 string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const optional__);
@@ -409,6 +414,7 @@ Type__0 const ref mut make_mutable_type__1(Type__0 const ref const type__);
 Type__0 const ref mut make_immutable_type__1(Type__0 const ref const type__);
 Type__0 const ref mut apply_generic_arguments__2(Type__0 const ref const type__, system__collections__List__1 const ref const generic_arguments__);
 system__collections__List__1 const ref mut apply_generic_arguments__3(system__collections__List__1 const ref const generic_parameters__, system__collections__List__1 const ref const existing_generic_arguments__, system__collections__List__1 const ref const generic_arguments__);
+Unknown_Type__0 mut ref mut Unknown_Type__0__0new__0(Unknown_Type__0 mut ref const self);
 
 // Class Declarations
 
@@ -816,6 +822,11 @@ struct Type__0
 	BOOL mut is_value_type__;
 	BOOL mut is_potentially_mutable__;
 	BOOL mut is_mutable__;
+};
+
+struct Unknown_Type__0
+{
+	Type_ID type_id;
 };
 
 // Global Definitions
@@ -2465,7 +2476,28 @@ Semantic_Node__0 const ref mut build_semantic_node__4(Semantic_Tree_Builder__0 c
 		}
 		else
 		{
-			Name_Subtable__0 const ref const access_scope__ = get_name__2(name_table__, lhs__->of_type__->name__);
+			Name_Subtable__0 const ref mut access_scope__;
+			/* match */ { void const ref const match_value = lhs__->of_type__;
+			   switch(*(Type_ID const ref)match_value)
+			{
+				case Object_Type__0__0Type_ID:
+				{
+					Object_Type__0 const ref const object_type__ = match_value;
+					access_scope__ = get_name__2(name_table__, object_type__->name__);
+				}
+				break;
+				case Primitive_Type__0__0Type_ID:
+				{
+					Primitive_Type__0 const ref const primitive_type__ = match_value;
+					access_scope__ = get_name__2(name_table__, primitive_type__->name__);
+				}
+				break;
+				default:
+				{
+					NOT_IMPLEMENTED__0();
+				}
+				break;
+			}}
 			Name_Subtable__0 const opt_ref const member_scope__ = find__2(access_scope__, get_syntax_node_text__1(member_name__));
 			if (cond(void_ptr__0op__equal(member_scope__, none)))
 			{
@@ -2797,8 +2829,8 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 			else
 			{
 				Type__0 const ref const containing_type__ = qualifier__->referenced_type__;
-				Name_Subtable__0 const ref const containing_scope__ = get_name__2(name_table__, containing_type__->name__);
-				assert__2(void_ptr__0op__not_equal(containing_scope__, none), full_name__1(containing_type__->name__));
+				Name_Subtable__0 const ref const containing_scope__ = get_type_name_subtable__2(name_table__, containing_type__);
+				assert__1(void_ptr__0op__not_equal(containing_scope__, none));
 				Name_Subtable__0 const ref const referenced_scope__ = find__2(containing_scope__, get_syntax_node_text__1(name_syntax__));
 				if (cond(void_ptr__0op__equal(referenced_scope__, none)))
 				{
@@ -2829,8 +2861,8 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 			else
 			{
 				Type__0 const ref const containing_type__ = qualifier__->referenced_type__;
-				Name_Subtable__0 const ref const containing_scope__ = get_name__2(name_table__, containing_type__->name__);
-				assert__2(void_ptr__0op__not_equal(containing_scope__, none), full_name__1(containing_type__->name__));
+				Name_Subtable__0 const ref const containing_scope__ = get_type_name_subtable__2(name_table__, containing_type__);
+				assert__1(void_ptr__0op__not_equal(containing_scope__, none));
 				Name_Subtable__0 const ref const referenced_scope__ = find__2(containing_scope__, get_syntax_node_text__1(name_syntax__));
 				if (cond(void_ptr__0op__equal(referenced_scope__, none)))
 				{
@@ -2902,6 +2934,45 @@ Semantic_Node__0 mut ref mut build_type_name_semantic_node__4(Semantic_Tree_Buil
 	}
 }
 
+Name_Subtable__0 const ref mut get_type_name_subtable__2(Name_Table__0 const ref const name_table__, Type__0 const ref const type__)
+{
+	Name_Subtable__0 const ref mut containing_scope__;
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Object_Type__0__0Type_ID:
+		{
+			Object_Type__0 const ref const object_type__ = match_value;
+			containing_scope__ = get_name__2(name_table__, object_type__->name__);
+		}
+		break;
+		case Primitive_Type__0__0Type_ID:
+		{
+			Primitive_Type__0 const ref const primitive_type__ = match_value;
+			containing_scope__ = get_name__2(name_table__, primitive_type__->name__);
+		}
+		break;
+		case Function_Type__0__0Type_ID:
+		{
+			NOT_IMPLEMENTED__1(((string){{13},(uint8_t*)u8"Function_Type"}));
+		}
+		break;
+		case Namespace_Type__0__0Type_ID:
+		{
+			Namespace_Type__0 const ref const namespace_type__ = match_value;
+			containing_scope__ = get_name__2(name_table__, namespace_type__->name__);
+		}
+		break;
+		default:
+		{
+			NOT_IMPLEMENTED__0();
+		}
+		break;
+	}}
+	assert__1(void_ptr__0op__not_equal(containing_scope__, none));
+	return containing_scope__;
+}
+
 Type__0 const ref mut build_optional_type__3(Semantic_Tree_Builder__0 const ref const builder__, Name_Table__0 const ref const name_table__, Type__0 const ref const base_type__)
 {
 	Name_Subtable__0 const opt_ref const optional_type_scope__ = get_name__2(name_table__, builder__->optional_type_name__);
@@ -2944,7 +3015,7 @@ Semantic_Node__0 const ref mut build_constructor_name_semantic_node__4(Semantic_
 		string const constructor_name__ = string__0op__add(((string){{4},(uint8_t*)u8"new_"}), get_token_text__1(name__));
 		Type__0 const ref const referenced_type__ = type_node__->referenced_type__;
 		assert__2(void_ptr__0op__not_equal(referenced_type__, none), string__0op__add(string__0op__add(((string){{24},(uint8_t*)u8"no referenced type for `"}), get_semantic_node_text__1(type_node__)), ((string){{1},(uint8_t*)u8"`"})));
-		Name_Subtable__0 const opt_ref const constructor_scope__ = lookup_special__2(get_name__2(name_table__, referenced_type__->name__), constructor_name__);
+		Name_Subtable__0 const opt_ref const constructor_scope__ = lookup_special__2(get_type_name_subtable__2(name_table__, referenced_type__), constructor_name__);
 		if (cond(void_ptr__0op__not_equal(constructor_scope__, none)))
 		{
 			add_item__2(children__, Semantic_Node__0__0new__token__1(allocate(sizeof(Semantic_Node__0)), name__));
@@ -4660,7 +4731,7 @@ string mut mangle_name__1(Type__0 const ref const type__)
 {
 	system__text__String_Builder__0 mut ref const builder__ = system__text__String_Builder__0__0new__0(allocate(sizeof(system__text__String_Builder__0)));
 	BOOL mut first_segment__ = TRUE;
-	for (string__0iter mut iter = string__0iterate(type__->name__->segments__); string__0next(&iter);)
+	for (string__0iter mut iter = string__0iterate(get_type_name__1(type__)->segments__); string__0next(&iter);)
 	{
 		string const segment__ = string__0current(&iter);
 		if (cond(first_segment__))
@@ -4683,8 +4754,79 @@ string mut mangle_name__1(Type__0 const ref const type__)
 	}
 
 	sb_append__2(builder__, ((string){{2},(uint8_t*)u8"__"}));
-	sb_append__2(builder__, int_to_string__1(type__->generic_arguments__->count__));
+	sb_append__2(builder__, int_to_string__1(get_generic_arguments__1(type__)->count__));
 	return sb_to_string__1(builder__);
+}
+
+Name__0 const ref mut get_type_name__1(Type__0 const ref const type__)
+{
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Object_Type__0__0Type_ID:
+		{
+			Object_Type__0 const ref const object_type__ = match_value;
+			return object_type__->name__;
+		}
+		break;
+		case Primitive_Type__0__0Type_ID:
+		{
+			Primitive_Type__0 const ref const primitive_type__ = match_value;
+			return primitive_type__->name__;
+		}
+		break;
+		case Function_Type__0__0Type_ID:
+		{
+			NOT_IMPLEMENTED__1(((string){{13},(uint8_t*)u8"Function_Type"}));
+		}
+		break;
+		case Namespace_Type__0__0Type_ID:
+		{
+			Namespace_Type__0 const ref const namespace_type__ = match_value;
+			return namespace_type__->name__;
+		}
+		break;
+		default:
+		{
+			NOT_IMPLEMENTED__0();
+		}
+		break;
+	}}
+}
+
+system__collections__List__1 const ref mut get_generic_arguments__1(Type__0 const ref const type__)
+{
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
+	{
+		case Object_Type__0__0Type_ID:
+		{
+			Object_Type__0 const ref const object_type__ = match_value;
+			return object_type__->generic_arguments__;
+		}
+		break;
+		case Primitive_Type__0__0Type_ID:
+		{
+			Primitive_Type__0 const ref const primitive_type__ = match_value;
+			return primitive_type__->generic_arguments__;
+		}
+		break;
+		case Function_Type__0__0Type_ID:
+		{
+			NOT_IMPLEMENTED__1(((string){{13},(uint8_t*)u8"Function_Type"}));
+		}
+		break;
+		case Namespace_Type__0__0Type_ID:
+		{
+			NOT_IMPLEMENTED__1(((string){{14},(uint8_t*)u8"Namespace_Type"}));
+		}
+		break;
+		default:
+		{
+			NOT_IMPLEMENTED__0();
+		}
+		break;
+	}}
 }
 
 string mut mangle_function_name__2(string const name__, int32 const parameter_count__)
@@ -4820,9 +4962,9 @@ system__text__String_Builder__0 mut ref mut convert_type_name__2(Type__0 const r
 	return c_type__;
 }
 
-string mut convert_reference_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const nullable__)
+string mut convert_reference_type__3(BOOL const mutable_binding__, Object_Type__0 const ref const type__, BOOL const nullable__)
 {
-	system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
+	system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(object_type_as_type__1(type__));
 	if (cond(type__->is_mutable__))
 	{
 		sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
@@ -4876,24 +5018,51 @@ BOOL mut is_optional_type__1(Type__0 const ref const type__)
 
 string mut convert_non_optional_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const optional__)
 {
-	if (cond(type__->is_value_type__))
+	/* match */ { void const ref const match_value = type__;
+	   switch(*(Type_ID const ref)match_value)
 	{
-		system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
-		if (cond(bool_op(bool_arg(mutable_binding__) || bool_arg(type__->is_mutable__))))
+		case Object_Type__0__0Type_ID:
 		{
-			sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
-		}
-		else
-		{
-			sb_append__2(c_type__, ((string){{6},(uint8_t*)u8" const"}));
-		}
+			Object_Type__0 const ref const object_type__ = match_value;
+			if (cond(BOOL__0op__not(object_type__->is_value_type__)))
+			{
+				return convert_reference_type__3(mutable_binding__, object_type__, optional__);
+			}
+			else
+			{
+				system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
+				if (cond(bool_op(bool_arg(mutable_binding__) || bool_arg(object_type__->is_mutable__))))
+				{
+					sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
+				}
+				else
+				{
+					sb_append__2(c_type__, ((string){{6},(uint8_t*)u8" const"}));
+				}
 
-		return sb_to_string__1(c_type__);
-	}
-	else
-	{
-		return convert_reference_type__3(mutable_binding__, type__, optional__);
-	}
+				return sb_to_string__1(c_type__);
+			}
+		}
+		break;
+		case Primitive_Type__0__0Type_ID:
+		{
+			Primitive_Type__0 const ref const primitive_type__ = match_value;
+			system__text__String_Builder__0 mut ref const c_type__ = convert_type_name__1(type__);
+			if (cond(bool_op(bool_arg(mutable_binding__) || bool_arg(primitive_type__->is_mutable__))))
+			{
+				sb_append__2(c_type__, ((string){{4},(uint8_t*)u8" mut"}));
+			}
+			else
+			{
+				sb_append__2(c_type__, ((string){{6},(uint8_t*)u8" const"}));
+			}
+
+			return sb_to_string__1(c_type__);
+		}
+		break;
+		default:
+		   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+	}}
 }
 
 string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref const type__, BOOL const optional__)
@@ -4911,11 +5080,6 @@ string mut convert_type__3(BOOL const mutable_binding__, Type__0 const ref const
 				if (cond(optional_type__->is_value_type__))
 				{
 					system__text__String_Builder__0 mut ref const c_type__ = system__text__String_Builder__0__0new__1(allocate(sizeof(system__text__String_Builder__0)), ((string){{10},(uint8_t*)u8"optional__"}));
-					if (cond(mutable_binding__))
-					{
-						sb_append__2(c_type__, ((string){{6},(uint8_t*)u8"0var__"}));
-					}
-
 					if (cond(p__->is_mutable__))
 					{
 						sb_append__2(c_type__, ((string){{6},(uint8_t*)u8"0mut__"}));
@@ -7207,24 +7371,10 @@ void mut add_subtable__3(Name_Subtable__0 mut ref const scope__, Name__0 const r
 					return;
 				}
 				break;
-				case Function_Type__0__0Type_ID:
-				{
-				}
-				break;
-				case Object_Type__0__0Type_ID:
-				{
-				}
-				break;
-				case Primitive_Type__0__0Type_ID:
-				{
-				}
-				break;
-				case Type__0__0Type_ID:
-				{
-				}
-				break;
 				default:
-				   NON_EXHAUSTIVE_MATCH(*(Type_ID const ref)match_value);
+				{
+				}
+				break;
 			}}
 		}
 
@@ -7950,6 +8100,8 @@ system__collections__List__1 const ref mut apply_generic_arguments__3(system__co
 	assert__1(int32__0op__equal(generic_parameters__->count__, generic_arguments__->count__));
 	return generic_arguments__;
 }
+
+Unknown_Type__0 mut ref mut Unknown_Type__0__0new__0(Unknown_Type__0 mut ref const self) { self->type_id = Unknown_Type__0__0Type_ID; return self; }
 
 // Entry Point Adapter
 int32_t main(int argc, char const ptr const ptr argv)
