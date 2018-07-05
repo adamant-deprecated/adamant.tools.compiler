@@ -898,6 +898,7 @@ int32 const NamespaceDeclaration__ = ((int32){129});
 int32 const MatchStatement__ = ((int32){131});
 int32 const MatchArm__ = ((int32){134});
 int32 const MatchPattern__ = ((int32){135});
+int32 const NeverType__ = ((int32){140});
 int32 const EndOfFile__ = ((int32){0});
 int32 const LeftBrace__ = ((int32){1});
 int32 const RightBrace__ = ((int32){2});
@@ -971,6 +972,7 @@ int32 const MatchKeyword__ = ((int32){130});
 int32 const AbstractKeyword__ = ((int32){136});
 int32 const Caret__ = ((int32){137});
 int32 const CaretDot__ = ((int32){138});
+int32 const Never__ = ((int32){139});
 int32 const Lexing__ = ((int32){1});
 int32 const Parsing__ = ((int32){2});
 int32 const Analysis__ = ((int32){3});
@@ -3106,7 +3108,7 @@ Token__0 const ref mut expect_token__2(Compilation_Unit_Parser__0 mut ref const 
 
 Syntax__0 const ref mut parse_type_name__1(Compilation_Unit_Parser__0 mut ref const parser__)
 {
-	if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, CodePoint__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, String__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Int__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Bool__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Void__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, UnsignedInt__)))))
+	if (cond(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(bool_op(bool_arg(int32__0op__equal(parser__->token__->kind__, CodePoint__)) || bool_arg(int32__0op__equal(parser__->token__->kind__, String__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Int__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Bool__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Void__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, UnsignedInt__)))) || bool_arg(int32__0op__equal(parser__->token__->kind__, Never__)))))
 	{
 		return syntax_node_as_syntax__1(Syntax_Node__0__0new__2(allocate(sizeof(Syntax_Node__0)), PredefinedType__, token_as_syntax__1(accept_token__1(parser__))));
 	}
@@ -4609,6 +4611,10 @@ Token__0 const ref mut new_identifier_or_keyword_token__2(Token_Stream__0 mut re
 	else if (cond(string__0op__equal(value__, ((string){{5},(uint8_t*)u8"match"}))))
 	{
 		kind__ = MatchKeyword__;
+	}
+	else if (cond(string__0op__equal(value__, ((string){{5},(uint8_t*)u8"never"}))))
+	{
+		kind__ = Never__;
 	}
 	else
 	{
@@ -6254,9 +6260,15 @@ void mut emit_declaration__2(Emitter__0 mut ref const emitter__, Semantic_Node__
 		string const parameters__ = convert_parameter_list__3(emitter__, parameters_node__, is_main__);
 		Semantic_Node__0 const ref const return_type_node__ = system__collections__List__1__0op__element(declaration__->children__, ((int32){3}));
 		string const c_type__ = convert_type__2(TRUE, return_type_node__);
-		write_line__2(emitter__->function_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){{1},(uint8_t*)u8" "})), name__), parameters__), ((string){{1},(uint8_t*)u8";"})));
+		string mut modifiers__ = ((string){{0},(uint8_t*)u8""});
+		if (cond(bool_op(bool_arg(string__0op__equal(c_type__, ((string){{9},(uint8_t*)u8"never mut"}))) || bool_arg(string__0op__equal(c_type__, ((string){{19},(uint8_t*)u8"optional__never mut"}))))))
+		{
+			modifiers__ = ((string){{9},(uint8_t*)u8"noreturn "});
+		}
+
+		write_line__2(emitter__->function_declarations__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(string__0op__add(modifiers__, c_type__), ((string){{1},(uint8_t*)u8" "})), name__), parameters__), ((string){{1},(uint8_t*)u8";"})));
 		element_separator_line__1(emitter__->definitions__);
-		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(c_type__, ((string){{1},(uint8_t*)u8" "})), name__), parameters__));
+		write_line__2(emitter__->definitions__, string__0op__add(string__0op__add(string__0op__add(string__0op__add(modifiers__, c_type__), ((string){{1},(uint8_t*)u8" "})), name__), parameters__));
 		if (cond(is_main__))
 		{
 			if (cond(string__0op__not_equal(emitter__->main_function_return_type__, ((string){{0},(uint8_t*)u8""}))))
