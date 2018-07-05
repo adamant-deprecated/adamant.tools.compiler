@@ -347,7 +347,7 @@ Symbol__0 mut ref mut Symbol__0__0new__identifier__1(Symbol__0 mut ref const sel
 Symbol__0 mut ref mut Symbol__0__0new__identifier__2(Symbol__0 mut ref const self, string const name__, system__collections__List__1 const ref const children__);
 Symbol__0 mut ref mut Symbol__0__0new__constructor__2(Symbol__0 mut ref const self, string const name__, system__collections__List__1 const ref const declarations__);
 Symbol__0 mut ref mut Symbol__0__0new__package__2(Symbol__0 mut ref const self, string const name__, system__collections__List__1 const ref const children__);
-Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self, Type__0 const ref const declares_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__);
+Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self, Object_Type__0 const ref const declares_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__);
 Symbol__0 mut ref mut Symbol__0__0new__of_type__4(Symbol__0 mut ref const self, string const name__, Type__0 const ref const of_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__);
 Symbol__0 const opt_ref mut get_child_symbol__3(Symbol__0 const ref const symbol__, string const name__, int32 const kind__);
 Detached_Symbol__0 const ref mut symbol_as_detached_symbol__1(Symbol__0 const ref const symbol__);
@@ -7162,7 +7162,7 @@ Symbol__0 mut ref mut Symbol__0__0new__package__2(Symbol__0 mut ref const self, 
 	return self;
 }
 
-Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self, Type__0 const ref const declares_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__)
+Symbol__0 mut ref mut Symbol__0__0new__declaring__3(Symbol__0 mut ref const self, Object_Type__0 const ref const declares_type__, system__collections__List__1 const ref const declarations__, system__collections__List__1 const ref const children__)
 {
 	self->type_id = Symbol__0__0Type_ID;
 	assert__1(void_ptr__0op__not_equal(declares_type__, none));
