@@ -10,8 +10,18 @@ enum Type_ID
 typedef enum Type_ID Type_ID;
 
 // Type Declarations
+
 typedef struct Mutable_Class__0 Mutable_Class__0;
+typedef struct vtable__Mutable_Class__0 vtable__Mutable_Class__0;
+typedef struct self__Mutable_Class__0 self__Mutable_Class__0;
+typedef struct { vtable__Mutable_Class__0 const*_Nonnull restrict vt;  self__Mutable_Class__0 const*_Nonnull restrict self; } ref__Mutable_Class__0;
+typedef struct { vtable__Mutable_Class__0 const*_Nonnull restrict vt;  self__Mutable_Class__0 *_Nonnull restrict self; } ref__0mut__Mutable_Class__0;
+
 typedef struct Immutable_Class__0 Immutable_Class__0;
+typedef struct vtable__Immutable_Class__0 vtable__Immutable_Class__0;
+typedef struct self__Immutable_Class__0 self__Immutable_Class__0;
+typedef struct { vtable__Immutable_Class__0 const*_Nonnull restrict vt;  self__Immutable_Class__0 const*_Nonnull restrict self; } ref__Immutable_Class__0;
+typedef struct { vtable__Immutable_Class__0 const*_Nonnull restrict vt;  self__Immutable_Class__0 *_Nonnull restrict self; } ref__0mut__Immutable_Class__0;
 
 // Function Declarations
 Mutable_Class__0 mut ref mut Mutable_Class__0__0new__0(Mutable_Class__0 mut ref const self);

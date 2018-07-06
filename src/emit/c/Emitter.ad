@@ -1332,7 +1332,12 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         assert(declared_type =/= none, get_semantic_node_text(first_child(declaration, Identifier)));
         let class_name: string = mangle_name(declared_type);
         write_line(emitter.type_id_declaration, class_name + "__0Type_ID,");
+        element_separator_line(emitter.type_declarations);
         write_line(emitter.type_declarations, "typedef struct " + class_name + " " + class_name + ";");
+        write_line(emitter.type_declarations, "typedef struct vtable__" + class_name + " vtable__" + class_name + ";");
+        write_line(emitter.type_declarations, "typedef struct self__" + class_name + " self__" + class_name + ";");
+        write_line(emitter.type_declarations, "typedef struct { vtable__" + class_name + " const*_Nonnull restrict vt;  self__" + class_name + " const*_Nonnull restrict self; } ref__" + class_name + ";");
+        write_line(emitter.type_declarations, "typedef struct { vtable__" + class_name + " const*_Nonnull restrict vt;  self__" + class_name + " *_Nonnull restrict self; } ref__0mut__" + class_name + ";");
         element_separator_line(emitter.class_declarations);
         write_line(emitter.class_declarations, "struct " + class_name);
         begin_block(emitter.class_declarations);

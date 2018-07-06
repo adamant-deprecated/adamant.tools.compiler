@@ -9,7 +9,12 @@ enum Type_ID
 typedef enum Type_ID Type_ID;
 
 // Type Declarations
+
 typedef struct C__0 C__0;
+typedef struct vtable__C__0 vtable__C__0;
+typedef struct self__C__0 self__C__0;
+typedef struct { vtable__C__0 const*_Nonnull restrict vt;  self__C__0 const*_Nonnull restrict self; } ref__C__0;
+typedef struct { vtable__C__0 const*_Nonnull restrict vt;  self__C__0 *_Nonnull restrict self; } ref__0mut__C__0;
 
 // Function Declarations
 C__0 mut ref mut C__0__0new__1(C__0 mut ref const self, string const name__);
