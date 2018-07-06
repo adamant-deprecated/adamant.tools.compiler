@@ -56,6 +56,9 @@ public bind_declared_symbols(
                 add_item(parent_symbol.children, symbol);
                 let nested_scope: Name_Scope = new Name_Scope(scope, syntax_annotations.symbol, parameter_symbols);
                 syntax_annotations.scope = nested_scope;
+
+                let body: Syntax_Node = first_child_syntax_node(syntax, Block);
+                bind_declared_symbols(symbol, body, nested_scope, annotations);
             }
             else if syntax_node.kind == ConstructorDeclaration
             {
@@ -79,6 +82,9 @@ public bind_declared_symbols(
                 add_item(parent_symbol.children, symbol);
                 let nested_scope: Name_Scope = new Name_Scope(scope, syntax_annotations.symbol, parameter_symbols);
                 syntax_annotations.scope = nested_scope;
+
+                let body: Syntax_Node = first_child_syntax_node(syntax, Block);
+                bind_declared_symbols(symbol, body, nested_scope, annotations);
             }
             else if syntax_node.kind == ClassDeclaration
                 or syntax_node.kind == StructDeclaration
@@ -96,6 +102,7 @@ public bind_declared_symbols(
             }
             else if syntax_node.kind == FieldDeclaration
                 or syntax_node.kind == GlobalDeclaration
+                or syntax_node.kind == LocalDeclarationStatement
             {
                 let variable_declaration: Syntax = syntax_node_as_syntax(first_child_syntax_node(syntax_node, VariableDeclaration));
                 bind_declared_symbols(parent_symbol, variable_declaration, scope, annotations);
@@ -118,6 +125,63 @@ public bind_declared_symbols(
                 add_item(parent_symbol.children, symbol);
                 syntax_annotations.symbol = symbol;
                 syntax_annotations.of_type = optional_type;
+            }
+            else if syntax_node.kind == Block
+            {
+                for let statement: Syntax in statements(syntax_node)
+                {
+                    bind_declared_symbols(parent_symbol, statement, scope, annotations);
+                }
+            }
+            else if syntax_node.kind == ForStatement
+            {
+                let variable_declaration: Syntax = syntax_node_as_syntax(first_child_syntax_node(syntax_node, VariableDeclaration));
+                bind_declared_symbols(parent_symbol, variable_declaration, scope, annotations);
+                let body: Syntax_Node = first_child_syntax_node(syntax, Block);
+                bind_declared_symbols(parent_symbol, body, scope, annotations);
+            }
+            else if syntax_node.kind == LoopStatement
+                or syntax_node.kind == WhileStatement
+                or syntax_node.kind == DoWhileStatement
+            {
+                let body: Syntax_Node = first_child_syntax_node(syntax, Block);
+                bind_declared_symbols(parent_symbol, body, scope, annotations);
+            }
+            else if syntax_node.kind == IfStatement
+            {
+                let body: Syntax_Node = first_child_syntax_node(syntax, Block);
+                bind_declared_symbols(parent_symbol, body, scope, annotations);
+                let else_clause: Syntax_Node? = first_child_syntax_node(syntax_node, ElseClause);
+                if else_clause =/= none
+                {
+                    let optional_block: Syntax_Node? = first_child_syntax_node(syntax, Block);
+                    if optional_block =/= none
+                    {
+                        bind_declared_symbols(parent_symbol, optional_block, scope, annotations);
+                    }
+                    else
+                    {
+                        bind_declared_symbols(parent_symbol, first_child_syntax_node(syntax, IfStatement), scope, annotations);
+                    }
+                }
+            }
+            else if syntax_node.kind == MatchStatement
+            {
+                for let child: Syntax in syntax.children
+                {
+                    if child.kind == MatchArm
+                    {
+                        let block: Syntax_Node = first_child_syntax_node(child, Block);
+                        bind_declared_symbols(parent_symbol, block, scope, annotations);
+                    }
+                }
+            }
+            else if syntax_node.kind == ReturnStatement
+                or syntax_node.kind == BreakStatement
+                or syntax_node.kind == ContinueStatement
+                or syntax_node.kind == ExpressionStatement
+            {
+                // ignore, there are no declared symbols in these
             }
             else
             {
