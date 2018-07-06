@@ -3,7 +3,7 @@
 // Type ID Declarations
 enum Type_ID
 {
-	never__0Type__ID = 0,
+	never__0Type_ID = 0,
 	Reference_Type__0__0Type_ID,
 };
 typedef enum Type_ID Type_ID;

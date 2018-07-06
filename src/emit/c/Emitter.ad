@@ -1447,7 +1447,7 @@ public emit_preamble(emitter: mut Emitter) -> void
     write_line(emitter.type_id_declaration, "// Type ID Declarations");
     write_line(emitter.type_id_declaration, "enum Type_ID");
     begin_block(emitter.type_id_declaration);
-    write_line(emitter.type_id_declaration, "never__0Type__ID = 0,");
+    write_line(emitter.type_id_declaration, "never__0Type_ID = 0,");
     blank_line(emitter.type_declarations);
     write_line(emitter.type_declarations, "// Type Declarations");
     blank_line(emitter.function_declarations);
