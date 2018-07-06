@@ -27,13 +27,14 @@ public /* abstract */ class Syntax_Symbol
         self.children = new system.collections.List<Syntax_Symbol>();
     }
 
-    public new constructor(name: string)
+    public new constructor(name: string, type: Type)
     {
         assert(string_byte_length(name) > 0);
+        assert(type =/= none, "name="+name);
         self.name = name;
         self.kind = IdentifierSymbol;
         self.is_special_name = true;
-        self.of_type = none;
+        self.of_type = type;
         self.declares_type = none;
         self.declarations = new system.collections.List<Syntax>();
         self.children = new system.collections.List<Syntax_Symbol>();

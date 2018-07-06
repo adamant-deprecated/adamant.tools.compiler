@@ -59,8 +59,26 @@ public bind_declared_symbols(
             }
             else if syntax_node.kind == ConstructorDeclaration
             {
-                let _parameter_symbols: system.collections.List<Syntax_Symbol> = bind_parameter_symbols(syntax_node, scope, annotations);
-                // NOT_IMPLEMENTED("syntax_node.kind=ConstructorDeclaration");
+                // TODO account for the `self` parameter
+                let parameter_symbols: system.collections.List<Syntax_Symbol> = bind_parameter_symbols(syntax_node, scope, annotations);
+                let return_type: Type = parent_symbol.declares_type;
+                let function_type: Type = new Function_Type(parameter_symbol_types(parameter_symbols), return_type);
+                syntax_annotations.of_type = function_type;
+                var full_name: string = "new";
+                let constructor_name: Token? = first_child_token(syntax, Identifier);
+                if constructor_name =/= none
+                {
+                    full_name = "new_" + get_token_text(constructor_name);
+                }
+                let symbol: Syntax_Symbol = new Syntax_Symbol.constructor(full_name, function_type);
+                for let parameter_symbol: Syntax_Symbol in parameter_symbols
+                {
+                    add_item(symbol.children, parameter_symbol);
+                }
+                syntax_annotations.symbol = symbol;
+                add_item(parent_symbol.children, symbol);
+                let nested_scope: Name_Scope = new Name_Scope(scope, syntax_annotations.symbol, parameter_symbols);
+                syntax_annotations.scope = nested_scope;
             }
             else if syntax_node.kind == ClassDeclaration
                 or syntax_node.kind == StructDeclaration
