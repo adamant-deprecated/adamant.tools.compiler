@@ -96,18 +96,6 @@ public mangle_name(type: Type) -> string
     return sb_to_string(builder);
 }
 
-public get_type_name(type: Type) -> Name
-{
-    match type
-    {
-        object_type: Object_Type => { return object_type.name; },
-        primitive_type: Primitive_Type => { return primitive_type.name; },
-        _: Function_Type => { NOT_IMPLEMENTED("Function_Type"); },
-        namespace_type: Namespace_Type => { return namespace_type.name; },
-        _ => { NOT_IMPLEMENTED(); }
-    }
-}
-
 public get_generic_arguments(type: Type) -> system.collections.List<Type>
 {
     match type
@@ -340,7 +328,7 @@ public convert_type(mutable_binding: bool, type: Type, optional: bool) -> string
             if unqualified_name(p.name) == "optional"
             {
                 let optional_type: Type = p.generic_arguments[0];
-                if optional_type.is_value_type
+                if type_is_value_type(optional_type)
                 {
                     // optional<T> is a const struct
                     let c_type: mut system.text.String_Builder = new system.text.String_Builder("optional__");
@@ -464,7 +452,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         //     write(builder, sb_to_string(params));
         // }
 
-        if type.is_value_type
+        if type_is_value_type(type)
             { convert_expression(argument_list, builder); }
         else
             { convert_reference_type_constructor_arguments(argument_list, builder, sb_to_string(convert_type_name(type))); }
@@ -592,7 +580,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         if type =/= none
         {
             if is_optional_type(type)
-                { type = type.generic_arguments[0]; }
+                { type = cast_as_primitive_type(type).generic_arguments[0]; }
 
             match type
             {
@@ -620,7 +608,7 @@ public convert_expression(syntax: Semantic_Node, builder: mut Source_File_Builde
         if type =/= none
         {
             if is_optional_type(type)
-                { type = type.generic_arguments[0]; }
+                { type = cast_as_primitive_type(type).generic_arguments[0]; }
 
             match type
             {
@@ -929,9 +917,9 @@ public convert_reference_type_constructor_arguments(
 public convert_member_access(lhs: Semantic_Node, builder: mut Source_File_Builder) -> void
 {
     let type: Type? = lhs.of_type;
-    if type =/= none and type.is_value_type // TODO eventually, we shouldn't need to check if the type is null
+    if type =/= none and type_is_value_type(type) // TODO eventually, we shouldn't need to check if the type is null
         and not (is_optional_type(type) // optional reference types are still pointers
-                and not as_type(type.generic_arguments[0]).is_value_type) // as_type() needed for now because of void_ptr
+                and not type_is_value_type(cast_as_primitive_type(type).generic_arguments[0])) // as_type() needed for now because of void_ptr
         { write(builder, "."); }
     else
         { write(builder, "->"); }

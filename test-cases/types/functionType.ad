@@ -1,0 +1,13 @@
+public identity(v: int) -> int
+{
+    return v;
+}
+
+public main() -> int
+{
+    let ints: mut system.collections.List<int> = new system.collections.List<int>();
+    let x: int = identity(0);
+    add_int(ints, x);
+    add_int(ints, identity(5));
+    return identity(identity(x));
+}

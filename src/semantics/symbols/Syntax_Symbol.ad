@@ -56,10 +56,10 @@ public /* abstract */ class Syntax_Symbol
     public new declaring(declares_type: Type, declaration: Syntax)
     {
         assert(declares_type =/= none);
-        assert(declaration =/= none);
-        self.name = unqualified_name(declares_type.name);
+        assert(declaration =/= none, "declares_type="+type_to_string(declares_type));
+        self.name = unqualified_name(get_type_name(declares_type));
         self.kind = IdentifierSymbol;
-        self.is_special_name = declares_type.name.is_special;
+        self.is_special_name = get_type_name(declares_type).is_special;
         self.of_type = none;
         self.declares_type = declares_type;
         self.declarations = new system.collections.List<Syntax>();

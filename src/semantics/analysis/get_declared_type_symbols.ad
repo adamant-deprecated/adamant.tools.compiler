@@ -34,7 +34,7 @@ public build_declared_symbols(
         or syntax.kind == StructDeclaration
     {
         let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
-        let name: Name = new Name(parent.declares_type.name, TypeName, unqualified_name);
+        let name: Name = new Name(get_type_name(parent.declares_type), TypeName, unqualified_name);
         let is_value_type: bool = syntax.kind =/= ClassDeclaration;
         let type: Type = object_type_as_type(new Object_Type(is_value_type, name, true));
         let symbol: mut Syntax_Symbol = new Syntax_Symbol.declaring(type, syntax_node_as_syntax(syntax));
@@ -50,7 +50,7 @@ public build_declared_symbols(
     else if syntax.kind == EnumDeclaration
     {
         let unqualified_name: string = get_token_text(first_child_token(syntax, Identifier));
-        let name: Name = new Name(parent.declares_type.name, TypeName, unqualified_name);
+        let name: Name = new Name(get_type_name(parent.declares_type), TypeName, unqualified_name);
         let type: Type = object_type_as_type(new Object_Type(false, name, true));
         let symbol: mut Syntax_Symbol = new Syntax_Symbol.declaring(type, syntax_node_as_syntax(syntax));
         let syntax_annotations: mut Annotations = annotations_for(annotations, syntax_node_as_syntax(syntax));

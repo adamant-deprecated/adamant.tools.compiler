@@ -139,13 +139,15 @@ public get_scope(scope: Name_Subtable, name: Name) -> Name_Subtable?
 public bind_type(scope: mut Name_Subtable, type: Type) -> void
 {
     assert(type =/= none, full_name(scope.name));
+    // debug_write_line("      binding name `"+full_name(scope.name)+"` to type `"+type_to_string(type)+"`");
     if scope.type =/= none
     {
         // TODO this prevents multiple variables with the same name and type in a method
         // Hack to let the compiler figure out the type for the equality operator
-        let scope_type_name: string = full_name(scope.type.name);
-        assert(scope_type_name == full_name(type.name),
-            full_name(scope.name)+" currently `"+scope_type_name+"` trying to set to `"+full_name(type.name)+"`");
+
+        let scope_type: string = type_to_string(scope.type);
+        assert(scope_type == type_to_string(type),
+            full_name(scope.name)+" currently `"+scope_type+"` trying to set to `"+type_to_string(type)+"`");
     }
     scope.type = type;
 }

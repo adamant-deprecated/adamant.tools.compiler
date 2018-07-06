@@ -71,9 +71,9 @@ public /* abstract */ class Symbol // = Type_Symbol | Variable_Symbol
         children: system.collections.List<Symbol>)
     {
         assert(declares_type =/= none);
-        assert(declarations =/= none, "name="+unqualified_name(declares_type.name));
-        assert(children =/= none, "name="+unqualified_name(declares_type.name));
-        self.name = unqualified_name(declares_type.name);
+        assert(declarations =/= none, "declares_type="+type_to_string(declares_type));
+        assert(children =/= none, "declares_type="+type_to_string(declares_type));
+        self.name = unqualified_name(get_type_name(declares_type));
         self.kind = IdentifierSymbol;
         self.is_special_name = declares_type.name.is_special;
         self.of_type = none;

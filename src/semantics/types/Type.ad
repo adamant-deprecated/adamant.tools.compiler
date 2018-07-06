@@ -2,12 +2,6 @@
 // Base class for types
 public /* abstract */ class Type
 {
-    public let name: Name;
-    public let generic_parameters: system.collections.List<Generic_Parameter>; // unused at this level, here for alignment
-    public let generic_arguments: system.collections.List<Type>;
-    public let is_value_type: bool;
-    public let is_potentially_mutable: bool; // Whether the type being referred to can ever be mutable
-    public let is_mutable: bool;
 }
 
 public no_generic_arguments(generic_parameters: system.collections.List<Generic_Parameter>) -> system.collections.List<Type>
@@ -27,7 +21,7 @@ public make_mutable_type(type: Type) -> Type
     {
         o: Object_Type =>
         {
-            assert(type.is_potentially_mutable, "self.name="+full_name(type.name));
+            assert(o.is_potentially_mutable, "self.name="+full_name(o.name));
             return object_type_as_type(new Object_Type(o.is_value_type, o.name, o.generic_parameters, o.generic_arguments, o.is_potentially_mutable, true));
         }
     }
@@ -75,4 +69,68 @@ public apply_generic_arguments(
     assert(generic_parameters.count == generic_arguments.count);
 
     return generic_arguments;
+}
+
+public type_is_value_type(type: Type) -> bool
+{
+    var is_value_type: bool = false;
+    match type
+    {
+        _: Primitive_Type => { is_value_type = true; },
+        object_type: Object_Type => { is_value_type = object_type.is_value_type; }
+    }
+    return is_value_type;
+}
+
+public cast_as_primitive_type(type: Type) -> Primitive_Type
+{
+    match type
+    {
+        p: Primitive_Type => { return p; },
+        _ => { NOT_IMPLEMENTED("Failed to cast type to Primitive_Type"); }
+    }
+}
+
+public type_to_string(type: Type) -> string
+{
+    let sb: mut system.text.String_Builder = new system.text.String_Builder();
+    type_to_string(type, sb);
+    return sb_to_string(sb);
+}
+
+public type_to_string(type: Type, sb: mut system.text.String_Builder) -> void
+{
+    match type
+    {
+        p: Primitive_Type => { sb_append(sb, full_name(p.name)); },
+        o: Object_Type => { sb_append(sb, full_name(o.name)); },
+        f: Function_Type =>
+        {
+            sb_append(sb, "(");
+            var first: bool = true;
+            for let parameter_type: Type in f.parameter_types
+            {
+                if first
+                    { first = false; }
+                else
+                    { sb_append(sb, ", "); }
+                type_to_string(parameter_type, sb);
+            }
+            sb_append(sb, ") -> ");
+            type_to_string(f.return_type, sb);
+        },
+        n: Namespace_Type => { sb_append(sb, full_name(n.name)); }
+    }
+}
+
+public get_type_name(type: Type) -> Name
+{
+    match type
+    {
+        object_type: Object_Type => { return object_type.name; },
+        primitive_type: Primitive_Type => { return primitive_type.name; },
+        _: Function_Type => { NOT_IMPLEMENTED("Can't get name of Function_Type `"+type_to_string(type)+"`"); },
+        namespace_type: Namespace_Type => { return namespace_type.name; },
+        _ => { NOT_IMPLEMENTED(); }
+    }
 }

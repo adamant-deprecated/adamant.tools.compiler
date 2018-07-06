@@ -1,0 +1,15 @@
+public test() -> int
+{
+    return 5;
+}
+
+public test(v: int) -> int
+{
+    return v;
+}
+
+public main(console: system.console.Console) -> void
+{
+    console_write_line(console, "`test()` = "+int_to_string(test()));
+    console_write_line(console, "`test(1)` = "+int_to_string(test(1)));
+}

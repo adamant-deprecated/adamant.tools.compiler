@@ -170,7 +170,7 @@ public bind_type_name(
     {
         let qualifier_syntax: Syntax_Node = type_syntax.children[0];
         let qualifier_type: Type = bind_type_name(qualifier_syntax, scope, annotations);
-        let qualifier_symbol: Detached_Symbol? = lookup_qualified_name_in_scope(scope, qualifier_type.name);
+        let qualifier_symbol: Detached_Symbol? = lookup_qualified_name_in_scope(scope, get_type_name(qualifier_type));
         assert(qualifier_symbol =/= none);
         let qualified_syntax: Syntax_Node = type_syntax.children[2];
         if qualified_syntax.kind == IdentifierName

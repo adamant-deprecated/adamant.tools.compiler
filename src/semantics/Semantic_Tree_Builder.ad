@@ -78,9 +78,9 @@ public build_semantic_node(
         let return_type_node: Semantic_Node = build_type_name_semantic_node(builder, return_type, name_table, scope);
         add_item(children, return_type_node);
 
-        let function_type: Type = function_type_as_type(new Function_Type(function_scope.name, parameter_types(parameters_node), return_type_node.referenced_type));
-        // debug_write_line("Binding function `"+get_syntax_node_text(function_name)+"` with type `"+full_name(function_type.name)+"`, scope `"+full_name(function_scope.name)+"`");
-        bind_type(function_scope, function_type);
+        let _function_type: Type = function_type_as_type(new Function_Type(parameter_types(parameters_node), return_type_node.referenced_type));
+        // debug_write_line("      binding function `"+get_syntax_node_text(function_name)+"` with type `"+type_to_string(function_type)+"`, scope `"+full_name(function_scope.name)+"`");
+        // bind_type(function_scope, function_type);
         let body: Syntax_Node = first_child_syntax_node(syntax, Block);
         if body =/= none
         {

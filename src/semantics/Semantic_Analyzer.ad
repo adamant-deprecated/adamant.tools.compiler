@@ -3,6 +3,7 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
     assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
 
     // Hard code a stand-in package-name for now
+    // debug_write_line("  building prerequisites...");
     let name: Package_Name = new Package_Name("default");
     let primitives_package: Package = build_primitives_package();
     let runtime_package: Package = build_runtime_library_package(primitives_package);
@@ -10,15 +11,21 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
     add_item(references, new Package_Reference(primitives_package));
     add_item(references, new Package_Reference(runtime_package));
 
+    // debug_write_line("    getting declared type symbols...");
     let annotations: mut Annotations_Dictionary = new Annotations_Dictionary(package_syntax);
     let package_syntax_symbol: Syntax_Symbol = get_declared_type_symbols(package_syntax, name, annotations);
     // debug_write_syntax_symbols(package_syntax_symbol, "");
+    // debug_write_line("    binding declared symbols...");
     bind_declared_symbols(package_syntax_symbol, references, annotations);
     // debug_write_syntax_symbols(package_syntax_symbol, "");
+    // debug_write_line("    building symbol table...");
     let name_table: Name_Table = build_symbol_table(name, package_syntax, references, annotations);
+    // debug_write_line("    binding declaration types...");
     bind_declaration_types(package_syntax, name_table);
+    // debug_write_line("    building semantic tree...");
     let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();
     let compilation_units: system.collections.List<Compilation_Unit> = build_compilation_units(semantic_tree_builder, package_syntax, name_table);
+    // debug_write_line("    building symbols...");
     let package_symbol: Symbol = build_symbols(name, compilation_units);
     let package: Package = new Package(name, references, compilation_units, package_symbol);
 

@@ -2,7 +2,6 @@
 // A function type may be generic and have generic parameters
 public class Function_Type // : Type
 {
-    public let name: Name; // Must be first to match `Type`
     public let generic_parameters: system.collections.List<Generic_Parameter>;
     // TODO type arguments can be values, not just types
     public let generic_arguments: system.collections.List<Type?>;
@@ -10,9 +9,8 @@ public class Function_Type // : Type
     public let parameter_types: system.collections.List<Type>;
     public let return_type: Type;
 
-    public new(name: Name, parameter_types: system.collections.List<Type>, return_type: Type)
+    public new(parameter_types: system.collections.List<Type>, return_type: Type)
     {
-        self.name = name;
         self.generic_parameters = new system.collections.List<Generic_Parameter>();
         self.generic_arguments = new system.collections.List<Type?>();
         self.parameter_types = parameter_types;
@@ -20,12 +18,10 @@ public class Function_Type // : Type
     }
 
     public new(
-        name: Name,
         generic_parameters: system.collections.List<Generic_Parameter>,
         parameter_types: system.collections.List<Type>,
         return_type: Type)
     {
-        self.name = name;
         self.generic_parameters = generic_parameters;
         self.generic_arguments = no_generic_arguments(generic_parameters);
         self.parameter_types = parameter_types;
