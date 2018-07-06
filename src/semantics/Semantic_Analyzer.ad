@@ -14,10 +14,10 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
     // debug_write_line("    getting declared type symbols...");
     let annotations: mut Annotations_Dictionary = new Annotations_Dictionary(package_syntax);
     let package_syntax_symbol: Syntax_Symbol = get_declared_type_symbols(package_syntax, name, annotations);
-    // debug_write_syntax_symbols(package_syntax_symbol, "");
+    // debug_write_syntax_symbols(package_syntax_symbol, "      ");
     // debug_write_line("    binding declared symbols...");
     bind_declared_symbols(package_syntax_symbol, references, annotations);
-    // debug_write_syntax_symbols(package_syntax_symbol, "");
+    // debug_write_syntax_symbols(package_syntax_symbol, "      ");
     // debug_write_line("    building symbol table...");
     let name_table: Name_Table = build_symbol_table(name, package_syntax, references, annotations);
     // debug_write_line("    binding declaration types...");

@@ -41,14 +41,21 @@ public bind_declared_symbols(
             }
             else if syntax_node.kind == FunctionDeclaration
             {
-                let _parameter_symbols: system.collections.List<Syntax_Symbol> = bind_parameter_symbols(syntax_node, scope, annotations);
+                let parameter_symbols: system.collections.List<Syntax_Symbol> = bind_parameter_symbols(syntax_node, scope, annotations);
                 let return_type_syntax: Syntax_Node = syntax_node.children[4]; // TODO need more reliable way to pick this out
-                let _return_type: Type = bind_type_name(return_type_syntax, scope, annotations);
-                // let nested_scope: Name_Scope = new Name_Scope(scope, syntax_annotations.symbol, parameter_symbols);
-                // syntax_annotations.scope = nested_scope;
-                // let function_type: Type = new Function_Type()
-                // syntax_annotations.of_type = optional_type;
-                // NOT_IMPLEMENTED("syntax_node.kind=FunctionDeclaration");
+                let return_type: Type = bind_type_name(return_type_syntax, scope, annotations);
+                let function_type: Type = new Function_Type(parameter_symbol_types(parameter_symbols), return_type);
+                syntax_annotations.of_type = function_type;
+                let function_name: string = get_token_text(first_child_token(syntax_node, Identifier));
+                let symbol: Syntax_Symbol = new Syntax_Symbol.of_type(function_name, function_type);
+                for let parameter_symbol: Syntax_Symbol in parameter_symbols
+                {
+                    add_item(symbol.children, parameter_symbol);
+                }
+                syntax_annotations.symbol = symbol;
+                add_item(parent_symbol.children, symbol);
+                let nested_scope: Name_Scope = new Name_Scope(scope, syntax_annotations.symbol, parameter_symbols);
+                syntax_annotations.scope = nested_scope;
             }
             else if syntax_node.kind == ConstructorDeclaration
             {
@@ -255,4 +262,15 @@ public lookup_optional_type(scope: Name_Scope) -> Type
     assert(symbol =/= none, "Could not find symbol for optional type");
     let type: Type = symbol.declares_type;
     return type;
+}
+
+public parameter_symbol_types(parameter_symbols: system.collections.List<Syntax_Symbol>)
+    -> system.collections.List<Type>
+{
+    let types: mut system.collections.List<Type> = new system.collections.List<Type>();
+    for let parameter_symbol: Syntax_Symbol in parameter_symbols
+    {
+        add_item(types, parameter_symbol.of_type);
+    }
+    return types;
 }
