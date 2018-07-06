@@ -45,7 +45,6 @@ inline void_ptr allocate(size_t bytes)
 // -----------------------------------------------------------------------------
 
 typedef struct never never;
-typedef struct optional__never optional__never;
 typedef struct BOOL BOOL;
 typedef struct int32 int32;
 typedef struct byte byte;
@@ -58,9 +57,9 @@ struct never
 };
 
 // `never?` type
-struct optional__never
-{
-};
+// Because we need to be able to assign `none` to a varible of type `never?` we
+// have to typedef it as void pointer even though that is wrong.
+typedef void_ptr optional__never;
 
 // TODO this is a hack for now, the type of `none` should be `never?`
 static const void_ptr none = NULL;
