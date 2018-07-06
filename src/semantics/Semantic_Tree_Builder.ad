@@ -17,7 +17,8 @@ public class Semantic_Tree_Builder
 public build_compilation_units(
     builder: Semantic_Tree_Builder,
     package_syntax: Syntax_Node,
-    name_table: Name_Table)
+    name_table: Name_Table,
+    annotations: Annotations_Dictionary)
     -> system.collections.List<Compilation_Unit>
 {
     assert(package_syntax.kind == PackageNode, "package_syntax.kind=" + int_to_string(package_syntax.kind));
@@ -28,7 +29,7 @@ public build_compilation_units(
 
     for let compilation_unit_syntax: Syntax_Node in package_syntax.children
     {
-        add_item(compilation_units, build_compilation_unit_semantic_node(builder, compilation_unit_syntax, name_table));
+        add_item(compilation_units, build_compilation_unit_semantic_node(builder, compilation_unit_syntax, name_table, annotations));
     }
     return compilation_units;
 }
@@ -36,7 +37,8 @@ public build_compilation_units(
 public build_compilation_unit_semantic_node(
     builder: Semantic_Tree_Builder,
     compilation_unit_syntax: Syntax_Node,
-    name_table: Name_Table)
+    name_table: Name_Table,
+    annotations: Annotations_Dictionary)
     -> Compilation_Unit
 {
     assert(compilation_unit_syntax.kind == CompilationUnit, "compilation_unit_syntax.kind=" + int_to_string(compilation_unit_syntax.kind));
@@ -45,7 +47,7 @@ public build_compilation_unit_semantic_node(
     let declarations: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
     for let declaration_syntax: Syntax_Node in compilation_unit_syntax.children
     {
-        add_item(declarations, build_semantic_node(builder, declaration_syntax, name_table, name_table.any_package));
+        add_item(declarations, build_semantic_node(builder, declaration_syntax, name_table, name_table.any_package, annotations));
     }
     return new Compilation_Unit(compilation_unit_syntax, declarations);
 }
@@ -54,7 +56,8 @@ public build_semantic_node(
     builder: Semantic_Tree_Builder,
     syntax: Syntax_Node,
     name_table: Name_Table,
-    scope: Name_Subtable)
+    scope: Name_Subtable,
+    annotations: Annotations_Dictionary)
     -> Semantic_Node
 {
     let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
@@ -62,20 +65,20 @@ public build_semantic_node(
     if syntax.kind == FunctionDeclaration
         or syntax.kind == MethodDeclaration
     {
-        add_item(children, build_semantic_node(builder, as_any(access_modifier(syntax)), name_table, scope));
+        add_item(children, build_semantic_node(builder, as_any(access_modifier(syntax)), name_table, scope, annotations));
         let function_name: Token = first_child_token(syntax, Identifier);
-        add_item(children, build_semantic_node(builder, as_any(function_name), name_table, scope));
+        add_item(children, build_semantic_node(builder, as_any(function_name), name_table, scope, annotations));
 
         let function_scope: mut Name_Subtable = find(scope, get_token_text(function_name));
         assert(function_scope =/= none, "get_syntax_node_text(function_name)="+get_token_text(function_name));
 
         let parameters: Syntax_Node = first_child_syntax_node(syntax, ParameterList);
         // TODO it is really only the parameters that are in this scope, the types aren't
-        let parameters_node: Semantic_Node = build_parameters_semantic_node(builder, parameters, name_table, function_scope);
+        let parameters_node: Semantic_Node = build_parameters_semantic_node(builder, parameters, name_table, function_scope, annotations);
         add_item(children, parameters_node);
 
         let return_type: Syntax_Node = syntax.children[4]; // TODO need more reliable way to pick this out
-        let return_type_node: Semantic_Node = build_type_name_semantic_node(builder, return_type, name_table, scope);
+        let return_type_node: Semantic_Node = build_type_name_semantic_node(builder, return_type, name_table, scope, annotations);
         add_item(children, return_type_node);
 
         let _function_type: Type = function_type_as_type(new Function_Type(parameter_types(parameters_node), return_type_node.referenced_type));
@@ -84,7 +87,7 @@ public build_semantic_node(
         let body: Syntax_Node = first_child_syntax_node(syntax, Block);
         if body =/= none
         {
-            add_item(children, build_semantic_node(builder, body, name_table, function_scope));
+            add_item(children, build_semantic_node(builder, body, name_table, function_scope, annotations));
         }
 
         // TODO what about the function type?
@@ -94,13 +97,13 @@ public build_semantic_node(
         or syntax.kind == StructDeclaration
     {
         let type_name: Token = first_child_token(syntax, Identifier);
-        add_item(children, build_semantic_node(builder, as_any(type_name), name_table, scope));
+        add_item(children, build_semantic_node(builder, as_any(type_name), name_table, scope, annotations));
         let type_scope: Name_Subtable = find(scope, get_token_text(type_name));
         assert(type_scope =/= none, "get_syntax_node_text(type_name)="+get_token_text(type_name));
 
         for let member: Syntax_Node in members(syntax)
         {
-            add_item(children, build_semantic_node(builder, member, name_table, type_scope));
+            add_item(children, build_semantic_node(builder, member, name_table, type_scope, annotations));
         }
 
         // TODO what about the class/struct type?
@@ -108,7 +111,7 @@ public build_semantic_node(
     }
     else if syntax.kind == ConstructorDeclaration
     {
-        add_item(children, build_semantic_node(builder, as_any(access_modifier(syntax)), name_table, scope));
+        add_item(children, build_semantic_node(builder, as_any(access_modifier(syntax)), name_table, scope, annotations));
         var full_name: string = "new";
         let constructor_name: Token? = first_child_token(syntax, Identifier);
         if constructor_name =/= none
@@ -122,12 +125,12 @@ public build_semantic_node(
 
         let parameters: Syntax_Node = first_child_syntax_node(syntax, ParameterList);
         // TODO it is really only the parameters that are in this scope, the types aren't
-        add_item(children, build_parameters_semantic_node(builder, parameters, name_table, constructor_scope));
+        add_item(children, build_parameters_semantic_node(builder, parameters, name_table, constructor_scope, annotations));
 
         let body: Syntax_Node = first_child_syntax_node(syntax, Block);
         if body =/= none
         {
-            add_item(children, build_semantic_node(builder, body, name_table, constructor_scope));
+            add_item(children, build_semantic_node(builder, body, name_table, constructor_scope, annotations));
         }
 
         // TODO what about the function type?
@@ -162,7 +165,7 @@ public build_semantic_node(
     else if syntax.kind == MemberAccessExpression
     {
         // Before dot
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
         add_item(children, lhs);
         // assert(lhs.of_type =/= none, "Build Member Access: " + get_syntax_node_text(syntax));
         // After dot
@@ -219,14 +222,14 @@ public build_semantic_node(
     }
     else if syntax.kind == NewExpression
     {
-        add_item(children, build_constructor_name_semantic_node(builder, syntax.children[1], name_table, scope)); // Type
-        add_item(children, build_semantic_node(builder, first_child_syntax_node(syntax, ArgumentList), name_table, scope)); // Call Arguments
+        add_item(children, build_constructor_name_semantic_node(builder, syntax.children[1], name_table, scope, annotations)); // Type
+        add_item(children, build_semantic_node(builder, first_child_syntax_node(syntax, ArgumentList), name_table, scope, annotations)); // Call Arguments
         return new Semantic_Node.concrete_with_children(syntax, children);
     }
     else if syntax.kind == LocalDeclarationStatement
     {
         let variable_declaration_syntax: Syntax_Node = first_child_syntax_node(syntax, VariableDeclaration);
-        add_item(children, build_semantic_node(builder, variable_declaration_syntax, name_table, scope));
+        add_item(children, build_semantic_node(builder, variable_declaration_syntax, name_table, scope, annotations));
         return new Semantic_Node.concrete_with_children(syntax, children);
     }
     else if syntax.kind == VariableDeclaration
@@ -236,7 +239,7 @@ public build_semantic_node(
         let identifier: Token = first_child_token(syntax, Identifier);
         add_item(children, new Semantic_Node.token(identifier));
         let type_syntax: Syntax_Node = syntax.children[3];
-        let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
+        let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope, annotations);
         assert(type_node.referenced_type =/= none, get_semantic_node_text(type_node));
         let variable_scope: mut Name_Subtable = lookup(scope, get_token_text(identifier));
         assert(variable_scope =/= none, get_syntax_node_text(syntax));
@@ -248,7 +251,7 @@ public build_semantic_node(
         if syntax.children.count == 6
         {
             let initalizer: Syntax_Node = syntax.children[5];
-            add_item(children, build_semantic_node(builder, initalizer, name_table, scope));
+            add_item(children, build_semantic_node(builder, initalizer, name_table, scope, annotations));
         }
         return new Semantic_Node.concrete_with_children(syntax, children);
     }
@@ -261,7 +264,7 @@ public build_semantic_node(
             let colon: Token = syntax.children[1];
             add_item(children, new Semantic_Node.token(colon));
             let type_syntax: Syntax_Node = syntax.children[2];
-            let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
+            let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope, annotations);
             // TODO set the type in the name table
             add_item(children, type_node);
         }
@@ -301,15 +304,15 @@ public build_semantic_node(
     }
     else if syntax.kind == NegateExpression
     {
-        let operand: Semantic_Node = build_semantic_node(builder, syntax.children[1], name_table, scope);
+        let operand: Semantic_Node = build_semantic_node(builder, syntax.children[1], name_table, scope, annotations);
         add_item(children, operand);
         assert(operand.of_type =/= none, get_syntax_node_text(syntax));
         return new Semantic_Node.of_type(lookup_special(scope, "int").type, syntax, children);
     }
     else if syntax.kind == AddExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         // assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -321,8 +324,8 @@ public build_semantic_node(
     }
     else if syntax.kind == SubtractExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         // assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -331,8 +334,8 @@ public build_semantic_node(
     }
     else if syntax.kind == MultiplyExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -341,8 +344,8 @@ public build_semantic_node(
     }
     else if syntax.kind == DivideExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -351,8 +354,8 @@ public build_semantic_node(
     }
     else if syntax.kind == RemainderExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -361,15 +364,15 @@ public build_semantic_node(
     }
     else if syntax.kind == ParenthesizedExpression
     {
-        let operand: Semantic_Node = build_semantic_node(builder, syntax.children[1], name_table, scope);
+        let operand: Semantic_Node = build_semantic_node(builder, syntax.children[1], name_table, scope, annotations);
         add_item(children, operand);
         assert(operand.of_type =/= none, get_syntax_node_text(syntax));
         return new Semantic_Node.of_type(operand.of_type, syntax, children);
     }
     else if syntax.kind == EqualExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         // assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -378,8 +381,8 @@ public build_semantic_node(
     }
     else if syntax.kind == NotEqualExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         // assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -388,8 +391,8 @@ public build_semantic_node(
     }
     else if syntax.kind == ComparisonExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, new Semantic_Node.token(syntax.children[1]));
         add_item(children, rhs);
@@ -399,8 +402,8 @@ public build_semantic_node(
     }
     else if syntax.kind == AndExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         // assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -409,8 +412,8 @@ public build_semantic_node(
     }
     else if syntax.kind == OrExpression
     {
-        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope);
-        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope);
+        let lhs: Semantic_Node = build_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
+        let rhs: Semantic_Node = build_semantic_node(builder, syntax.children[2], name_table, scope, annotations);
         add_item(children, lhs);
         add_item(children, rhs);
         // assert(lhs.of_type =/= none, get_syntax_node_text(syntax));
@@ -419,7 +422,7 @@ public build_semantic_node(
     }
     else if syntax.kind == NotExpression
     {
-        let operand: Semantic_Node = build_semantic_node(builder, syntax.children[1], name_table, scope);
+        let operand: Semantic_Node = build_semantic_node(builder, syntax.children[1], name_table, scope, annotations);
         add_item(children, operand);
         // assert(operand.of_type =/= none, "Build Not Expression: " + get_syntax_node_text(syntax));
         return new Semantic_Node.of_type(lookup_special(scope, "bool").type, syntax, children);
@@ -435,7 +438,7 @@ public build_semantic_node(
         //      replace with specific constructions
         for let child_syntax: Syntax_Node in syntax.children
         {
-            add_item(children, build_semantic_node(builder, child_syntax, name_table, scope));
+            add_item(children, build_semantic_node(builder, child_syntax, name_table, scope, annotations));
         }
         return new Semantic_Node.concrete_with_children(syntax, children);
         // NOT_IMPLEMENTED("syntax.kind="+int_to_string(syntax.kind));
@@ -446,7 +449,8 @@ public build_parameters_semantic_node(
     builder: Semantic_Tree_Builder,
     parameters_syntax: Syntax_Node,
     name_table: Name_Table,
-    scope: Name_Subtable)
+    scope: Name_Subtable,
+    annotations: Annotations_Dictionary)
     -> mut Semantic_Node
 {
     assert(parameters_syntax.kind == ParameterList, "parameters_syntax.kind="+ int_to_string(parameters_syntax.kind));
@@ -463,7 +467,7 @@ public build_parameters_semantic_node(
             add_item(children, new Semantic_Node.token(identifier));
             // Because a parameter can have `var` at the beginning, the position of the type isn't constant
             let type_syntax: Syntax_Node = parameter.children[parameter.children.count - 1];
-            let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope);
+            let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_syntax, name_table, scope, annotations);
             assert(type_node.referenced_type =/= none, get_syntax_node_text(parameter));
             add_item(children, type_node);
             let parameter_scope: mut Name_Subtable = lookup(scope, get_token_text(identifier));
@@ -494,7 +498,8 @@ public build_type_name_semantic_node(
     builder: Semantic_Tree_Builder,
     syntax: Syntax_Node,
     name_table: Name_Table,
-    scope: Name_Subtable)
+    scope: Name_Subtable,
+    annotations: Annotations_Dictionary)
     -> mut Semantic_Node
 {
     let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
@@ -523,7 +528,7 @@ public build_type_name_semantic_node(
     else if syntax.kind == QualifiedName
     {
         let qualifier_syntax: Syntax_Node = syntax.children[0];
-        let qualifier: Semantic_Node = build_type_name_semantic_node(builder, qualifier_syntax, name_table, scope);
+        let qualifier: Semantic_Node = build_type_name_semantic_node(builder, qualifier_syntax, name_table, scope, annotations);
         add_item(children, qualifier);
 
         let qualified_syntax: Syntax_Node = syntax.children[2];
@@ -574,7 +579,7 @@ public build_type_name_semantic_node(
 
                 let name_node: Semantic_Node = new Semantic_Node.concrete(name_syntax, resolution_error(name_syntax, qualifier));
                 add_item(generic_name_children, name_node);
-                build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
+                build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children, annotations);
                 let qualified_name: mut Semantic_Node = new Semantic_Node.concrete_with_children(qualified_syntax, generic_name_children);
                 add_item(children, qualified_name);
                 return new Semantic_Node.concrete_with_children(syntax, children);
@@ -591,7 +596,7 @@ public build_type_name_semantic_node(
                 {
                     let name_node: Semantic_Node = new Semantic_Node.concrete(name_syntax, resolution_error(name_syntax, qualifier));
                     add_item(generic_name_children, name_node);
-                    build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
+                    build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children, annotations);
                     let qualified_name: mut Semantic_Node = new Semantic_Node.concrete_with_children(qualified_syntax, generic_name_children);
                     add_item(children, qualified_name);
                     return new Semantic_Node.concrete_with_children(syntax, children);
@@ -600,7 +605,7 @@ public build_type_name_semantic_node(
                 let referenced_type_name: Type = referenced_scope.type;
                 let name_node: Semantic_Node = new Semantic_Node.referencing_type(referenced_type_name, name_syntax, new system.collections.List<Semantic_Node>());
                 add_item(generic_name_children, name_node);
-                let type_arguments: system.collections.List<Type?> = build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children);
+                let type_arguments: system.collections.List<Type?> = build_type_arguments_semantic_node(builder, qualified_syntax, name_table, scope, generic_name_children, annotations);
                 let referenced_type: Type = apply_generic_arguments(referenced_type_name, type_arguments);
                 let qualified_name: mut Semantic_Node = new Semantic_Node.referencing_type(referenced_type, qualified_syntax, generic_name_children);
                 add_item(children, qualified_name);
@@ -616,7 +621,7 @@ public build_type_name_semantic_node(
     }
     else if syntax.kind == MutableType
     {
-        let inner_type: Semantic_Node = build_type_name_semantic_node(builder, syntax.children[1], name_table, scope);
+        let inner_type: Semantic_Node = build_type_name_semantic_node(builder, syntax.children[1], name_table, scope, annotations);
         add_item(children, inner_type);
         if inner_type.referenced_type == none
         {
@@ -628,7 +633,7 @@ public build_type_name_semantic_node(
     }
     else if syntax.kind == ImmutableType
     {
-        let inner_type: Semantic_Node = build_type_name_semantic_node(builder, syntax.children[0], name_table, scope);
+        let inner_type: Semantic_Node = build_type_name_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
         add_item(children, inner_type);
         if inner_type.referenced_type == none
         {
@@ -640,7 +645,7 @@ public build_type_name_semantic_node(
     }
     else if syntax.kind == OptionalType
     {
-        let inner_type: Semantic_Node = build_type_name_semantic_node(builder, syntax.children[0], name_table, scope);
+        let inner_type: Semantic_Node = build_type_name_semantic_node(builder, syntax.children[0], name_table, scope, annotations);
         add_item(children, inner_type);
         if inner_type.referenced_type == none
         {
@@ -656,7 +661,7 @@ public build_type_name_semantic_node(
         //      replace with specific constructions
         // for let child_syntax: Syntax_Node in syntax.children
         // {
-        // 	add_item(children, build_type_name_semantic_node(builder, child_syntax, name_table, scope));
+        // 	add_item(children, build_type_name_semantic_node(builder, child_syntax, name_table, scope, annotations));
         // }
         // return new Semantic_Node.concrete_with_children(syntax, children);
         let place: int = syntax.start;
@@ -700,7 +705,8 @@ public build_type_arguments_semantic_node(
     syntax: Syntax_Node,
     name_table: Name_Table,
     scope: Name_Subtable,
-    children: mut system.collections.List<Semantic_Node>)
+    children: mut system.collections.List<Semantic_Node>,
+    annotations: Annotations_Dictionary)
     -> system.collections.List<Type>
 {
     let arguments: mut system.collections.List<Type> = new system.collections.List<Type>();
@@ -710,7 +716,7 @@ public build_type_arguments_semantic_node(
 
     for let type_argument: Syntax_Node in type_arguments(syntax)
     {
-        let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_argument, name_table, scope);
+        let type_node: Semantic_Node = build_type_name_semantic_node(builder, type_argument, name_table, scope, annotations);
         add_item(arguments, type_node.referenced_type);
         add_item(children, type_node);
     }
@@ -722,7 +728,8 @@ public build_constructor_name_semantic_node(
     builder: Semantic_Tree_Builder,
     syntax: Syntax_Node,
     name_table: Name_Table,
-    scope: Name_Subtable)
+    scope: Name_Subtable,
+    annotations: Annotations_Dictionary)
     -> Semantic_Node
 {
     if syntax.kind == QualifiedName
@@ -731,7 +738,7 @@ public build_constructor_name_semantic_node(
         let children: mut system.collections.List<Semantic_Node> = new system.collections.List<Semantic_Node>();
         let qualifier: Syntax_Node = syntax.children[0];
         // It could be a named constructor call
-        let type_node: Semantic_Node = build_type_name_semantic_node(builder, qualifier, name_table, scope);
+        let type_node: Semantic_Node = build_type_name_semantic_node(builder, qualifier, name_table, scope, annotations);
         add_item(children, type_node);
         let name: Token = syntax.children[2];
         let constructor_name: string = "new_" + get_token_text(name);
@@ -746,7 +753,7 @@ public build_constructor_name_semantic_node(
         }
     }
 
-    return build_type_name_semantic_node(builder, syntax, name_table, scope);
+    return build_type_name_semantic_node(builder, syntax, name_table, scope, annotations);
 }
 
 public parameter_types(parameters_node: Semantic_Node) -> system.collections.List<Type>
