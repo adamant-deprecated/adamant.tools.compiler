@@ -114,6 +114,7 @@ public bind_declared_symbols(
                 assert(optional_symbol =/= none);
                 syntax_annotations.symbol = optional_symbol;
                 syntax_annotations.of_type = optional_type;
+                syntax_annotations.scope = scope;
             }
             else if syntax_node.kind == VariableDeclaration
             {

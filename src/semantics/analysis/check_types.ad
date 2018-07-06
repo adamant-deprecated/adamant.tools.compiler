@@ -1,0 +1,51 @@
+public check_types(
+    symbol: Syntax_Symbol,
+    annotations: mut Annotations_Dictionary)
+    -> void
+{
+    if symbol.kind == IdentifierSymbol
+        and symbol.declarations.count > 0
+    {
+        var recurse: bool = false;
+        let syntax: Syntax = symbol.declarations[0];
+        if syntax.kind == PackageNode
+            or syntax.kind == NamespaceDeclaration
+        {
+            recurse = true;
+        }
+        else if syntax.kind == FunctionDeclaration
+            or syntax.kind == ConstructorDeclaration
+        {
+            let syntax_annotations: Annotations = annotations_for(annotations, syntax);
+            assert(syntax_annotations.scope =/= none);
+            let body: Syntax = first_child_syntax_node(syntax, Block);
+            for let statement: Syntax_Node in statements(body)
+            {
+                check_statement_types(statement, syntax_annotations.scope);
+            }
+        }
+        else if syntax.kind == FieldDeclaration
+                or syntax.kind == GlobalDeclaration
+                or syntax.kind == LocalDeclarationStatement
+        {
+            let variable_declaration: Syntax = syntax_node_as_syntax(first_child_syntax_node(syntax, VariableDeclaration));
+            if variable_declaration.children.count == 6
+            {
+                let syntax_annotations: Annotations = annotations_for(annotations, syntax);
+                let scope: Name_Scope = syntax_annotations.scope;
+                let initalizer: Syntax_Node = syntax.children[5];
+                check_expression_types(initalizer, scope);
+            }
+        }
+    }
+}
+
+public check_statement_types(statement: Syntax_Node, scope: Name_Scope) -> void
+{
+
+}
+
+public check_expression_types(expression: Syntax_Node, scope: Name_Scope) -> void
+{
+
+}

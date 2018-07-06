@@ -18,9 +18,11 @@ public analyze_semantics(package_syntax: Syntax_Node) -> Package
     // debug_write_line("    binding declared symbols...");
     bind_declared_symbols(package_syntax_symbol, references, annotations);
     // debug_write_syntax_symbols(package_syntax_symbol, "      ");
+    check_types(package_syntax_symbol, annotations);
     // debug_write_line("    building symbol table...");
     let name_table: Name_Table = build_symbol_table(name, package_syntax, references, annotations);
     // debug_write_line("    building semantic tree...");
+    // TODO make semantic tree building do as little work as possible, it is just creating the tree
     let semantic_tree_builder: Semantic_Tree_Builder = new Semantic_Tree_Builder();
     let compilation_units: system.collections.List<Compilation_Unit> = build_compilation_units(semantic_tree_builder, package_syntax, name_table, annotations);
     // debug_write_line("    building symbols...");
