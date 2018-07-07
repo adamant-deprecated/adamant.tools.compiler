@@ -20,6 +20,9 @@
 #define opt_ptr *_Nullable
 #define mut
 
+#define let const
+#define var
+
 #define NON_EXHAUSTIVE_MATCH(type_id) NON_EXHAUSTIVE_MATCH_IMPL(type_id, __func__, __FILE__, __LINE__);
 noreturn void NON_EXHAUSTIVE_MATCH_IMPL(int32_t type_id, char const *_Nonnull function, char const *_Nonnull file, int32_t line);
 

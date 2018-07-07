@@ -360,6 +360,64 @@ public old_convert_type(mutable_binding: bool, type_node: Semantic_Node) -> stri
     return old_convert_type(mutable_binding, type_node.referenced_type, false); // not optional
 }
 
+public convert_return_type(type_node: Semantic_Node) -> string
+{
+    // TODO remove call to old_convert_type()
+    return old_convert_type(true, type_node);
+    assert(type_node.referenced_type =/= none, get_semantic_node_text(type_node));
+    let c_type: mut system.text.String_Builder = new system.text.String_Builder();
+    convert_type(type_node.referenced_type, c_type);
+    return sb_to_string(c_type);
+}
+
+public convert_variable_type(mutable_binding: bool, type_node: Semantic_Node) -> string
+{
+    // TODO remove call to old_convert_type()
+    return old_convert_type(mutable_binding, type_node);
+    assert(type_node.referenced_type =/= none, get_semantic_node_text(type_node));
+    let c_type: mut system.text.String_Builder = new system.text.String_Builder();
+    if mutable_binding
+    {
+        sb_append(c_type, "var ");
+    }
+    else
+    {
+        sb_append(c_type, "let ");
+    }
+    convert_type(type_node.referenced_type, c_type);
+    return sb_to_string(c_type);
+}
+
+public convert_type(type: Type, c_type: mut system.text.String_Builder) -> void
+{
+    match type
+    {
+        p: Primitive_Type =>
+        {
+            let name: string = unqualified_name(p.name);
+            if name == "bool"
+            {
+                sb_append(c_type, "BOOL");
+            }
+            else if name == "int"
+            {
+                sb_append(c_type, "int32");
+            }
+            else if name == "uint"
+            {
+                sb_append(c_type, "uint32");
+            }
+            else
+            {
+                sb_append(c_type, name);
+            }
+        },
+        _: Object_Type => { NOT_IMPLEMENTED("Object_Type"); },
+        _: Namespace_Type => { NOT_IMPLEMENTED("Function_Type"); },
+        _: Function_Type => { NOT_IMPLEMENTED("Function_Type"); }
+    }
+}
+
 // TODO can't have `self_type` be a nullable string because comparison not implemented yet
 public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, self_type: string, is_main_function: bool) -> string
 {
@@ -381,7 +439,7 @@ public convert_parameter_list(emitter: mut Emitter, parameters: Semantic_Node, s
 
         let mutable_binding: bool = node_has_child(parameter, VarKeyword);
         let type_node: Semantic_Node = parameter.children[parameter.children.count - 1];
-        sb_append(builder, old_convert_type(mutable_binding, type_node));
+        sb_append(builder, convert_variable_type(mutable_binding, type_node));
         sb_append(builder, " ");
         sb_append(builder, mangle_field_name(get_semantic_node_text(first_child(parameter, Identifier))));
 
@@ -1018,7 +1076,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         if variable_name[0] =/= '_' // skip emitting unused varaible to avoid warning about unused variables
         {
             begin_line(emitter.definitions, "");
-            write(emitter.definitions, old_convert_type(mutable_binding, variable_type_node));
+            write(emitter.definitions, convert_variable_type(mutable_binding, variable_type_node));
             write(emitter.definitions, " ");
             write(emitter.definitions, mangle_field_name(variable_name));
             write(emitter.definitions, " = ");
@@ -1096,7 +1154,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
                     // let first_char: code_point = variable_name[0];
                     if variable_name[0] =/= '_' // skip emitting unused varaible to avoid warning about unused variables
                     {
-                        begin_line(emitter.definitions, old_convert_type(false, match_variable_type_node));
+                        begin_line(emitter.definitions, convert_variable_type(false, match_variable_type_node));
                         write(emitter.definitions, " ");
                         write(emitter.definitions, mangle_field_name(variable_name));
                         end_line(emitter.definitions, " = match_value;");
@@ -1151,7 +1209,7 @@ public emit_statement(emitter: mut Emitter, statement: Semantic_Node) -> void
         }
         let variable_type: Semantic_Node = variable_declaration.children[2];
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
-        begin_line(emitter.definitions, old_convert_type(mutable_binding, variable_type));
+        begin_line(emitter.definitions, convert_variable_type(mutable_binding, variable_type));
         write(emitter.definitions, " " + mangle_field_name(variable_name));
         if variable_declaration.children.count > 3
         {
@@ -1246,7 +1304,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         let field_type: Semantic_Node = variable_declaration.children[2];
         // because we need to assign them in constructors don't mark fields const
         // TODO it might be better to just not emit a mutability specifier on these types to avoid confusion
-        let c_type: string = old_convert_type(true, field_type);
+        let c_type: string = convert_variable_type(true, field_type);
         write_line(emitter.class_declarations, c_type + " " + mangle_field_name(field_name) + ";");
     }
     else if member.kind == MethodDeclaration
@@ -1262,7 +1320,7 @@ public emit_member_declaration(emitter: mut Emitter, member: Semantic_Node, clas
         let is_associated_function: bool = self_parameter == none;
         let mutable_self: bool = not is_associated_function and node_has_child(self_parameter, MutableKeyword);
         let return_type_node: Semantic_Node = member.children[3];
-        let c_type: string = old_convert_type(true, return_type_node);
+        let c_type: string = convert_variable_type(true, return_type_node);
         var static_modifier: string = "";
         if is_associated_function
             { static_modifier = "static "; }
@@ -1319,7 +1377,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let variable_name: string = get_semantic_node_text(first_child(variable_declaration, Identifier));
         let variable_type: Semantic_Node = variable_declaration.children[2];
         let mutable_binding: bool = node_has_child(variable_declaration, VarKeyword);
-        let c_type: string = old_convert_type(mutable_binding, variable_type);
+        let c_type: string = convert_variable_type(mutable_binding, variable_type);
         begin_line(emitter.global_definitions, c_type);
         write(emitter.global_definitions, " " + mangle_field_name(variable_name) + " = ");
         let expression: Semantic_Node = variable_declaration.children[3];
@@ -1408,7 +1466,7 @@ public emit_declaration(emitter: mut Emitter, declaration: Semantic_Node) -> voi
         let parameters: string = convert_parameter_list(emitter, parameters_node, is_main);
         let return_type_node: Semantic_Node = declaration.children[3];
         // TODO const/mut doesn't really apply to the outer level of return types. This matches C.
-        let c_type: string = old_convert_type(true, return_type_node);
+        let c_type: string = convert_return_type(return_type_node);
         var modifiers: string = "";
         if c_type == "never mut" or c_type == "optional__never mut"
         {
