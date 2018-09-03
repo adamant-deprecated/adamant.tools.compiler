@@ -1,15 +1,10 @@
-# Adamant Compiler
+# *Deprecated* Adamant Compiler
 
 A compiler for the [Adamant language](http://adamant-lang.org) that is in the process of being bootstrapped. The compiler currently compiles a small subset of the Adamant language to C. It is capable of compiling itself and a small test suite.  Additional language features are being implemented and the compiler code refactored to take advantages of them.
 
-## Project Status: Alpha Active
+## Project Status: Alpha *Deprecated*
 
-The compiler is under active development. It is in a very early stage, and there are likely issues and limitations. APIs are subject to frequent breaking changes.
-
-Platform | Status
----|---
-Windows | [![Build status](https://ci.appveyor.com/api/projects/status/uy8j809tc3u3cil3/branch/master?svg=true)](https://ci.appveyor.com/project/WalkerCodeRanger/adamant-compiler/branch/master)
-Linux | [![Build Status](https://travis-ci.org/adamant/adamant.tools.compiler.svg?branch=master)](https://travis-ci.org/adamant/adamant.tools.compiler)
+This project should not be used. The current Adamant compiler is the "[adamant.tools.compiler.bootstrap](https://github.com/adamant/adamant.tools.compiler.bootstrap)" project.
 
 ## Implementation Notes
 
