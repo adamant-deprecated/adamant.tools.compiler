@@ -4,19 +4,11 @@ A compiler for the [Adamant language](http://adamant-lang.org) that is in the pr
 
 ## Project Status: Alpha *Deprecated*
 
-This project should not be used. The current Adamant compiler is the "[adamant.tools.compiler.bootstrap](https://github.com/adamant/adamant.tools.compiler.bootstrap)" project.
+This project should not be used.
 
 ## Implementation Notes
 
 The list of the currently [implemented language features](docs/ImplementedLanguageFeatures.md) can be found in the docs directory.
-
-## Contributing
-
-Fork the project and then clone the repository.  Submit changes as a pull request.  Language features should have a test in the test suite for them.
-
-The compiler translates into code that is compiled using the [clang++ compiler](https://clang.llvm.org) version 5.0.  Older versions of the C compiler may work, but this is not being tested and may change.  It builds on both Windows and Linux with CI builds on every commit in the repo.
-
-Please read all of this section, particularly about the development cycle before attempting to contribute.
 
 ### Bootstrapping Structure
 
